@@ -82,14 +82,6 @@ public interface RandomGenerator<T> {
 	}
 
 	@API(status = INTERNAL)
-	default RandomGenerator<T> injectNull(double nullProbability) {
-		return random -> {
-			if (random.nextDouble() <= nullProbability) return Shrinkable.unshrinkable(null);
-			return RandomGenerator.this.next(random);
-		};
-	}
-
-	@API(status = INTERNAL)
 	default RandomGenerator<T> withEdgeCases(int genSize, EdgeCases<T> edgeCases) {
 		return RandomGeneratorFacade.implementation.withEdgeCases(this, genSize, edgeCases);
 	}

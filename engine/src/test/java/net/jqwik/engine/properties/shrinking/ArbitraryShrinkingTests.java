@@ -165,6 +165,29 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Group
+	class InjectNull {
+
+		@Property(tries = 100)
+		void shrinkToNull(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3).injectNull(0.5);
+			assertAllValuesAreShrunkTo(null, arbitrary, random);
+		}
+
+		@Property(tries = 100)
+		void dontShrinkToNullIfFalsifierDoesNotAllow(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3).injectNull(0.5);
+			Falsifier<Integer> falsifier = aNumber -> {
+				if (aNumber == null) {
+					return TryExecutionResult.satisfied();
+				}
+				return TryExecutionResult.falsified(null);
+			};
+			Integer value = shrinkToMinimal(arbitrary, random, falsifier);
+			assertThat(value).isEqualTo(1);
+		}
+	}
+
+	@Group
 	class Uniqueness {
 
 		@Property(tries = 10)

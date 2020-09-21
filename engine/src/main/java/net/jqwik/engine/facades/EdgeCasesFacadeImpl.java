@@ -34,11 +34,6 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 	}
 
 	@Override
-	public <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases) {
-		return EdgeCasesSupport.concat(edgeCases);
-	}
-
-	@Override
 	public <T, U> EdgeCases<U> mapShrinkable(EdgeCases<T> self, Function<Shrinkable<T>, Shrinkable<U>> mapper) {
 		List<Supplier<Shrinkable<U>>> mappedSuppliers =
 			self.suppliers().stream()

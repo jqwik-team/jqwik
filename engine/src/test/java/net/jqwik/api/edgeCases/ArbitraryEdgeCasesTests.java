@@ -71,7 +71,7 @@ class ArbitraryEdgeCasesTests {
 		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-10, 10).injectNull(0.1);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-			-10, -2, -1, 0, 1, 2, 10, null
+			null, -10, -2, -1, 0, 1, 2, 10
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(8);

@@ -59,4 +59,25 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 						.stream(SourceOfRandomness.current())
 						.map(Shrinkable::value);
 	}
+
+	@Override
+	public <T> Arbitrary<T> injectNull(Arbitrary<T> self, double nullProbability) {
+		int frequencyNull = (int) Math.round(nullProbability * 100);
+		int frequencyNotNull = 100 - frequencyNull;
+		if (frequencyNull <= 0) {
+			return self;
+		}
+		if (frequencyNull >= 100) {
+			return Arbitraries.just(null);
+		}
+		Arbitrary<T> withNull = Arbitraries.frequencyOf(
+			Tuple.of(frequencyNull, Arbitraries.just(null)),
+			Tuple.of(frequencyNotNull, self)
+		);
+		if (self.isUnique()) {
+			return withNull.unique();
+		} else {
+			return withNull;
+		}
+	}
 }

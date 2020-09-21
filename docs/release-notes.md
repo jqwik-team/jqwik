@@ -37,6 +37,9 @@ title: jqwik Release Notes
 
 - A maximum of 1000 (instead of 10000) edge cases is generated _per arbitrary_.
 
+- Arbitraries that allow nullables through `Arbitrary.injectNull()` or 
+  annotation `@WithNull` will now shrink their values to `null` if possible.
+
 #### Bug Fixes
 
 - With a lot of edge cases sometimes _only_ edge cases were generated. 

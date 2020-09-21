@@ -21,8 +21,6 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
 		public abstract <T> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers);
 
-		public abstract <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases);
-
 		public abstract <T, U> EdgeCases<U> mapShrinkable(EdgeCases<T> self, Function<Shrinkable<T>, Shrinkable<U>> mapper);
 
 		public abstract <T, U> EdgeCases<U> flatMapArbitrary(EdgeCases<T> self, Function<T, Arbitrary<U>> mapper);
@@ -59,13 +57,6 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> fromSupplier(Supplier<Shrinkable<T>> supplier) {
 		return fromSuppliers(Collections.singletonList(supplier));
-	}
-
-	@SafeVarargs
-	@API(status = INTERNAL)
-	// TODO: Remove as soon as Arbitrary.injectNull() uses frequencyOf()
-	static <T> EdgeCases<T> concat(EdgeCases<T>... rest) {
-		return EdgeCasesFacade.implementation.concat(Arrays.asList(rest));
 	}
 
 	@API(status = INTERNAL)

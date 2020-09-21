@@ -44,6 +44,8 @@ public interface Arbitrary<T> {
 		public abstract <T, A> StreamableArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
 
 		public abstract <T> Stream<T> sampleStream(Arbitrary<T> arbitrary);
+
+		public abstract <T> Arbitrary<T> injectNull(Arbitrary<T> self, double nullProbability);
 	}
 
 	/**
@@ -235,34 +237,7 @@ public interface Arbitrary<T> {
 	 * @return a new arbitrary instance
 	 */
 	default Arbitrary<T> injectNull(double nullProbability) {
-		if (nullProbability <= 0.0) {
-			return this;
-		}
-		if (nullProbability >= 1.0) {
-			return Arbitraries.just(null);
-		}
-		return new Arbitrary<T>() {
-			@Override
-			public RandomGenerator<T> generator(int genSize) {
-				return Arbitrary.this.generator(genSize).injectNull(nullProbability);
-			}
-
-			@Override
-			public boolean isUnique() {
-				return Arbitrary.this.isUnique();
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(ExhaustiveGenerator::injectNull);
-			}
-
-			@Override
-			public EdgeCases<T> edgeCases() {
-				EdgeCases<T> nullSupplier = EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(null));
-				return EdgeCases.concat(Arbitrary.this.edgeCases(), nullSupplier);
-			}
-		};
+		return ArbitraryFacade.implementation.injectNull(Arbitrary.this, nullProbability);
 	}
 
 	/**

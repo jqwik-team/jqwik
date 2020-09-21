@@ -52,6 +52,6 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 			Arbitrary<T> configuredArbitrary = SelfConfiguringArbitrary.configure(f.get2(), configurator, targetType);
 			return Tuple.of(f.get1(), configuredArbitrary);
 		});
-		return this;
+		return configurator.configure(this, targetType);
 	}
 }

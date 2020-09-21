@@ -1,8 +1,5 @@
 - 1.3.6
 
-    - Shrink nullable generators to null if possible
-        - Remove EdgeCases.concat(...)
-    
     - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
         - useBeanProperties()
             - are considered nullable
