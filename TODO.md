@@ -1,11 +1,5 @@
 - 1.3.6
 
-    - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
-        - useBeanProperties()
-            - are considered nullable
-            - with optional spec: Map<String, Arbitrary> to map
-              a property to a certain arbitrary
-
     - Edge Cases
     
         - Restrict number of generated edge cases to number of tries
@@ -26,6 +20,13 @@
     
 
 - 1.3.x
+
+    - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
+      https://github.com/jlink/jqwik/issues/121
+        - useBeanProperties()
+            - are considered nullable
+            - with optional spec: Map<String, Arbitrary> to map
+              a property to a certain arbitrary
 
     - Domains
         - Deprecate AbstractDomainContextBase
