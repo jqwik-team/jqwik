@@ -68,7 +68,7 @@ public class DefaultMapArbitrary<K, V> extends AbstractArbitraryBase implements 
 			minSize <= 1
 				? singleEntryEdgeCases()
 				: EdgeCases.none();
-		return EdgeCases.concat(emptyMapEdgeCase, singleEntryEdgeCases);
+		return EdgeCasesSupport.concat(emptyMapEdgeCase, singleEntryEdgeCases);
 	}
 
 	private EdgeCases<Map<K, V>> singleEntryEdgeCases() {

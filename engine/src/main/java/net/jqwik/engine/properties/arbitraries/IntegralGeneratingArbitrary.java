@@ -54,7 +54,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 					shrinkingTarget()
 				))
 				.collect(Collectors.toList());
-		return EdgeCases.fromShrinkables(shrinkables);
+		return EdgeCasesSupport.fromShrinkables(shrinkables);
 	}
 
 	private Stream<BigInteger> streamEdgeCases() {

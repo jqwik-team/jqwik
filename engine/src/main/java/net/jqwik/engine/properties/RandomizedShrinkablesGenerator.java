@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.facades.*;
+import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
 
 import static java.lang.Math.*;
@@ -83,7 +84,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 												.stream()
 												.map(Arbitrary::edgeCases)
 												.collect(Collectors.toList());
-		return EdgeCases.concat(edgeCases);
+		return EdgeCasesSupport.concat(edgeCases);
 	}
 
 	private static RandomizedParameterGenerator resolveParameter(

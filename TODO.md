@@ -1,10 +1,9 @@
 - 1.3.6
 
-    - Consolidate EdgeCases and EdgeCasesSupport
-    
     - Shrink nullable generators to null if possible
+        - Remove EdgeCases.concat(...)
     
-    - Arbitraries.forType(Class<T> targetType)
+    - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
         - useBeanProperties()
             - are considered nullable
             - with optional spec: Map<String, Arbitrary> to map

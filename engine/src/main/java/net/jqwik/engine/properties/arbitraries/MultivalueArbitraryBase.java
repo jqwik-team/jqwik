@@ -75,7 +75,7 @@ abstract class MultivalueArbitraryBase<T, U> extends AbstractArbitraryBase imple
 		EdgeCases<C> emptyListEdgeCase = (minSize == 0) ? emptyListEdgeCase(shrinkableCreator) : EdgeCases.none();
 		EdgeCases<C> singleElementEdgeCases = (minSize <= 1 && maxSize >= 1) ? fixedSizeEdgeCases(1, shrinkableCreator) : EdgeCases.none();
 		EdgeCases<C> fixedSizeEdgeCases = generateFixedSizeEdgeCases() ? fixedSizeEdgeCases(minSize, shrinkableCreator) : EdgeCases.none();
-		return EdgeCases.concat(Arrays.asList(emptyListEdgeCase, singleElementEdgeCases, fixedSizeEdgeCases));
+		return EdgeCasesSupport.concat(Arrays.asList(emptyListEdgeCase, singleElementEdgeCases, fixedSizeEdgeCases));
 	}
 
 	private boolean generateFixedSizeEdgeCases() {

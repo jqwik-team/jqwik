@@ -63,21 +63,9 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
 	@SafeVarargs
 	@API(status = INTERNAL)
+	// TODO: Remove as soon as Arbitrary.injectNull() uses frequencyOf()
 	static <T> EdgeCases<T> concat(EdgeCases<T>... rest) {
-		return concat(Arrays.asList(rest));
-	}
-
-	@API(status = INTERNAL)
-	static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases) {
-		return EdgeCasesFacade.implementation.concat(edgeCases);
-	}
-
-	@API(status = INTERNAL)
-	static <T> EdgeCases<T> fromShrinkables(List<Shrinkable<T>> shrinkables) {
-		return () -> shrinkables
-						 .stream()
-						 .map(shrinkable -> (Supplier<Shrinkable<T>>) () -> shrinkable)
-						 .collect(Collectors.toList());
+		return EdgeCasesFacade.implementation.concat(Arrays.asList(rest));
 	}
 
 	@API(status = INTERNAL)

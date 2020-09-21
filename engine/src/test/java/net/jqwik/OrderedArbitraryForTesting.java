@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
@@ -39,6 +40,6 @@ public class OrderedArbitraryForTesting<T> implements Arbitrary<T> {
 			Arrays.stream(elements)
 				  .map(Shrinkable::unshrinkable)
 			.collect(Collectors.toList());
-		return EdgeCases.fromShrinkables(shrinkables);
+		return EdgeCasesSupport.fromShrinkables(shrinkables);
 	}
 }

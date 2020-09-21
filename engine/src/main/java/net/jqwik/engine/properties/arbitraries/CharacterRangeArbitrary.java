@@ -47,6 +47,6 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 
 	@Override
 	public EdgeCases<Character> edgeCases() {
-		return EdgeCases.fromShrinkables(listOfEdgeCases());
+		return EdgeCasesSupport.fromShrinkables(listOfEdgeCases());
 	}
 }

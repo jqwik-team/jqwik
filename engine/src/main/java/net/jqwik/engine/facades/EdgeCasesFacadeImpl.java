@@ -8,6 +8,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
+import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
@@ -20,7 +21,7 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 
 	private static final Logger LOG = Logger.getLogger(EdgeCasesFacadeImpl.class.getName());
 
-	private Store<Boolean> warningAlreadyLogged =
+	private final Store<Boolean> warningAlreadyLogged =
 		Store.create(
 			Tuple.of(EdgeCasesFacadeImpl.class, "warning"),
 			Lifespan.PROPERTY,
@@ -29,39 +30,12 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 
 	@Override
 	public <T> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {
-		return new EdgeCases<T>() {
-			@Override
-			public List<Supplier<Shrinkable<T>>> suppliers() {
-				return suppliers;
-			}
-
-			@Override
-			public String toString() {
-				String edgeCases =
-					suppliers
-						.stream()
-						.map(Supplier::get)
-						.map(Shrinkable::value)
-						.map(JqwikStringSupport::displayString)
-						.collect(Collectors.joining(", "));
-				return String.format("EdgeCases[%s]", edgeCases);
-			}
-		};
+		return EdgeCasesSupport.fromSuppliers(suppliers);
 	}
 
 	@Override
 	public <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases) {
-		if (edgeCases.isEmpty()) {
-			return EdgeCases.none();
-		}
-		List<Supplier<Shrinkable<T>>> concatenatedSuppliers = new ArrayList<>();
-		for (EdgeCases<T> edgeCase : edgeCases) {
-			if (edgeCase.isEmpty()) {
-				continue;
-			}
-			concatenatedSuppliers.addAll(edgeCase.suppliers());
-		}
-		return EdgeCases.fromSuppliers(concatenatedSuppliers);
+		return EdgeCasesSupport.concat(edgeCases);
 	}
 
 	@Override

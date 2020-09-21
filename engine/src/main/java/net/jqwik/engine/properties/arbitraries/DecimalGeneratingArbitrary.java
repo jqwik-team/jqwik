@@ -62,7 +62,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 
 	@Override
 	public EdgeCases<BigDecimal> edgeCases() {
-		return EdgeCases.fromShrinkables(edgeCaseShrinkables());
+		return EdgeCasesSupport.fromShrinkables(edgeCaseShrinkables());
 	}
 
 	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables() {

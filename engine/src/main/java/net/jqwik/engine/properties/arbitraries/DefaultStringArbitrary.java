@@ -40,7 +40,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 		EdgeCases<String> fixedSizeEdgeCases =
 			hasMultiCharEdgeCases() ? fixedSizedEdgeCases(minLength) : EdgeCases.none();
 
-		return EdgeCases.concat(singleCharEdgeCases, emptyStringEdgeCases, fixedSizeEdgeCases);
+		return EdgeCasesSupport.concat(singleCharEdgeCases, emptyStringEdgeCases, fixedSizeEdgeCases);
 	}
 
 	private boolean hasEmptyStringEdgeCase() {
