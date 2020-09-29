@@ -1,5 +1,16 @@
 - 1.3.7
 
+    - Domains
+        - Deprecate AbstractDomainContextBase
+            - Introduce DomainContextBase
+            - Allow @Provide methods in DomainContextBase subclasses
+            - Allow @ForAll parameters in @Provide methods
+            - Allow Arbitrary<T> parameters in @Provide methods
+            - @Configure method for configurators?
+
+    
+- 1.3.x
+
     - Edge Cases
     
         - Restrict number of generated edge cases to number of tries
@@ -17,9 +28,6 @@
                 - Collections
                 - Combinators
             - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
-    
-
-- 1.3.x
 
     - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
       https://github.com/jlink/jqwik/issues/121
@@ -28,13 +36,6 @@
             - with optional spec: Map<String, Arbitrary> to map
               a property to a certain arbitrary
 
-    - Domains
-        - Deprecate AbstractDomainContextBase
-            - Introduce DomainContextBase
-            - Allow @Provide methods in DomainContextBase subclasses
-            - Allow @ForAll parameters in @Provide methods
-            - Allow Arbitrary<T> parameters in @Provide methods 
-    
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
             - forType(Class<T> targetType, int depth)
