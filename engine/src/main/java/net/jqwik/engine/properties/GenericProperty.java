@@ -77,6 +77,18 @@ public class GenericProperty {
 						);
 					case INVALID:
 						countChecks--;
+						if (maxTries == 1) { // Examples have exactly one try
+							return PropertyCheckResult.skipExample(
+								configuration.getStereotype(),
+								name,
+								configuration.getSeed(),
+								configuration.getGenerationMode(),
+								configuration.getEdgeCasesMode(),
+								parametersGenerator.edgeCasesTotal(),
+								parametersGenerator.edgeCasesTried(),
+								tryExecutionResult.throwable().orElse(null)
+							);
+						}
 						break;
 					default:
 						String message = String.format("Unknown TryExecutionResult.status [%s]", tryExecutionResult.status().name());

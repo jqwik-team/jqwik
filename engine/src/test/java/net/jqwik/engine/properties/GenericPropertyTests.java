@@ -410,6 +410,28 @@ class GenericPropertyTests {
 			assertThat(result.falsifiedParameters().get()).isEmpty();
 		}
 
+		@Example
+		void abortedWhenExampleThrowsAbortedException() {
+			CheckedFunction forAllFunction = args -> {
+				throw new TestAbortedException("skip example");
+			};
+
+			PropertyConfiguration configuration = aConfig().withTries(1).build();
+			GenericProperty property =
+				new GenericProperty("skipped example", configuration, emptyShrinkablesGenerator(), forAllFunction, tryLifecycleContextSupplier);
+
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
+
+			assertThat(result.propertyName()).isEqualTo("skipped example");
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.ABORTED);
+			assertThat(result.throwable()).isPresent();
+			assertThat(result.throwable().get()).isInstanceOf(TestAbortedException.class);
+			assertThat(result.throwable().get().getMessage()).isEqualTo("skip example");
+			assertThat(result.countTries()).isEqualTo(1);
+			assertThat(result.countChecks()).isEqualTo(0);
+		}
+
+
 	}
 
 	@Group

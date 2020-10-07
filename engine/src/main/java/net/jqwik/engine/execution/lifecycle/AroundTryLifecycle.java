@@ -21,8 +21,8 @@ public class AroundTryLifecycle implements TryLifecycleExecutor {
 	public TryExecutionResult execute(TryLifecycleContext tryLifecycleContext, List<Object> parameters) {
 		try {
 			return aroundTry.aroundTry(tryLifecycleContext, tryExecutor, parameters);
-		} catch (TestAbortedException exception) {
-			return TryExecutionResult.invalid();
+		} catch (TestAbortedException tea) {
+			return TryExecutionResult.invalid(tea);
 		} catch (AssertionError | Exception e) {
 			return TryExecutionResult.falsified(e);
 		} catch (Throwable throwable) {

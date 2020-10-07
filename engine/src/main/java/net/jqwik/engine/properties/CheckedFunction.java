@@ -17,7 +17,7 @@ public interface CheckedFunction extends Predicate<List<Object>>, TryExecutor, T
 			boolean result = this.test(parameters);
 			return result ? TryExecutionResult.satisfied() : TryExecutionResult.falsified(null);
 		} catch (TestAbortedException tea) {
-			return TryExecutionResult.invalid();
+			return TryExecutionResult.invalid(tea);
 		} catch (AssertionError | Exception e) {
 			return TryExecutionResult.falsified(e);
 		}

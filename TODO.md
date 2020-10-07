@@ -1,5 +1,7 @@
 - 1.3.7
 
+    - Release notes and user guide for https://github.com/jlink/jqwik/issues/122
+
     - Bug: Do Wildcard constraints still work for generation?
     
       	@Property

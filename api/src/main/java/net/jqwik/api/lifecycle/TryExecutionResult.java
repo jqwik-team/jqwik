@@ -3,6 +3,7 @@ package net.jqwik.api.lifecycle;
 import java.util.*;
 
 import org.apiguardian.api.*;
+import org.opentest4j.TestAbortedException;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -107,9 +108,11 @@ public interface TryExecutionResult {
 	 * Create a result that calls out the current parameter list as invalid.
 	 * All remaining tries will be executed.
 	 *
+	 * @param throwable A (potentially null) exception. Usually of type {@linkplain TestAbortedException}.
 	 * @return result instance
 	 */
-	static TryExecutionResult invalid() {
+	@API(status = EXPERIMENTAL, since = "1.3.7")
+	static TryExecutionResult invalid(Throwable throwable) {
 		return new TryExecutionResult() {
 			@Override
 			public Status status() {
@@ -118,7 +121,7 @@ public interface TryExecutionResult {
 
 			@Override
 			public Optional<Throwable> throwable() {
-				return Optional.empty();
+				return Optional.ofNullable(throwable);
 			}
 
 			@Override
@@ -132,6 +135,16 @@ public interface TryExecutionResult {
 			}
 
 		};
+	}
+
+	/**
+	 * Create a result that calls out the current parameter list as invalid.
+	 * All remaining tries will be executed.
+	 *
+	 * @return result instance
+	 */
+	static TryExecutionResult invalid() {
+		return invalid(null);
 	}
 
 	/**

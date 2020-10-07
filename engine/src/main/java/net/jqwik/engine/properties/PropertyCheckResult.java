@@ -14,7 +14,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	enum CheckStatus {
 		SUCCESSFUL,
 		FAILED,
-		EXHAUSTED
+		EXHAUSTED,
+		ABORTED
 	}
 
 	public static PropertyCheckResult successful(
@@ -81,6 +82,33 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
 	private static boolean areEquivalent(FalsifiedSample originalSample, ShrunkFalsifiedSample shrunkSample) {
 		return originalSample.equals(shrunkSample) && shrunkSample.countShrinkingSteps() == 0;
+	}
+
+	public static PropertyCheckResult skipExample(
+		String stereotype,
+		String propertyName,
+		String randomSeed,
+		GenerationMode generation,
+		EdgeCasesMode edgeCasesMode,
+		int edgeCasesTotal,
+		int edgeCasesTried,
+		Throwable throwable
+	) {
+		return new PropertyCheckResult(
+			CheckStatus.ABORTED,
+			stereotype,
+			propertyName,
+			1,
+			0,
+			randomSeed,
+			generation,
+			edgeCasesMode,
+			edgeCasesTotal,
+			edgeCasesTried,
+			null,
+			null,
+			throwable
+		);
 	}
 
 	public static PropertyCheckResult exhausted(
@@ -180,7 +208,11 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
 	@Override
 	public Status status() {
-		return checkStatus() == CheckStatus.SUCCESSFUL ? Status.SUCCESSFUL : Status.FAILED;
+		switch (checkStatus()) {
+			case SUCCESSFUL: return Status.SUCCESSFUL;
+			case ABORTED: return Status.ABORTED;
+			default: return Status.FAILED;
+		}
 	}
 
 	@Override
