@@ -16,6 +16,16 @@ class FunctionalTypeExamples {
 	}
 
 	@Property
+	void fromIntToMyString(@ForAll Function<Integer, @From("myString") String> function) {
+		assertThat(function.apply(42)).isIn("one", "two", "three");
+	}
+
+	@Provide
+	Arbitrary<String> myString() {
+		return Arbitraries.of("one", "two", "three");
+	}
+
+	@Property
 	void emptyStringsAlwaysTestFalse(@ForAll("predicates") Predicate<String> predicate) {
 		assertThat(predicate.test("")).isFalse();
 		// System.out.println(predicate.test("any string"));
