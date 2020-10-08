@@ -2,6 +2,8 @@
 
     - Release notes and user guide for https://github.com/jlink/jqwik/issues/122
 
+    - List Edge Cases: No longer list of small sizes with identical object
+    
     - Bug: Do Wildcard constraints still work for generation?
     
       	@Property
