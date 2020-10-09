@@ -29,6 +29,8 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Added two edge cases for generation of integral numbers.
+
 #### Breaking Changes
 
 - _Examples_ with a failing assumption - i.e. throwing a `TestAbortedException` -

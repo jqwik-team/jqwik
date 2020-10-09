@@ -66,7 +66,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	private Stream<BigInteger> streamRawEdgeCases() {
 		BigInteger[] literalEdgeCases = new BigInteger[]{
 			valueOf(-2), valueOf(-1), BigInteger.ZERO, valueOf(2), valueOf(1),
-			min, max
+			min, min.add(ONE), max, max.subtract(ONE)
 		};
 		return shrinkingTarget == null
 				   ? Arrays.stream(literalEdgeCases)

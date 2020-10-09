@@ -176,7 +176,7 @@ class CombinatorsEdgeCasesTests {
 
 	@Example
 	void combineWithBuilder() {
-		Arbitrary<Integer> numbers = Arbitraries.integers().between(10, 100).withDistribution(RandomDistribution.uniform());
+		Arbitrary<Integer> numbers = Arbitraries.integers().between(10, 100);
 
 		Supplier<AdditionBuilder> additionBuilderSupplier = AdditionBuilder::new;
 		Arbitrary<Integer> sum = Combinators
@@ -187,9 +187,9 @@ class CombinatorsEdgeCasesTests {
 
 		EdgeCases<Integer> edgeCases = sum.edgeCases();
 		assertThat(values(edgeCases))
-			.containsExactlyInAnyOrder(20, 110, 200);
+			.containsExactlyInAnyOrder(20, 21, 22, 198, 199, 200, 109, 110, 111);
 		// make sure edge cases can be repeatedly generated
-		assertThat(values(edgeCases)).hasSize(3);
+		assertThat(values(edgeCases)).hasSize(9);
 	}
 
 	class AdditionBuilder {

@@ -23,13 +23,15 @@ class EdgeCasesGenerationProperties {
 	private class CheckIntEdgeCasesGeneratedFirst implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
-			assertThat(generated(7)).containsExactlyInAnyOrder(
+			assertThat(generated(9)).containsExactlyInAnyOrder(
 				asList(-2),
 				asList(-1),
 				asList(0),
 				asList(1),
 				asList(2),
 				asList(-100),
+				asList(-99),
+				asList(99),
 				asList(100)
 			);
 		}
@@ -122,37 +124,33 @@ class EdgeCasesGenerationProperties {
 	}
 
 	@Property(tries = 1000, edgeCases = EdgeCasesMode.MIXIN)
-	@PerProperty(CheckCombinationsIntOddInt.class)
+	@PerProperty(CheckCombinationsIntEvenInt.class)
 	void edgeCasesFromFilteredInt(
-		@ForAll @IntRange(min = -100, max = 100) int anInt,
-		@ForAll("oddNumbers") int oddInt
+		@ForAll @IntRange(min = -1, max = 1) int anInt,
+		@ForAll("evenNumbers") int evenInt
 	) {
-		generated.add(asList(anInt, oddInt));
+		generated.add(asList(anInt, evenInt));
 	}
 
 	@Provide
-	Arbitrary<Integer> oddNumbers() {
-		return Arbitraries.integers().between(-100, 100).filter(i -> i % 2 != 0);
+	Arbitrary<Integer> evenNumbers() {
+		return Arbitraries.integers().between(-100, 100).filter(i -> i % 2 == 0);
 	}
 
-	private class CheckCombinationsIntOddInt implements PerProperty.Lifecycle {
+	private class CheckCombinationsIntEvenInt implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
 			assertThat(generated).contains(
-				asList(-100, -1),
-				asList(-2, -1),
-				asList(-1, -1),
-				asList(0, -1),
-				asList(1, -1),
-				asList(2, -1),
-				asList(100, -1),
-				asList(-100, 1),
-				asList(-2, 1),
-				asList(-1, 1),
-				asList(0, 1),
-				asList(1, 1),
-				asList(2, 1),
-				asList(100, 1)
+				asList(-1, -100),
+				asList(-1, -2),
+				asList(-1, -0),
+				asList(-1, 2),
+				asList(-1, 100),
+				asList(1, -100),
+				asList(1, -2),
+				asList(1, -0),
+				asList(1, 2),
+				asList(1, 100)
 			);
 		}
 	}
