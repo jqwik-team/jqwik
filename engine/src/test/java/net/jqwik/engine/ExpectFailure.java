@@ -69,7 +69,7 @@ public @interface ExpectFailure {
 				"%sProperty [%s] should have failed with failure of type %s, but %s",
 				headerText,
 				context.label(),
-
+				expectedFailureType.getName(),
 				reason
 			);
 			return testExecutionResult.mapToFailed(message);
