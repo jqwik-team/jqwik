@@ -1,15 +1,5 @@
 - 1.3.7
 
-    - Bug: Do Wildcard constraints still work for generation?
-    
-      	@Property
-      	// @Report(Reporting.GENERATED)
-      	<T extends Serializable> boolean reverseWithTypeVariable(@ForAll List<T> original) {
-      		return reverse(reverse(original)).equals(original);
-      	}
-
-        seems to generated List<Object>. Should it?
-
     - Arbitrary.unique() requires a scope
         - In container
         - In super container
