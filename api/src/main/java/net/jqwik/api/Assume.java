@@ -19,6 +19,12 @@ public class Assume {
 	 *
 	 * <p>
 	 * Assumptions are typically positioned at the beginning of a property method.
+	 * </p>
+	 *
+	 * <p>
+	 * A failing assumption in an example test (annotated with {@linkplain Example}
+	 * or having a single try) will be reported as a skipped test.
+	 * </p>
 	 *
 	 * @param condition Condition to make the assumption true
 	 */

@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.3.7-SNAPSHOT](#137-snapshot)
 - [1.3.6](#136)
 - [1.3.5](#135)
 - [1.3.4](#134)
@@ -23,6 +24,20 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.3.7-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+- _Examples_ with a failing assumption - i.e. throwing a `TestAbortedException` -
+  will now be reported as being skipped. See https://github.com/jlink/jqwik/issues/122
+  for motivation and reasoning.
+
+#### Bug Fixes
+
+No known bugs
 
 ## 1.3.6
 
