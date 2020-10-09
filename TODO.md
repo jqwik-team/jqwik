@@ -1,7 +1,5 @@
 - 1.3.7
 
-    - List Edge Cases: No longer list of small sizes with identical object
-    
     - Bug: Do Wildcard constraints still work for generation?
     
       	@Property
@@ -11,6 +9,12 @@
       	}
 
         seems to generated List<Object>. Should it?
+
+    - Arbitrary.unique() requires a scope
+        - In container
+        - In super container
+        - In whole try
+      Maybe a scope parameter together with Arbitrary.scope(name) can work?
 
     - Domains
         - Deprecate AbstractDomainContextBase
