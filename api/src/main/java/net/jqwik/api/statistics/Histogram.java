@@ -16,6 +16,8 @@ public class Histogram implements StatisticsReportFormat {
 
 	private static final Logger LOG = Logger.getLogger(Histogram.class.getName());
 
+	static final char BOX = '\u25a0';
+
 	@Override
 	public List<String> formatReport(List<StatisticsEntry> entries) {
 		if (entries.isEmpty()) {
@@ -134,7 +136,7 @@ public class Histogram implements StatisticsReportFormat {
 
 	private String bars(int num, double scale) {
 		int weight = (int) (num / scale);
-		return multiply('■', weight);
+		return multiply(BOX, weight);
 	}
 
 	private String multiply(final char c, final int times) {
