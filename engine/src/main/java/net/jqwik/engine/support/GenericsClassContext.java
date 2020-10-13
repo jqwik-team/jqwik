@@ -233,7 +233,7 @@ public class GenericsClassContext {
 
 		// For compatibility with JDK >= 9. A breaking change in the JDK :-(
 		// @Override
-		public AnnotatedType getAnnotatedOwnerType​() {
+		public AnnotatedType getAnnotatedOwnerType() {
 			// TODO: Return annotatedType.getAnnotatedOwnerType() as soon as Java >= 9 is being used
 			return null;
 		}

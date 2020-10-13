@@ -224,11 +224,16 @@ class JqwikIntegrationTests {
 
 		events.assertEventsMatchLooselyInOrder(
 			event(container(DisabledTests.class), started()),
-			event(test("disabledSuccess"), skippedWithReason("a reason")),
 			event(test("disabledFailure"), skippedWithReason(r -> r.startsWith("@Disabled:"))),
 			event(container(DisabledTests.DisabledGroup.class), skippedWithReason(r -> r.startsWith("@Disabled:"))),
 			event(container(DisabledTests.class), finishedSuccessfully())
+		);
 
+		events.assertEventsMatchLooselyInOrder(
+			event(container(DisabledTests.class), started()),
+			event(test("disabledSuccess"), skippedWithReason("a reason")),
+			event(container(DisabledTests.DisabledGroup.class), skippedWithReason(r -> r.startsWith("@Disabled:"))),
+			event(container(DisabledTests.class), finishedSuccessfully())
 		);
 
 	}
