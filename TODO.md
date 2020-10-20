@@ -1,5 +1,7 @@
 - 1.3.7
 
+    - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
+
     - Arbitrary.unique() requires a scope
         - In container
         - In super container

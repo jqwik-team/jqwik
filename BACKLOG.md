@@ -162,8 +162,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Arbitraries.fromSize(Function<Integer, Arbitrary> f) : Arbitrary
   Use current size to influence arbitrary generation
 
-- Arbitraries.strings().emails()
-
 - @Property(timeout=500) msecs to timeout a property run
 
 - Guided data generation
