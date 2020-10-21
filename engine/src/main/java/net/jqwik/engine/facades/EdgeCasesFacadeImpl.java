@@ -10,7 +10,6 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.shrinking.*;
-import net.jqwik.engine.support.*;
 
 /**
  * Is loaded through reflection in api module
@@ -21,12 +20,50 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 
 	private static final Logger LOG = Logger.getLogger(EdgeCasesFacadeImpl.class.getName());
 
-	private final Store<Boolean> warningAlreadyLogged =
-		Store.create(
-			Tuple.of(EdgeCasesFacadeImpl.class, "warning"),
-			Lifespan.PROPERTY,
-			() -> false
-		);
+	private final Store<Boolean> warningAlreadyLogged;
+
+	public EdgeCasesFacadeImpl() {
+		warningAlreadyLogged = initWarningAlreadyLogged();
+	}
+
+	private Store<Boolean> initWarningAlreadyLogged() {
+		try {
+			return Store.create(
+				Tuple.of(EdgeCasesFacadeImpl.class, "warning"),
+				Lifespan.PROPERTY,
+				() -> false
+			);
+		} catch (JqwikException jqwikException) {
+			// this can happen if arbitraries are used outside a Jqwik context
+			// TODO: Get rid of that store which is a hack anyway
+			return new Store<Boolean>() {
+				@Override
+				public Boolean get() {
+					return true;
+				}
+
+				@Override
+				public Lifespan lifespan() {
+					return Lifespan.PROPERTY;
+				}
+
+				@Override
+				public void update(Function<Boolean, Boolean> updater) {
+
+				}
+
+				@Override
+				public void reset() {
+
+				}
+
+				@Override
+				public Store<Boolean> onClose(Consumer<Boolean> onCloseCallback) {
+					return this;
+				}
+			};
+		}
+	}
 
 	@Override
 	public <T> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {

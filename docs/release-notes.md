@@ -39,6 +39,11 @@ title: jqwik Release Notes
 
 #### Bug Fixes
 
+- Using some arbitraries with `Arbitrary.sample()` outside of a jqwik context 
+  [no longer worked](https://github.com/jlink/jqwik/issues/125). 
+  Now it does again.
+                                 
+
 No known bugs
 
 ## 1.3.6

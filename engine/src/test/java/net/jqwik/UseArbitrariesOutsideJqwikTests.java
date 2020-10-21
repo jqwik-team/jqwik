@@ -7,10 +7,10 @@ import net.jqwik.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+// These tests must run outside jqwik!
 class UseArbitrariesOutsideJqwikTests {
 
 	@Test
-	// This test must run outside jqwik!
 	void forType() {
 		TypeArbitrary<Person> people = Arbitraries.forType(Person.class);
 
@@ -19,6 +19,11 @@ class UseArbitrariesOutsideJqwikTests {
 			assertThat(value.firstName).isNotNull();
 			assertThat(value.lastName).isNotNull();
 		});
+	}
+
+	@Test
+	void forStrings() {
+		assertThat(Arbitraries.strings().sample()).isInstanceOf(String.class);
 	}
 
 	private static class Person {
