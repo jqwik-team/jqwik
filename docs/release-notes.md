@@ -44,8 +44,6 @@ title: jqwik Release Notes
   Now it does again.
                                  
 
-No known bugs
-
 ## 1.3.6
 
 <p style="padding-left:1em;font-size:larger">
