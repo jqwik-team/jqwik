@@ -1,5 +1,11 @@
 - 1.3.7
 
+    - Bug https://github.com/jlink/jqwik/issues/126
+
+    - Reporting Bug:
+      Generated Functions with same baseSeed should be equal to suppress
+      After Execution reporting.
+
     - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
 
     - Arbitrary.unique() requires a scope
