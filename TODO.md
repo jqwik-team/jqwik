@@ -1,12 +1,16 @@
 - 1.3.7
 
-    - Bug https://github.com/jlink/jqwik/issues/126
-    
     - StatisticsEntryImpl.toString()
 
-    - Reporting Bug:
+    - Reporting Display Bug:
       Generated Functions with same baseSeed should be equal to suppress
-      After Execution reporting.
+      After Execution reporting. Maybe comparison should only be made
+      for objects with explicit implementation of equals()?
+
+- 1.3.8
+
+    - How can generated functions produce constant results even when unique
+      arbitraries are involved?
 
     - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
 

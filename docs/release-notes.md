@@ -42,6 +42,10 @@ title: jqwik Release Notes
 - Using some arbitraries with `Arbitrary.sample()` outside of a jqwik context 
   [no longer worked](https://github.com/jlink/jqwik/issues/125). 
   Now it does again.
+
+- The default character generator was erroneously considered to produce unique
+  characters. Resulted in a strange to analyze 
+  [bug when generating functions](https://github.com/jlink/jqwik/issues/126)
                                  
 
 ## 1.3.6
