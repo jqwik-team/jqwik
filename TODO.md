@@ -1,6 +1,8 @@
 - 1.3.7
 
     - Bug https://github.com/jlink/jqwik/issues/126
+    
+    - StatisticsEntryImpl.toString()
 
     - Reporting Bug:
       Generated Functions with same baseSeed should be equal to suppress

@@ -1,10 +1,12 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
 
@@ -22,6 +24,11 @@ class DefaultCharacterArbitraryTests {
 
 		assertAtLeastOneGenerated(this.arbitrary.generator(1000), c -> c <= '\u1000');
 		assertAtLeastOneGenerated(this.arbitrary.generator(1000), c -> c >= '\uF000');
+	}
+
+	@Example
+	void defaultIsNotUnique() {
+		assertThat(this.arbitrary.isUnique()).isFalse();
 	}
 
 	@Example
@@ -88,17 +95,17 @@ class DefaultCharacterArbitraryTests {
 		final List<Character> chars = Arrays.asList('a', 'b', 'c', '1', '2', '.');
 
 		CharacterArbitrary all = this.arbitrary
-									 .range(min1, max1)
-									 .range(min2, max2)
-									 .range(min3, max3)
-									 .with('a', 'b', 'c', '1', '2', '.');
+										 .range(min1, max1)
+										 .range(min2, max2)
+										 .range(min3, max3)
+										 .with('a', 'b', 'c', '1', '2', '.');
 
 		assertAllGenerated(
-			all.generator(1000),
-			c -> (c >= min1 && c <= max1) ||
-					 (c >= min2 && c <= max2) ||
-					 (c >= min3 && c <= max3) ||
-					 chars.contains(c)
+				all.generator(1000),
+				c -> (c >= min1 && c <= max1) ||
+							 (c >= min2 && c <= max2) ||
+							 (c >= min3 && c <= max3) ||
+							 chars.contains(c)
 		);
 
 		ArbitraryTestHelper.assertAtLeastOneGeneratedOf(all.generator(1000),
@@ -114,9 +121,17 @@ class DefaultCharacterArbitraryTests {
 		assertAtLeastOneGeneratedOf(all.generator(1000), toCharacterArray(DefaultCharacterArbitrary.WHITESPACE_CHARS));
 	}
 
+	@Example
+	void withUniqueArbitraryChars() {
+		Arbitrary<Character> abcd = Arbitraries.of('a', 'b', 'c', 'd').unique();
+		CharacterArbitrary all = this.arbitrary.with(abcd);
+		assertThat(all.isUnique()).isTrue();
+		assertThat(all.allValues().get()).containsExactlyInAnyOrder('a', 'b', 'c', 'd');
+	}
+
 	private Character[] toCharacterArray(char[] chars) {
 		Character[] result = new Character[chars.length];
-		for (int i=0; i<chars.length; i++) {
+		for (int i = 0; i < chars.length; i++) {
 			result[i] = chars[i];
 		}
 		return result;

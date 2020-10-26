@@ -76,6 +76,9 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 
 	@Override
 	public boolean isUnique() {
+		if (parts.isEmpty()) {
+			return false;
+		}
 		return parts.stream().allMatch(Arbitrary::isUnique);
 	}
 
