@@ -422,6 +422,17 @@ public class Arbitraries {
 	}
 
 	/**
+	 * Create an arbitrary that generates valid E-Mail addresses.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.38")
+	public static Arbitrary<String> emails() {
+		return just("test@test.b.com");
+		//return just("test@a.aa");
+	}
+
+	/**
 	 * Create an arbitrary that generates values of type Character.
 	 *
 	 * @return a new arbitrary instance
