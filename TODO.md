@@ -1,13 +1,4 @@
-- 1.3.7
-
-    - Generate documentation
-    
-    - Release and tag
-    
 - 1.3.8
-
-    - How can generated functions produce constant results even when unique
-      arbitraries are involved?
 
     - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
 
@@ -16,6 +7,11 @@
         - In super container
         - In whole try
       Maybe a scope parameter together with Arbitrary.scope(name) can work?
+
+        - How can generated functions produce constant results even when unique
+          arbitraries are involved?
+
+        - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
 
     - Histograms: Make clustering of numerical values easy, e.g. by overriding a method
       called `Histogram.clusterSize()`.
@@ -79,6 +75,4 @@
       - Maybe change AroundTryHook to allow replacement of `Random` source
       - Or: Introduce ProvideGenerationSourceHook
       
-    - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
-    
 
