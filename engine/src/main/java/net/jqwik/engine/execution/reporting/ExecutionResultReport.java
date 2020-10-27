@@ -88,14 +88,10 @@ public class ExecutionResultReport {
 		List<Object> parameters,
 		List<Object> parametersAfterRun
 	) {
-		if (areThereChanges(parameters, parametersAfterRun)) {
+		if (ParameterChangesDetector.haveParametersChanged(parameters, parametersAfterRun)) {
 			String changesSampleHeadline = "After Execution";
 			SampleReporter.reportSample(reportLines, propertyMethod, parametersAfterRun, changesSampleHeadline, 1);
 		}
-	}
-
-	private static boolean areThereChanges(List<Object> after, List<Object> before) {
-		return !after.equals(before);
 	}
 
 	private static void appendOriginalError(StringBuilder reportLines, Throwable error) {

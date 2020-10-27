@@ -31,6 +31,9 @@ title: jqwik Release Notes
 
 - Added two edge cases for generation of integral numbers.
 
+- Reporting of parameters that changed during execution of property is now better
+  at detecting real changes.
+
 #### Breaking Changes
 
 - _Examples_ with a failing assumption - i.e. throwing a `TestAbortedException` -
