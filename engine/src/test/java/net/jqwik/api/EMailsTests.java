@@ -35,6 +35,79 @@ public class EMailsTests {
 	}
 
 	@Example
+	void validSignsBeforeAt(){
+		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
+		assertAllGenerated(generator, (String value) -> firstPartSignCheck(value));
+	}
+
+	private boolean firstPartSignCheck(String email){
+		String firstPart = getFirstPartOfEmail(email);
+		if(isQuoted(firstPart)){
+			firstPart = firstPart.substring(1, firstPart.length() - 1);
+			firstPart = firstPart.replace( " ", "");
+			firstPart = firstPart.replace( "(", "");
+			firstPart = firstPart.replace( ")", "");
+			firstPart = firstPart.replace( ",", "");
+			firstPart = firstPart.replace( ":", "");
+			firstPart = firstPart.replace( ";", "");
+			firstPart = firstPart.replace( "<", "");
+			firstPart = firstPart.replace( ">", "");
+			firstPart = firstPart.replace( "@", "");
+			firstPart = firstPart.replace( "[", "");
+			firstPart = firstPart.replace( "\\\\", "");
+			firstPart = firstPart.replace( "]", "");
+			firstPart = firstPart.replace( "\\\"", "");
+		}
+		for(char c = 'a'; c <= 'z'; c++){
+			firstPart = firstPart.replace(c + "", "");
+		}
+		for(char c = 'A'; c <= 'Z'; c++){
+			firstPart = firstPart.replace(c + "", "");
+		}
+		for(char c = '0'; c <= '9'; c++){
+			firstPart = firstPart.replace(c + "", "");
+		}
+		firstPart = firstPart.replace( "!", "");
+		firstPart = firstPart.replace( "#", "");
+		firstPart = firstPart.replace( "$", "");
+		firstPart = firstPart.replace( "%", "");
+		firstPart = firstPart.replace( "&", "");
+		firstPart = firstPart.replace( "'", "");
+		firstPart = firstPart.replace( "*", "");
+		firstPart = firstPart.replace( "+", "");
+		firstPart = firstPart.replace( "-", "");
+		firstPart = firstPart.replace( "/", "");
+		firstPart = firstPart.replace( "=", "");
+		firstPart = firstPart.replace( "?", "");
+		firstPart = firstPart.replace( "^", "");
+		firstPart = firstPart.replace( "_", "");
+		firstPart = firstPart.replace( "`", "");
+		firstPart = firstPart.replace( "{", "");
+		firstPart = firstPart.replace( "|", "");
+		firstPart = firstPart.replace( "}", "");
+		firstPart = firstPart.replace( "~", "");
+		firstPart = firstPart.replace( ".", "");
+		return firstPart.equals("");
+	}
+
+	@Example
+	void validUseOfDotBeforeAt(){
+		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
+		assertAllGenerated(generator, (String value) -> checkDotUseBeforeAt(value));
+	}
+
+	private boolean checkDotUseBeforeAt(String email){
+		String firstPart = getFirstPartOfEmail(email);
+		if(isQuoted(firstPart)){
+			return true;
+		}
+		if(firstPart.contains("..") || firstPart.charAt(0) == '.' || firstPart.charAt(firstPart.length() - 1) == '.'){
+			return false;
+		}
+		return true;
+	}
+
+	@Example
 	void validSignsAfterAt(){
 		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
 		assertAllGenerated(generator, (String value) -> secondPartSignCheck(value));
@@ -62,10 +135,10 @@ public class EMailsTests {
 	@Example
 	void validUseOfHyphenAndDotAfterAt(){
 		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> checkHypenAndDotUseAfterAt(value));
+		assertAllGenerated(generator, (String value) -> checkHyphenAndDotUseAfterAt(value));
 	}
 
-	private boolean checkHypenAndDotUseAfterAt(String email){
+	private boolean checkHyphenAndDotUseAfterAt(String email){
 		String secondPart = getSecondPartOfEmail(email);
 		if(isIPAddress(secondPart)){
 			return true;
@@ -116,12 +189,18 @@ public class EMailsTests {
 			return true;
 		}
 		secondPart = secondPart.substring(1, secondPart.length() - 1);
-		System.out.println(secondPart);
 		return InetAddresses.isInetAddress(secondPart);
 	}
 
 	private boolean isIPAddress(String secondPart){
-		if(secondPart.charAt(0) == '[' || secondPart.charAt(secondPart.length() - 1) == ']'){
+		if(secondPart.charAt(0) == '[' && secondPart.charAt(secondPart.length() - 1) == ']'){
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isQuoted(String firstPart){
+		if(firstPart.length() >= 3 && firstPart.charAt(0) == '"' && firstPart.charAt(firstPart.length() - 1) == '"'){
 			return true;
 		}
 		return false;
@@ -142,7 +221,8 @@ public class EMailsTests {
 
 	private String getSecondPartOfEmail(String email){
 		int index = email.indexOf('@');
-		return email.substring(index + 1);
+		String substring = email.substring(index + 1);
+		return substring;
 	}
 
 }
