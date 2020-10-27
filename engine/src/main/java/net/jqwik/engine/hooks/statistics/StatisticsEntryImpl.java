@@ -49,4 +49,9 @@ public class StatisticsEntryImpl implements StatisticsEntry {
 	public List<Object> values() {
 		return values;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s (%s, %s%%): %s", name, count, percentage, JqwikStringSupport.displayString(values));
+	}
 }

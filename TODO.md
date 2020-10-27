@@ -1,7 +1,5 @@
 - 1.3.7
 
-    - StatisticsEntryImpl.toString()
-
     - Reporting Display Bug:
       Generated Functions with same baseSeed should be equal to suppress
       After Execution reporting. Maybe comparison should only be made
@@ -20,6 +18,9 @@
         - In whole try
       Maybe a scope parameter together with Arbitrary.scope(name) can work?
 
+    - Histograms: Make clustering of numerical values easy, e.g. by overriding a method
+      called `Histogram.clusterSize()`.
+    
     - Domains
         - Deprecate AbstractDomainContextBase
             - Introduce DomainContextBase
