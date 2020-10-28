@@ -1,46 +1,29 @@
 package net.jqwik.api;
 
 import com.tngtech.archunit.thirdparty.com.google.common.net.*;
+import org.assertj.core.api.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
+class EMailsTests {
 
-public class EMailsTests {
-
-	@Example
-	void containsAtSign(){
-		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> value.contains("@"));
+	@Property(tries = 10)
+	void containsAtSign(@ForAll("emails") String email){
+		Assertions.assertThat(email).contains("@");
 	}
 
-	@Example
-	void validLengthBeforeAt(){
-		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> firstPartLengthCheck(value));
-	}
-
-	private boolean firstPartLengthCheck(String email){
+	@Property
+	void validLengthBeforeAt(@ForAll("emails") String email){
 		String firstPart = getFirstPartOfEmail(email);
-		return firstPart.length() > 0 && firstPart.length() <= 64;
+		Assertions.assertThat(firstPart.length()).isBetween(1, 64);
 	}
 
-	@Example
-	void validLengthAfterAt(){
-		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> secondPartLengthCheck(value));
-	}
-
-	private boolean secondPartLengthCheck(String email){
+	@Property
+	void validLengthAfterAt(@ForAll("emails") String email){
 		String secondPart = getSecondPartOfEmail(email);
-		return secondPart.length() > 0 && secondPart.length() <= 253;
+		Assertions.assertThat(secondPart.length()).isBetween(1, 253);
 	}
 
-	@Example
-	void validSignsBeforeAt(){
-		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> firstPartSignCheck(value));
-	}
-
-	private boolean firstPartSignCheck(String email){
+	@Property
+	void validSignsBeforeAt(@ForAll("emails") String email){
 		String firstPart = getFirstPartOfEmail(email);
 		if(isQuoted(firstPart)){
 			firstPart = firstPart.substring(1, firstPart.length() - 1);
@@ -87,36 +70,25 @@ public class EMailsTests {
 		firstPart = firstPart.replace( "}", "");
 		firstPart = firstPart.replace( "~", "");
 		firstPart = firstPart.replace( ".", "");
-		return firstPart.equals("");
+		Assertions.assertThat(firstPart).isEqualTo("");
 	}
 
-	@Example
-	void validUseOfDotBeforeAt(){
-		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> checkDotUseBeforeAt(value));
-	}
-
-	private boolean checkDotUseBeforeAt(String email){
+	@Property
+	void validUseOfDotBeforeAt(@ForAll("emails") String email){
 		String firstPart = getFirstPartOfEmail(email);
 		if(isQuoted(firstPart)){
-			return true;
+			return;
 		}
-		if(firstPart.contains("..") || firstPart.charAt(0) == '.' || firstPart.charAt(firstPart.length() - 1) == '.'){
-			return false;
-		}
-		return true;
+		Assertions.assertThat(firstPart).doesNotContain("..");
+		Assertions.assertThat(firstPart.charAt(0)).isNotEqualTo('.');
+		Assertions.assertThat(firstPart.charAt(firstPart.length() - 1)).isNotEqualTo('.');
 	}
 
-	@Example
-	void validSignsAfterAt(){
-		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> secondPartSignCheck(value));
-	}
-
-	private boolean secondPartSignCheck(String email){
+	@Property
+	void validSignsAfterAt(@ForAll("emails") String email){
 		String secondPart = getSecondPartOfEmail(email);
 		if(isIPAddress(secondPart)){
-			return true;
+			return;
 		}
 		for(char c = 'a'; c <= 'z'; c++){
 			secondPart = secondPart.replace(c + "", "");
@@ -129,67 +101,52 @@ public class EMailsTests {
 		}
 		secondPart = secondPart.replace("-", "");
 		secondPart = secondPart.replace(".", "");
-		return secondPart.equals("");
+		Assertions.assertThat(secondPart).isEqualTo("");
 	}
 
-	@Example
-	void validUseOfHyphenAndDotAfterAt(){
-		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> checkHyphenAndDotUseAfterAt(value));
-	}
-
-	private boolean checkHyphenAndDotUseAfterAt(String email){
+	@Property
+	void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email){
 		String secondPart = getSecondPartOfEmail(email);
 		if(isIPAddress(secondPart)){
-			return true;
+			return;
 		}
-		if(secondPart.charAt(0) == '-' || secondPart.charAt(secondPart.length() - 1) == '-'){
-			return false;
+		Assertions.assertThat(secondPart.charAt(0)).isNotEqualTo('-');
+		Assertions.assertThat(secondPart.charAt(secondPart.length() - 1)).isNotEqualTo('-');
+		Assertions.assertThat(secondPart).doesNotContain("..");
+		Assertions.assertThat(secondPart.charAt(0)).isNotEqualTo('.');
+		Assertions.assertThat(secondPart.charAt(secondPart.length() - 1)).isNotEqualTo('.');
+		if(secondPart.length() >= 2){
+			Assertions.assertThat(secondPart.charAt(secondPart.length() - 2)).isNotEqualTo('.');
 		}
-		if(secondPart.contains("..") || secondPart.charAt(0) == '.' || secondPart.charAt(secondPart.length() - 1) == '.' || (secondPart.length() >= 2 && secondPart.charAt(secondPart.length() - 2) == '.')){
-			return false;
-		}
-		return true;
 	}
 
-	@Example
-	void validDomainPartLengthAfterAt(){
-		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> checkDomainPartLengthAfterAt(value));
-	}
-
-	private boolean checkDomainPartLengthAfterAt(String email){
+	@Property
+	void validDomainPartLengthAfterAt(@ForAll("emails") String email){
 		String secondPart = getSecondPartOfEmail(email);
 		if(isIPAddress(secondPart)){
-			return true;
+			return;
 		}
 		while (true) {
 			if (secondPart.contains(".")) {
 				int startVal = 0;
 				int checkVal = secondPart.indexOf('.');
-				if (checkVal - startVal > 63) {
-					return false;
-				}
+				Assertions.assertThat(checkVal - startVal).isLessThanOrEqualTo(63);
 				secondPart = secondPart.substring(checkVal + 1);
 			} else {
-				return secondPart.length() <= 63;
+				Assertions.assertThat(secondPart.length()).isLessThanOrEqualTo(63);
+				return;
 			}
 		}
 	}
 
-	@Example
-	void validIPAddressAfterAt(){
-		RandomGenerator<String> generator = getEmailGeneratorFromArbitrary();
-		assertAllGenerated(generator, (String value) -> IPAddressCheck(value));
-	}
-
-	private boolean IPAddressCheck(String email){
+	@Property
+	void validIPAddressAfterAt(@ForAll("emails") String email){
 		String secondPart = getSecondPartOfEmail(email);
 		if(!isIPAddress(secondPart)){
-			return true;
+			return;
 		}
 		secondPart = secondPart.substring(1, secondPart.length() - 1);
-		return InetAddresses.isInetAddress(secondPart);
+		Assertions.assertThat(InetAddresses.isInetAddress(secondPart)).isTrue();
 	}
 
 	private boolean isIPAddress(String secondPart){
@@ -206,11 +163,6 @@ public class EMailsTests {
 		return false;
 	}
 
-	private RandomGenerator<String> getEmailGeneratorFromArbitrary(){
-		Arbitrary<String> emailArbitrary = Arbitraries.emails();
-		return emailArbitrary.generator(1);
-	}
-
 	private String getFirstPartOfEmail(String email){
 		int index = email.indexOf('@');
 		if(index == -1){
@@ -223,6 +175,11 @@ public class EMailsTests {
 		int index = email.indexOf('@');
 		String substring = email.substring(index + 1);
 		return substring;
+	}
+
+	@Provide
+	Arbitrary<String> emails(){
+		return Arbitraries.emails();
 	}
 
 }
