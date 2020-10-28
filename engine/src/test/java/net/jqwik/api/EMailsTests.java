@@ -156,16 +156,20 @@ class EMailsTests {
 	void checkFirstPartStatistic(@ForAll("emails") String email){
 		String firstPart = getFirstPartOfEmail(email);
 		Statistics.collect(isQuoted(firstPart));
-		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(true).count(c -> true));
-		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(false).count(c -> false));
+		Statistics.coverage(coverage -> {
+			coverage.check(true).count(c -> c >= 1);
+			coverage.check(false).count(c -> c >= 1);
+		});
 	}
 
 	@Property
 	void checkSecondPartStatistic(@ForAll("emails") String email){
 		String secondPart = getSecondPartOfEmail(email);
 		Statistics.collect(isIPAddress(secondPart));
-		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(true).count(c -> true));
-		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(false).count(c -> false));
+		Statistics.coverage(coverage -> {
+			coverage.check(true).count(c -> c >= 1);
+			coverage.check(false).count(c -> c >= 1);
+		});
 	}
 
 	private boolean isIPAddress(String secondPart){
