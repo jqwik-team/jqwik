@@ -429,18 +429,23 @@ public class Arbitraries {
 	public static int i = 0;
 	@API(status = EXPERIMENTAL, since = "1.38")
 	public static Arbitrary<String> emails() {
-		//return just("test@test.b.com");
-		Arbitrary<String> arbitraryFirst = emailsFirstPart();
-		StringArbitrary arbitraryAt = Arbitraries.strings().withChars('@').ofLength(1);
-		return Combinators.combine(arbitraryFirst, arbitraryAt).as((partA, at) -> partA + at);
+		//return just("test@a.test.com");
+		Arbitrary<String> arbitraryLocalPart = emailsLocalPart();
+		Arbitrary<String> arbitraryDomain = emailsDomain();
+		return Combinators.combine(arbitraryLocalPart, arbitraryDomain).as((localPart, domain) -> localPart + "@" + domain);
 	}
 
-	private static Arbitrary<String> emailsFirstPart(){
+	private static Arbitrary<String> emailsLocalPart(){
 		Arbitrary<String> unquoted = Arbitraries.strings().alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.").ofMinLength(1).ofMaxLength(64);
 		unquoted = unquoted.filter(v -> !v.contains(".."));
 		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
 		unquoted = unquoted.filter(v -> v.charAt(v.length() - 1) != '.');
 		return unquoted;
+	}
+
+	private static Arbitrary<String> emailsDomain(){
+		Arbitrary<String> domain = Arbitraries.strings().alpha().ofLength(10);
+		return domain;
 	}
 
 	/**
