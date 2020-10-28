@@ -171,7 +171,7 @@ class EMailsTests {
 	}
 
 	private String getLocalPartOfEmail(String email){
-		int index = email.indexOf('@');
+		int index = email.lastIndexOf('@');
 		if(index == -1){
 			index = 0;
 		}
@@ -179,7 +179,7 @@ class EMailsTests {
 	}
 
 	private String getDomainOfEmail(String email){
-		int index = email.indexOf('@');
+		int index = email.lastIndexOf('@');
 		String substring = email.substring(index + 1);
 		return substring;
 	}
