@@ -430,7 +430,17 @@ public class Arbitraries {
 	@API(status = EXPERIMENTAL, since = "1.38")
 	public static Arbitrary<String> emails() {
 		//return just("test@test.b.com");
-		return just("test@[192.21.2.1]");
+		Arbitrary<String> arbitraryFirst = emailsFirstPart();
+		StringArbitrary arbitraryAt = Arbitraries.strings().withChars('@').ofLength(1);
+		return Combinators.combine(arbitraryFirst, arbitraryAt).as((partA, at) -> partA + at);
+	}
+
+	private static Arbitrary<String> emailsFirstPart(){
+		Arbitrary<String> unquoted = Arbitraries.strings().alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.").ofMinLength(1).ofMaxLength(64);
+		unquoted = unquoted.filter(v -> !v.contains(".."));
+		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
+		unquoted = unquoted.filter(v -> v.charAt(v.length() - 1) != '.');
+		return unquoted;
 	}
 
 	/**
