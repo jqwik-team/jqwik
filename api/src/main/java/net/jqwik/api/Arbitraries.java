@@ -426,10 +426,11 @@ public class Arbitraries {
 	 *
 	 * @return a new arbitrary instance
 	 */
+	public static int i = 0;
 	@API(status = EXPERIMENTAL, since = "1.38")
 	public static Arbitrary<String> emails() {
-		return just("test@test.b.com");
-		//return just("test@[192.21.2.1]");
+		//return just("test@test.b.com");
+		return just("test@[192.21.2.1]");
 	}
 
 	/**

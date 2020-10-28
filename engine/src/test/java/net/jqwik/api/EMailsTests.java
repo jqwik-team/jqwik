@@ -1,6 +1,9 @@
 package net.jqwik.api;
 
 import com.tngtech.archunit.thirdparty.com.google.common.net.*;
+
+import net.jqwik.api.statistics.*;
+
 import org.assertj.core.api.*;
 
 class EMailsTests {
@@ -147,6 +150,22 @@ class EMailsTests {
 		}
 		secondPart = secondPart.substring(1, secondPart.length() - 1);
 		Assertions.assertThat(InetAddresses.isInetAddress(secondPart)).isTrue();
+	}
+
+	@Property
+	void checkFirstPartStatistic(@ForAll("emails") String email){
+		String firstPart = getFirstPartOfEmail(email);
+		Statistics.collect(isQuoted(firstPart));
+		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(true).count(c -> true));
+		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(false).count(c -> false));
+	}
+
+	@Property
+	void checkSecondPartStatistic(@ForAll("emails") String email){
+		String secondPart = getSecondPartOfEmail(email);
+		Statistics.collect(isIPAddress(secondPart));
+		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(true).count(c -> true));
+		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(false).count(c -> false));
 	}
 
 	private boolean isIPAddress(String secondPart){
