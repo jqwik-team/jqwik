@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -456,7 +457,27 @@ public class Arbitraries {
 	}
 
 	private static Arbitrary<String> emailsDomain(){
-		Arbitrary<String> domain = Arbitraries.strings().alpha().ofLength(10);
+		return Arbitraries.frequencyOf(
+				Tuple.of(1, emailsDomainIPv4()),
+				Tuple.of(1, emailsDomainIPv6()),
+				Tuple.of(2, emailsDomainDomain())
+		);
+	}
+
+	private static Arbitrary<String> emailsDomainIPv4(){
+		Arbitrary<Integer> addressPart = Arbitraries.integers().between(0, 255);
+		return Combinators.combine(addressPart, addressPart, addressPart, addressPart).as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]");
+	}
+
+	private static Arbitrary<String> emailsDomainIPv6(){
+		//Arbitrary<String> addressPart = Arbitraries.strings().numeric().withChars('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F').ofMinLength(1).ofMaxLength(4);
+		//Arbitrary<String> address = Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart).as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
+		Arbitrary<String> address = Arbitraries.strings().numeric().alpha().ofLength(10);
+		return address;
+	}
+
+	private static Arbitrary<String> emailsDomainDomain(){
+		Arbitrary<String> domain = Arbitraries.strings().numeric().alpha().ofLength(10);
 		return domain;
 	}
 
