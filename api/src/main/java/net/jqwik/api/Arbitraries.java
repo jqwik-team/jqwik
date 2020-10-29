@@ -429,7 +429,6 @@ public class Arbitraries {
 	public static int i = 0;
 	@API(status = EXPERIMENTAL, since = "1.38")
 	public static Arbitrary<String> emails() {
-		//return just("test@a.test.com");
 		Arbitrary<String> arbitraryLocalPart = emailsLocalPart();
 		Arbitrary<String> arbitraryDomain = emailsDomain();
 		return Combinators.combine(arbitraryLocalPart, arbitraryDomain).as((localPart, domain) -> localPart + "@" + domain);
@@ -451,34 +450,9 @@ public class Arbitraries {
 
 	private static Arbitrary<String> emailsLocalPartQuoted(){
 		Arbitrary<String> quoted = Arbitraries.strings().alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]").ofMinLength(1).ofMaxLength(62);
-		quoted = quoted.filter(v -> !containsSignWithoutBackslash(v, '"'));
-		quoted = quoted.filter(v -> everyBackslashHasBackslash(v));
-		Arbitrary<String> quotationMark = Arbitraries.strings().withChars("\"").ofLength(1);
-		return Combinators.combine(quoted, quotationMark).as((q, m) -> m + q + m);
-	}
-
-	private static boolean containsSignWithoutBackslash(String string, char c){
-		if(string.charAt(0) == c){
-			return true;
-		}
-		for(int i = 1; i < string.length(); i++){
-			if(string.charAt(i) == c && string.charAt(i-1) != '\\'){
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static boolean everyBackslashHasBackslash(String string){
-		for(int i = 0; i < string.length(); i++){
-			if(string.charAt(i) == '\\'){
-				if(i == string.length() - 1 || string.charAt(i + 1) != '\\'){
-					return false;
-				}
-				i++;
-			}
-		}
-		return true;
+		quoted = quoted.map(v -> "\"" + v.replace("\\", "\\\\").replace("\"", "\\\"") + "\"");
+		quoted = quoted.filter(v -> v.length() <= 64);
+		return quoted;
 	}
 
 	private static Arbitrary<String> emailsDomain(){
