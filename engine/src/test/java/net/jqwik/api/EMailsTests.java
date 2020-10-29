@@ -133,6 +133,7 @@ class EMailsTests {
 		String domain = getDomainOfEmail(email);
 		Assume.that(isIPAddress(domain));
 		domain = domain.substring(1, domain.length() - 1);
+		System.out.println("Test:" + email);
 		Assertions.assertThat(InetAddresses.isInetAddress(domain)).isTrue();
 	}
 
@@ -150,6 +151,19 @@ class EMailsTests {
 	void domainsAndIPAddressesAreGenerated(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Statistics.collect(isIPAddress(domain));
+		Statistics.coverage(coverage -> {
+			coverage.check(true).count(c -> c >= 1);
+			coverage.check(false).count(c -> c >= 1);
+		});
+	}
+
+	@Property
+	void IPv4AndIPv6AreGenerated(@ForAll("emails") String email){
+		System.out.println(email);
+		String domain = getDomainOfEmail(email);
+		Assume.that(isIPAddress(domain));
+		domain = domain.substring(1, domain.length() - 1);
+		Statistics.collect(domain.contains("."));
 		Statistics.coverage(coverage -> {
 			coverage.check(true).count(c -> c >= 1);
 			coverage.check(false).count(c -> c >= 1);
