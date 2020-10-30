@@ -10,24 +10,24 @@ import java.util.stream.*;
 
 class EMailsTests {
 
-	@Property(tries = 10)
+	@Property(tries = 10, edgeCases = EdgeCasesMode.NONE)
 	void containsAtSign(@ForAll("emails") String email){
 		Assertions.assertThat(email).contains("@");
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void validLengthBeforeAt(@ForAll("emails") String email){
 		String localPart = getLocalPartOfEmail(email);
 		Assertions.assertThat(localPart.length()).isBetween(1, 64);
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void validLengthAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assertions.assertThat(domain.length()).isBetween(1, 253);
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void validSignsBeforeAt(@ForAll("emails") String email){
 		String localPart = getLocalPartOfEmail(email);
 		if(isQuoted(localPart)){
@@ -78,7 +78,7 @@ class EMailsTests {
 		Assertions.assertThat(localPart).isEqualTo("");
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void validUseOfDotBeforeAt(@ForAll("emails") String email){
 		String localPart = getLocalPartOfEmail(email);
 		Assume.that(!isQuoted(localPart));
@@ -87,7 +87,7 @@ class EMailsTests {
 		Assertions.assertThat(localPart.charAt(localPart.length() - 1)).isNotEqualTo('.');
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void validSignsAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(!isIPAddress(domain));
@@ -105,7 +105,7 @@ class EMailsTests {
 		Assertions.assertThat(domain).isEqualTo("");
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(!isIPAddress(domain));
@@ -118,7 +118,7 @@ class EMailsTests {
 		Assertions.assertThat(domain.charAt(domain.length() - 2)).isNotEqualTo('.');
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void validMaxDomainLengthAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(!isIPAddress(domain));
@@ -128,16 +128,15 @@ class EMailsTests {
 		});
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void validIPAddressAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(isIPAddress(domain));
 		domain = domain.substring(1, domain.length() - 1);
-		System.out.println("Test:" + email);
 		Assertions.assertThat(InetAddresses.isInetAddress(domain)).isTrue();
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void quotedAndUnquotedUsernamesAreGenerated(@ForAll("emails") String email){
 		String localPart = getLocalPartOfEmail(email);
 		Statistics.collect(isQuoted(localPart));
@@ -147,7 +146,7 @@ class EMailsTests {
 		});
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void domainsAndIPAddressesAreGenerated(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Statistics.collect(isIPAddress(domain));
@@ -157,9 +156,8 @@ class EMailsTests {
 		});
 	}
 
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE)
 	void IPv4AndIPv6AreGenerated(@ForAll("emails") String email){
-		System.out.println(email);
 		String domain = getDomainOfEmail(email);
 		Assume.that(isIPAddress(domain));
 		domain = domain.substring(1, domain.length() - 1);
