@@ -1,5 +1,6 @@
 package net.jqwik.engine.facades;
 
+import java.net.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -147,13 +148,13 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return Combinators.combine(arbitraryLocalPart, arbitraryDomain).as((localPart, domain) -> localPart + "@" + domain);
 	}
 
-	private static Arbitrary<String> emailsLocalPart(){
+	private Arbitrary<String> emailsLocalPart(){
 		Arbitrary<String> unquoted = emailsLocalPartUnquoted();
 		Arbitrary<String> quoted = emailsLocalPartQuoted();
 		return Arbitraries.oneOf(unquoted, quoted);
 	}
 
-	private static Arbitrary<String> emailsLocalPartUnquoted(){
+	private Arbitrary<String> emailsLocalPartUnquoted(){
 		Arbitrary<String> unquoted = Arbitraries.strings().alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.").ofMinLength(1).ofMaxLength(64);
 		unquoted = unquoted.filter(v -> !v.contains(".."));
 		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
@@ -161,14 +162,14 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return unquoted;
 	}
 
-	private static Arbitrary<String> emailsLocalPartQuoted(){
+	private Arbitrary<String> emailsLocalPartQuoted(){
 		Arbitrary<String> quoted = Arbitraries.strings().alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]").ofMinLength(1).ofMaxLength(62);
 		quoted = quoted.map(v -> "\"" + v.replace("\\", "\\\\").replace("\"", "\\\"") + "\"");
 		quoted = quoted.filter(v -> v.length() <= 64);
 		return quoted;
 	}
 
-	private static Arbitrary<String> emailsDomain(){
+	private Arbitrary<String> emailsDomain(){
 		return Arbitraries.frequencyOf(
 				Tuple.of(1, emailsDomainIPv4()),
 				Tuple.of(1, emailsDomainIPv6()),
@@ -176,19 +177,40 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		);
 	}
 
-	private static Arbitrary<String> emailsDomainIPv4(){
+	private Arbitrary<String> emailsDomainIPv4(){
 		Arbitrary<Integer> addressPart = Arbitraries.integers().between(0, 255);
 		return Combinators.combine(addressPart, addressPart, addressPart, addressPart).as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]");
 	}
 
-	private static Arbitrary<String> emailsDomainIPv6(){
-		//Arbitrary<String> addressPart = Arbitraries.strings().numeric().withChars('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F').ofMinLength(1).ofMaxLength(4);
-		//Arbitrary<String> address = Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart).as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
-		Arbitrary<String> address = Arbitraries.strings().numeric().alpha().ofLength(10);
+	private Arbitrary<String> emailsDomainIPv6(){
+		Arbitrary<String> addressPart = Arbitraries.strings().numeric().withChars('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F').ofMaxLength(4);
+		Arbitrary<String> address = Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart).as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
+		address = address.filter(v -> isValidIPv6Address(v));
 		return address;
 	}
 
-	private static Arbitrary<String> emailsDomainDomain(){
+	private boolean isValidIPv6Address(String ip){
+		ip = ip.substring(1, ip.length() - 1);
+		if(ip.contains(":::") || (ip.charAt(0) == ':' && ip.charAt(1) != ':') || (ip.charAt(ip.length() - 1) == ':' && ip.charAt(ip.length() - 2) != ':')){
+			return false;
+		}
+		boolean first = true;
+		boolean inCheck = false;
+		for(int i = 0; i < ip.length() - 1; i++){
+			if(ip.charAt(i) == ':' && (ip.charAt(i+1) == ':')){
+				if(first){
+					first = false; inCheck = true;
+				} else if(!inCheck){
+					return false;
+				}
+			} else {
+				inCheck = false;
+			}
+		}
+		return true;
+	}
+
+	private Arbitrary<String> emailsDomainDomain(){
 		Arbitrary<String> domain = Arbitraries.strings().numeric().alpha().ofLength(10);
 		return domain;
 	}
