@@ -35,19 +35,19 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 		if (arbitraries.isEmpty()) {
 			return EdgeCases.none();
 		}
-		Arbitrary<List<Object>>[] combinedArbitrary = new Arbitrary[1];
+		Arbitrary<List<Object>> combinedArbitrary = null;
 		for (int i = 0; i < arbitraries.size(); i++) {
 			Arbitrary<Object> current = arbitraries.get(i);
 			if (i == 0) {
-				combinedArbitrary[0] = current.map(Collections::singletonList);
+				combinedArbitrary = current.map(Collections::singletonList);
 			} else {
-				combinedArbitrary[0] = combinedArbitrary[0].flatMap(list -> current.map(value -> {
+				combinedArbitrary = combinedArbitrary.flatMap(list -> current.map(value -> {
 					ArrayList<Object> result = new ArrayList<>(list);
 					result.add(value);
 					return result;
 				}));
 			}
 		}
-		return combinedArbitrary[0].map(combineFunction).edgeCases();
+		return combinedArbitrary.map(combineFunction).edgeCases();
 	}
 }
