@@ -1,6 +1,5 @@
 package net.jqwik.api;
 
-import java.net.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -70,6 +69,8 @@ public class Arbitraries {
 		public abstract ShortArbitrary shorts();
 
 		public abstract StringArbitrary strings();
+
+		public abstract Arbitrary<String> emails();
 
 		public abstract CharacterArbitrary chars();
 
@@ -427,58 +428,9 @@ public class Arbitraries {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	public static int i = 0;
 	@API(status = EXPERIMENTAL, since = "1.38")
 	public static Arbitrary<String> emails() {
-		Arbitrary<String> arbitraryLocalPart = emailsLocalPart();
-		Arbitrary<String> arbitraryDomain = emailsDomain();
-		return Combinators.combine(arbitraryLocalPart, arbitraryDomain).as((localPart, domain) -> localPart + "@" + domain);
-	}
-
-	private static Arbitrary<String> emailsLocalPart(){
-		Arbitrary<String> unquoted = emailsLocalPartUnquoted();
-		Arbitrary<String> quoted = emailsLocalPartQuoted();
-		return oneOf(unquoted, quoted);
-	}
-
-	private static Arbitrary<String> emailsLocalPartUnquoted(){
-		Arbitrary<String> unquoted = Arbitraries.strings().alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.").ofMinLength(1).ofMaxLength(64);
-		unquoted = unquoted.filter(v -> !v.contains(".."));
-		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
-		unquoted = unquoted.filter(v -> v.charAt(v.length() - 1) != '.');
-		return unquoted;
-	}
-
-	private static Arbitrary<String> emailsLocalPartQuoted(){
-		Arbitrary<String> quoted = Arbitraries.strings().alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]").ofMinLength(1).ofMaxLength(62);
-		quoted = quoted.map(v -> "\"" + v.replace("\\", "\\\\").replace("\"", "\\\"") + "\"");
-		quoted = quoted.filter(v -> v.length() <= 64);
-		return quoted;
-	}
-
-	private static Arbitrary<String> emailsDomain(){
-		return Arbitraries.frequencyOf(
-				Tuple.of(1, emailsDomainIPv4()),
-				Tuple.of(1, emailsDomainIPv6()),
-				Tuple.of(2, emailsDomainDomain())
-		);
-	}
-
-	private static Arbitrary<String> emailsDomainIPv4(){
-		Arbitrary<Integer> addressPart = Arbitraries.integers().between(0, 255);
-		return Combinators.combine(addressPart, addressPart, addressPart, addressPart).as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]");
-	}
-
-	private static Arbitrary<String> emailsDomainIPv6(){
-		//Arbitrary<String> addressPart = Arbitraries.strings().numeric().withChars('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F').ofMinLength(1).ofMaxLength(4);
-		//Arbitrary<String> address = Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart).as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
-		Arbitrary<String> address = Arbitraries.strings().numeric().alpha().ofLength(10);
-		return address;
-	}
-
-	private static Arbitrary<String> emailsDomainDomain(){
-		Arbitrary<String> domain = Arbitraries.strings().numeric().alpha().ofLength(10);
-		return domain;
+		return ArbitrariesFacade.implementation.emails();
 	}
 
 	/**
