@@ -5,18 +5,18 @@ import net.jqwik.api.*;
 public class DefaultEmailArbitrary extends AbstractArbitraryBase {
 
 	public Arbitrary<String> emails(){
-		Arbitrary<String> arbitraryLocalPart = emailsLocalPart();
-		Arbitrary<String> arbitraryDomain = emailsDomain();
+		Arbitrary<String> arbitraryLocalPart = localPart();
+		Arbitrary<String> arbitraryDomain = domain();
 		return Combinators.combine(arbitraryLocalPart, arbitraryDomain).as((localPart, domain) -> localPart + "@" + domain);
 	}
 
-	private Arbitrary<String> emailsLocalPart(){
-		Arbitrary<String> unquoted = emailsLocalPartUnquoted();
-		Arbitrary<String> quoted = emailsLocalPartQuoted();
+	private Arbitrary<String> localPart(){
+		Arbitrary<String> unquoted = localPartUnquoted();
+		Arbitrary<String> quoted = localPartQuoted();
 		return Arbitraries.oneOf(unquoted, quoted);
 	}
 
-	private Arbitrary<String> emailsLocalPartUnquoted(){
+	private Arbitrary<String> localPartUnquoted(){
 		Arbitrary<String> unquoted = Arbitraries.strings().alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.").ofMinLength(1).ofMaxLength(64);
 		unquoted = unquoted.filter(v -> !v.contains(".."));
 		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
@@ -24,34 +24,34 @@ public class DefaultEmailArbitrary extends AbstractArbitraryBase {
 		return unquoted;
 	}
 
-	private Arbitrary<String> emailsLocalPartQuoted(){
+	private Arbitrary<String> localPartQuoted(){
 		Arbitrary<String> quoted = Arbitraries.strings().alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]").ofMinLength(1).ofMaxLength(62);
 		quoted = quoted.map(v -> "\"" + v.replace("\\", "\\\\").replace("\"", "\\\"") + "\"");
 		quoted = quoted.filter(v -> v.length() <= 64);
 		return quoted;
 	}
 
-	private Arbitrary<String> emailsDomain(){
+	private Arbitrary<String> domain(){
 		return Arbitraries.frequencyOf(
-				Tuple.of(1, emailsDomainIPv4()),
-				Tuple.of(1, emailsDomainIPv6()),
-				Tuple.of(2, emailsDomainDomain())
+				Tuple.of(1, domainIPv4()),
+				Tuple.of(1, domainIPv6()),
+				Tuple.of(2, domainDomain())
 		);
 	}
 
-	private Arbitrary<String> emailsDomainIPv4(){
+	private Arbitrary<String> domainIPv4(){
 		Arbitrary<Integer> addressPart = Arbitraries.integers().between(0, 255);
 		return Combinators.combine(addressPart, addressPart, addressPart, addressPart).as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]");
 	}
 
-	private Arbitrary<String> emailsDomainIPv6(){
+	private Arbitrary<String> domainIPv6(){
 		Arbitrary<String> addressPart = Arbitraries.strings().numeric().withChars('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F').ofMaxLength(4);
 		Arbitrary<String> address = Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart).as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
-		address = address.filter(v -> isValidIPv6Address(v));
+		address = address.filter(v -> generatedAddressIsValidIPv6Address(v));
 		return address;
 	}
 
-	private boolean isValidIPv6Address(String ip){
+	private boolean generatedAddressIsValidIPv6Address(String ip){
 		ip = ip.substring(1, ip.length() - 1);
 		if(ip.contains(":::") || (ip.charAt(0) == ':' && ip.charAt(1) != ':') || (ip.charAt(ip.length() - 1) == ':' && ip.charAt(ip.length() - 2) != ':')){
 			return false;
@@ -72,8 +72,21 @@ public class DefaultEmailArbitrary extends AbstractArbitraryBase {
 		return true;
 	}
 
-	private Arbitrary<String> emailsDomainDomain(){
-		Arbitrary<String> domain = Arbitraries.strings().numeric().alpha().ofLength(10);
+	private Arbitrary<String> domainDomain(){
+		return Arbitraries.lazyOf(
+				() -> domainDomainPart(),
+				this::domainDomainGenerate
+		).filter(v -> v.length() <= 253).filter(v -> (v.length() < 2 || v.charAt(v.length() - 2) != '.') && v.charAt(0) != '.' && v.charAt(v.length() - 1) != '.' && !v.contains("..")).filter(v -> v.charAt(0) != '-' && v.charAt(v.length() - 1) != '-');
+	}
+
+	private Arbitrary<String> domainDomainGenerate(){
+		return Combinators.combine(domainDomain(), domainDomainPart()).as((x, y) -> x + "." + y);
+	}
+
+	private Arbitrary<String> domainDomainPart(){
+		//Not using .alpha().numeric().withChars("-") because runtime is too high
+		//Using "." in withChars() to generate more subdomains
+		Arbitrary<String> domain = Arbitraries.strings().withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-.").ofMinLength(1).ofMaxLength(63);
 		return domain;
 	}
 

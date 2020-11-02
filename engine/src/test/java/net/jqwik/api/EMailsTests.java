@@ -169,15 +169,24 @@ class EMailsTests {
 		});
 	}
 
-	/*@Property
+	@Property
 	void domainsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(!isIPAddress(domain));
-		Statistics.collect((int) domain.chars().filter(v -> v == '.').count());
+		Statistics.collect((int) domain.chars().filter(v -> v == '.').count() + 1);
 		Statistics.coverage(coverage -> {
-			coverage.check(0, 1, 2, 3, 4, 5 ,6 ,7 ,8 ,9, 10).count(c -> c >= 1);
+			coverage.check(1).count(c -> c >= 1);
+			coverage.check(2).count(c -> c >= 1);
+			coverage.check(3).count(c -> c >= 1);
+			coverage.check(4).count(c -> c >= 1);
+			coverage.check(5).count(c -> c >= 1);
+			coverage.check(6).count(c -> c >= 1);
+			coverage.check(7).count(c -> c >= 1);
+			coverage.check(8).count(c -> c >= 1);
+			coverage.check(9).count(c -> c >= 1);
+			coverage.check(10).count(c -> c >= 1);
 		});
-	}*/
+	}
 
 	private boolean isIPAddress(String domain){
 		if(domain.charAt(0) == '[' && domain.charAt(domain.length() - 1) == ']'){
