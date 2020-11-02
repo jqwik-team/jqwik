@@ -11,6 +11,10 @@ import java.util.stream.*;
 @PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
 class EMailsTests {
 
+	private static final String ALLOWED_CHARS_DOMAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
+	private static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";
+	private static final String ALLOWED_CHARS_LOCALPART_QUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~\"(),:;<>@[\\] ";
+
 	@Property(tries = 10)
 	void containsAtSign(@ForAll("emails") String email){
 		Assertions.assertThat(email).contains("@");
@@ -29,54 +33,27 @@ class EMailsTests {
 	}
 
 	@Property
-	void validSignsBeforeAt(@ForAll("emails") String email){
+	void validSignsBeforeAtUnquoted(@ForAll("emails") String email){
 		String localPart = getLocalPartOfEmail(email);
-		if(isQuoted(localPart)){
-			localPart = localPart.substring(1, localPart.length() - 1);
-			localPart = localPart.replace( " ", "");
-			localPart = localPart.replace( "(", "");
-			localPart = localPart.replace( ")", "");
-			localPart = localPart.replace( ",", "");
-			localPart = localPart.replace( ":", "");
-			localPart = localPart.replace( ";", "");
-			localPart = localPart.replace( "<", "");
-			localPart = localPart.replace( ">", "");
-			localPart = localPart.replace( "@", "");
-			localPart = localPart.replace( "[", "");
-			localPart = localPart.replace( "\\\\", "");
-			localPart = localPart.replace( "]", "");
-			localPart = localPart.replace( "\\\"", "");
-		}
-		for(char c = 'a'; c <= 'z'; c++){
-			localPart = localPart.replace(c + "", "");
-		}
-		for(char c = 'A'; c <= 'Z'; c++){
-			localPart = localPart.replace(c + "", "");
-		}
-		for(char c = '0'; c <= '9'; c++){
-			localPart = localPart.replace(c + "", "");
-		}
-		localPart = localPart.replace( "!", "");
-		localPart = localPart.replace( "#", "");
-		localPart = localPart.replace( "$", "");
-		localPart = localPart.replace( "%", "");
-		localPart = localPart.replace( "&", "");
-		localPart = localPart.replace( "'", "");
-		localPart = localPart.replace( "*", "");
-		localPart = localPart.replace( "+", "");
-		localPart = localPart.replace( "-", "");
-		localPart = localPart.replace( "/", "");
-		localPart = localPart.replace( "=", "");
-		localPart = localPart.replace( "?", "");
-		localPart = localPart.replace( "^", "");
-		localPart = localPart.replace( "_", "");
-		localPart = localPart.replace( "`", "");
-		localPart = localPart.replace( "{", "");
-		localPart = localPart.replace( "|", "");
-		localPart = localPart.replace( "}", "");
-		localPart = localPart.replace( "~", "");
-		localPart = localPart.replace( ".", "");
-		Assertions.assertThat(localPart).isEqualTo("");
+		Assume.that(!isQuoted(localPart));
+		Assertions.assertThat(localPart.chars()).allMatch(c -> ALLOWED_CHARS_LOCALPART_UNQUOTED.contains(((char) c.intValue()) + ""));
+	}
+
+	@Property
+	void validSignsBeforeAtQuoted(@ForAll("emails") String email){
+		String localPart = getLocalPartOfEmail(email);
+		Assume.that(isQuoted(localPart));
+		Assertions.assertThat(localPart.chars()).allMatch(c -> ALLOWED_CHARS_LOCALPART_QUOTED.contains(((char) c.intValue()) + ""));
+	}
+
+	@Property
+	void validUseOfQuotedBackslashAndQuotationMarks(@ForAll("emails") String email){
+		String localPart = getLocalPartOfEmail(email);
+		Assume.that(isQuoted(localPart));
+		localPart = localPart.substring(1, localPart.length() - 1);
+		localPart = localPart.replace("\\\"", "").replace("\\\\", "");
+		Assertions.assertThat(localPart).doesNotContain("\\");
+		Assertions.assertThat(localPart).doesNotContain("\"");
 	}
 
 	@Property
@@ -92,18 +69,7 @@ class EMailsTests {
 	void validSignsAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(!isIPAddress(domain));
-		for(char c = 'a'; c <= 'z'; c++){
-			domain = domain.replace(c + "", "");
-		}
-		for(char c = 'A'; c <= 'Z'; c++){
-			domain = domain.replace(c + "", "");
-		}
-		for(char c = '0'; c <= '9'; c++){
-			domain = domain.replace(c + "", "");
-		}
-		domain = domain.replace("-", "");
-		domain = domain.replace(".", "");
-		Assertions.assertThat(domain).isEqualTo("");
+		Assertions.assertThat(domain.chars()).allMatch(c -> ALLOWED_CHARS_DOMAIN.contains(((char) c.intValue()) + ""));
 	}
 
 	@Property
