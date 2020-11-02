@@ -180,11 +180,6 @@ class EMailsTests {
 			coverage.check(3).count(c -> c >= 1);
 			coverage.check(4).count(c -> c >= 1);
 			coverage.check(5).count(c -> c >= 1);
-			coverage.check(6).count(c -> c >= 1);
-			coverage.check(7).count(c -> c >= 1);
-			coverage.check(8).count(c -> c >= 1);
-			coverage.check(9).count(c -> c >= 1);
-			coverage.check(10).count(c -> c >= 1);
 		});
 	}
 
