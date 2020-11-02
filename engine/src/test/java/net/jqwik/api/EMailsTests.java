@@ -8,26 +8,27 @@ import org.assertj.core.api.*;
 
 import java.util.stream.*;
 
+@PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
 class EMailsTests {
 
-	@Property(tries = 10, edgeCases = EdgeCasesMode.NONE)
+	@Property(tries = 10)
 	void containsAtSign(@ForAll("emails") String email){
 		Assertions.assertThat(email).contains("@");
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void validLengthBeforeAt(@ForAll("emails") String email){
 		String localPart = getLocalPartOfEmail(email);
 		Assertions.assertThat(localPart.length()).isBetween(1, 64);
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void validLengthAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assertions.assertThat(domain.length()).isBetween(1, 253);
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void validSignsBeforeAt(@ForAll("emails") String email){
 		String localPart = getLocalPartOfEmail(email);
 		if(isQuoted(localPart)){
@@ -78,7 +79,7 @@ class EMailsTests {
 		Assertions.assertThat(localPart).isEqualTo("");
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void validUseOfDotBeforeAt(@ForAll("emails") String email){
 		String localPart = getLocalPartOfEmail(email);
 		Assume.that(!isQuoted(localPart));
@@ -87,7 +88,7 @@ class EMailsTests {
 		Assertions.assertThat(localPart.charAt(localPart.length() - 1)).isNotEqualTo('.');
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void validSignsAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(!isIPAddress(domain));
@@ -105,7 +106,7 @@ class EMailsTests {
 		Assertions.assertThat(domain).isEqualTo("");
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(!isIPAddress(domain));
@@ -118,7 +119,7 @@ class EMailsTests {
 		Assertions.assertThat(domain.charAt(domain.length() - 2)).isNotEqualTo('.');
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void validMaxDomainLengthAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(!isIPAddress(domain));
@@ -128,7 +129,7 @@ class EMailsTests {
 		});
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void validIPAddressAfterAt(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(isIPAddress(domain));
@@ -136,37 +137,47 @@ class EMailsTests {
 		Assertions.assertThat(InetAddresses.isInetAddress(domain)).isTrue();
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void quotedAndUnquotedUsernamesAreGenerated(@ForAll("emails") String email){
 		String localPart = getLocalPartOfEmail(email);
 		Statistics.collect(isQuoted(localPart));
 		Statistics.coverage(coverage -> {
-			coverage.check(true).count(c -> c >= 1);
-			coverage.check(false).count(c -> c >= 1);
+			coverage.check(true).percentage(p -> p > 35);
+			coverage.check(false).percentage(p -> p > 35);
 		});
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void domainsAndIPAddressesAreGenerated(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Statistics.collect(isIPAddress(domain));
 		Statistics.coverage(coverage -> {
-			coverage.check(true).count(c -> c >= 1);
-			coverage.check(false).count(c -> c >= 1);
+			coverage.check(true).percentage(p -> p > 35);
+			coverage.check(false).percentage(p -> p > 35);
 		});
 	}
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property
 	void IPv4AndIPv6AreGenerated(@ForAll("emails") String email){
 		String domain = getDomainOfEmail(email);
 		Assume.that(isIPAddress(domain));
 		domain = domain.substring(1, domain.length() - 1);
 		Statistics.collect(domain.contains("."));
 		Statistics.coverage(coverage -> {
-			coverage.check(true).count(c -> c >= 1);
-			coverage.check(false).count(c -> c >= 1);
+			coverage.check(true).percentage(p -> p > 35);
+			coverage.check(false).percentage(p -> p > 35);
 		});
 	}
+
+	/*@Property
+	void domainsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email){
+		String domain = getDomainOfEmail(email);
+		Assume.that(!isIPAddress(domain));
+		Statistics.collect((int) domain.chars().filter(v -> v == '.').count());
+		Statistics.coverage(coverage -> {
+			coverage.check(0, 1, 2, 3, 4, 5 ,6 ,7 ,8 ,9, 10).count(c -> c >= 1);
+		});
+	}*/
 
 	private boolean isIPAddress(String domain){
 		if(domain.charAt(0) == '[' && domain.charAt(domain.length() - 1) == ']'){
