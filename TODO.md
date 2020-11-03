@@ -2,6 +2,14 @@
 
     - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
 
+    - Laufzeit .alpha().numeric().withChars("-") vs .withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-.")
+      Weighting of individual char arbitraries
+      
+    - Histograms: Make clustering of numerical values easy, e.g. by overriding a method
+      called `Histogram.clusterSize()`.
+    
+- 1.3.x
+
     - Arbitrary.unique() requires a scope
         - In container
         - In super container
@@ -13,9 +21,6 @@
 
         - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
 
-    - Histograms: Make clustering of numerical values easy, e.g. by overriding a method
-      called `Histogram.clusterSize()`.
-    
     - Domains
         - Deprecate AbstractDomainContextBase
             - Introduce DomainContextBase
@@ -23,9 +28,6 @@
             - Allow @ForAll parameters in @Provide methods
             - Allow Arbitrary<T> parameters in @Provide methods
             - @Configure method for configurators?
-
-    
-- 1.3.x
 
     - Edge Cases
     
