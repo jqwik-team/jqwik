@@ -47,21 +47,25 @@ public class DefaultEmailArbitrary extends AbstractArbitraryBase {
 	private Arbitrary<String> domainIPv6(){
 		Arbitrary<String> addressPart = Arbitraries.strings().numeric().withChars('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F').ofMaxLength(4);
 		Arbitrary<String> address = Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart).as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
-		address = address.filter(v -> generatedAddressIsValidIPv6Address(v));
+		address = address.filter(v -> validUseOfColonInIPv6Address(v.substring(1, v.length() - 1)));
 		return address;
 	}
 
-	private boolean generatedAddressIsValidIPv6Address(String ip){
-		ip = ip.substring(1, ip.length() - 1);
-		if(ip.contains(":::") || (ip.charAt(0) == ':' && ip.charAt(1) != ':') || (ip.charAt(ip.length() - 1) == ':' && ip.charAt(ip.length() - 2) != ':')){
+	public static boolean validUseOfColonInIPv6Address(String ip){
+		boolean ipContainsThreeColons = ip.contains(":::");
+		boolean startsWithOnlyOneColon = ip.charAt(0) == ':' && ip.charAt(1) != ':';
+		boolean endsWithOnlyOneColon = ip.charAt(ip.length() - 1) == ':' && ip.charAt(ip.length() - 2) != ':';
+		if(ipContainsThreeColons || startsWithOnlyOneColon || endsWithOnlyOneColon){
 			return false;
 		}
 		boolean first = true;
 		boolean inCheck = false;
 		for(int i = 0; i < ip.length() - 1; i++){
-			if(ip.charAt(i) == ':' && (ip.charAt(i+1) == ':')){
+			boolean ipContainsTwoColonsAtI = ip.charAt(i) == ':' && (ip.charAt(i+1) == ':');
+			if(ipContainsTwoColonsAtI){
 				if(first){
-					first = false; inCheck = true;
+					first = false;
+					inCheck = true;
 				} else if(!inCheck){
 					return false;
 				}
@@ -72,6 +76,8 @@ public class DefaultEmailArbitrary extends AbstractArbitraryBase {
 		return true;
 	}
 
+	//TODO Arbitraries Recursive
+	//TODO Filtermethoden rausziehen, dabei einzelne booleans, den für TLD rausziehen
 	private Arbitrary<String> domainDomain(){
 		return Arbitraries.lazyOf(
 				() -> domainDomainPart(),

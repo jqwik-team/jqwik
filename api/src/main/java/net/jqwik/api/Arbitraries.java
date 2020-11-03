@@ -428,7 +428,7 @@ public class Arbitraries {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.38")
+	@API(status = EXPERIMENTAL, since = "1.3.8")
 	public static Arbitrary<String> emails() {
 		return ArbitrariesFacade.implementation.emails();
 	}
