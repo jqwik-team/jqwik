@@ -11,8 +11,6 @@ import static org.assertj.core.api.Assertions.*;
 @Group
 class EMailsTests {
 
-
-	// TODO Label .label bei Statistiken
 	// TODO Shrinking a@a tests , ArbitraryShrinkingTests zum orientieren
 	// TODO User-Guide schreiben vor Numeric Arbitrary Types
 
@@ -168,21 +166,23 @@ class EMailsTests {
 		@Property
 		void quotedAndUnquotedUsernamesAreGenerated(@ForAll("emails") String email){
 			String localPart = getLocalPartOfEmail(email);
-			Statistics.collect(isQuoted(localPart));
-			Statistics.coverage(coverage -> {
-				coverage.check(true).percentage(p -> p > 35);
-				coverage.check(false).percentage(p -> p > 35);
-			});
+			Statistics.label("Quoted usernames")
+				.collect(isQuoted(localPart))
+				.coverage(coverage -> {
+					coverage.check(true).percentage(p -> p > 35);
+					coverage.check(false).percentage(p -> p > 35);
+			  	});
 		}
 
 		@Property
 		void domainsAndIPAddressesAreGenerated(@ForAll("emails") String email){
 			String domain = getDomainOfEmail(email);
-			Statistics.collect(isIPAddress(domain));
-			Statistics.coverage(coverage -> {
-				coverage.check(true).percentage(p -> p > 35);
-				coverage.check(false).percentage(p -> p > 35);
-			});
+			Statistics.label("Domains")
+				.collect(isIPAddress(domain))
+				.coverage(coverage -> {
+					coverage.check(true).percentage(p -> p > 35);
+					coverage.check(false).percentage(p -> p > 35);
+				});
 		}
 
 		@Property
@@ -190,25 +190,28 @@ class EMailsTests {
 			String domain = getDomainOfEmail(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
-			Statistics.collect(domain.contains("."));
-			Statistics.coverage(coverage -> {
-				coverage.check(true).percentage(p -> p > 35);
-				coverage.check(false).percentage(p -> p > 35);
-			});
+			Statistics.label("IPv4 addresses")
+				.collect(domain.contains("."))
+				.coverage(coverage -> {
+					coverage.check(true).percentage(p -> p > 35);
+					coverage.check(false).percentage(p -> p > 35);
+				});
 		}
 
 		@Property
 		void domainsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email){
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
-			Statistics.collect((int) domain.chars().filter(v -> v == '.').count() + 1);
-			Statistics.coverage(coverage -> {
-				coverage.check(1).count(c -> c >= 1);
-				coverage.check(2).count(c -> c >= 1);
-				coverage.check(3).count(c -> c >= 1);
-				coverage.check(4).count(c -> c >= 1);
-				coverage.check(5).count(c -> c >= 1);
-			});
+			int domainParts = (int) (domain.chars().filter(v -> v == '.').count() + 1);
+			Statistics.label("Domain parts")
+				.collect(domainParts)
+				.coverage(coverage -> {
+					coverage.check(1).count(c -> c >= 1);
+					coverage.check(2).count(c -> c >= 1);
+					coverage.check(3).count(c -> c >= 1);
+					coverage.check(4).count(c -> c >= 1);
+					coverage.check(5).count(c -> c >= 1);
+				});
 		}
 
 	}
