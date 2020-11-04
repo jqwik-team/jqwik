@@ -2,9 +2,6 @@
 
     - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
 
-    - Laufzeit .alpha().numeric().withChars("-") vs .withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-.")
-      Weighting of individual char arbitraries
-      
     - Histograms: Make clustering of numerical values easy, e.g. by overriding a method
       called `Histogram.clusterSize()`.
     
@@ -20,6 +17,9 @@
           arbitraries are involved?
 
         - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
+
+    - Allow to add frequency to chars for String and Character arbitraries
+      eg. StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
 
     - Domains
         - Deprecate AbstractDomainContextBase
