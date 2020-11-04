@@ -76,17 +76,32 @@ public class DefaultEmailArbitrary extends AbstractArbitraryBase {
 		return true;
 	}
 
-	//TODO Arbitraries Recursive
-	//TODO Filtermethoden rausziehen, dabei einzelne booleans, den für TLD rausziehen
 	private Arbitrary<String> domainDomain(){
-		return Arbitraries.lazyOf(
-				() -> domainDomainPart(),
-				this::domainDomainGenerate
-		).filter(v -> v.length() <= 253).filter(v -> (v.length() < 2 || v.charAt(v.length() - 2) != '.') && v.charAt(0) != '.' && v.charAt(v.length() - 1) != '.' && !v.contains("..")).filter(v -> v.charAt(0) != '-' && v.charAt(v.length() - 1) != '-');
+		Arbitrary<Integer> length = Arbitraries.integers().between(0, 25);
+		Arbitrary<String> lastDomainPart = domainDomainPart();
+		return length.flatMap(depth -> Arbitraries.recursive(
+				() -> lastDomainPart,
+				this::domainDomainGenerate,
+				depth
+		)).filter(v -> v.length() <= 253 && validUseOfDotsInDomain(v) && validUseOfHyphensInDomain(v));
 	}
 
-	private Arbitrary<String> domainDomainGenerate(){
-		return Combinators.combine(domainDomain(), domainDomainPart()).as((x, y) -> x + "." + y);
+	private boolean validUseOfDotsInDomain(String domain){
+		boolean tldMinimumTwoSigns = domain.length() < 2 || domain.charAt(domain.length() - 2) != '.';
+		boolean firstSignNotADot = domain.charAt(0) != '.';
+		boolean lastSignNotADot = domain.charAt(domain.length() - 1) != '.';
+		boolean containsNoDoubleDot = !domain.contains("..");
+		return tldMinimumTwoSigns && firstSignNotADot && lastSignNotADot && containsNoDoubleDot;
+	}
+
+	private boolean validUseOfHyphensInDomain(String domain){
+		boolean firstSignNotAHyphen = domain.charAt(0) != '-';
+		boolean lastSignNotAHyphen = domain.charAt(domain.length() - 1) != '-';
+		return firstSignNotAHyphen && lastSignNotAHyphen;
+	}
+
+	private Arbitrary<String> domainDomainGenerate(Arbitrary<String> domain){
+		return Combinators.combine(domainDomainPart(), domain).as((x, y) -> x + "." + y);
 	}
 
 	private Arbitrary<String> domainDomainPart(){
