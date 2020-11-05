@@ -1251,6 +1251,36 @@ Shrinking moves towards the start of the frequency list.
       return Arbitraries.defaultFor(List.class, String.class);
   }
   ```
+  
+### Email Address Generation
+
+To generate email addresses you can call up the static method `emails()` on class `Arbitraries`.
+
+An email address consists of two parts: `local-part` and `domain`. The complete email address is therefore `local-part@domain`.
+The `local-part` can be `unquoted` or `quoted`, which allows for more characters.
+The `domain` can also be an IP address, surrounded by square brackets `[]`.
+
+For example, valid email addresses are: 
+```
+abc@example
+abc@example.com
+" "@example.example
+"admin@server"@[192.168.201.0]
+admin@[32::FF:aBc:79a:83B:FFFF:345]
+```
+
+You can use `emails()` as follows:
+```java
+@Property
+void containsAt(@ForAll("emails") String email){
+    assertThat(email).contains("@");
+}
+
+@Provide
+Arbitrary<String> emails(){
+    return Arbitraries.emails();
+}
+```
 
 ### Numeric Arbitrary Types
 
