@@ -33,9 +33,9 @@ public class DefaultEmailArbitrary extends AbstractArbitraryBase {
 
 	private Arbitrary<String> domain(){
 		return Arbitraries.frequencyOf(
+				Tuple.of(2, domainDomain()),
 				Tuple.of(1, domainIPv4()),
-				Tuple.of(1, domainIPv6()),
-				Tuple.of(2, domainDomain())
+				Tuple.of(1, domainIPv6())
 		);
 	}
 
