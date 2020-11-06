@@ -1269,9 +1269,11 @@ abc@example.com
 admin@[32::FF:aBc:79a:83B:FFFF:345]
 ```
 
+To generate the entire range of values, it is recommended to use `(edgeCases = EdgeCasesMode.NONE)`, as there are many edge cases.
+
 You can use `emails()` as follows:
 ```java
-@Property
+@Property(edgeCases = EdgeCasesMode.NONE)
 void containsAt(@ForAll("emails") String email){
     assertThat(email).contains("@");
 }
