@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.statistics.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -219,48 +220,70 @@ class EMailsTests {
 	@Group
 	class ShrinkingTests {
 
-		@Property
+		@Property(tries = 20)
+		void defaultShrinking(@ForAll Random random){
+			Arbitrary<String> emails = Arbitraries.emails();
+			assertAllValuesAreShrunkTo("A@a", emails, random);
+		}
+
+		@Property(tries = 20)
 		void domainShrinking(@ForAll Random random){
-			Arbitrary<String> emails = Arbitraries.emails().filter(v -> domainShrinkingFilter(v));
-			assertAllValuesAreShrunkTo("a@a", emails, random);
+			Arbitrary<String> emails = Arbitraries.emails();
+			Falsifier<String> falsifier = falsifyDomain();
+			String value = shrinkToMinimal(emails, random, falsifier);
+			assertThat(value).isEqualTo("A@a");
 		}
 
-		@Property
+		@Property(tries = 20)
 		void domainShrinkingWithTLD(@ForAll Random random){
-			Arbitrary<String> emails = Arbitraries.emails().filter(v -> domainShrinkingWithTLDFilter(v));
-			assertAllValuesAreShrunkTo("a@a.aa", emails, random);
+			Arbitrary<String> emails = Arbitraries.emails();
+			Falsifier<String> falsifier = falsifyDomainWithTLD();
+			String value = shrinkToMinimal(emails, random, falsifier);
+			assertThat(value).isEqualTo("A@a.aa");
 		}
 
-		@Property
+		@Property(tries = 50)
 		void ipv4Shrinking(@ForAll Random random){
-			Arbitrary<String> emails = Arbitraries.emails().filter(v -> ipv4ShrinkingFilter(v));
-			assertAllValuesAreShrunkTo("a@[0.0.0.0]", emails, random);
+			Arbitrary<String> emails = Arbitraries.emails();
+			Falsifier<String> falsifier = falsifyIPv4();
+			String value = shrinkToMinimal(emails, random, falsifier);
+			assertThat(value).isEqualTo("A@[0.0.0.0]");
 		}
 
-		@Property
+		@Property(tries = 20)
 		void ipv6Shrinking(@ForAll Random random){
-			Arbitrary<String> emails = Arbitraries.emails().filter(v -> ipv6ShrinkingFilter(v));
-			assertAllValuesAreShrunkTo("a@[::0:0:0:0:0:0]", emails, random);
+			Arbitrary<String> emails = Arbitraries.emails();
+			Falsifier<String> falsifier = falsifyIPv6();
+			String value = shrinkToMinimal(emails, random, falsifier);
+			assertThat(value).isEqualTo("A@[::0:0:0:0:0:0]");
 		}
 
-		private boolean domainShrinkingFilter(String email){
-			String domain = getDomainOfEmail(email);
-			return !isIPAddress(domain);
+		private TestingFalsifier<String> falsifyDomain() {
+			return email -> {
+				String domain = getDomainOfEmail(email);
+				return isIPAddress(domain);
+			};
 		}
 
-		private boolean domainShrinkingWithTLDFilter(String email){
-			String domain = getDomainOfEmail(email);
-			return !isIPAddress(domain) && domain.contains(".");
+		private TestingFalsifier<String> falsifyDomainWithTLD() {
+			return email -> {
+				String domain = getDomainOfEmail(email);
+				return !(!isIPAddress(domain) && domain.contains("."));
+			};
 		}
 
-		private boolean ipv4ShrinkingFilter(String email){
-			String domain = getDomainOfEmail(email);
-			return isIPAddress(domain) && domain.contains(".");
+		private TestingFalsifier<String> falsifyIPv4() {
+			return email -> {
+				String domain = getDomainOfEmail(email);
+				return !(isIPAddress(domain) && domain.contains("."));
+			};
 		}
 
-		private boolean ipv6ShrinkingFilter(String email){
-			String domain = getDomainOfEmail(email);
-			return isIPAddress(domain) && domain.contains(":");
+		private TestingFalsifier<String> falsifyIPv6() {
+			return email -> {
+				String domain = getDomainOfEmail(email);
+				return !(isIPAddress(domain) && domain.contains(":"));
+			};
 		}
 
 	}
