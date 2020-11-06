@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.statistics.*;
@@ -7,12 +8,11 @@ import net.jqwik.engine.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.ShrinkingTestHelper.*;
+
 @PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
 @Group
 class EMailsTests {
-
-	// TODO Shrinking a@a tests , ArbitraryShrinkingTests zum orientieren
-	// TODO User-Guide schreiben vor Numeric Arbitrary Types
 
 	private static final String ALLOWED_CHARS_DOMAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
 	private static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";
@@ -212,6 +212,55 @@ class EMailsTests {
 					coverage.check(4).count(c -> c >= 1);
 					coverage.check(5).count(c -> c >= 1);
 				});
+		}
+
+	}
+
+	@Group
+	class ShrinkingTests {
+
+		@Property
+		void domainShrinking(@ForAll Random random){
+			Arbitrary<String> emails = Arbitraries.emails().filter(v -> domainShrinkingFilter(v));
+			assertAllValuesAreShrunkTo("a@a", emails, random);
+		}
+
+		@Property
+		void domainShrinkingWithTLD(@ForAll Random random){
+			Arbitrary<String> emails = Arbitraries.emails().filter(v -> domainShrinkingWithTLDFilter(v));
+			assertAllValuesAreShrunkTo("a@a.aa", emails, random);
+		}
+
+		@Property
+		void ipv4Shrinking(@ForAll Random random){
+			Arbitrary<String> emails = Arbitraries.emails().filter(v -> ipv4ShrinkingFilter(v));
+			assertAllValuesAreShrunkTo("a@[0.0.0.0]", emails, random);
+		}
+
+		@Property
+		void ipv6Shrinking(@ForAll Random random){
+			Arbitrary<String> emails = Arbitraries.emails().filter(v -> ipv6ShrinkingFilter(v));
+			assertAllValuesAreShrunkTo("a@[::0:0:0:0:0:0]", emails, random);
+		}
+
+		private boolean domainShrinkingFilter(String email){
+			String domain = getDomainOfEmail(email);
+			return !isIPAddress(domain);
+		}
+
+		private boolean domainShrinkingWithTLDFilter(String email){
+			String domain = getDomainOfEmail(email);
+			return !isIPAddress(domain) && domain.contains(".");
+		}
+
+		private boolean ipv4ShrinkingFilter(String email){
+			String domain = getDomainOfEmail(email);
+			return isIPAddress(domain) && domain.contains(".");
+		}
+
+		private boolean ipv6ShrinkingFilter(String email){
+			String domain = getDomainOfEmail(email);
+			return isIPAddress(domain) && domain.contains(":");
 		}
 
 	}
