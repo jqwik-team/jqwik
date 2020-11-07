@@ -2,21 +2,21 @@
 
     - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
 
+    - Give weights/frequency in StringArbitrary.alpha() etc. by number of allowed chars
+
     - Histograms: Make clustering of numerical values easy, e.g. by overriding a method
       called `Histogram.clusterSize()`.
     
 - 1.3.x
 
-    - Arbitrary.unique() requires a scope
-        - In container
-        - In super container
-        - In whole try
-      Maybe a scope parameter together with Arbitrary.scope(name) can work?
-
-        - How can generated functions produce constant results even when unique
-          arbitraries are involved?
-
-        - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
+    - Deprecate Arbitrary.unique()
+    
+      Instead make something like List|Set|ArrayArbitrary.constraint(
+        list, element -> !list.contains(element);
+      ) 
+        - ListArbitrary.unique(Function<E, T>)
+        - ListArbitrary.uniqueBy(Predicate<E> uniqueCondition)
+        - How can that work across collections
 
     - Allow to add frequency to chars for String and Character arbitraries
       eg. StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
