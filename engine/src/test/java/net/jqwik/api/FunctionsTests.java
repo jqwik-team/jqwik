@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -75,10 +76,15 @@ class FunctionsTests {
 
 		assertThat(function1.hashCode()).isEqualTo(function1.hashCode());
 		Function<String, Integer> function2 = generator.next(random).value();
-		while (function2.apply("a") == function1.apply("a")) {
+		while (function2.apply("a").equals(function1.apply("a"))) {
 			function2 = generator.next(random).value();
 		}
-		assertThat(function1.hashCode()).isNotEqualTo(function2.hashCode());
+
+		// In rare cases the hash code can be the same despite the functions producing different results
+		boolean hashCodesAreDifferent = function1.hashCode() != function2.hashCode();
+		Statistics.label("hash codes are different")
+				  .collect(hashCodesAreDifferent)
+				  .coverage(checker -> checker.check(true).percentage(p -> p > 95));
 	}
 
 	@Example
