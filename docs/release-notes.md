@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.3.8-SNAPSHOT](#138-snapshot)
 - [1.3.7](#137)
 - [1.3.6](#136)
 - [1.3.5](#135)
@@ -25,7 +26,31 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 1.3.8-SNAPSHOT
+
+#### New and Enhanced Features
+
+- The header of the label column in 
+  [histograms and number range histograms](/docs/1.3.8/user-guide.html#histograms) 
+  can now be changed.
+
+#### Breaking Changes
+
+No breaking changes.
+
+#### Bug Fixes
+
+No known bugs.
+                                 
+
 ## 1.3.7
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/1.3.7/user-guide.html">User guide</a>
+and
+<a href="/docs/1.3.7/javadoc/index.html">javadoc</a>
+</p>
+
 
 #### New and Enhanced Features
 
@@ -33,7 +58,7 @@ title: jqwik Release Notes
 
 - Reporting of parameters that changed during execution of property is now better
   at detecting real changes.
-
+  
 #### Breaking Changes
 
 - _Examples_ with a failing assumption - i.e. throwing a `TestAbortedException` -

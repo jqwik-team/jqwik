@@ -3009,7 +3009,8 @@ void integersInRanges(@ForAll @IntRange(min = -1000, max = 1000) int aNumber) {
 ```
 
 Both types can be subclassed to override behaviour like the number of buckets,
-the maximum drawing range of the bar, the order of elements and the label of a bucket. 
+the maximum drawing range of the bar, the order of elements, the label of a bucket
+and the header of the label column. 
 
 #### Make Your Own Statistics Report Format
 

@@ -108,6 +108,30 @@ class HistogramTests {
 	}
 
 	@Example
+	void nameLabelColumn() {
+		Histogram histogram = new Histogram() {
+			@Override
+			protected String labelColumnHeader() {
+				return "value";
+			}
+		};
+
+		List<StatisticsEntry> entries = asList(
+			createEntry(asList(1), 500),
+			createEntry(asList(2), 100)
+		);
+
+		List<String> report = histogram.formatReport(entries);
+
+		Assertions.assertThat(report).containsExactly(
+			"   # | value | count | ",
+			"-----|-------|-------|---------------------------------------------------------------------------------",
+			"   0 |     1 |   500 | " + bar(80),
+			"   1 |     2 |   100 | " + bar(16)
+		);
+	}
+
+	@Example
 	void clusterTwoValuesIntoOne() {
 		Histogram histogram = new Histogram() {
 			@Override
@@ -227,6 +251,11 @@ class HistogramTests {
 				protected int maxDrawRange() {
 					return 10;
 				}
+
+				@Override
+				protected String labelColumnHeader() {
+					return "range";
+				}
 			};
 
 			List<StatisticsEntry> entries = asList(
@@ -245,7 +274,7 @@ class HistogramTests {
 			List<String> report = histogram.formatReport(entries);
 
 			Assertions.assertThat(report).containsExactly(
-				"   # |   label | count | ",
+				"   # |   range | count | ",
 				"-----|---------|-------|-----------",
 				"   0 |  [1..3[ |    20 | " + bar(10),
 				"   1 |  [3..5[ |    20 | " + bar(10),

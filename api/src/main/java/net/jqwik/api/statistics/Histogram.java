@@ -100,6 +100,16 @@ public class Histogram implements StatisticsReportFormat {
 				   .collect(Collectors.toList());
 	}
 
+	/**
+	 * Change the displayed name of the label column
+	 *
+	 * @return the string to show as header of the column
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.8")
+	protected String labelColumnHeader() {
+		return "label";
+	}
+
 	private List<String> generateHistogram(final List<StatisticsEntry> entries, final List<Bucket> buckets) {
 		int labelWidth = calculateLabelWidth(buckets);
 		int maxCount = buckets.stream().mapToInt(bucket1 -> bucket1.count).max().orElse(0);
@@ -148,7 +158,7 @@ public class Histogram implements StatisticsReportFormat {
 	}
 
 	private String header(String format) {
-		return String.format(format, "#", "label", "count", "");
+		return String.format(format, "#", labelColumnHeader(), "count", "");
 	}
 
 	private String ruler(String format) {

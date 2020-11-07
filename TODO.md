@@ -3,11 +3,12 @@
     - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
 
     - Give weights/frequency in StringArbitrary.alpha() etc. by number of allowed chars
-
-    - Histograms: Make clustering of numerical values easy, e.g. by overriding a method
-      called `Histogram.clusterSize()`.
     
 - 1.3.x
+
+    - Add Arbitrary.sampleStream(DomainContext ... contexts) for sampling
+      from given contexts.
+        - Also Arbitrary.sample(DomainContext ... contexts)
 
     - Deprecate Arbitrary.unique()
     
