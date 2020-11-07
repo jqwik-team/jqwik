@@ -14,9 +14,9 @@
       Instead make something like List|Set|ArrayArbitrary.constraint(
         list, element -> !list.contains(element);
       ) 
-        - ListArbitrary.unique(Function<E, T>)
-        - ListArbitrary.uniqueBy(Predicate<E> uniqueCondition)
-        - How can that work across collections
+        - ListArbitrary.uniqueElements()
+        - ListArbitrary.uniqueElementsBy(Predicate<E> uniqueCondition)
+        - How can that work across collections?
 
     - Allow to add frequency to chars for String and Character arbitraries
       eg. StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
