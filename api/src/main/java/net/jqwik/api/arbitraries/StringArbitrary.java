@@ -49,7 +49,8 @@ public interface StringArbitrary extends Arbitrary<String> {
 	 *
 	 * Can be combined with other methods that allow chars.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.0")
+	@API(status = DEPRECATED, since = "1.3.8")
+	@Deprecated
 	StringArbitrary withChars(Arbitrary<Character> characterArbitrary);
 
 	/**

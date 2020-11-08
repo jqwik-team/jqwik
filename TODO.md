@@ -1,8 +1,6 @@
 - 1.3.8
 
     - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
-
-    - Give weights/frequency in StringArbitrary.alpha() etc. by number of allowed chars
     
 - 1.3.x
 

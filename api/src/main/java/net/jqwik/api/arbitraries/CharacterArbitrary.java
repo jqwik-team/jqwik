@@ -32,7 +32,8 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	 *
 	 * Adds to all already allowed chars.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.0")
+	@API(status = DEPRECATED, since = "1.3.8")
+	@Deprecated
 	CharacterArbitrary with(Arbitrary<Character> characterArbitrary);
 
 	/**

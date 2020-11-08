@@ -36,7 +36,13 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
-No breaking changes.
+- The distribution of char groups when generating `Character`s or `String`s
+  is now weighted by the number of chars in each group so that each possible
+  char has the same probability of being generated - except for edge cases.
+
+- `StringArbitrary.withChars(Arbitrary<Character>)` was deprecated
+
+- `CharacterArbitrary.with(Arbitrary<Character>)` was deprecated
 
 #### Bug Fixes
 

@@ -38,7 +38,7 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 		return codepoint >= 0xe000 && codepoint <= 0xf8ff;
 	}
 
-	private List<Arbitrary<Character>> parts = new ArrayList<>();
+	private List<Tuple.Tuple2<Integer, Arbitrary<Character>>> partsWithSize = new ArrayList<>();
 
 	public DefaultCharacterArbitrary() {
 	}
@@ -49,13 +49,14 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	}
 
 	private Arbitrary<Character> arbitrary() {
-		if (parts.isEmpty()) {
+		if (partsWithSize.isEmpty()) {
 			return defaultArbitrary();
 		}
-		if (parts.size() == 1) {
-			return parts.get(0);
+		if (partsWithSize.size() == 1) {
+			return partsWithSize.get(0).get2();
 		}
-		return Arbitraries.oneOf(parts);
+
+		return Arbitraries.frequencyOf(partsWithSize);
 	}
 
 	private Arbitrary<Character> defaultArbitrary() {
@@ -76,30 +77,32 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 
 	@Override
 	public boolean isUnique() {
-		if (parts.isEmpty()) {
+		// TODO Remove as soon as CharacterArbitrary.with(Arbitrary<Character>) has been removed
+		if (partsWithSize.isEmpty()) {
 			return false;
 		}
-		return parts.stream().allMatch(Arbitrary::isUnique);
+		return partsWithSize.stream().allMatch(a -> a.get2().isUnique());
 	}
 
 	@Override
 	public CharacterArbitrary range(char min, char max) {
-		return cloneWith(rangeArbitrary(min, max));
+		return cloneWith(rangeArbitrary(min, max), max - min + 1);
 	}
 
 	@Override
 	public CharacterArbitrary with(char... allowedChars) {
-		return cloneWith(charsArbitrary(allowedChars));
+		return cloneWith(charsArbitrary(allowedChars), allowedChars.length);
 	}
 
 	@Override
 	public CharacterArbitrary with(CharSequence allowedChars) {
-		return cloneWith(charsArbitrary(allowedChars.toString().toCharArray()));
+		char[] chars = allowedChars.toString().toCharArray();
+		return with(chars);
 	}
 
 	@Override
 	public CharacterArbitrary with(final Arbitrary<Character> characterArbitrary) {
-		return cloneWith(characterArbitrary);
+		return cloneWith(characterArbitrary, 1);
 	}
 
 	private Arbitrary<Character> charsArbitrary(char[] allowedChars) {
@@ -126,10 +129,10 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 		return with(DefaultCharacterArbitrary.WHITESPACE_CHARS);
 	}
 
-	private CharacterArbitrary cloneWith(Arbitrary<Character> part) {
+	private CharacterArbitrary cloneWith(Arbitrary<Character> part, int size) {
 		DefaultCharacterArbitrary clone = super.typedClone();
-		clone.parts = new ArrayList<>(parts);
-		clone.parts.add(part);
+		clone.partsWithSize = new ArrayList<>(partsWithSize);
+		clone.partsWithSize.add(Tuple.of(size, part));
 		return clone;
 	}
 

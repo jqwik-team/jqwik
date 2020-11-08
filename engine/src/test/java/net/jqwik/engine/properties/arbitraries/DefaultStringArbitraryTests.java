@@ -5,7 +5,7 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.statistics.Statistics;
+import net.jqwik.api.statistics.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
 
@@ -127,8 +127,8 @@ class DefaultStringArbitraryTests {
 			return s.chars().allMatch(c -> c <= DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT);
 		});
 		assertAtLeastOneGenerated(
-			stringArbitrary.generator(10),
-			s -> s.contains(Character.toString((char) DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT))
+				stringArbitrary.generator(10),
+				s -> s.contains(Character.toString((char) DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT))
 		);
 	}
 
@@ -162,14 +162,41 @@ class DefaultStringArbitraryTests {
 		}
 	}
 
-	@Property
-	void randomStringsShouldContainZeroChar(@ForAll @StringLength(min = 1, max = 20) String aString) {
-		Statistics.label("contains 0")
-				  .collect(aString.contains("\u0000"))
-				  .coverage(checker -> checker.check(true).count(c -> c > 10));
-		Statistics.label("0 at last position")
-				  .collect(aString.charAt(aString.length() - 1) == '\u0000')
-				  .coverage(checker -> checker.check(true).count(c -> c > 10));
+	@Group
+	class Coverage {
+		@Property
+		void randomStringsShouldContainZeroChar(@ForAll @StringLength(min = 1, max = 20) String aString) {
+			Statistics.label("contains 0")
+					  .collect(aString.contains("\u0000"))
+					  .coverage(checker -> checker.check(true).count(c -> c > 10));
+			Statistics.label("0 at last position")
+					  .collect(aString.charAt(aString.length() - 1) == '\u0000')
+					  .coverage(checker -> checker.check(true).count(c -> c > 10));
+		}
+
+		@Property(generation = GenerationMode.RANDOMIZED, edgeCases = EdgeCasesMode.NONE)
+		void stringFromSeveralCharacterGroups_HaveRandomDistributionBySize(@ForAll("a to z, 1 to 3") String aString) {
+			char onlyChar = aString.charAt(0);
+
+			// The distribution should be 9:1 (27:3)
+
+			Statistics.label("a to z")
+					  .collect(onlyChar >= 'a' && onlyChar <= 'z')
+					  .coverage(coverage -> coverage.check(true).percentage(p -> p > 80));
+
+			Statistics.label("1 to 3")
+					  .collect(onlyChar >= '1' && onlyChar <= '3')
+					  .coverage(coverage -> coverage.check(true).percentage(p -> p < 20));
+		}
+
+		@Provide("a to z, 1 to 3")
+		Arbitrary<String> aToZand1to3() {
+			return new DefaultStringArbitrary()
+						   .withCharRange('a', 'z')
+						   .withCharRange('1', '3')
+						   .ofLength(1);
+		}
+
 	}
 
 }
