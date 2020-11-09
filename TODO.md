@@ -2,6 +2,12 @@
 
     - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
     
+    - Change to main branch
+    
+    - Generate documentation
+    
+    - Release
+    
 - 1.3.x
 
     - Add Arbitrary.sampleStream(DomainContext ... contexts) for sampling
