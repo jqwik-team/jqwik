@@ -115,50 +115,6 @@ class EMailsTests {
 			return string.contains(Character.toString((char) c));
 		}
 
-		private boolean isValidIPAddress(String address){
-			if(address.contains(":")) {
-				return isValidIPv6Address(address);
-			} else {
-				return isValidIPv4Address(address);
-			}
-		}
-
-		private boolean isValidIPv6Address(String address) {
-			return DefaultEmailArbitrary.validUseOfColonInIPv6Address(address) && validCharsInIPv6Address(address);
-		}
-
-		private boolean validCharsInIPv6Address(String address){
-			String[] addressParts = address.split("\\:");
-			if((addressParts.length != 8 && addressParts.length != 6) || (addressParts.length == 6 && !address.endsWith("::"))){
-				return false;
-			}
-			for(String part : addressParts){
-				for(char c : part.toCharArray()){
-					if(!ALLOWED_CHARS_IPV6_ADDRESS.contains(Character.toString(c))){
-						return false;
-					}
-				}
-			}
-			return true;
-		}
-
-		private boolean isValidIPv4Address(String address) {
-			String[] addressParts = address.split("\\.");
-			if(addressParts.length != 4){
-				return false;
-			}
-			for(String part : addressParts){
-				if(part == null || part.length() == 0){
-					return false;
-				}
-				int partInt = Integer.parseInt(part);
-				if(partInt < 0 || partInt > 255){
-					return false;
-				}
-			}
-			return true;
-		}
-
 	}
 
 	@Group
@@ -226,7 +182,7 @@ class EMailsTests {
 			assertAllValuesAreShrunkTo("A@a", emails, random);
 		}
 
-		@Property(tries = 20)
+		@Property(tries=20)
 		void domainShrinking(@ForAll Random random){
 			Arbitrary<String> emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyDomain();
@@ -234,12 +190,17 @@ class EMailsTests {
 			assertThat(value).isEqualTo("A@a");
 		}
 
-		@Property(tries = 20)
+		@Property(tries=20)
 		void domainShrinkingWithTLD(@ForAll Random random){
 			Arbitrary<String> emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyDomainWithTLD();
 			String value = shrinkToMinimal(emails, random, falsifier);
-			assertThat(value).isEqualTo("A@a.aa");
+			String domain = getDomainOfEmail(value);
+			String[] domainParts = domain.split("\\.");
+			IntStream.range(0, domainParts.length - 1).forEach(i -> {
+				assertThat(domainParts[i]).isEqualTo("a");
+			});
+			assertThat(domainParts[domainParts.length - 1]).isEqualTo("aa");
 		}
 
 		@Property(tries = 50)
@@ -255,7 +216,13 @@ class EMailsTests {
 			Arbitrary<String> emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyIPv6();
 			String value = shrinkToMinimal(emails, random, falsifier);
-			assertThat(value).isEqualTo("A@[::0:0:0:0:0:0]");
+			String domain = getDomainOfEmail(value);
+			domain = domain.substring(1, domain.length() - 1);
+			String[] domainParts = domain.split(":");
+			assertThat(isValidIPv6Address(domain)).isTrue();
+			IntStream.range(0, domainParts.length).forEach(i -> {
+				assertThat(domainParts[i]).isIn("0", "");
+			});
 		}
 
 		private TestingFalsifier<String> falsifyDomain() {
@@ -286,6 +253,49 @@ class EMailsTests {
 			};
 		}
 
+	}
+	private boolean isValidIPAddress(String address){
+		if(address.contains(":")) {
+			return isValidIPv6Address(address);
+		} else {
+			return isValidIPv4Address(address);
+		}
+	}
+
+	private boolean isValidIPv6Address(String address) {
+		return DefaultEmailArbitrary.validUseOfColonInIPv6Address(address) && validCharsInIPv6Address(address);
+	}
+
+	private boolean validCharsInIPv6Address(String address){
+		String[] addressParts = address.split("\\:");
+		if((addressParts.length != 8 && addressParts.length != 6) || (addressParts.length == 6 && !address.endsWith("::"))){
+			return false;
+		}
+		for(String part : addressParts){
+			for(char c : part.toCharArray()){
+				if(!ALLOWED_CHARS_IPV6_ADDRESS.contains(Character.toString(c))){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean isValidIPv4Address(String address) {
+		String[] addressParts = address.split("\\.");
+		if(addressParts.length != 4){
+			return false;
+		}
+		for(String part : addressParts){
+			if(part == null || part.length() == 0){
+				return false;
+			}
+			int partInt = Integer.parseInt(part);
+			if(partInt < 0 || partInt > 255){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean isIPAddress(String domain){
