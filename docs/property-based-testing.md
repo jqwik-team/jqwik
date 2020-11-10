@@ -13,12 +13,14 @@ However, most of the stuff is in the context of functional programming languages
   [PBT in Java](https://blog.johanneslink.net/2018/03/24/property-based-testing-in-java-introduction/)
   from the developer of jqwik.
 - [How to Specify it! In Java!](https://johanneslink.net/how-to-specify-it/)
-- Here is an [overview article](https://en.wikipedia.org/wiki/Property_testing) on Wikipedia.
+- [Know for Sure](https://blogs.oracle.com/javamagazine/know-for-sure-with-property-based-testing): 
+  An article in Oracle's Java Magazine about Property-based Testing in Java
 - [Quickcheck](https://en.wikipedia.org/wiki/QuickCheck) is the original tool for writing property tests.
+  The article links to scores of PBT libraries in dozens of programming languages.
 - A [nice video](https://www.youtube.com/watch?v=fltD7yrHbUA) from a presentation by Noel Markham
   in which he motivates and introduces ScalaCheck.
 - [PropEr Testing](http://propertesting.com/): An online-book about Property-Based Testing.
-  The examples use Erlang but most of the contents is generic. 
+  The examples use Erlang but most of the contents is generic.
 
 ### Patterns for PBT
 
