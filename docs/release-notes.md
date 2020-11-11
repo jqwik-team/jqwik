@@ -30,6 +30,9 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- You can now 
+  [generate valid email addresses](/docs/1.3.8/user-guide.html#email-address-generation). 
+
 - The header of the label column in 
   [histograms and number range histograms](/docs/1.3.8/user-guide.html#histograms) 
   can now be changed.

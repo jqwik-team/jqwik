@@ -1,7 +1,7 @@
 - 1.3.8
 
-    - Arbitraries.strings().emails() (https://github.com/jlink/jqwik/issues/127)
-    
+    - Default email generation through annotation `@Email`
+
     - Change to main branch
     
     - Generate documentation

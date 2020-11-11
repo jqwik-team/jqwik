@@ -24,38 +24,38 @@ class EMailsTests {
 	class AllGeneratedEmailAddressesAreValid {
 
 		@Property(tries = 10)
-		void containsAtSign(@ForAll("emails") String email){
+		void containsAtSign(@ForAll("emails") String email) {
 			assertThat(email).contains("@");
 		}
 
 		@Property
-		void validLengthBeforeAt(@ForAll("emails") String email){
+		void validLengthBeforeAt(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			assertThat(localPart.length()).isBetween(1, 64);
 		}
 
 		@Property
-		void validLengthAfterAt(@ForAll("emails") String email){
+		void validLengthAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(domain.length()).isBetween(1, 253);
 		}
 
 		@Property
-		void validSignsBeforeAtUnquoted(@ForAll("emails") String email){
+		void validSignsBeforeAtUnquoted(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(!isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_UNQUOTED, c));
 		}
 
 		@Property
-		void validSignsBeforeAtQuoted(@ForAll("emails") String email){
+		void validSignsBeforeAtQuoted(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_QUOTED, c));
 		}
 
 		@Property
-		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll("emails") String email){
+		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			localPart = localPart.substring(1, localPart.length() - 1);
@@ -65,7 +65,7 @@ class EMailsTests {
 		}
 
 		@Property
-		void validUseOfDotBeforeAt(@ForAll("emails") String email){
+		void validUseOfDotBeforeAt(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(!isQuoted(localPart));
 			assertThat(localPart).doesNotContain("..");
@@ -74,14 +74,14 @@ class EMailsTests {
 		}
 
 		@Property
-		void validSignsAfterAt(@ForAll("emails") String email){
+		void validSignsAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_DOMAIN, c));
 		}
 
 		@Property
-		void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email){
+		void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.charAt(0)).isNotEqualTo('-');
@@ -94,7 +94,7 @@ class EMailsTests {
 		}
 
 		@Property
-		void validMaxDomainLengthAfterAt(@ForAll("emails") String email){
+		void validMaxDomainLengthAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			String[] domainParts = domain.split("\\.");
@@ -104,14 +104,14 @@ class EMailsTests {
 		}
 
 		@Property
-		void validIPAddressAfterAt(@ForAll("emails") String email){
+		void validIPAddressAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
 			assertThat(isValidIPAddress(domain)).isTrue();
 		}
 
-		private boolean stringContainsChar(String string, int c){
+		private boolean stringContainsChar(String string, int c) {
 			return string.contains(Character.toString((char) c));
 		}
 
@@ -121,54 +121,54 @@ class EMailsTests {
 	class CheckAllVariantsAreCovered {
 
 		@Property
-		void quotedAndUnquotedUsernamesAreGenerated(@ForAll("emails") String email){
+		void quotedAndUnquotedUsernamesAreGenerated(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Statistics.label("Quoted usernames")
-				.collect(isQuoted(localPart))
-				.coverage(coverage -> {
-					coverage.check(true).percentage(p -> p > 35);
-					coverage.check(false).percentage(p -> p > 35);
-			  	});
+					  .collect(isQuoted(localPart))
+					  .coverage(coverage -> {
+						  coverage.check(true).percentage(p -> p > 35);
+						  coverage.check(false).percentage(p -> p > 35);
+					  });
 		}
 
 		@Property
-		void domainsAndIPAddressesAreGenerated(@ForAll("emails") String email){
+		void domainsAndIPAddressesAreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Statistics.label("Domains")
-				.collect(isIPAddress(domain))
-				.coverage(coverage -> {
-					coverage.check(true).percentage(p -> p > 35);
-					coverage.check(false).percentage(p -> p > 35);
-				});
+					  .collect(isIPAddress(domain))
+					  .coverage(coverage -> {
+						  coverage.check(true).percentage(p -> p > 35);
+						  coverage.check(false).percentage(p -> p > 35);
+					  });
 		}
 
 		@Property
-		void IPv4AndIPv6AreGenerated(@ForAll("emails") String email){
+		void IPv4AndIPv6AreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
 			Statistics.label("IPv4 addresses")
-				.collect(domain.contains("."))
-				.coverage(coverage -> {
-					coverage.check(true).percentage(p -> p > 35);
-					coverage.check(false).percentage(p -> p > 35);
-				});
+					  .collect(domain.contains("."))
+					  .coverage(coverage -> {
+						  coverage.check(true).percentage(p -> p > 35);
+						  coverage.check(false).percentage(p -> p > 35);
+					  });
 		}
 
 		@Property
-		void domainsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email){
+		void domainsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			int domainParts = (int) (domain.chars().filter(v -> v == '.').count() + 1);
 			Statistics.label("Domain parts")
-				.collect(domainParts)
-				.coverage(coverage -> {
-					coverage.check(1).count(c -> c >= 1);
-					coverage.check(2).count(c -> c >= 1);
-					coverage.check(3).count(c -> c >= 1);
-					coverage.check(4).count(c -> c >= 1);
-					coverage.check(5).count(c -> c >= 1);
-				});
+					  .collect(domainParts)
+					  .coverage(coverage -> {
+						  coverage.check(1).count(c -> c >= 1);
+						  coverage.check(2).count(c -> c >= 1);
+						  coverage.check(3).count(c -> c >= 1);
+						  coverage.check(4).count(c -> c >= 1);
+						  coverage.check(5).count(c -> c >= 1);
+					  });
 		}
 
 	}
@@ -177,21 +177,21 @@ class EMailsTests {
 	class ShrinkingTests {
 
 		@Property(tries = 20)
-		void defaultShrinking(@ForAll Random random){
+		void defaultShrinking(@ForAll Random random) {
 			Arbitrary<String> emails = Arbitraries.emails();
 			assertAllValuesAreShrunkTo("A@a", emails, random);
 		}
 
-		@Property(tries=20)
-		void domainShrinking(@ForAll Random random){
+		@Property(tries = 20)
+		void domainShrinking(@ForAll Random random) {
 			Arbitrary<String> emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyDomain();
 			String value = shrinkToMinimal(emails, random, falsifier);
 			assertThat(value).isEqualTo("A@a");
 		}
 
-		@Property(tries=20)
-		void domainShrinkingWithTLD(@ForAll Random random){
+		@Property(tries = 20)
+		void domainShrinkingWithTLD(@ForAll Random random) {
 			Arbitrary<String> emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyDomainWithTLD();
 			String value = shrinkToMinimal(emails, random, falsifier);
@@ -204,7 +204,7 @@ class EMailsTests {
 		}
 
 		@Property(tries = 50)
-		void ipv4Shrinking(@ForAll Random random){
+		void ipv4Shrinking(@ForAll Random random) {
 			Arbitrary<String> emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyIPv4();
 			String value = shrinkToMinimal(emails, random, falsifier);
@@ -212,7 +212,7 @@ class EMailsTests {
 		}
 
 		@Property(tries = 20)
-		void ipv6Shrinking(@ForAll Random random){
+		void ipv6Shrinking(@ForAll Random random) {
 			Arbitrary<String> emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyIPv6();
 			String value = shrinkToMinimal(emails, random, falsifier);
@@ -254,8 +254,9 @@ class EMailsTests {
 		}
 
 	}
-	private boolean isValidIPAddress(String address){
-		if(address.contains(":")) {
+
+	private boolean isValidIPAddress(String address) {
+		if (address.contains(":")) {
 			return isValidIPv6Address(address);
 		} else {
 			return isValidIPv4Address(address);
@@ -266,14 +267,14 @@ class EMailsTests {
 		return DefaultEmailArbitrary.validUseOfColonInIPv6Address(address) && validCharsInIPv6Address(address);
 	}
 
-	private boolean validCharsInIPv6Address(String address){
+	private boolean validCharsInIPv6Address(String address) {
 		String[] addressParts = address.split("\\:");
-		if((addressParts.length != 8 && addressParts.length != 6) || (addressParts.length == 6 && !address.endsWith("::"))){
+		if ((addressParts.length != 8 && addressParts.length != 6) || (addressParts.length == 6 && !address.endsWith("::"))) {
 			return false;
 		}
-		for(String part : addressParts){
-			for(char c : part.toCharArray()){
-				if(!ALLOWED_CHARS_IPV6_ADDRESS.contains(Character.toString(c))){
+		for (String part : addressParts) {
+			for (char c : part.toCharArray()) {
+				if (!ALLOWED_CHARS_IPV6_ADDRESS.contains(Character.toString(c))) {
 					return false;
 				}
 			}
@@ -283,51 +284,51 @@ class EMailsTests {
 
 	private boolean isValidIPv4Address(String address) {
 		String[] addressParts = address.split("\\.");
-		if(addressParts.length != 4){
+		if (addressParts.length != 4) {
 			return false;
 		}
-		for(String part : addressParts){
-			if(part == null || part.length() == 0){
+		for (String part : addressParts) {
+			if (part == null || part.length() == 0) {
 				return false;
 			}
 			int partInt = Integer.parseInt(part);
-			if(partInt < 0 || partInt > 255){
+			if (partInt < 0 || partInt > 255) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private boolean isIPAddress(String domain){
-		if(domain.charAt(0) == '[' && domain.charAt(domain.length() - 1) == ']'){
+	private boolean isIPAddress(String domain) {
+		if (domain.charAt(0) == '[' && domain.charAt(domain.length() - 1) == ']') {
 			return true;
 		}
 		return false;
 	}
 
-	private boolean isQuoted(String localPart){
-		if(localPart.length() >= 3 && localPart.charAt(0) == '"' && localPart.charAt(localPart.length() - 1) == '"'){
+	private boolean isQuoted(String localPart) {
+		if (localPart.length() >= 3 && localPart.charAt(0) == '"' && localPart.charAt(localPart.length() - 1) == '"') {
 			return true;
 		}
 		return false;
 	}
 
-	private String getLocalPartOfEmail(String email){
+	private String getLocalPartOfEmail(String email) {
 		int index = email.lastIndexOf('@');
-		if(index == -1){
+		if (index == -1) {
 			index = 0;
 		}
 		return email.substring(0, index);
 	}
 
-	private String getDomainOfEmail(String email){
+	private String getDomainOfEmail(String email) {
 		int index = email.lastIndexOf('@');
 		String substring = email.substring(index + 1);
 		return substring;
 	}
 
 	@Provide
-	Arbitrary<String> emails(){
+	Arbitrary<String> emails() {
 		return Arbitraries.emails();
 	}
 
