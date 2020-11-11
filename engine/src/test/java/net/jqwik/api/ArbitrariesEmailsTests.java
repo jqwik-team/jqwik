@@ -13,7 +13,7 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
 @Group
-class EMailsTests {
+class ArbitrariesEmailsTests {
 
 	private static final String ALLOWED_CHARS_DOMAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
 	private static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";

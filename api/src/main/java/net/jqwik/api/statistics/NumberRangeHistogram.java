@@ -130,7 +130,7 @@ public class NumberRangeHistogram extends Histogram {
 			}
 		}
 
-		BigInteger maxBigInteger = max.setScale(0, BigDecimal.ROUND_UP).toBigInteger();
+		BigInteger maxBigInteger = max.setScale(0, RoundingMode.UP).toBigInteger();
 		return Tuple.of(min.toBigInteger(), maxBigInteger);
 	}
 
