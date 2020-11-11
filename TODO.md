@@ -1,14 +1,14 @@
 - 1.3.8
 
-    - Default email generation through annotation `@Email`
+    - Setup Github actions
 
-    - Change to main branch
-    
     - Generate documentation
     
     - Release
     
 - 1.3.x
+
+    - Default email generation through annotation `@Email`
 
     - Add Arbitrary.sampleStream(DomainContext ... contexts) for sampling
       from given contexts.
