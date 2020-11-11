@@ -1,10 +1,8 @@
 - 1.3.8
 
-    - Setup Github actions
-
-    - Generate documentation
+    - Generate documentation for 1.3.8
     
-    - Release
+    - Release 1.3.8
     
 - 1.3.x
 
