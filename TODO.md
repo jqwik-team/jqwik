@@ -1,8 +1,4 @@
-- 1.3.8
-
-    - Release 1.3.8
-    
-- 1.3.x
+- 1.3.9
 
     - Fix javadoc links ("--" -> "()") 
 
@@ -11,6 +7,8 @@
     - Add Arbitrary.sampleStream(DomainContext ... contexts) for sampling
       from given contexts.
         - Also Arbitrary.sample(DomainContext ... contexts)
+
+- 1.3.x
 
     - Deprecate Arbitrary.unique()
     
