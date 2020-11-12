@@ -1138,7 +1138,7 @@ The starting point for generation usually is a static method call on class
 
 #### Generate values yourself
 
-- [`Arbitrary<T> randomValue(Function<Random, T> generator)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#randomValue-java.util.function.Function-): 
+- [`Arbitrary<T> randomValue(Function<Random, T> generator)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#randomValue(java.util.function.Function)): 
   Take a `random` instance and create an object from it.
   Those values cannot be [shrunk](#result-shrinking), though.
   
@@ -1158,34 +1158,34 @@ The starting point for generation usually is a static method call on class
   }
   ```
 
-- [`Arbitrary<T> fromGenerator(RandomGenerator<T> generator)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#fromGenerator-net.jqwik.api.RandomGenerator-):
+- [`Arbitrary<T> fromGenerator(RandomGenerator<T> generator)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#fromGenerator(net.jqwik.api.RandomGenerator)):
   If the number of _tries_ influences value generation or if you want 
   to allow for [shrinking](#result-shrinking) you have to provide 
   your own `RandomGenerator` implementation. 
   
 #### Select or generate values randomly
 
-- [`Arbitrary<U> of(U... values)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#of-U...-):
+- [`Arbitrary<U> of(U... values)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#of(U...)):
   Choose randomly from a list of values. Shrink towards the first one.
   
-- [`Arbitrary<U> ofSuppliers(Supplier<U>... valueSuppliers)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#ofSuppliers-java.util.function.Supplier...-):
+- [`Arbitrary<U> ofSuppliers(Supplier<U>... valueSuppliers)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#ofSuppliers(java.util.function.Supplier...)):
   Choose randomly from a list of value suppliers and get the object from this supplier.
   This is useful when dealing with mutable objects where `Arbitrary.of(..)` would reuse a potentially changed object.
   
-- [`Arbitrary<T> just(T constantValue)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#just-T-):
+- [`Arbitrary<T> just(T constantValue)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#just(T)):
   Always provide the same constant value in each try. Mostly useful to combine with other arbitraries.
     
-- [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#of-java.lang.Class-):
+- [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#of(java.lang.Class)):
   Choose randomly from all values of an `enum`. Shrink towards first enum value.
 
-- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#create-java.util.function.Supplier-): 
+- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#create(java.util.function.Supplier)): 
   In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
   This is useful when dealing with mutable objects where `Arbitrary.just()` may reuse a changed object.
 
 #### Select randomly with Weights
 
-If you have a set of values to choose from with weighted probabilities, use `
-[`Arbitraries.frequency(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#frequency-net.jqwik.api.Tuple.Tuple2...-):
+If you have a set of values to choose from with weighted probabilities, use
+[`Arbitraries.frequency(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#frequency(net.jqwik.api.Tuple.Tuple2...)):
 
 ```java
 @Property
@@ -1214,25 +1214,25 @@ Shrinking moves towards the start of the frequency list.
 
 #### Characters and Strings
 
-- [`StringArbitrary strings()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#strings--)
-- [`CharacterArbitrary chars()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#chars--)
+- [`StringArbitrary strings()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#strings()))
+- [`CharacterArbitrary chars()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#chars()))
 
 #### java.util.Random
 
-- [`Arbitrary<Random> randoms()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#randoms--): 
+- [`Arbitrary<Random> randoms()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#randoms()): 
   Random instances will never be shrunk
 
 #### Shuffling Permutations
 
-- [`Arbitrary<List<T>> shuffle(T ... values)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#shuffle-T...-):
+- [`Arbitrary<List<T>> shuffle(T ... values)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#shuffle(T...):
   Return unshrinkable permutations of the `values` handed in.
 
-- [`Arbitrary<List<T>> shuffle(List<T> values)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#shuffle-java.util.List-):
+- [`Arbitrary<List<T>> shuffle(List<T> values)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#shuffle(java.util.List):
   Return unshrinkable permutations of the `values` handed in.
 
 #### Default Types
 
-- [`Arbitrary<T> defaultFor(Class<T> type, Class<?> ... parameterTypes)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#defaultFor-java.lang.Class-java.lang.Class...-): 
+- [`Arbitrary<T> defaultFor(Class<T> type, Class<?> ... parameterTypes)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#defaultFor-java.lang.Class(java.lang.Class...)): 
   Return the default arbitrary available for type `type` [if one is provided](#providing-default-arbitraries)
   by default. For parameterized types you can also specify the parameter types. 
   
@@ -1300,17 +1300,17 @@ but all numeric arbitrary types share some things:
 
 #### Integrals
 
-- [`ByteArbitrary bytes()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bytes--)
-- [`ShortArbitrary shorts()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#shorts--)
-- [`IntegerArbitrary integers()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#integers--)
-- [`LongArbitrary longs()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#longs--)
-- [`BigIntegerArbitrary bigIntegers()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bigIntegers--)
+- [`ByteArbitrary bytes()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bytes())
+- [`ShortArbitrary shorts()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#shorts())
+- [`IntegerArbitrary integers()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#integers())
+- [`LongArbitrary longs()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#longs())
+- [`BigIntegerArbitrary bigIntegers()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bigIntegers())
 
 #### Decimals
 
-- [`FloatArbitrary floats()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#floats--)
-- [`DoubleArbitrary doubles()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#doubles--)
-- [`BigDecimalArbitrary bigDecimals()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bigDecimals--)
+- [`FloatArbitrary floats()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#floats())
+- [`DoubleArbitrary doubles()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#doubles())
+- [`BigDecimalArbitrary bigDecimals()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bigDecimals())
 
 Decimal arbitrary types come with a few additional capabilities:
 
@@ -1323,25 +1323,25 @@ Decimal arbitrary types come with a few additional capabilities:
 
 With release `1.3.0` jqwik provides you with a means to influence the probability distribution
 of randomly generated numbers. The way to do that is by calling 
-[`withDistribution(distribution)`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/NumericalArbitrary.html#withDistribution-net.jqwik.api.RandomDistribution-).
+[`withDistribution(distribution)`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/NumericalArbitrary.html#withDistribution(net.jqwik.api.RandomDistribution)).
 Currently three different distributions are supported:
 
-- [`RandomDistribution.biased()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#biased--): 
+- [`RandomDistribution.biased()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#biased()): 
   This is the default. 
   It generates values closer to the center of a numerical range with a higher probability. 
   The bigger the range the stronger the bias.
 
-- [`RandomDistribution.uniform()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#uniform--): 
+- [`RandomDistribution.uniform()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#uniform()): 
   This distribution will generate values across the allowed range 
   with a uniform probability distribution.
   
-- [`RandomDistribution.gaussian(borderSigma)`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#gaussian-double-): 
+- [`RandomDistribution.gaussian(borderSigma)`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#gaussian(double)): 
   A (potentially asymmetric) gaussian distribution -- 
-  aka "normal distribution" -- the mean of which is the specified center 
+  aka "normal distribution" () the mean of which is the specified center 
   and the probability at the borders is `borderSigma` times _standard deviation_.
   Gaussian generation is approximately 10 times slower than biased or uniform generation.
 
-- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#gaussian--): 
+- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#gaussian()): 
   A gaussian distribution with `borderSigma` of 3, i.e. approximately 99.7% of values are within the borders.
 
 The specified distribution does not influence the generation of [edge cases](#generation-of-edge-cases).
@@ -1402,18 +1402,18 @@ This is because they will be generated a few times as edge cases.
 Arbitraries for multi value types require to start with an `Arbitrary` instance for the element type. 
 You can then create the corresponding multi value arbitrary from there:
 
-- [`ListArbitrary<T> Arbitrary.list()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#list--)
-- [`SetArbitrary<T> Arbitrary.set()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#set--)
-- [`StreamArbitrary<T> Arbitrary.streamOf()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#stream--)
-- [`IteratorArbitrary<T> Arbitrary.iterator()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#iterator--)
-- [`StreamableArbitrary<T, A> Arbitrary.array(Class<A> arrayClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
+- [`ListArbitrary<T> Arbitrary.list()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#list())
+- [`SetArbitrary<T> Arbitrary.set()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#set())
+- [`StreamArbitrary<T> Arbitrary.streamOf()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#stream())
+- [`IteratorArbitrary<T> Arbitrary.iterator()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#iterator())
+- [`StreamableArbitrary<T, A> Arbitrary.array(Class<A> arrayClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#array(java.lang.Class))
 
 ### Collecting Values in a List
 
 If you do not want any random combination of values in your list - as 
 can be done with `Arbitrary.list()` - you have the possibility to collect random values
 in a list until a certain condition is fulfilled. 
-[`Arbitrary.collect(Predicate condition)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#collect-java.util.function.Predicate-)
+[`Arbitrary.collect(Predicate condition)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#collect(java.util.function.Predicate))
 is what you need in those cases.
 
 Imagine you need a list of integers the sum of which should be at least `1000`.
@@ -1426,7 +1426,7 @@ Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000)
 
 ### Optional
 
-Using [`Arbitrary.optional()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#optional--)
+Using [`Arbitrary.optional()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#optional())
 allows to generate an optional of any type. 
 `Optional.empty()` values are injected with a probability of `0.05`, i.e. 1 in 20.
 
@@ -1440,17 +1440,17 @@ Arbitrary<Tuple.Tuple2> integerPair = Arbitrary.integers().between(1, 25).tuple2
 
 There's a method for tuples of length 1 to 4:
 
-- [`Arbitrary.tuple1()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple1--)
-- [`Arbitrary.tuple2()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple2--)
-- [`Arbitrary.tuple3()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple3--)
-- [`Arbitrary.tuple4()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple4--)
-- [`Arbitrary.tuple5()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple5--)
+- [`Arbitrary.tuple1()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple1())
+- [`Arbitrary.tuple2()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple2())
+- [`Arbitrary.tuple3()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple3())
+- [`Arbitrary.tuple4()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple4())
+- [`Arbitrary.tuple5()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple5())
 
 ### Maps
 
 Generating instances of type `Map` is a bit different since two arbitraries
 are needed, one for the key and one for the value. Therefore you have to use
-[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-) like this:
+[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary(net.jqwik.api.Arbitrary)) like this:
 
 ```java
 @Property
@@ -1468,7 +1468,7 @@ Arbitrary<Map<Integer, String>> numberMaps() {
 ```
 
 For generating individual `Map.Entry` instances there is
-[`Arbitraries.entries(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-).
+[`Arbitraries.entries(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary)).
 
 
 ### Functional Types
@@ -1571,7 +1571,7 @@ Arbitrary<List<Integer>> fixedSizedListOfPositiveIntegers() {
 ### Generate `null` values
 
 Predefined generators will never create `null` values. If you want to allow that,
-call [`Arbitrary.injectNull(double probability)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#injectNull-double-). 
+call [`Arbitrary.injectNull(double probability)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#injectNull(double)). 
 The following provider method creates an arbitrary that will return a `null` String 
 in about 1 of 100 generated values.
 
@@ -1661,7 +1661,7 @@ for the two String values - using `tuple2()` does that.
 
 If you want to include only part of all the values generated by an arbitrary,
 use 
-[`Arbitrary.filter(Predicate<T> filterPredicate)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#filter-java.util.function.Predicate-). 
+[`Arbitrary.filter(Predicate<T> filterPredicate)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#filter(java.util.function.Predicate)). 
 The following arbitrary will filter out all
 even numbers from the stream of generated integers:
 
@@ -1680,7 +1680,7 @@ the current property will be abandoned by throwing an exception.
 
 If you want to make sure that all the values generated by an arbitrary are unique,
 use
-[`Arbitrary.unique()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#unique--).
+[`Arbitrary.unique()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#unique()).
 The following arbitrary will generate integers between 1 and 1000 but never the same integer twice:
 
 ```java
@@ -1698,7 +1698,7 @@ the current property will be abandoned by throwing an exception.
 
 Sometimes it's easier to start with an existing arbitrary and use its generated values to
 build other objects from them. In that case, use 
-[`Arbitrary.map(Function<T, U> mapper)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#map-java.util.function.Function-).
+[`Arbitrary.map(Function<T, U> mapper)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#map(java.util.function.Function)).
 The following example uses generated integers to create numerical Strings: 
 
 ```java
@@ -1751,7 +1751,7 @@ However, both have dependencies:
 - `end` must not be larger than the string size
 - `begin` must not be larger than `end`
 You can make _jqwik_ create all three values by using 
-[`flatMap`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#flatMap-java.util.function.Function-) 
+[`flatMap`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#flatMap(java.util.function.Function)) 
 combined with a tuple type 
 [like this](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/FlatMappingExamples.java#L32):
 
@@ -1844,7 +1844,7 @@ Arbitrary<Integer> oneOfThree() {
 Sometimes just mapping a single stream of generated values is not enough to generate
 a more complicated domain object. In those cases you can combine several arbitraries to
 a single result arbitrary using 
-[`Combinators.combine()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#combine-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-) 
+[`Combinators.combine()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#combine(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary)) 
 with up to eight arbitraries. 
 [Create an issue on github](https://github.com/jlink/jqwik/issues) if you need more than eight. 
 
@@ -1948,8 +1948,8 @@ Arbitrary<Person> validPeopleWithBuilder() {
 ```
 
 Have a look at 
-[Combinators.withBuilder(Supplier)](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#withBuilder-java.util.function.Supplier-)
-and [Combinators.withBuilder(Arbitrary)](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#withBuilder-net.jqwik.api.Arbitrary-)
+[Combinators.withBuilder(Supplier)](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#withBuilder(java.util.function.Supplier))
+and [Combinators.withBuilder(Arbitrary)](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#withBuilder(net.jqwik.api.Arbitrary))
 to check the API.
 
 #### Flat Combination
@@ -2029,7 +2029,7 @@ Some generators (e.g. most number generators) are sensitive to the
 The default value for `genSize` is the number of tries configured for the property
 they are used in. If there is a need to influence the behaviour of generators
 you can do so by using 
-[`Arbitrary.fixGenSize(int)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize-int-)..
+[`Arbitrary.fixGenSize(int)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize(int))..
 
 ## Recursive Arbitraries
 
@@ -2074,7 +2074,7 @@ private StringArbitrary word() {
 
 There are two things to which you must pay attention:
 
-- Use [`Arbitraries.lazyOf(Supplier<Arbitrary<T>>...suppliers)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#lazyOf-java.util.function.Supplier-java.util.function.Supplier...-) 
+- Use [`Arbitraries.lazyOf(Supplier<Arbitrary<T>>...suppliers)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#lazyOf(java.util.function.Supplier,java.util.function.Supplier...)) 
   to wrap the recursive call itself. 
   Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
 - Every recursion needs one or more base cases in order to stop recursion at some point. 
@@ -2156,7 +2156,7 @@ Arbitrary<String> deterministic(int length, Arbitrary<String> sentence) {
 ### Deterministic Recursion with `recursive()`
 
 To further simplify this _jqwik_ provides a helper function:
-[`Arbitraries.recursive(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#recursive-java.util.function.Supplier-java.util.function.Function-int-).
+[`Arbitraries.recursive(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#recursive(java.util.function.Supplier,java.util.function.Function,int)).
 Using that further simplifies the example:
 
 ```java
@@ -2191,7 +2191,7 @@ in which you might want to generate values directly.
 ### Generating a Single Value
 
 Getting a single random value out of an arbitrary is easy and can be done
-with [`Arbitrary.sample()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#sample--):
+with [`Arbitrary.sample()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#sample()):
 
 ```java
 Arbitrary<String> strings = Arbitraries.of("string1", "string2", "string3");
@@ -2207,7 +2207,7 @@ freshly instantiated if used outside a property.
 
 ### Generating a Stream of Values
 
-Getting a stream of generated values is just as easy with [`Arbitrary.sampleStream()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#sampleStream--):
+Getting a stream of generated values is just as easy with [`Arbitrary.sampleStream()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#sampleStream()):
 
 ```java
 List<String> values = Arrays.asList("string1", "string2", "string3");
@@ -2221,7 +2221,7 @@ assertThat(streamOfStrings).allMatch(values::contains);
 
 There are a few cases when you don't want to generate individual values from an
 arbitrary but use all possible values to construct another arbitrary. This can be achieved through
-[`Arbitrary.allValues()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#allValues--).
+[`Arbitrary.allValues()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#allValues()).
 
 Return type is `Optional<Stream<T>>` because _jqwik_ can only perform this task if
 [exhaustive generation](#exhaustive-generation) is doable.
@@ -2231,7 +2231,7 @@ Return type is `Optional<Stream<T>>` because _jqwik_ can only perform this task 
 
 You can also use an arbitrary to iterate through all values it specifies.
 Use
-[`Arbitrary.forEachValue(Consumer action)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#forEachValue-java.util.function.Consumer-).
+[`Arbitrary.forEachValue(Consumer action)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#forEachValue(java.util.function.Consumer)).
 for that purpose. This only works when [exhaustive generation](#exhaustive-generation) is possible.
 In other cases the attempt to iterate will result in an exception.
 
@@ -2451,7 +2451,7 @@ The interesting API elements are
   A generic collection type especially crafted for holding and shrinking of a list of actions.
   As a convenience it will apply the actions to a state-based object when you call `run(state)`.
   
-- [`Arbitraries.sequences()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#sequences-net.jqwik.api.Arbitrary-):
+- [`Arbitraries.sequences()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#sequences(net.jqwik.api.Arbitrary)):
   This method will create the arbitrary for generating an `ActionSequence` given the
   arbitrary for generating actions.
 
@@ -2550,7 +2550,7 @@ boolean comparingUnequalStrings(
 ```
 
 This is a reasonable use of 
-[`Assume.that(boolean condition)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Assume.html#that-boolean-) 
+[`Assume.that(boolean condition)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Assume.html#that(boolean)) 
 because most generated value sets will pass through.
 
 Have a look at a seemingly similar example:
@@ -2594,7 +2594,7 @@ cases - of 1000 generated - will actually be checked.
 In many cases turning up the accepted discard ration is a bad idea. With some creativity
 we can often avoid the problem by generating out test data a bit differently. 
 Look at this variant of the above property, which also uses 
-[`Assume.that()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Assume.html#that-boolean-)
+[`Assume.that()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Assume.html#that(boolean))
 but with a much lower discard ratio:
 
 ```java
@@ -2797,7 +2797,7 @@ described [above](#failure-reporting).
 In many situations you'd like to know if _jqwik_ will really generate
 the kind of values you expect and if the frequency and distribution of
 certain value classes meets your testing needs. 
-[`Statistics.collect()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#collect-java.lang.Object...-)
+[`Statistics.collect()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#collect(java.lang.Object...))
 is made for this exact purpose.
 
 In the most simple case you'd like to know how often a certain value
@@ -3120,7 +3120,7 @@ void labeledStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
 ```
 
 Start by looking at
-[`Statistics.coverage()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#coverage-java.util.function.Consumer-)
+[`Statistics.coverage()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#coverage(java.util.function.Consumer))
 to see all the options you have for checking percentages and counts.
 
 #### Check Ad-hoc Query Coverage
@@ -3498,7 +3498,7 @@ and check the following api entry points:
 
 - [UseType](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/UseType.html)
 - [UseTypeMode](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/UseTypeMode.html)
-- [Arbitraries.forType()](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#forType-java.lang.Class-)
+- [Arbitraries.forType()](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#forType(java.lang.Class))
 - [TypeArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/TypeArbitrary.html)
 
 ## Generation of Edge Cases
@@ -3792,7 +3792,7 @@ There are a few fundamental principles that determine and constrain the lifecycl
    you cannot use non-static inner classes of test containers to implement lifecycle interfaces.
 7. If relevant, the order in which hook methods are being applied is determined by dedicated methods
    in the hook interface, e.g. 
-   [`BeforeContainerHook.beforeContainerProximity()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--).
+   [`BeforeContainerHook.beforeContainerProximity()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity()).
    
 Mind that much of what you can do with hooks can also be done using the simpler
 mechanisms of [annotated lifecycle methods](#annotated-lifecycle-methods) or
@@ -3806,10 +3806,10 @@ reuse generic behaviour in many places or even across projects.
 All lifecycle hook interfaces extend `net.jqwik.api.lifecycle.LifecycleHook` which
 has two methods that may be overridden:
 
-- [`propagateTo()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--):
+- [`propagateTo()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo()):
   Determine if and how a hook will be propagated to an element's children.
 
-- [`appliesTo(Optional<AnnotatedElement>)`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html#appliesTo-java.util.Optional-):
+- [`appliesTo(Optional<AnnotatedElement>)`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html#appliesTo(java.util.Optional)):
   Determine if a hook will be applied to a concrete element. For example, you might want to constrain a certain hook
   to apply only to property methods and not to containers:
   
@@ -3842,6 +3842,7 @@ With these hooks you can determine if a test element will be run at all,
 and what potential actions should be done before or after running it.
 
 ##### SkipExecutionHook
+
 
 Implement [`SkipExecutionHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html) 
 to filter out a test container or property method depending on some runtime condition.
@@ -4195,7 +4196,7 @@ There are a few interesting things going on:
 - The temporary file is created only once per try. 
   That means that all parameters in the scope of this try will contain _the same file_.
 - A callback is added through 
-  [`onClose(..)`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Store.html#onClose-java.util.function.Consumer-) 
+  [`onClose(..)`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Store.html#onClose(java.util.function.Consumer)) 
   which takes care of deleting the file as soon as the lifespan's scope (the try) is finished.
   
 With this information you can probably figure out how the following test container works -- 

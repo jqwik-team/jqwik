@@ -1,7 +1,5 @@
 - 1.3.9
 
-    - Fix javadoc links ("--" -> "()") 
-
     - Default email generation through annotation `@Email`
 
     - Add Arbitrary.sampleStream(DomainContext ... contexts) for sampling
