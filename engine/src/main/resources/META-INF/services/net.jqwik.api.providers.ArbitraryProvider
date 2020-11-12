@@ -11,3 +11,4 @@ net.jqwik.engine.providers.BigDecimalArbitraryProvider
 net.jqwik.engine.providers.StringArbitraryProvider
 net.jqwik.engine.providers.RandomArbitraryProvider
 net.jqwik.engine.providers.ObjectArbitraryProvider
+net.jqwik.engine.providers.EmailArbitraryProvider
