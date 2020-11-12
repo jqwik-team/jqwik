@@ -1382,7 +1382,7 @@ Shrinking moves towards the start of the frequency list.
 ### Email Address Generation
 
 To generate email addresses you can call up the static method
-[`Arbitraries.emails()`](/docs/1.3.8/javadoc/net/jqwik/api/Arbitraries.html#emails--). 
+[`Arbitraries.emails()`](/docs/1.3.8/javadoc/net/jqwik/api/Arbitraries.html#emails()). 
 
 An email address consists of two parts: `local-part` and `domain`. The complete email address is therefore `local-part@domain`.
 The `local-part` can be `unquoted` or `quoted`, which allows for more characters.
