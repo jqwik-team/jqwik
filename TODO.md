@@ -1,10 +1,10 @@
 - 1.3.8
 
-    - Generate documentation for 1.3.8
-    
     - Release 1.3.8
     
 - 1.3.x
+
+    - Fix javadoc links ("--" -> "()") 
 
     - Default email generation through annotation `@Email`
 
