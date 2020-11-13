@@ -21,4 +21,6 @@ public @interface Email {
 	boolean allowDomains() default true;
 	boolean allowIPv6() default true;
 	boolean allowIPv4() default true;
+	boolean allowQuotedLocalPart() default true;
+	boolean allowUnquotedLocalPart() default true;
 }
