@@ -25,11 +25,6 @@ class ArbitrariesEmailsTests {
 	class AllGeneratedEmailAddressesAreValid {
 
 		@Property(tries = 10)
-		void stringTest(@ForAll @AlphaChars String test){
-			System.out.println(test);
-		}
-
-		@Property(tries = 10)
 		void containsAtSign(@ForAll @Email String email) {
 			assertThat(email).contains("@");
 		}
