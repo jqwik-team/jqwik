@@ -144,7 +144,19 @@ class ArbitrariesEmailsTests {
 		@Property
 		void onlyDomainsAreGenerated(@ForAll @Email(allowIPv6 = false, allowIPv4 = false) String email){
 			String domain = getDomainOfEmail(email);
-			assertThat(!isIPAddress(domain)).isTrue();
+			assertThat(isIPAddress(domain)).isFalse();
+		}
+
+		@Property
+		void onlyQuotedLocalPartsAreGenerated(@ForAll @Email(allowUnquotedLocalPart = false) String email){
+			String localPart = getLocalPartOfEmail(email);
+			assertThat(isQuoted(localPart)).isTrue();
+		}
+
+		@Property
+		void onlyUnquotedLocalPartsAreGenerated(@ForAll @Email(allowQuotedLocalPart = false) String email){
+			String localPart = getLocalPartOfEmail(email);
+			assertThat(isQuoted(localPart)).isFalse();
 		}
 
 	}
