@@ -5,7 +5,6 @@ import org.apiguardian.api.API;
 import java.lang.annotation.*;
 
 import static org.apiguardian.api.API.Status.EXPERIMENTAL;
-import static org.apiguardian.api.API.Status.MAINTAINED;
 
 /**
  * Constrain strings to be valid email addresses
