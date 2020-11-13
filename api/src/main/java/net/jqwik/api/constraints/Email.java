@@ -18,4 +18,7 @@ import static org.apiguardian.api.API.Status.EXPERIMENTAL;
 @Documented
 @API(status = EXPERIMENTAL, since = "1.3.9")
 public @interface Email {
+	boolean allowDomains() default true;
+	boolean allowIPv6() default true;
+	boolean allowIPv4() default true;
 }

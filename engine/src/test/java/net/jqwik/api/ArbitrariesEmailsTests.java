@@ -119,6 +119,37 @@ class ArbitrariesEmailsTests {
 	}
 
 	@Group
+	class checkAnnotationProperties {
+
+		@Property
+		void onlyIPAddressesAreGenerated(@ForAll @Email(allowDomains = false) String email){
+			String domain = getDomainOfEmail(email);
+			assertThat(isIPAddress(domain)).isTrue();
+		}
+
+		@Property
+		void onlyIPv4AddressesAreGenerated(@ForAll @Email(allowDomains = false, allowIPv6 = false) String email){
+			String domain = getDomainOfEmail(email);
+			assertThat(isIPAddress(domain)).isTrue();
+			assertThat(domain).contains(".");
+		}
+
+		@Property
+		void onlyIPv6AddressesAreGenerated(@ForAll @Email(allowDomains = false, allowIPv4 = false) String email){
+			String domain = getDomainOfEmail(email);
+			assertThat(isIPAddress(domain)).isTrue();
+			assertThat(domain).contains(":");
+		}
+
+		@Property
+		void onlyDomainsAreGenerated(@ForAll @Email(allowIPv6 = false, allowIPv4 = false) String email){
+			String domain = getDomainOfEmail(email);
+			assertThat(!isIPAddress(domain)).isTrue();
+		}
+
+	}
+
+	@Group
 	class CheckAllVariantsAreCovered {
 
 		@Property
