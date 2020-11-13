@@ -15,7 +15,13 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, ArbitraryProvider.SubtypeProvider subtypeProvider) {
-		return Collections.singleton(Arbitraries.emails());
+		Email email = targetType.findAnnotation(Email.class).get();
+		boolean allowQuotedLocalPart = email.allowQuotedLocalPart();
+		boolean allowUnquotedLocalPart = email.allowUnquotedLocalPart();
+		boolean allowDomains = email.allowDomains();
+		boolean allowIPv4 = email.allowIPv4();
+		boolean allowIPv6 = email.allowIPv6();
+		return Collections.singleton(Arbitraries.emails(allowQuotedLocalPart, allowUnquotedLocalPart, allowDomains, allowIPv4, allowIPv6));
 	}
 
 	@Override
