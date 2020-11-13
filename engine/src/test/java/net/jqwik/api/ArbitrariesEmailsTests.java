@@ -3,6 +3,7 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
@@ -24,38 +25,43 @@ class ArbitrariesEmailsTests {
 	class AllGeneratedEmailAddressesAreValid {
 
 		@Property(tries = 10)
-		void containsAtSign(@ForAll("emails") String email) {
+		void stringTest(@ForAll @AlphaChars String test){
+			System.out.println(test);
+		}
+
+		@Property(tries = 10)
+		void containsAtSign(@ForAll @Email String email) {
 			assertThat(email).contains("@");
 		}
 
 		@Property
-		void validLengthBeforeAt(@ForAll("emails") String email) {
+		void validLengthBeforeAt(@ForAll @Email String email) {
 			String localPart = getLocalPartOfEmail(email);
 			assertThat(localPart.length()).isBetween(1, 64);
 		}
 
 		@Property
-		void validLengthAfterAt(@ForAll("emails") String email) {
+		void validLengthAfterAt(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(domain.length()).isBetween(1, 253);
 		}
 
 		@Property
-		void validSignsBeforeAtUnquoted(@ForAll("emails") String email) {
+		void validSignsBeforeAtUnquoted(@ForAll @Email String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(!isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_UNQUOTED, c));
 		}
 
 		@Property
-		void validSignsBeforeAtQuoted(@ForAll("emails") String email) {
+		void validSignsBeforeAtQuoted(@ForAll @Email String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_QUOTED, c));
 		}
 
 		@Property
-		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll("emails") String email) {
+		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll @Email String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			localPart = localPart.substring(1, localPart.length() - 1);
@@ -65,7 +71,7 @@ class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validUseOfDotBeforeAt(@ForAll("emails") String email) {
+		void validUseOfDotBeforeAt(@ForAll @Email String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(!isQuoted(localPart));
 			assertThat(localPart).doesNotContain("..");
@@ -74,14 +80,14 @@ class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validSignsAfterAt(@ForAll("emails") String email) {
+		void validSignsAfterAt(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_DOMAIN, c));
 		}
 
 		@Property
-		void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email) {
+		void validUseOfHyphenAndDotAfterAt(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.charAt(0)).isNotEqualTo('-');
@@ -94,7 +100,7 @@ class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validMaxDomainLengthAfterAt(@ForAll("emails") String email) {
+		void validMaxDomainLengthAfterAt(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			String[] domainParts = domain.split("\\.");
@@ -104,7 +110,7 @@ class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validIPAddressAfterAt(@ForAll("emails") String email) {
+		void validIPAddressAfterAt(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
@@ -121,7 +127,7 @@ class ArbitrariesEmailsTests {
 	class CheckAllVariantsAreCovered {
 
 		@Property
-		void quotedAndUnquotedUsernamesAreGenerated(@ForAll("emails") String email) {
+		void quotedAndUnquotedUsernamesAreGenerated(@ForAll @Email String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Statistics.label("Quoted usernames")
 					  .collect(isQuoted(localPart))
@@ -132,7 +138,7 @@ class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void domainsAndIPAddressesAreGenerated(@ForAll("emails") String email) {
+		void domainsAndIPAddressesAreGenerated(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
 			Statistics.label("Domains")
 					  .collect(isIPAddress(domain))
@@ -143,7 +149,7 @@ class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void IPv4AndIPv6AreGenerated(@ForAll("emails") String email) {
+		void IPv4AndIPv6AreGenerated(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
@@ -156,7 +162,7 @@ class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void domainsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email) {
+		void domainsWithOneAndMorePartsAreGenerated(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			int domainParts = (int) (domain.chars().filter(v -> v == '.').count() + 1);
@@ -325,11 +331,6 @@ class ArbitrariesEmailsTests {
 		int index = email.lastIndexOf('@');
 		String substring = email.substring(index + 1);
 		return substring;
-	}
-
-	@Provide
-	Arbitrary<String> emails() {
-		return Arbitraries.emails();
 	}
 
 }

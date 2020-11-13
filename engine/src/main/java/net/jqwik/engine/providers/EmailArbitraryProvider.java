@@ -10,14 +10,16 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		Optional<Email> annotation = targetType.findAnnotation(Email.class);
-		return !annotation.equals(Optional.empty());
+		return targetType.isAssignableFrom(String.class) && targetType.findAnnotation(Email.class).isPresent();
 	}
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, ArbitraryProvider.SubtypeProvider subtypeProvider) {
 		return Collections.singleton(Arbitraries.emails());
 	}
 
+	@Override
+	public int priority() {
+		return 5;
+	}
 }
