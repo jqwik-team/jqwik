@@ -157,7 +157,7 @@ class CheckedPropertyTests {
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = createCheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+				p -> Collections.singleton(Arbitraries.integers().between(-100, 100).asGeneric()),
 				Optional.empty(),
 				aConfig().withSeed("414243").withTries(20).withEdgeCases(EdgeCasesMode.MIXIN).build(),
 				lifecycleContextForMethod("prop1", int.class)
@@ -183,7 +183,7 @@ class CheckedPropertyTests {
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = createCheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+				p -> Collections.singleton(Arbitraries.integers().between(-100, 100).asGeneric()),
 				Optional.empty(),
 				aConfig()
 					.withSeed("")
@@ -203,7 +203,7 @@ class CheckedPropertyTests {
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = createCheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+				p -> Collections.singleton(Arbitraries.integers().between(-100, 100).asGeneric()),
 				Optional.empty(),
 				aConfig()
 					.withSeed("")
@@ -223,7 +223,7 @@ class CheckedPropertyTests {
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = createCheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+				p -> Collections.singleton(Arbitraries.integers().between(-100, 100).asGeneric()),
 				Optional.empty(),
 				aConfig()
 					.withSeed("4242")
@@ -463,7 +463,7 @@ class CheckedPropertyTests {
 				CheckedFunction checkSample = params -> true;
 				CheckedProperty checkedProperty = createCheckedProperty(
 					"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
-					p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+					p -> Collections.singleton(Arbitraries.integers().between(-100, 100).asGeneric()),
 					Optional.empty(),
 					aConfig().withTries(10).withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_FIRST).build(),
 					lifecycleContextForMethod("sampleProperty", int.class, int.class)
@@ -507,7 +507,7 @@ class CheckedPropertyTests {
 
 		CheckedProperty checkedProperty = createCheckedProperty(
 			methodName, forAllFunction, getParametersForMethod(methodName),
-			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))),
+			p -> Collections.singleton(Arbitraries.integers().between(-50, 50).asGeneric()),
 			Optional.empty(),
 			aConfig().build(),
 			lifecycleContextForMethod(methodName, parameterTypes)

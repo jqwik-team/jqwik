@@ -99,7 +99,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	private static Set<Arbitrary<Object>> resolveArbitraries(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
 		Set<Arbitrary<Object>> arbitraries =
 			arbitraryResolver.forParameter(parameter).stream()
-							 .map(GenericArbitrary::new)
+							 .map(Arbitrary::asGeneric)
 							 .collect(Collectors.toSet());
 		if (arbitraries.isEmpty()) {
 			throw new CannotFindArbitraryException(TypeUsageImpl.forParameter(parameter), parameter.getAnnotation(ForAll.class));

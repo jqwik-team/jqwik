@@ -64,7 +64,6 @@ public interface Arbitrary<T> {
 	RandomGenerator<T> generator(int genSize);
 
 	/**
-	 * Sometimes simplifies test writing
 	 * @return The same instance but with type Arbitrary&lt;Object&gt;
 	 */
 	@SuppressWarnings("unchecked")

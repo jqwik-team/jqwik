@@ -2,9 +2,10 @@ package net.jqwik.engine.properties.arbitraries;
 
 import net.jqwik.api.*;
 
-public class DefaultEmailArbitrary extends AbstractArbitraryBase {
+public class DefaultEmailArbitrary extends ArbitraryDecorator<String> {
 
-	public Arbitrary<String> emails(){
+	@Override
+	protected Arbitrary<String> arbitrary(){
 		Arbitrary<String> arbitraryLocalPart = localPart();
 		Arbitrary<String> arbitraryDomain = domain();
 		return Combinators.combine(arbitraryLocalPart, arbitraryDomain).as((localPart, domain) -> localPart + "@" + domain);
@@ -51,6 +52,7 @@ public class DefaultEmailArbitrary extends AbstractArbitraryBase {
 		return address;
 	}
 
+	// TODO: Cyclomatic Complexity > 11
 	public static boolean validUseOfColonInIPv6Address(String ip){
 		boolean ipContainsThreeColons = ip.contains(":::");
 		boolean startsWithOnlyOneColon = ip.charAt(0) == ':' && ip.charAt(1) != ':';
