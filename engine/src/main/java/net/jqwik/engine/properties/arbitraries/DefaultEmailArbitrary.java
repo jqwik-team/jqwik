@@ -1,11 +1,11 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 
-public class DefaultEmailArbitrary extends ArbitraryDecorator<String> {
+public class DefaultEmailArbitrary extends AbstractArbitraryBase implements EmailArbitrary {
 
-	@Override
-	protected Arbitrary<String> arbitrary(){
+	public Arbitrary<String> emails(){
 		Arbitrary<String> arbitraryLocalPart = localPart();
 		Arbitrary<String> arbitraryDomain = domain();
 		return Combinators.combine(arbitraryLocalPart, arbitraryDomain).as((localPart, domain) -> localPart + "@" + domain);
@@ -52,7 +52,6 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> {
 		return address;
 	}
 
-	// TODO: Cyclomatic Complexity > 11
 	public static boolean validUseOfColonInIPv6Address(String ip){
 		boolean ipContainsThreeColons = ip.contains(":::");
 		boolean startsWithOnlyOneColon = ip.charAt(0) == ':' && ip.charAt(1) != ':';
@@ -113,4 +112,38 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> {
 		return domain;
 	}
 
+	@Override
+	public EmailArbitrary quotedLocalParts() {
+		return null;
+	}
+
+	@Override
+	public EmailArbitrary unquotedLocalParts() {
+		return null;
+	}
+
+	@Override
+	public EmailArbitrary ipv4Addresses() {
+		return null;
+	}
+
+	@Override
+	public EmailArbitrary ipv6Addresses() {
+		return null;
+	}
+
+	@Override
+	public EmailArbitrary domains() {
+		return null;
+	}
+
+	@Override
+	public RandomGenerator<String> generator(int genSize) {
+		return null;
+	}
+
+	@Override
+	public EdgeCases<String> edgeCases() {
+		return null;
+	}
 }

@@ -21,7 +21,7 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 		boolean allowDomains = email.allowDomains();
 		boolean allowIPv4 = email.allowIPv4();
 		boolean allowIPv6 = email.allowIPv6();
-		return Collections.singleton(Arbitraries.emails(allowQuotedLocalPart, allowUnquotedLocalPart, allowDomains, allowIPv4, allowIPv6));
+		return Collections.singleton(Arbitraries.emails());
 	}
 
 	@Override

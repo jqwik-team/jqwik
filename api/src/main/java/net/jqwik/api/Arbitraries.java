@@ -71,7 +71,6 @@ public class Arbitraries {
 		public abstract StringArbitrary strings();
 
 		public abstract Arbitrary<String> emails();
-		public abstract Arbitrary<String> emails(boolean allowQuotedLocalPart, boolean allowUnquotedLocalPart, boolean allowDomains, boolean allowIPv4, boolean allowIPv6);
 
 		public abstract CharacterArbitrary chars();
 
@@ -432,21 +431,6 @@ public class Arbitraries {
 	@API(status = EXPERIMENTAL, since = "1.3.8")
 	public static Arbitrary<String> emails() {
 		return ArbitrariesFacade.implementation.emails();
-	}
-
-	/**
-	 * Create an arbitrary that generates valid E-Mail addresses.
-	 *
-	 * @param allowQuotedLocalPart false if you don't want to have quoted local parts
-	 * @param allowUnquotedLocalPart false if you don't want to have unquoted local parts
-	 * @param allowDomains false if you don't want to have domains in the domain part
-	 * @param allowIPv4 false if you don't want to have IPv4 addresses in the domain part
-	 * @param allowIPv6 false if you don't want to have IPv6 addresses in the domain part
-	 * @return a new arbitrary instance
-	 */
-	@API(status = EXPERIMENTAL, since = "1.3.9")
-	public static Arbitrary<String> emails(boolean allowQuotedLocalPart, boolean allowUnquotedLocalPart, boolean allowDomains, boolean allowIPv4, boolean allowIPv6) {
-		return ArbitrariesFacade.implementation.emails(allowQuotedLocalPart, allowUnquotedLocalPart, allowDomains, allowIPv4, allowIPv6);
 	}
 
 	/**
