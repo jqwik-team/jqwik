@@ -22,6 +22,16 @@ class UseArbitrariesOutsideJqwikTests {
 	}
 
 	@Test
+	void defaultFor() {
+		Arbitrary<String> strings = Arbitraries.defaultFor(String.class);
+
+		strings.sampleStream().limit(100).forEach(value -> {
+			assertThat(value).isNotNull();
+			assertThat(value).isInstanceOf(String.class);
+		});
+	}
+
+	@Test
 	void forStrings() {
 		assertThat(Arbitraries.strings().sample()).isInstanceOf(String.class);
 	}

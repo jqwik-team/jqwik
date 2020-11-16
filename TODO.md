@@ -2,12 +2,6 @@
 
     - Default email generation through annotation `@Email`
 
-    - Add Arbitrary.sampleStream(DomainContext ... contexts) for sampling
-      from given contexts.
-        - Also Arbitrary.sample(DomainContext ... contexts)
-
-- 1.3.x
-
     - Deprecate Arbitrary.unique()
     
       Instead make something like List|Set|ArrayArbitrary.constraint(
@@ -16,6 +10,9 @@
         - ListArbitrary.uniqueElements()
         - ListArbitrary.uniqueElementsBy(Predicate<E> uniqueCondition)
         - How can that work across collections?
+
+
+- 1.3.x
 
     - Allow to add frequency to chars for String and Character arbitraries
       eg. StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
