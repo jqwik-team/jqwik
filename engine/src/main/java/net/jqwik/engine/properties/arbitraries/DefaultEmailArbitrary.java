@@ -3,7 +3,13 @@ package net.jqwik.engine.properties.arbitraries;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultEmailArbitrary extends ArbitraryDecorator<String> {
+public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements EmailArbitrary {
+
+	private boolean allowQuotedLocalPart = false;
+	private boolean allowUnquotedLocalPart = false;
+	private boolean allowDomains = false;
+	private boolean allowIPv4Addresses = false;
+	private boolean allowIPv6Addresses = false;
 
 	@Override
 	protected Arbitrary<String> arbitrary(){
@@ -13,9 +19,20 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> {
 	}
 
 	private Arbitrary<String> localPart(){
+		boolean allowUnquoted = allowUnquotedLocalPart;
+		boolean allowQuoted = allowQuotedLocalPart;
+		if(!allowUnquoted && !allowQuoted){
+			allowUnquoted = true;
+			allowQuoted = true;
+		}
 		Arbitrary<String> unquoted = localPartUnquoted();
 		Arbitrary<String> quoted = localPartQuoted();
-		return Arbitraries.oneOf(unquoted, quoted);
+		int frequencyUnquoted = allowUnquoted ? 1 : 0;
+		int frequencyQuoted = allowQuoted ? 1 : 0;
+		return Arbitraries.frequencyOf(
+				Tuple.of(frequencyUnquoted, unquoted),
+				Tuple.of(frequencyQuoted, quoted)
+		);
 	}
 
 	private Arbitrary<String> localPartUnquoted(){
@@ -34,10 +51,21 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> {
 	}
 
 	private Arbitrary<String> domain(){
+		boolean allowDomain = allowDomains;
+		boolean allowIPv4 = allowIPv4Addresses;
+		boolean allowIPv6 = allowIPv6Addresses;
+		if(!allowDomain && !allowIPv4 && !allowIPv6){
+			allowDomain = true;
+			allowIPv4 = true;
+			allowIPv6 = true;
+		}
+		int frequencyDomain = allowDomain ? 2 : 0;
+		int frequencyIPv4Addresses = allowIPv4 ? 1 : 0;
+		int frequencyIPv6Addresses = allowIPv6 ? 1 : 0;
 		return Arbitraries.frequencyOf(
-				Tuple.of(2, domainDomain()),
-				Tuple.of(1, domainIPv4()),
-				Tuple.of(1, domainIPv6())
+				Tuple.of(frequencyDomain, domainDomain()),
+				Tuple.of(frequencyIPv4Addresses, domainIPv4()),
+				Tuple.of(frequencyIPv6Addresses, domainIPv6())
 		);
 	}
 
@@ -114,4 +142,38 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> {
 		return domain;
 	}
 
+	@Override
+	public EmailArbitrary quotedLocalParts() {
+		DefaultEmailArbitrary clone = typedClone();
+		clone.allowQuotedLocalPart = true;
+		return clone;
+	}
+
+	@Override
+	public EmailArbitrary unquotedLocalParts() {
+		DefaultEmailArbitrary clone = typedClone();
+		clone.allowUnquotedLocalPart = true;
+		return clone;
+	}
+
+	@Override
+	public EmailArbitrary ipv4Addresses() {
+		DefaultEmailArbitrary clone = typedClone();
+		clone.allowIPv4Addresses = true;
+		return clone;
+	}
+
+	@Override
+	public EmailArbitrary ipv6Addresses() {
+		DefaultEmailArbitrary clone = typedClone();
+		clone.allowIPv6Addresses = true;
+		return clone;
+	}
+
+	@Override
+	public EmailArbitrary domains() {
+		DefaultEmailArbitrary clone = typedClone();
+		clone.allowDomains = true;
+		return clone;
+	}
 }
