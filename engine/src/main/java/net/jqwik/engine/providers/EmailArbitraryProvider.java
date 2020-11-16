@@ -1,6 +1,7 @@
 package net.jqwik.engine.providers;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
@@ -16,12 +17,23 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, ArbitraryProvider.SubtypeProvider subtypeProvider) {
 		Email email = targetType.findAnnotation(Email.class).get();
-		boolean allowQuotedLocalPart = email.allowQuotedLocalPart();
-		boolean allowUnquotedLocalPart = email.allowUnquotedLocalPart();
-		boolean allowDomains = email.allowDomains();
-		boolean allowIPv4 = email.allowIPv4();
-		boolean allowIPv6 = email.allowIPv6();
-		return Collections.singleton(Arbitraries.emails());
+		EmailArbitrary emailArbitrary = (EmailArbitrary) Arbitraries.emails();
+		if(email.allowQuotedLocalPart()){
+			emailArbitrary = emailArbitrary.quotedLocalParts();
+		}
+		if(email.allowUnquotedLocalPart()){
+			emailArbitrary = emailArbitrary.unquotedLocalParts();
+		}
+		if(email.allowDomains()){
+			emailArbitrary = emailArbitrary.domains();
+		}
+		if(email.allowIPv4()){
+			emailArbitrary = emailArbitrary.ipv4Addresses();
+		}
+		if(email.allowIPv6()){
+			emailArbitrary = emailArbitrary.ipv6Addresses();
+		}
+		return Collections.singleton(emailArbitrary);
 	}
 
 	@Override
