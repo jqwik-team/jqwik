@@ -13,27 +13,27 @@ import static org.apiguardian.api.API.Status.*;
 public interface EmailArbitrary extends Arbitrary<String> {
 
 	/**
-	 * Allow quoted local parts
+	 * Generates quoted local parts
 	 */
 	EmailArbitrary quotedLocalParts();
 
 	/**
-	 * Allow unquoted local parts
+	 * Generates unquoted local parts
 	 */
 	EmailArbitrary unquotedLocalParts();
 
 	/**
-	 * Allow IPv4 addresses in the domain
+	 * Generates IPv4 addresses in the domain part
 	 */
 	EmailArbitrary ipv4Addresses();
 
 	/**
-	 * Allow IPv6 addresses in the domain
+	 * Generates IPv6 addresses in the domain part
 	 */
 	EmailArbitrary ipv6Addresses();
 
 	/**
-	 * Allow domains in the domain
+	 * Generates domains in the domain part
 	 */
 	EmailArbitrary domains();
 

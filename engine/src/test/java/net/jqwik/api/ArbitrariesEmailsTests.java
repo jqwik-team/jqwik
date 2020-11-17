@@ -122,39 +122,39 @@ class ArbitrariesEmailsTests {
 	class checkAnnotationProperties {
 
 		@Property
-		void onlyIPAddressesAreGenerated(@ForAll @Email(allowDomains = false) String email){
+		void onlyIPAddressesAreGenerated(@ForAll @Email(domains = false) String email){
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 		}
 
 		@Property
-		void onlyIPv4AddressesAreGenerated(@ForAll @Email(allowDomains = false, allowIPv6 = false) String email){
+		void onlyIPv4AddressesAreGenerated(@ForAll @Email(domains = false, ipv6Addresses = false) String email){
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(".");
 		}
 
 		@Property
-		void onlyIPv6AddressesAreGenerated(@ForAll @Email(allowDomains = false, allowIPv4 = false) String email){
+		void onlyIPv6AddressesAreGenerated(@ForAll @Email(domains = false, ipv4Addresses = false) String email){
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(":");
 		}
 
 		@Property
-		void onlyDomainsAreGenerated(@ForAll @Email(allowIPv6 = false, allowIPv4 = false) String email){
+		void onlyDomainsAreGenerated(@ForAll @Email(ipv6Addresses = false, ipv4Addresses = false) String email){
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isFalse();
 		}
 
 		@Property
-		void onlyQuotedLocalPartsAreGenerated(@ForAll @Email(allowUnquotedLocalPart = false) String email){
+		void onlyQuotedLocalPartsAreGenerated(@ForAll @Email(unquotedLocalPart = false) String email){
 			String localPart = getLocalPartOfEmail(email);
 			assertThat(isQuoted(localPart)).isTrue();
 		}
 
 		@Property
-		void onlyUnquotedLocalPartsAreGenerated(@ForAll @Email(allowQuotedLocalPart = false) String email){
+		void onlyUnquotedLocalPartsAreGenerated(@ForAll @Email(quotedLocalPart = false) String email){
 			String localPart = getLocalPartOfEmail(email);
 			assertThat(isQuoted(localPart)).isFalse();
 		}
