@@ -111,7 +111,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 				() -> lastDomainPart,
 				this::domainDomainGenerate,
 				depth
-		)).filter(v -> v.length() <= 253 && validUseOfDotsInDomain(v) && validUseOfHyphensInDomain(v));
+		)).filter(v -> v.length() <= 253 && validUseOfDotsInDomain(v) && validUseOfHyphensInDomain(v) && tldNotAllNumeric(v));
 	}
 
 	private boolean validUseOfDotsInDomain(String domain){
@@ -126,6 +126,20 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		boolean firstSignNotAHyphen = domain.charAt(0) != '-';
 		boolean lastSignNotAHyphen = domain.charAt(domain.length() - 1) != '-';
 		return firstSignNotAHyphen && lastSignNotAHyphen;
+	}
+
+	private boolean tldNotAllNumeric(String domain){
+		String parts[] = domain.split("\\.");
+		if(parts.length == 1){
+			return true;
+		}
+		String tld = parts[parts.length - 1];
+		for(char c : tld.toCharArray()){
+			if(c < '0' || c > '9'){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Arbitrary<String> domainDomainGenerate(Arbitrary<String> domain){
