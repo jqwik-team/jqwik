@@ -1,10 +1,10 @@
 package net.jqwik.api.constraints;
 
-import org.apiguardian.api.API;
-
 import java.lang.annotation.*;
 
-import static org.apiguardian.api.API.Status.EXPERIMENTAL;
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * Constrain strings to be valid email addresses
@@ -18,9 +18,9 @@ import static org.apiguardian.api.API.Status.EXPERIMENTAL;
 @Documented
 @API(status = EXPERIMENTAL, since = "1.3.9")
 public @interface Email {
-	boolean allowDomains() default true;
-	boolean allowIPv6() default true;
-	boolean allowIPv4() default true;
-	boolean allowQuotedLocalPart() default true;
-	boolean allowUnquotedLocalPart() default true;
+	boolean domains() default true;
+	boolean ipv6Addresses() default true;
+	boolean ipv4Addresses() default true;
+	boolean quotedLocalPart() default true;
+	boolean unquotedLocalPart() default true;
 }

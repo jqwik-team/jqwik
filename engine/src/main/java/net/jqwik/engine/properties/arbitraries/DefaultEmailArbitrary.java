@@ -19,16 +19,14 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> localPart(){
-		boolean allowUnquoted = allowUnquotedLocalPart;
-		boolean allowQuoted = allowQuotedLocalPart;
-		if(!allowUnquoted && !allowQuoted){
-			allowUnquoted = true;
-			allowQuoted = true;
+		if(!allowUnquotedLocalPart && !allowQuotedLocalPart){
+			allowUnquotedLocalPart = true;
+			allowQuotedLocalPart = true;
 		}
 		Arbitrary<String> unquoted = localPartUnquoted();
 		Arbitrary<String> quoted = localPartQuoted();
-		int frequencyUnquoted = allowUnquoted ? 1 : 0;
-		int frequencyQuoted = allowQuoted ? 1 : 0;
+		int frequencyUnquoted = allowUnquotedLocalPart ? 1 : 0;
+		int frequencyQuoted = allowQuotedLocalPart ? 1 : 0;
 		return Arbitraries.frequencyOf(
 				Tuple.of(frequencyUnquoted, unquoted),
 				Tuple.of(frequencyQuoted, quoted)
@@ -51,17 +49,14 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> domain(){
-		boolean allowDomain = allowDomains;
-		boolean allowIPv4 = allowIPv4Addresses;
-		boolean allowIPv6 = allowIPv6Addresses;
-		if(!allowDomain && !allowIPv4 && !allowIPv6){
-			allowDomain = true;
-			allowIPv4 = true;
-			allowIPv6 = true;
+		if(!allowDomains && !allowIPv4Addresses && !allowIPv6Addresses){
+			allowDomains = true;
+			allowIPv4Addresses = true;
+			allowIPv6Addresses = true;
 		}
-		int frequencyDomain = allowDomain ? 2 : 0;
-		int frequencyIPv4Addresses = allowIPv4 ? 1 : 0;
-		int frequencyIPv6Addresses = allowIPv6 ? 1 : 0;
+		int frequencyDomain = allowDomains ? 2 : 0;
+		int frequencyIPv4Addresses = allowIPv4Addresses ? 1 : 0;
+		int frequencyIPv6Addresses = allowIPv6Addresses ? 1 : 0;
 		return Arbitraries.frequencyOf(
 				Tuple.of(frequencyDomain, domainDomain()),
 				Tuple.of(frequencyIPv4Addresses, domainIPv4()),
@@ -83,28 +78,30 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 
 	// TODO: Cyclomatic Complexity > 11
 	public static boolean validUseOfColonInIPv6Address(String ip){
-		boolean ipContainsThreeColons = ip.contains(":::");
-		boolean startsWithOnlyOneColon = ip.charAt(0) == ':' && ip.charAt(1) != ':';
-		boolean endsWithOnlyOneColon = ip.charAt(ip.length() - 1) == ':' && ip.charAt(ip.length() - 2) != ':';
-		if(ipContainsThreeColons || startsWithOnlyOneColon || endsWithOnlyOneColon){
+		if(!checkColonPlacement(ip)){
 			return false;
 		}
 		boolean first = true;
 		boolean inCheck = false;
 		for(int i = 0; i < ip.length() - 1; i++){
 			boolean ipContainsTwoColonsAtI = ip.charAt(i) == ':' && (ip.charAt(i+1) == ':');
-			if(ipContainsTwoColonsAtI){
-				if(first){
-					first = false;
-					inCheck = true;
-				} else if(!inCheck){
-					return false;
-				}
-			} else {
+			if(ipContainsTwoColonsAtI && first) {
+				first = false;
+				inCheck = true;
+			} else if(ipContainsTwoColonsAtI && !inCheck) {
+				return false;
+			} else if(!ipContainsTwoColonsAtI) {
 				inCheck = false;
 			}
 		}
 		return true;
+	}
+
+	private static boolean checkColonPlacement(String ip){
+		boolean ipContainsThreeColons = ip.contains(":::");
+		boolean startsWithOnlyOneColon = ip.charAt(0) == ':' && ip.charAt(1) != ':';
+		boolean endsWithOnlyOneColon = ip.charAt(ip.length() - 1) == ':' && ip.charAt(ip.length() - 2) != ':';
+		return !ipContainsThreeColons && !startsWithOnlyOneColon && !endsWithOnlyOneColon;
 	}
 
 	private Arbitrary<String> domainDomain(){

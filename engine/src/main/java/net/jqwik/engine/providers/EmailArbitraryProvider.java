@@ -1,11 +1,11 @@
 package net.jqwik.engine.providers;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
-
-import java.util.*;
 
 public class EmailArbitraryProvider implements ArbitraryProvider {
 
@@ -18,19 +18,19 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, ArbitraryProvider.SubtypeProvider subtypeProvider) {
 		Email email = targetType.findAnnotation(Email.class).get();
 		EmailArbitrary emailArbitrary = (EmailArbitrary) Arbitraries.emails();
-		if(email.allowQuotedLocalPart()){
+		if(email.quotedLocalPart()){
 			emailArbitrary = emailArbitrary.quotedLocalParts();
 		}
-		if(email.allowUnquotedLocalPart()){
+		if(email.unquotedLocalPart()){
 			emailArbitrary = emailArbitrary.unquotedLocalParts();
 		}
-		if(email.allowDomains()){
+		if(email.domains()){
 			emailArbitrary = emailArbitrary.domains();
 		}
-		if(email.allowIPv4()){
+		if(email.ipv4Addresses()){
 			emailArbitrary = emailArbitrary.ipv4Addresses();
 		}
-		if(email.allowIPv6()){
+		if(email.ipv6Addresses()){
 			emailArbitrary = emailArbitrary.ipv6Addresses();
 		}
 		return Collections.singleton(emailArbitrary);
