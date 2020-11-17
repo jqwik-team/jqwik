@@ -20,6 +20,7 @@ class ArbitrariesEmailsTests {
 	private static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";
 	private static final String ALLOWED_CHARS_LOCALPART_QUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~\"(),:;<>@[\\] ";
 	private static final String ALLOWED_CHARS_IPV6_ADDRESS = "0123456789abcdefABCDEF";
+	private static final String ALLOWED_NOT_NUMERIC_CHARS_TLD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-";
 
 	@Group
 	class AllGeneratedEmailAddressesAreValid {
@@ -104,6 +105,16 @@ class ArbitrariesEmailsTests {
 			});
 		}
 
+		@Property(tries = 5000)
+		void tldNotAllNumeric(@ForAll @Email String email){
+			String domain = getDomainOfEmail(email);
+			Assume.that(!isIPAddress(domain));
+			String[] domainParts = domain.split("\\.");
+			Assume.that(domainParts.length >= 2);
+			String tld = domainParts[domainParts.length - 1];
+			assertThat(stringContainsMinimumOneChar(ALLOWED_NOT_NUMERIC_CHARS_TLD, tld)).isTrue();
+		}
+
 		@Property
 		void validIPAddressAfterAt(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
@@ -114,6 +125,15 @@ class ArbitrariesEmailsTests {
 
 		private boolean stringContainsChar(String string, int c) {
 			return string.contains(Character.toString((char) c));
+		}
+
+		private boolean stringContainsMinimumOneChar(String string, String chars){
+			for(char c : chars.toCharArray()){
+				if(stringContainsChar(string, c)){
+					return true;
+				}
+			}
+			return false;
 		}
 
 	}
