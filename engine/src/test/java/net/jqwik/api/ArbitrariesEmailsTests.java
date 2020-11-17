@@ -25,7 +25,7 @@ class ArbitrariesEmailsTests {
 	class AllGeneratedEmailAddressesAreValid {
 
 		@Property(tries = 10)
-		void containsAtSign(@ForAll @Email String email) {
+		void containsAt(@ForAll @Email String email) {
 			assertThat(email).contains("@");
 		}
 
@@ -42,14 +42,14 @@ class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validSignsBeforeAtUnquoted(@ForAll @Email String email) {
+		void validCharsBeforeAtUnquoted(@ForAll @Email String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(!isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_UNQUOTED, c));
 		}
 
 		@Property
-		void validSignsBeforeAtQuoted(@ForAll @Email String email) {
+		void validCharsBeforeAtQuoted(@ForAll @Email String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_QUOTED, c));
@@ -75,7 +75,7 @@ class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validSignsAfterAt(@ForAll @Email String email) {
+		void validCharsAfterAt(@ForAll @Email String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_DOMAIN, c));
