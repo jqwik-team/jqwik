@@ -1255,7 +1255,8 @@ Shrinking moves towards the start of the frequency list.
 ### Email Address Generation
 
 To generate email addresses you can call up the static method
-[`Arbitraries.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#emails()). 
+[`Arbitraries.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#emails())
+or use the `@Email` annotation. 
 
 An email address consists of two parts: `local-part` and `domain`. The complete email address is therefore `local-part@domain`.
 The `local-part` can be `unquoted` or `quoted`, which allows for more characters.
@@ -1270,16 +1271,23 @@ abc@example.com
 admin@[32::FF:aBc:79a:83B:FFFF:345]
 ```
 
-You can use `emails()` as follows:
+You can use the following restrictions in `@Email` annotation:
+- `unquotedLocalPart` to decide whether unquoted local parts are generated
+- `quotedLocalPart` to decide whether quoted local parts are generated
+- `domains` to decide whether domains are generated in the domain part
+- `ipv4Addresses` to decide whether ipv4 addresses are generated in the domain part
+- `ipv6Addresses` to decide whether ipv6 addresses are generated in the domain part
+
+You can use it as follows:
 ```java
 @Property
-void containsAt(@ForAll("emails") String email){
+void containsAt(@ForAll @Email String email){
     assertThat(email).contains("@");
 }
 
-@Provide
-Arbitrary<String> emails(){
-    return Arbitraries.emails();
+@Property
+void containsAt2(@ForAll @Email(quotedLocalPart = false, ipv4Addresses = false, ipv6Addresses = false) String email){
+    assertThat(email).contains("@");
 }
 ```
 
