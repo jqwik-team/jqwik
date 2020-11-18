@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
@@ -27,38 +26,38 @@ public class ArbitrariesEmailsTests {
 	class AllGeneratedEmailAddressesAreValid {
 
 		@Property(tries = 10)
-		void containsAt(@ForAll @Email String email) {
+		void containsAt(@ForAll("emails") String email) {
 			assertThat(email).contains("@");
 		}
 
 		@Property
-		void validLengthBeforeAt(@ForAll @Email String email) {
+		void validLengthBeforeAt(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			assertThat(localPart.length()).isBetween(1, 64);
 		}
 
 		@Property
-		void validLengthAfterAt(@ForAll @Email String email) {
+		void validLengthAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(domain.length()).isBetween(1, 253);
 		}
 
 		@Property
-		void validCharsBeforeAtUnquoted(@ForAll @Email String email) {
+		void validCharsBeforeAtUnquoted(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(!isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_UNQUOTED, c));
 		}
 
 		@Property
-		void validCharsBeforeAtQuoted(@ForAll @Email String email) {
+		void validCharsBeforeAtQuoted(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_QUOTED, c));
 		}
 
 		@Property
-		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll @Email String email) {
+		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			localPart = localPart.substring(1, localPart.length() - 1);
@@ -68,7 +67,7 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validUseOfDotBeforeAt(@ForAll @Email String email) {
+		void validUseOfDotBeforeAt(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(!isQuoted(localPart));
 			assertThat(localPart).doesNotContain("..");
@@ -77,14 +76,14 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validCharsAfterAt(@ForAll @Email String email) {
+		void validCharsAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_DOMAIN, c));
 		}
 
 		@Property
-		void validUseOfHyphenAndDotAfterAt(@ForAll @Email String email) {
+		void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.charAt(0)).isNotEqualTo('-');
@@ -97,7 +96,7 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validMaxDomainLengthAfterAt(@ForAll @Email String email) {
+		void validMaxDomainLengthAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			String[] domainParts = domain.split("\\.");
@@ -107,7 +106,7 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property(tries = 5000)
-		void tldNotAllNumeric(@ForAll @Email String email){
+		void tldNotAllNumeric(@ForAll("emails") String email){
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			String[] domainParts = domain.split("\\.");
@@ -117,7 +116,7 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void validIPAddressAfterAt(@ForAll @Email String email) {
+		void validIPAddressAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
@@ -216,7 +215,7 @@ public class ArbitrariesEmailsTests {
 	class CheckAllVariantsAreCovered {
 
 		@Property
-		void quotedAndUnquotedUsernamesAreGenerated(@ForAll @Email String email) {
+		void quotedAndUnquotedUsernamesAreGenerated(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Statistics.label("Quoted usernames")
 					  .collect(isQuoted(localPart))
@@ -227,7 +226,7 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void domainsAndIPAddressesAreGenerated(@ForAll @Email String email) {
+		void domainsAndIPAddressesAreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Statistics.label("Domains")
 					  .collect(isIPAddress(domain))
@@ -238,7 +237,7 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void IPv4AndIPv6AreGenerated(@ForAll @Email String email) {
+		void IPv4AndIPv6AreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
@@ -251,7 +250,7 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void domainsWithOneAndMorePartsAreGenerated(@ForAll @Email String email) {
+		void domainsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			int domainParts = (int) (domain.chars().filter(v -> v == '.').count() + 1);
@@ -348,6 +347,11 @@ public class ArbitrariesEmailsTests {
 			};
 		}
 
+	}
+	
+	@Provide
+	private EmailArbitrary emails(){
+		return Arbitraries.emails();
 	}
 
 	private boolean isValidIPAddress(String address) {
