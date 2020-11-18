@@ -83,7 +83,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		}
 		boolean first = true;
 		boolean inCheck = false;
-		for(int i = 0; i < ip.length() - 1; i++){
+		for (int i = 0; i < ip.length() - 1; i++){
 			boolean ipContainsTwoColonsAtI = ip.charAt(i) == ':' && (ip.charAt(i+1) == ':');
 			if(ipContainsTwoColonsAtI && first) {
 				first = false;
@@ -134,7 +134,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 			return true;
 		}
 		String tld = parts[parts.length - 1];
-		for(char c : tld.toCharArray()){
+		for (char c : tld.toCharArray()){
 			if(c < '0' || c > '9'){
 				return true;
 			}

@@ -70,7 +70,7 @@ public class Arbitraries {
 
 		public abstract StringArbitrary strings();
 
-		public abstract Arbitrary<String> emails();
+		public abstract EmailArbitrary emails();
 
 		public abstract CharacterArbitrary chars();
 
@@ -429,7 +429,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.3.8")
-	public static Arbitrary<String> emails() {
+	public static EmailArbitrary emails() {
 		return ArbitrariesFacade.implementation.emails();
 	}
 

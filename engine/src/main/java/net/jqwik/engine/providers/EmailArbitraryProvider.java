@@ -17,7 +17,7 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, ArbitraryProvider.SubtypeProvider subtypeProvider) {
 		Email email = targetType.findAnnotation(Email.class).get();
-		EmailArbitrary emailArbitrary = (EmailArbitrary) Arbitraries.emails();
+		EmailArbitrary emailArbitrary = Arbitraries.emails();
 		if(email.quotedLocalPart()){
 			emailArbitrary = emailArbitrary.quotedLocalParts();
 		}
