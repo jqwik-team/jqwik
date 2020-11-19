@@ -1,6 +1,8 @@
 - 1.3.9
 
-    - Default email generation through annotation `@Email`
+    - Bug https://github.com/jlink/jqwik/issues/132
+
+    - TODO: Adapt edge cases of email addresses to only generate the most important ones
 
     - XRange constraints use filter when specialized arbitraries are not available
 

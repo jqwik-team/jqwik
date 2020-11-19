@@ -12,14 +12,15 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	private boolean allowIPv6Addresses = false;
 
 	@Override
-	protected Arbitrary<String> arbitrary(){
+	protected Arbitrary<String> arbitrary() {
 		Arbitrary<String> arbitraryLocalPart = localPart();
-		Arbitrary<String> arbitraryDomain = domain();
-		return Combinators.combine(arbitraryLocalPart, arbitraryDomain).as((localPart, domain) -> localPart + "@" + domain);
+		Arbitrary<String> arbitraryDomain = webDomain();
+		return Combinators.combine(arbitraryLocalPart, arbitraryDomain)
+						  .as((localPart, domain) -> localPart + "@" + domain);
 	}
 
-	private Arbitrary<String> localPart(){
-		if(!allowUnquotedLocalPart && !allowQuotedLocalPart){
+	private Arbitrary<String> localPart() {
+		if (!allowUnquotedLocalPart && !allowQuotedLocalPart) {
 			allowUnquotedLocalPart = true;
 			allowQuotedLocalPart = true;
 		}
@@ -33,23 +34,30 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		);
 	}
 
-	private Arbitrary<String> localPartUnquoted(){
-		Arbitrary<String> unquoted = Arbitraries.strings().alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.").ofMinLength(1).ofMaxLength(64);
+	private Arbitrary<String> localPartUnquoted() {
+		Arbitrary<String> unquoted =
+				Arbitraries.strings()
+						   .alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.")
+						   .ofMinLength(1).ofMaxLength(64);
 		unquoted = unquoted.filter(v -> !v.contains(".."));
 		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
 		unquoted = unquoted.filter(v -> v.charAt(v.length() - 1) != '.');
 		return unquoted;
 	}
 
-	private Arbitrary<String> localPartQuoted(){
-		Arbitrary<String> quoted = Arbitraries.strings().alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]").ofMinLength(1).ofMaxLength(62);
-		quoted = quoted.map(v -> "\"" + v.replace("\\", "\\\\").replace("\"", "\\\"") + "\"");
+	private Arbitrary<String> localPartQuoted() {
+		Arbitrary<String> quoted =
+				Arbitraries.strings()
+						   .alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
+						   .ofMinLength(1).ofMaxLength(62);
+		quoted = quoted.map(v -> "\"" + v.replace("\\", "\\\\")
+										 .replace("\"", "\\\"") + "\"");
 		quoted = quoted.filter(v -> v.length() <= 64);
 		return quoted;
 	}
 
-	private Arbitrary<String> domain(){
-		if(!allowDomains && !allowIPv4Addresses && !allowIPv6Addresses){
+	private Arbitrary<String> webDomain() {
+		if (!allowDomains && !allowIPv4Addresses && !allowIPv6Addresses) {
 			allowDomains = true;
 			allowIPv4Addresses = true;
 			allowIPv6Addresses = true;
@@ -64,47 +72,52 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		);
 	}
 
-	private Arbitrary<String> domainIPv4(){
+	private Arbitrary<String> domainIPv4() {
 		Arbitrary<Integer> addressPart = Arbitraries.integers().between(0, 255);
-		return Combinators.combine(addressPart, addressPart, addressPart, addressPart).as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]");
+		return Combinators.combine(addressPart, addressPart, addressPart, addressPart)
+						  .as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]");
 	}
 
-	private Arbitrary<String> domainIPv6(){
-		Arbitrary<String> addressPart = Arbitraries.strings().numeric().withChars('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F').ofMaxLength(4);
-		Arbitrary<String> address = Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart).as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
+	private Arbitrary<String> domainIPv6() {
+		Arbitrary<String> addressPart =
+				Arbitraries.strings()
+						   .numeric().withChars('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F')
+						   .ofMaxLength(4);
+		Arbitrary<String> address =
+				Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart)
+						   .as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
 		address = address.filter(v -> validUseOfColonInIPv6Address(v.substring(1, v.length() - 1)));
 		return address;
 	}
 
-	// TODO: Cyclomatic Complexity > 11
-	public static boolean validUseOfColonInIPv6Address(String ip){
-		if(!checkColonPlacement(ip)){
+	public static boolean validUseOfColonInIPv6Address(String ip) {
+		if (!checkColonPlacement(ip)) {
 			return false;
 		}
 		boolean first = true;
 		boolean inCheck = false;
-		for (int i = 0; i < ip.length() - 1; i++){
-			boolean ipContainsTwoColonsAtI = ip.charAt(i) == ':' && (ip.charAt(i+1) == ':');
-			if(ipContainsTwoColonsAtI && first) {
+		for (int i = 0; i < ip.length() - 1; i++) {
+			boolean ipContainsTwoColonsAtI = ip.charAt(i) == ':' && (ip.charAt(i + 1) == ':');
+			if (ipContainsTwoColonsAtI && first) {
 				first = false;
 				inCheck = true;
-			} else if(ipContainsTwoColonsAtI && !inCheck) {
+			} else if (ipContainsTwoColonsAtI && !inCheck) {
 				return false;
-			} else if(!ipContainsTwoColonsAtI) {
+			} else if (!ipContainsTwoColonsAtI) {
 				inCheck = false;
 			}
 		}
 		return true;
 	}
 
-	private static boolean checkColonPlacement(String ip){
+	private static boolean checkColonPlacement(String ip) {
 		boolean ipContainsThreeColons = ip.contains(":::");
 		boolean startsWithOnlyOneColon = ip.charAt(0) == ':' && ip.charAt(1) != ':';
 		boolean endsWithOnlyOneColon = ip.charAt(ip.length() - 1) == ':' && ip.charAt(ip.length() - 2) != ':';
 		return !ipContainsThreeColons && !startsWithOnlyOneColon && !endsWithOnlyOneColon;
 	}
 
-	private Arbitrary<String> domainDomain(){
+	private Arbitrary<String> domainDomain() {
 		Arbitrary<Integer> length = Arbitraries.integers().between(0, 25);
 		Arbitrary<String> lastDomainPart = domainDomainPart();
 		return length.flatMap(depth -> Arbitraries.recursive(
@@ -114,7 +127,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		)).filter(v -> v.length() <= 253 && validUseOfDotsInDomain(v) && validUseOfHyphensInDomain(v) && tldNotAllNumeric(v));
 	}
 
-	private boolean validUseOfDotsInDomain(String domain){
+	private boolean validUseOfDotsInDomain(String domain) {
 		boolean tldMinimumTwoSigns = domain.length() < 2 || domain.charAt(domain.length() - 2) != '.';
 		boolean firstSignNotADot = domain.charAt(0) != '.';
 		boolean lastSignNotADot = domain.charAt(domain.length() - 1) != '.';
@@ -122,67 +135,69 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		return tldMinimumTwoSigns && firstSignNotADot && lastSignNotADot && containsNoDoubleDot;
 	}
 
-	private boolean validUseOfHyphensInDomain(String domain){
+	private boolean validUseOfHyphensInDomain(String domain) {
 		boolean firstSignNotAHyphen = domain.charAt(0) != '-';
 		boolean lastSignNotAHyphen = domain.charAt(domain.length() - 1) != '-';
 		return firstSignNotAHyphen && lastSignNotAHyphen;
 	}
 
-	private boolean tldNotAllNumeric(String domain){
+	private boolean tldNotAllNumeric(String domain) {
 		String parts[] = domain.split("\\.");
-		if(parts.length == 1){
+		if (parts.length == 1) {
 			return true;
 		}
 		String tld = parts[parts.length - 1];
-		for (char c : tld.toCharArray()){
-			if(c < '0' || c > '9'){
+		for (char c : tld.toCharArray()) {
+			if (c < '0' || c > '9') {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private Arbitrary<String> domainDomainGenerate(Arbitrary<String> domain){
+	private Arbitrary<String> domainDomainGenerate(Arbitrary<String> domain) {
 		return Combinators.combine(domainDomainPart(), domain).as((x, y) -> x + "." + y);
 	}
 
-	private Arbitrary<String> domainDomainPart(){
+	private Arbitrary<String> domainDomainPart() {
 		//Not using .alpha().numeric().withChars("-") because runtime is too high
 		//Using "." in withChars() to generate more subdomains
-		Arbitrary<String> domain = Arbitraries.strings().withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-.").ofMinLength(1).ofMaxLength(63);
+		Arbitrary<String> domain =
+				Arbitraries.strings().withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-.")
+						   .ofMinLength(1).ofMaxLength(63);
 		return domain;
 	}
 
 	@Override
-	public EmailArbitrary quotedLocalParts() {
+	public EmailArbitrary quotedLocalPart() {
 		DefaultEmailArbitrary clone = typedClone();
 		clone.allowQuotedLocalPart = true;
 		return clone;
 	}
 
 	@Override
-	public EmailArbitrary unquotedLocalParts() {
+	public EmailArbitrary unquotedLocalPart() {
 		DefaultEmailArbitrary clone = typedClone();
 		clone.allowUnquotedLocalPart = true;
 		return clone;
 	}
 
 	@Override
-	public EmailArbitrary ipv4Addresses() {
+	public EmailArbitrary ipv4Address() {
 		DefaultEmailArbitrary clone = typedClone();
 		clone.allowIPv4Addresses = true;
 		return clone;
 	}
 
 	@Override
-	public EmailArbitrary ipv6Addresses() {
+	public EmailArbitrary ipv6Address() {
 		DefaultEmailArbitrary clone = typedClone();
 		clone.allowIPv6Addresses = true;
 		return clone;
 	}
 
 	@Override
-	public EmailArbitrary domains() {
+	public EmailArbitrary domain() {
 		DefaultEmailArbitrary clone = typedClone();
 		clone.allowDomains = true;
 		return clone;

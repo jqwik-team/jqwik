@@ -1254,9 +1254,14 @@ Shrinking moves towards the start of the frequency list.
   
 ### Email Address Generation
 
-To generate email addresses you can call up the static method
-[`Arbitraries.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#emails())
-or use the `@Email` annotation. 
+To generate email addresses you can either
+
+- call up the static method [`Arbitraries.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#emails()).
+  The return type is [`EmailArbitrary`](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/EmailArbitrary.html)
+  which provides a few configuration methods.
+
+- or use the [`@Email`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Email.html) 
+  annotation on `@ForAll` parameters as in the examples below. 
 
 An email address consists of two parts: `local-part` and `domain`. The complete email address is therefore `local-part@domain`.
 The `local-part` can be `unquoted` or `quoted`, which allows for more characters.
@@ -1279,14 +1284,15 @@ You can use the following restrictions in `@Email` annotation:
 - `ipv6Addresses` to decide whether ipv6 addresses are generated in the domain part
 
 You can use it as follows:
+
 ```java
 @Property
-void containsAt(@ForAll @Email String email){
+void defaultEmailAddresses(@ForAll @Email String email) {
     assertThat(email).contains("@");
 }
 
 @Property
-void containsAt2(@ForAll @Email(quotedLocalPart = false, ipv4Addresses = false, ipv6Addresses = false) String email){
+void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Address = false, ipv6Address = false) String email) {
     assertThat(email).contains("@");
 }
 ```

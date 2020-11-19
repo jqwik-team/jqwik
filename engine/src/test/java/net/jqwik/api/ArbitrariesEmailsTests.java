@@ -106,7 +106,7 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property(tries = 5000)
-		void tldNotAllNumeric(@ForAll("emails") String email){
+		void tldNotAllNumeric(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			String[] domainParts = domain.split("\\.");
@@ -127,9 +127,9 @@ public class ArbitrariesEmailsTests {
 			return string.contains(Character.toString((char) c));
 		}
 
-		private boolean stringContainsMinimumOneChar(String string, String chars){
-			for (char c : chars.toCharArray()){
-				if(stringContainsChar(string, c)){
+		private boolean stringContainsMinimumOneChar(String string, String chars) {
+			for (char c : chars.toCharArray()) {
+				if (stringContainsChar(string, c)) {
 					return true;
 				}
 			}
@@ -139,74 +139,74 @@ public class ArbitrariesEmailsTests {
 	}
 
 	@Group
-	class checkEmailArbitraryMethods {
+	class CheckEmailArbitraryMethods {
 
 		@Property
-		void onlyIPAddressesAreGenerated(@ForAll("onlyIPAddresses") String email){
+		void onlyIPAddressesAreGenerated(@ForAll("onlyIPAddresses") String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 		}
 
 		@Provide
-		private EmailArbitrary onlyIPAddresses(){
-			return Arbitraries.emails().ipv4Addresses().ipv6Addresses();
+		private EmailArbitrary onlyIPAddresses() {
+			return Arbitraries.emails().ipv4Address().ipv6Address();
 		}
 
 		@Property
-		void onlyIPv4AddressesAreGenerated(@ForAll("onlyIPv4Addresses") String email){
+		void onlyIPv4AddressesAreGenerated(@ForAll("onlyIPv4Addresses") String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(".");
 		}
 
 		@Provide
-		private EmailArbitrary onlyIPv4Addresses(){
-			return Arbitraries.emails().ipv4Addresses();
+		private EmailArbitrary onlyIPv4Addresses() {
+			return Arbitraries.emails().ipv4Address();
 		}
 
 		@Property
-		void onlyIPv6AddressesAreGenerated(@ForAll("onlyIPv6Addresses") String email){
+		void onlyIPv6AddressesAreGenerated(@ForAll("onlyIPv6Addresses") String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(":");
 		}
 
 		@Provide
-		private EmailArbitrary onlyIPv6Addresses(){
-			return Arbitraries.emails().ipv6Addresses();
+		private EmailArbitrary onlyIPv6Addresses() {
+			return Arbitraries.emails().ipv6Address();
 		}
 
 		@Property
-		void onlyDomainsAreGenerated(@ForAll("onlyDomains") String email){
+		void onlyDomainsAreGenerated(@ForAll("onlyDomains") String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isFalse();
 		}
 
 		@Provide
-		private EmailArbitrary onlyDomains(){
-			return Arbitraries.emails().domains();
+		private EmailArbitrary onlyDomains() {
+			return Arbitraries.emails().domain();
 		}
 
 		@Property
-		void onlyQuotedLocalPartsAreGenerated(@ForAll("onlyQuoted") String email){
+		void onlyQuotedLocalPartsAreGenerated(@ForAll("onlyQuoted") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			assertThat(isQuoted(localPart)).isTrue();
 		}
 
 		@Provide
-		private EmailArbitrary onlyQuoted(){
-			return Arbitraries.emails().quotedLocalParts();
+		private EmailArbitrary onlyQuoted() {
+			return Arbitraries.emails().quotedLocalPart();
 		}
 
 		@Property
-		void onlyUnquotedLocalPartsAreGenerated(@ForAll("onlyUnquoted") String email){
+		void onlyUnquotedLocalPartsAreGenerated(@ForAll("onlyUnquoted") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			assertThat(isQuoted(localPart)).isFalse();
 		}
 
 		@Provide
-		private EmailArbitrary onlyUnquoted(){
-			return Arbitraries.emails().unquotedLocalParts();
+		private EmailArbitrary onlyUnquoted() {
+			return Arbitraries.emails().unquotedLocalPart();
 		}
 
 	}
@@ -268,7 +268,7 @@ public class ArbitrariesEmailsTests {
 	}
 
 	@Group
-	class ShrinkingTests {
+	class Shrinking {
 
 		@Property(tries = 20)
 		void defaultShrinking(@ForAll Random random) {
@@ -348,9 +348,9 @@ public class ArbitrariesEmailsTests {
 		}
 
 	}
-	
+
 	@Provide
-	private EmailArbitrary emails(){
+	private EmailArbitrary emails() {
 		return Arbitraries.emails();
 	}
 

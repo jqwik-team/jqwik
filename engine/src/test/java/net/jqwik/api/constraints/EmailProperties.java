@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ArbitrariesEmailsTests.*;
 
-@PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
+@PropertyDefaults(edgeCases = EdgeCasesMode.NONE) // TODO: Remove as soon as edge cases are more restricted
 @Group
 class EmailProperties {
 
@@ -15,27 +15,27 @@ class EmailProperties {
 	class checkAnnotationProperties {
 
 		@Property
-		void onlyIPAddressesAreGenerated(@ForAll @Email(domains = false) String email) {
+		void onlyIPAddressesAreGenerated(@ForAll @Email(domain = false) String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 		}
 
 		@Property
-		void onlyIPv4AddressesAreGenerated(@ForAll @Email(domains = false, ipv6Addresses = false) String email) {
+		void onlyIPv4AddressesAreGenerated(@ForAll @Email(domain = false, ipv6Address = false) String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(".");
 		}
 
 		@Property
-		void onlyIPv6AddressesAreGenerated(@ForAll @Email(domains = false, ipv4Addresses = false) String email) {
+		void onlyIPv6AddressesAreGenerated(@ForAll @Email(domain = false, ipv4Address = false) String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(":");
 		}
 
 		@Property
-		void onlyDomainsAreGenerated(@ForAll @Email(ipv6Addresses = false, ipv4Addresses = false) String email) {
+		void onlyDomainsAreGenerated(@ForAll @Email(ipv6Address = false, ipv4Address = false) String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isFalse();
 		}

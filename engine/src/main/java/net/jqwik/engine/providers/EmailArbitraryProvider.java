@@ -19,19 +19,19 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 		Email email = targetType.findAnnotation(Email.class).get();
 		EmailArbitrary emailArbitrary = Arbitraries.emails();
 		if(email.quotedLocalPart()){
-			emailArbitrary = emailArbitrary.quotedLocalParts();
+			emailArbitrary = emailArbitrary.quotedLocalPart();
 		}
 		if(email.unquotedLocalPart()){
-			emailArbitrary = emailArbitrary.unquotedLocalParts();
+			emailArbitrary = emailArbitrary.unquotedLocalPart();
 		}
-		if(email.domains()){
-			emailArbitrary = emailArbitrary.domains();
+		if(email.domain()){
+			emailArbitrary = emailArbitrary.domain();
 		}
-		if(email.ipv4Addresses()){
-			emailArbitrary = emailArbitrary.ipv4Addresses();
+		if(email.ipv4Address()){
+			emailArbitrary = emailArbitrary.ipv4Address();
 		}
-		if(email.ipv6Addresses()){
-			emailArbitrary = emailArbitrary.ipv6Addresses();
+		if(email.ipv6Address()){
+			emailArbitrary = emailArbitrary.ipv6Address();
 		}
 		return Collections.singleton(emailArbitrary);
 	}

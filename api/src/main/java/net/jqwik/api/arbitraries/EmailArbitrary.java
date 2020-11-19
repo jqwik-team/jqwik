@@ -8,33 +8,47 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Fluent interface to configure arbitraries that generate email values.
+ *
+ * <p>
+ *    By default all variants of email addresses are generated
+ * </p>
  */
 @API(status = EXPERIMENTAL, since = "1.3.9")
 public interface EmailArbitrary extends Arbitrary<String> {
 
 	/**
-	 * Generates quoted local parts
+	 * Allow quoted local part.
+	 *
+	 * Can be combined with other methods.
 	 */
-	EmailArbitrary quotedLocalParts();
+	EmailArbitrary quotedLocalPart();
 
 	/**
-	 * Generates unquoted local parts
+	 * Allow unquoted local part.
+	 *
+	 * Can be combined with other methods.
 	 */
-	EmailArbitrary unquotedLocalParts();
+	EmailArbitrary unquotedLocalPart();
 
 	/**
-	 * Generates IPv4 addresses in the domain part
+	 * Allow IPv4 addresses in the domain part.
+	 *
+	 * Can be combined with other methods.
 	 */
-	EmailArbitrary ipv4Addresses();
+	EmailArbitrary ipv4Address();
 
 	/**
-	 * Generates IPv6 addresses in the domain part
+	 * Allow IPv6 addresses in the domain part.
+	 *
+	 * Can be combined with other methods.
 	 */
-	EmailArbitrary ipv6Addresses();
+	EmailArbitrary ipv6Address();
 
 	/**
-	 * Generates domains in the domain part
+	 * Allow named web domains in the domain part.
+	 *
+	 * Can be combined with other methods.
 	 */
-	EmailArbitrary domains();
+	EmailArbitrary domain();
 
 }
