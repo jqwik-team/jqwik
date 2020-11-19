@@ -45,7 +45,8 @@ No breaking changes.
 
 #### Bug Fixes
 
-No known bugs.
+- [Reporting of null values in failed properties](https://github.com/jlink/jqwik/issues/132) 
+  no longer fails with NPE.
 
 
 ## 1.3.8
