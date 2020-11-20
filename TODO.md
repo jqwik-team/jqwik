@@ -1,5 +1,8 @@
 - 1.3.9
 
+    - Hand in property execution context to domains when being created.
+      E.g. to get annotation values from method
+
     - Add code of conduct. Examples:
         - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
         - https://github.com/junit-team/junit5/blob/main/CODE_OF_CONDUCT.md
