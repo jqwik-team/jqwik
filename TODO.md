@@ -1,6 +1,11 @@
 - 1.3.9
 
-    - TODO: Adapt edge cases of email addresses to only generate the most important ones
+    - Add code of conduct. Examples:
+        - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
+        - https://github.com/junit-team/junit5/blob/main/CODE_OF_CONDUCT.md
+
+    - Adapt edge cases of email addresses to only generate the most important ones.
+      See https://github.com/jlink/jqwik/issues/133
 
     - XRange constraints use filter when specialized arbitraries are not available
 
