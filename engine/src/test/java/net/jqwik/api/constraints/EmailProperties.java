@@ -2,6 +2,7 @@ package net.jqwik.api.constraints;
 
 import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -15,27 +16,27 @@ class EmailProperties {
 	class checkAnnotationProperties {
 
 		@Property
-		void onlyIPAddressesAreGenerated(@ForAll @Email(domain = false) String email) {
+		void onlyIPAddressesAreGenerated(@ForAll @Email(domainHost = false) String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 		}
 
 		@Property
-		void onlyIPv4AddressesAreGenerated(@ForAll @Email(domain = false, ipv6Address = false) String email) {
+		void onlyIPv4AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv6Host = false) String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(".");
 		}
 
 		@Property
-		void onlyIPv6AddressesAreGenerated(@ForAll @Email(domain = false, ipv4Address = false) String email) {
+		void onlyIPv6AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv4Host = false) String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(":");
 		}
 
 		@Property
-		void onlyDomainsAreGenerated(@ForAll @Email(ipv6Address = false, ipv4Address = false) String email) {
+		void onlyDomainsAreGenerated(@ForAll @Email(ipv6Host = false, ipv4Host = false) String email) {
 			String domain = getDomainOfEmail(email);
 			assertThat(isIPAddress(domain)).isFalse();
 		}
@@ -52,6 +53,16 @@ class EmailProperties {
 			assertThat(isQuoted(localPart)).isFalse();
 		}
 
+		@Property
+		@ExpectFailure(failureType = JqwikException.class)
+		void generationFailsWithNoLocalPart(@ForAll @Email(quotedLocalPart = false, unquotedLocalPart = false) String email) {
+		}
+
+		@Property
+		@ExpectFailure(failureType = JqwikException.class)
+		void generationFailsWithNoHost(@ForAll @Email(domainHost = false, ipv4Host = false, ipv6Host = false) String email) {
+		}
+
 	}
 
 	@Group
@@ -63,8 +74,8 @@ class EmailProperties {
 			Statistics.label("Quoted usernames")
 					  .collect(isQuoted(localPart))
 					  .coverage(coverage -> {
-						  coverage.check(true).percentage(p -> p > 35);
-						  coverage.check(false).percentage(p -> p > 35);
+						  coverage.check(true).percentage(p -> p > 10);
+						  coverage.check(false).percentage(p -> p > 70);
 					  });
 		}
 
@@ -74,8 +85,8 @@ class EmailProperties {
 			Statistics.label("Domains")
 					  .collect(isIPAddress(domain))
 					  .coverage(coverage -> {
-						  coverage.check(true).percentage(p -> p > 35);
-						  coverage.check(false).percentage(p -> p > 35);
+						  coverage.check(true).percentage(p -> p > 10);
+						  coverage.check(false).percentage(p -> p > 60);
 					  });
 		}
 

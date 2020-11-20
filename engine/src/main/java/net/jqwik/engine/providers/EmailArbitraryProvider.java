@@ -16,24 +16,38 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, ArbitraryProvider.SubtypeProvider subtypeProvider) {
-		Email email = targetType.findAnnotation(Email.class).get();
-		EmailArbitrary emailArbitrary = Arbitraries.emails();
-		if(email.quotedLocalPart()){
-			emailArbitrary = emailArbitrary.quotedLocalPart();
+		Optional<Email> optionalEmail = targetType.findAnnotation(Email.class);
+		return optionalEmail.map(email -> {
+			checkValidEmailConfiguration(email);
+			EmailArbitrary emailArbitrary = Arbitraries.emails();
+			if (email.quotedLocalPart()) {
+				emailArbitrary = emailArbitrary.quotedLocalPart();
+			}
+			if (email.unquotedLocalPart()) {
+				emailArbitrary = emailArbitrary.unquotedLocalPart();
+			}
+			if (email.domainHost()) {
+				emailArbitrary = emailArbitrary.domainHost();
+			}
+			if (email.ipv4Host()) {
+				emailArbitrary = emailArbitrary.ipv4Host();
+			}
+			if (email.ipv6Host()) {
+				emailArbitrary = emailArbitrary.ipv6Host();
+			}
+			return Collections.<Arbitrary<?>>singleton(emailArbitrary);
+		}).orElse(Collections.emptySet());
+	}
+
+	public void checkValidEmailConfiguration(Email email) {
+		if (!email.quotedLocalPart() && !email.unquotedLocalPart()) {
+			String message = "Email addresses require a quoted or unquoted local part.";
+			throw new JqwikException(message);
 		}
-		if(email.unquotedLocalPart()){
-			emailArbitrary = emailArbitrary.unquotedLocalPart();
+		if (!email.domainHost() && !email.ipv4Host() && !email.ipv6Host()) {
+			String message = "Email addresses require some kind of host.";
+			throw new JqwikException(message);
 		}
-		if(email.domain()){
-			emailArbitrary = emailArbitrary.domain();
-		}
-		if(email.ipv4Address()){
-			emailArbitrary = emailArbitrary.ipv4Address();
-		}
-		if(email.ipv6Address()){
-			emailArbitrary = emailArbitrary.ipv6Address();
-		}
-		return Collections.singleton(emailArbitrary);
 	}
 
 	@Override

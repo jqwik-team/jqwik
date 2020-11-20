@@ -7,10 +7,10 @@ import net.jqwik.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Fluent interface to configure arbitraries that generate email values.
+ * Fluent interface to configure arbitraries that generate valid email addresses.
  *
  * <p>
- *    By default all variants of email addresses are generated
+ *    By default all variants of email addresses are generated.
  * </p>
  */
 @API(status = EXPERIMENTAL, since = "1.3.9")
@@ -31,24 +31,24 @@ public interface EmailArbitrary extends Arbitrary<String> {
 	EmailArbitrary unquotedLocalPart();
 
 	/**
-	 * Allow IPv4 addresses in the domain part.
+	 * Allow IPv4 addresses in the host part.
 	 *
 	 * Can be combined with other methods.
 	 */
-	EmailArbitrary ipv4Address();
+	EmailArbitrary ipv4Host();
 
 	/**
-	 * Allow IPv6 addresses in the domain part.
+	 * Allow IPv6 addresses in the host part.
 	 *
 	 * Can be combined with other methods.
 	 */
-	EmailArbitrary ipv6Address();
+	EmailArbitrary ipv6Host();
 
 	/**
-	 * Allow named web domains in the domain part.
+	 * Allow named web domains in the host part.
 	 *
 	 * Can be combined with other methods.
 	 */
-	EmailArbitrary domain();
+	EmailArbitrary domainHost();
 
 }

@@ -7,9 +7,9 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 
 	private boolean allowQuotedLocalPart = false;
 	private boolean allowUnquotedLocalPart = false;
-	private boolean allowDomains = false;
-	private boolean allowIPv4Addresses = false;
-	private boolean allowIPv6Addresses = false;
+	private boolean allowDomainHost = false;
+	private boolean allowIPv4Host = false;
+	private boolean allowIPv6Host = false;
 
 	@Override
 	protected Arbitrary<String> arbitrary() {
@@ -26,7 +26,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		}
 		Arbitrary<String> unquoted = localPartUnquoted();
 		Arbitrary<String> quoted = localPartQuoted();
-		int frequencyUnquoted = allowUnquotedLocalPart ? 1 : 0;
+		int frequencyUnquoted = allowUnquotedLocalPart ? 4 : 0;
 		int frequencyQuoted = allowQuotedLocalPart ? 1 : 0;
 		return Arbitraries.frequencyOf(
 				Tuple.of(frequencyUnquoted, unquoted),
@@ -57,14 +57,14 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> webDomain() {
-		if (!allowDomains && !allowIPv4Addresses && !allowIPv6Addresses) {
-			allowDomains = true;
-			allowIPv4Addresses = true;
-			allowIPv6Addresses = true;
+		if (!allowDomainHost && !allowIPv4Host && !allowIPv6Host) {
+			allowDomainHost = true;
+			allowIPv4Host = true;
+			allowIPv6Host = true;
 		}
-		int frequencyDomain = allowDomains ? 2 : 0;
-		int frequencyIPv4Addresses = allowIPv4Addresses ? 1 : 0;
-		int frequencyIPv6Addresses = allowIPv6Addresses ? 1 : 0;
+		int frequencyDomain = allowDomainHost ? 4 : 0;
+		int frequencyIPv4Addresses = allowIPv4Host ? 1 : 0;
+		int frequencyIPv6Addresses = allowIPv6Host ? 1 : 0;
 		return Arbitraries.frequencyOf(
 				Tuple.of(frequencyDomain, domainDomain()),
 				Tuple.of(frequencyIPv4Addresses, domainIPv4()),
@@ -183,23 +183,23 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	@Override
-	public EmailArbitrary ipv4Address() {
+	public EmailArbitrary ipv4Host() {
 		DefaultEmailArbitrary clone = typedClone();
-		clone.allowIPv4Addresses = true;
+		clone.allowIPv4Host = true;
 		return clone;
 	}
 
 	@Override
-	public EmailArbitrary ipv6Address() {
+	public EmailArbitrary ipv6Host() {
 		DefaultEmailArbitrary clone = typedClone();
-		clone.allowIPv6Addresses = true;
+		clone.allowIPv6Host = true;
 		return clone;
 	}
 
 	@Override
-	public EmailArbitrary domain() {
+	public EmailArbitrary domainHost() {
 		DefaultEmailArbitrary clone = typedClone();
-		clone.allowDomains = true;
+		clone.allowDomainHost = true;
 		return clone;
 	}
 }

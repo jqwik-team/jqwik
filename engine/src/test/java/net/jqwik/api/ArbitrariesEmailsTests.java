@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.net.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -149,7 +150,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyIPAddresses() {
-			return Arbitraries.emails().ipv4Address().ipv6Address();
+			return Arbitraries.emails().ipv4Host().ipv6Host();
 		}
 
 		@Property
@@ -161,7 +162,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyIPv4Addresses() {
-			return Arbitraries.emails().ipv4Address();
+			return Arbitraries.emails().ipv4Host();
 		}
 
 		@Property
@@ -173,7 +174,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyIPv6Addresses() {
-			return Arbitraries.emails().ipv6Address();
+			return Arbitraries.emails().ipv6Host();
 		}
 
 		@Property
@@ -184,7 +185,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyDomains() {
-			return Arbitraries.emails().domain();
+			return Arbitraries.emails().domainHost();
 		}
 
 		@Property
@@ -220,24 +221,24 @@ public class ArbitrariesEmailsTests {
 			Statistics.label("Quoted usernames")
 					  .collect(isQuoted(localPart))
 					  .coverage(coverage -> {
-						  coverage.check(true).percentage(p -> p > 35);
-						  coverage.check(false).percentage(p -> p > 35);
+						  coverage.check(true).percentage(p -> p > 10);
+						  coverage.check(false).percentage(p -> p > 70);
 					  });
 		}
 
 		@Property
-		void domainsAndIPAddressesAreGenerated(@ForAll("emails") String email) {
+		void domainsAndIpHostsAreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Statistics.label("Domains")
 					  .collect(isIPAddress(domain))
 					  .coverage(coverage -> {
-						  coverage.check(true).percentage(p -> p > 35);
-						  coverage.check(false).percentage(p -> p > 35);
+						  coverage.check(true).percentage(p -> p > 10);
+						  coverage.check(false).percentage(p -> p > 60);
 					  });
 		}
 
 		@Property
-		void IPv4AndIPv6AreGenerated(@ForAll("emails") String email) {
+		void Ipv4AndIpv6HostsAreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
@@ -250,7 +251,7 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void domainsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email) {
+		void domainHostsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			int domainParts = (int) (domain.chars().filter(v -> v == '.').count() + 1);

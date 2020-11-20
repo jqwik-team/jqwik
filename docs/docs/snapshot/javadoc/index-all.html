@@ -886,12 +886,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/BeforeContainerHook.html#DO_NOTHING">DO_NOTHING</a></span> - Static variable in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/EmailArbitrary.html#domain()">domain()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/EmailArbitrary.html" title="interface in net.jqwik.api.arbitraries">EmailArbitrary</a></dt>
-<dd>
-<div class="block">Allow named web domains in the domain part.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/Email.html#domain()">domain()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Email.html" title="annotation in net.jqwik.api.constraints">Email</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/domains/Domain.html" title="annotation in net.jqwik.api.domains"><span class="typeNameLink">Domain</span></a> - Annotation Type in <a href="net/jqwik/api/domains/package-summary.html">net.jqwik.api.domains</a></dt>
 <dd>
 <div class="block">Use <code>@Domain(MyDomainContext.class)</code> to use only
@@ -910,6 +904,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html#%3Cinit%3E()">DomainContextFacade()</a></span> - Constructor for class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains">DomainContext.DomainContextFacade</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/EmailArbitrary.html#domainHost()">domainHost()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/EmailArbitrary.html" title="interface in net.jqwik.api.arbitraries">EmailArbitrary</a></dt>
+<dd>
+<div class="block">Allow named web domains in the host part.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/Email.html#domainHost()">domainHost()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Email.html" title="annotation in net.jqwik.api.constraints">Email</a></dt>
+<dd>
+<div class="block">Are hosts with domain name allowed.</div>
+</dd>
 <dt><a href="net/jqwik/api/domains/DomainList.html" title="annotation in net.jqwik.api.domains"><span class="typeNameLink">DomainList</span></a> - Annotation Type in <a href="net/jqwik/api/domains/package-summary.html">net.jqwik.api.domains</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#doNotSkip()">doNotSkip()</a></span> - Static method in class net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></dt>
@@ -975,7 +977,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="net/jqwik/api/arbitraries/EmailArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">EmailArbitrary</span></a> - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
 <dd>
-<div class="block">Fluent interface to configure arbitraries that generate email values.</div>
+<div class="block">Fluent interface to configure arbitraries that generate valid email addresses.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#emails()">emails()</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -1651,18 +1653,22 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="net/jqwik/api/stateful/Invariant.html" title="interface in net.jqwik.api.stateful"><span class="typeNameLink">Invariant</span></a>&lt;<a href="net/jqwik/api/stateful/Invariant.html" title="type parameter in Invariant">T</a>&gt; - Interface in <a href="net/jqwik/api/stateful/package-summary.html">net.jqwik.api.stateful</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/EmailArbitrary.html#ipv4Address()">ipv4Address()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/EmailArbitrary.html" title="interface in net.jqwik.api.arbitraries">EmailArbitrary</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/EmailArbitrary.html#ipv4Host()">ipv4Host()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/EmailArbitrary.html" title="interface in net.jqwik.api.arbitraries">EmailArbitrary</a></dt>
 <dd>
-<div class="block">Allow IPv4 addresses in the domain part.</div>
+<div class="block">Allow IPv4 addresses in the host part.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/Email.html#ipv4Address()">ipv4Address()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Email.html" title="annotation in net.jqwik.api.constraints">Email</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/EmailArbitrary.html#ipv6Address()">ipv6Address()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/EmailArbitrary.html" title="interface in net.jqwik.api.arbitraries">EmailArbitrary</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/Email.html#ipv4Host()">ipv4Host()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Email.html" title="annotation in net.jqwik.api.constraints">Email</a></dt>
 <dd>
-<div class="block">Allow IPv6 addresses in the domain part.</div>
+<div class="block">Are hosts with ipv4 addresses allowed.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/Email.html#ipv6Address()">ipv6Address()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Email.html" title="annotation in net.jqwik.api.constraints">Email</a></dt>
-<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/EmailArbitrary.html#ipv6Host()">ipv6Host()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/EmailArbitrary.html" title="interface in net.jqwik.api.arbitraries">EmailArbitrary</a></dt>
+<dd>
+<div class="block">Allow IPv6 addresses in the host part.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/Email.html#ipv6Host()">ipv6Host()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Email.html" title="annotation in net.jqwik.api.constraints">Email</a></dt>
+<dd>
+<div class="block">Are hosts with ipv6 addresses allowed.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/providers/TypeUsage.html#isAnnotated(java.lang.Class)">isAnnotated(Class&lt;A&gt;)</a></span> - Method in interface net.jqwik.api.providers.<a href="net/jqwik/api/providers/TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></dt>
 <dd>
 <div class="block">Return true if the current instance is annotated (directly or indirectly through meta-annotations)
@@ -2591,7 +2597,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Allow quoted local part.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/Email.html#quotedLocalPart()">quotedLocalPart()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Email.html" title="annotation in net.jqwik.api.constraints">Email</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Are quoted local parts allowed.</div>
+</dd>
 </dl>
 <a id="I:R">
 <!--   -->
@@ -3383,7 +3391,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Allow unquoted local part.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/Email.html#unquotedLocalPart()">unquotedLocalPart()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Email.html" title="annotation in net.jqwik.api.constraints">Email</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Are unquoted local parts allowed.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html#unshrinkable(java.util.function.Supplier,net.jqwik.api.ShrinkingDistance)">unshrinkable(Supplier&lt;T&gt;, ShrinkingDistance)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html" title="class in net.jqwik.api">Shrinkable.ShrinkableFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.html#unshrinkable(T)">unshrinkable(T)</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a></dt>

@@ -19,9 +19,29 @@ import static org.apiguardian.api.API.Status.*;
 @Documented
 @API(status = EXPERIMENTAL, since = "1.3.9")
 public @interface Email {
-	boolean domain() default true;
-	boolean ipv6Address() default true;
-	boolean ipv4Address() default true;
+
+	/**
+	 * Are hosts with domain name allowed.
+	 */
+	boolean domainHost() default true;
+
+	/**
+	 * Are hosts with ipv6 addresses allowed.
+	 */
+	boolean ipv6Host() default true;
+
+	/**
+	 * Are hosts with ipv4 addresses allowed.
+	 */
+	boolean ipv4Host() default true;
+
+	/**
+	 * Are quoted local parts allowed.
+	 */
 	boolean quotedLocalPart() default true;
+
+	/**
+	 * Are unquoted local parts allowed.
+	 */
 	boolean unquotedLocalPart() default true;
 }

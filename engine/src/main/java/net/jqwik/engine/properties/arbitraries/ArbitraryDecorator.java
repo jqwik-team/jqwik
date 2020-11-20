@@ -23,4 +23,9 @@ abstract class ArbitraryDecorator<T>  extends AbstractArbitraryBase implements A
 	public EdgeCases<T> edgeCases() {
 		return arbitrary().edgeCases();
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Decorated:%s", super.toString());
+	}
 }

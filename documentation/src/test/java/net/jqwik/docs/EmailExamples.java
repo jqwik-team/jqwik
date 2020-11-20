@@ -13,7 +13,7 @@ class EmailExamples {
 	}
 
 	@Property
-	void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Address = false, ipv6Address = false) String email) {
+	void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Host = false, ipv6Host = false) String email) {
 		assertThat(email).contains("@");
 	}
 }

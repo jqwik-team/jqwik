@@ -1390,9 +1390,10 @@ To generate email addresses you can either
 - or use the [`@Email`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Email.html) 
   annotation on `@ForAll` parameters as in the examples below. 
 
-An email address consists of two parts: `local-part` and `domain`. The complete email address is therefore `local-part@domain`.
-The `local-part` can be `unquoted` or `quoted`, which allows for more characters.
-The `domain` can also be an IP address, surrounded by square brackets `[]`.
+An email address consists of two parts: `local-part` and `host`. 
+The complete email address is therefore `local-part@host`.
+The `local-part` can be `unquoted` or `quoted` (in double quotes), which allows for more characters to be used.
+The `host` can be a standard domain name, but also an IP (v4 or v6) address, surrounded by square brackets `[]`.
 
 For example, valid email addresses are: 
 ```
@@ -1406,9 +1407,9 @@ admin@[32::FF:aBc:79a:83B:FFFF:345]
 You can use the following restrictions in `@Email` annotation:
 - `unquotedLocalPart` to decide whether unquoted local parts are generated
 - `quotedLocalPart` to decide whether quoted local parts are generated
-- `domains` to decide whether domains are generated in the domain part
-- `ipv4Addresses` to decide whether ipv4 addresses are generated in the domain part
-- `ipv6Addresses` to decide whether ipv6 addresses are generated in the domain part
+- `domainHost` to decide whether domains are generated in the host part
+- `ipv4Host` to decide whether ipv4 addresses are generated in the host part
+- `ipv6Host` to decide whether ipv6 addresses are generated in the host part
 
 You can use it as follows:
 
@@ -1419,7 +1420,7 @@ void defaultEmailAddresses(@ForAll @Email String email) {
 }
 
 @Property
-void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Address = false, ipv6Address = false) String email) {
+void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Host = false, ipv6Host = false) String email) {
     assertThat(email).contains("@");
 }
 ```
