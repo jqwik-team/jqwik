@@ -1,11 +1,7 @@
 - 1.3.9
 
-    - Hand in property execution context to domains when being created.
-      E.g. to get annotation values from method
-
-    - Add code of conduct. Examples:
-        - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
-        - https://github.com/junit-team/junit5/blob/main/CODE_OF_CONDUCT.md
+    - Can values of Arbitraries.create() been cached so that they are not
+      regenerated for reporting?
 
     - Adapt edge cases of email addresses to only generate the most important ones.
       See https://github.com/jlink/jqwik/issues/133
@@ -15,6 +11,10 @@
     - StringLength constraints uses filter when StringArbitrary not available
 
 - 1.3.x
+
+    - Add code of conduct. Examples:
+        - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
+        - https://github.com/junit-team/junit5/blob/main/CODE_OF_CONDUCT.md
 
     - Deprecate Arbitrary.unique()
     
@@ -35,6 +35,10 @@
             - Allow @ForAll parameters in @Provide methods
             - Allow Arbitrary<T> parameters in @Provide methods
             - @Configure method for configurators?
+        - Hand in property execution context to domains when being created.
+          E.g. to get annotation values from method
+          DomainContext.prepare(PropertyExecutionContext context)
+
 
     - Edge Cases
     
