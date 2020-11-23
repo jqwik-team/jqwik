@@ -88,6 +88,7 @@ public class ArbitrariesEmailsTests {
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.charAt(0)).isNotEqualTo('-');
 			assertThat(domain.charAt(domain.length() - 1)).isNotEqualTo('-');
+			assertThat(domain).contains(".");
 			assertThat(domain).doesNotContain("..");
 			assertThat(domain.charAt(0)).isNotEqualTo('.');
 			assertThat(domain.charAt(domain.length() - 1)).isNotEqualTo('.');
@@ -250,18 +251,18 @@ public class ArbitrariesEmailsTests {
 		}
 
 		@Property
-		void domainHostsWithOneAndMorePartsAreGenerated(@ForAll("emails") String email) {
+		void domainHostsWithTwoAndMorePartsAreGenerated(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(!isIPAddress(domain));
 			int domainParts = (int) (domain.chars().filter(v -> v == '.').count() + 1);
 			Statistics.label("Domain parts")
 					  .collect(domainParts)
 					  .coverage(coverage -> {
-						  coverage.check(1).count(c -> c >= 1);
 						  coverage.check(2).count(c -> c >= 1);
 						  coverage.check(3).count(c -> c >= 1);
 						  coverage.check(4).count(c -> c >= 1);
 						  coverage.check(5).count(c -> c >= 1);
+						  coverage.check(6).count(c -> c >= 1);
 					  });
 		}
 
@@ -273,7 +274,10 @@ public class ArbitrariesEmailsTests {
 		@Property(tries = 20)
 		void defaultShrinking(@ForAll Random random) {
 			EmailArbitrary emails = Arbitraries.emails();
-			assertAllValuesAreShrunkTo("A@a", emails, random);
+			Falsifier<String> falsifier = falsifyDefault();
+			String value = shrinkToMinimal(emails, random, falsifier);
+			assertThat(checkShrinkedDomainEnding(value)).isTrue();
+			assertThat(checkShrinkedLocalPart(value)).isTrue();
 		}
 
 		@Property(tries = 20)
@@ -281,7 +285,7 @@ public class ArbitrariesEmailsTests {
 			EmailArbitrary emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyDomain();
 			String value = shrinkToMinimal(emails, random, falsifier);
-			assertThat(value).isEqualTo("A@a");
+			assertThat(checkShrinkedDomainEnding(value)).isTrue();
 		}
 
 		@Property(tries = 20)
@@ -313,6 +317,19 @@ public class ArbitrariesEmailsTests {
 			String domain = getDomainOfEmail(value);
 			domain = domain.substring(1, domain.length() - 1);
 			assertThat(domain).isEqualTo("::");
+		}
+
+		private boolean checkShrinkedDomainEnding(String address){
+			return address.endsWith(".a.aa") || address.endsWith("@a.aa");
+		}
+
+		private boolean checkShrinkedLocalPart(String address){
+			String localPart = getLocalPartOfEmail(address);
+			return localPart.equals("A");
+		}
+
+		private TestingFalsifier<String> falsifyDefault() {
+			return email -> false;
 		}
 
 		private TestingFalsifier<String> falsifyDomain() {

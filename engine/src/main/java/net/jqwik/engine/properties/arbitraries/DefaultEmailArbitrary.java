@@ -126,7 +126,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> domainDomain() {
-		Arbitrary<Integer> length = Arbitraries.integers().between(0, 25);
+		Arbitrary<Integer> length = Arbitraries.integers().between(1, 25);
 		Arbitrary<String> lastDomainPart = domainDomainPart();
 		return length.flatMap(depth -> Arbitraries.recursive(
 				() -> lastDomainPart,
