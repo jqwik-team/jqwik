@@ -1,6 +1,5 @@
 package net.jqwik.api;
 
-import java.net.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -116,7 +115,7 @@ public class ArbitrariesEmailsTests {
 			assertThat(stringContainsMinimumOneChar(ALLOWED_NOT_NUMERIC_CHARS_TLD, tld)).isTrue();
 		}
 
-		@Property
+		@Property(tries = 5000)
 		void validIPAddressAfterAt(@ForAll("emails") String email) {
 			String domain = getDomainOfEmail(email);
 			Assume.that(isIPAddress(domain));
@@ -313,11 +312,7 @@ public class ArbitrariesEmailsTests {
 			String value = shrinkToMinimal(emails, random, falsifier);
 			String domain = getDomainOfEmail(value);
 			domain = domain.substring(1, domain.length() - 1);
-			String[] domainParts = domain.split(":");
-			assertThat(isValidIPv6Address(domain)).isTrue();
-			IntStream.range(0, domainParts.length).forEach(i -> {
-				assertThat(domainParts[i]).isIn("0", "");
-			});
+			assertThat(domain).isEqualTo("::");
 		}
 
 		private TestingFalsifier<String> falsifyDomain() {
@@ -369,10 +364,13 @@ public class ArbitrariesEmailsTests {
 
 	private boolean validCharsInIPv6Address(String address) {
 		String[] addressParts = address.split("\\:");
-		if ((addressParts.length != 8 && addressParts.length != 6) || (addressParts.length == 6 && !address.endsWith("::"))) {
+		if(addressParts.length > 8 || (addressParts.length > 6 && address.endsWith("::"))){
 			return false;
 		}
 		for (String part : addressParts) {
+			if(part.length() > 4){
+				return false;
+			}
 			for (char c : part.toCharArray()) {
 				if (!ALLOWED_CHARS_IPV6_ADDRESS.contains(Character.toString(c))) {
 					return false;

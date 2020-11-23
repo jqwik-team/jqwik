@@ -86,7 +86,15 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		Arbitrary<String> address =
 				Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart)
 						   .as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
+		address = address.map(v -> removeThreeOrMoreColons(v));
 		address = address.filter(v -> validUseOfColonInIPv6Address(v.substring(1, v.length() - 1)));
+		return address;
+	}
+
+	private String removeThreeOrMoreColons(String address){
+		while(address.contains(":::")){
+			address = address.replace(":::", "::");
+		}
 		return address;
 	}
 
