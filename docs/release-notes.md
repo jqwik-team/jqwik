@@ -41,7 +41,7 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
-No breaking changes.
+- Email arbitrary no longer generates domain hosts without top level domain
 
 #### Bug Fixes
 

@@ -1,5 +1,7 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
@@ -14,7 +16,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	@Override
 	protected Arbitrary<String> arbitrary() {
 		Arbitrary<String> arbitraryLocalPart = localPart();
-		Arbitrary<String> arbitraryDomain = webDomain();
+		Arbitrary<String> arbitraryDomain = host();
 		return Combinators.combine(arbitraryLocalPart, arbitraryDomain)
 						  .as((localPart, domain) -> localPart + "@" + domain);
 	}
@@ -56,7 +58,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		return quoted;
 	}
 
-	private Arbitrary<String> webDomain() {
+	private Arbitrary<String> host() {
 		if (!allowDomainHost && !allowIPv4Host && !allowIPv6Host) {
 			allowDomainHost = true;
 			allowIPv4Host = true;
@@ -66,38 +68,52 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		int frequencyIPv4Addresses = allowIPv4Host ? 1 : 0;
 		int frequencyIPv6Addresses = allowIPv6Host ? 1 : 0;
 		return Arbitraries.frequencyOf(
-				Tuple.of(frequencyDomain, domainDomain()),
-				Tuple.of(frequencyIPv4Addresses, domainIPv4()),
-				Tuple.of(frequencyIPv6Addresses, domainIPv6())
+				Tuple.of(frequencyDomain, webDomain()),
+				Tuple.of(frequencyIPv4Addresses, hostIpv4()),
+				Tuple.of(frequencyIPv6Addresses, hostIpv6())
 		);
 	}
 
-	private Arbitrary<String> domainIPv4() {
+	private Arbitrary<String> hostIpv4() {
 		Arbitrary<Integer> addressPart = Arbitraries.integers().between(0, 255);
 		return Combinators.combine(addressPart, addressPart, addressPart, addressPart)
 						  .as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]");
 	}
 
-	private Arbitrary<String> domainIPv6() {
-		Arbitrary<String> addressPart =
-				Arbitraries.strings()
-						   .numeric().withChars('a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F')
-						   .ofMaxLength(4);
-		Arbitrary<String> address =
-				Combinators.combine(addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart, addressPart)
-						   .as((a, b, c, d, e, f, g, h) -> "[" + a + ":" + b + ":" + c + ":" + d + ":" + e + ":" + f + ":" + g + ":" + h + "]");
-		address = address.map(v -> removeThreeOrMoreColons(v));
-		address = address.filter(v -> validUseOfColonInIPv6Address(v.substring(1, v.length() - 1)));
-		return address;
+	private Arbitrary<String> hostIpv6() {
+		Arbitrary<List<String>> addressParts = ipv6Part().list().ofSize(8);
+		Arbitrary<String> plainAddress = addressParts.map(parts -> String.join(":", parts));
+		return plainAddress
+					   .map(this::removeThreeOrMoreColons)
+					   .filter(DefaultEmailArbitrary::validUseOfColonInIPv6Address)
+					   .map(plain -> "[" + plain + "]");
 	}
 
-	private String removeThreeOrMoreColons(String address){
-		while(address.contains(":::")){
+	private Arbitrary<String> ipv6Part() {
+		Arbitrary<Integer> ipv6PartNumber = Arbitraries.integers().between(0, 0xffff);
+		return Arbitraries.frequencyOf(
+				Tuple.of(1, Arbitraries.just("")),
+				Tuple.of(8, ipv6PartNumber.map(this::toLowerHex)),
+				Tuple.of(1, ipv6PartNumber.map(this::toUpperHex))
+		);
+	}
+
+	private String toLowerHex(int ipv6Part) {
+		return Integer.toHexString(ipv6Part);
+	}
+
+	private String toUpperHex(int ipv6Part) {
+		return toLowerHex(ipv6Part).toUpperCase();
+	}
+
+	private String removeThreeOrMoreColons(String address) {
+		while (address.contains(":::")) {
 			address = address.replace(":::", "::");
 		}
 		return address;
 	}
 
+	// TODO: This is not understandable for me
 	public static boolean validUseOfColonInIPv6Address(String ip) {
 		if (!checkColonPlacement(ip)) {
 			return false;
@@ -125,36 +141,35 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		return !ipContainsThreeColons && !startsWithOnlyOneColon && !endsWithOnlyOneColon;
 	}
 
-	private Arbitrary<String> domainDomain() {
+	private Arbitrary<String> webDomain() {
 		Arbitrary<Integer> length = Arbitraries.integers().between(1, 25);
-		Arbitrary<String> lastDomainPart = domainDomainPart();
+		Arbitrary<String> topLevelDomain = topLevelDomain();
+
 		return length.flatMap(depth -> Arbitraries.recursive(
-				() -> lastDomainPart,
-				this::domainDomainGenerate,
+				() -> topLevelDomain,
+				this::prependDomainPart,
 				depth
-		)).filter(v -> v.length() <= 253 && validUseOfDotsInDomain(v) && validUseOfHyphensInDomain(v) && tldNotAllNumeric(v));
+		).filter(v -> v.length() <= 253));
 	}
 
-	private boolean validUseOfDotsInDomain(String domain) {
-		boolean tldMinimumTwoSigns = domain.length() < 2 || domain.charAt(domain.length() - 2) != '.';
-		boolean firstSignNotADot = domain.charAt(0) != '.';
-		boolean lastSignNotADot = domain.charAt(domain.length() - 1) != '.';
-		boolean containsNoDoubleDot = !domain.contains("..");
-		return tldMinimumTwoSigns && firstSignNotADot && lastSignNotADot && containsNoDoubleDot;
+	private Arbitrary<String> prependDomainPart(Arbitrary<String> tail) {
+		Arbitrary<String> domainPart = domainPart(1, 63);
+		return Combinators.combine(domainPart, tail)
+						  .as((part, rest) -> {
+							  String newDomain = part + "." + rest;
+							  // This is an optimization to have less filtering
+							  if (newDomain.length() > 253) {
+								  return rest;
+							  }
+							  return newDomain;
+						  });
 	}
 
-	private boolean validUseOfHyphensInDomain(String domain) {
-		boolean firstSignNotAHyphen = domain.charAt(0) != '-';
-		boolean lastSignNotAHyphen = domain.charAt(domain.length() - 1) != '-';
-		return firstSignNotAHyphen && lastSignNotAHyphen;
+	private Arbitrary<String> topLevelDomain() {
+		return domainPart(2, 10).filter(this::notAllNumeric);
 	}
 
-	private boolean tldNotAllNumeric(String domain) {
-		String parts[] = domain.split("\\.");
-		if (parts.length == 1) {
-			return true;
-		}
-		String tld = parts[parts.length - 1];
+	private boolean notAllNumeric(String tld) {
 		for (char c : tld.toCharArray()) {
 			if (c < '0' || c > '9') {
 				return true;
@@ -163,17 +178,19 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		return false;
 	}
 
-	private Arbitrary<String> domainDomainGenerate(Arbitrary<String> domain) {
-		return Combinators.combine(domainDomainPart(), domain).as((x, y) -> x + "." + y);
-	}
-
-	private Arbitrary<String> domainDomainPart() {
+	private Arbitrary<String> domainPart(int minLength, int maxLength) {
 		//Not using .alpha().numeric().withChars("-") because runtime is too high
 		//Using "." in withChars() to generate more subdomains
-		Arbitrary<String> domain =
-				Arbitraries.strings().withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-.")
-						   .ofMinLength(1).ofMaxLength(63);
-		return domain;
+		return Arbitraries.strings()
+						  .withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
+						  .ofMinLength(minLength).ofMaxLength(maxLength)
+						  .filter(this::validUseOfHyphensInDomainPart);
+	}
+
+	private boolean validUseOfHyphensInDomainPart(String domainPart) {
+		boolean firstSignNotAHyphen = domainPart.charAt(0) != '-';
+		boolean lastSignNotAHyphen = domainPart.charAt(domainPart.length() - 1) != '-';
+		return firstSignNotAHyphen && lastSignNotAHyphen;
 	}
 
 	@Override

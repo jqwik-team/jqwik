@@ -1,5 +1,7 @@
 package net.jqwik.api.constraints;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.engine.*;
@@ -17,27 +19,27 @@ class EmailProperties {
 
 		@Property
 		void onlyIPAddressesAreGenerated(@ForAll @Email(domainHost = false) String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			assertThat(isIPAddress(domain)).isTrue();
 		}
 
 		@Property
 		void onlyIPv4AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv6Host = false) String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(".");
 		}
 
 		@Property
 		void onlyIPv6AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv4Host = false) String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(":");
 		}
 
 		@Property
 		void onlyDomainsAreGenerated(@ForAll @Email(ipv6Host = false, ipv4Host = false) String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			assertThat(isIPAddress(domain)).isFalse();
 		}
 
@@ -63,6 +65,19 @@ class EmailProperties {
 		void generationFailsWithNoHost(@ForAll @Email(domainHost = false, ipv4Host = false, ipv6Host = false) String email) {
 		}
 
+		@Property
+		@ExpectFailure(checkResult = ShrinkToAatAdotAA.class)
+		boolean shrinking(@ForAll @Email(ipv6Host = false, ipv4Host = false, quotedLocalPart = false) String email) {
+			return false;
+		}
+
+		class ShrinkToAatAdotAA extends ShrinkToChecker {
+			@Override
+			public Iterable<?> shrunkValues() {
+				return Arrays.asList("A@a.aa");
+			}
+		}
+
 	}
 
 	@Group
@@ -81,7 +96,7 @@ class EmailProperties {
 
 		@Property
 		void domainsAndIPAddressesAreGenerated(@ForAll @Email String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Statistics.label("Domains")
 					  .collect(isIPAddress(domain))
 					  .coverage(coverage -> {
@@ -92,7 +107,7 @@ class EmailProperties {
 
 		@Property
 		void IPv4AndIPv6AreGenerated(@ForAll @Email String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
 			Statistics.label("IPv4 addresses")

@@ -38,7 +38,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void validLengthAfterAt(@ForAll("emails") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			assertThat(domain.length()).isBetween(1, 253);
 		}
 
@@ -77,14 +77,14 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void validCharsAfterAt(@ForAll("emails") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_DOMAIN, c));
 		}
 
 		@Property
 		void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.charAt(0)).isNotEqualTo('-');
 			assertThat(domain.charAt(domain.length() - 1)).isNotEqualTo('-');
@@ -98,7 +98,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void validMaxDomainLengthAfterAt(@ForAll("emails") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Assume.that(!isIPAddress(domain));
 			String[] domainParts = domain.split("\\.");
 			IntStream.range(0, domainParts.length).forEach(i -> {
@@ -108,7 +108,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property(tries = 5000)
 		void tldNotAllNumeric(@ForAll("emails") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Assume.that(!isIPAddress(domain));
 			String[] domainParts = domain.split("\\.");
 			Assume.that(domainParts.length >= 2);
@@ -118,7 +118,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property(tries = 5000)
 		void validIPAddressAfterAt(@ForAll("emails") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
 			assertThat(isValidIPAddress(domain)).isTrue();
@@ -144,7 +144,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void onlyIPAddressesAreGenerated(@ForAll("onlyIPAddresses") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			assertThat(isIPAddress(domain)).isTrue();
 		}
 
@@ -155,7 +155,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void onlyIPv4AddressesAreGenerated(@ForAll("onlyIPv4Addresses") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(".");
 		}
@@ -167,7 +167,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void onlyIPv6AddressesAreGenerated(@ForAll("onlyIPv6Addresses") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			assertThat(isIPAddress(domain)).isTrue();
 			assertThat(domain).contains(":");
 		}
@@ -179,7 +179,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void onlyDomainsAreGenerated(@ForAll("onlyDomains") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			assertThat(isIPAddress(domain)).isFalse();
 		}
 
@@ -228,7 +228,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void domainsAndIpHostsAreGenerated(@ForAll("emails") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Statistics.label("Domains")
 					  .collect(isIPAddress(domain))
 					  .coverage(coverage -> {
@@ -239,7 +239,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void Ipv4AndIpv6HostsAreGenerated(@ForAll("emails") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);
 			Statistics.label("IPv4 addresses")
@@ -252,7 +252,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void domainHostsWithTwoAndMorePartsAreGenerated(@ForAll("emails") String email) {
-			String domain = getDomainOfEmail(email);
+			String domain = getEmailHost(email);
 			Assume.that(!isIPAddress(domain));
 			int domainParts = (int) (domain.chars().filter(v -> v == '.').count() + 1);
 			Statistics.label("Domain parts")
@@ -269,39 +269,26 @@ public class ArbitrariesEmailsTests {
 	}
 
 	@Group
+	@PropertyDefaults(tries = 20)
 	class Shrinking {
 
-		@Property(tries = 20)
+		@Property
 		void defaultShrinking(@ForAll Random random) {
 			EmailArbitrary emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyDefault();
 			String value = shrinkToMinimal(emails, random, falsifier);
-			assertThat(checkShrinkedDomainEnding(value)).isTrue();
-			assertThat(checkShrinkedLocalPart(value)).isTrue();
+			assertThat(value).isEqualTo("A@a.aa");
 		}
 
-		@Property(tries = 20)
+		@Property
 		void domainShrinking(@ForAll Random random) {
 			EmailArbitrary emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyDomain();
 			String value = shrinkToMinimal(emails, random, falsifier);
-			assertThat(checkShrinkedDomainEnding(value)).isTrue();
+			assertThat(value).isEqualTo("A@a.aa");
 		}
 
-		@Property(tries = 20)
-		void domainShrinkingWithTLD(@ForAll Random random) {
-			EmailArbitrary emails = Arbitraries.emails();
-			Falsifier<String> falsifier = falsifyDomainWithTLD();
-			String value = shrinkToMinimal(emails, random, falsifier);
-			String domain = getDomainOfEmail(value);
-			String[] domainParts = domain.split("\\.");
-			IntStream.range(0, domainParts.length - 1).forEach(i -> {
-				assertThat(domainParts[i]).isEqualTo("a");
-			});
-			assertThat(domainParts[domainParts.length - 1]).isEqualTo("aa");
-		}
-
-		@Property(tries = 50)
+		@Property
 		void ipv4Shrinking(@ForAll Random random) {
 			EmailArbitrary emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyIPv4();
@@ -309,23 +296,12 @@ public class ArbitrariesEmailsTests {
 			assertThat(value).isEqualTo("A@[0.0.0.0]");
 		}
 
-		@Property(tries = 20)
+		@Property
 		void ipv6Shrinking(@ForAll Random random) {
 			EmailArbitrary emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyIPv6();
 			String value = shrinkToMinimal(emails, random, falsifier);
-			String domain = getDomainOfEmail(value);
-			domain = domain.substring(1, domain.length() - 1);
-			assertThat(domain).isEqualTo("::");
-		}
-
-		private boolean checkShrinkedDomainEnding(String address){
-			return address.endsWith(".a.aa") || address.endsWith("@a.aa");
-		}
-
-		private boolean checkShrinkedLocalPart(String address){
-			String localPart = getLocalPartOfEmail(address);
-			return localPart.equals("A");
+			assertThat(value).isEqualTo("A@[::]");
 		}
 
 		private TestingFalsifier<String> falsifyDefault() {
@@ -334,28 +310,21 @@ public class ArbitrariesEmailsTests {
 
 		private TestingFalsifier<String> falsifyDomain() {
 			return email -> {
-				String domain = getDomainOfEmail(email);
+				String domain = getEmailHost(email);
 				return isIPAddress(domain);
-			};
-		}
-
-		private TestingFalsifier<String> falsifyDomainWithTLD() {
-			return email -> {
-				String domain = getDomainOfEmail(email);
-				return !(!isIPAddress(domain) && domain.contains("."));
 			};
 		}
 
 		private TestingFalsifier<String> falsifyIPv4() {
 			return email -> {
-				String domain = getDomainOfEmail(email);
+				String domain = getEmailHost(email);
 				return !(isIPAddress(domain) && domain.contains("."));
 			};
 		}
 
 		private TestingFalsifier<String> falsifyIPv6() {
 			return email -> {
-				String domain = getDomainOfEmail(email);
+				String domain = getEmailHost(email);
 				return !(isIPAddress(domain) && domain.contains(":"));
 			};
 		}
@@ -381,11 +350,11 @@ public class ArbitrariesEmailsTests {
 
 	private boolean validCharsInIPv6Address(String address) {
 		String[] addressParts = address.split("\\:");
-		if(addressParts.length > 8 || (addressParts.length > 6 && address.endsWith("::"))){
+		if (addressParts.length > 8 || (addressParts.length > 6 && address.endsWith("::"))) {
 			return false;
 		}
 		for (String part : addressParts) {
-			if(part.length() > 4){
+			if (part.length() > 4) {
 				return false;
 			}
 			for (char c : part.toCharArray()) {
@@ -436,10 +405,9 @@ public class ArbitrariesEmailsTests {
 		return email.substring(0, index);
 	}
 
-	public static String getDomainOfEmail(String email) {
+	public static String getEmailHost(String email) {
 		int index = email.lastIndexOf('@');
-		String substring = email.substring(index + 1);
-		return substring;
+		return email.substring(index + 1);
 	}
 
 }
