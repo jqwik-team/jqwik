@@ -441,8 +441,10 @@ public interface Arbitrary<T> {
 	@API(status = MAINTAINED, since = "1.3.0")
 	default T sample() {
 		return this.sampleStream()
-				   .findFirst()
-				   .orElseThrow(() -> new JqwikException("Cannot generate a value"));
+			.map(Optional::ofNullable)
+			.findFirst()
+			.orElseThrow(() -> new JqwikException("Cannot generate a value"))
+			.orElse(null);
 	}
 
 	/**
