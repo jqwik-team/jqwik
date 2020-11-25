@@ -1,8 +1,5 @@
 - 1.3.9
 
-    - Can values of Arbitraries.create() been cached so that they are not
-      regenerated for reporting?
-
     - Adapt edge cases of email addresses to only generate the most important ones.
       See https://github.com/jlink/jqwik/issues/133
 

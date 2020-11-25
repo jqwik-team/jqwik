@@ -38,7 +38,7 @@ public class DefaultReporter implements Reporter {
 			stringBuilder.append(line);
 		} else {
 			stringBuilder.append(String.format("%n"));
-			LineReporter lineReporter = new LineReporterImpl(stringBuilder, 0);
+			LineReporter lineReporter = new BuilderBasedLineReporter(stringBuilder, 0);
 			sampleReport.report(lineReporter, 1, "");
 		}
 		removeTrailingNewLine(stringBuilder);
@@ -53,7 +53,7 @@ public class DefaultReporter implements Reporter {
 	private String buildReports(Map<String, Object> reports) {
 		SampleReporter sampleReporter = new SampleReporter(null, reports);
 		StringBuilder stringBuilder = new StringBuilder();
-		LineReporter lineReporter = new LineReporterImpl(stringBuilder, 0);
+		LineReporter lineReporter = new BuilderBasedLineReporter(stringBuilder, 0);
 		sampleReporter.reportTo(lineReporter);
 		removeTrailingNewLine(stringBuilder);
 		return stringBuilder.toString();

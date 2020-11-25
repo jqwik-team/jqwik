@@ -26,7 +26,7 @@ public class SampleReporter {
 	) {
 		Map<String, Object> reports = createSampleReports(propertyMethod, sample);
 		SampleReporter sampleReporter = new SampleReporter(headline, reports);
-		LineReporter lineReporter = new LineReporterImpl(reportLines, indentLevel);
+		LineReporter lineReporter = new BuilderBasedLineReporter(reportLines, indentLevel);
 		sampleReporter.reportTo(lineReporter);
 	}
 

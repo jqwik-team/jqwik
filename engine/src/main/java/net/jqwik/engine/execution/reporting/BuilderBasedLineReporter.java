@@ -1,11 +1,11 @@
 package net.jqwik.engine.execution.reporting;
 
-public class LineReporterImpl implements LineReporter {
+class BuilderBasedLineReporter implements LineReporter {
 
 	private final StringBuilder builder;
 	private final int baseIndent;
 
-	public LineReporterImpl(StringBuilder builder, int baseIndent) {
+	BuilderBasedLineReporter(StringBuilder builder, int baseIndent) {
 		this.builder = builder;
 		this.baseIndent = baseIndent;
 	}
