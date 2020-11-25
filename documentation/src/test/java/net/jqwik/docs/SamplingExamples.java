@@ -11,9 +11,9 @@ class SamplingExamples {
 
 	@Example
 	void generateSingleSample() {
-		Arbitrary<String> strings = Arbitraries.of("string1", "string2", "string3");
+		Arbitrary<String> strings = Arbitraries.of("string1", "string2", "string3", null);
 		String aString = strings.sample();
-		assertThat(aString).isIn("string1", "string2", "string3");
+		assertThat(aString).isIn("string1", "string2", "string3", null);
 	}
 
 	@Example
