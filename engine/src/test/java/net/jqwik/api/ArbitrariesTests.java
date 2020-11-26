@@ -202,38 +202,16 @@ class ArbitrariesTests {
 		}
 	}
 
-	@Group
-	@Label("create(..)")
-	class Create {
-		@Example
-		void create() {
-			Arbitrary<AtomicInteger> constant = Arbitraries.create(() -> new AtomicInteger(42));
-			AtomicInteger[] previous = new AtomicInteger[]{new AtomicInteger(42)};
-			assertAllGenerated(constant.generator(1000), value -> {
-				assertThat(value.get()).isEqualTo(42);
-				// Value is generated freshly
-				assertThat(value).isNotSameAs(previous[0]);
-				previous[0] = value;
-			});
-		}
-
-		@Example
-		void create_caches_immutable_objects(@ForAll Random random) {
-			Arbitrary<AtomicInteger> constant = Arbitraries.create(() -> new AtomicInteger(42));
-			Shrinkable<AtomicInteger> shrinkable = constant.generator(1000).next(random);
-
-			assertThat(shrinkable.value()).isSameAs(shrinkable.value());
-		}
-
-		@Example
-		void create_does_not_cache_mutable_objects(@ForAll Random random) {
-			Arbitrary<Person> constant = Arbitraries.create(() -> new Person("a", "b"));
-			Shrinkable<Person> shrinkable = constant.generator(1000).next(random);
-
-			assertThat(shrinkable.value()).isNotSameAs(shrinkable.value());
-			assertThat(shrinkable.value()).isEqualTo(shrinkable.value());
-		}
-
+	@Example
+	void create_regenerates_objects_on_each_call() {
+		Arbitrary<AtomicInteger> constant = Arbitraries.create(() -> new AtomicInteger(42));
+		AtomicInteger[] previous = new AtomicInteger[]{new AtomicInteger(42)};
+		assertAllGenerated(constant.generator(1000), value -> {
+			assertThat(value.get()).isEqualTo(42);
+			// Value is generated freshly
+			assertThat(value).isNotSameAs(previous[0]);
+			previous[0] = value;
+		});
 	}
 
 	@Group
