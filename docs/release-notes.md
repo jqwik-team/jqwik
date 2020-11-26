@@ -48,6 +48,8 @@ title: jqwik Release Notes
 - [Reporting of null values in failed properties](https://github.com/jlink/jqwik/issues/132) 
   no longer fails with NPE.
 
+- Sampling arbitraries with null values 
+  [no longer fails](https://github.com/jlink/jqwik/pull/136).
 
 ## 1.3.8
 

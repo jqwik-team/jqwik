@@ -382,19 +382,19 @@ class ArbitraryTests {
 	}
 
 	@Group
+	@PropertyDefaults(tries = 10)
 	class Sampling {
 
 		@Property
-		void singleSample(@ForAll @Size(min = 1) List<Integer> values) {
+		void singleSample(@ForAll @Size(min = 1) List<@WithNull Integer> values) {
 			Arbitrary<Integer> ints = Arbitraries.of(values);
 
 			Integer anInt = ints.sample();
-
 			assertThat(anInt).isIn(values);
 		}
 
 		@Property
-		void sampleStream(@ForAll @Size(min = 1) List<Integer> values) {
+		void sampleStream(@ForAll @Size(min = 1) List<@WithNull Integer> values) {
 			Arbitrary<Integer> ints = Arbitraries.of(values);
 
 			ints.sampleStream()

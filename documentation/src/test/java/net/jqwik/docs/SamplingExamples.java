@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class SamplingExamples {
 
-	@Example
+	@Property(tries = 10)
 	void generateSingleSample() {
 		Arbitrary<String> strings = Arbitraries.of("string1", "string2", "string3", null);
 		String aString = strings.sample();
@@ -20,7 +20,7 @@ class SamplingExamples {
 	void generateStreamOfSamples() {
 		List<String> values = Arrays.asList("string1", "string2", "string3");
 		Arbitrary<String> strings = Arbitraries.of(values);
-		Stream<String> streamOfStrings = strings.sampleStream();
+		Stream<String> streamOfStrings = strings.sampleStream().limit(100);
 
 		assertThat(streamOfStrings).allMatch(values::contains);
 	}
