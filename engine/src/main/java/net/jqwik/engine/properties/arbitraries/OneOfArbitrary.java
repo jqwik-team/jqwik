@@ -34,7 +34,7 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 
 	@Override
 	public EdgeCases<T> edgeCases() {
-		return EdgeCasesSupport.choose(all).flatMapArbitrary(Function.identity());
+		return EdgeCasesSupport.concatFrom(all);
 	}
 
 	@Override

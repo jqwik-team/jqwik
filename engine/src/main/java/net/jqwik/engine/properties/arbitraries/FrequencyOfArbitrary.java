@@ -37,7 +37,7 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 
 	@Override
 	public EdgeCases<T> edgeCases() {
-		return EdgeCasesSupport.choose(allArbitraries()).flatMapArbitrary(Function.identity());
+		return EdgeCasesSupport.concatFrom(allArbitraries());
 	}
 
 	private List<Arbitrary<T>> allArbitraries() {

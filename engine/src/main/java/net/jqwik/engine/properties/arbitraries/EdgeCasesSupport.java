@@ -52,6 +52,14 @@ public class EdgeCasesSupport {
 		return EdgeCasesSupport.fromShrinkables(shrinkables);
 	}
 
+	public static <T> EdgeCases<T> concatFrom(final List<Arbitrary<T>> arbitraries) {
+		List<Shrinkable<Arbitrary<T>>> shrinkables = new ArrayList<>();
+		for (Arbitrary<T> arbitrary : arbitraries) {
+			shrinkables.add(new ChooseValueShrinkable<>(arbitrary, arbitraries));
+		}
+		return EdgeCasesSupport.fromShrinkables(shrinkables).flatMapArbitrary(Function.identity());
+	}
+
 	public static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases) {
 		if (edgeCases.isEmpty()) {
 			return EdgeCases.none();
