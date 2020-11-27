@@ -10,6 +10,7 @@ import net.jqwik.engine.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
@@ -327,6 +328,75 @@ public class ArbitrariesEmailsTests {
 				String domain = getEmailHost(email);
 				return !(isIPAddress(domain) && domain.contains(":"));
 			};
+		}
+
+	}
+
+	@Group
+	@Disabled("Not yet implemented")
+	class EdgeCasesTests {
+
+		@Example
+		void unquotedLocalPart() {
+			EmailArbitrary emails = Arbitraries.emails().unquotedLocalPart().domainHost();
+			Set<String> localParts = collectEdgeCases(emails.edgeCases())
+											 .stream()
+											 .map(ArbitrariesEmailsTests::getLocalPartOfEmail)
+											 .collect(Collectors.toSet());
+
+			assertThat(localParts).containsExactlyInAnyOrder("A", "a", "0", "!");
+		}
+
+		@Example
+		void quotedLocalPart() {
+			EmailArbitrary emails = Arbitraries.emails().quotedLocalPart().domainHost();
+			Set<String> localParts = collectEdgeCases(emails.edgeCases())
+											 .stream()
+											 .map(ArbitrariesEmailsTests::getLocalPartOfEmail)
+											 .collect(Collectors.toSet());
+
+			assertThat(localParts).containsExactlyInAnyOrder("\"A\"", "\"a\"", "\" \"");
+		}
+
+		@Example
+		void domainHost() {
+			EmailArbitrary emails = Arbitraries.emails().unquotedLocalPart().domainHost();
+			Set<String> hosts = collectEdgeCases(emails.edgeCases())
+											 .stream()
+											 .map(ArbitrariesEmailsTests::getEmailHost)
+											 .collect(Collectors.toSet());
+
+			assertThat(hosts).containsExactlyInAnyOrder(
+					"a.aa", "a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.aa"
+			);
+		}
+
+		@Example
+		void ipv4Host() {
+			EmailArbitrary emails = Arbitraries.emails().unquotedLocalPart().ipv4Host();
+			Set<String> hosts = collectEdgeCases(emails.edgeCases())
+											 .stream()
+											 .map(ArbitrariesEmailsTests::getEmailHost)
+											 .collect(Collectors.toSet());
+
+			assertThat(hosts).containsExactlyInAnyOrder(
+					"[0.0.0.0]", "[255.255.255.255]", "[127.0.0.1]"
+			);
+		}
+
+		@Example
+		void ipv6Host() {
+			EmailArbitrary emails = Arbitraries.emails().unquotedLocalPart().ipv6Host();
+			Set<String> hosts = collectEdgeCases(emails.edgeCases())
+											 .stream()
+											 .map(ArbitrariesEmailsTests::getEmailHost)
+											 .collect(Collectors.toSet());
+
+			assertThat(hosts).containsExactlyInAnyOrder(
+					"[::]",
+					"[0:0:0:0:0:0:0:0]",
+					"[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]", "[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]"
+			);
 		}
 
 	}
