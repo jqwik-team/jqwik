@@ -142,10 +142,10 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> webDomain() {
-		Arbitrary<Integer> length = Arbitraries.integers().between(1, 25);
+		Arbitrary<Integer> numberOfSubdomains = Arbitraries.integers().between(1, 25);
 		Arbitrary<String> topLevelDomain = topLevelDomain();
 
-		return length.flatMap(depth -> Arbitraries.recursive(
+		return numberOfSubdomains.flatMap(depth -> Arbitraries.recursive(
 				() -> topLevelDomain,
 				this::prependDomainPart,
 				depth

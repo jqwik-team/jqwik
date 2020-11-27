@@ -13,12 +13,10 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 
-	private final List<Tuple2<Integer, Arbitrary<T>>> frequencies = new ArrayList<>();
+	private final List<Tuple2<Integer, Arbitrary<T>>> frequencies;
 
 	public FrequencyOfArbitrary(List<Tuple2<Integer, Arbitrary<T>>> frequencies) {
-		frequencies.stream()
-				   .filter(f -> f.get1() > 0)
-				   .forEach(this.frequencies::add);
+		this.frequencies = frequencies;
 		if (this.frequencies.isEmpty()) {
 			throw new JqwikException("At least one frequency must be above 0");
 		}

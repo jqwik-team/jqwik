@@ -142,6 +142,21 @@ class ArbitrariesEdgeCasesTests {
 	}
 
 	@Example
+	@Label("Arbitraries.frequencyOf(tuples)")
+	void frequencyOfWithZeroFrequency() {
+		Arbitrary<Integer> arbitrary = Arbitraries.frequencyOf(
+			Tuple.of(0, Arbitraries.integers().between(-1, 1)),
+			Tuple.of(2, Arbitraries.integers().greaterOrEqual(100))
+		);
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+			100, 101, Integer.MAX_VALUE - 1, Integer.MAX_VALUE
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(4);
+	}
+
+	@Example
 	@Label("Functions.function(type, returnArbitrary)")
 	void functionHasConstantFunctionsAsEdgeCases() {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(10, 100);

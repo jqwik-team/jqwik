@@ -2,6 +2,7 @@ package net.jqwik.engine.facades;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -92,7 +93,12 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
 	public <T> Arbitrary<T> frequencyOf(List<Tuple.Tuple2<Integer, Arbitrary<T>>> frequencies) {
-		return new FrequencyOfArbitrary<>(frequencies);
+		List<Tuple.Tuple2<Integer, Arbitrary<T>>> aboveZeroFrequencies =
+				frequencies.stream().filter(f -> f.get1() > 0).collect(Collectors.toList());
+		if (aboveZeroFrequencies.size() == 1) {
+			return aboveZeroFrequencies.get(0).get2();
+		}
+		return new FrequencyOfArbitrary<>(aboveZeroFrequencies);
 	}
 
 	@Override
