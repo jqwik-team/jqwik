@@ -48,7 +48,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	}
 
 	private boolean hasMultiCharEdgeCases() {
-		return minLength == maxLength && minLength > 1 && !characterArbitrary.isUnique();
+		return minLength <= maxLength && minLength > 1 && !characterArbitrary.isUnique();
 	}
 
 	private boolean hasSingleCharEdgeCases() {

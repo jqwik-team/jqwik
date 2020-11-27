@@ -101,4 +101,11 @@ public class ArbitraryTestHelper {
 		return generator.next(random).value();
 	}
 
+	public static <T> Set<T> collectEdgeCases(EdgeCases<T> edgeCases) {
+		Set<T> values = new HashSet<>();
+		for (Shrinkable<T> edgeCase : edgeCases) {
+			values.add(edgeCase.value());
+		}
+		return values;
+	}
 }
