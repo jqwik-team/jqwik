@@ -1,6 +1,8 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.*;
 
 import net.jqwik.api.*;
@@ -26,6 +28,13 @@ public class EdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 	public EdgeCases.Config<T> add(T edgeCase) {
 		additionalEdgeCases.add(edgeCase);
 		return this;
+	}
+
+	@SafeVarargs
+	@Override
+	public final EdgeCases.Config<T> includeOnly(T... includedValues) {
+		List<T> values = Arrays.asList(includedValues);
+		return filter(values::contains);
 	}
 
 	public EdgeCases<T> configure(Consumer<EdgeCases.Config<T>> configurator, EdgeCases<T> defaultEdgeCases) {

@@ -127,6 +127,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCasesMode.html#activated()">activated()</a></span> - Method in enum net.jqwik.api.<a href="net/jqwik/api/EdgeCasesMode.html" title="enum in net.jqwik.api">EdgeCasesMode</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.Config.html#add(T)">add(T)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.Config.html" title="interface in net.jqwik.api">EdgeCases.Config</a></dt>
+<dd>
+<div class="block">Add an unshrinkable additional value as edgeCase.</div>
+</dd>
 <dt><a href="net/jqwik/api/lifecycle/AddLifecycleHook.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">AddLifecycleHook</span></a> - Annotation Type in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>
 <div class="block">Use to register a concrete <a href="net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">lifecycle hook implementation</a>
@@ -751,6 +755,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Do all configuration yourself or delegate to <a href="net/jqwik/api/configurators/ArbitraryConfigurator.html#configure(net.jqwik.api.Arbitrary,net.jqwik.api.providers.TypeUsage)"><code>ArbitraryConfigurator.configure(Arbitrary, TypeUsage)</code></a>
  of the <code>configurator</code> that's being handed in.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#configureEdgeCases(net.jqwik.api.Arbitrary,java.util.function.Consumer)">configureEdgeCases(Arbitrary&lt;T&gt;, Consumer&lt;EdgeCases.Config&lt;T&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.html#constant(T)">constant(T)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.html" title="class in net.jqwik.api">Arbitraries</a></dt>
 <dd>
 <div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
@@ -923,9 +929,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Create a new arbitrary of type <code>T</code> that will use the underlying
  arbitrary to create the tuple values but will return unshrinkable values.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.html#dontShrink()">dontShrink()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.html#dontShrink()">dontShrink()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#dontShrink(net.jqwik.api.Arbitrary)">dontShrink(Arbitrary&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/arbitraries/DoubleArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">DoubleArbitrary</span></a> - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
 <dd>
@@ -957,7 +963,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/PropertyDefaults.html#edgeCases()">edgeCases()</a></span> - Method in annotation type net.jqwik.api.<a href="net/jqwik/api/PropertyDefaults.html" title="annotation in net.jqwik.api">PropertyDefaults</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)">edgeCases(Consumer&lt;EdgeCases.Config&lt;T&gt;&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
+<dd>
+<div class="block">Experimental interface to change generated edge cases of a specific arbitrary.</div>
+</dd>
 <dt><a href="net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api"><span class="typeNameLink">EdgeCases</span></a>&lt;<a href="net/jqwik/api/EdgeCases.html" title="type parameter in EdgeCases">T</a>&gt; - Interface in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/jqwik/api/EdgeCases.Config.html" title="interface in net.jqwik.api"><span class="typeNameLink">EdgeCases.Config</span></a>&lt;<a href="net/jqwik/api/EdgeCases.Config.html" title="type parameter in EdgeCases.Config">T</a>&gt; - Interface in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">EdgeCases.EdgeCasesFacade</span></a> - Class in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
 <dd>&nbsp;</dd>
@@ -1139,8 +1151,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Create a new arbitrary of the same type <code>T</code> that creates and shrinks the original arbitrary but only allows
  values that are accepted by the <code>filterPredicate</code>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.html#filter(java.util.function.Predicate)">filter(Predicate&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a></dt>
-<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.Config.html#filter(java.util.function.Predicate)">filter(Predicate&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.Config.html" title="interface in net.jqwik.api">EdgeCases.Config</a></dt>
+<dd>
+<div class="block">Only include edge cases for which <a href="net/jqwik/api/EdgeCases.Config.html#filter(java.util.function.Predicate)">EdgeCases.Config.filter(Predicate)</a>  returns true</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.html#filter(java.util.function.Predicate)">filter(Predicate&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/FalsificationResult.html#filter(java.util.function.Predicate)">filter(Predicate&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/FalsificationResult.html" title="class in net.jqwik.api">FalsificationResult</a></dt>
@@ -1151,7 +1165,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.html#filter(java.util.function.Predicate)">filter(Predicate&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html#filter(net.jqwik.api.EdgeCases,java.util.function.Predicate)">filter(EdgeCases&lt;T&gt;, Predicate&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html" title="class in net.jqwik.api">EdgeCases.EdgeCasesFacade</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#filter(net.jqwik.api.Arbitrary,java.util.function.Predicate)">filter(Arbitrary&lt;T&gt;, Predicate&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.ExhaustiveGeneratorFacade.html#filter(net.jqwik.api.ExhaustiveGenerator,java.util.function.Predicate)">filter(ExhaustiveGenerator&lt;T&gt;, Predicate&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.ExhaustiveGeneratorFacade.html" title="class in net.jqwik.api">ExhaustiveGenerator.ExhaustiveGeneratorFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -1217,15 +1231,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.html#flatMap(java.util.function.Function)">flatMap(Function&lt;T, RandomGenerator&lt;U&gt;&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#flatMap(net.jqwik.api.Arbitrary,java.util.function.Function)">flatMap(Arbitrary&lt;T&gt;, Function&lt;T, Arbitrary&lt;U&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html#flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,int,long)">flatMap(Shrinkable&lt;T&gt;, Function&lt;T, Arbitrary&lt;U&gt;&gt;, int, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html" title="class in net.jqwik.api">RandomGenerator.RandomGeneratorFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html#flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,int,long)">flatMap(Shrinkable&lt;T&gt;, Function&lt;T, Arbitrary&lt;U&gt;&gt;, int, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html" title="class in net.jqwik.api">Shrinkable.ShrinkableFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html#flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,long)">flatMap(Shrinkable&lt;T&gt;, Function&lt;T, RandomGenerator&lt;U&gt;&gt;, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html" title="class in net.jqwik.api">RandomGenerator.RandomGeneratorFacade</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.html#flatMapArbitrary(java.util.function.Function)">flatMapArbitrary(Function&lt;T, Arbitrary&lt;U&gt;&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html#flatMapArbitrary(net.jqwik.api.EdgeCases,java.util.function.Function)">flatMapArbitrary(EdgeCases&lt;T&gt;, Function&lt;T, Arbitrary&lt;U&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html" title="class in net.jqwik.api">EdgeCases.EdgeCasesFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ListArbitrary.html#flatMapEach(java.util.function.BiFunction)">flatMapEach(BiFunction&lt;List&lt;T&gt;, T, Arbitrary&lt;U&gt;&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ListArbitrary.html" title="interface in net.jqwik.api.arbitraries">ListArbitrary</a></dt>
 <dd>
@@ -1237,8 +1249,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Flat-map over each element of the generated streamable giving access to the
  all elements when streaming.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#flatMapExhaustiveGenerator(net.jqwik.api.ExhaustiveGenerator,java.util.function.Function,long)">flatMapExhaustiveGenerator(ExhaustiveGenerator&lt;T&gt;, Function&lt;T, Arbitrary&lt;U&gt;&gt;, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/arbitraries/FloatArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">FloatArbitrary</span></a> - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
 <dd>
 <div class="block">Fluent interface to configure the generation of Float and float values.</div>
@@ -1583,13 +1593,11 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  arbitrary to create the tuple values but will ignore any raised exception of
  type <code>exceptionType</code> during generation.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.html#ignoreException(java.lang.Class)">ignoreException(Class&lt;? extends Throwable&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.html#ignoreException(java.lang.Class)">ignoreException(Class&lt;? extends Throwable&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.html#ignoreException(java.lang.Class)">ignoreException(Class&lt;? extends Throwable&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html#ignoreException(net.jqwik.api.EdgeCases,java.lang.Class)">ignoreException(EdgeCases&lt;T&gt;, Class&lt;? extends Throwable&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html" title="class in net.jqwik.api">EdgeCases.EdgeCasesFacade</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#ignoreException(net.jqwik.api.Arbitrary,java.lang.Class)">ignoreException(Arbitrary&lt;T&gt;, Class&lt;? extends Throwable&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.ExhaustiveGeneratorFacade.html#ignoreException(net.jqwik.api.ExhaustiveGenerator,java.lang.Class)">ignoreException(ExhaustiveGenerator&lt;T&gt;, Class&lt;? extends Throwable&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.ExhaustiveGeneratorFacade.html" title="class in net.jqwik.api">ExhaustiveGenerator.ExhaustiveGeneratorFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -1598,6 +1606,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.CombinableBuilder.html#in(net.jqwik.api.Combinators.F2)">in(Combinators.F2&lt;B, T, C&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.CombinableBuilder.html" title="class in net.jqwik.api">Combinators.CombinableBuilder</a></dt>
 <dd>
 <div class="block">Use the last provided arbitrary to change the builder object.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.Config.html#includeOnly(T...)">includeOnly(T...)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.Config.html" title="interface in net.jqwik.api">EdgeCases.Config</a></dt>
+<dd>
+<div class="block">Include the values given if they are in the generated edge cases anyway</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/ParameterResolutionContext.html#index()">index()</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/ParameterResolutionContext.html" title="interface in net.jqwik.api.lifecycle">ParameterResolutionContext</a></dt>
 <dd>&nbsp;</dd>
@@ -1948,13 +1960,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Create a new arbitrary of type <code>U</code> that maps the values of the original arbitrary using the <code>mapper</code>
  function.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.html#map(java.util.function.Function)">map(Function&lt;T, U&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.html#map(java.util.function.Function)">map(Function&lt;T, U&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.html#map(java.util.function.Function)">map(Function&lt;T, U&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.html#map(java.util.function.Function)">map(Function&lt;T, U&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#map(net.jqwik.api.Arbitrary,java.util.function.Function)">map(Arbitrary&lt;T&gt;, Function&lt;T, U&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.ExhaustiveGeneratorFacade.html#map(net.jqwik.api.ExhaustiveGenerator,java.util.function.Function)">map(ExhaustiveGenerator&lt;T&gt;, Function&lt;T, U&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.ExhaustiveGeneratorFacade.html" title="class in net.jqwik.api">ExhaustiveGenerator.ExhaustiveGeneratorFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -1981,11 +1993,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Create an arbitrary to create instances of Map.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.html#mapShrinkable(java.util.function.Function)">mapShrinkable(Function&lt;Shrinkable&lt;T&gt;, Shrinkable&lt;U&gt;&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.html#mapShrinkable(java.util.function.Function)">mapShrinkable(Function&lt;Shrinkable&lt;T&gt;, Shrinkable&lt;U&gt;&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html#mapShrinkable(net.jqwik.api.EdgeCases,java.util.function.Function)">mapShrinkable(EdgeCases&lt;T&gt;, Function&lt;Shrinkable&lt;T&gt;, Shrinkable&lt;U&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html" title="class in net.jqwik.api">EdgeCases.EdgeCasesFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/PropertyExecutionResult.html#mapTo(net.jqwik.api.lifecycle.PropertyExecutionResult.Status,java.lang.Throwable)">mapTo(PropertyExecutionResult.Status, Throwable)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></dt>
 <dd>
@@ -2137,6 +2145,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ForAll.html#NO_VALUE">NO_VALUE</a></span> - Static variable in annotation type net.jqwik.api.<a href="net/jqwik/api/ForAll.html" title="annotation in net.jqwik.api">ForAll</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.Config.html#none()">none()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.Config.html" title="interface in net.jqwik.api">EdgeCases.Config</a></dt>
+<dd>
+<div class="block">Don't use any of the default edge cases</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.html#none()">none()</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/StatisticsReport.None.html#%3Cinit%3E()">None()</a></span> - Constructor for class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/StatisticsReport.None.html" title="class in net.jqwik.api.statistics">StatisticsReport.None</a></dt>
@@ -3170,7 +3182,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.html#suppliers()">suppliers()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.html#supplyUnshrinkable(java.util.function.Supplier)">supplyUnshrinkable(Supplier&lt;T&gt;)</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.html#supplyUnshrinkable(java.util.function.Supplier,boolean)">supplyUnshrinkable(Supplier&lt;T&gt;, boolean)</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <a id="I:T">

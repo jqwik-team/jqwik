@@ -270,14 +270,13 @@ public class ArbitrariesEmailsTests {
 	}
 
 	@Group
-	@PropertyDefaults(tries = 20)
+	@PropertyDefaults(tries = 10)
 	class Shrinking {
 
 		@Property
 		void defaultShrinking(@ForAll Random random) {
 			EmailArbitrary emails = Arbitraries.emails();
-			Falsifier<String> falsifier = falsifyDefault();
-			String value = shrinkToMinimal(emails, random, falsifier);
+			String value = shrinkToMinimal(emails, random);
 			assertThat(value).isEqualTo("A@a.aa");
 		}
 
@@ -299,7 +298,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void ipv6Shrinking(@ForAll Random random) {
-			EmailArbitrary emails = Arbitraries.emails();
+			Arbitrary<String> emails = Arbitraries.emails();
 			Falsifier<String> falsifier = falsifyIPv6();
 			String value = shrinkToMinimal(emails, random, falsifier);
 			assertThat(value).isEqualTo("A@[::]");
@@ -333,8 +332,17 @@ public class ArbitrariesEmailsTests {
 	}
 
 	@Group
-	@Disabled("Not yet implemented")
 	class EdgeCasesTests {
+
+		@Example
+		void all() {
+			EmailArbitrary emails = Arbitraries.emails();
+			int expectedNumberOfEdgeCases = (4 + 3) * (2 + 3 + 4);
+			Set<String> allEdgeCases = collectEdgeCases(emails.edgeCases());
+			assertThat(allEdgeCases).hasSize(expectedNumberOfEdgeCases);
+
+			// allEdgeCases.forEach(System.out::println);
+		}
 
 		@Example
 		void unquotedLocalPart() {
@@ -367,7 +375,7 @@ public class ArbitrariesEmailsTests {
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).containsExactlyInAnyOrder(
-					"a.aa", "a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.aa"
+					"a.aa", "a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.aa"
 			);
 		}
 

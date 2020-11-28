@@ -49,6 +49,16 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		 * @return same configuration instance
 		 */
 		Config<T> add(T edgeCase);
+
+		/**
+		 * Include the values given if they are in the generated edge cases anyway
+		 *
+		 * @param includedValues The values to be included
+		 *
+		 * @return same configuration instance
+		 */
+		@SuppressWarnings("unchecked")
+		Config<T> includeOnly(T ... includedValues);
 	}
 
 	List<Supplier<Shrinkable<T>>> suppliers();

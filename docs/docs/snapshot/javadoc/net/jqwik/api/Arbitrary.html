@@ -27,7 +27,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":18,"i1":18,"i2":18,"i3":18,"i4":18,"i5":6,"i6":18,"i7":18,"i8":18,"i9":18,"i10":18,"i11":18,"i12":6,"i13":18,"i14":18,"i15":18,"i16":18,"i17":18,"i18":18,"i19":18,"i20":18,"i21":18,"i22":18,"i23":18,"i24":18,"i25":18,"i26":18,"i27":18,"i28":18,"i29":18,"i30":18};
+var data = {"i0":18,"i1":18,"i2":18,"i3":18,"i4":18,"i5":6,"i6":18,"i7":18,"i8":18,"i9":18,"i10":18,"i11":18,"i12":18,"i13":6,"i14":18,"i15":18,"i16":18,"i17":18,"i18":18,"i19":18,"i20":18,"i21":18,"i22":18,"i23":18,"i24":18,"i25":18,"i26":18,"i27":18,"i28":18,"i29":18,"i30":18,"i31":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -219,6 +219,13 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#edgeCases(java.util.function.Consumer)">edgeCases</a></span>&#8203;(java.util.function.Consumer&lt;<a href="EdgeCases.Config.html" title="interface in net.jqwik.api">EdgeCases.Config</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;&nbsp;configurator)</code></th>
+<td class="colLast">
+<div class="block">Experimental interface to change generated edge cases of a specific arbitrary.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>default java.util.Optional&lt;<a href="ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#exhaustive()">exhaustive</a></span>()</code></th>
 <td class="colLast">
@@ -226,14 +233,14 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  number of generated samples.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>default java.util.Optional&lt;<a href="ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#exhaustive(long)">exhaustive</a></span>&#8203;(long&nbsp;maxNumberOfSamples)</code></th>
 <td class="colLast">
 <div class="block">Create the exhaustive generator for an arbitrary.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#filter(java.util.function.Predicate)">filter</a></span>&#8203;(java.util.function.Predicate&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&nbsp;filterPredicate)</code></th>
 <td class="colLast">
@@ -241,14 +248,14 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  values that are accepted by the <code>filterPredicate</code>.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#fixGenSize(int)">fixGenSize</a></span>&#8203;(int&nbsp;genSize)</code></th>
 <td class="colLast">
 <div class="block">Fix the genSize of an arbitrary so that it can no longer be influenced from outside</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>default &lt;U&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;U&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#flatMap(java.util.function.Function)">flatMap</a></span>&#8203;(java.util.function.Function&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;U&gt;&gt;&nbsp;mapper)</code></th>
 <td class="colLast">
@@ -256,7 +263,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  using the <code>mapper</code> function.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>default void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#forEachValue(java.util.function.Consumer)">forEachValue</a></span>&#8203;(java.util.function.Consumer&lt;? super <a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&nbsp;action)</code></th>
 <td class="colLast">
@@ -264,14 +271,14 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  exhaustive generation is possible.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code><a href="RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#generator(int)">generator</a></span>&#8203;(int&nbsp;genSize)</code></th>
 <td class="colLast">
 <div class="block">Create the random generator for an arbitrary</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ignoreException(java.lang.Class)">ignoreException</a></span>&#8203;(java.lang.Class&lt;? extends java.lang.Throwable&gt;&nbsp;exceptionType)</code></th>
 <td class="colLast">
@@ -280,7 +287,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  type <code>exceptionType</code> during generation.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#injectDuplicates(double)">injectDuplicates</a></span>&#8203;(double&nbsp;duplicateProbability)</code></th>
 <td class="colLast">
@@ -288,14 +295,14 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  inject duplicates of previously generated values with a probability of <code>duplicateProbability</code>.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#injectNull(double)">injectNull</a></span>&#8203;(double&nbsp;nullProbability)</code></th>
 <td class="colLast">
 <div class="block">Create a new arbitrary of the same type but inject null values with a probability of <code>nullProbability</code>.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>default boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isUnique()">isUnique</a></span>()</code></th>
 <td class="colLast">
@@ -303,7 +310,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  should return true.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>default <a href="arbitraries/IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries">IteratorArbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#iterator()">iterator</a></span>()</code></th>
 <td class="colLast">
@@ -311,14 +318,14 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  stream.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>default <a href="arbitraries/ListArbitrary.html" title="interface in net.jqwik.api.arbitraries">ListArbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#list()">list</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Create a new arbitrary of type <code>List&lt;T&gt;</code> using the existing arbitrary for generating the elements of the list.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>default &lt;U&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;U&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#map(java.util.function.Function)">map</a></span>&#8203;(java.util.function.Function&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;U&gt;&nbsp;mapper)</code></th>
 <td class="colLast">
@@ -326,7 +333,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  function.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.util.Optional&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#optional()">optional</a></span>()</code></th>
 <td class="colLast">
@@ -334,28 +341,28 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  stream.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="type parameter in Arbitrary">T</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#sample()">sample</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Generate a single sample value using this arbitrary.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>default java.util.stream.Stream&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#sampleStream()">sampleStream</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Generate a stream of sample values using this arbitrary.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>default <a href="arbitraries/SetArbitrary.html" title="interface in net.jqwik.api.arbitraries">SetArbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#set()">set</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Create a new arbitrary of type <code>Set&lt;T&gt;</code> using the existing arbitrary for generating the elements of the set.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>default <a href="arbitraries/StreamArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamArbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stream()">stream</a></span>()</code></th>
 <td class="colLast">
@@ -363,7 +370,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  for generating the elements of the stream.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Tuple.Tuple1.html" title="class in net.jqwik.api">Tuple.Tuple1</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#tuple1()">tuple1</a></span>()</code></th>
 <td class="colLast">
@@ -371,7 +378,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  arbitrary to create the tuple value;</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Tuple.Tuple2.html" title="class in net.jqwik.api">Tuple.Tuple2</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#tuple2()">tuple2</a></span>()</code></th>
 <td class="colLast">
@@ -379,7 +386,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  arbitrary to create the tuple values;</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Tuple.Tuple3.html" title="class in net.jqwik.api">Tuple.Tuple3</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#tuple3()">tuple3</a></span>()</code></th>
 <td class="colLast">
@@ -387,7 +394,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  arbitrary to create the tuple values;</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Tuple.Tuple4.html" title="class in net.jqwik.api">Tuple.Tuple4</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#tuple4()">tuple4</a></span>()</code></th>
 <td class="colLast">
@@ -395,7 +402,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  arbitrary to create the tuple values;</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Tuple.Tuple5.html" title="class in net.jqwik.api">Tuple.Tuple5</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>,&#8203;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#tuple5()">tuple5</a></span>()</code></th>
 <td class="colLast">
@@ -403,7 +410,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  arbitrary to create the tuple values;</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>default <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#unique()">unique</a></span>()</code></th>
 <td class="colLast">
@@ -977,7 +984,7 @@ default&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitra
 <a id="dontShrink()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>dontShrink</h4>
 <pre class="methodSignature">@API(status=EXPERIMENTAL,
@@ -994,6 +1001,26 @@ default&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitra
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new arbitrary instance</dd>
+</dl>
+</li>
+</ul>
+<a id="edgeCases(java.util.function.Consumer)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>edgeCases</h4>
+<pre class="methodSignature">@API(status=EXPERIMENTAL,
+     since="1.3.9")
+default&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&nbsp;edgeCases&#8203;(java.util.function.Consumer&lt;<a href="EdgeCases.Config.html" title="interface in net.jqwik.api">EdgeCases.Config</a>&lt;<a href="Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&gt;&nbsp;configurator)</pre>
+<div class="block">Experimental interface to change generated edge cases of a specific arbitrary.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>configurator</code> - A consumer that configures deviating edge cases behaviour</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new arbitrary instance</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="EdgeCases.Config.html" title="interface in net.jqwik.api"><code>EdgeCases.Config</code></a></dd>
 </dl>
 </li>
 </ul>

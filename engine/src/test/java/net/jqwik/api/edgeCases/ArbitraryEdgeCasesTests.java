@@ -359,6 +359,23 @@ class ArbitraryEdgeCasesTests {
 			});
 		}
 
+		@Example
+		void includeOnly() {
+			Arbitrary<Integer> arbitrary =
+					Arbitraries
+							.integers()
+							.between(-100, 100)
+					.edgeCases(edgeCasesConfig -> edgeCasesConfig.includeOnly(-100, 100));
+
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(-100, 100);
+
+			// Random value generation still works
+			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
+				assertThat(i).isBetween(-100, 100);
+			});
+		}
+
 	}
 
 	private <T> Set<T> values(EdgeCases<T> edgeCases) {

@@ -45,7 +45,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		unquoted = unquoted.filter(v -> !v.contains(".."));
 		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
 		unquoted = unquoted.filter(v -> v.charAt(v.length() - 1) != '.');
-		return unquoted;
+		return unquoted.edgeCases(stringConfig -> stringConfig.includeOnly("A", "a", "0", "!"));
 	}
 
 	private Arbitrary<String> localPartQuoted() {
@@ -56,7 +56,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		quoted = quoted.map(v -> "\"" + v.replace("\\", "\\\\")
 										 .replace("\"", "\\\"") + "\"");
 		quoted = quoted.filter(v -> v.length() <= 64);
-		return quoted;
+		return quoted.edgeCases(stringConfig -> stringConfig.includeOnly("\"A\"", "\"a\"", "\" \""));
 	}
 
 	private Arbitrary<String> host() {
@@ -76,9 +76,11 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> hostIpv4() {
-		Arbitrary<Integer> addressPart = Arbitraries.integers().between(0, 255);
+		Arbitrary<Integer> addressPart =
+				Arbitraries.integers().between(0, 255);
 		return Combinators.combine(addressPart, addressPart, addressPart, addressPart)
-						  .as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]");
+						  .as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]")
+						  .edgeCases(stringConfig -> stringConfig.includeOnly("[0.0.0.0]", "[255.255.255.255]").add("[127.0.0.1]"));
 	}
 
 	private Arbitrary<String> hostIpv6() {
@@ -87,7 +89,13 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		return plainAddress
 					   .map(this::removeThreeOrMoreColons)
 					   .filter(DefaultEmailArbitrary::validUseOfColonInIPv6Address)
-					   .map(plain -> "[" + plain + "]");
+					   .map(plain -> "[" + plain + "]")
+					   .edgeCases(stringConfig -> stringConfig.includeOnly(
+							   "[::]",
+							   "[0:0:0:0:0:0:0:0]",
+							   "[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+							   "[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]"
+					   ));
 	}
 
 	private Arbitrary<String> ipv6Part() {
@@ -143,7 +151,10 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> webDomain() {
-		Arbitrary<Integer> numberOfSubdomains = Arbitraries.integers().between(1, 25);
+		Arbitrary<Integer> numberOfSubdomains =
+				Arbitraries.integers()
+						   .between(1, 25)
+						   .edgeCases(integerConfig -> integerConfig.includeOnly(1, 25));
 		Arbitrary<String> topLevelDomain = topLevelDomain();
 
 		return numberOfSubdomains.flatMap(depth -> Arbitraries.recursive(

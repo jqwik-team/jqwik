@@ -35,9 +35,15 @@ title: jqwik Release Notes
 - [Generating email addresses](/docs/snapshot/user-guide.html#email-address-generation)
   has now configuration options. 
 
-- Added constraint annotation 
+- Generated email addresses now 
+  [have fewer edge cases](https://github.com/jlink/jqwik/issues/133). 
+
+- Added constraint annotation
   [`@Email`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Email.html)
   for generating valid email addresses.
+  
+- Experimental support for 
+  [changing an arbitraries edge cases](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)).
 
 #### Breaking Changes
 

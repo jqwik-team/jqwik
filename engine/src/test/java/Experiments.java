@@ -3,7 +3,12 @@ import java.util.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+
+import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 class Experiments {
 

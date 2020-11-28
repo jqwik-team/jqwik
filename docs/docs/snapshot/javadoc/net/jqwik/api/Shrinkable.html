@@ -247,7 +247,8 @@ extends java.lang.Comparable&lt;<a href="Shrinkable.html" title="interface in ne
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supplyUnshrinkable(java.util.function.Supplier)">supplyUnshrinkable</a></span>&#8203;(java.util.function.Supplier&lt;T&gt;&nbsp;supplier)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#supplyUnshrinkable(java.util.function.Supplier,boolean)">supplyUnshrinkable</a></span>&#8203;(java.util.function.Supplier&lt;T&gt;&nbsp;supplier,
+                  boolean&nbsp;cacheImmutables)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i12" class="altColor">
@@ -309,14 +310,15 @@ extends java.lang.Comparable&lt;<a href="Shrinkable.html" title="interface in ne
                                       <a href="ShrinkingDistance.html" title="class in net.jqwik.api">ShrinkingDistance</a>&nbsp;distance)</pre>
 </li>
 </ul>
-<a id="supplyUnshrinkable(java.util.function.Supplier)">
+<a id="supplyUnshrinkable(java.util.function.Supplier,boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>supplyUnshrinkable</h4>
 <pre class="methodSignature">@API(status=INTERNAL)
-static&nbsp;&lt;T&gt;&nbsp;<a href="Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&nbsp;supplyUnshrinkable&#8203;(java.util.function.Supplier&lt;T&gt;&nbsp;supplier)</pre>
+static&nbsp;&lt;T&gt;&nbsp;<a href="Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&nbsp;supplyUnshrinkable&#8203;(java.util.function.Supplier&lt;T&gt;&nbsp;supplier,
+                                            boolean&nbsp;cacheImmutables)</pre>
 </li>
 </ul>
 <a id="value()">
