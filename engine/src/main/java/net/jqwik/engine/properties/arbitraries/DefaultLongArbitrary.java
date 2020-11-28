@@ -29,7 +29,7 @@ public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongA
 
 	@Override
 	public EdgeCases<Long> edgeCases() {
-		return generatingArbitrary.edgeCases().map(BigInteger::longValueExact);
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::longValueExact);
 	}
 
 	@Override

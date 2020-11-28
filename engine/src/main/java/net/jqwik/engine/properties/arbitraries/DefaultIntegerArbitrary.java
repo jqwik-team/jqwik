@@ -29,7 +29,7 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 
 	@Override
 	public EdgeCases<Integer> edgeCases() {
-		return generatingArbitrary.edgeCases().map(BigInteger::intValueExact);
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::intValueExact);
 	}
 
 	@Override

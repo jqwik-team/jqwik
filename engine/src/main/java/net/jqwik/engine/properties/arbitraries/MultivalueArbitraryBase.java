@@ -59,8 +59,8 @@ abstract class MultivalueArbitraryBase<T, U> extends AbstractArbitraryBase imple
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
 		EdgeCases<List<T>> edgeCases = edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize));
 		return RandomGenerators
-				   .list(elementGenerator, minSize, maxSize, cutoffSize(genSize))
-				   .withEdgeCases(genSize, edgeCases);
+					   .list(elementGenerator, minSize, maxSize, cutoffSize(genSize))
+					   .withEdgeCases(genSize, edgeCases);
 	}
 
 	protected int cutoffSize(int genSize) {
@@ -86,20 +86,21 @@ abstract class MultivalueArbitraryBase<T, U> extends AbstractArbitraryBase imple
 	}
 
 	private <C extends Collection<?>> EdgeCases<C> fixedSizeEdgeCases(
-		final int fixedSize,
-		final BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator
+			final int fixedSize,
+			final BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator
 	) {
-		return elementArbitrary
-				   .edgeCases()
-				   .mapShrinkable((Shrinkable<T> shrinkableT) -> {
-					   List<Shrinkable<T>> elements = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableT));
-					   return shrinkableCreator.apply(elements, minSize);
-				   });
+		return EdgeCasesSupport.mapShrinkable(
+				elementArbitrary.edgeCases(),
+				shrinkableT -> {
+					List<Shrinkable<T>> elements = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableT));
+					return shrinkableCreator.apply(elements, minSize);
+				}
+		);
 	}
 
 	private <C extends Collection<?>> EdgeCases<C> emptyListEdgeCase(BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator) {
 		return EdgeCases.fromSupplier(
-			() -> shrinkableCreator.apply(Collections.emptyList(), minSize)
+				() -> shrinkableCreator.apply(Collections.emptyList(), minSize)
 		);
 	}
 

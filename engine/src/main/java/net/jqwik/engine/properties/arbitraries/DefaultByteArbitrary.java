@@ -29,7 +29,7 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 
 	@Override
 	public EdgeCases<Byte> edgeCases() {
-		return generatingArbitrary.edgeCases().map(BigInteger::byteValueExact);
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::byteValueExact);
 	}
 
 	@Override

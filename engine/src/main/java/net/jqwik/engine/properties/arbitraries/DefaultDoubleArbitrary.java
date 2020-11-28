@@ -30,7 +30,7 @@ public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements Dou
 
 	@Override
 	public EdgeCases<Double> edgeCases() {
-		return generatingArbitrary.edgeCases().map(BigDecimal::doubleValue);
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigDecimal::doubleValue);
 	}
 
 	@Override

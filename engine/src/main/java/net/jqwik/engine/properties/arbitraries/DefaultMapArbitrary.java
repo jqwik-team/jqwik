@@ -42,15 +42,15 @@ public class DefaultMapArbitrary<K, V> extends AbstractArbitraryBase implements 
 		// Using list of generated Map.Entry does not work because of potential duplicate keys
 		Arbitrary<List<K>> keySets = keysArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize).map(ArrayList::new);
 		return keySets.flatMap(keys -> valuesArbitrary.list().ofSize(keys.size()).map(
-			values -> {
-				HashMap<K, V> map = new HashMap<>();
-				for (int i = 0; i < keys.size(); i++) {
-					K key = keys.get(i);
-					V value = values.get(i);
-					map.put(key, value);
-				}
-				return map;
-			}));
+				values -> {
+					HashMap<K, V> map = new HashMap<>();
+					for (int i = 0; i < keys.size(); i++) {
+						K key = keys.get(i);
+						V value = values.get(i);
+						map.put(key, value);
+					}
+					return map;
+				}));
 	}
 
 	@Override
@@ -61,20 +61,20 @@ public class DefaultMapArbitrary<K, V> extends AbstractArbitraryBase implements 
 	@Override
 	public EdgeCases<Map<K, V>> edgeCases() {
 		EdgeCases<Map<K, V>> emptyMapEdgeCase =
-			minSize == 0
-				? EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(new HashMap<>()))
-				: EdgeCases.none();
+				minSize == 0
+						? EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(new HashMap<>()))
+						: EdgeCases.none();
 		EdgeCases<Map<K, V>> singleEntryEdgeCases =
-			minSize <= 1
-				? singleEntryEdgeCases()
-				: EdgeCases.none();
+				minSize <= 1
+						? singleEntryEdgeCases()
+						: EdgeCases.none();
 		return EdgeCasesSupport.concat(emptyMapEdgeCase, singleEntryEdgeCases);
 	}
 
 	private EdgeCases<Map<K, V>> singleEntryEdgeCases() {
-		return keysArbitrary.edgeCases().flatMapArbitrary(
-			key ->
-				valuesArbitrary.map(value -> {
+		return EdgeCasesSupport.flatMapArbitrary(
+				keysArbitrary.edgeCases(),
+				key -> valuesArbitrary.map(value -> {
 					HashMap<K, V> map = new HashMap<>();
 					map.put(key, value);
 					return map;

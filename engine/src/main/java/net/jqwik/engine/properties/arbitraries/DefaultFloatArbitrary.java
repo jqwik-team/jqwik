@@ -30,7 +30,7 @@ public class DefaultFloatArbitrary extends AbstractArbitraryBase implements Floa
 
 	@Override
 	public EdgeCases<Float> edgeCases() {
-		return generatingArbitrary.edgeCases().map(BigDecimal::floatValue);
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigDecimal::floatValue);
 	}
 
 	@Override

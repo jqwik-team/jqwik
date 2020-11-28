@@ -17,14 +17,6 @@ import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
  * Is loaded through reflection in api module
  */
 public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
-	@Override
-	public <T, U> Optional<ExhaustiveGenerator<U>> flatMapExhaustiveGenerator(
-		ExhaustiveGenerator<T> self,
-		Function<T, Arbitrary<U>> mapper,
-		long maxNumberOfSamples
-	) {
-		return ExhaustiveGenerators.flatMap(self, mapper, maxNumberOfSamples);
-	}
 
 	@Override
 	public <T> ListArbitrary<T> list(Arbitrary<T> elementArbitrary) {
@@ -35,7 +27,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	public <T> SetArbitrary<T> set(Arbitrary<T> elementArbitrary) {
 		// The set can never be larger than the max number of possible elements
 		return new DefaultSetArbitrary<>(elementArbitrary)
-				   .ofMaxSize(maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
+					   .ofMaxSize(maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
 	@Override
@@ -51,6 +43,79 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	@Override
 	public <T, A> StreamableArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
 		return new DefaultArrayArbitrary<>(elementArbitrary, arrayClass, elementArbitrary.isUnique());
+	}
+
+	@Override
+	public <T> Arbitrary<T> filter(Arbitrary<T> self, Predicate<T> filterPredicate) {
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return self.generator(genSize).filter(filterPredicate);
+			}
+
+			@Override
+			public boolean isUnique() {
+				return self.isUnique();
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return self.exhaustive(maxNumberOfSamples)
+						   .map(generator -> generator.filter(filterPredicate));
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return EdgeCasesSupport.filter(self.edgeCases(), filterPredicate);
+			}
+		};
+	}
+
+	@Override
+	public <T, U> Arbitrary<U> map(Arbitrary<T> self, Function<T, U> mapper) {
+		return new Arbitrary<U>() {
+			@Override
+			public RandomGenerator<U> generator(int genSize) {
+				return self.generator(genSize).map(mapper);
+			}
+
+			@Override
+			public boolean isUnique() {
+				return self.isUnique();
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<U>> exhaustive(long maxNumberOfSamples) {
+				return self.exhaustive(maxNumberOfSamples)
+						   .map(generator -> generator.map(mapper));
+			}
+
+			@Override
+			public EdgeCases<U> edgeCases() {
+				return EdgeCasesSupport.map(self.edgeCases(), mapper);
+			}
+		};
+	}
+
+	@Override
+	public <T, U> Arbitrary<U> flatMap(Arbitrary<T> self, Function<T, Arbitrary<U>> mapper) {
+		return new Arbitrary<U>() {
+			@Override
+			public RandomGenerator<U> generator(int genSize) {
+				return self.generator(genSize).flatMap(mapper, genSize);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<U>> exhaustive(long maxNumberOfSamples) {
+				return self.exhaustive(maxNumberOfSamples)
+						   .flatMap(generator -> ExhaustiveGenerators.flatMap(generator, mapper, maxNumberOfSamples));
+			}
+
+			@Override
+			public EdgeCases<U> edgeCases() {
+				return EdgeCasesSupport.flatMapArbitrary(self.edgeCases(), mapper);
+			}
+		};
 	}
 
 	@Override
@@ -71,8 +136,8 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			return Arbitraries.just(null);
 		}
 		Arbitrary<T> withNull = Arbitraries.frequencyOf(
-			Tuple.of(frequencyNull, Arbitraries.just(null)),
-			Tuple.of(frequencyNotNull, self)
+				Tuple.of(frequencyNull, Arbitraries.just(null)),
+				Tuple.of(frequencyNotNull, self)
 		);
 		if (self.isUnique()) {
 			return withNull.unique();
@@ -80,4 +145,56 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			return withNull;
 		}
 	}
+
+	@Override
+	public <T> Arbitrary<T> ignoreException(Arbitrary<T> self, Class<? extends Throwable> exceptionType) {
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return self.generator(genSize).ignoreException(exceptionType);
+			}
+
+			@Override
+			public boolean isUnique() {
+				return self.isUnique();
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return self.exhaustive(maxNumberOfSamples)
+						   .map(generator -> generator.ignoreException(exceptionType));
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return EdgeCasesSupport.ignoreException(self.edgeCases(), exceptionType);
+			}
+		};
+	}
+
+	@Override
+	public <T> Arbitrary<T> dontShrink(Arbitrary<T> self) {
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return self.generator(genSize).dontShrink();
+			}
+
+			@Override
+			public boolean isUnique() {
+				return self.isUnique();
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return self.exhaustive(maxNumberOfSamples);
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return EdgeCasesSupport.dontShrink(self.edgeCases());
+			}
+		};
+	}
+
 }

@@ -29,7 +29,7 @@ public class DefaultShortArbitrary extends AbstractArbitraryBase implements Shor
 
 	@Override
 	public EdgeCases<Short> edgeCases() {
-		return generatingArbitrary.edgeCases().map(BigInteger::shortValueExact);
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::shortValueExact);
 	}
 
 	@Override

@@ -27,8 +27,10 @@ public class DefaultFunctionArbitrary<F, R> extends AbstractArbitraryBase implem
 	@Override
 	public EdgeCases<F> edgeCases() {
 		ConstantFunctionGenerator<F, R> constantFunctionGenerator = createConstantFunctionGenerator(1000);
-		return resultArbitrary.edgeCases()
-							  .mapShrinkable(constantFunctionGenerator::createConstantFunction);
+		return EdgeCasesSupport.mapShrinkable(
+				resultArbitrary.edgeCases(),
+				constantFunctionGenerator::createConstantFunction
+		);
 	}
 
 	private List<RandomGenerator<F>> createGenerators(int genSize) {

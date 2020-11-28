@@ -31,9 +31,12 @@ class EdgeCasesTests {
 
 	@Example
 	void mappedEdgeCasesCanBeShrunk() {
-		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(10, 100).shrinkTowards(25);
+		Arbitrary<String> arbitrary =
+				Arbitraries.integers()
+						   .between(10, 100).shrinkTowards(25)
+						   .map(i -> Integer.toString(i));
 
-		EdgeCases<String> edgeCases = arbitrary.edgeCases().map(i -> Integer.toString(i));
+		EdgeCases<String> edgeCases = arbitrary.edgeCases();
 		assertThat(edgeCases).hasSize(5);
 
 		Falsifier<String> falsifier = ignore -> TryExecutionResult.falsified(null);
@@ -45,9 +48,12 @@ class EdgeCasesTests {
 
 	@Example
 	void filteredEdgeCasesCanBeShrunk() {
-		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(0, 11);
+		Arbitrary<Integer> arbitrary =
+				Arbitraries.integers()
+						   .between(0, 11)
+						   .filter(i -> i % 2 == 1);
 
-		EdgeCases<Integer> edgeCases = arbitrary.edgeCases().filter(i -> i % 2 == 1);
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(edgeCases).hasSize(2);
 
 		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
@@ -59,10 +65,11 @@ class EdgeCasesTests {
 
 	@Example
 	void flatMappedEdgeCasesCanBeShrunk() {
-		Arbitrary<Integer> arbitrary = Arbitraries.of(1, 10);
+		Arbitrary<String> arbitrary =
+				Arbitraries.of(1, 10)
+						   .flatMap(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i));
 
-		EdgeCases<String> edgeCases =
-			arbitrary.edgeCases().flatMapArbitrary(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i));
+		EdgeCases<String> edgeCases = arbitrary.edgeCases();
 
 		assertThat(edgeCases).hasSize(4);
 

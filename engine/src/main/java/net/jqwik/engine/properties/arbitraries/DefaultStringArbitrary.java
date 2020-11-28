@@ -24,21 +24,21 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	@Override
 	public Optional<ExhaustiveGenerator<String>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.strings(
-			characterArbitrary,
-			minLength,
-			maxLength,
-			maxNumberOfSamples
+				characterArbitrary,
+				minLength,
+				maxLength,
+				maxNumberOfSamples
 		);
 	}
 
 	@Override
 	public EdgeCases<String> edgeCases() {
 		EdgeCases<String> emptyStringEdgeCases =
-			hasEmptyStringEdgeCase() ? emptyStringEdgeCase() : EdgeCases.none();
+				hasEmptyStringEdgeCase() ? emptyStringEdgeCase() : EdgeCases.none();
 		EdgeCases<String> singleCharEdgeCases =
-			hasSingleCharEdgeCases() ? fixedSizedEdgeCases(1) : EdgeCases.none();
+				hasSingleCharEdgeCases() ? fixedSizedEdgeCases(1) : EdgeCases.none();
 		EdgeCases<String> fixedSizeEdgeCases =
-			hasMultiCharEdgeCases() ? fixedSizedEdgeCases(minLength) : EdgeCases.none();
+				hasMultiCharEdgeCases() ? fixedSizedEdgeCases(minLength) : EdgeCases.none();
 
 		return EdgeCasesSupport.concat(singleCharEdgeCases, emptyStringEdgeCases, fixedSizeEdgeCases);
 	}
@@ -60,12 +60,13 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	}
 
 	private EdgeCases<String> fixedSizedEdgeCases(int fixedSize) {
-		return characterArbitrary
-				   .edgeCases()
-				   .mapShrinkable(shrinkableChar -> {
-					   List<Shrinkable<Character>> chars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
-					   return new ShrinkableString(chars, minLength, maxLength);
-				   });
+		return EdgeCasesSupport.mapShrinkable(
+				characterArbitrary.edgeCases(),
+				shrinkableChar -> {
+					List<Shrinkable<Character>> chars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
+					return new ShrinkableString(chars, minLength, maxLength);
+				}
+		);
 	}
 
 	@Override
@@ -121,8 +122,8 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	public StringArbitrary alpha() {
 		DefaultStringArbitrary clone = typedClone();
 		clone.characterArbitrary = clone.characterArbitrary
-									   .range('A', 'Z')
-									   .range('a', 'z');
+										   .range('A', 'Z')
+										   .range('a', 'z');
 		return clone;
 	}
 
