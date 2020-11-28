@@ -47,15 +47,10 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> Arbitrary<T> filter(Arbitrary<T> self, Predicate<T> filterPredicate) {
-		return new Arbitrary<T>() {
+		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
 				return self.generator(genSize).filter(filterPredicate);
-			}
-
-			@Override
-			public boolean isUnique() {
-				return self.isUnique();
 			}
 
 			@Override
@@ -148,15 +143,10 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> Arbitrary<T> ignoreException(Arbitrary<T> self, Class<? extends Throwable> exceptionType) {
-		return new Arbitrary<T>() {
+		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
 				return self.generator(genSize).ignoreException(exceptionType);
-			}
-
-			@Override
-			public boolean isUnique() {
-				return self.isUnique();
 			}
 
 			@Override
@@ -174,20 +164,10 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> Arbitrary<T> dontShrink(Arbitrary<T> self) {
-		return new Arbitrary<T>() {
+		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
 				return self.generator(genSize).dontShrink();
-			}
-
-			@Override
-			public boolean isUnique() {
-				return self.isUnique();
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return self.exhaustive(maxNumberOfSamples);
 			}
 
 			@Override
@@ -197,4 +177,14 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 		};
 	}
 
+	@Override
+	public <T> Arbitrary<T> configureEdgeCases(Arbitrary<T> self, Consumer<EdgeCases.Config<T>> configurator) {
+		EdgeCasesConfiguration<T> config = new EdgeCasesConfiguration<>();
+		return new ArbitraryDelegator<T>(self) {
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return config.configure(configurator, self.edgeCases());
+			}
+		};
+	}
 }

@@ -23,7 +23,8 @@ class LazyArbitraryShrinkingTests {
 		Assertions.assertThat(value).isEqualTo(0);
 	}
 
-	@Property(tries = 10)
+	// Fixed seed because in rare cases it can take VERY long
+	@Property(tries = 10, seed = "42")
 	void severalStepsToList(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfInteger();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;

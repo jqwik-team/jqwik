@@ -65,6 +65,9 @@ public class EdgeCasesSupport {
 		if (edgeCases.isEmpty()) {
 			return EdgeCases.none();
 		}
+		if (edgeCases.size() == 1) {
+			return edgeCases.get(0);
+		}
 		List<Supplier<Shrinkable<T>>> concatenatedSuppliers = new ArrayList<>();
 		for (EdgeCases<T> edgeCase : edgeCases) {
 			if (edgeCase.isEmpty()) {

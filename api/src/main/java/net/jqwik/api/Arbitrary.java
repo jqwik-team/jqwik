@@ -50,6 +50,8 @@ public interface Arbitrary<T> {
 		public abstract <T> Arbitrary<T> ignoreException(Arbitrary<T> self, Class<? extends Throwable> exceptionType);
 
 		public abstract <T> Arbitrary<T> dontShrink(Arbitrary<T> self);
+
+		public abstract <T> Arbitrary<T> configureEdgeCases(Arbitrary<T> self, Consumer<EdgeCases.Config<T>> configurator);
 	}
 
 	/**
@@ -508,6 +510,20 @@ public interface Arbitrary<T> {
 	@API(status = EXPERIMENTAL, since = "1.3.2")
 	default Arbitrary<T> dontShrink() {
 		return ArbitraryFacade.implementation.dontShrink(Arbitrary.this);
+	}
+
+	/**
+	 * Experimental interface to change generated edge cases of a specific arbitrary.
+	 *
+	 * @param configurator A consumer that configures deviating edge cases behaviour
+	 *
+	 * @return a new arbitrary instance
+	 *
+	 * @see EdgeCases.Config
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.9")
+	default Arbitrary<T> edgeCases(Consumer<EdgeCases.Config<T>> configurator) {
+		return ArbitraryFacade.implementation.configureEdgeCases(Arbitrary.this, configurator);
 	}
 
 }

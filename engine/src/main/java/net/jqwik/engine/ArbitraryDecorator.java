@@ -1,17 +1,22 @@
-package net.jqwik.engine.properties.arbitraries;
+package net.jqwik.engine;
 
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.arbitraries.*;
 
-
-abstract class ArbitraryDecorator<T>  extends AbstractArbitraryBase implements Arbitrary<T> {
+public abstract class ArbitraryDecorator<T>  extends AbstractArbitraryBase implements Arbitrary<T> {
 
 	abstract protected Arbitrary<T> arbitrary();
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
 		return arbitrary().generator(genSize);
+	}
+
+	@Override
+	public boolean isUnique() {
+		return arbitrary().isUnique();
 	}
 
 	@Override

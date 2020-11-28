@@ -13,24 +13,12 @@ import static org.assertj.core.api.Assertions.*;
 @Group
 class ArbitraryEdgeCasesTests {
 
-	// @Example
-	// void withoutEdgeCases() {
-	// 	Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-100, 100).withoutEdgeCases();
-	// 	EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-	// 	assertThat(values(edgeCases)).isEmpty();
-	//
-	// 	// Random value generation still works
-	// 	ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
-	// 		assertThat(i).isBetween(-100, 100);
-	// 	});
-	// }
-
 	@Example
 	void mapping() {
 		Arbitrary<String> arbitrary = Arbitraries.integers().between(-10, 10).map(i -> Integer.toString(i));
 		EdgeCases<String> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-			"-10", "-9", "-2", "-1", "0", "1", "2", "9", "10"
+				"-10", "-9", "-2", "-1", "0", "1", "2", "9", "10"
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(9);
@@ -41,7 +29,7 @@ class ArbitraryEdgeCasesTests {
 		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-10, 10).filter(i -> i % 2 == 0);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-			-10, -2, 0, 2, 10
+				-10, -2, 0, 2, 10
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(5);
@@ -50,17 +38,17 @@ class ArbitraryEdgeCasesTests {
 	@Example
 	void ignoringExceptions() {
 		Arbitrary<Integer> arbitrary =
-			Arbitraries.integers().between(-10, 10)
-					   .map(i -> {
-						   if (i % 2 != 0) {
-							   throw new IllegalArgumentException("Only even numbers");
-						   }
-						   return i;
-					   })
-					   .ignoreException(IllegalArgumentException.class);
+				Arbitraries.integers().between(-10, 10)
+						   .map(i -> {
+							   if (i % 2 != 0) {
+								   throw new IllegalArgumentException("Only even numbers");
+							   }
+							   return i;
+						   })
+						   .ignoreException(IllegalArgumentException.class);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-			-10, -2, 0, 2, 10
+				-10, -2, 0, 2, 10
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(5);
@@ -71,7 +59,7 @@ class ArbitraryEdgeCasesTests {
 		Arbitrary<Integer> arbitrary = Arbitraries.of(-10, 10).injectNull(0.1);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-			null, -10, 10
+				null, -10, 10
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(3);
@@ -82,7 +70,7 @@ class ArbitraryEdgeCasesTests {
 		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-10, 10).fixGenSize(100);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-			-10, -9, -2, -1, 0, 1, 2, 9, 10
+				-10, -9, -2, -1, 0, 1, 2, 9, 10
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(9);
@@ -93,7 +81,7 @@ class ArbitraryEdgeCasesTests {
 		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-10, 10).unique();
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-			-10, -9, -2, -1, 0, 1, 2, 9, 10
+				-10, -9, -2, -1, 0, 1, 2, 9, 10
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(9);
@@ -106,7 +94,7 @@ class ArbitraryEdgeCasesTests {
 
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-			5, 6, 49, 50, 10, 11, 99, 100
+				5, 6, 49, 50, 10, 11, 99, 100
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(8);
@@ -117,7 +105,7 @@ class ArbitraryEdgeCasesTests {
 		Arbitrary<Optional<Integer>> arbitrary = Arbitraries.of(-10, 10).optional();
 		EdgeCases<Optional<Integer>> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-			Optional.empty(), Optional.of(-10), Optional.of(10)
+				Optional.empty(), Optional.of(-10), Optional.of(10)
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(3);
@@ -131,9 +119,9 @@ class ArbitraryEdgeCasesTests {
 			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list();
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				Collections.emptyList(),
-				Collections.singletonList(-10),
-				Collections.singletonList(10)
+					Collections.emptyList(),
+					Collections.singletonList(-10),
+					Collections.singletonList(10)
 			);
 			// make sure edge cases can be repeatedly generated
 			assertThat(values(arbitrary.edgeCases())).hasSize(3);
@@ -144,15 +132,15 @@ class ArbitraryEdgeCasesTests {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(1);
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				Collections.singletonList(-10),
-				Collections.singletonList(-9),
-				Collections.singletonList(-2),
-				Collections.singletonList(-1),
-				Collections.singletonList(0),
-				Collections.singletonList(1),
-				Collections.singletonList(2),
-				Collections.singletonList(9),
-				Collections.singletonList(10)
+					Collections.singletonList(-10),
+					Collections.singletonList(-9),
+					Collections.singletonList(-2),
+					Collections.singletonList(-1),
+					Collections.singletonList(0),
+					Collections.singletonList(1),
+					Collections.singletonList(2),
+					Collections.singletonList(9),
+					Collections.singletonList(10)
 			);
 		}
 
@@ -168,8 +156,8 @@ class ArbitraryEdgeCasesTests {
 			Arbitrary<Integer> ints = Arbitraries.of(10, 100);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofSize(3);
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				asList(10, 10, 10),
-				asList(100, 100, 100)
+					asList(10, 10, 10),
+					asList(100, 100, 100)
 			);
 		}
 
@@ -185,10 +173,10 @@ class ArbitraryEdgeCasesTests {
 
 			Set<List<Integer>> values = values(edgeCases);
 			assertThat(values).containsExactlyInAnyOrder(
-				Collections.emptyList(),
-				Collections.singletonList(-1),
-				Collections.singletonList(0),
-				Collections.singletonList(1)
+					Collections.emptyList(),
+					Collections.singletonList(-1),
+					Collections.singletonList(0),
+					Collections.singletonList(1)
 			);
 		}
 
@@ -197,16 +185,16 @@ class ArbitraryEdgeCasesTests {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Set<Integer>> arbitrary = ints.set();
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				Collections.emptySet(),
-				Collections.singleton(-10),
-				Collections.singleton(-9),
-				Collections.singleton(-2),
-				Collections.singleton(-1),
-				Collections.singleton(0),
-				Collections.singleton(1),
-				Collections.singleton(2),
-				Collections.singleton(9),
-				Collections.singleton(10)
+					Collections.emptySet(),
+					Collections.singleton(-10),
+					Collections.singleton(-9),
+					Collections.singleton(-2),
+					Collections.singleton(-1),
+					Collections.singleton(0),
+					Collections.singleton(1),
+					Collections.singleton(2),
+					Collections.singleton(9),
+					Collections.singleton(10)
 			);
 			assertThat(values(arbitrary.edgeCases())).hasSize(10);
 		}
@@ -216,15 +204,15 @@ class ArbitraryEdgeCasesTests {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Set<Integer>> arbitrary = ints.set().ofMinSize(1);
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				Collections.singleton(-10),
-				Collections.singleton(-9),
-				Collections.singleton(-2),
-				Collections.singleton(-1),
-				Collections.singleton(0),
-				Collections.singleton(1),
-				Collections.singleton(2),
-				Collections.singleton(9),
-				Collections.singleton(10)
+					Collections.singleton(-10),
+					Collections.singleton(-9),
+					Collections.singleton(-2),
+					Collections.singleton(-1),
+					Collections.singleton(0),
+					Collections.singleton(1),
+					Collections.singleton(2),
+					Collections.singleton(9),
+					Collections.singleton(10)
 			);
 		}
 
@@ -235,9 +223,9 @@ class ArbitraryEdgeCasesTests {
 			Set<Stream<Integer>> streams = values(arbitrary.edgeCases());
 			Set<List<Integer>> lists = streams.stream().map(stream -> stream.collect(Collectors.toList())).collect(Collectors.toSet());
 			assertThat(lists).containsExactlyInAnyOrder(
-				Collections.emptyList(),
-				Collections.singletonList(-10),
-				Collections.singletonList(10)
+					Collections.emptyList(),
+					Collections.singletonList(-10),
+					Collections.singletonList(10)
 			);
 			assertThat(values(arbitrary.edgeCases())).hasSize(3);
 		}
@@ -248,17 +236,17 @@ class ArbitraryEdgeCasesTests {
 			Arbitrary<Iterator<Integer>> arbitrary = ints.iterator();
 			Set<Iterator<Integer>> iterators = values(arbitrary.edgeCases());
 			Set<List<Integer>> lists =
-				iterators.stream()
-						 .map(iterator -> {
-							 List<Integer> list = new ArrayList<>();
-							 while (iterator.hasNext()) { list.add(iterator.next()); }
-							 return list;
-						 })
-						 .collect(Collectors.toSet());
+					iterators.stream()
+							 .map(iterator -> {
+								 List<Integer> list = new ArrayList<>();
+								 while (iterator.hasNext()) { list.add(iterator.next()); }
+								 return list;
+							 })
+							 .collect(Collectors.toSet());
 			assertThat(lists).containsExactlyInAnyOrder(
-				Collections.emptyList(),
-				Collections.singletonList(-10),
-				Collections.singletonList(10)
+					Collections.emptyList(),
+					Collections.singletonList(-10),
+					Collections.singletonList(10)
 			);
 			assertThat(values(arbitrary.edgeCases())).hasSize(3);
 		}
@@ -268,9 +256,9 @@ class ArbitraryEdgeCasesTests {
 			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 			StreamableArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				new Integer[]{},
-				new Integer[]{-10},
-				new Integer[]{10}
+					new Integer[]{},
+					new Integer[]{-10},
+					new Integer[]{10}
 			);
 			assertThat(values(arbitrary.edgeCases())).hasSize(3);
 		}
@@ -279,13 +267,96 @@ class ArbitraryEdgeCasesTests {
 		void tupleEdgeCases() {
 			Arbitrary<Integer> ints = Arbitraries.just(42);
 			assertThat(values(ints.tuple1().edgeCases()))
-				.containsExactlyInAnyOrder(Tuple.of(42));
+					.containsExactlyInAnyOrder(Tuple.of(42));
 			assertThat(values(ints.tuple2().edgeCases()))
-				.containsExactlyInAnyOrder(Tuple.of(42, 42));
+					.containsExactlyInAnyOrder(Tuple.of(42, 42));
 			assertThat(values(ints.tuple3().edgeCases()))
-				.containsExactlyInAnyOrder(Tuple.of(42, 42, 42));
+					.containsExactlyInAnyOrder(Tuple.of(42, 42, 42));
 			assertThat(values(ints.tuple4().edgeCases()))
-				.containsExactlyInAnyOrder(Tuple.of(42, 42, 42, 42));
+					.containsExactlyInAnyOrder(Tuple.of(42, 42, 42, 42));
+		}
+
+	}
+
+	@Group
+	class Configuration {
+
+		@Example
+		void noEdgeCases() {
+			Arbitrary<Integer> arbitrary =
+					Arbitraries
+							.integers()
+							.between(-100, 100)
+					.edgeCases(edgeCasesConfig -> edgeCasesConfig.none());
+
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).isEmpty();
+
+			// Random value generation still works
+			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
+				assertThat(i).isBetween(-100, 100);
+			});
+		}
+
+		@Example
+		void filter() {
+			Arbitrary<Integer> arbitrary =
+					Arbitraries
+							.integers()
+							.between(-100, 100)
+					.edgeCases(edgeCasesConfig -> {
+						edgeCasesConfig.filter(i -> i % 2 == 0);
+						edgeCasesConfig.filter(i -> i >= 0);
+					});
+
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(0, 2, 100);
+
+			// Random value generation still works
+			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
+				assertThat(i).isBetween(-100, 100);
+			});
+		}
+
+		@Example
+		void addingEdgeCases() {
+			Arbitrary<Integer> arbitrary =
+					Arbitraries
+							.integers()
+							.between(-100, 100)
+					.edgeCases(edgeCasesConfig -> {
+						edgeCasesConfig.add(42);
+						edgeCasesConfig.add(41);
+					});
+
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(-1, 0, -2, 1, 2, -99, -100, 99, 100, 41, 42);
+
+			// Random value generation still works
+			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
+				assertThat(i).isBetween(-100, 100);
+			});
+		}
+
+		@Example
+		void combineFilterAndAdd() {
+			Arbitrary<Integer> arbitrary =
+					Arbitraries
+							.integers()
+							.between(-100, 100)
+					.edgeCases(edgeCasesConfig -> {
+						edgeCasesConfig.filter(i -> i < 0);
+						edgeCasesConfig.add(42);
+						edgeCasesConfig.add(41);
+					});
+
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(-1, -2, -99, -100, 41, 42);
+
+			// Random value generation still works
+			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
+				assertThat(i).isBetween(-100, 100);
+			});
 		}
 
 	}
