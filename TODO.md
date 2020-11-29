@@ -1,8 +1,5 @@
 - 1.3.9
 
-    - Adapt edge cases of email addresses to only generate the most important ones.
-      See https://github.com/jlink/jqwik/issues/133
-
     - XRange constraints use filter when specialized arbitraries are not available
 
     - StringLength constraints uses filter when StringArbitrary not available

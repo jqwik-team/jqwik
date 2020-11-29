@@ -13,7 +13,6 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.api.ShrinkingTestHelper.*;
 
-@PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
 @Group
 public class ArbitrariesEmailsTests {
 
@@ -234,7 +233,7 @@ public class ArbitrariesEmailsTests {
 					  .collect(isIPAddress(domain))
 					  .coverage(coverage -> {
 						  coverage.check(true).percentage(p -> p > 10);
-						  coverage.check(false).percentage(p -> p > 60);
+						  coverage.check(false).percentage(p -> p > 50);
 					  });
 		}
 
