@@ -9,8 +9,8 @@ import net.jqwik.engine.properties.*;
 
 public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements BigDecimalArbitrary {
 
-	private static final BigDecimal DEFAULT_MIN = BigDecimal.valueOf(-Double.MAX_VALUE);
-	private static final BigDecimal DEFAULT_MAX = BigDecimal.valueOf(Double.MAX_VALUE);
+	public static final BigDecimal DEFAULT_MIN = BigDecimal.valueOf(-Double.MAX_VALUE);
+	public static final BigDecimal DEFAULT_MAX = BigDecimal.valueOf(Double.MAX_VALUE);
 	private static final Range<BigDecimal> DEFAULT_RANGE = Range.of(DEFAULT_MIN, DEFAULT_MAX);
 
 	private final DecimalGeneratingArbitrary generatingArbitrary;

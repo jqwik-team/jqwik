@@ -1,7 +1,14 @@
 net.jqwik.engine.properties.configurators.ScaleConfigurator
 net.jqwik.engine.properties.configurators.CharsConfigurator
 net.jqwik.engine.properties.configurators.StringLengthConfigurator
-net.jqwik.engine.properties.configurators.RangeConfigurator
+net.jqwik.engine.properties.configurators.ByteRangeConfigurator
+net.jqwik.engine.properties.configurators.ShortRangeConfigurator
+net.jqwik.engine.properties.configurators.IntRangeConfigurator
+net.jqwik.engine.properties.configurators.LongRangeConfigurator
+net.jqwik.engine.properties.configurators.FloatRangeConfigurator
+net.jqwik.engine.properties.configurators.DoubleRangeConfigurator
+net.jqwik.engine.properties.configurators.BigIntegerRangeConfigurator
+net.jqwik.engine.properties.configurators.BigDecimalRangeConfigurator
 net.jqwik.engine.properties.configurators.PositiveConfigurator
 net.jqwik.engine.properties.configurators.NegativeConfigurator
 net.jqwik.engine.properties.configurators.WhitespaceConfigurator

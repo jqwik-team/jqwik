@@ -1,6 +1,6 @@
 - 1.3.9
 
-    - XRange constraints use filter when specialized arbitraries are not available
+    - Release notes for changed Range constraint behaviour
 
 - 1.3.x
 

@@ -241,8 +241,8 @@ class RangeProperties {
 
 		@Property(generation = GenerationMode.RANDOMIZED)
 		boolean bigDecimalAlsoWorksForProvidedArbitrary(@ForAll("providedDecimal") @BigRange(min = "2", max = "7") BigDecimal value) {
-			return value.compareTo(new BigDecimal("2")) > 0
-						   && value.compareTo(new BigDecimal("7")) < 0;
+			return value.compareTo(new BigDecimal("2")) >= 0
+						   && value.compareTo(new BigDecimal("7")) <= 0;
 		}
 
 		@Provide
@@ -272,8 +272,8 @@ class RangeProperties {
 
 		@Property(generation = GenerationMode.RANDOMIZED)
 		boolean bigIntegerAlsoWorksForProvidedArbitrary(@ForAll("providedInteger") @BigRange(min = "2", max = "7") BigInteger value) {
-			return value.compareTo(new BigInteger("2")) > 0
-						   && value.compareTo(new BigInteger("7")) < 0;
+			return value.compareTo(new BigInteger("2")) >= 0
+						   && value.compareTo(new BigInteger("7")) <= 0;
 		}
 
 		@Provide

@@ -8,8 +8,8 @@ import net.jqwik.api.arbitraries.*;
 
 public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements BigIntegerArbitrary {
 
-	private static final BigInteger DEFAULT_MIN = BigInteger.valueOf(Long.MIN_VALUE);
-	private static final BigInteger DEFAULT_MAX = BigInteger.valueOf(Long.MAX_VALUE);
+	public static final BigInteger DEFAULT_MIN = BigInteger.valueOf(Long.MIN_VALUE);
+	public static final BigInteger DEFAULT_MAX = BigInteger.valueOf(Long.MAX_VALUE);
 
 	private final IntegralGeneratingArbitrary generatingArbitrary;
 
