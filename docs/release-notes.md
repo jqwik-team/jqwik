@@ -45,6 +45,8 @@ title: jqwik Release Notes
 - Experimental support for 
   [changing an arbitraries edge cases](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)).
 
+- Constraint annotation `@StringLength` now works for any arbitrary returning a `String`.
+
 #### Breaking Changes
 
 - Email arbitrary no longer generates domain hosts without top level domain

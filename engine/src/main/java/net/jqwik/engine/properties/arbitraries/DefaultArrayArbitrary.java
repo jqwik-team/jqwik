@@ -55,7 +55,9 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 
 	@Override
 	public Arbitrary<A> configure(ArbitraryConfigurator configurator, TypeUsage targetType) {
-		elementArbitrary = configurator.configure(elementArbitrary, targetType);
+		targetType.getComponentType().ifPresent(elementType -> {
+			elementArbitrary = configurator.configure(elementArbitrary, elementType);
+		});
 		return configurator.configure(this, targetType);
 	}
 }

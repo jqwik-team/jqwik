@@ -30,4 +30,18 @@ class StringLengthProperties {
 		return aString.length() <= 7;
 	}
 
+	@Property
+	boolean stringLengthAlsoWorksWithProvidedArbitrary(@ForAll("provided") @StringLength(max = 5) String aString) {
+		return aString.length() <= 5;
+	}
+
+	@Provide
+	Arbitrary<String> provided() {
+		return Arbitraries.longs().greaterOrEqual(0).map(l -> Long.toString(l));
+	}
+
+	@Property
+	void doesNotInfluenceNonStringArbitrary(@ForAll @StringLength(max = 5) long aLong) {
+	}
+
 }

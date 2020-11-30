@@ -280,7 +280,7 @@ public class TypeUsageImpl implements TypeUsage {
 		this.type = type;
 		this.annotatedType = annotatedType;
 		this.typeVariable = typeVariable;
-		this.annotations = annotations;
+		this.annotations = new ArrayList<>(annotations);
 	}
 
 	void addTypeArguments(List<TypeUsage> typeArguments) {
@@ -436,7 +436,7 @@ public class TypeUsageImpl implements TypeUsage {
 		if (isSingleUpperBoundVariableType()) {
 			return getAnnotationsStream().collect(Collectors.toList());
 		}
-		return annotations;
+		return Collections.unmodifiableList(annotations);
 	}
 
 	private Stream<Annotation> getAnnotationsStream() {
@@ -466,9 +466,12 @@ public class TypeUsageImpl implements TypeUsage {
 
 	@Override
 	public Optional<TypeUsage> getComponentType() {
-		Class<?> componentType = rawType.getComponentType();
-		if (componentType != null)
-			return Optional.of(TypeUsage.of(componentType));
+		Class<?> componentRawType = rawType.getComponentType();
+		if (componentRawType != null) {
+			TypeUsageImpl componentType = (TypeUsageImpl) TypeUsage.of(componentRawType);
+			componentType.annotations.addAll(this.annotations);
+			return Optional.of(componentType);
+		}
 		return Optional.empty();
 	}
 

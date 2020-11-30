@@ -237,6 +237,28 @@ class TypeUsageTests {
 		}
 
 		@Example
+		void annotationsOfArrayArePropagatedToComponentType() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void stringArray(@Size(2) @StringLength(3) String[] strings) {}
+			}
+
+			Method method = LocalClass.class.getMethod("stringArray", String[].class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage arrayType = TypeUsageImpl.forParameter(parameter);
+			assertThat(arrayType.isArray()).isTrue();
+			assertThat(arrayType.getRawType()).isEqualTo(String[].class);
+			assertThat(arrayType.getAnnotations().get(0)).isInstanceOf(Size.class);
+			assertThat(arrayType.getAnnotations().get(1)).isInstanceOf(StringLength.class);
+
+			TypeUsage componentType = arrayType.getComponentType().get();
+			assertThat(componentType.getRawType()).isEqualTo(String.class);
+			assertThat(componentType.getAnnotations().get(0)).isInstanceOf(Size.class);
+			assertThat(componentType.getAnnotations().get(1)).isInstanceOf(StringLength.class);
+
+		}
+
+		@Example
 		void wildcard() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
