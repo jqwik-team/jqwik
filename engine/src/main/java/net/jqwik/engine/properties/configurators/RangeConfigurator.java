@@ -4,11 +4,24 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.providers.*;
 
 import java.math.*;
 import java.util.function.*;
 
 public class RangeConfigurator extends ArbitraryConfiguratorBase {
+
+	@Override
+	protected boolean acceptTargetType(TypeUsage targetType) {
+		return targetType.isAssignableFrom(Byte.class)
+					   || targetType.isAssignableFrom(Short.class)
+					   || targetType.isAssignableFrom(Integer.class)
+					   || targetType.isAssignableFrom(Long.class)
+					   || targetType.isAssignableFrom(Float.class)
+					   || targetType.isAssignableFrom(Double.class)
+					   || targetType.isAssignableFrom(BigInteger.class)
+					   || targetType.isAssignableFrom(BigDecimal.class);
+	}
 
 	public BigDecimalArbitrary configure(BigDecimalArbitrary arbitrary, BigRange range) {
 		BigDecimal min = evaluate(range.min(), BigDecimal::new);
@@ -42,8 +55,13 @@ public class RangeConfigurator extends ArbitraryConfiguratorBase {
 		return arbitrary.between(range.min(), range.minIncluded(), range.max(), range.maxIncluded());
 	}
 
-	public IntegerArbitrary configure(IntegerArbitrary arbitrary, IntRange range) {
-		return arbitrary.greaterOrEqual(range.min()).lessOrEqual(range.max());
+	public Arbitrary<Integer> configure(Arbitrary<Integer> arbitrary, IntRange range) {
+		if (arbitrary instanceof IntegerArbitrary) {
+			IntegerArbitrary integerArbitrary = (IntegerArbitrary) arbitrary;
+			return integerArbitrary.greaterOrEqual(range.min()).lessOrEqual(range.max());
+		} else {
+			return arbitrary.filter(i -> i >= range.min() && i <= range.max());
+		}
 	}
 
 	public LongArbitrary configure(LongArbitrary arbitrary, LongRange range) {
