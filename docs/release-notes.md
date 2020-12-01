@@ -45,7 +45,10 @@ title: jqwik Release Notes
 - Experimental support for 
   [changing an arbitraries edge cases](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)).
 
-- Constraint annotation `@StringLength` now works for any arbitrary returning a `String`.
+- Constraint annotation `@StringLength` now works for any arbitrary that generates a `String`.
+
+- Range annotations (`@Byte|Short|Int|Long|Float|Double|BigRange`) do work now when applied
+  to any arbitrary that generates the appropriate numeric type.
 
 #### Breaking Changes
 

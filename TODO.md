@@ -1,8 +1,18 @@
 - 1.3.9
 
-    - Release notes for changed Range constraint behaviour
+    - Generate documentation
+    
+    - Release
 
-- 1.3.x
+- 1.4.0
+
+    - Remove deprecated APIs
+    
+    - Email generation
+        - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails() 
+        - @Email -> net.jqwik.api.web.@Email
+        - Emails.localPart(String) 
+        - Emails.host(String) 
 
     - Add code of conduct. Examples:
         - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
@@ -16,9 +26,6 @@
         - ListArbitrary.uniqueElements()
         - ListArbitrary.uniqueElementsBy(Predicate<E> uniqueCondition)
         - How can that work across collections?
-
-    - Allow to add frequency to chars for String and Character arbitraries
-      eg. StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
 
     - Domains
         - Deprecate AbstractDomainContextBase
@@ -77,4 +84,7 @@
       - Maybe change AroundTryHook to allow replacement of `Random` source
       - Or: Introduce ProvideGenerationSourceHook
       
+    - Allow to add frequency to chars for String and Character arbitraries
+      eg. StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
+
 
