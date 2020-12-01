@@ -50,7 +50,7 @@ and
   for generating valid email addresses.
   
 - Experimental support for 
-  [changing an arbitraries edge cases](/docs/1.3.9/javadoc/net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)).
+  [changing an arbitrary's edge cases](/docs/1.3.9/javadoc/net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)).
 
 - Constraint annotation `@StringLength` now works for any arbitrary that generates a `String`.
 
