@@ -1,9 +1,3 @@
-- 1.3.9
-
-    - Generate documentation
-    
-    - Release
-
 - 1.4.0
 
     - Remove deprecated APIs
@@ -53,6 +47,9 @@
                 - Combinators
                 
         - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
+
+
+- 1.4.x
 
     - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
       https://github.com/jlink/jqwik/issues/121
