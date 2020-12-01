@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.3.9-SNAPSHOT](#139-snapshot)
+- [1.3.9](#139)
 - [1.3.8](#138)
 - [1.3.7](#137)
 - [1.3.6](#136)
@@ -28,22 +28,29 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.3.9-SNAPSHOT
+## 1.3.9
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/1.3.9/user-guide.html">User guide</a>
+and
+<a href="/docs/1.3.9/javadoc/index.html">javadoc</a>
+</p>
+
 
 #### New and Enhanced Features
 
-- [Generating email addresses](/docs/snapshot/user-guide.html#email-address-generation)
+- [Generating email addresses](/docs/1.3.9/user-guide.html#email-address-generation)
   has now configuration options. 
 
 - Generated email addresses now 
   [have fewer edge cases](https://github.com/jlink/jqwik/issues/133). 
 
 - Added constraint annotation
-  [`@Email`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Email.html)
+  [`@Email`](/docs/1.3.9/javadoc/net/jqwik/api/constraints/Email.html)
   for generating valid email addresses.
   
 - Experimental support for 
-  [changing an arbitraries edge cases](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)).
+  [changing an arbitraries edge cases](/docs/1.3.9/javadoc/net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)).
 
 - Constraint annotation `@StringLength` now works for any arbitrary that generates a `String`.
 
