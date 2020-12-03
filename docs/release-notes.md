@@ -9,7 +9,6 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.4.0-SNAPSHOT](#140-snapshot)
 - [1.3.x](#13x)
 - [1.2.x](#12x)
 - [1.1.x](#11x)
@@ -19,19 +18,22 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.4.0-SNAPSHOT
 
-#### New and Enhanced Features
+## 1.3.x
 
-#### Breaking Changes
+### 1.3.10-SNAPSHOT
 
 #### Bug Fixes
 
-- `Arbitraries.lazy()` 
+- `Arbitraries.lazy()`
   [did not allow exhaustive generation](https://github.com/jlink/jqwik/issues/137)
   but does now.
 
-## 1.3.x
+- `SampleReportingFormat.reportJavaBean(..)` can now handle methods named
+  `is` or `get`.
+
+- `SampleReportingFormat.reportJavaBean(..)` can now handle properties
+  that return `Optional<T>`.
 
 ### 1.3.9
 

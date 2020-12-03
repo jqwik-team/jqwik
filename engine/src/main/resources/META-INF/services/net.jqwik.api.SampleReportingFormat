@@ -1,3 +1,4 @@
+net.jqwik.engine.execution.reporting.OptionalReportingFormat
 net.jqwik.engine.execution.reporting.ArrayReportingFormat
 net.jqwik.engine.execution.reporting.StreamReportingFormat
 net.jqwik.engine.properties.stateful.ActionSequenceReportingFormat

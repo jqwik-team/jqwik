@@ -17,6 +17,8 @@ public class SampleReportingFormatFacadeImpl extends SampleReportingFormat.Sampl
 		Map<Object, Object> report = new LinkedHashMap<>();
 		Arrays.stream(bean.getClass().getMethods())
 			  .filter(method -> !method.getName().equals("getClass"))
+			  .filter(method -> !method.getName().equals("get"))
+			  .filter(method -> !method.getName().equals("is"))
 			  .filter(method -> method.getName().startsWith("get") ||
 									method.getName().startsWith("is"))
 			  .map(method -> Tuple.of(extractPropertyName(method), method))
@@ -53,7 +55,7 @@ public class SampleReportingFormatFacadeImpl extends SampleReportingFormat.Sampl
 		Supplier<Object> supplier
 	) {
 		Object value = supplier.get();
-		if (value != null) {
+		if (value != null && !value.equals(Optional.empty())) {
 			report.put(SampleReportingFormat.plainLabel(name), value);
 		}
 	}

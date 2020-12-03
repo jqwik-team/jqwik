@@ -1,3 +1,8 @@
+- 1.3.10
+
+      - Bug: SampleReportingFormat.reportJavaBean must handle methods 
+        with name "is" or "get"
+
 - 1.4.0
 
     - Remove deprecated APIs

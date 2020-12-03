@@ -172,6 +172,34 @@ class SampleReportingTests {
 		}
 
 		@Example
+		void optionalNotEmpty() {
+			ValueReport report = ValueReport.of(Optional.of("not empty"));
+
+			String expectedCompact = "Optional[\"not empty\"]";
+			Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
+			report.report(lineReporter, 2, "");
+			assertThat(lineReporter.lines).containsSequence(
+				"    Optional[",
+				"      \"not empty\"",
+				"    ]"
+			);
+		}
+
+		@Example
+		void optionalEmpty() {
+			ValueReport report = ValueReport.of(Optional.empty());
+
+			String expectedCompact = "Optional[null]";
+			Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
+			report.report(lineReporter, 2, "");
+			assertThat(lineReporter.lines).containsSequence(
+					"    Optional[",
+					"      null",
+					"    ]"
+			);
+		}
+
+		@Example
 		void stringWithLabelAndAppendix() {
 			ValueReport.ReportingFormatFinder finder = value -> new NullReportingFormat() {
 				@Override
@@ -326,6 +354,18 @@ class SampleReportingTests {
 					public List<YourObject> getYourObjects() {
 						return java.util.Collections.singletonList(new YourObject());
 					}
+					public String get() {
+						return "hallo";
+					}
+					public boolean is() {
+						return true;
+					}
+					public Optional<String> getNotEmpty() {
+						return Optional.of("not empty");
+					}
+					public Optional<String> getDoNotShowEmpty() {
+						return Optional.empty();
+					}
 				}
 				SampleReportingFormat myObjectFormat = new SampleReportingFormat() {
 					@Override
@@ -347,6 +387,7 @@ class SampleReportingTests {
 					"    {",
 					"      age=17,",
 					"      name=\"name\",",
+					"      notEmpty=Optional[not empty],",
 					"      young=true,",
 					"      yourObjects=[{hallo=\"hello\"}]",
 					"    },"
