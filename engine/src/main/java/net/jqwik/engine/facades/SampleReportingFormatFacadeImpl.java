@@ -17,6 +17,7 @@ public class SampleReportingFormatFacadeImpl extends SampleReportingFormat.Sampl
 		Map<Object, Object> report = new LinkedHashMap<>();
 		Arrays.stream(bean.getClass().getMethods())
 			  .filter(method -> !JqwikReflectionSupport.isStatic(method))
+			  .filter(method -> method.getParameters().length == 0)
 			  .filter(method -> !method.getName().equals("getClass"))
 			  .filter(method -> !method.getName().equals("get"))
 			  .filter(method -> !method.getName().equals("is"))

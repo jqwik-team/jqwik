@@ -360,6 +360,9 @@ class SampleReportingTests {
 					public boolean is() {
 						return true;
 					}
+					public String getWithParameter(int anInt) {
+						return "should not show up";
+					}
 					public Optional<String> getNotEmpty() {
 						return Optional.of("not empty");
 					}
