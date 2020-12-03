@@ -337,6 +337,9 @@ class SampleReportingTests {
 					public String getHallo() {
 						return "hello";
 					}
+					public String getToIgnore() {
+						return "should be ignored";
+					}
 				}
 				class MyObject {
 					public int getAge() {
@@ -369,6 +372,9 @@ class SampleReportingTests {
 					public Optional<String> getDoNotShowEmpty() {
 						return Optional.empty();
 					}
+					public String getToIgnore() {
+						return "should be ignored";
+					}
 				}
 				SampleReportingFormat myObjectFormat = new SampleReportingFormat() {
 					@Override
@@ -378,7 +384,7 @@ class SampleReportingTests {
 
 					@Override
 					public Object report(Object value) {
-						return SampleReportingFormat.reportJavaBean(value);
+						return SampleReportingFormat.reportJavaBean(value, "toIgnore");
 					}
 				};
 				ValueReport.ReportingFormatFinder finder = formatFinder(myObjectFormat);

@@ -1,7 +1,5 @@
 - 1.3.10
 
-    - Allow to exclude properties from SampleReportingFormat.reportJavaBean(bean)
-
 - 1.4.0
 
     - Remove deprecated APIs

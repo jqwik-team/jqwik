@@ -23,6 +23,11 @@ title: jqwik Release Notes
 
 ### 1.3.10-SNAPSHOT
 
+#### New and Enhanced Features
+
+- `SampleReportingFormat.reportJavaBean(..)` optionally takes list
+  of properties to ignore.
+
 #### Bug Fixes
 
 - `Arbitraries.lazy()`
