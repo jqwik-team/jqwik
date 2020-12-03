@@ -8,6 +8,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 
+import static java.math.RoundingMode.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -955,6 +956,34 @@ class ExhaustiveGenerationTests {
 			assertThat(generator.maxCount()).isEqualTo(16);
 			assertThat(generator).containsOnly(2, 3, 4, 5, 6, 7, 8);
 		}
+	}
+
+	@Example
+	@Label("Arbitraries.defaultFor() returns the edge cases of the resolve arbitrary")
+	void defaultFor() {
+		Optional<ExhaustiveGenerator<RoundingMode>> optionalGenerator = Arbitraries.defaultFor(RoundingMode.class).exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<RoundingMode> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(8);
+		assertThat(generator).containsExactlyInAnyOrder(
+				UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, UNNECESSARY
+		);
+	}
+
+	@Example
+	@Label("Arbitraries.lazy() returns the edge cases of the resolve arbitrary")
+	void lazy() {
+		Optional<ExhaustiveGenerator<RoundingMode>> optionalGenerator = Arbitraries.lazy(
+				() -> Arbitraries.of(RoundingMode.class)
+		).exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<RoundingMode> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(8);
+		assertThat(generator).containsExactlyInAnyOrder(
+				UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, UNNECESSARY
+		);
 	}
 
 	@Example

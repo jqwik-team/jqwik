@@ -35,6 +35,11 @@ public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<
 	}
 
 	@Override
+	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+		return getArbitrary().exhaustive(maxNumberOfSamples);
+	}
+
+	@Override
 	public EdgeCases<T> edgeCases() {
 		return EdgeCases.none();
 	}
