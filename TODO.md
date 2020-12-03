@@ -1,7 +1,6 @@
 - 1.3.10
 
-      - Bug: SampleReportingFormat.reportJavaBean must handle methods 
-        with name "is" or "get"
+    - Allow to exclude properties from SampleReportingFormat.reportJavaBean(bean)
 
 - 1.4.0
 
