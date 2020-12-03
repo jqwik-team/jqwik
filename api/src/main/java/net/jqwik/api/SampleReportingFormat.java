@@ -17,7 +17,7 @@ public interface SampleReportingFormat extends Comparable<SampleReportingFormat>
 			implementation = FacadeLoader.load(SampleReportingFormat.SampleReportingFormatFacade.class);
 		}
 
-		public abstract Object reportJavaBean(Object bean, String[] propsToIgnore);
+		public abstract Object reportJavaBean(Object bean, String[] excludeProperties);
 	}
 
 	/**
@@ -26,11 +26,12 @@ public interface SampleReportingFormat extends Comparable<SampleReportingFormat>
 	 * attributes.
 	 *
 	 * @param bean Java object with its properties following the bean convention
+	 * @param excludeProperties 0..n names of properties that shall be excluded during reporting
 	 * @return a map with all bean properties in alphabetical order
 	 */
 	@API(status = EXPERIMENTAL, since = "1.3.5")
-	static Object reportJavaBean(Object bean, String ... propsToIgnore) {
-		return SampleReportingFormatFacade.implementation.reportJavaBean(bean, propsToIgnore);
+	static Object reportJavaBean(Object bean, String ... excludeProperties) {
+		return SampleReportingFormatFacade.implementation.reportJavaBean(bean, excludeProperties);
 	}
 
 	/**

@@ -26,7 +26,7 @@ title: jqwik Release Notes
 #### New and Enhanced Features
 
 - `SampleReportingFormat.reportJavaBean(..)` optionally takes list
-  of properties to ignore.
+  of properties to exclude from reporting.
 
 #### Bug Fixes
 

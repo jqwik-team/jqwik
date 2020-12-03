@@ -13,9 +13,9 @@ import net.jqwik.engine.support.*;
 public class SampleReportingFormatFacadeImpl extends SampleReportingFormat.SampleReportingFormatFacade {
 
 	@Override
-	public Object reportJavaBean(Object bean, String[] propsToIgnore) {
+	public Object reportJavaBean(Object bean, String[] excludeProperties) {
 		Map<Object, Object> report = new LinkedHashMap<>();
-		List<String> namesToIgnore = Arrays.asList(propsToIgnore);
+		List<String> namesToIgnore = Arrays.asList(excludeProperties);
 		Arrays.stream(bean.getClass().getMethods())
 			  .filter(method -> !JqwikReflectionSupport.isStatic(method))
 			  .filter(method -> method.getParameters().length == 0)
