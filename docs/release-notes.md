@@ -9,16 +9,8 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.3.9](#139)
-- [1.3.8](#138)
-- [1.3.7](#137)
-- [1.3.6](#136)
-- [1.3.5](#135)
-- [1.3.4](#134)
-- [1.3.3](#133)
-- [1.3.2](#132)
-- [1.3.1](#131)
-- [1.3.0](#130)
+- [1.4.0-SNAPSHOT](#140-snapshot)
+- [1.3.x](#13x)
 - [1.2.x](#12x)
 - [1.1.x](#11x)
 - [1.0.0](#100)
@@ -27,8 +19,21 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 1.4.0-SNAPSHOT
 
-## 1.3.9
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+- `Arbitraries.lazy()` 
+  [did not allow exhaustive generation](https://github.com/jlink/jqwik/issues/137)
+  but does now.
+
+## 1.3.x
+
+### 1.3.9
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.9/user-guide.html">User guide</a>
@@ -69,7 +74,7 @@ and
 - Sampling arbitraries with null values 
   [no longer fails](https://github.com/jlink/jqwik/pull/136).
 
-## 1.3.8
+### 1.3.8
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.8/user-guide.html">User guide</a>
@@ -102,7 +107,7 @@ and
 No known bugs.
                                  
 
-## 1.3.7
+### 1.3.7
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.7/user-guide.html">User guide</a>
@@ -135,7 +140,7 @@ and
   [bug when generating functions](https://github.com/jlink/jqwik/issues/126)
                                  
 
-## 1.3.6
+### 1.3.6
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.6/user-guide.html">User guide</a>
@@ -168,7 +173,7 @@ and
 
 - Edge cases for `oneOf(..)` and `frequencyOf(..)` generators are now correctly being shrunk.
 
-## 1.3.5
+### 1.3.5
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.5/user-guide.html">User guide</a>
@@ -204,7 +209,7 @@ and
   See https://github.com/jlink/jqwik/issues/113
 
 
-## 1.3.4
+### 1.3.4
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.4/user-guide.html">User guide</a>
@@ -240,7 +245,7 @@ and
   Thank you, https://github.com/Danny02!
   
 
-## 1.3.3
+### 1.3.3
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.3/user-guide.html">User guide</a>
@@ -297,7 +302,7 @@ and
 - Reporting an exhausted property had been broken since `1.2.4` and nobody noticed.
   Works again. 
 
-## 1.3.2
+### 1.3.2
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.2/user-guide.html">User guide</a>
@@ -348,7 +353,7 @@ and
   
 - Reporting shrunk samples now report the actual sample and not a freshly generated one
 
-## 1.3.1
+### 1.3.1
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.1/user-guide.html">User guide</a>
@@ -376,7 +381,7 @@ and
 
 No open bugs had been reported.
 
-## 1.3.0
+### 1.3.0
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.3.0/user-guide.html">User guide</a>
