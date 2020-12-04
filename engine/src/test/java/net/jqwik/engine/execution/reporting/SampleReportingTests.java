@@ -332,15 +332,7 @@ class SampleReportingTests {
 			}
 
 			@Example
-			void javaBeanReport() {
-				class YourObject {
-					public String getHallo() {
-						return "hello";
-					}
-					public String getToIgnore() {
-						return "should be ignored";
-					}
-				}
+			void deprecatedJavaBeanReport() {
 				class MyObject {
 					public int getAge() {
 						return 17;
@@ -351,40 +343,16 @@ class SampleReportingTests {
 					public boolean isYoung() {
 						return true;
 					}
-					public String getDoNotShowNull() {
-						return null;
-					}
-					public List<YourObject> getYourObjects() {
-						return java.util.Collections.singletonList(new YourObject());
-					}
-					public String get() {
-						return "hallo";
-					}
-					public boolean is() {
-						return true;
-					}
-					public String getWithParameter(int anInt) {
-						return "should not show up";
-					}
-					public Optional<String> getNotEmpty() {
-						return Optional.of("not empty");
-					}
-					public Optional<String> getDoNotShowEmpty() {
-						return Optional.empty();
-					}
-					public String getToIgnore() {
-						return "should be ignored";
-					}
 				}
 				SampleReportingFormat myObjectFormat = new SampleReportingFormat() {
 					@Override
 					public boolean appliesTo(final Object value) {
-						return value instanceof MyObject || value instanceof YourObject;
+						return value instanceof MyObject;
 					}
 
 					@Override
 					public Object report(Object value) {
-						return SampleReportingFormat.reportJavaBean(value, "toIgnore");
+						return SampleReportingFormat.reportJavaBean(value);
 					}
 				};
 				ValueReport.ReportingFormatFinder finder = formatFinder(myObjectFormat);
@@ -396,9 +364,7 @@ class SampleReportingTests {
 					"    {",
 					"      age=17,",
 					"      name=\"name\",",
-					"      notEmpty=Optional[not empty],",
-					"      young=true,",
-					"      yourObjects=[{hallo=\"hello\"}]",
+					"      young=true",
 					"    },"
 				);
 			}

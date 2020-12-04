@@ -25,8 +25,13 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
-- `SampleReportingFormat.reportJavaBean(..)` optionally takes list
-  of properties to exclude from reporting.
+- Introduced `JavaBeanReportingFormat` for simpler and configurable reporting
+  of Java beans.
+
+#### Breaking Changes
+
+- `SampleReportingFormat.reportJavaBean(..)` has been deprecated. 
+  Will be removed in version 1.4.0.
 
 #### Bug Fixes
 

@@ -9,29 +9,24 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.3.1")
 public interface SampleReportingFormat extends Comparable<SampleReportingFormat> {
 
-	@API(status = INTERNAL)
-	abstract class SampleReportingFormatFacade {
-		private static final SampleReportingFormat.SampleReportingFormatFacade implementation;
-
-		static {
-			implementation = FacadeLoader.load(SampleReportingFormat.SampleReportingFormatFacade.class);
-		}
-
-		public abstract Object reportJavaBean(Object bean, String[] excludeProperties);
-	}
-
 	/**
 	 * Use in {@linkplain SampleReportingFormat#report(Object)}
 	 * if you just want to report all of an object's bean properties as
 	 * attributes.
 	 *
 	 * @param bean Java object with its properties following the bean convention
-	 * @param excludeProperties 0..n names of properties that shall be excluded during reporting
 	 * @return a map with all bean properties in alphabetical order
+	 * @deprecated Make an implementation of {@linkplain JavaBeanReportingFormat} instead. To be removed in 1.4.0.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.5")
-	static Object reportJavaBean(Object bean, String ... excludeProperties) {
-		return SampleReportingFormatFacade.implementation.reportJavaBean(bean, excludeProperties);
+	@Deprecated
+	@API(status = DEPRECATED, since = "1.3.10")
+	static Object reportJavaBean(Object bean) {
+		return JavaBeanReportingFormat.JavaBeanReportingFormatFacade.implementation.reportJavaBean(
+				bean,
+				false,
+				Collections.emptySet(),
+				props -> props
+		);
 	}
 
 	/**
