@@ -47,7 +47,9 @@ public class JavaBeanReportingFormatFacadeImpl extends JavaBeanReportingFormat.J
 		Map<String, Tuple2<String, Method>> propertyMap = toMap(properties);
 		for (String name : sortedNames) {
 			Tuple2<String, Method> entry = propertyMap.get(name);
-			sortedProperties.add(entry);
+			if (entry != null) {
+				sortedProperties.add(entry);
+			}
 		}
 
 		return sortedProperties;

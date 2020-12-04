@@ -91,6 +91,7 @@ class JavaBeanReportingFormatTests {
 				sorted.add(0, "young");
 				sorted.remove("notEmpty");
 				sorted.add(1, "notEmpty");
+				sorted.add(2, "nonExistant");
 				return sorted;
 			}
 
