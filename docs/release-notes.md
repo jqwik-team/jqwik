@@ -21,7 +21,14 @@ title: jqwik Release Notes
 
 ## 1.3.x
 
-### 1.3.10-SNAPSHOT
+### 1.3.10
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/1.3.10/user-guide.html">User guide</a>
+and
+<a href="/docs/1.3.10/javadoc/index.html">javadoc</a>
+</p>
+
 
 #### New and Enhanced Features
 
