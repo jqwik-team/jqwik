@@ -37,10 +37,6 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		this.suppliers = suppliers;
 	}
 
-	private int size() {
-		return suppliers.size();
-	}
-
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
 		return random -> {
@@ -162,6 +158,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	// Currently disabled since I'm not sure if it provides additional value
+	@SuppressWarnings("unused")
 	private Stream<Shrinkable<T>> shrinkToAlternativesAndGrow(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
 		ShrinkingDistance distance = current.distance();
 		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
@@ -170,8 +167,8 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 				   .filter(index -> !usedIndexes.contains(index))
 				   .peek(newUsedIndexes::add)
 				   .mapToObj(index -> generateCurrent(genSize, index, seed))
-				   .filter(shrinkableAndParts -> shrinkableAndParts.get1().distance().compareTo(distance) < 0)
 				   .map(Tuple1::get1)
+				   .filter(tShrinkable -> tShrinkable.distance().compareTo(distance) < 0)
 				   .flatMap(Shrinkable::grow)
 				   .filter(shrinkable -> shrinkable.distance().compareTo(distance) < 0)
 				   .map(grownShrinkable -> createShrinkable(

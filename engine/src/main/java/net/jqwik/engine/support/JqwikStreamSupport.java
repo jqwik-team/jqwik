@@ -9,6 +9,14 @@ public class JqwikStreamSupport {
 
 	/**
 	 * From https://stackoverflow.com/a/46230233/32352
+	 *
+	 * @param leftStream left
+	 * @param rightStream right
+	 * @param combiner combine
+	 * @param <L> left type
+	 * @param <R> right type
+	 * @param <T> result type
+	 * @return a zipped stream
 	 */
 	public static <L, R, T> Stream<T> zip(Stream<L> leftStream, Stream<R> rightStream, BiFunction<L, R, T> combiner) {
 		Spliterator<L> lefts = leftStream.spliterator();
@@ -32,6 +40,10 @@ public class JqwikStreamSupport {
 
 	/**
 	 * Use only if normal concatenating will overflow the stack with too many streams
+	 *
+	 * @param suppliers stream supplier
+	 * @param <T> type
+	 * @return a stream
 	 */
 	public static <T> Stream<T> lazyConcat(List<Supplier<Stream<T>>> suppliers) {
 		return suppliers.stream().flatMap(Supplier::get);
@@ -54,6 +66,11 @@ public class JqwikStreamSupport {
 	 * Taken from https://stackoverflow.com/a/46446546/32352
 	 *
 	 * TODO: Remove when moving to Java &gt; 8
+	 *
+	 * @param stream a stream
+	 * @param p a predicate
+	 * @param <T> a type
+	 * @return a stream
 	 */
 	public static <T> Stream<T> takeWhile(Stream<T> stream, Predicate<? super T> p) {
 		class Taking extends Spliterators.AbstractSpliterator<T> implements Consumer<T> {
