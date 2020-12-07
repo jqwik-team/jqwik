@@ -73,8 +73,10 @@ class ShrinkableSetTests {
 			//noinspection unchecked
 			assertThat((Set<Integer>) sample.parameters().get(0)).containsExactly(0, 1);
 			assertThat(sample.falsifyingError()).isPresent();
-			assertThat(sample.falsifyingError().get()).isInstanceOf(AssertionError.class);
-			assertThat(sample.falsifyingError().get()).hasMessage("my reason");
+			sample.falsifyingError().ifPresent(error -> {
+				assertThat(error).isInstanceOf(AssertionError.class);
+				assertThat(error).hasMessage("my reason");
+			});
 		}
 
 		@Example

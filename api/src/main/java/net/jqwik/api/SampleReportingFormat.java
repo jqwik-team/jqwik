@@ -11,26 +11,6 @@ public interface SampleReportingFormat extends Comparable<SampleReportingFormat>
 
 	/**
 	 * Use in {@linkplain SampleReportingFormat#report(Object)}
-	 * if you just want to report all of an object's bean properties as
-	 * attributes.
-	 *
-	 * @param bean Java object with its properties following the bean convention
-	 * @return a map with all bean properties in alphabetical order
-	 * @deprecated Make an implementation of {@linkplain JavaBeanReportingFormat} instead. To be removed in 1.4.0.
-	 */
-	@Deprecated
-	@API(status = DEPRECATED, since = "1.3.10")
-	static Object reportJavaBean(Object bean) {
-		return JavaBeanReportingFormat.JavaBeanReportingFormatFacade.implementation.reportJavaBean(
-				bean,
-				false,
-				Collections.emptySet(),
-				props -> props
-		);
-	}
-
-	/**
-	 * Use in {@linkplain SampleReportingFormat#report(Object)}
 	 * if you just want to report a plain label and not a String in quotes.
 	 *
 	 * @param plain String to report

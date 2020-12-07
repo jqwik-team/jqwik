@@ -443,39 +443,13 @@ public class Arbitraries {
 	}
 
 	/**
-	 * Create an arbitrary that will provide the sample values from first to last
-	 * and then start again at the beginning. Shrinking of samples is tried
-	 * towards the start of the samples.
-	 *
-	 * <p>
-	 * Attention: If you want to randomly choose between {@code samples}
-	 * you must use {@link Arbitraries#of(Object[])}
-	 * </p>
-	 *
-	 * @param samples The array of sample values
-	 * @param <T>     The type of values to generate
-	 * @return a new arbitrary instance
-	 * @deprecated Use {@link Arbitraries#of(Object[])} or move to data-driven properties if order is important. Will be removed in version 1.4.0
-	 */
-	@SafeVarargs
-	@Deprecated
-	@API(status = DEPRECATED, since = "1.3.0")
-	public static <T> Arbitrary<T> samples(T... samples) {
-		return fromGenerators(
-			ArbitrariesFacade.implementation.randomSamples(samples),
-			max -> ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(samples), max),
-			EdgeCases.none()
-		);
-	}
-
-	/**
 	 * Create an arbitrary that will always generate the same value.
 	 *
 	 * @param value The value to "generate"
 	 * @param <T>   The type of the value
 	 * @return a new arbitrary instance
 	 * @see #just(Object)
-	 * @deprecated Use {@linkplain Arbitraries#just(Object)} instead. To be removed in version 2.0.
+	 * @deprecated Use {@linkplain Arbitraries#just(Object)} instead. To be removed in version 1.5.0.
 	 **/
 	@API(status = DEPRECATED, since = "1.3.2")
 	public static <T> Arbitrary<T> constant(T value) {

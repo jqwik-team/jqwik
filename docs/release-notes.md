@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.4.0-SNAPSHOT](#140-snapshot)
 - [1.3.x](#13x)
 - [1.2.x](#12x)
 - [1.1.x](#11x)
@@ -17,6 +18,25 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.4.0-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
+
+#### Breaking Changes
+
+- Removed deprecated APIs
+    - `Arbitrary.samples(..)`
+    - Interface `FalsificationResult`
+    - `SampleReportingFormat.reportJavaBean(..)`
+    - `Shrinkable.shrink(Falsifier<T> falsifier)`
+    - Interface `ShrinkingSequence`
+    - `CharacterArbitary.with(Arbitrary<Character> characterArbitrary)`
+    - `StringArbitary.withChars(Arbitrary<Character> characterArbitrary)`
+
+#### Bug Fixes
 
 
 ## 1.3.x

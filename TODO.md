@@ -1,7 +1,7 @@
 - 1.4.0
 
-    - Remove deprecated APIs
-    
+    - Review EXPERIMENTAL APIs and promote some to MAINTAINED    
+
     - Email generation
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails() 
         - @Email -> net.jqwik.api.web.@Email

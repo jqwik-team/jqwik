@@ -100,11 +100,6 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 		return with(chars);
 	}
 
-	@Override
-	public CharacterArbitrary with(final Arbitrary<Character> characterArbitrary) {
-		return cloneWith(characterArbitrary, 1);
-	}
-
 	private Arbitrary<Character> charsArbitrary(char[] allowedChars) {
 		return Arbitraries.of(allowedChars);
 	}

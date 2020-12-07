@@ -313,14 +313,6 @@ class ArbitrariesEdgeCasesTests {
 			assertThat(collectEdgeCases(edgeCases)).allMatch(aString -> aString.chars().allMatch(c -> c == 'a' || c == 'z'));
 		}
 
-		@Property
-		void stringsOfFixedLengthWithUniqueCharacters(@ForAll @IntRange(min = 2, max = 10) int stringLength) {
-			Arbitrary<Character> uniqueCharacters = Arbitraries.chars().range('a', 'z').unique();
-			StringArbitrary arbitrary = Arbitraries.strings().withChars(uniqueCharacters).ofLength(stringLength);
-			EdgeCases<String> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).isEmpty();
-		}
-
 	}
 
 	@Group

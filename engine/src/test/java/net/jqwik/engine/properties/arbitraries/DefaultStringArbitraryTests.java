@@ -77,19 +77,6 @@ class DefaultStringArbitraryTests {
 	}
 
 	@Example
-	void withArbitraryChars() {
-		Arbitrary<Character> characterArbitrary = Arbitraries.of('a', 'x', '3', '?');
-		StringArbitrary stringArbitrary = this.arbitrary.withChars(characterArbitrary);
-		assertAllGenerated(stringArbitrary.generator(10), s -> {
-			return s.chars().allMatch(c -> c == 'a' || c == '3' || c == 'x' || c == '?');
-		});
-		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString('a')));
-		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString('x')));
-		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString('3')));
-		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString('?')));
-	}
-
-	@Example
 	void withCharsFromCharSequence() {
 		StringArbitrary stringArbitrary = this.arbitrary.withChars("amx");
 		assertAllGenerated(stringArbitrary.generator(10), s -> {

@@ -82,17 +82,6 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return Stream.empty();
 	}
 
-	/**
-	 * This method is no longer used anywhere within jqwik.
-	 *
-	 * @deprecated Will be removed in version 1.4
-	 */
-	@Deprecated
-	@API(status = DEPRECATED, since = "1.3.3")
-	default ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
-		throw new JqwikException("This method must not be used any more");
-	}
-
 	ShrinkingDistance distance();
 
 	/**

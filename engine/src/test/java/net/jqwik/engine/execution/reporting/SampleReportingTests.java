@@ -331,44 +331,6 @@ class SampleReportingTests {
 				);
 			}
 
-			@Example
-			void deprecatedJavaBeanReport() {
-				class MyObject {
-					public int getAge() {
-						return 17;
-					}
-					public String getName() {
-						return "name";
-					}
-					public boolean isYoung() {
-						return true;
-					}
-				}
-				SampleReportingFormat myObjectFormat = new SampleReportingFormat() {
-					@Override
-					public boolean appliesTo(final Object value) {
-						return value instanceof MyObject;
-					}
-
-					@Override
-					public Object report(Object value) {
-						return SampleReportingFormat.reportJavaBean(value);
-					}
-				};
-				ValueReport.ReportingFormatFinder finder = formatFinder(myObjectFormat);
-
-				ValueReport report = ValueReport.of(new MyObject(), finder);
-
-				report.report(lineReporter, 2, ",");
-				assertThat(lineReporter.lines).containsSequence(
-					"    {",
-					"      age=17,",
-					"      name=\"name\",",
-					"      young=true",
-					"    },"
-				);
-			}
-
 		}
 
 		@Group

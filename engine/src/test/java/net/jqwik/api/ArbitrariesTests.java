@@ -132,14 +132,6 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	@Deprecated
-	void samplesAreGeneratedDeterministicallyInRoundRobin() {
-		Arbitrary<Integer> integerArbitrary = Arbitraries.samples(-5, 0, 3);
-		RandomGenerator<Integer> generator = integerArbitrary.generator(1);
-		ArbitraryTestHelper.assertGeneratedExactly(generator, -5, 0, 3, -5, 0, 3);
-	}
-
-	@Example
 	void randoms() {
 		Arbitrary<Random> randomArbitrary = Arbitraries.randoms();
 		RandomGenerator<Random> generator = randomArbitrary.generator(1);

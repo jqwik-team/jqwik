@@ -121,14 +121,6 @@ class DefaultCharacterArbitraryTests {
 		assertAtLeastOneGeneratedOf(all.generator(1000), toCharacterArray(DefaultCharacterArbitrary.WHITESPACE_CHARS));
 	}
 
-	@Example
-	void withUniqueArbitraryChars() {
-		Arbitrary<Character> abcd = Arbitraries.of('a', 'b', 'c', 'd').unique();
-		CharacterArbitrary all = this.arbitrary.with(abcd);
-		assertThat(all.isUnique()).isTrue();
-		assertThat(all.allValues().get()).containsExactlyInAnyOrder('a', 'b', 'c', 'd');
-	}
-
 	private Character[] toCharacterArray(char[] chars) {
 		Character[] result = new Character[chars.length];
 		for (int i = 0; i < chars.length; i++) {
