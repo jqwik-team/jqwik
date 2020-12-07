@@ -2,6 +2,8 @@
 
     - Review EXPERIMENTAL APIs and promote some to MAINTAINED    
 
+    - Fill in some gaps in Javadoc (e.g. Combinators)
+
     - Email generation
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails() 
         - @Email -> net.jqwik.api.web.@Email
