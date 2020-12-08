@@ -3,6 +3,8 @@
     - Review EXPERIMENTAL APIs and promote some to MAINTAINED    
 
     - Fill in some gaps in Javadoc (e.g. Combinators)
+    
+    - Remove special handling for wildcards - handle like type variables
 
     - Email generation
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails() 
@@ -13,6 +15,21 @@
     - Add code of conduct. Examples:
         - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
         - https://github.com/junit-team/junit5/blob/main/CODE_OF_CONDUCT.md
+
+    - Edge Cases
+
+        - Restrict number of generated edge cases to number of tries
+          - For embedded/individual use of generators only use a max of 100 edge cases
+        
+        - Arbitrary.edgeCases(Consumer<Config>):
+          - Special handling possible? for:
+              - Numeric Arbitraries
+              - CharacterArbitrary
+              - Arbitrary.of() arbitraries
+              - Collections
+              - Combinators
+        
+        - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
 
     - Deprecate Arbitrary.unique()
     
@@ -34,21 +51,6 @@
         - Hand in property execution context to domains when being created.
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
-
-    - Edge Cases
-    
-        - Restrict number of generated edge cases to number of tries
-            - For embedded/individual use of generators only use a max of 100 edge cases
-
-        - Arbitrary.edgeCases(Consumer<Config>):        
-            - Special handling possible? for:
-                - Numeric Arbitraries
-                - CharacterArbitrary
-                - Arbitrary.of() arbitraries
-                - Collections
-                - Combinators
-                
-        - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
 
 
 - 1.4.x
