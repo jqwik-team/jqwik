@@ -1007,9 +1007,6 @@ class VariableTypedPropertyExamples {
 }
 ```
 
-In the case of unbounded type variables or an unbounded wildcard type, _jqwik_
-will create instanced of a special class (`WildcardObject`) under the hood.
-
 In the case of bounded type variables and bounded wildcard types, _jqwik_
 will check if any [registered arbitrary provider](#providing-default-arbitraries)
 can provide suitable arbitraries and choose randomly between those.

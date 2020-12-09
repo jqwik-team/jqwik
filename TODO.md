@@ -4,8 +4,6 @@
 
     - Fill in some gaps in Javadoc (e.g. Combinators)
     
-    - Remove special handling for wildcards - handle like type variables
-
     - Email generation
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails() 
         - @Email -> net.jqwik.api.web.@Email

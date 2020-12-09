@@ -19,7 +19,7 @@ class SizeProperties {
 	}
 
 	@Property
-	boolean sets(@ForAll @Size(min = 2, max = 7) Set<?> aValue) {
+	boolean sets(@ForAll @Size(min = 2, max = 7) Set<? extends Number> aValue) {
 		return aValue.size() >= 2 && aValue.size() <= 7;
 	}
 

@@ -8,7 +8,6 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.engine.properties.arbitraries.WildcardArbitrary.*;
 import net.jqwik.engine.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -145,7 +144,7 @@ class RegisteredArbitraryProvidersTests {
 		}
 
 		@Property
-		<T extends Comparable> boolean constrainedTypeVariable(@ForAll T aValue) {
+		<T extends Comparable<T>> boolean constrainedTypeVariable(@ForAll T aValue) {
 			return aValue != null;
 		}
 
@@ -161,7 +160,7 @@ class RegisteredArbitraryProvidersTests {
 
 		@Property
 		boolean listOfUnconstrainedWildcard(@ForAll List<?> aValue) {
-			return aValue.stream().allMatch(e -> e instanceof WildcardObject);
+			return aValue.stream().allMatch(e -> e != null);
 		}
 
 	}

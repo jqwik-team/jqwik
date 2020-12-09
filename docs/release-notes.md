@@ -36,6 +36,9 @@ title: jqwik Release Notes
     - `CharacterArbitary.with(Arbitrary<Character> characterArbitrary)`
     - `StringArbitary.withChars(Arbitrary<Character> characterArbitrary)`
 
+- Unconstrained wildcards are no longer handled in a special way
+  but just like unconstrained type variables.
+
 #### Bug Fixes
 
 

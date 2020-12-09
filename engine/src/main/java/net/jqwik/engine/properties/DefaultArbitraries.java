@@ -15,7 +15,6 @@ public class DefaultArbitraries {
 	public static List<ArbitraryProvider> getDefaultProviders() {
 		ArrayList<ArbitraryProvider> providers = new ArrayList<>();
 		providers.add(new EnumArbitraryProvider());
-		providers.add(new WildcardArbitraryProvider());
 		providers.add(new ListArbitraryProvider());
 		providers.add(new SetArbitraryProvider());
 		providers.add(new HashMapArbitraryProvider());
