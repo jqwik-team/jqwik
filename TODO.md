@@ -52,6 +52,8 @@
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
 
+    - Use JUnit Configuration Parameters Mechanism
+      https://github.com/jlink/jqwik/issues/139
 
 - 1.4.x
 
