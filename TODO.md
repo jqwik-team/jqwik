@@ -4,6 +4,10 @@
 
     - Fill in some gaps in Javadoc (e.g. Combinators)
     
+    - Time and Date Generation Module
+        - Add new module `jqwik-time`
+        - https://github.com/jlink/jqwik/issues/140
+    
     - Email generation
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails() 
         - @Email -> net.jqwik.api.web.@Email
