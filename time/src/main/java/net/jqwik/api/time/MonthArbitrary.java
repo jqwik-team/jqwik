@@ -23,5 +23,6 @@ public interface MonthArbitrary extends Arbitrary<Month> {
 	default MonthArbitrary atTheLatest(int max){
 		return atTheLatest(DefaultMonthArbitrary.getMonthFromInt(max));
 	}
+	MonthArbitrary only(Month... months);
 
 }

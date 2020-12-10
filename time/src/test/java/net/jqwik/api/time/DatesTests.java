@@ -137,6 +137,8 @@ class DatesTests {
 		@Group
 		class MonthMethods {
 
+			private Month[] allowedMonths;
+
 			@Property
 			void monthGreaterOrEqual(@ForAll("monthsGreaterOrEqual") LocalDate date) {
 				assertThat(date.getMonth()).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startInt));
@@ -182,6 +184,17 @@ class DatesTests {
 				startInt = Arbitraries.integers().between(1, 12).sample();
 				endInt = startInt;
 				return Dates.dates().monthBetween(startInt, endInt);
+			}
+
+			@Property
+			void monthOnlyMonths(@ForAll("monthsOnlyMonths") LocalDate date){
+				assertThat(date.getMonth()).isIn(allowedMonths);
+			}
+
+			@Provide
+			Arbitrary<LocalDate> monthsOnlyMonths(){
+				allowedMonths = MonthTests.generateMonths();
+				return Dates.dates().onlyMonths(allowedMonths);
 			}
 
 		}
