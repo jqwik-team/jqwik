@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.time.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -139,37 +140,6 @@ class DatesTests {
 			private Month startMonth;
 			private Month endMonth;
 
-			private Month intToMonth(int month){
-				switch (month){
-					case 1:
-						return Month.JANUARY;
-					case 2:
-						return Month.FEBRUARY;
-					case 3:
-						return Month.MARCH;
-					case 4:
-						return Month.APRIL;
-					case 5:
-						return Month.MAY;
-					case 6:
-						return Month. JUNE;
-					case 7:
-						return Month.JULY;
-					case 8:
-						return Month.AUGUST;
-					case 9:
-						return Month.SEPTEMBER;
-					case 10:
-						return Month.OCTOBER;
-					case 11:
-						return Month.NOVEMBER;
-					case 12:
-						return Month.DECEMBER;
-					default:
-						return null;
-				}
-			}
-
 			@Property
 			void monthGreaterOrEqual(@ForAll("monthsGreaterOrEqual") LocalDate date) {
 				assertThat(date.getMonth()).isGreaterThanOrEqualTo(startMonth);
@@ -177,7 +147,7 @@ class DatesTests {
 
 			@Provide
 			Arbitrary<LocalDate> monthsGreaterOrEqual() {
-				startMonth = intToMonth(Arbitraries.integers().between(1, 12).sample());
+				startMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(1, 12).sample());
 				return Dates.dates().monthGreaterOrEqual(startMonth);
 			}
 
@@ -188,7 +158,7 @@ class DatesTests {
 
 			@Provide
 			Arbitrary<LocalDate> monthsLessOrEqual() {
-				endMonth = intToMonth(Arbitraries.integers().between(1, 12).sample());
+				endMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(1, 12).sample());
 				return Dates.dates().monthLessOrEqual(endMonth);
 			}
 
@@ -201,8 +171,8 @@ class DatesTests {
 			@Provide
 			Arbitrary<LocalDate> monthsBetween() {
 				int start = Arbitraries.integers().between(1, 12).sample();
-				startMonth = intToMonth(start);
-				endMonth = intToMonth(Arbitraries.integers().between(start, 12).sample());
+				startMonth = DefaultMonthArbitrary.getMonthFromInt(start);
+				endMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(start, 12).sample());
 				return Dates.dates().monthBetween(startMonth, endMonth);
 			}
 
@@ -213,7 +183,7 @@ class DatesTests {
 
 			@Provide
 			Arbitrary<LocalDate> monthsBetweenSame() {
-				startMonth = intToMonth(Arbitraries.integers().between(1, 12).sample());
+				startMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(1, 12).sample());
 				endMonth = startMonth;
 				return Dates.dates().monthBetween(startMonth, endMonth);
 			}

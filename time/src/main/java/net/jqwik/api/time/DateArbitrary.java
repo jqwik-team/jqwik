@@ -6,6 +6,7 @@ import net.jqwik.api.*;
 
 public interface DateArbitrary extends Arbitrary<LocalDate> {
 
+	//TODO: Documentation
 	default DateArbitrary between(LocalDate dateBegin, LocalDate dateEnd){
 		return atTheEarliest(dateBegin).atTheLatest(dateEnd);
 	}

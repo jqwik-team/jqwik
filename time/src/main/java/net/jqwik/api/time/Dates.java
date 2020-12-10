@@ -16,8 +16,8 @@ public class Dates {
 		return null;
 	}
 
-	public static DateArbitrary months() {
-		return null;
+	public static MonthArbitrary months() {
+		return new DefaultMonthArbitrary();
 	}
 
 	public static DateArbitrary daysOfMonth() {
