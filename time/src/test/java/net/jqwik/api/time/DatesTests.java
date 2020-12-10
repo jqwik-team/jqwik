@@ -23,9 +23,6 @@ class DatesTests {
 	@Group
 	class CheckDateMethods {
 
-		private int startInt;
-		private int endInt;
-
 		@Group
 		class DateMethods {
 
@@ -83,6 +80,9 @@ class DatesTests {
 
 		@Group
 		class YearMethods {
+
+			private int startInt;
+			private int endInt;
 
 			@Property
 			void yearGreaterOrEqual(@ForAll("yearsGreaterOrEqual") LocalDate date) {
@@ -222,6 +222,9 @@ class DatesTests {
 
 		@Group
 		class DayOfMonthMethods {
+
+			private int startInt;
+			private int endInt;
 
 			@Property
 			void dayOfMonthGreaterOrEqual(@ForAll("dayOfMonthsGreaterOrEqual") LocalDate date) {

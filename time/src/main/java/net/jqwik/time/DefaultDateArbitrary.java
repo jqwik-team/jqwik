@@ -8,54 +8,75 @@ import net.jqwik.api.time.*;
 
 public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implements DateArbitrary {
 
+	private int yearMin = LocalDate.MIN.getYear();
+	private int yearMax = LocalDate.MAX.getYear();
+
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
-		return Arbitraries.just(LocalDate.of(2020, 12, 9));
+		Arbitrary<Integer> year = generateYear();
+		return Combinators.combine(year, year).as((y, y2) -> LocalDate.of(y, 12, 9));
+	}
+
+	private Arbitrary<Integer> generateYear(){
+		return Arbitraries.integers().between(yearMin, yearMax);
 	}
 
 	@Override
 	public DateArbitrary atTheEarliest(LocalDate date) {
-		return typedClone();
+		DefaultDateArbitrary clone = typedClone();
+		return clone;
 	}
 
 	@Override
 	public DateArbitrary atTheLatest(LocalDate date) {
-		return typedClone();
+		DefaultDateArbitrary clone = typedClone();
+		return clone;
 	}
 
 	@Override
 	public DateArbitrary yearGreaterOrEqual(int min) {
-		return typedClone();
+		DefaultDateArbitrary clone = typedClone();
+		min = Math.max(min, LocalDate.MIN.getYear());
+		clone.yearMin = min;
+		return clone;
 	}
 
 	@Override
 	public DateArbitrary yearLessOrEqual(int max) {
-		return typedClone();
+		DefaultDateArbitrary clone = typedClone();
+		max = Math.min(max, LocalDate.MAX.getYear());
+		clone.yearMax = max;
+		return clone;
 	}
 
 	@Override
 	public DateArbitrary monthGreaterOrEqual(Month min) {
-		return typedClone();
+		DefaultDateArbitrary clone = typedClone();
+		return clone;
 	}
 
 	@Override
 	public DateArbitrary monthLessOrEqual(Month max) {
-		return typedClone();
+		DefaultDateArbitrary clone = typedClone();
+		return clone;
 	}
 
 	@Override
 	public DateArbitrary dayOfMonthGreaterOrEqual(int min) {
-		return typedClone();
+		DefaultDateArbitrary clone = typedClone();
+		return clone;
 	}
 
 	@Override
 	public DateArbitrary dayOfMonthLessOrEqual(int max) {
-		return typedClone();
+		DefaultDateArbitrary clone = typedClone();
+		return clone;
 	}
 
 	@Override
 	public DateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
-		return typedClone();
+		DefaultDateArbitrary clone = typedClone();
+		return clone;
 	}
 
 }
