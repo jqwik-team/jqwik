@@ -10,15 +10,22 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	private int yearMin = LocalDate.MIN.getYear();
 	private int yearMax = LocalDate.MAX.getYear();
+	private Month monthMin = Month.JANUARY;
+	private Month monthMax = Month.DECEMBER;
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
-		Arbitrary<Integer> year = generateYear();
-		return Combinators.combine(year, year).as((y, y2) -> LocalDate.of(y, 12, 9));
+		Arbitrary<Integer> year = generateYears();
+		Arbitrary<Month> month = generateMonths();
+		return Combinators.combine(year, month).as((y, m) -> LocalDate.of(y, m, 9));
 	}
 
-	private Arbitrary<Integer> generateYear(){
+	private Arbitrary<Integer> generateYears(){
 		return Arbitraries.integers().between(yearMin, yearMax);
+	}
+
+	private Arbitrary<Month> generateMonths(){
+		return Dates.months().between(monthMin, monthMax);
 	}
 
 	@Override
@@ -52,12 +59,14 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	@Override
 	public DateArbitrary monthGreaterOrEqual(Month min) {
 		DefaultDateArbitrary clone = typedClone();
+		clone.monthMin = min;
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary monthLessOrEqual(Month max) {
 		DefaultDateArbitrary clone = typedClone();
+		clone.monthMax = max;
 		return clone;
 	}
 
