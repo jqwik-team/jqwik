@@ -15,47 +15,47 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	@Override
 	public DateArbitrary atTheEarliest(LocalDate date) {
-		return null;
+		return typedClone();
 	}
 
 	@Override
 	public DateArbitrary atTheLatest(LocalDate date) {
-		return null;
+		return typedClone();
 	}
 
 	@Override
 	public DateArbitrary yearGreaterOrEqual(int min) {
-		return null;
+		return typedClone();
 	}
 
 	@Override
 	public DateArbitrary yearLessOrEqual(int max) {
-		return null;
+		return typedClone();
 	}
 
 	@Override
-	public DateArbitrary monthGreaterOrEqual(int min) {
-		return null;
+	public DateArbitrary monthGreaterOrEqual(Month min) {
+		return typedClone();
 	}
 
 	@Override
-	public DateArbitrary monthLessOrEqual(int max) {
-		return null;
+	public DateArbitrary monthLessOrEqual(Month max) {
+		return typedClone();
 	}
 
 	@Override
 	public DateArbitrary dayOfMonthGreaterOrEqual(int min) {
-		return null;
+		return typedClone();
 	}
 
 	@Override
 	public DateArbitrary dayOfMonthLessOrEqual(int max) {
-		return null;
+		return typedClone();
 	}
 
 	@Override
 	public DateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
-		return null;
+		return typedClone();
 	}
 
 }

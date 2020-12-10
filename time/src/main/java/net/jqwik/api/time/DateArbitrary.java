@@ -12,12 +12,21 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 	DateArbitrary atTheEarliest(LocalDate date);
 	DateArbitrary atTheLatest(LocalDate date);
 
+	default DateArbitrary yearBetween(int minYear, int maxYear){
+		return yearGreaterOrEqual(minYear).yearLessOrEqual(maxYear);
+	}
 	DateArbitrary yearGreaterOrEqual(int min);
 	DateArbitrary yearLessOrEqual(int max);
 
-	DateArbitrary monthGreaterOrEqual(int min);
-	DateArbitrary monthLessOrEqual(int max);
+	default DateArbitrary monthBetween(Month minMonth, Month maxMonth){
+		return monthGreaterOrEqual(minMonth).monthLessOrEqual(maxMonth);
+	}
+	DateArbitrary monthGreaterOrEqual(Month min);
+	DateArbitrary monthLessOrEqual(Month max);
 
+	default DateArbitrary dayOfMonthBetween(int minDayOfMonth, int maxDayOfMonth){
+		return dayOfMonthGreaterOrEqual(minDayOfMonth).dayOfMonthLessOrEqual(maxDayOfMonth);
+	}
 	DateArbitrary dayOfMonthGreaterOrEqual(int min);
 	DateArbitrary dayOfMonthLessOrEqual(int max);
 
