@@ -11,4 +11,25 @@ public class Dates {
 	public static DateArbitrary dates() {
 		return new DefaultDateArbitrary();
 	}
+
+	public static DateArbitrary years() {
+		return null;
+	}
+
+	public static DateArbitrary months() {
+		return null;
+	}
+
+	public static DateArbitrary daysOfMonth() {
+		return null;
+	}
+
+	public static DateArbitrary yearsAndMonths() {
+		return null;
+	}
+
+	public static DateArbitrary daysOfWeek() {
+		return null;
+	}
+
 }
