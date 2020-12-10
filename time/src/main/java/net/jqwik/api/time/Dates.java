@@ -12,8 +12,8 @@ public class Dates {
 		return new DefaultDateArbitrary();
 	}
 
-	public static DateArbitrary years() {
-		return null;
+	public static YearArbitrary years() {
+		return new DefaultYearArbitrary();
 	}
 
 	public static MonthArbitrary months() {

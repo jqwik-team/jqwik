@@ -41,6 +41,7 @@ publishing {
 					developer {
 						id = 'zinki97'
 						name = 'Johannes Zink'
+						email = 'support@johannes-games.de'
 					}
 				}
 				scm {
