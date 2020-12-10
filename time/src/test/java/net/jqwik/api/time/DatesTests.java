@@ -1,7 +1,6 @@
 package net.jqwik.api.time;
 
 import java.time.*;
-import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.time.*;
@@ -70,7 +69,7 @@ class DatesTests {
 
 			@Property
 			void betweenSame(@ForAll("datesBetweenSame") LocalDate date) {
-				assertThat(date).isEqualTo(date);
+				assertThat(date).isEqualTo(startDate);
 			}
 
 			@Provide
@@ -256,18 +255,6 @@ class DatesTests {
 
 			private DayOfWeek[] dayOfWeeks;
 
-			private DayOfWeek[] generateDayOfWeeks(){
-				int count = Arbitraries.integers().between(1, 7).sample();
-				Arbitrary<DayOfWeek> dayOfWeekArbitrary = Arbitraries.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
-				ArrayList<DayOfWeek> dayOfWeekArrayList = new ArrayList<>();
-				for(int i = 0; i < count; i++){
-					DayOfWeek toAdd = dayOfWeekArbitrary.sample();
-					dayOfWeekArbitrary = dayOfWeekArbitrary.filter(v -> !v.equals(toAdd));
-					dayOfWeekArrayList.add(toAdd);
-				}
-				return dayOfWeekArrayList.toArray(new DayOfWeek[]{});
-			}
-
 			@Property
 			void onlyDaysOfWeek(@ForAll("onlyDayOfWeeks") LocalDate localDate) {
 				assertThat(localDate.getDayOfWeek()).isIn(dayOfWeeks);
@@ -275,7 +262,7 @@ class DatesTests {
 
 			@Provide
 			Arbitrary<LocalDate> onlyDayOfWeeks() {
-				dayOfWeeks = generateDayOfWeeks();
+				dayOfWeeks = DaysOfWeekTests.generateDayOfWeeks();
 				return Dates.dates().onlyDaysOfWeek(dayOfWeeks);
 			}
 
