@@ -32,8 +32,8 @@ public class Dates {
 		return null;
 	}
 
-	public static DateArbitrary daysOfWeek() {
-		return null;
+	public static DaysOfWeekArbitrary daysOfWeek() {
+		return new DefaultDaysOfWeekArbitrary();
 	}
 
 }

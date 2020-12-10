@@ -20,7 +20,7 @@ public class DefaultMonthArbitrary extends ArbitraryDecorator<Month> implements 
 	}
 
 	private boolean isInAllowedMonths(Month month){
-		if(month == null){
+		if(allowedMonths == null){
 			return false;
 		}
 		for(Month m : allowedMonths){
