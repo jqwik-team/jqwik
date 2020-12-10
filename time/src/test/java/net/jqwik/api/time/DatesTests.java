@@ -24,6 +24,9 @@ class DatesTests {
 	@Group
 	class CheckDateMethods {
 
+		private int startInt;
+		private int endInt;
+
 		@Group
 		class DateMethods {
 
@@ -82,9 +85,6 @@ class DatesTests {
 		@Group
 		class YearMethods {
 
-			private int startInt;
-			private int endInt;
-
 			@Property
 			void yearGreaterOrEqual(@ForAll("yearsGreaterOrEqual") LocalDate date) {
 				assertThat(date.getYear()).isGreaterThanOrEqualTo(startInt);
@@ -137,64 +137,57 @@ class DatesTests {
 		@Group
 		class MonthMethods {
 
-			private Month startMonth;
-			private Month endMonth;
-
 			@Property
 			void monthGreaterOrEqual(@ForAll("monthsGreaterOrEqual") LocalDate date) {
-				assertThat(date.getMonth()).isGreaterThanOrEqualTo(startMonth);
+				assertThat(date.getMonth()).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startInt));
 			}
 
 			@Provide
 			Arbitrary<LocalDate> monthsGreaterOrEqual() {
-				startMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(1, 12).sample());
-				return Dates.dates().monthGreaterOrEqual(startMonth);
+				startInt = Arbitraries.integers().between(1, 12).sample();
+				return Dates.dates().monthGreaterOrEqual(startInt);
 			}
 
 			@Property
 			void monthLessOrEqual(@ForAll("monthsLessOrEqual") LocalDate date) {
-				assertThat(date.getMonth()).isLessThanOrEqualTo(endMonth);
+				assertThat(date.getMonth()).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(endInt));
 			}
 
 			@Provide
 			Arbitrary<LocalDate> monthsLessOrEqual() {
-				endMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(1, 12).sample());
-				return Dates.dates().monthLessOrEqual(endMonth);
+				endInt = Arbitraries.integers().between(1, 12).sample();
+				return Dates.dates().monthLessOrEqual(endInt);
 			}
 
 			@Property
 			void monthBetween(@ForAll("monthsBetween") LocalDate date) {
-				assertThat(date.getMonth()).isGreaterThanOrEqualTo(startMonth);
-				assertThat(date.getMonth()).isLessThanOrEqualTo(endMonth);
+				assertThat(date.getMonth()).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startInt));
+				assertThat(date.getMonth()).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(endInt));
 			}
 
 			@Provide
 			Arbitrary<LocalDate> monthsBetween() {
-				int start = Arbitraries.integers().between(1, 12).sample();
-				startMonth = DefaultMonthArbitrary.getMonthFromInt(start);
-				endMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(start, 12).sample());
-				return Dates.dates().monthBetween(startMonth, endMonth);
+				startInt = Arbitraries.integers().between(1, 12).sample();
+				endInt = Arbitraries.integers().between(startInt, 12).sample();
+				return Dates.dates().monthBetween(startInt, endInt);
 			}
 
 			@Property
 			void monthBetweenSame(@ForAll("monthsBetweenSame") LocalDate date) {
-				assertThat(date.getMonth()).isEqualTo(startMonth);
+				assertThat(date.getMonth()).isEqualTo(DefaultMonthArbitrary.getMonthFromInt(startInt));
 			}
 
 			@Provide
 			Arbitrary<LocalDate> monthsBetweenSame() {
-				startMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(1, 12).sample());
-				endMonth = startMonth;
-				return Dates.dates().monthBetween(startMonth, endMonth);
+				startInt = Arbitraries.integers().between(1, 12).sample();
+				endInt = startInt;
+				return Dates.dates().monthBetween(startInt, endInt);
 			}
 
 		}
 
 		@Group
 		class DayOfMonthMethods {
-
-			private int startInt;
-			private int endInt;
 
 			@Property
 			void dayOfMonthGreaterOrEqual(@ForAll("dayOfMonthsGreaterOrEqual") LocalDate date) {

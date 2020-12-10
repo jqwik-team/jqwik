@@ -28,6 +28,10 @@ public class Dates {
 		return null;
 	}
 
+	public static DateArbitrary monthsAndDays() {
+		return null;
+	}
+
 	public static DateArbitrary daysOfWeek() {
 		return null;
 	}
