@@ -23,53 +23,52 @@ class MonthTests {
 	@Group
 	class CheckMonthMethods {
 
-		private Month startMonth;
-		private Month endMonth;
+		private int startMonth;
+		private int endMonth;
 
 		@Property
 		void atTheEarliest(@ForAll("monthsAtTheEarliest") Month month) {
-			assertThat(month).isGreaterThanOrEqualTo(startMonth);
+			assertThat(month).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startMonth));
 		}
 
 		@Provide
 		Arbitrary<Month> monthsAtTheEarliest() {
-			startMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(1, 12).sample());
+			startMonth = Arbitraries.integers().between(1, 12).sample();
 			return Dates.months().atTheEarliest(startMonth);
 		}
 
 		@Property
 		void atTheLatest(@ForAll("monthsAtTheLatest") Month month) {
-			assertThat(month).isLessThanOrEqualTo(endMonth);
+			assertThat(month).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(endMonth));
 		}
 
 		@Provide
 		Arbitrary<Month> monthsAtTheLatest() {
-			endMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(1, 12).sample());
+			endMonth = Arbitraries.integers().between(1, 12).sample();
 			return Dates.months().atTheLatest(endMonth);
 		}
 
 		@Property
 		void between(@ForAll("monthsBetween") Month month) {
-			assertThat(month).isGreaterThanOrEqualTo(startMonth);
-			assertThat(month).isLessThanOrEqualTo(endMonth);
+			assertThat(month).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startMonth));
+			assertThat(month).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(endMonth));
 		}
 
 		@Provide
 		Arbitrary<Month> monthsBetween() {
-			int start = Arbitraries.integers().between(1, 12).sample();
-			startMonth = DefaultMonthArbitrary.getMonthFromInt(start);
-			endMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(start, 12).sample());
+			startMonth = Arbitraries.integers().between(1, 12).sample();
+			endMonth = Arbitraries.integers().between(startMonth, 12).sample();
 			return Dates.months().between(startMonth, endMonth);
 		}
 
 		@Property
 		void betweenSame(@ForAll("monthsBetweenSame") Month month) {
-			assertThat(month).isEqualTo(startMonth);
+			assertThat(month).isEqualTo(DefaultMonthArbitrary.getMonthFromInt(startMonth));
 		}
 
 		@Provide
 		Arbitrary<Month> monthsBetweenSame() {
-			startMonth = DefaultMonthArbitrary.getMonthFromInt(Arbitraries.integers().between(1, 12).sample());
+			startMonth = Arbitraries.integers().between(1, 12).sample();
 			endMonth = startMonth;
 			return Dates.months().between(startMonth, endMonth);
 		}
