@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @AddLifecycleHook(PropertyDefaults.PropertyDefaultsHook.class)
-@API(status = EXPERIMENTAL, since = "1.3.4")
+@API(status = MAINTAINED, since = "1.4.0")
 public @interface PropertyDefaults {
 
 	int tries() default Property.TRIES_NOT_SET;

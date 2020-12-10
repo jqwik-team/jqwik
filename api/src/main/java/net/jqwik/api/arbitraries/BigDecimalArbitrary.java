@@ -4,8 +4,6 @@ import java.math.*;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
-
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -76,6 +74,6 @@ public interface BigDecimalArbitrary extends NumericalArbitrary<BigDecimal, BigD
 	 *
 	 * @param target The value which is considered to be the most simple value for shrinking
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1.5")
+	@API(status = MAINTAINED, since = "1.4.0")
 	BigDecimalArbitrary shrinkTowards(BigDecimal target);
 }

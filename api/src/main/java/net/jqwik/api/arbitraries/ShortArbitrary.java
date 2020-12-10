@@ -32,6 +32,6 @@ public interface ShortArbitrary extends NumericalArbitrary<Short, ShortArbitrary
 	/**
 	 * Set shrinking target to {@code target} which must be between the allowed bounds.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1.4")
+	@API(status = MAINTAINED, since = "1.4.0")
 	Arbitrary<Short> shrinkTowards(short target);
 }

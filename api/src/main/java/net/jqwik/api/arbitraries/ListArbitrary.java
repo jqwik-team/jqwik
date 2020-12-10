@@ -51,7 +51,7 @@ public interface ListArbitrary<T> extends StreamableArbitrary<T, List<T>> {
 	 * @param mapper Mapper function to element type U
 	 * @return arbitrary of a list of Us
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.1")
+	@API(status = MAINTAINED, since = "1.4.0")
 	<U> Arbitrary<List<U>> mapEach(BiFunction<List<T>, T, U> mapper);
 
 	/**
@@ -62,6 +62,6 @@ public interface ListArbitrary<T> extends StreamableArbitrary<T, List<T>> {
 	 * @param flatMapper Mapper function to arbitrary of element type U
 	 * @return arbitrary of a list of Us
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.1")
+	@API(status = MAINTAINED, since = "1.4.0")
 	<U> Arbitrary<List<U>> flatMapEach(BiFunction<List<T>, T, Arbitrary<U>> flatMapper);
 }

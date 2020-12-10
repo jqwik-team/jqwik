@@ -34,6 +34,6 @@ public interface BigIntegerArbitrary extends NumericalArbitrary<BigInteger, BigI
 	/**
 	 * Set shrinking target to {@code target} which must be between the allowed bounds.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1.4")
-	Arbitrary<BigInteger> shrinkTowards(BigInteger target);
+	@API(status = MAINTAINED, since = "1.4.0")
+	BigIntegerArbitrary shrinkTowards(BigInteger target);
 }

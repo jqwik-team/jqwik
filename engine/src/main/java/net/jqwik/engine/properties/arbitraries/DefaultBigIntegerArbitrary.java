@@ -54,7 +54,7 @@ public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements
 	}
 
 	@Override
-	public Arbitrary<BigInteger> shrinkTowards(BigInteger target) {
+	public BigIntegerArbitrary shrinkTowards(BigInteger target) {
 		DefaultBigIntegerArbitrary clone = typedClone();
 		clone.generatingArbitrary.shrinkingTarget = target;
 		return clone;

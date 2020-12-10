@@ -51,7 +51,7 @@ public interface SetArbitrary<T> extends StreamableArbitrary<T, Set<T>> {
 	 * @param mapper Mapper function to element type U
 	 * @return arbitrary of a set of Us
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.1")
+	@API(status = MAINTAINED, since = "1.4.0")
 	<U> Arbitrary<Set<U>> mapEach(BiFunction<Set<T>, T, U> mapper);
 
 	/**
@@ -62,6 +62,6 @@ public interface SetArbitrary<T> extends StreamableArbitrary<T, Set<T>> {
 	 * @param flatMapper Mapper function to arbitrary of element type U
 	 * @return arbitrary of a set of Us
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.1")
+	@API(status = MAINTAINED, since = "1.4.0")
 	<U> Arbitrary<Set<U>> flatMapEach(BiFunction<Set<T>, T, Arbitrary<U>> flatMapper);
 }

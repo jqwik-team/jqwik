@@ -507,7 +507,7 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.2")
+	@API(status = MAINTAINED, since = "1.4.0")
 	default Arbitrary<T> dontShrink() {
 		return ArbitraryFacade.implementation.dontShrink(Arbitrary.this);
 	}

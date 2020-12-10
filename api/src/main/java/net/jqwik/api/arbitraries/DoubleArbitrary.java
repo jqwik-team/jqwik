@@ -2,8 +2,6 @@ package net.jqwik.api.arbitraries;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
-
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -73,6 +71,6 @@ public interface DoubleArbitrary extends NumericalArbitrary<Double, DoubleArbitr
 	 *
 	 * @param target The value which is considered to be the most simple value for shrinking
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1.5")
+	@API(status = MAINTAINED, since = "1.4.0")
 	DoubleArbitrary shrinkTowards(double target);
 }

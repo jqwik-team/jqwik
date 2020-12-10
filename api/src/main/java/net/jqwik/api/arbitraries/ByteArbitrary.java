@@ -2,8 +2,6 @@ package net.jqwik.api.arbitraries;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
-
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -32,6 +30,6 @@ public interface ByteArbitrary extends NumericalArbitrary<Byte, ByteArbitrary> {
 	/**
 	 * Set shrinking target to {@code target} which must be between the allowed bounds.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1.4")
-	Arbitrary<Byte> shrinkTowards(int target);
+	@API(status = MAINTAINED, since = "1.4.0")
+	ByteArbitrary shrinkTowards(int target);
 }

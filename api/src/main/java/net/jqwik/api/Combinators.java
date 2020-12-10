@@ -898,7 +898,7 @@ public class Combinators {
 		 * @param setter Use value provided by arbitrary to change a builder's property.
 		 * @return new {@linkplain BuilderCombinator} instance with same embedded builder
 		 */
-		@API(status = EXPERIMENTAL, since = "1.3.5")
+		@API(status = MAINTAINED, since = "1.4.0")
 		public BuilderCombinator<B> inSetter(BiConsumer<B, T> setter) {
 			F2<B, T, B> toFunction = (b, t) -> {
 				setter.accept(b, t);

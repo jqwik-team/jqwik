@@ -24,6 +24,25 @@ title: jqwik Release Notes
 #### New and Enhanced Features
 
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
+    - Method `Arbitrary.dontShrink()`
+    - Method `Combinators.CombinableBuilder.inSetter(..)`
+    - Class `PropertyDefaults`
+    - Class `Reporter`
+    - Class `SampleReportingFormat`
+    - Method `Tuple.of()`
+    - Method `Tuple.empty()`
+    - Method `BigDecimalArbitrary.shrinkTowards(..)`
+    - Method `BigIntegerArbitrary.shrinkTowards(..)`
+    - Method `ByteArbitrary.shrinkTowards(..)`
+    - Method `DoubleArbitrary.shrinkTowards(..)`
+    - Method `FloatArbitrary.shrinkTowards(..)`
+    - Method `IntegerArbitrary.shrinkTowards(..)`
+    - Method `LongArbitrary.shrinkTowards(..)`
+    - Method `ShortArbitrary.shrinkTowards(..)`
+    - Method `SetArbitrary.mapEach(..)`
+    - Method `SetArbitrary.flatMapEach(..)`
+    - Method `ListArbitrary.mapEach(..)`
+    - Method `ListArbitrary.flatMapEach(..)`
 
 #### Breaking Changes
 

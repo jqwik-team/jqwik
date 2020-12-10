@@ -18,7 +18,7 @@ import static org.apiguardian.api.API.Status.*;
  * unless <a href="https://jqwik.net/docs/current/user-guide.html#jqwik-configuration">told otherwise</a>.
  * </p>
  */
-@API(status = EXPERIMENTAL, since = "1.3.2")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface Reporter {
 
 	/**

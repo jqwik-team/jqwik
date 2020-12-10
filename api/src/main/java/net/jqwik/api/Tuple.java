@@ -24,12 +24,12 @@ public interface Tuple extends Serializable, Cloneable {
 		return String.format("(%s)", items);
 	}
 
-	@API(status = EXPERIMENTAL, since = "1.3.5")
+	@API(status = MAINTAINED, since = "1.3.5")
 	static Tuple0 of() {
 		return new Tuple0();
 	}
 
-	@API(status = EXPERIMENTAL, since = "1.3.5")
+	@API(status = MAINTAINED, since = "1.3.5")
 	static Tuple0 empty() {
 		return Tuple.of();
 	}
