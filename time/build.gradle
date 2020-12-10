@@ -1,0 +1,83 @@
+description = "Jqwik Time module"
+
+jar {
+	archiveBaseName.set('jqwik-time')
+	archiveVersion.set("${jqwikVersion}")
+	manifest {
+		attributes('Automatic-Module-Name': "${moduleName}.engine")
+	}
+}
+
+task publishTimeJavadoc(type: Javadoc) {
+	source = file('./src/main/java')
+	failOnError = false
+	destinationDir = file("${rootDir}/docs/javadoc")
+	include '**/api/**'
+}
+
+publishing {
+	publications {
+		jqwikTime(MavenPublication) {
+			groupId = 'net.jqwik'
+			artifactId = 'jqwik-time'
+			from components.java
+			pom {
+				groupId = 'net.jqwik'
+				name = 'jqwik-time'
+				description = project.description
+				url = 'https://jqwik.net/'
+				licenses {
+					license {
+						name = 'Eclipse Public License - v 2.0'
+						url = 'http://www.eclipse.org/legal/epl-v20.html'
+					}
+				}
+				developers {
+					developer {
+						id = 'jlink'
+						name = 'Johannes Link'
+						email = 'business@johanneslink.net'
+					}
+					developer {
+						id = 'zinki97'
+						name = 'Johannes Zink'
+					}
+				}
+				scm {
+					connection = 'scm:git:git://github.com/jlink/jqwik.git'
+					developerConnection = 'scm:git:git://github.com/jlink/jqwik.git'
+					url = 'https://github.com/jlink/jqwik'
+				}
+			}
+		}
+	}
+}
+
+signing {
+	if (!isSnapshotRelease) {
+		sign publishing.publications.jqwikEngine
+	}
+}
+
+test {
+	useJUnitPlatform {
+		includeEngines 'jqwik'
+	}
+
+	include 'net/**/*Properties.class'
+	include 'net/**/*Test.class'
+	include 'net/**/*Tests.class'
+
+	// testLogging.showStandardStreams = true
+}
+
+dependencies {
+	api(project(":api"))
+	api("org.opentest4j:opentest4j:${opentest4jVersion}")
+
+	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
+	testImplementation("org.assertj:assertj-core:${assertJVersion}")
+	testImplementation("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+	testImplementation("org.junit.platform:junit-platform-testkit:${junitPlatformVersion}")
+	testRuntimeOnly(project(":engine"))
+}
