@@ -43,6 +43,7 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 	default DateArbitrary monthLessOrEqual(int max){
 		return monthLessOrEqual(DefaultMonthArbitrary.getMonthFromInt(max));
 	};
+	DateArbitrary onlyMonths(Month... months);
 
 	default DateArbitrary dayOfMonthBetween(int minDayOfMonth, int maxDayOfMonth){
 		return dayOfMonthGreaterOrEqual(minDayOfMonth).dayOfMonthLessOrEqual(maxDayOfMonth);

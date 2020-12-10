@@ -1,6 +1,7 @@
 package net.jqwik.api.time;
 
 import java.time.*;
+import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.time.*;
@@ -8,7 +9,7 @@ import net.jqwik.time.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
-class MonthTests {
+public class MonthTests {
 
 	@Property
 	void validMonthIsGenerated(@ForAll("months") Month month) {
@@ -25,6 +26,7 @@ class MonthTests {
 
 		private int startMonth;
 		private int endMonth;
+		private Month[] allowedMonths;
 
 		@Property
 		void atTheEarliest(@ForAll("monthsAtTheEarliest") Month month) {
@@ -73,6 +75,29 @@ class MonthTests {
 			return Dates.months().between(startMonth, endMonth);
 		}
 
+		@Property
+		void only(@ForAll("onlyMonths") Month month){
+			assertThat(month).isIn(allowedMonths);
+		}
+
+		@Provide
+		Arbitrary<Month> onlyMonths(){
+			allowedMonths = generateMonths();
+			return Dates.months().only(allowedMonths);
+		}
+
+	}
+
+	public static Month[] generateMonths(){
+		int count = Arbitraries.integers().between(1, 12).sample();
+		Arbitrary<Month> monthArbitrary = Arbitraries.of(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
+		ArrayList<Month> monthArrayList = new ArrayList<>();
+		for(int i = 0; i < count; i++){
+			Month toAdd = monthArbitrary.sample();
+			monthArbitrary = monthArbitrary.filter(v -> !v.equals(toAdd));
+			monthArrayList.add(toAdd);
+		}
+		return monthArrayList.toArray(new Month[]{});
 	}
 
 }
