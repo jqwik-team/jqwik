@@ -8,20 +8,20 @@ import net.jqwik.api.time.*;
 
 public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implements DateArbitrary {
 
-	private int yearMin = LocalDate.MIN.getYear();
-	private int yearMax = LocalDate.MAX.getYear();
+	private Year yearMin = Year.of(LocalDate.MIN.getYear());
+	private Year yearMax = Year.of(LocalDate.MAX.getYear());
 	private Month monthMin = Month.JANUARY;
 	private Month monthMax = Month.DECEMBER;
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
-		Arbitrary<Integer> year = generateYears();
+		Arbitrary<Year> year = generateYears();
 		Arbitrary<Month> month = generateMonths();
-		return Combinators.combine(year, month).as((y, m) -> LocalDate.of(y, m, 9));
+		return Combinators.combine(year, month).as((y, m) -> LocalDate.of(y.getValue(), m, 9));
 	}
 
-	private Arbitrary<Integer> generateYears(){
-		return Arbitraries.integers().between(yearMin, yearMax);
+	private Arbitrary<Year> generateYears(){
+		return Dates.years().between(yearMin, yearMax);
 	}
 
 	private Arbitrary<Month> generateMonths(){
@@ -41,17 +41,17 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	@Override
-	public DateArbitrary yearGreaterOrEqual(int min) {
+	public DateArbitrary yearGreaterOrEqual(Year min) {
 		DefaultDateArbitrary clone = typedClone();
-		min = Math.max(min, LocalDate.MIN.getYear());
+		min = Year.of(Math.max(min.getValue(), LocalDate.MIN.getYear()));
 		clone.yearMin = min;
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary yearLessOrEqual(int max) {
+	public DateArbitrary yearLessOrEqual(Year max) {
 		DefaultDateArbitrary clone = typedClone();
-		max = Math.min(max, LocalDate.MAX.getYear());
+		max = Year.of(Math.min(max.getValue(), LocalDate.MAX.getYear()));
 		clone.yearMax = max;
 		return clone;
 	}
