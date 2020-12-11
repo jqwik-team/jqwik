@@ -7,6 +7,8 @@ import net.jqwik.time.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.time.copy.ArbitraryTestHelper.*;
+
 @Group
 class DatesTests {
 
@@ -23,60 +25,53 @@ class DatesTests {
 	@Group
 	class CheckDateMethods {
 
-		private int startInt;
-		private int endInt;
-
 		@Group
 		class DateMethods {
 
-			private LocalDate startDate;
-			private LocalDate endDate;
-
 			@Property
-			void atTheEarliest(@ForAll("datesAtTheEarliest") LocalDate date) {
-				assertThat(date).isAfterOrEqualTo(startDate);
-			}
+			void atTheEarliest(@ForAll("dates") LocalDate startDate) {
 
-			@Provide
-			Arbitrary<LocalDate> datesAtTheEarliest() {
-				startDate = Dates.dates().sample();
-				return Dates.dates().atTheEarliest(startDate);
+				Arbitrary<LocalDate> dates = Dates.dates().atTheEarliest(startDate);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date).isBeforeOrEqualTo(startDate);
+				});
+
 			}
 
 			@Property
-			void atTheLatest(@ForAll("datesAtTheLatest") LocalDate date) {
-				assertThat(date).isBeforeOrEqualTo(endDate);
-			}
+			void atTheLatest(@ForAll("dates") LocalDate endDate) {
 
-			@Provide
-			Arbitrary<LocalDate> datesAtTheLatest() {
-				endDate = Dates.dates().sample();
-				return Dates.dates().atTheLatest(endDate);
-			}
+				Arbitrary<LocalDate> dates = Dates.dates().atTheLatest(endDate);
 
-			@Property
-			void between(@ForAll("datesBetween") LocalDate date) {
-				assertThat(date).isAfterOrEqualTo(startDate);
-				assertThat(date).isBeforeOrEqualTo(endDate);
-			}
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date).isAfterOrEqualTo(endDate);
+				});
 
-			@Provide
-			Arbitrary<LocalDate> datesBetween() {
-				startDate = Dates.dates().sample();
-				endDate = Dates.dates().atTheEarliest(startDate).sample();
-				return Dates.dates().between(startDate, endDate);
 			}
 
 			@Property
-			void betweenSame(@ForAll("datesBetweenSame") LocalDate date) {
-				assertThat(date).isEqualTo(startDate);
+			void between(@ForAll("dates") LocalDate startDate, @ForAll("dates") LocalDate endDate) {
+
+				Assume.that(!startDate.isAfter(endDate));
+
+				Arbitrary<LocalDate> dates = Dates.dates().between(startDate, endDate);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date).isAfterOrEqualTo(startDate);
+					assertThat(date).isBeforeOrEqualTo(endDate);
+				});
 			}
 
-			@Provide
-			Arbitrary<LocalDate> datesBetweenSame() {
-				startDate = Dates.dates().sample();
-				endDate = startDate;
-				return Dates.dates().between(startDate, endDate);
+			@Property
+			void betweenSame(@ForAll("dates") LocalDate sameDate) {
+
+				Arbitrary<LocalDate> dates = Dates.dates().between(sameDate, sameDate);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date).isEqualTo(sameDate);
+				});
+
 			}
 
 		}
@@ -85,50 +80,55 @@ class DatesTests {
 		class YearMethods {
 
 			@Property
-			void yearGreaterOrEqual(@ForAll("yearsGreaterOrEqual") LocalDate date) {
-				assertThat(date.getYear()).isGreaterThanOrEqualTo(startInt);
-			}
+			void yearGreaterOrEqual(@ForAll("years") int year) {
 
-			@Provide
-			Arbitrary<LocalDate> yearsGreaterOrEqual() {
-				startInt = Arbitraries.integers().between(LocalDate.MIN.getYear(), LocalDate.MAX.getYear()).sample();
-				return Dates.dates().yearGreaterOrEqual(startInt);
-			}
+				Arbitrary<LocalDate> dates = Dates.dates().yearGreaterOrEqual(year);
 
-			@Property
-			void yearLessOrEqual(@ForAll("yearsLessOrEqual") LocalDate date) {
-				assertThat(date.getYear()).isLessThanOrEqualTo(endInt);
-			}
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getYear()).isGreaterThanOrEqualTo(year);
+				});
 
-			@Provide
-			Arbitrary<LocalDate> yearsLessOrEqual() {
-				endInt = Arbitraries.integers().between(LocalDate.MIN.getYear(), LocalDate.MAX.getYear()).sample();
-				return Dates.dates().yearLessOrEqual(endInt);
 			}
 
 			@Property
-			void yearBetween(@ForAll("yearsBetween") LocalDate date) {
-				assertThat(date.getYear()).isGreaterThanOrEqualTo(startInt);
-				assertThat(date.getYear()).isLessThanOrEqualTo(endInt);
-			}
+			void yearLessOrEqual(@ForAll("years") int year) {
 
-			@Provide
-			Arbitrary<LocalDate> yearsBetween() {
-				startInt = Arbitraries.integers().between(LocalDate.MIN.getYear(), LocalDate.MAX.getYear()).sample();
-				endInt = Arbitraries.integers().between(startInt, LocalDate.MAX.getYear()).sample();
-				return Dates.dates().yearBetween(startInt, endInt);
+				Arbitrary<LocalDate> dates = Dates.dates().yearLessOrEqual(year);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getYear()).isLessThanOrEqualTo(year);
+				});
+
 			}
 
 			@Property
-			void yearBetweenSame(@ForAll("yearsBetweenSame") LocalDate date) {
-				assertThat(date.getYear()).isEqualTo(startInt);
+			void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear) {
+
+				Assume.that(startYear <= endYear);
+
+				Arbitrary<LocalDate> dates = Dates.dates().yearBetween(startYear, endYear);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getYear()).isGreaterThanOrEqualTo(startYear);
+					assertThat(date.getYear()).isLessThanOrEqualTo(endYear);
+				});
+
+			}
+
+			@Property
+			void yearBetweenSame(@ForAll("years") int year) {
+
+				Arbitrary<LocalDate> dates = Dates.dates().yearBetween(year, year);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getYear()).isEqualTo(year);
+				});
+
 			}
 
 			@Provide
-			Arbitrary<LocalDate> yearsBetweenSame() {
-				startInt = Arbitraries.integers().between(LocalDate.MIN.getYear(), LocalDate.MAX.getYear()).sample();
-				endInt = startInt;
-				return Dates.dates().yearBetween(startInt, endInt);
+			Arbitrary<Integer> years() {
+				return Arbitraries.integers().between(LocalDate.MIN.getYear(), LocalDate.MAX.getYear());
 			}
 
 		}
@@ -136,64 +136,72 @@ class DatesTests {
 		@Group
 		class MonthMethods {
 
-			private Month[] allowedMonths;
-
 			@Property
-			void monthGreaterOrEqual(@ForAll("monthsGreaterOrEqual") LocalDate date) {
-				assertThat(date.getMonth()).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startInt));
-			}
+			void monthGreaterOrEqual(@ForAll("months") int month) {
 
-			@Provide
-			Arbitrary<LocalDate> monthsGreaterOrEqual() {
-				startInt = Arbitraries.integers().between(1, 12).sample();
-				return Dates.dates().monthGreaterOrEqual(startInt);
+				Arbitrary<LocalDate> dates = Dates.dates().monthGreaterOrEqual(month);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getMonth()).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(month));
+				});
+
 			}
 
 			@Property
-			void monthLessOrEqual(@ForAll("monthsLessOrEqual") LocalDate date) {
-				assertThat(date.getMonth()).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(endInt));
-			}
+			void monthLessOrEqual(@ForAll("months") int month) {
 
-			@Provide
-			Arbitrary<LocalDate> monthsLessOrEqual() {
-				endInt = Arbitraries.integers().between(1, 12).sample();
-				return Dates.dates().monthLessOrEqual(endInt);
-			}
+				Arbitrary<LocalDate> dates = Dates.dates().monthLessOrEqual(month);
 
-			@Property
-			void monthBetween(@ForAll("monthsBetween") LocalDate date) {
-				assertThat(date.getMonth()).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startInt));
-				assertThat(date.getMonth()).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(endInt));
-			}
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getMonth()).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(month));
+				});
 
-			@Provide
-			Arbitrary<LocalDate> monthsBetween() {
-				startInt = Arbitraries.integers().between(1, 12).sample();
-				endInt = Arbitraries.integers().between(startInt, 12).sample();
-				return Dates.dates().monthBetween(startInt, endInt);
 			}
 
 			@Property
-			void monthBetweenSame(@ForAll("monthsBetweenSame") LocalDate date) {
-				assertThat(date.getMonth()).isEqualTo(DefaultMonthArbitrary.getMonthFromInt(startInt));
-			}
+			void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth) {
 
-			@Provide
-			Arbitrary<LocalDate> monthsBetweenSame() {
-				startInt = Arbitraries.integers().between(1, 12).sample();
-				endInt = startInt;
-				return Dates.dates().monthBetween(startInt, endInt);
+				Assume.that(startMonth <= endMonth);
+
+				Arbitrary<LocalDate> dates = Dates.dates().monthBetween(startMonth, endMonth);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getMonth()).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startMonth));
+					assertThat(date.getMonth()).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(endMonth));
+				});
+
 			}
 
 			@Property
-			void monthOnlyMonths(@ForAll("monthsOnlyMonths") LocalDate date){
-				assertThat(date.getMonth()).isIn(allowedMonths);
+			void monthBetweenSame(@ForAll("months") int month) {
+
+				Arbitrary<LocalDate> dates = Dates.dates().monthBetween(month, month);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getMonth()).isEqualTo(DefaultMonthArbitrary.getMonthFromInt(month));
+				});
+
+			}
+
+			@Property
+			void monthOnlyMonths(@ForAll("monthsOnlyMonths") Month[] months){
+
+				Arbitrary<LocalDate> dates = Dates.dates().onlyMonths(months);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getMonth()).isIn(months);
+				});
+
 			}
 
 			@Provide
-			Arbitrary<LocalDate> monthsOnlyMonths(){
-				allowedMonths = MonthTests.generateMonths();
-				return Dates.dates().onlyMonths(allowedMonths);
+			Arbitrary<Month[]> monthsOnlyMonths(){
+				return MonthTests.generateMonths();
+			}
+
+			@Provide
+			Arbitrary<Integer> months() {
+				return Arbitraries.integers().between(1, 12);
 			}
 
 		}
@@ -202,50 +210,53 @@ class DatesTests {
 		class DayOfMonthMethods {
 
 			@Property
-			void dayOfMonthGreaterOrEqual(@ForAll("dayOfMonthsGreaterOrEqual") LocalDate date) {
-				assertThat(date.getDayOfMonth()).isGreaterThanOrEqualTo(startInt);
-			}
+			void dayOfMonthGreaterOrEqual(@ForAll("dayOfMonths") int dayOfMonth) {
 
-			@Provide
-			Arbitrary<LocalDate> dayOfMonthsGreaterOrEqual() {
-				startInt = Arbitraries.integers().between(1, 31).sample();
-				return Dates.dates().dayOfMonthGreaterOrEqual(startInt);
-			}
+				Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthGreaterOrEqual(dayOfMonth);
 
-			@Property
-			void dayOfMonthLessOrEqual(@ForAll("dayOfMonthsLessOrEqual") LocalDate date) {
-				assertThat(date.getDayOfMonth()).isLessThanOrEqualTo(endInt);
-			}
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getDayOfMonth()).isGreaterThanOrEqualTo(dayOfMonth);
+				});
 
-			@Provide
-			Arbitrary<LocalDate> dayOfMonthsLessOrEqual() {
-				endInt = Arbitraries.integers().between(1, 31).sample();
-				return Dates.dates().dayOfMonthLessOrEqual(endInt);
 			}
 
 			@Property
-			void dayOfMonthBetween(@ForAll("dayOfMonthsBetween") LocalDate date) {
-				assertThat(date.getDayOfMonth()).isGreaterThanOrEqualTo(startInt);
-				assertThat(date.getDayOfMonth()).isLessThanOrEqualTo(endInt);
-			}
+			void dayOfMonthLessOrEqual(@ForAll("dayOfMonths") int dayOfMonth) {
 
-			@Provide
-			Arbitrary<LocalDate> dayOfMonthsBetween() {
-				startInt = Arbitraries.integers().between(1, 31).sample();
-				endInt = Arbitraries.integers().between(startInt, 31).sample();
-				return Dates.dates().dayOfMonthBetween(startInt, endInt);
+				Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthLessOrEqual(dayOfMonth);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getDayOfMonth()).isLessThanOrEqualTo(dayOfMonth);
+				});
+
 			}
 
 			@Property
-			void dayOfMonthBetweenSame(@ForAll("dayOfMonthsBetweenSame") LocalDate date) {
-				assertThat(date.getDayOfMonth()).isEqualTo(startInt);
+			void dayOfMonthBetween(@ForAll("dayOfMonths") int startDayOfMonth, @ForAll("dayOfMonths") int endDayOfMonth) {
+
+				Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthBetween(startDayOfMonth, endDayOfMonth);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getDayOfMonth()).isGreaterThanOrEqualTo(startDayOfMonth);
+					assertThat(date.getDayOfMonth()).isLessThanOrEqualTo(endDayOfMonth);
+				});
+
+			}
+
+			@Property
+			void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth) {
+
+				Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthBetween(dayOfMonth, dayOfMonth);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getDayOfMonth()).isEqualTo(dayOfMonth);
+				});
+
 			}
 
 			@Provide
-			Arbitrary<LocalDate> dayOfMonthsBetweenSame() {
-				startInt = Arbitraries.integers().between(1, 31).sample();
-				endInt = startInt;
-				return Dates.dates().dayOfMonthBetween(startInt, endInt);
+			Arbitrary<Integer> dayOfMonths() {
+				return Arbitraries.integers().between(1, 31);
 			}
 
 		}
@@ -253,17 +264,19 @@ class DatesTests {
 		@Group
 		class OnlyDaysOfWeekMethods {
 
-			private DayOfWeek[] dayOfWeeks;
-
 			@Property
-			void onlyDaysOfWeek(@ForAll("onlyDayOfWeeks") LocalDate localDate) {
-				assertThat(localDate.getDayOfWeek()).isIn(dayOfWeeks);
+			void onlyDaysOfWeek(@ForAll("onlyDayOfWeeks") DayOfWeek[] dayOfWeeks) {
+
+				Arbitrary<LocalDate> dates = Dates.dates().onlyDaysOfWeek(dayOfWeeks);
+
+				assertAllGenerated(dates.generator(1000), date -> {
+					assertThat(date.getDayOfWeek()).isIn(dayOfWeeks);
+				});
 			}
 
 			@Provide
-			Arbitrary<LocalDate> onlyDayOfWeeks() {
-				dayOfWeeks = DaysOfWeekTests.generateDayOfWeeks();
-				return Dates.dates().onlyDaysOfWeek(dayOfWeeks);
+			Arbitrary<DayOfWeek[]> onlyDayOfWeeks() {
+				return DaysOfWeekTests.generateDayOfWeeks();
 			}
 
 		}

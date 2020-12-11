@@ -6,6 +6,8 @@ import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.time.copy.ArbitraryTestHelper.*;
+
 @Group
 class YearTests {
 
@@ -22,54 +24,51 @@ class YearTests {
 	@Group
 	class CheckYearMethods {
 
-		private int startInt;
-		private int endInt;
-
 		@Property
-		void greaterOrEqual(@ForAll("yearsGreaterOrEqual") Year year) {
-			assertThat(year.getValue()).isGreaterThanOrEqualTo(startInt);
-		}
+		void greaterOrEqual(@ForAll("years") Year year) {
 
-		@Provide
-		Arbitrary<Year> yearsGreaterOrEqual() {
-			startInt = Arbitraries.integers().between(Year.MIN_VALUE, Year.MAX_VALUE).sample();
-			return Dates.years().greaterOrEqual(startInt);
+			Arbitrary<Year> years = Dates.years().greaterOrEqual(year);
+
+			assertAllGenerated(years.generator(1000), y -> {
+				assertThat(y).isGreaterThanOrEqualTo(year);
+			});
+
 		}
 
 		@Property
-		void lessOrEqual(@ForAll("yearsLessOrEqual") Year year) {
-			assertThat(year.getValue()).isLessThanOrEqualTo(endInt);
-		}
+		void lessOrEqual(@ForAll("years") Year year) {
 
-		@Provide
-		Arbitrary<Year> yearsLessOrEqual() {
-			endInt = Arbitraries.integers().between(Year.MIN_VALUE, Year.MAX_VALUE).sample();
-			return Dates.years().lessOrEqual(endInt);
-		}
+			Arbitrary<Year> years = Dates.years().lessOrEqual(year);
 
-		@Property
-		void between(@ForAll("yearsBetween") Year year) {
-			assertThat(year.getValue()).isGreaterThanOrEqualTo(startInt);
-			assertThat(year.getValue()).isLessThanOrEqualTo(endInt);
-		}
+			assertAllGenerated(years.generator(1000), y -> {
+				assertThat(y).isLessThanOrEqualTo(year);
+			});
 
-		@Provide
-		Arbitrary<Year> yearsBetween() {
-			startInt = Arbitraries.integers().between(Year.MIN_VALUE, Year.MAX_VALUE).sample();
-			endInt = Arbitraries.integers().between(startInt, Year.MAX_VALUE).sample();
-			return Dates.years().between(startInt, endInt);
 		}
 
 		@Property
-		void betweenSame(@ForAll("yearsBetweenSame") Year year) {
-			assertThat(year.getValue()).isEqualTo(startInt);
+		void between(@ForAll("years") Year startYear, @ForAll("years") Year endYear) {
+
+			Assume.that(startYear.compareTo(endYear) <= 0);
+
+			Arbitrary<Year> years = Dates.years().between(startYear, endYear);
+
+			assertAllGenerated(years.generator(1000), year -> {
+				assertThat(year).isGreaterThanOrEqualTo(startYear);
+				assertThat(year).isLessThanOrEqualTo(endYear);
+			});
+
 		}
 
-		@Provide
-		Arbitrary<Year> yearsBetweenSame() {
-			startInt = Arbitraries.integers().between(Year.MIN_VALUE, Year.MAX_VALUE).sample();
-			endInt = startInt;
-			return Dates.years().between(startInt, endInt);
+		@Property
+		void betweenSame(@ForAll("years") Year year) {
+
+			Arbitrary<Year> years = Dates.years().between(year, year);
+
+			assertAllGenerated(years.generator(1000), y -> {
+				assertThat(y).isEqualTo(year);
+			});
+
 		}
 
 	}

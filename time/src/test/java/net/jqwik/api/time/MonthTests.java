@@ -4,9 +4,10 @@ import java.time.*;
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.time.*;
 
 import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.api.time.copy.ArbitraryTestHelper.*;
 
 @Group
 public class MonthTests {
@@ -24,80 +25,88 @@ public class MonthTests {
 	@Group
 	class CheckMonthMethods {
 
-		private int startMonth;
-		private int endMonth;
-		private Month[] allowedMonths;
-
 		@Property
-		void atTheEarliest(@ForAll("monthsAtTheEarliest") Month month) {
-			assertThat(month).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startMonth));
-		}
+		void atTheEarliest(@ForAll("months") Month month) {
 
-		@Provide
-		Arbitrary<Month> monthsAtTheEarliest() {
-			startMonth = Arbitraries.integers().between(1, 12).sample();
-			return Dates.months().atTheEarliest(startMonth);
+			Arbitrary<Month> months = Dates.months().atTheEarliest(month);
+
+			assertAllGenerated(months.generator(1000), m -> {
+				assertThat(m).isGreaterThanOrEqualTo(month);
+			});
+
 		}
 
 		@Property
-		void atTheLatest(@ForAll("monthsAtTheLatest") Month month) {
-			assertThat(month).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(endMonth));
-		}
+		void atTheLatest(@ForAll("months") Month month) {
 
-		@Provide
-		Arbitrary<Month> monthsAtTheLatest() {
-			endMonth = Arbitraries.integers().between(1, 12).sample();
-			return Dates.months().atTheLatest(endMonth);
-		}
+			Arbitrary<Month> months = Dates.months().atTheLatest(month);
 
-		@Property
-		void between(@ForAll("monthsBetween") Month month) {
-			assertThat(month).isGreaterThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(startMonth));
-			assertThat(month).isLessThanOrEqualTo(DefaultMonthArbitrary.getMonthFromInt(endMonth));
-		}
-
-		@Provide
-		Arbitrary<Month> monthsBetween() {
-			startMonth = Arbitraries.integers().between(1, 12).sample();
-			endMonth = Arbitraries.integers().between(startMonth, 12).sample();
-			return Dates.months().between(startMonth, endMonth);
+			assertAllGenerated(months.generator(1000), m -> {
+				assertThat(m).isLessThanOrEqualTo(month);
+			});
 		}
 
 		@Property
-		void betweenSame(@ForAll("monthsBetweenSame") Month month) {
-			assertThat(month).isEqualTo(DefaultMonthArbitrary.getMonthFromInt(startMonth));
-		}
+		void between(@ForAll("months") Month startMonth, @ForAll("months") Month endMonth) {
 
-		@Provide
-		Arbitrary<Month> monthsBetweenSame() {
-			startMonth = Arbitraries.integers().between(1, 12).sample();
-			endMonth = startMonth;
-			return Dates.months().between(startMonth, endMonth);
+			Assume.that(startMonth.compareTo(endMonth) <= 0);
+
+			Arbitrary<Month> months = Dates.months().between(startMonth, endMonth);
+
+			assertAllGenerated(months.generator(1000), month -> {
+				assertThat(month).isGreaterThanOrEqualTo(startMonth);
+				assertThat(month).isLessThanOrEqualTo(endMonth);
+			});
+
 		}
 
 		@Property
-		void only(@ForAll("onlyMonths") Month month){
-			assertThat(month).isIn(allowedMonths);
+		void betweenSame(@ForAll("months") Month month) {
+
+			Arbitrary<Month> months = Dates.months().between(month, month);
+
+			assertAllGenerated(months.generator(1000), m -> {
+				assertThat(m).isEqualTo(month);
+			});
+		}
+
+		@Property
+		void only(@ForAll("onlyMonths") Month[] months){
+
+			Arbitrary<Month> monthArbitrary = Dates.months().only(months);
+
+			assertAllGenerated(monthArbitrary.generator(1000), month -> {
+				assertThat(month).isIn(months);
+			});
 		}
 
 		@Provide
-		Arbitrary<Month> onlyMonths(){
-			allowedMonths = generateMonths();
-			return Dates.months().only(allowedMonths);
+		Arbitrary<Month[]> onlyMonths(){
+			return generateMonths();
 		}
 
 	}
 
-	public static Month[] generateMonths(){
-		int count = Arbitraries.integers().between(1, 12).sample();
+	public static Arbitrary<Month[]> generateMonths(){
 		Arbitrary<Month> monthArbitrary = Arbitraries.of(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
-		ArrayList<Month> monthArrayList = new ArrayList<>();
-		for(int i = 0; i < count; i++){
-			Month toAdd = monthArbitrary.sample();
-			monthArbitrary = monthArbitrary.filter(v -> !v.equals(toAdd));
-			monthArrayList.add(toAdd);
+		Arbitrary<Integer> length = Arbitraries.integers().between(1, 12);
+		Arbitrary<List<Month>> arbitrary = length.flatMap(depth -> Arbitraries.recursive(
+				() -> monthArbitrary.map(v -> new ArrayList<>()),
+				(v) -> addMonth(v, monthArbitrary),
+				depth
+		));
+		return arbitrary.map(v -> v.toArray(new Month[]{}));
+	}
+
+	private static Arbitrary<List<Month>> addMonth(Arbitrary<List<Month>> listArbitrary, Arbitrary<Month> monthArbitrary){
+		return Combinators.combine(listArbitrary, monthArbitrary).as(MonthTests::addToList);
+	}
+
+	private static List<Month> addToList(List<Month> list, Month month){
+		if(!list.contains(month)){
+			list.add(month);
 		}
-		return monthArrayList.toArray(new Month[]{});
+		return list;
 	}
 
 }
