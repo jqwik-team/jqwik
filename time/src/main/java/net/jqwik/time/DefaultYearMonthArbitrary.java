@@ -8,8 +8,8 @@ import net.jqwik.api.time.*;
 
 public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> implements YearMonthArbitrary {
 
-	private YearMonth yearMonthMin = YearMonth.of(Year.MIN_VALUE, 1);
-	private YearMonth yearMonthMax = YearMonth.of(Year.MAX_VALUE, 12);
+	private YearMonth yearMonthMin = YearMonth.of(Year.MIN_VALUE, Month.JANUARY);
+	private YearMonth yearMonthMax = YearMonth.of(Year.MAX_VALUE, Month.DECEMBER);
 	private Year yearMin = Year.of(Year.MIN_VALUE);
 	private Year yearMax = Year.of(Year.MAX_VALUE);
 	private Month monthMin = Month.JANUARY;
@@ -26,7 +26,7 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 								   .monthBetween(monthMin, monthMax)
 								   .onlyMonths(allowedMonths)
 								   .dayOfMonthBetween(1, 1);
-		return dates.map(v -> YearMonth.of(v.getYear(), v.getMonth().getValue()));
+		return dates.map(v -> YearMonth.of(v.getYear(), v.getMonth()));
 	}
 
 	@Override
