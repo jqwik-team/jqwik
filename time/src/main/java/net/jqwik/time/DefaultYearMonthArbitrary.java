@@ -79,4 +79,5 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 		clone.allowedMonths = months;
 		return clone;
 	}
+
 }

@@ -28,7 +28,7 @@ public class Dates {
 		return new DefaultYearMonthArbitrary();
 	}
 
-	public static DateArbitrary monthDays() {
+	public static MonthDayArbitrary monthDays() {
 		return null;
 	}
 
