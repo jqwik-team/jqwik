@@ -1,6 +1,7 @@
 package net.jqwik.time;
 
 import java.time.*;
+import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -13,12 +14,15 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	private Month monthMin = Month.JANUARY;
 	private Month monthMax = Month.DECEMBER;
 	private Month[] allowedMonths = new Month[]{Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER};
+	private int dayOfMonthMin = 1;
+	private int dayOfMonthMax = 31;
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
 		Arbitrary<Year> year = generateYears();
 		Arbitrary<Month> month = generateMonths();
-		return Combinators.combine(year, month).as((y, m) -> LocalDate.of(y.getValue(), m, 9));
+		Arbitrary<Integer> dayOfMonth = generateDayOfMonths();
+		return Combinators.combine(year, month, dayOfMonth).as(this::generateValidDateFromValues).filter(Objects::nonNull);
 	}
 
 	private Arbitrary<Year> generateYears(){
@@ -27,6 +31,20 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	private Arbitrary<Month> generateMonths(){
 		return Dates.months().between(monthMin, monthMax).only(allowedMonths);
+	}
+
+	private Arbitrary<Integer> generateDayOfMonths(){
+		return Dates.daysOfMonth().between(dayOfMonthMin, dayOfMonthMax);
+	}
+
+	private LocalDate generateValidDateFromValues(Year y, Month m, int d){
+		LocalDate date;
+		try {
+			date = LocalDate.of(y.getValue(), m, d);
+		} catch (DateTimeException e){
+			return null;
+		}
+		return date;
 	}
 
 	@Override
@@ -81,12 +99,16 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	@Override
 	public DateArbitrary dayOfMonthGreaterOrEqual(int min) {
 		DefaultDateArbitrary clone = typedClone();
+		min = Math.max(1, min);
+		clone.dayOfMonthMin = min;
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary dayOfMonthLessOrEqual(int max) {
 		DefaultDateArbitrary clone = typedClone();
+		max = Math.min(31, max);
+		clone.dayOfMonthMax = max;
 		return clone;
 	}
 

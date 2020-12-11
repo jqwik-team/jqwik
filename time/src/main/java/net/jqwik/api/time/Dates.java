@@ -20,8 +20,8 @@ public class Dates {
 		return new DefaultMonthArbitrary();
 	}
 
-	public static DateArbitrary daysOfMonth() {
-		return null;
+	public static DaysOfMonthArbitrary daysOfMonth() {
+		return new DefaultDaysOfMonthArbitrary();
 	}
 
 	public static DateArbitrary yearsAndMonths() {

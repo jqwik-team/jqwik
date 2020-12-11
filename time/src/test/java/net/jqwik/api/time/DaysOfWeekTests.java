@@ -25,8 +25,6 @@ public class DaysOfWeekTests {
 	@Group
 	class CheckDaysOfWeekMethods {
 
-		private DayOfWeek[] dayOfWeeks;
-
 		@Property
 		void only(@ForAll("onlyDayOfWeeks") DayOfWeek[] dayOfWeeks) {
 

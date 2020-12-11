@@ -234,6 +234,8 @@ class DatesTests {
 			@Property
 			void dayOfMonthBetween(@ForAll("dayOfMonths") int startDayOfMonth, @ForAll("dayOfMonths") int endDayOfMonth) {
 
+				Assume.that(startDayOfMonth <= endDayOfMonth);
+
 				Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthBetween(startDayOfMonth, endDayOfMonth);
 
 				assertAllGenerated(dates.generator(1000), date -> {
