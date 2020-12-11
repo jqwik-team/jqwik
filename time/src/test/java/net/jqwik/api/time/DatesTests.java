@@ -34,7 +34,7 @@ class DatesTests {
 				Arbitrary<LocalDate> dates = Dates.dates().atTheEarliest(startDate);
 
 				assertAllGenerated(dates.generator(1000), date -> {
-					assertThat(date).isBeforeOrEqualTo(startDate);
+					assertThat(date).isAfterOrEqualTo(startDate);
 				});
 
 			}
@@ -45,7 +45,7 @@ class DatesTests {
 				Arbitrary<LocalDate> dates = Dates.dates().atTheLatest(endDate);
 
 				assertAllGenerated(dates.generator(1000), date -> {
-					assertThat(date).isAfterOrEqualTo(endDate);
+					assertThat(date).isBeforeOrEqualTo(endDate);
 				});
 
 			}
