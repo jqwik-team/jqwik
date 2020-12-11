@@ -23,7 +23,7 @@ public interface YearMonthArbitrary extends Arbitrary<YearMonth> {
 	default YearMonthArbitrary yearGreaterOrEqual(int min){
 		return yearGreaterOrEqual(Year.of(min));
 	}
-	YearMonthArbitrary yearLessOrEqual(Year min);
+	YearMonthArbitrary yearLessOrEqual(Year max);
 	default YearMonthArbitrary yearLessOrEqual(int max){
 		return yearLessOrEqual(Year.of(max));
 	}
