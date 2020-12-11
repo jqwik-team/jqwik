@@ -52,14 +52,14 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	private void optimizeRuntime(){
-		yearMin = Year.of(dateMin.getYear());
-		yearMax = Year.of(dateMax.getYear());
+		yearMin = Year.of(Math.max(yearMin.getValue(), dateMin.getYear()));
+		yearMax = Year.of(Math.min(yearMax.getValue(), dateMax.getYear()));
 		if(yearMin.equals(yearMax)){
-			monthMin = dateMin.getMonth();
-			monthMax = dateMax.getMonth();
+			monthMin = Month.of(Math.max(monthMin.getValue(), dateMin.getMonth().getValue()));
+			monthMax = Month.of(Math.min(monthMax.getValue(), dateMax.getMonth().getValue()));
 			if(monthMin.equals(monthMax)){
-				dayOfMonthMin = dateMin.getDayOfMonth();
-				dayOfMonthMax = dateMax.getDayOfMonth();
+				dayOfMonthMin = Math.max(dayOfMonthMin, dateMin.getDayOfMonth());
+				dayOfMonthMax = Math.min(dayOfMonthMax, dateMax.getDayOfMonth());
 			}
 		}
 	}

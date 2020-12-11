@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.time.copy.ArbitraryTestHelper.*;
+import static net.jqwik.api.testing.TestingSupport.*;
 
 @Group
 public class DaysOfWeekTests {
@@ -26,12 +26,13 @@ public class DaysOfWeekTests {
 	class CheckDaysOfWeekMethods {
 
 		@Property
-		void only(@ForAll("onlyDayOfWeeks") DayOfWeek[] dayOfWeeks) {
+		void only(@ForAll("onlyDayOfWeeks") DayOfWeek[] dayOfWeeks, @ForAll Random random) {
 
 			Arbitrary<DayOfWeek> daysOfWeekArbitrary = Dates.daysOfWeek().only(dayOfWeeks);
 
-			assertAllGenerated(daysOfWeekArbitrary.generator(1000), dayOfWeek -> {
+			assertAllGenerated(daysOfWeekArbitrary.generator(1000), random, dayOfWeek -> {
 				assertThat(dayOfWeek).isIn(dayOfWeeks);
+				return true;
 			});
 		}
 

@@ -1,10 +1,12 @@
 package net.jqwik.api.time;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.time.copy.ArbitraryTestHelper.*;
+import static net.jqwik.api.testing.TestingSupport.*;
 
 @Group
 public class DaysOfMonthTests {
@@ -24,48 +26,52 @@ public class DaysOfMonthTests {
 	class CheckDaysOfMonthMethods {
 
 		@Property
-		void greaterOrEqual(@ForAll("dayOfMonth") int dayOfMonth) {
+		void greaterOrEqual(@ForAll("dayOfMonth") int dayOfMonth, @ForAll Random random) {
 
 			Arbitrary<Integer> dayOfMonths = Dates.daysOfMonth().greaterOrEqual(dayOfMonth);
 
-			assertAllGenerated(dayOfMonths.generator(1000), d -> {
+			assertAllGenerated(dayOfMonths.generator(1000), random, d -> {
 				assertThat(d).isGreaterThanOrEqualTo(dayOfMonth);
+				return true;
 			});
 
 		}
 
 		@Property
-		void lessOrEqual(@ForAll("dayOfMonth") int dayOfMonth) {
+		void lessOrEqual(@ForAll("dayOfMonth") int dayOfMonth, @ForAll Random random) {
 
 			Arbitrary<Integer> dayOfMonths = Dates.daysOfMonth().lessOrEqual(dayOfMonth);
 
-			assertAllGenerated(dayOfMonths.generator(1000), d -> {
+			assertAllGenerated(dayOfMonths.generator(1000), random, d -> {
 				assertThat(d).isLessThanOrEqualTo(dayOfMonth);
+				return true;
 			});
 
 		}
 
 		@Property
-		void between(@ForAll("dayOfMonth") int startDayOfMonth, @ForAll("dayOfMonth") int endDayOfMonth) {
+		void between(@ForAll("dayOfMonth") int startDayOfMonth, @ForAll("dayOfMonth") int endDayOfMonth, @ForAll Random random) {
 
 			Assume.that(startDayOfMonth < endDayOfMonth);
 
 			Arbitrary<Integer> dayOfMonths = Dates.daysOfMonth().between(startDayOfMonth, endDayOfMonth);
 
-			assertAllGenerated(dayOfMonths.generator(1000), year -> {
+			assertAllGenerated(dayOfMonths.generator(1000), random, year -> {
 				assertThat(year).isGreaterThanOrEqualTo(startDayOfMonth);
 				assertThat(year).isLessThanOrEqualTo(endDayOfMonth);
+				return true;
 			});
 
 		}
 
 		@Property
-		void betweenSame(@ForAll("dayOfMonth") int dayOfMonth) {
+		void betweenSame(@ForAll("dayOfMonth") int dayOfMonth, @ForAll Random random) {
 
 			Arbitrary<Integer> dayOfMonths = Dates.daysOfMonth().between(dayOfMonth, dayOfMonth);
 
-			assertAllGenerated(dayOfMonths.generator(1000), d -> {
+			assertAllGenerated(dayOfMonths.generator(1000), random, d -> {
 				assertThat(d).isEqualTo(dayOfMonth);
+				return true;
 			});
 
 		}

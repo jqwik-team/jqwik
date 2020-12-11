@@ -3,7 +3,6 @@ package net.jqwik.api.time;
 import java.time.*;
 
 import net.jqwik.api.*;
-import net.jqwik.time.*;
 
 public interface MonthArbitrary extends Arbitrary<Month> {
 
@@ -12,15 +11,15 @@ public interface MonthArbitrary extends Arbitrary<Month> {
 		return atTheEarliest(startMonth).atTheLatest(endMonth);
 	}
 	default MonthArbitrary between(int startMonth, int endMonth){
-		return between(DefaultMonthArbitrary.getMonthFromInt(startMonth), DefaultMonthArbitrary.getMonthFromInt(endMonth));
+		return between(Month.of(startMonth), Month.of(endMonth));
 	}
 	MonthArbitrary atTheEarliest(Month min);
 	default MonthArbitrary atTheEarliest(int min){
-		return atTheEarliest(DefaultMonthArbitrary.getMonthFromInt(min));
+		return atTheEarliest(Month.of(min));
 	}
 	MonthArbitrary atTheLatest(Month max);
 	default MonthArbitrary atTheLatest(int max){
-		return atTheLatest(DefaultMonthArbitrary.getMonthFromInt(max));
+		return atTheLatest(Month.of(max));
 	}
 	MonthArbitrary only(Month... months);
 
