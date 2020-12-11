@@ -23,7 +23,7 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 	default DateArbitrary yearGreaterOrEqual(int min){
 		return yearGreaterOrEqual(Year.of(min));
 	}
-	DateArbitrary yearLessOrEqual(Year min);
+	DateArbitrary yearLessOrEqual(Year max);
 	default DateArbitrary yearLessOrEqual(int max){
 		return yearLessOrEqual(Year.of(max));
 	}
