@@ -1,7 +1,6 @@
 package net.jqwik.time;
 
 import java.time.*;
-import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -9,6 +8,8 @@ import net.jqwik.api.time.*;
 
 public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implements DateArbitrary {
 
+	private LocalDate dateMin = LocalDate.MIN;
+	private LocalDate dateMax = LocalDate.MAX;
 	private Year yearMin = Year.of(LocalDate.MIN.getYear());
 	private Year yearMax = Year.of(LocalDate.MAX.getYear());
 	private Month monthMin = Month.JANUARY;
@@ -19,10 +20,13 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
+		optimizeRuntime();
 		Arbitrary<Year> year = generateYears();
 		Arbitrary<Month> month = generateMonths();
 		Arbitrary<Integer> dayOfMonth = generateDayOfMonths();
-		return Combinators.combine(year, month, dayOfMonth).as(this::generateValidDateFromValues).filter(Objects::nonNull);
+		return Combinators.combine(year, month, dayOfMonth)
+						  .as(this::generateValidDateFromValues)
+						  .filter(v -> v != null && !v.isBefore(dateMin) && !v.isAfter(dateMax));
 	}
 
 	private Arbitrary<Year> generateYears(){
@@ -47,15 +51,30 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 		return date;
 	}
 
+	private void optimizeRuntime(){
+		yearMin = Year.of(dateMin.getYear());
+		yearMax = Year.of(dateMax.getYear());
+		if(yearMin.equals(yearMax)){
+			monthMin = dateMin.getMonth();
+			monthMax = dateMax.getMonth();
+			if(monthMin.equals(monthMax)){
+				dayOfMonthMin = dateMin.getDayOfMonth();
+				dayOfMonthMax = dateMax.getDayOfMonth();
+			}
+		}
+	}
+
 	@Override
 	public DateArbitrary atTheEarliest(LocalDate date) {
 		DefaultDateArbitrary clone = typedClone();
+		clone.dateMin = date;
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary atTheLatest(LocalDate date) {
 		DefaultDateArbitrary clone = typedClone();
+		clone.dateMax = date;
 		return clone;
 	}
 
