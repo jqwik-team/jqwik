@@ -17,6 +17,7 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	private Month[] allowedMonths = new Month[]{Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER};
 	private int dayOfMonthMin = 1;
 	private int dayOfMonthMax = 31;
+	private DayOfWeek[] allowedDayOfWeeks = new DayOfWeek[]{DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY};
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
@@ -26,7 +27,7 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 		Arbitrary<Integer> dayOfMonth = generateDayOfMonths();
 		return Combinators.combine(year, month, dayOfMonth)
 						  .as(this::generateValidDateFromValues)
-						  .filter(v -> v != null && !v.isBefore(dateMin) && !v.isAfter(dateMax));
+						  .filter(v -> v != null && !v.isBefore(dateMin) && !v.isAfter(dateMax) && isInAllowedDayOfWeeks(v.getDayOfWeek()));
 	}
 
 	private Arbitrary<Year> generateYears(){
@@ -49,6 +50,18 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 			return null;
 		}
 		return date;
+	}
+
+	private boolean isInAllowedDayOfWeeks(DayOfWeek dayOfWeek){
+		if(allowedDayOfWeeks == null){
+			return false;
+		}
+		for(DayOfWeek d : allowedDayOfWeeks){
+			if(d.equals(dayOfWeek)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void optimizeRuntime(){
@@ -134,6 +147,7 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	@Override
 	public DateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
 		DefaultDateArbitrary clone = typedClone();
+		clone.allowedDayOfWeeks = daysOfWeek;
 		return clone;
 	}
 
