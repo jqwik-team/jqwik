@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
  * together but that cannot be implemented in a single class, e.g. because
  * the same hook type must be added with different proximity or different propagation.
  */
-@API(status = EXPERIMENTAL, since = "1.2.5")
+@API(status = MAINTAINED, since = "1.4.0")
 @FunctionalInterface
 public interface RegistrarHook extends LifecycleHook {
 

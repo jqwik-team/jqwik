@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Represents the result of running a property.
  */
-@API(status = EXPERIMENTAL, since = "1.0")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface PropertyExecutionResult {
 
 	/**
@@ -54,7 +54,6 @@ public interface PropertyExecutionResult {
 	 *
 	 * @return an optional list of parameters
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.3")
 	Optional<List<Object>> falsifiedParameters();
 
 	/**
@@ -76,7 +75,6 @@ public interface PropertyExecutionResult {
 	 *
 	 * @return an number equal to or greater than 0
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	int countChecks();
 
 	/**
@@ -85,7 +83,6 @@ public interface PropertyExecutionResult {
 	 *
 	 * @return an number equal to or greater than 0
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	int countTries();
 
 	/**
@@ -112,7 +109,6 @@ public interface PropertyExecutionResult {
 	 * @param throwable Throwable object or null
 	 * @return the changed result object
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	PropertyExecutionResult mapTo(Status newStatus, Throwable throwable);
 
 	/**
@@ -121,7 +117,6 @@ public interface PropertyExecutionResult {
 	 *
 	 * @return the changed result object
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	default PropertyExecutionResult mapToSuccessful() {
 		if (status() == Status.SUCCESSFUL) {
 			return this;
@@ -136,7 +131,6 @@ public interface PropertyExecutionResult {
 	 * @param throwable Throwable object or null
 	 * @return the changed result object
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	default PropertyExecutionResult mapToFailed(Throwable throwable) {
 		return mapTo(Status.FAILED, throwable);
 	}
@@ -148,7 +142,6 @@ public interface PropertyExecutionResult {
 	 * @param message a String that serves as message of an assertion error
 	 * @return the changed result object
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	default PropertyExecutionResult mapToFailed(String message) {
 		return mapToFailed(new AssertionFailedError(message));
 	}
@@ -160,7 +153,6 @@ public interface PropertyExecutionResult {
 	 * @param throwable Throwable object or null
 	 * @return the changed result object
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	default PropertyExecutionResult mapToAborted(Throwable throwable) {
 		return mapTo(Status.ABORTED, throwable);
 	}

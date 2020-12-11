@@ -8,7 +8,7 @@ import static org.apiguardian.api.API.Status.*;
  * Implement this hook to define behaviour for a container (class or whole test suite)
  * that should be run exactly once after of its property methods and child containers.
  */
-@API(status = EXPERIMENTAL, since = "1.2.4")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface AfterContainerHook extends LifecycleHook {
 
 	/**

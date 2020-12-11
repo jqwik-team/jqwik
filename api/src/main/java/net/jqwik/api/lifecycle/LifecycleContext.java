@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see PropertyLifecycleContext
  * @see TryLifecycleContext
  */
-@API(status = EXPERIMENTAL, since = "1.0")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface LifecycleContext {
 
 	/**
@@ -33,7 +33,6 @@ public interface LifecycleContext {
 	 *
 	 * @return an optional annotated element
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.5")
 	Optional<AnnotatedElement> optionalElement();
 
 	/**
@@ -42,7 +41,6 @@ public interface LifecycleContext {
 	 *
 	 * @return an optional annotated element
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.5")
 	Optional<Class<?>> optionalContainerClass();
 
 	/**
@@ -50,7 +48,6 @@ public interface LifecycleContext {
 	 *
 	 * @return Current instance to test reporter
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
 	Reporter reporter();
 
 	/**
@@ -60,7 +57,6 @@ public interface LifecycleContext {
 	 * @param <T>             The annotation type
 	 * @return instance of annotation type
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	<T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass);
 
 	/**
@@ -71,7 +67,6 @@ public interface LifecycleContext {
 	 * @param <T>             The annotation type
 	 * @return list of annotation objects
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	<T extends Annotation> List<T> findAnnotationsInContainer(Class<T> annotationClass);
 
 	/**
@@ -89,7 +84,6 @@ public interface LifecycleContext {
 	 * @param <T> The type to instantiate
 	 * @return a freshly created instance of class {@code clazz}
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	<T> T newInstance(Class<T> clazz);
 
 	/**
@@ -101,6 +95,5 @@ public interface LifecycleContext {
 	 * @return supplier instance
 	 * @throws CannotResolveParameterException if parameter cannot be resolved
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.5")
 	Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Executable executable, int index);
 }

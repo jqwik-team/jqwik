@@ -21,7 +21,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see ResolveParameterHook
  * @see RegistrarHook
  */
-@API(status = EXPERIMENTAL, since = "1.0")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface LifecycleHook {
 
 	/**
@@ -31,7 +31,6 @@ public interface LifecycleHook {
 	 *                or method but is empty for the engine
 	 * @return true if a hook shall be applied to this element
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	default boolean appliesTo(Optional<AnnotatedElement> element) {
 		return true;
 	}
@@ -42,7 +41,6 @@ public interface LifecycleHook {
 	 *
 	 * @return propagation mode enum
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.4")
 	default PropagationMode propagateTo() {
 		return PropagationMode.NO_DESCENDANTS;
 	}

@@ -18,7 +18,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(LifecycleHooks.class)
-@API(status = EXPERIMENTAL, since = "1.0")
+@API(status = MAINTAINED, since = "1.4.0")
 public @interface AddLifecycleHook {
 
 	/**
@@ -31,6 +31,5 @@ public @interface AddLifecycleHook {
 	 *
 	 * @return Propagation mode enum value
 	 */
-	@API(status = EXPERIMENTAL, since = "1.0")
 	PropagationMode propagateTo() default PropagationMode.NOT_SET;
 }

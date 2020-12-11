@@ -8,7 +8,7 @@ import static org.apiguardian.api.API.Status.*;
  * Objects of this class represent a property's execution.
  * This is used in {@linkplain AroundPropertyHook}.
  */
-@API(status = EXPERIMENTAL, since = "1.0")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface PropertyExecutor {
 
 	/**

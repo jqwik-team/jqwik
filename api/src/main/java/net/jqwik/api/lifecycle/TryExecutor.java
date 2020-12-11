@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Experimental feature. Not ready for public usage yet.
  */
-@API(status = EXPERIMENTAL, since = "1.2.3")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface TryExecutor {
 
 	TryExecutionResult execute(List<Object> parameters);

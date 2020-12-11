@@ -43,6 +43,7 @@ title: jqwik Release Notes
     - Method `SetArbitrary.flatMapEach(..)`
     - Method `ListArbitrary.mapEach(..)`
     - Method `ListArbitrary.flatMapEach(..)`
+    - Mostly everything in package `net.jqwik.api.lifecycle`
 
 #### Breaking Changes
 

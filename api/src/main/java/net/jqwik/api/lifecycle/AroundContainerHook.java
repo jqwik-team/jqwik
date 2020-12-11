@@ -8,7 +8,7 @@ import static org.apiguardian.api.API.Status.*;
  * An aggregate interface of {@linkplain BeforeContainerHook} and {@linkplain AfterContainerHook}
  * for convenience.
  */
-@API(status = EXPERIMENTAL, since = "1.2.4")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface AroundContainerHook extends BeforeContainerHook, AfterContainerHook {
 
 	/**

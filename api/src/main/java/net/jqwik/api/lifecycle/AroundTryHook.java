@@ -11,7 +11,7 @@ import static org.apiguardian.api.API.Status.*;
  * i.e., do something directly before or after executing a property method with a given list of parameters.
  * You can even change the result of a try from satisfied to falsified or the other way round.
  */
-@API(status = EXPERIMENTAL, since = "1.2.3")
+@API(status = MAINTAINED, since = "1.4.0")
 @FunctionalInterface
 public interface AroundTryHook extends LifecycleHook {
 

@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
  * i.e., do something directly before or after running a property - or both.
  * You can even change the result of a property from successful to failed or the other way round.
  */
-@API(status = EXPERIMENTAL, since = "1.0")
+@API(status = MAINTAINED, since = "1.4.0")
 @FunctionalInterface
 public interface AroundPropertyHook extends LifecycleHook {
 

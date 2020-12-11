@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * The context information of a single try of a property.
  */
-@API(status = EXPERIMENTAL, since = "1.2.3")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface TryLifecycleContext extends LifecycleContext {
 
 	/**
@@ -17,7 +17,6 @@ public interface TryLifecycleContext extends LifecycleContext {
 	 *
 	 * @return a Method instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.7")
 	Method targetMethod();
 
 	/**
@@ -30,7 +29,6 @@ public interface TryLifecycleContext extends LifecycleContext {
 	 *
 	 * @return a Class instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.7")
 	Class<?> containerClass();
 
 	/**
@@ -43,7 +41,6 @@ public interface TryLifecycleContext extends LifecycleContext {
 	 *
 	 * @return an instance of the container class in which the current property method is running
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.7")
 	Object testInstance();
 
 }

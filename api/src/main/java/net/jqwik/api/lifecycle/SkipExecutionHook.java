@@ -11,7 +11,7 @@ import static org.apiguardian.api.API.Status.*;
  * a test run or not. Evaluation of hooks is stopped
  * as soon as a single hook returns {@linkplain SkipResult#skip(String)}.
  */
-@API(status = EXPERIMENTAL, since = "1.0")
+@API(status = MAINTAINED, since = "1.4.0")
 @FunctionalInterface
 public interface SkipExecutionHook extends LifecycleHook {
 

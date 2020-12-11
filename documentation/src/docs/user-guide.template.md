@@ -3777,8 +3777,7 @@ Similar to [Jupiter's Extension Model](https://junit.org/junit5/docs/current/use
 _jqwik_ provides a means to extend and change the way how properties and containers are being
 configured, run and reported on. The API -- interfaces, classes and annotations -- for accessing 
 those _lifecycle hooks_ lives in the package `net.jqwik.api.lifecycle` and is -- as of this release --
-still in the [API evolution status](#api-evolution) `EXPERIMENTAL`: Some parts of it will probably 
-change without notice in later versions.
+are now mostly in the [API evolution status](#api-evolution) `MAINTAINED`.
 
 #### Principles of Lifecycle Hooks
 

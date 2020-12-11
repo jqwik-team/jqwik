@@ -30,7 +30,7 @@ import static org.apiguardian.api.API.Status.*;
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@API(status = EXPERIMENTAL, since = "1.2.4")
+@API(status = MAINTAINED, since = "1.4.0")
 public @interface AfterTry {
 
 }

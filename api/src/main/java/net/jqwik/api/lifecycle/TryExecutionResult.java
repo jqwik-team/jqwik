@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Represents the result of calling a property method with a list of parameters.
  */
-@API(status = EXPERIMENTAL, since = "1.2.3")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface TryExecutionResult {
 
 	/**
@@ -111,7 +111,6 @@ public interface TryExecutionResult {
 	 * @param throwable A (potentially null) exception. Usually of type {@linkplain TestAbortedException}.
 	 * @return result instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.7")
 	static TryExecutionResult invalid(Throwable throwable) {
 		return new TryExecutionResult() {
 			@Override
@@ -157,7 +156,6 @@ public interface TryExecutionResult {
 	/**
 	 * @return true if status is falsified
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.3")
 	default boolean isFalsified() {
 		return this.status() == Status.FALSIFIED;
 	}
@@ -166,7 +164,6 @@ public interface TryExecutionResult {
 	/**
 	 * @return true if status is invalid
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.3")
 	default boolean isInvalid() {
 		return this.status() == Status.INVALID;
 	}

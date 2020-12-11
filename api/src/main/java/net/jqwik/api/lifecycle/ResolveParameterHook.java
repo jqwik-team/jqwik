@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  * This hook type allows to provide parameters for property methods
  * but also to annotated lifecycle methods.
  */
-@API(status = EXPERIMENTAL, since = "1.2.4")
+@API(status = MAINTAINED, since = "1.4.0")
 @FunctionalInterface
 public interface ResolveParameterHook extends LifecycleHook {
 
@@ -18,7 +18,6 @@ public interface ResolveParameterHook extends LifecycleHook {
 	 * A functional interface specialized on providing parameters to property methods
 	 * and to annotated lifecycle methods.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.5")
 	@FunctionalInterface
 	interface ParameterSupplier {
 		/**
@@ -43,7 +42,6 @@ public interface ResolveParameterHook extends LifecycleHook {
 	 * @param lifecycleContext Can be of type {@linkplain ContainerLifecycleContext} or {@linkplain PropertyLifecycleContext}
 	 * @return supplier instance wrapped in {@linkplain Optional} or {@linkplain Optional#empty()} if it cannot be resolved
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.5")
 	Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext);
 
 	@API(status = INTERNAL)
