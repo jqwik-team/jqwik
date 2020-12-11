@@ -29,7 +29,7 @@ public class Dates {
 	}
 
 	public static MonthDayArbitrary monthDays() {
-		return null;
+		return new DefaultMonthDayArbitrary();
 	}
 
 	public static DaysOfWeekArbitrary daysOfWeek() {
