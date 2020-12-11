@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.time.copy.ArbitraryTestHelper.*;
+import static net.jqwik.api.testing.TestingSupport.*;
 
 @Group
 public class MonthTests {
@@ -26,57 +26,62 @@ public class MonthTests {
 	class CheckMonthMethods {
 
 		@Property
-		void atTheEarliest(@ForAll("months") Month month) {
+		void atTheEarliest(@ForAll("months") Month month, @ForAll Random random) {
 
 			Arbitrary<Month> months = Dates.months().atTheEarliest(month);
 
-			assertAllGenerated(months.generator(1000), m -> {
+			assertAllGenerated(months.generator(1000), random, m -> {
 				assertThat(m).isGreaterThanOrEqualTo(month);
+				return true;
 			});
 
 		}
 
 		@Property
-		void atTheLatest(@ForAll("months") Month month) {
+		void atTheLatest(@ForAll("months") Month month, @ForAll Random random) {
 
 			Arbitrary<Month> months = Dates.months().atTheLatest(month);
 
-			assertAllGenerated(months.generator(1000), m -> {
+			assertAllGenerated(months.generator(1000), random, m -> {
 				assertThat(m).isLessThanOrEqualTo(month);
+				return true;
 			});
 		}
 
 		@Property
-		void between(@ForAll("months") Month startMonth, @ForAll("months") Month endMonth) {
+		void between(@ForAll("months") Month startMonth, @ForAll("months") Month endMonth, @ForAll Random random) {
 
 			Assume.that(startMonth.compareTo(endMonth) <= 0);
 
 			Arbitrary<Month> months = Dates.months().between(startMonth, endMonth);
 
-			assertAllGenerated(months.generator(1000), month -> {
+			assertAllGenerated(months.generator(1000), random, month -> {
 				assertThat(month).isGreaterThanOrEqualTo(startMonth);
 				assertThat(month).isLessThanOrEqualTo(endMonth);
+				return true;
 			});
 
 		}
 
 		@Property
-		void betweenSame(@ForAll("months") Month month) {
+		void betweenSame(@ForAll("months") Month month, @ForAll Random random) {
 
 			Arbitrary<Month> months = Dates.months().between(month, month);
 
-			assertAllGenerated(months.generator(1000), m -> {
+			assertAllGenerated(months.generator(1000), random, m -> {
 				assertThat(m).isEqualTo(month);
+				return true;
 			});
 		}
 
 		@Property
-		void only(@ForAll("onlyMonths") Month[] months){
+		void only(@ForAll("onlyMonths") Month[] months, @ForAll Random random){
 
 			Arbitrary<Month> monthArbitrary = Dates.months().only(months);
 
-			assertAllGenerated(monthArbitrary.generator(1000), month -> {
+			assertAllGenerated(monthArbitrary.generator(1000), random, month -> {
 				assertThat(month).isIn(months);
+				return true;
 			});
 		}
 
