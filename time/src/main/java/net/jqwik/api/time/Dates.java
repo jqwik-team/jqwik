@@ -24,11 +24,11 @@ public class Dates {
 		return new DefaultDaysOfMonthArbitrary();
 	}
 
-	public static DateArbitrary yearsAndMonths() {
-		return null;
+	public static YearMonthArbitrary yearMonths() {
+		return new DefaultYearMonthArbitrary();
 	}
 
-	public static DateArbitrary monthsAndDays() {
+	public static DateArbitrary monthDays() {
 		return null;
 	}
 
