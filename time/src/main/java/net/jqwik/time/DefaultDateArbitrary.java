@@ -1,6 +1,7 @@
 package net.jqwik.time;
 
 import java.time.*;
+import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -26,8 +27,8 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 		Arbitrary<Month> month = generateMonths();
 		Arbitrary<Integer> dayOfMonth = generateDayOfMonths();
 		return Combinators.combine(year, month, dayOfMonth)
-						  .as(this::generateValidDateFromValues)
-						  .filter(v -> v != null && !v.isBefore(dateMin) && !v.isAfter(dateMax) && isInAllowedDayOfWeeks(v.getDayOfWeek()));
+						  .as(this::generateDateFromValues)
+						  .filter(Objects::nonNull);
 	}
 
 	private Arbitrary<Year> generateYears() {
@@ -42,11 +43,14 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 		return Dates.daysOfMonth().between(dayOfMonthMin, dayOfMonthMax);
 	}
 
-	private LocalDate generateValidDateFromValues(Year y, Month m, int d) {
+	private LocalDate generateDateFromValues(Year y, Month m, int d) {
 		LocalDate date;
 		try {
 			date = LocalDate.of(y.getValue(), m, d);
 		} catch (DateTimeException e) {
+			return null;
+		}
+		if(date.isBefore(dateMin) || date.isAfter(dateMax) || !isInAllowedDayOfWeeks(date.getDayOfWeek())){
 			return null;
 		}
 		return date;
