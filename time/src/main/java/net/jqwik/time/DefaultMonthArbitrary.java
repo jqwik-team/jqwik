@@ -14,17 +14,18 @@ public class DefaultMonthArbitrary extends ArbitraryDecorator<Month> implements 
 
 	@Override
 	protected Arbitrary<Month> arbitrary() {
-		Arbitrary<Month> months = Arbitraries.of(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
+		Arbitrary<Month> months = Arbitraries
+										  .of(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
 		months = months.filter(v -> v.compareTo(min) >= 0 && v.compareTo(max) <= 0 && isInAllowedMonths(v));
 		return months;
 	}
 
-	private boolean isInAllowedMonths(Month month){
-		if(allowedMonths == null){
+	private boolean isInAllowedMonths(Month month) {
+		if (allowedMonths == null) {
 			return false;
 		}
-		for(Month m : allowedMonths){
-			if(m.equals(month)){
+		for (Month m : allowedMonths) {
+			if (m.equals(month)) {
 				return true;
 			}
 		}

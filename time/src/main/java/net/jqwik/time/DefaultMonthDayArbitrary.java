@@ -16,7 +16,6 @@ public class DefaultMonthDayArbitrary extends ArbitraryDecorator<MonthDay> imple
 	private int dayOfMonthMin = 1;
 	private int dayOfMonthMax = 31;
 
-
 	@Override
 	protected Arbitrary<MonthDay> arbitrary() {
 		DateArbitrary dates = Dates.dates()

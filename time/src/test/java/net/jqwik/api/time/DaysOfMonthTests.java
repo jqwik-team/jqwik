@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.api.testing.TestingSupport.*;
 
 @Group
-public class DaysOfMonthTests {
+class DaysOfMonthTests {
 
 	@Property
 	void validDayOfWeekIsGenerated(@ForAll("dayOfMonth") int dayOfMonth) {

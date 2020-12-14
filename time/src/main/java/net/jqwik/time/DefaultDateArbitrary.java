@@ -30,47 +30,47 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 						  .filter(v -> v != null && !v.isBefore(dateMin) && !v.isAfter(dateMax) && isInAllowedDayOfWeeks(v.getDayOfWeek()));
 	}
 
-	private Arbitrary<Year> generateYears(){
+	private Arbitrary<Year> generateYears() {
 		return Dates.years().between(yearMin, yearMax);
 	}
 
-	private Arbitrary<Month> generateMonths(){
+	private Arbitrary<Month> generateMonths() {
 		return Dates.months().between(monthMin, monthMax).only(allowedMonths);
 	}
 
-	private Arbitrary<Integer> generateDayOfMonths(){
+	private Arbitrary<Integer> generateDayOfMonths() {
 		return Dates.daysOfMonth().between(dayOfMonthMin, dayOfMonthMax);
 	}
 
-	private LocalDate generateValidDateFromValues(Year y, Month m, int d){
+	private LocalDate generateValidDateFromValues(Year y, Month m, int d) {
 		LocalDate date;
 		try {
 			date = LocalDate.of(y.getValue(), m, d);
-		} catch (DateTimeException e){
+		} catch (DateTimeException e) {
 			return null;
 		}
 		return date;
 	}
 
-	private boolean isInAllowedDayOfWeeks(DayOfWeek dayOfWeek){
-		if(allowedDayOfWeeks == null){
+	private boolean isInAllowedDayOfWeeks(DayOfWeek dayOfWeek) {
+		if (allowedDayOfWeeks == null) {
 			return false;
 		}
-		for(DayOfWeek d : allowedDayOfWeeks){
-			if(d.equals(dayOfWeek)){
+		for (DayOfWeek d : allowedDayOfWeeks) {
+			if (d.equals(dayOfWeek)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private void optimizeRuntime(){
+	private void optimizeRuntime() {
 		yearMin = Year.of(Math.max(yearMin.getValue(), dateMin.getYear()));
 		yearMax = Year.of(Math.min(yearMax.getValue(), dateMax.getYear()));
-		if(yearMin.equals(yearMax)){
+		if (yearMin.equals(yearMax)) {
 			monthMin = Month.of(Math.max(monthMin.getValue(), dateMin.getMonth().getValue()));
 			monthMax = Month.of(Math.min(monthMax.getValue(), dateMax.getMonth().getValue()));
-			if(monthMin.equals(monthMax)){
+			if (monthMin.equals(monthMax)) {
 				dayOfMonthMin = Math.max(dayOfMonthMin, dateMin.getDayOfMonth());
 				dayOfMonthMax = Math.min(dayOfMonthMax, dateMax.getDayOfMonth());
 			}

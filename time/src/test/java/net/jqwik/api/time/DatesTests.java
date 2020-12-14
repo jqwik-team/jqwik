@@ -196,7 +196,7 @@ class DatesTests {
 			}
 
 			@Property
-			void monthOnlyMonths(@ForAll("monthsOnlyMonths") Month[] months, @ForAll Random random){
+			void monthOnlyMonths(@ForAll("monthsOnlyMonths") Month[] months, @ForAll Random random) {
 
 				Arbitrary<LocalDate> dates = Dates.dates().onlyMonths(months);
 
@@ -208,7 +208,7 @@ class DatesTests {
 			}
 
 			@Provide
-			Arbitrary<Month[]> monthsOnlyMonths(){
+			Arbitrary<Month[]> monthsOnlyMonths() {
 				return MonthTests.generateMonths();
 			}
 
@@ -247,7 +247,11 @@ class DatesTests {
 			}
 
 			@Property
-			void dayOfMonthBetween(@ForAll("dayOfMonths") int startDayOfMonth, @ForAll("dayOfMonths") int endDayOfMonth, @ForAll Random random) {
+			void dayOfMonthBetween(
+					@ForAll("dayOfMonths") int startDayOfMonth,
+					@ForAll("dayOfMonths") int endDayOfMonth,
+					@ForAll Random random
+			) {
 
 				Assume.that(startDayOfMonth <= endDayOfMonth);
 
