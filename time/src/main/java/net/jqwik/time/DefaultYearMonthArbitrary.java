@@ -16,7 +16,6 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 	private Month monthMax = Month.DECEMBER;
 	private Month[] allowedMonths = new Month[]{Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER};
 
-
 	@Override
 	protected Arbitrary<YearMonth> arbitrary() {
 		DateArbitrary dates = Dates.dates()

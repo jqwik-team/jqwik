@@ -53,7 +53,11 @@ class YearMonthTests {
 			}
 
 			@Property
-			void between(@ForAll("yearMonths") YearMonth startYearMonth, @ForAll("yearMonths") YearMonth endYearMonth, @ForAll Random random) {
+			void between(
+					@ForAll("yearMonths") YearMonth startYearMonth,
+					@ForAll("yearMonths") YearMonth endYearMonth,
+					@ForAll Random random
+			) {
 
 				Assume.that(!startYearMonth.isAfter(endYearMonth));
 
@@ -196,7 +200,7 @@ class YearMonthTests {
 			}
 
 			@Property
-			void monthOnlyMonths(@ForAll("monthsOnlyMonths") Month[] months, @ForAll Random random){
+			void monthOnlyMonths(@ForAll("monthsOnlyMonths") Month[] months, @ForAll Random random) {
 
 				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().onlyMonths(months);
 
@@ -208,7 +212,7 @@ class YearMonthTests {
 			}
 
 			@Provide
-			Arbitrary<Month[]> monthsOnlyMonths(){
+			Arbitrary<Month[]> monthsOnlyMonths() {
 				return MonthTests.generateMonths();
 			}
 

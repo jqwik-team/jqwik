@@ -17,12 +17,12 @@ public class DefaultDaysOfWeekArbitrary extends ArbitraryDecorator<DayOfWeek> im
 		return daysOfWeek;
 	}
 
-	private boolean isInAllowedDayOfWeeks(DayOfWeek dayOfWeek){
-		if(allowedDayOfWeeks == null){
+	private boolean isInAllowedDayOfWeeks(DayOfWeek dayOfWeek) {
+		if (allowedDayOfWeeks == null) {
 			return false;
 		}
-		for(DayOfWeek d : allowedDayOfWeeks){
-			if(d.equals(dayOfWeek)){
+		for (DayOfWeek d : allowedDayOfWeeks) {
+			if (d.equals(dayOfWeek)) {
 				return true;
 			}
 		}
