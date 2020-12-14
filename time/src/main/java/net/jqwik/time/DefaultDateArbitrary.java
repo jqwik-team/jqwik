@@ -50,7 +50,7 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 		} catch (DateTimeException e) {
 			return null;
 		}
-		if(date.isBefore(dateMin) || date.isAfter(dateMax) || !isInAllowedDayOfWeeks(date.getDayOfWeek())){
+		if (date.isBefore(dateMin) || date.isAfter(dateMax) || !isInAllowedDayOfWeeks(date.getDayOfWeek())) {
 			return null;
 		}
 		return date;
@@ -96,32 +96,20 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	@Override
-	public DateArbitrary yearGreaterOrEqual(Year min) {
+	public DateArbitrary yearBetween(Year minYear, Year maxYear) {
 		DefaultDateArbitrary clone = typedClone();
-		min = Year.of(Math.max(min.getValue(), LocalDate.MIN.getYear()));
-		clone.yearMin = min;
+		minYear = Year.of(Math.max(minYear.getValue(), LocalDate.MIN.getYear()));
+		clone.yearMin = minYear;
+		maxYear = Year.of(Math.min(maxYear.getValue(), LocalDate.MAX.getYear()));
+		clone.yearMax = maxYear;
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary yearLessOrEqual(Year max) {
+	public DateArbitrary monthBetween(Month minMonth, Month maxMonth) {
 		DefaultDateArbitrary clone = typedClone();
-		max = Year.of(Math.min(max.getValue(), LocalDate.MAX.getYear()));
-		clone.yearMax = max;
-		return clone;
-	}
-
-	@Override
-	public DateArbitrary monthGreaterOrEqual(Month min) {
-		DefaultDateArbitrary clone = typedClone();
-		clone.monthMin = min;
-		return clone;
-	}
-
-	@Override
-	public DateArbitrary monthLessOrEqual(Month max) {
-		DefaultDateArbitrary clone = typedClone();
-		clone.monthMax = max;
+		clone.monthMin = minMonth;
+		clone.monthMax = maxMonth;
 		return clone;
 	}
 
@@ -133,18 +121,12 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	@Override
-	public DateArbitrary dayOfMonthGreaterOrEqual(int min) {
+	public DateArbitrary dayOfMonthBetween(int minDayOfMonth, int maxDayOfMonth) {
 		DefaultDateArbitrary clone = typedClone();
-		min = Math.max(1, min);
-		clone.dayOfMonthMin = min;
-		return clone;
-	}
-
-	@Override
-	public DateArbitrary dayOfMonthLessOrEqual(int max) {
-		DefaultDateArbitrary clone = typedClone();
-		max = Math.min(31, max);
-		clone.dayOfMonthMax = max;
+		minDayOfMonth = Math.max(1, minDayOfMonth);
+		clone.dayOfMonthMin = minDayOfMonth;
+		maxDayOfMonth = Math.min(31, maxDayOfMonth);
+		clone.dayOfMonthMax = maxDayOfMonth;
 		return clone;
 	}
 
