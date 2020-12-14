@@ -225,4 +225,16 @@ class YearMonthTests {
 
 	}
 
+	@Group
+	class Shrinking {
+
+		@Property
+		void defaultShrinking(@ForAll Random random){
+			YearMonthArbitrary yearMonths = Dates.yearMonths();
+			YearMonth value = shrinkToMinimal(yearMonths, random);
+			assertThat(value).isEqualTo(YearMonth.of(0, Month.JANUARY));
+		}
+
+	}
+
 }

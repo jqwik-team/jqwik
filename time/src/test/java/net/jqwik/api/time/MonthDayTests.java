@@ -225,4 +225,16 @@ class MonthDayTests {
 
 	}
 
+	@Group
+	class Shrinking {
+
+		@Property
+		void defaultShrinking(@ForAll Random random){
+			MonthDayArbitrary monthDays = Dates.monthDays();
+			MonthDay value = shrinkToMinimal(monthDays, random);
+			assertThat(value).isEqualTo(MonthDay.of(Month.JANUARY, 1));
+		}
+
+	}
+
 }

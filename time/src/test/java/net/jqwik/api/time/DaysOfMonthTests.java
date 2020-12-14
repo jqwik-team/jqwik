@@ -78,4 +78,16 @@ class DaysOfMonthTests {
 
 	}
 
+	@Group
+	class Shrinking {
+
+		@Property
+		void defaultShrinking(@ForAll Random random){
+			DaysOfMonthArbitrary daysOfMonth = Dates.daysOfMonth();
+			int value = shrinkToMinimal(daysOfMonth, random);
+			assertThat(value).isEqualTo(1);
+		}
+
+	}
+
 }

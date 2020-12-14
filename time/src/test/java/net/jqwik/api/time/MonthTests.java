@@ -92,6 +92,18 @@ public class MonthTests {
 
 	}
 
+	@Group
+	class Shrinking {
+
+		@Property
+		void defaultShrinking(@ForAll Random random){
+			MonthArbitrary months = Dates.months();
+			Month value = shrinkToMinimal(months, random);
+			assertThat(value).isEqualTo(Month.JANUARY);
+		}
+
+	}
+
 	public static Arbitrary<Month[]> generateMonths(){
 		Arbitrary<Month> monthArbitrary = Arbitraries.of(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
 		Arbitrary<Integer> length = Arbitraries.integers().between(1, 12);
