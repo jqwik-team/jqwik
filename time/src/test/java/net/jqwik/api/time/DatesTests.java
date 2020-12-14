@@ -84,30 +84,6 @@ class DatesTests {
 		class YearMethods {
 
 			@Property
-			void yearGreaterOrEqual(@ForAll("years") int year, @ForAll Random random) {
-
-				Arbitrary<LocalDate> dates = Dates.dates().yearGreaterOrEqual(year);
-
-				assertAllGenerated(dates.generator(1000), random, date -> {
-					assertThat(date.getYear()).isGreaterThanOrEqualTo(year);
-					return true;
-				});
-
-			}
-
-			@Property
-			void yearLessOrEqual(@ForAll("years") int year, @ForAll Random random) {
-
-				Arbitrary<LocalDate> dates = Dates.dates().yearLessOrEqual(year);
-
-				assertAllGenerated(dates.generator(1000), random, date -> {
-					assertThat(date.getYear()).isLessThanOrEqualTo(year);
-					return true;
-				});
-
-			}
-
-			@Property
 			void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll Random random) {
 
 				Assume.that(startYear <= endYear);
@@ -143,30 +119,6 @@ class DatesTests {
 
 		@Group
 		class MonthMethods {
-
-			@Property
-			void monthGreaterOrEqual(@ForAll("months") int month, @ForAll Random random) {
-
-				Arbitrary<LocalDate> dates = Dates.dates().monthGreaterOrEqual(month);
-
-				assertAllGenerated(dates.generator(1000), random, date -> {
-					assertThat(date.getMonth()).isGreaterThanOrEqualTo(Month.of(month));
-					return true;
-				});
-
-			}
-
-			@Property
-			void monthLessOrEqual(@ForAll("months") int month, @ForAll Random random) {
-
-				Arbitrary<LocalDate> dates = Dates.dates().monthLessOrEqual(month);
-
-				assertAllGenerated(dates.generator(1000), random, date -> {
-					assertThat(date.getMonth()).isLessThanOrEqualTo(Month.of(month));
-					return true;
-				});
-
-			}
 
 			@Property
 			void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
@@ -221,30 +173,6 @@ class DatesTests {
 
 		@Group
 		class DayOfMonthMethods {
-
-			@Property
-			void dayOfMonthGreaterOrEqual(@ForAll("dayOfMonths") int dayOfMonth, @ForAll Random random) {
-
-				Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthGreaterOrEqual(dayOfMonth);
-
-				assertAllGenerated(dates.generator(1000), random, date -> {
-					assertThat(date.getDayOfMonth()).isGreaterThanOrEqualTo(dayOfMonth);
-					return true;
-				});
-
-			}
-
-			@Property
-			void dayOfMonthLessOrEqual(@ForAll("dayOfMonths") int dayOfMonth, @ForAll Random random) {
-
-				Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthLessOrEqual(dayOfMonth);
-
-				assertAllGenerated(dates.generator(1000), random, date -> {
-					assertThat(date.getDayOfMonth()).isLessThanOrEqualTo(dayOfMonth);
-					return true;
-				});
-
-			}
 
 			@Property
 			void dayOfMonthBetween(
