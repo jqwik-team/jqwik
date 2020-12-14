@@ -257,4 +257,16 @@ class DatesTests {
 
 	}
 
+	@Group
+	class Shrinking {
+
+		@Property
+		void defaultShrinking(@ForAll Random random){
+			DateArbitrary dates = Dates.dates();
+			LocalDate value = shrinkToMinimal(dates, random);
+			assertThat(value).isEqualTo(LocalDate.of(0, Month.JANUARY, 1));
+		}
+
+	}
+
 }

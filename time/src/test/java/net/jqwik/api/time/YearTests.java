@@ -78,4 +78,16 @@ class YearTests {
 
 	}
 
+	@Group
+	class Shrinking {
+
+		@Property
+		void defaultShrinking(@ForAll Random random){
+			YearArbitrary years = Dates.years();
+			Year value = shrinkToMinimal(years, random);
+			assertThat(value).isEqualTo(Year.of(0));
+		}
+
+	}
+
 }
