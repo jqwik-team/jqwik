@@ -75,7 +75,7 @@ public class MonthTests {
 		}
 
 		@Property
-		void only(@ForAll("onlyMonths") Month[] months, @ForAll Random random){
+		void only(@ForAll("onlyMonths") Month[] months, @ForAll Random random) {
 
 			Arbitrary<Month> monthArbitrary = Dates.months().only(months);
 
@@ -86,7 +86,7 @@ public class MonthTests {
 		}
 
 		@Provide
-		Arbitrary<Month[]> onlyMonths(){
+		Arbitrary<Month[]> onlyMonths() {
 			return generateMonths();
 		}
 
@@ -96,16 +96,54 @@ public class MonthTests {
 	class Shrinking {
 
 		@Property
-		void defaultShrinking(@ForAll Random random){
+		void defaultShrinking(@ForAll Random random) {
 			MonthArbitrary months = Dates.months();
 			Month value = shrinkToMinimal(months, random);
 			assertThat(value).isEqualTo(Month.JANUARY);
 		}
 
+		@Property
+		void shrinksToSmallestFailingValue(@ForAll Random random){
+			MonthArbitrary months = Dates.months();
+			TestingFalsifier<Month> falsifier = month -> month.compareTo(Month.MARCH) < 0;
+			Month value = shrinkToMinimal(months, random, falsifier);
+			assertThat(value).isEqualTo(Month.MARCH);
+		}
+
 	}
 
-	public static Arbitrary<Month[]> generateMonths(){
-		Arbitrary<Month> monthArbitrary = Arbitraries.of(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
+	@Group
+	class ExhaustiveGeneration {
+
+		@Property(tries = 5)
+		void between() {
+			Optional<ExhaustiveGenerator<Month>> optionalGenerator = Dates.months().between(Month.MARCH, Month.JULY).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Month> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
+			assertThat(generator)
+					.containsExactly(Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY);
+		}
+
+		@Property(tries = 5)
+		void only() {
+			Optional<ExhaustiveGenerator<Month>> optionalGenerator = Dates.months()
+																		  .only(Month.JANUARY, Month.MARCH, Month.APRIL, Month.DECEMBER)
+																		  .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Month> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
+			assertThat(generator)
+					.containsExactly(Month.JANUARY, Month.MARCH, Month.APRIL, Month.DECEMBER);
+		}
+
+	}
+
+	public static Arbitrary<Month[]> generateMonths() {
+		Arbitrary<Month> monthArbitrary = Arbitraries
+												  .of(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
 		Arbitrary<Integer> length = Arbitraries.integers().between(1, 12);
 		Arbitrary<List<Month>> arbitrary = length.flatMap(depth -> Arbitraries.recursive(
 				() -> monthArbitrary.map(v -> new ArrayList<>()),
@@ -115,12 +153,12 @@ public class MonthTests {
 		return arbitrary.map(v -> v.toArray(new Month[]{}));
 	}
 
-	private static Arbitrary<List<Month>> addMonth(Arbitrary<List<Month>> listArbitrary, Arbitrary<Month> monthArbitrary){
+	private static Arbitrary<List<Month>> addMonth(Arbitrary<List<Month>> listArbitrary, Arbitrary<Month> monthArbitrary) {
 		return Combinators.combine(listArbitrary, monthArbitrary).as(MonthTests::addToList);
 	}
 
-	private static List<Month> addToList(List<Month> list, Month month){
-		if(!list.contains(month)){
+	private static List<Month> addToList(List<Month> list, Month month) {
+		if (!list.contains(month)) {
 			list.add(month);
 		}
 		return list;

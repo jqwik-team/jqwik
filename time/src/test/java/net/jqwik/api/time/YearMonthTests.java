@@ -229,10 +229,61 @@ class YearMonthTests {
 	class Shrinking {
 
 		@Property
-		void defaultShrinking(@ForAll Random random){
+		void defaultShrinking(@ForAll Random random) {
 			YearMonthArbitrary yearMonths = Dates.yearMonths();
 			YearMonth value = shrinkToMinimal(yearMonths, random);
 			assertThat(value).isEqualTo(YearMonth.of(0, Month.JANUARY));
+		}
+
+		@Property
+		void shrinksToSmallestFailingPositiveValue(@ForAll Random random){
+			YearMonthArbitrary yearMonths = Dates.yearMonths();
+			TestingFalsifier<YearMonth> falsifier = ym -> ym.isBefore(YearMonth.of(2013, Month.MAY));
+			YearMonth value = shrinkToMinimal(yearMonths, random, falsifier);
+			assertThat(value).isEqualTo(YearMonth.of(2013, Month.MAY));
+		}
+
+		@Property
+		void shrinksToSmallestFailingNegativeValue(@ForAll Random random){
+			YearMonthArbitrary yearMonths = Dates.yearMonths();
+			TestingFalsifier<YearMonth> falsifier = ym -> ym.isAfter(YearMonth.of(-2013, Month.MAY));
+			YearMonth value = shrinkToMinimal(yearMonths, random, falsifier);
+			assertThat(value).isEqualTo(YearMonth.of(-2013, Month.MAY));
+		}
+
+	}
+
+	@Group
+	class ExhaustiveGeneration {
+
+		@Property(tries = 5)
+		void between() {
+			Optional<ExhaustiveGenerator<YearMonth>> optionalGenerator = Dates.yearMonths()
+																			  .between(YearMonth.of(41, Month.OCTOBER), YearMonth
+																																.of(42, Month.FEBRUARY))
+																			  .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<YearMonth> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(24); // Cannot know the number of filtered elements in advance
+			assertThat(generator)
+					.containsExactly(YearMonth.of(41, Month.OCTOBER), YearMonth.of(41, Month.NOVEMBER), YearMonth
+																												.of(41, Month.DECEMBER), YearMonth
+																																				 .of(42, Month.JANUARY), YearMonth
+																																												 .of(42, Month.FEBRUARY));
+		}
+
+		@Property(tries = 5)
+		void onlyMonthsWithSameYear() {
+			Optional<ExhaustiveGenerator<YearMonth>> optionalGenerator = Dates.yearMonths().yearBetween(42, 42)
+																			  .onlyMonths(Month.FEBRUARY, Month.MARCH, Month.SEPTEMBER)
+																			  .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<YearMonth> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
+			assertThat(generator)
+					.containsExactly(YearMonth.of(42, Month.FEBRUARY), YearMonth.of(42, Month.MARCH), YearMonth.of(42, Month.SEPTEMBER));
 		}
 
 	}

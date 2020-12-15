@@ -303,10 +303,6 @@ public class ArbitrariesEmailsTests {
 			assertThat(value).isEqualTo("A@[::]");
 		}
 
-		private TestingFalsifier<String> falsifyDefault() {
-			return email -> false;
-		}
-
 		private TestingFalsifier<String> falsifyDomain() {
 			return email -> {
 				String domain = getEmailHost(email);

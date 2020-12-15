@@ -82,10 +82,34 @@ class DaysOfMonthTests {
 	class Shrinking {
 
 		@Property
-		void defaultShrinking(@ForAll Random random){
+		void defaultShrinking(@ForAll Random random) {
 			DaysOfMonthArbitrary daysOfMonth = Dates.daysOfMonth();
 			int value = shrinkToMinimal(daysOfMonth, random);
 			assertThat(value).isEqualTo(1);
+		}
+
+		@Property
+		void shrinksToSmallestFailingValue(@ForAll Random random){
+			DaysOfMonthArbitrary daysOfMonths = Dates.daysOfMonth();
+			TestingFalsifier<Integer> falsifier = day -> day.intValue() < 17;
+			int value = shrinkToMinimal(daysOfMonths, random, falsifier);
+			assertThat(value).isEqualTo(17);
+		}
+
+	}
+
+	@Group
+	class ExhaustiveGeneration {
+
+		@Property(tries = 5)
+		void between() {
+			Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Dates.daysOfMonth().between(10, 17).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(8);
+			assertThat(generator)
+					.containsExactly(10, 11, 12, 13, 14, 15, 16, 17);
 		}
 
 	}
