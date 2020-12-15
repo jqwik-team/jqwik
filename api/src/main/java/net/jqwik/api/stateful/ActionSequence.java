@@ -47,7 +47,7 @@ public interface ActionSequence<M> {
 	 *
 	 * @see	#withInvariant(Invariant)
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.5")
+	@API(status = MAINTAINED, since = "1.4.0")
 	ActionSequence<M> withInvariant(String label, Invariant<M> invariant);
 
 	M finalModel();

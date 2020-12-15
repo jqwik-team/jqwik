@@ -1,6 +1,6 @@
 - 1.4.0
 
-    - Review EXPERIMENTAL APIs and promote some to MAINTAINED    
+    - Review TODOs    
 
     - Fill in some gaps in Javadoc (e.g. Combinators)
     

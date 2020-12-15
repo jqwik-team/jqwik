@@ -45,7 +45,7 @@ public interface StatisticsCollector {
 	 *
 	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
+	@API(status = MAINTAINED, since = "1.4.0")
 	void coverage(Consumer<StatisticsCoverage> checker);
 
 }

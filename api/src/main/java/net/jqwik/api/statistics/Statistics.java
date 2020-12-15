@@ -105,7 +105,7 @@ public class Statistics {
 	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
 	 * @see #collect(Object...) javadoc of the collect(Object...) method for example usage
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
+	@API(status = MAINTAINED, since = "1.4.0")
 	public static void coverage(Consumer<StatisticsCoverage> checker) {
 		StatisticsFacade.implementation.defaultCollector().coverage(checker);
 	}

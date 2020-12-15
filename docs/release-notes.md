@@ -24,6 +24,7 @@ title: jqwik Release Notes
 #### New and Enhanced Features
 
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
+    - Mostly everything in package `net.jqwik.api.lifecycle`
     - Method `Arbitrary.dontShrink()`
     - Method `Combinators.CombinableBuilder.inSetter(..)`
     - Class `PropertyDefaults`
@@ -43,7 +44,11 @@ title: jqwik Release Notes
     - Method `SetArbitrary.flatMapEach(..)`
     - Method `ListArbitrary.mapEach(..)`
     - Method `ListArbitrary.flatMapEach(..)`
-    - Mostly everything in package `net.jqwik.api.lifecycle`
+    - Method `ActionSequence.withInvariant(..)`
+    - Method `Statistics.coverage(..)`
+    - Method `StatisticsCollector.coverage(..)`
+    - Class `StatisticsCoverage`
+    - Class `StatisticsEntry`
 
 #### Breaking Changes
 

@@ -12,7 +12,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see StatisticsReportFormat
  */
-@API(status = EXPERIMENTAL, since = "1.2.3")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface StatisticsEntry {
 
 	/**
@@ -33,6 +33,5 @@ public interface StatisticsEntry {
 	/**
 	 * The values collected during {@linkplain Statistics#collect(Object...)}
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.0")
 	List<Object> values();
 }
