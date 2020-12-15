@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
