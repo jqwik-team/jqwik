@@ -76,15 +76,6 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	}
 
 	@Override
-	public boolean isUnique() {
-		// TODO Remove as soon as CharacterArbitrary.with(Arbitrary<Character>) has been removed
-		if (partsWithSize.isEmpty()) {
-			return false;
-		}
-		return partsWithSize.stream().allMatch(a -> a.get2().isUnique());
-	}
-
-	@Override
 	public CharacterArbitrary range(char min, char max) {
 		return cloneWith(rangeArbitrary(min, max), max - min + 1);
 	}

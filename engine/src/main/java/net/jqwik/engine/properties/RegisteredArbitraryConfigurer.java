@@ -22,12 +22,7 @@ public class RegisteredArbitraryConfigurer {
 					// Configurators are allowed to return null for filtering out arbitraries
 					break;
 				}
-				// TODO: This condition exists 3 times
-				if (createdArbitrary instanceof SelfConfiguringArbitrary) {
-					createdArbitrary = performSelfConfiguration(createdArbitrary, arbitraryConfigurator, targetType);
-				} else {
-					createdArbitrary = arbitraryConfigurator.configure(createdArbitrary, targetType);
-				}
+				createdArbitrary = SelfConfiguringArbitrary.configure(createdArbitrary, arbitraryConfigurator, targetType);
 			}
 		}
 		return createdArbitrary;
@@ -36,16 +31,6 @@ public class RegisteredArbitraryConfigurer {
 	private boolean hasConfigurationAnnotation(TypeUsage targetType) {
 		return targetType.getAnnotations().stream()
 						 .anyMatch(annotation -> !annotation.annotationType().equals(ForAll.class));
-	}
-
-	private <T> Arbitrary<T> performSelfConfiguration(
-		Arbitrary<T> arbitrary,
-		ArbitraryConfigurator configurator,
-		TypeUsage parameter
-	) {
-		@SuppressWarnings("unchecked")
-		SelfConfiguringArbitrary<T> selfConfiguringArbitrary = (SelfConfiguringArbitrary<T>) arbitrary;
-		return selfConfiguringArbitrary.configure(configurator, parameter);
 	}
 
 }

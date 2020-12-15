@@ -60,7 +60,7 @@ class LazyArbitraryShrinkingTests {
 		List<Integer> shrunkValue = shrinkToMinimal(falsifiedShrinkable, falsifier, null);
 
 		Assertions.assertThat(shrunkValue.size()).isLessThanOrEqualTo(falsifiedShrinkable.value().size());
-		// TODO: Should be improved
+		// TODO: Shrinking should be improved so that:
 		// Assertions.assertThat(shrunkValue).isEqualTo(Arrays.asList(1, 1));
 	}
 

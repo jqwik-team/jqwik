@@ -83,7 +83,8 @@ class PropertyTaskCreator {
 		try {
 			return methodDescriptor.getParent().map(
 				containerDescriptor -> {
-					//TODO: Hand context in from outside to always have the same instance
+					//TODO: Hand context in from outside to always have the same instance.
+					//  This will require a major overhaul of task creation :-(
 					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(containerDescriptor);
 					ContainerLifecycleContext containerLifecycleContext = new DefaultContainerLifecycleContext(
 						(ContainerClassDescriptor) containerDescriptor,

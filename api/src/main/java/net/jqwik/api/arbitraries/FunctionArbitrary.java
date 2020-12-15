@@ -27,6 +27,6 @@ public interface FunctionArbitrary<F, R> extends Arbitrary<F> {
 	 * @param answer A function that produces a concrete answer or throws an exception
 	 * @return A new instance of function arbitrary
 	 */
-	<F_> FunctionArbitrary<F_, R> when(Predicate<List<Object>> parameterCondition, Function<List<Object>, R> answer);
+	<F_ extends F> FunctionArbitrary<F_, R> when(Predicate<List<Object>> parameterCondition, Function<List<Object>, R> answer);
 
 }

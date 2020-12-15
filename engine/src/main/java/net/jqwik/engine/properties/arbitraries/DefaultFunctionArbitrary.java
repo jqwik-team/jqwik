@@ -51,8 +51,7 @@ public class DefaultFunctionArbitrary<F, R> extends AbstractArbitraryBase implem
 	}
 
 	@Override
-	// TODO: Is there a way to map F on F_ safely?
-	public <F_> FunctionArbitrary<F_, R> when(Predicate<List<Object>> parameterCondition, Function<List<Object>, R> answer) {
+	public <F_ extends F> FunctionArbitrary<F_, R> when(Predicate<List<Object>> parameterCondition, Function<List<Object>, R> answer) {
 		DefaultFunctionArbitrary<F_, R> clone = typedClone();
 		clone.conditions.addAll(this.conditions);
 		clone.addCondition(Tuple.of(parameterCondition, answer));

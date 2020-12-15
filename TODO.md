@@ -1,7 +1,5 @@
 - 1.4.0
 
-    - Review TODOs    
-
     - Fill in some gaps in Javadoc (e.g. Combinators)
     
     - Time and Date Generation Module
