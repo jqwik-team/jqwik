@@ -1450,7 +1450,7 @@ If you want to generate tuples of the same base types that also use the same gen
 Arbitrary<Tuple.Tuple2> integerPair = Arbitrary.integers().between(1, 25).tuple2();
 ```
 
-There's a method for tuples of length 1 to 4:
+There's a method for tuples of length 1 to 5:
 
 - [`Arbitrary.tuple1()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple1())
 - [`Arbitrary.tuple2()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple2())
