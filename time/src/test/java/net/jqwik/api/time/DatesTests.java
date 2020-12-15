@@ -231,8 +231,9 @@ class DatesTests {
 				return generateDayOfWeeks();
 			}
 
-			Arbitrary<DayOfWeek[]> generateDayOfWeeks(){
-				Arbitrary<DayOfWeek> dayOfWeekArbitrary = Arbitraries.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
+			Arbitrary<DayOfWeek[]> generateDayOfWeeks() {
+				Arbitrary<DayOfWeek> dayOfWeekArbitrary = Arbitraries
+																  .of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
 				Arbitrary<Integer> length = Arbitraries.integers().between(1, 7);
 				Arbitrary<List<DayOfWeek>> arbitrary = length.flatMap(depth -> Arbitraries.recursive(
 						() -> dayOfWeekArbitrary.map(v -> new ArrayList<>()),
@@ -242,12 +243,12 @@ class DatesTests {
 				return arbitrary.map(v -> v.toArray(new DayOfWeek[]{}));
 			}
 
-			Arbitrary<List<DayOfWeek>> addDayOfWeek(Arbitrary<List<DayOfWeek>> listArbitrary, Arbitrary<DayOfWeek> monthArbitrary){
+			Arbitrary<List<DayOfWeek>> addDayOfWeek(Arbitrary<List<DayOfWeek>> listArbitrary, Arbitrary<DayOfWeek> monthArbitrary) {
 				return Combinators.combine(listArbitrary, monthArbitrary).as(this::addToList);
 			}
 
-			List<DayOfWeek> addToList(List<DayOfWeek> list, DayOfWeek dayOfWeek){
-				if(!list.contains(dayOfWeek)){
+			List<DayOfWeek> addToList(List<DayOfWeek> list, DayOfWeek dayOfWeek) {
+				if (!list.contains(dayOfWeek)) {
 					list.add(dayOfWeek);
 				}
 				return list;
@@ -261,10 +262,78 @@ class DatesTests {
 	class Shrinking {
 
 		@Property
-		void defaultShrinking(@ForAll Random random){
+		void defaultShrinking(@ForAll Random random) {
 			DateArbitrary dates = Dates.dates();
 			LocalDate value = shrinkToMinimal(dates, random);
 			assertThat(value).isEqualTo(LocalDate.of(0, Month.JANUARY, 1));
+		}
+
+		@Property
+		void shrinksToSmallestFailingPositiveValue(@ForAll Random random){
+			DateArbitrary dates = Dates.dates();
+			TestingFalsifier<LocalDate> falsifier = date -> date.isBefore(LocalDate.of(2013, Month.MAY, 25));
+			LocalDate value = shrinkToMinimal(dates, random, falsifier);
+			assertThat(value).isEqualTo(LocalDate.of(2013, Month.MAY, 25));
+		}
+
+		@Property
+		void shrinksToSmallestFailingNegativeValue(@ForAll Random random){
+			DateArbitrary dates = Dates.dates();
+			TestingFalsifier<LocalDate> falsifier = date -> date.isAfter(LocalDate.of(-2013, Month.MAY, 25));
+			LocalDate value = shrinkToMinimal(dates, random, falsifier);
+			assertThat(value).isEqualTo(LocalDate.of(-2013, Month.MAY, 25));
+		}
+
+	}
+
+	@Group
+	class ExhaustiveGeneration {
+
+		@Property(tries = 5)
+		void between() {
+			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator = Dates.dates()
+																			  .between(LocalDate.of(42, Month.DECEMBER, 30), LocalDate
+																																	 .of(43, Month.JANUARY, 2))
+																			  .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(744); // Cannot know the number of filtered elements in advance
+			assertThat(generator).containsExactly(LocalDate.of(42, Month.DECEMBER, 30), LocalDate.of(42, Month.DECEMBER, 31), LocalDate
+																																	  .of(43, Month.JANUARY, 1), LocalDate
+																																										 .of(43, Month.JANUARY, 2));
+		}
+
+		@Property(tries = 5)
+		void onlyMonthsWithSameYearAndDayOfMonth() {
+			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator = Dates.dates().yearBetween(1997, 1997).dayOfMonthBetween(17, 17)
+																			  .onlyMonths(Month.MARCH, Month.OCTOBER, Month.DECEMBER)
+																			  .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
+			assertThat(generator).containsExactly(LocalDate.of(1997, Month.MARCH, 17), LocalDate.of(1997, Month.OCTOBER, 17), LocalDate
+																																	  .of(1997, Month.DECEMBER, 17));
+		}
+
+		@Property(tries = 5)
+		void onlyDaysOfWeekWithSameYearAndMonth() {
+			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator = Dates.dates().yearBetween(2020, 2020).monthBetween(12, 12)
+																			  .onlyDaysOfWeek(DayOfWeek.MONDAY, DayOfWeek.THURSDAY)
+																			  .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(372); // Cannot know the number of filtered elements in advance
+			assertThat(generator).containsExactly(LocalDate.of(2020, Month.DECEMBER, 3), LocalDate.of(2020, Month.DECEMBER, 7), LocalDate
+																																		.of(2020, Month.DECEMBER, 10), LocalDate
+																																											   .of(2020, Month.DECEMBER, 14), LocalDate
+																																																					  .of(2020, Month.DECEMBER, 17), LocalDate
+																																																															 .of(2020, Month.DECEMBER, 21), LocalDate
+																																																																									.of(2020, Month.DECEMBER, 24), LocalDate
+																																																																																		   .of(2020, Month.DECEMBER, 28), LocalDate
+																																																																																												  .of(2020, Month.DECEMBER, 31));
 		}
 
 	}

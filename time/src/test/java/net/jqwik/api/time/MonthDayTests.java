@@ -229,10 +229,49 @@ class MonthDayTests {
 	class Shrinking {
 
 		@Property
-		void defaultShrinking(@ForAll Random random){
+		void defaultShrinking(@ForAll Random random) {
 			MonthDayArbitrary monthDays = Dates.monthDays();
 			MonthDay value = shrinkToMinimal(monthDays, random);
 			assertThat(value).isEqualTo(MonthDay.of(Month.JANUARY, 1));
+		}
+
+		@Property
+		void shrinksToSmallestFailingValue(@ForAll Random random){
+			MonthDayArbitrary monthDays = Dates.monthDays();
+			TestingFalsifier<MonthDay> falsifier = md -> md.isBefore(MonthDay.of(Month.MAY, 25));
+			MonthDay value = shrinkToMinimal(monthDays, random, falsifier);
+			assertThat(value).isEqualTo(MonthDay.of(Month.MAY, 25));
+		}
+
+	}
+
+	@Group
+	class ExhaustiveGeneration {
+
+		@Property(tries = 5)
+		void between() {
+			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator = Dates.monthDays()
+																			 .between(MonthDay.of(Month.FEBRUARY, 27), MonthDay.of(Month.MARCH, 2))
+																			 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<MonthDay> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(372); // Cannot know the number of filtered elements in advance
+			assertThat(generator)
+					.containsExactly(MonthDay.of(Month.FEBRUARY, 27), MonthDay.of(Month.FEBRUARY, 28), MonthDay.of(Month.FEBRUARY, 29), MonthDay.of(Month.MARCH, 1), MonthDay.of(Month.MARCH, 2));
+		}
+
+		@Property(tries = 5)
+		void onlyMonthsWithSameDayOfMonths() {
+			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator = Dates.monthDays().dayOfMonthBetween(17, 17)
+																			 .onlyMonths(Month.APRIL, Month.AUGUST, Month.OCTOBER)
+																			 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<MonthDay> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
+			assertThat(generator)
+					.containsExactly(MonthDay.of(Month.APRIL, 17), MonthDay.of(Month.AUGUST, 17), MonthDay.of(Month.OCTOBER, 17));
 		}
 
 	}
