@@ -1,7 +1,17 @@
 - 1.4.0
 
     - Fill in some gaps in Javadoc (e.g. Combinators)
-    
+
+    - Publish test report in github action
+      ```
+      -   name: Publish Test Report
+          uses: scacap/action-surefire-report@v1
+          if: always()
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            report_paths: '**/build/test-results/test/TEST-*.xml'
+      ```  
+
     - Email generation
         - Fix TODO in DefaultEmailArbitrary
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails()
