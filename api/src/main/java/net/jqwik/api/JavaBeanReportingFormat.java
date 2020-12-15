@@ -12,8 +12,7 @@ public abstract class JavaBeanReportingFormat implements SampleReportingFormat {
 
 	@API(status = INTERNAL)
 	abstract public static class JavaBeanReportingFormatFacade {
-		// TODO: Make private as soon as SampleReportingFormat.reportAsBean() has been removed
-		static final JavaBeanReportingFormatFacade implementation;
+		private static final JavaBeanReportingFormatFacade implementation;
 
 		static {
 			implementation = FacadeLoader.load(JavaBeanReportingFormatFacade.class);
