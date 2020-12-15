@@ -2,11 +2,9 @@
 
     - Fill in some gaps in Javadoc (e.g. Combinators)
     
-    - Time and Date Generation Module
-        - https://github.com/jlink/jqwik/issues/140
-    
     - Email generation
-        - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails() 
+        - Fix TODO in DefaultEmailArbitrary
+        - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails()
         - @Email -> net.jqwik.api.web.@Email
         - Emails.localPart(String) 
         - Emails.host(String) 
@@ -14,6 +12,9 @@
     - Add code of conduct. Examples:
         - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
         - https://github.com/junit-team/junit5/blob/main/CODE_OF_CONDUCT.md
+
+    - Time and Date Generation Module
+        - https://github.com/jlink/jqwik/issues/140
 
     - Edge Cases
 
