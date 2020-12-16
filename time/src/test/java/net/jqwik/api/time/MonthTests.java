@@ -117,6 +117,17 @@ public class MonthTests {
 	class ExhaustiveGeneration {
 
 		@Property(tries = 5)
+		void containsAllValues() {
+			Optional<ExhaustiveGenerator<Month>> optionalGenerator = Dates.months().exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Month> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
+			assertThat(generator)
+					.containsExactly(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
+		}
+
+		@Property(tries = 5)
 		void between() {
 			Optional<ExhaustiveGenerator<Month>> optionalGenerator = Dates.months().between(Month.MARCH, Month.JULY).exhaustive();
 			assertThat(optionalGenerator).isPresent();
