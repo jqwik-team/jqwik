@@ -90,7 +90,7 @@ class DaysOfMonthTests {
 		}
 
 		@Property
-		void shrinksToSmallestFailingValue(@ForAll Random random){
+		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			DaysOfMonthArbitrary daysOfMonths = Dates.daysOfMonth();
 			TestingFalsifier<Integer> falsifier = day -> day.intValue() < 17;
 			int value = shrinkToMinimal(daysOfMonths, random, falsifier);
@@ -101,6 +101,17 @@ class DaysOfMonthTests {
 
 	@Group
 	class ExhaustiveGeneration {
+
+		@Property(tries = 5)
+		void containsAllValues() {
+			Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Dates.daysOfMonth().exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(31);
+			assertThat(generator)
+					.containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31);
+		}
 
 		@Property(tries = 5)
 		void between() {
