@@ -303,4 +303,30 @@ class MonthDayTests {
 
 	}
 
+	@Group
+	class EdgeCasesTests {
+
+		@Property(tries = 5)
+		void all() {
+
+			MonthDayArbitrary monthDays = Dates.monthDays();
+			Set<MonthDay> edgeCases = collectEdgeCases(monthDays.edgeCases());
+			assertThat(edgeCases).hasSize(2 * 4);
+			assertThat(edgeCases)
+					.containsExactly(MonthDay.of(Month.JANUARY, 1), MonthDay.of(Month.DECEMBER, 1), MonthDay.of(Month.JANUARY, 2), MonthDay.of(Month.DECEMBER, 2), MonthDay.of(Month.JANUARY, 30), MonthDay.of(Month.DECEMBER, 30), MonthDay.of(Month.JANUARY, 31), MonthDay.of(Month.DECEMBER, 31));
+
+		}
+
+		@Property(tries = 5)
+		void between() {
+
+			MonthDayArbitrary monthDays = Dates.monthDays().between(MonthDay.of(Month.FEBRUARY, 28), MonthDay.of(Month.APRIL, 10));
+			Set<MonthDay> edgeCases = collectEdgeCases(monthDays.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactly(MonthDay.of(Month.FEBRUARY, 28), MonthDay.of(Month.APRIL, 10));
+
+		}
+
+	}
+
 }

@@ -270,7 +270,7 @@ class DatesTests {
 		}
 
 		@Property
-		void shrinksToSmallestFailingPositiveValue(@ForAll Random random){
+		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
 			DateArbitrary dates = Dates.dates();
 			TestingFalsifier<LocalDate> falsifier = date -> date.isBefore(LocalDate.of(2013, Month.MAY, 25));
 			LocalDate value = shrinkToMinimal(dates, random, falsifier);
@@ -278,7 +278,7 @@ class DatesTests {
 		}
 
 		@Property
-		void shrinksToSmallestFailingNegativeValue(@ForAll Random random){
+		void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
 			DateArbitrary dates = Dates.dates();
 			TestingFalsifier<LocalDate> falsifier = date -> date.isAfter(LocalDate.of(-2013, Month.MAY, 25));
 			LocalDate value = shrinkToMinimal(dates, random, falsifier);
@@ -335,6 +335,48 @@ class DatesTests {
 																																																																									.of(2020, Month.DECEMBER, 24), LocalDate
 																																																																																		   .of(2020, Month.DECEMBER, 28), LocalDate
 																																																																																												  .of(2020, Month.DECEMBER, 31));
+		}
+
+	}
+
+	@Group
+	class EdgeCasesTests {
+
+		@Property(tries = 5)
+		void all() {
+
+			DateArbitrary dates = Dates.dates();
+			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
+			assertThat(edgeCases).hasSize(9 * 2 * 4);
+			assertThat(edgeCases).containsExactlyInAnyOrderElementsOf(generateEdgeCaseDates());
+
+		}
+
+		@Property(tries = 5)
+		void between() {
+
+			DateArbitrary dates = Dates.dates().between(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(200, Month.NOVEMBER, 10));
+			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactly(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(200, Month.NOVEMBER, 10));
+
+		}
+
+		List<LocalDate> generateEdgeCaseDates() {
+
+			List<LocalDate> dateList = new ArrayList<>();
+			Year[] yearEdgeCases = new Year[]{Year.of(-999999999), Year.of(-999999998), Year.of(-2), Year.of(-1), Year.of(0), Year.of(1), Year.of(2), Year.of(999999998), Year.of(999999999)};
+			Month[] monthEdgeCases = new Month[]{Month.JANUARY, Month.DECEMBER};
+			int[] dayOfMonthEdgeCases = new int[]{1, 2, 30, 31};
+			for (Year y : yearEdgeCases) {
+				for (Month m : monthEdgeCases) {
+					for (int d : dayOfMonthEdgeCases) {
+						dateList.add(LocalDate.of(y.getValue(), m, d));
+					}
+				}
+			}
+			return dateList;
+
 		}
 
 	}

@@ -104,7 +104,7 @@ public class MonthTests {
 		}
 
 		@Property
-		void shrinksToSmallestFailingValue(@ForAll Random random){
+		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			MonthArbitrary months = Dates.months();
 			TestingFalsifier<Month> falsifier = month -> month.compareTo(Month.MARCH) < 0;
 			Month value = shrinkToMinimal(months, random, falsifier);
@@ -149,6 +149,31 @@ public class MonthTests {
 			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
 			assertThat(generator)
 					.containsExactly(Month.JANUARY, Month.MARCH, Month.APRIL, Month.DECEMBER);
+		}
+
+	}
+
+	@Group
+	class EdgeCasesTests {
+
+		@Property(tries = 5)
+		void all() {
+
+			MonthArbitrary months = Dates.months();
+			Set<Month> edgeCases = collectEdgeCases(months.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).contains(Month.JANUARY, Month.DECEMBER);
+
+		}
+
+		@Property(tries = 5)
+		void between() {
+
+			MonthArbitrary months = Dates.months().between(Month.MARCH, Month.AUGUST);
+			Set<Month> edgeCases = collectEdgeCases(months.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).contains(Month.MARCH, Month.AUGUST);
+
 		}
 
 	}

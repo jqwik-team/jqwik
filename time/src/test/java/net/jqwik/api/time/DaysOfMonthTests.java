@@ -126,4 +126,29 @@ class DaysOfMonthTests {
 
 	}
 
+	@Group
+	class EdgeCasesTests {
+
+		@Property(tries = 5)
+		void all() {
+
+			DaysOfMonthArbitrary daysOfMonths = Dates.daysOfMonth();
+			Set<Integer> edgeCases = collectEdgeCases(daysOfMonths.edgeCases());
+			assertThat(edgeCases).hasSize(4);
+			assertThat(edgeCases).contains(1, 2, 30, 31);
+
+		}
+
+		@Property(tries = 5)
+		void between() {
+
+			DaysOfMonthArbitrary daysOfMonths = Dates.daysOfMonth().between(5, 12);
+			Set<Integer> edgeCases = collectEdgeCases(daysOfMonths.edgeCases());
+			assertThat(edgeCases).hasSize(4);
+			assertThat(edgeCases).contains(5, 6, 11, 12);
+
+		}
+
+	}
+
 }
