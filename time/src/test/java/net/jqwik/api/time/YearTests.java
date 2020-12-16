@@ -90,7 +90,7 @@ class YearTests {
 		}
 
 		@Property
-		void shrinksToSmallestFailingPositiveValue(@ForAll Random random){
+		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
 			YearArbitrary years = Dates.years();
 			TestingFalsifier<Year> falsifier = year -> year.getValue() < 42;
 			Year value = shrinkToMinimal(years, random, falsifier);
@@ -98,7 +98,7 @@ class YearTests {
 		}
 
 		@Property
-		void shrinksToSmallestFailingNegativeValue(@ForAll Random random){
+		void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
 			YearArbitrary years = Dates.years();
 			TestingFalsifier<Year> falsifier = year -> year.getValue() > -42;
 			Year value = shrinkToMinimal(years, random, falsifier);
@@ -119,6 +119,32 @@ class YearTests {
 			assertThat(generator.maxCount()).isEqualTo(11);
 			assertThat(generator)
 					.containsExactly(Year.of(-5), Year.of(-4), Year.of(-3), Year.of(-2), Year.of(-1), Year.of(0), Year.of(1), Year.of(2), Year.of(3), Year.of(4), Year.of(5));
+		}
+
+	}
+
+	@Group
+	class EdgeCasesTests {
+
+		@Property(tries = 5)
+		void all() {
+
+			YearArbitrary years = Dates.years();
+			Set<Year> edgeCases = collectEdgeCases(years.edgeCases());
+			assertThat(edgeCases).hasSize(9);
+			assertThat(edgeCases)
+					.contains(Year.of(-999999999), Year.of(-999999998), Year.of(-2), Year.of(-1), Year.of(0), Year.of(1), Year.of(2), Year.of(999999998), Year.of(999999999));
+
+		}
+
+		@Property(tries = 5)
+		void between() {
+
+			YearArbitrary years = Dates.years().between(100, 200);
+			Set<Year> edgeCases = collectEdgeCases(years.edgeCases());
+			assertThat(edgeCases).hasSize(4);
+			assertThat(edgeCases).contains(Year.of(100), Year.of(101), Year.of(199), Year.of(200));
+
 		}
 
 	}

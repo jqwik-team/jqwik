@@ -237,7 +237,7 @@ class YearMonthTests {
 		}
 
 		@Property
-		void shrinksToSmallestFailingPositiveValue(@ForAll Random random){
+		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
 			YearMonthArbitrary yearMonths = Dates.yearMonths();
 			TestingFalsifier<YearMonth> falsifier = ym -> ym.isBefore(YearMonth.of(2013, Month.MAY));
 			YearMonth value = shrinkToMinimal(yearMonths, random, falsifier);
@@ -245,7 +245,7 @@ class YearMonthTests {
 		}
 
 		@Property
-		void shrinksToSmallestFailingNegativeValue(@ForAll Random random){
+		void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
 			YearMonthArbitrary yearMonths = Dates.yearMonths();
 			TestingFalsifier<YearMonth> falsifier = ym -> ym.isAfter(YearMonth.of(-2013, Month.MAY));
 			YearMonth value = shrinkToMinimal(yearMonths, random, falsifier);
@@ -285,6 +285,45 @@ class YearMonthTests {
 			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
 			assertThat(generator)
 					.containsExactly(YearMonth.of(42, Month.FEBRUARY), YearMonth.of(42, Month.MARCH), YearMonth.of(42, Month.SEPTEMBER));
+		}
+
+	}
+
+	@Group
+	class EdgeCasesTests {
+
+		@Property(tries = 5)
+		void all() {
+
+			YearMonthArbitrary yearMonths = Dates.yearMonths();
+			Set<YearMonth> edgeCases = collectEdgeCases(yearMonths.edgeCases());
+			assertThat(edgeCases).hasSize(9 * 2);
+			assertThat(edgeCases).containsExactlyInAnyOrderElementsOf(generateEdgeCaseYearMonths());
+
+		}
+
+		@Property(tries = 5)
+		void between() {
+
+			YearMonthArbitrary yearMonths = Dates.yearMonths().between(YearMonth.of(100, Month.MARCH), YearMonth.of(200, Month.OCTOBER));
+			Set<YearMonth> edgeCases = collectEdgeCases(yearMonths.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactly(YearMonth.of(100, Month.MARCH), YearMonth.of(200, Month.OCTOBER));
+
+		}
+
+		List<YearMonth> generateEdgeCaseYearMonths() {
+
+			List<YearMonth> yearMonthsList = new ArrayList<>();
+			Year[] yearEdgeCases = new Year[]{Year.of(-999999999), Year.of(-999999998), Year.of(-2), Year.of(-1), Year.of(0), Year.of(1), Year.of(2), Year.of(999999998), Year.of(999999999)};
+			Month[] monthEdgeCases = new Month[]{Month.JANUARY, Month.DECEMBER};
+			for (Year y : yearEdgeCases) {
+				for (Month m : monthEdgeCases) {
+					yearMonthsList.add(YearMonth.of(y.getValue(), m));
+				}
+			}
+			return yearMonthsList;
+
 		}
 
 	}
