@@ -357,8 +357,33 @@ class DatesTests {
 
 			DateArbitrary dates = Dates.dates().between(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(200, Month.NOVEMBER, 10));
 			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
-			assertThat(edgeCases).hasSize(2);
-			assertThat(edgeCases).containsExactly(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(200, Month.NOVEMBER, 10));
+			assertThat(edgeCases).hasSize(13 * 2);
+			assertThat(edgeCases)
+					.containsExactlyInAnyOrder(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(100, Month.DECEMBER, 1), LocalDate
+																																 .of(100, Month.DECEMBER, 2), LocalDate
+																																									  .of(100, Month.DECEMBER, 30), LocalDate
+																																																			.of(100, Month.DECEMBER, 31), LocalDate
+																																																												  .of(101, Month.JANUARY, 1), LocalDate
+																																																																					  .of(101, Month.JANUARY, 2), LocalDate
+																																																																														  .of(101, Month.JANUARY, 30), LocalDate
+																																																																																							   .of(101, Month.JANUARY, 31), LocalDate
+																																																																																																	.of(101, Month.DECEMBER, 1), LocalDate
+																																																																																																										 .of(101, Month.DECEMBER, 2), LocalDate
+																																																																																																																			  .of(101, Month.DECEMBER, 30), LocalDate
+																																																																																																																													.of(101, Month.DECEMBER, 31), LocalDate
+																																																																																																																																						  .of(199, Month.JANUARY, 1), LocalDate
+																																																																																																																																															  .of(199, Month.JANUARY, 2), LocalDate
+																																																																																																																																																								  .of(199, Month.JANUARY, 30), LocalDate
+																																																																																																																																																																	   .of(199, Month.JANUARY, 31), LocalDate
+																																																																																																																																																																											.of(199, Month.DECEMBER, 1), LocalDate
+																																																																																																																																																																																				 .of(199, Month.DECEMBER, 2), LocalDate
+																																																																																																																																																																																													  .of(199, Month.DECEMBER, 30), LocalDate
+																																																																																																																																																																																																							.of(199, Month.DECEMBER, 31), LocalDate
+																																																																																																																																																																																																																  .of(200, Month.JANUARY, 1), LocalDate
+																																																																																																																																																																																																																									  .of(200, Month.JANUARY, 2), LocalDate
+																																																																																																																																																																																																																																		  .of(200, Month.JANUARY, 30), LocalDate
+																																																																																																																																																																																																																																											   .of(200, Month.JANUARY, 31), LocalDate
+																																																																																																																																																																																																																																																					.of(200, Month.NOVEMBER, 10));
 
 		}
 

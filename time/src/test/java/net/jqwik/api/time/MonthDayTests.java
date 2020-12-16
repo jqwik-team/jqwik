@@ -320,10 +320,11 @@ class MonthDayTests {
 		@Property(tries = 5)
 		void between() {
 
-			MonthDayArbitrary monthDays = Dates.monthDays().between(MonthDay.of(Month.FEBRUARY, 28), MonthDay.of(Month.APRIL, 10));
+			MonthDayArbitrary monthDays = Dates.monthDays().between(MonthDay.of(Month.FEBRUARY, 25), MonthDay.of(Month.APRIL, 10));
 			Set<MonthDay> edgeCases = collectEdgeCases(monthDays.edgeCases());
-			assertThat(edgeCases).hasSize(2);
-			assertThat(edgeCases).containsExactly(MonthDay.of(Month.FEBRUARY, 28), MonthDay.of(Month.APRIL, 10));
+			assertThat(edgeCases).hasSize(3 * 2);
+			assertThat(edgeCases)
+					.containsExactlyInAnyOrder(MonthDay.of(Month.FEBRUARY, 25), MonthDay.of(Month.FEBRUARY, 28), MonthDay.of(Month.FEBRUARY, 29), MonthDay.of(Month.APRIL, 1), MonthDay.of(Month.APRIL, 2), MonthDay.of(Month.APRIL, 10));
 
 		}
 
