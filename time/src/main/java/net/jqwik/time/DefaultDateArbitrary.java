@@ -25,9 +25,16 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 		Arbitrary<Year> year = generateYears();
 		Arbitrary<Month> month = generateMonths();
 		Arbitrary<Integer> dayOfMonth = generateDayOfMonths();
-		return Combinators.combine(year, month, dayOfMonth)
-						  .as(this::generateDateFromValues)
-						  .ignoreException(DateTimeException.class);
+		Arbitrary<LocalDate> localDates = Combinators.combine(year, month, dayOfMonth)
+													 .as(this::generateDateFromValues)
+													 .ignoreException(DateTimeException.class);
+		if (!dateMin.equals(LocalDate.MIN)) {
+			localDates = localDates.edgeCases(localDateConfig -> localDateConfig.add(dateMin));
+		}
+		if (!dateMax.equals(LocalDate.MAX)) {
+			localDates = localDates.edgeCases(localDateConfig -> localDateConfig.add(dateMax));
+		}
+		return localDates;
 	}
 
 	private Arbitrary<Year> generateYears() {

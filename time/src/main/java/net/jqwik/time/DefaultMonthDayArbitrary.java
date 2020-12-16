@@ -25,7 +25,20 @@ public class DefaultMonthDayArbitrary extends ArbitraryDecorator<MonthDay> imple
 								   .monthBetween(monthMin, monthMax)
 								   .onlyMonths(allowedMonths)
 								   .dayOfMonthBetween(dayOfMonthMin, dayOfMonthMax);
-		return dates.map(v -> MonthDay.of(v.getMonth(), v.getDayOfMonth()));
+
+		Arbitrary<MonthDay> monthDays = dates.map(v -> MonthDay.of(v.getMonth(), v.getDayOfMonth()));
+		monthDays = addAllNeededEndOfMonthEdgeCases(monthDays);
+		return monthDays;
+	}
+
+	private Arbitrary<MonthDay> addAllNeededEndOfMonthEdgeCases(Arbitrary<MonthDay> monthDays) {
+
+		int[][] endOfMonth = new int[][]{{30, 31}, {28, 29}, {30, 31}, {29, 30}, {30, 31}, {29, 30}, {30, 31}, {30, 31}, {29, 30}, {30, 31}, {29, 30}, {30, 31}};
+		int neededMonth = Math.max(monthMin.getValue(), monthDayMin.getMonthValue());
+		monthDays = monthDays.edgeCases(monthDayConfig -> monthDayConfig.add(MonthDay.of(neededMonth, endOfMonth[neededMonth - 1][0])));
+		monthDays = monthDays.edgeCases(monthDayConfig -> monthDayConfig.add(MonthDay.of(neededMonth, endOfMonth[neededMonth - 1][1])));
+		return monthDays;
+
 	}
 
 	@Override

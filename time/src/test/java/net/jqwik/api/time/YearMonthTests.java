@@ -307,8 +307,14 @@ class YearMonthTests {
 
 			YearMonthArbitrary yearMonths = Dates.yearMonths().between(YearMonth.of(100, Month.MARCH), YearMonth.of(200, Month.OCTOBER));
 			Set<YearMonth> edgeCases = collectEdgeCases(yearMonths.edgeCases());
-			assertThat(edgeCases).hasSize(2);
-			assertThat(edgeCases).containsExactly(YearMonth.of(100, Month.MARCH), YearMonth.of(200, Month.OCTOBER));
+			assertThat(edgeCases).hasSize(4 * 2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(YearMonth.of(100, Month.MARCH), YearMonth.of(100, Month.DECEMBER), YearMonth
+																																	   .of(101, Month.JANUARY), YearMonth
+																																										.of(101, Month.DECEMBER), YearMonth
+																																																		  .of(199, Month.JANUARY), YearMonth
+																																																										   .of(199, Month.DECEMBER), YearMonth
+																																																																			 .of(200, Month.JANUARY), YearMonth
+																																																																											  .of(200, Month.OCTOBER));
 
 		}
 
