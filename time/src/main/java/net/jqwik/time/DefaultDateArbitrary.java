@@ -84,34 +84,34 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	@Override
-	public DateArbitrary atTheEarliest(LocalDate date) {
+	public DateArbitrary atTheEarliest(LocalDate min) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.dateMin = date;
+		clone.dateMin = min;
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary atTheLatest(LocalDate date) {
+	public DateArbitrary atTheLatest(LocalDate max) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.dateMax = date;
+		clone.dateMax = max;
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary yearBetween(Year minYear, Year maxYear) {
+	public DateArbitrary yearBetween(Year min, Year max) {
 		DefaultDateArbitrary clone = typedClone();
-		minYear = Year.of(Math.max(minYear.getValue(), LocalDate.MIN.getYear()));
-		clone.yearMin = minYear;
-		maxYear = Year.of(Math.min(maxYear.getValue(), LocalDate.MAX.getYear()));
-		clone.yearMax = maxYear;
+		min = Year.of(Math.max(min.getValue(), LocalDate.MIN.getYear()));
+		clone.yearMin = min;
+		max = Year.of(Math.min(max.getValue(), LocalDate.MAX.getYear()));
+		clone.yearMax = max;
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary monthBetween(Month minMonth, Month maxMonth) {
+	public DateArbitrary monthBetween(Month min, Month max) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.monthMin = minMonth;
-		clone.monthMax = maxMonth;
+		clone.monthMin = min;
+		clone.monthMax = max;
 		return clone;
 	}
 
@@ -123,12 +123,12 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	@Override
-	public DateArbitrary dayOfMonthBetween(int minDayOfMonth, int maxDayOfMonth) {
+	public DateArbitrary dayOfMonthBetween(int min, int max) {
 		DefaultDateArbitrary clone = typedClone();
-		minDayOfMonth = Math.max(1, minDayOfMonth);
-		clone.dayOfMonthMin = minDayOfMonth;
-		maxDayOfMonth = Math.min(31, maxDayOfMonth);
-		clone.dayOfMonthMax = maxDayOfMonth;
+		min = Math.max(1, min);
+		clone.dayOfMonthMin = min;
+		max = Math.min(31, max);
+		clone.dayOfMonthMax = max;
 		return clone;
 	}
 
