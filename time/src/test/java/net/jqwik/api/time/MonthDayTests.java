@@ -263,7 +263,7 @@ class MonthDayTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<MonthDay> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(372); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(62); // Cannot know the number of filtered elements in advance
 			assertThat(generator)
 					.containsExactly(MonthDay.of(Month.FEBRUARY, 27), MonthDay.of(Month.FEBRUARY, 28), MonthDay.of(Month.FEBRUARY, 29), MonthDay.of(Month.MARCH, 1), MonthDay.of(Month.MARCH, 2));
 		}

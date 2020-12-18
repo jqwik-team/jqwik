@@ -294,7 +294,7 @@ class DatesTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(372); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(31); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(LocalDate.of(2020, Month.DECEMBER, 3), LocalDate.of(2020, Month.DECEMBER, 7), LocalDate
 																																		.of(2020, Month.DECEMBER, 10), LocalDate
 																																											   .of(2020, Month.DECEMBER, 14), LocalDate
