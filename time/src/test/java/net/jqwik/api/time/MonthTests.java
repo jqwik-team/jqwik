@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -76,19 +77,14 @@ public class MonthTests {
 		}
 
 		@Property
-		void only(@ForAll("onlyMonths") Month[] months, @ForAll Random random) {
+		void only(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
 
-			Arbitrary<Month> monthArbitrary = Dates.months().only(months);
+			Arbitrary<Month> monthArbitrary = Dates.months().only(months.toArray(new Month[]{}));
 
 			assertAllGenerated(monthArbitrary.generator(1000), random, month -> {
 				assertThat(month).isIn(months);
 				return true;
 			});
-		}
-
-		@Provide
-		Arbitrary<Month[]> onlyMonths() {
-			return generateMonths();
 		}
 
 	}
@@ -133,7 +129,7 @@ public class MonthTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Month> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(5); // Cannot know the number of filtered elements in advance
 			assertThat(generator)
 					.containsExactly(Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY);
 		}
@@ -176,29 +172,6 @@ public class MonthTests {
 
 		}
 
-	}
-
-	public static Arbitrary<Month[]> generateMonths() {
-		Arbitrary<Month> monthArbitrary = Arbitraries
-												  .of(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
-		Arbitrary<Integer> length = Arbitraries.integers().between(1, 12);
-		Arbitrary<List<Month>> arbitrary = length.flatMap(depth -> Arbitraries.recursive(
-				() -> monthArbitrary.map(v -> new ArrayList<>()),
-				(v) -> addMonth(v, monthArbitrary),
-				depth
-		));
-		return arbitrary.map(v -> v.toArray(new Month[]{}));
-	}
-
-	private static Arbitrary<List<Month>> addMonth(Arbitrary<List<Month>> listArbitrary, Arbitrary<Month> monthArbitrary) {
-		return Combinators.combine(listArbitrary, monthArbitrary).as(MonthTests::addToList);
-	}
-
-	private static List<Month> addToList(List<Month> list, Month month) {
-		if (!list.contains(month)) {
-			list.add(month);
-		}
-		return list;
 	}
 
 }

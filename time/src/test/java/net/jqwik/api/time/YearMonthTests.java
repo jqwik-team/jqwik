@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -201,20 +202,15 @@ class YearMonthTests {
 			}
 
 			@Property
-			void monthOnlyMonths(@ForAll("monthsOnlyMonths") Month[] months, @ForAll Random random) {
+			void monthOnlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
 
-				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().onlyMonths(months);
+				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().onlyMonths(months.toArray(new Month[]{}));
 
 				assertAllGenerated(yearMonths.generator(1000), random, ym -> {
 					assertThat(ym.getMonth()).isIn(months);
 					return true;
 				});
 
-			}
-
-			@Provide
-			Arbitrary<Month[]> monthsOnlyMonths() {
-				return MonthTests.generateMonths();
 			}
 
 			@Provide

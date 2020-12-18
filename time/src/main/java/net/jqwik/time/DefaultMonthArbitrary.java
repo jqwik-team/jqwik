@@ -1,6 +1,7 @@
 package net.jqwik.time;
 
 import java.time.*;
+import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -14,11 +15,15 @@ public class DefaultMonthArbitrary extends ArbitraryDecorator<Month> implements 
 
 	@Override
 	protected Arbitrary<Month> arbitrary() {
-		Arbitrary<Month> months = Arbitraries
-										  .of(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
-		months = months.edgeCases(monthConfig -> monthConfig.add(min).add(max));
-		months = months.filter(v -> v.compareTo(min) >= 0 && v.compareTo(max) <= 0 && isInAllowedMonths(v));
-		return months;
+		List<Month> values = Arrays.asList(Month.class.getEnumConstants());
+		final int indexMin = values.indexOf(min);
+		final int indexMax = values.indexOf(max);
+
+		return Arbitraries.integers()
+						  .between(indexMin, indexMax)
+						  .edgeCases(integerConfig -> integerConfig.includeOnly(indexMin, indexMax))
+						  .map(values::get)
+						  .filter(this::isInAllowedMonths);
 	}
 
 	private boolean isInAllowedMonths(Month month) {
