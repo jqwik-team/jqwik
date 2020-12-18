@@ -42,16 +42,16 @@ public class DefaultMonthDayArbitrary extends ArbitraryDecorator<MonthDay> imple
 	}
 
 	@Override
-	public MonthDayArbitrary atTheEarliest(MonthDay monthDay) {
+	public MonthDayArbitrary atTheEarliest(MonthDay min) {
 		DefaultMonthDayArbitrary clone = typedClone();
-		clone.monthDayMin = monthDay;
+		clone.monthDayMin = min;
 		return clone;
 	}
 
 	@Override
-	public MonthDayArbitrary atTheLatest(MonthDay monthDay) {
+	public MonthDayArbitrary atTheLatest(MonthDay max) {
 		DefaultMonthDayArbitrary clone = typedClone();
-		clone.monthDayMax = monthDay;
+		clone.monthDayMax = max;
 		return clone;
 	}
 

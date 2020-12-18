@@ -29,16 +29,16 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 	}
 
 	@Override
-	public YearMonthArbitrary atTheEarliest(YearMonth yearMonth) {
+	public YearMonthArbitrary atTheEarliest(YearMonth min) {
 		DefaultYearMonthArbitrary clone = typedClone();
-		clone.yearMonthMin = yearMonth;
+		clone.yearMonthMin = min;
 		return clone;
 	}
 
 	@Override
-	public YearMonthArbitrary atTheLatest(YearMonth yearMonth) {
+	public YearMonthArbitrary atTheLatest(YearMonth max) {
 		DefaultYearMonthArbitrary clone = typedClone();
-		clone.yearMonthMax = yearMonth;
+		clone.yearMonthMax = max;
 		return clone;
 	}
 
