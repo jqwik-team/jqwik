@@ -1295,6 +1295,55 @@ void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Host =
 }
 ```
 
+### Date Arbitrary Types
+
+You can create an arbitrary for date values by calling a static method on class `Dates`:
+
+- [`DateArbitrary dates()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#dates())
+- [`YearArbitrary years()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#years())
+- [`MonthArbitrary months()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#months())
+- [`DaysOfMonthArbitrary daysOfMonth()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#daysOfMonth())
+- [`YearMonthArbitrary yearMonths()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#yearMonths())
+- [`MonthDayArbitrary monthDays()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#monthDays())
+
+In addition, you can constrain their values using the following functions:
+
+#### DateArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
+- You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
+
+#### YearArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`, `greaterOrEqual(min)` and `lessOrEqual(max)`.
+
+#### MonthArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can limit the generation of months to only a few months using `only(months)`.
+
+#### DaysOfMonthArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`, `greaterOrEqual(min)` and `lessOrEqual(max)`.
+
+#### YearMonthArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`, `yearGreaterOrEqual(min)` and `yearLessOrEqual(max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`, `monthGreaterOrEqual(min)` and `monthLessOrEqual(max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+
+#### MonthDayArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`, `monthGreaterOrEqual(min)` and `monthLessOrEqual(max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`, `dayOfMonthGreaterOrEqual(min)` and `dayOfMonthLessOrEqual(max)`.
+
 ### Numeric Arbitrary Types
 
 Creating an arbitrary for numeric values also starts by calling a static method
