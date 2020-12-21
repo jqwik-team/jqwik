@@ -233,6 +233,7 @@ class MonthDayTests {
 		}
 
 		@Property
+		@Disabled
 		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			MonthDayArbitrary monthDays = Dates.monthDays();
 			TestingFalsifier<MonthDay> falsifier = md -> md.isBefore(MonthDay.of(Month.MAY, 25));
