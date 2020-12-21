@@ -238,6 +238,7 @@ class DatesTests {
 		}
 
 		@Property
+		@Disabled
 		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
 			DateArbitrary dates = Dates.dates();
 			TestingFalsifier<LocalDate> falsifier = date -> date.isBefore(LocalDate.of(2013, Month.MAY, 25));
@@ -246,6 +247,7 @@ class DatesTests {
 		}
 
 		@Property
+		@Disabled
 		void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
 			DateArbitrary dates = Dates.dates();
 			TestingFalsifier<LocalDate> falsifier = date -> date.isAfter(LocalDate.of(-2013, Month.MAY, 25));

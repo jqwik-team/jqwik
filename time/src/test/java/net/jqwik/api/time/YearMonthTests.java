@@ -233,6 +233,7 @@ class YearMonthTests {
 		}
 
 		@Property
+		@Disabled
 		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
 			YearMonthArbitrary yearMonths = Dates.yearMonths();
 			TestingFalsifier<YearMonth> falsifier = ym -> ym.isBefore(YearMonth.of(2013, Month.MAY));
@@ -241,6 +242,7 @@ class YearMonthTests {
 		}
 
 		@Property
+		@Disabled
 		void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
 			YearMonthArbitrary yearMonths = Dates.yearMonths();
 			TestingFalsifier<YearMonth> falsifier = ym -> ym.isAfter(YearMonth.of(-2013, Month.MAY));
