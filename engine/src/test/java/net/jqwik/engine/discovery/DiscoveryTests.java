@@ -268,7 +268,7 @@ class DiscoveryTests {
 	}
 
 	private TestDescriptor discoverTests(LauncherDiscoveryRequest discoveryRequest) {
-		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(engineId);
+		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(engineId, null);
 		new JqwikDiscoverer(testRunData, propertyDefaultValues).discover(discoveryRequest, engineDescriptor);
 		return engineDescriptor;
 	}
