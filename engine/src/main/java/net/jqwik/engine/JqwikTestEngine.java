@@ -18,19 +18,14 @@ public class JqwikTestEngine implements TestEngine {
 	private static final Logger LOG = Logger.getLogger(JqwikTestEngine.class.getName());
 
 	private final LifecycleHooksRegistry lifecycleRegistry = new LifecycleHooksRegistry();
-	private JqwikConfiguration configuration;
-	private Throwable startupThrowable = null;
+	private final Supplier<JqwikConfiguration> configurationSupplier;
 
 	public JqwikTestEngine() {
 		this(DefaultJqwikConfiguration::new);
 	}
 
 	JqwikTestEngine(Supplier<JqwikConfiguration> configurationSupplier) {
-		try {
-			this.configuration = configurationSupplier.get();
-		} catch (Throwable engineStartupThrowable) {
-			this.startupThrowable = engineStartupThrowable;
-		}
+		this.configurationSupplier = configurationSupplier;
 	}
 
 	@Override
@@ -40,12 +35,8 @@ public class JqwikTestEngine implements TestEngine {
 
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
-		// Throw exception caught during startup otherwise JUnit platform message hides original exception
-		if (startupThrowable != null) {
-			return JqwikExceptionSupport.throwAsUncheckedException(startupThrowable);
-		}
-
-		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
+		JqwikConfiguration configuration = buildConfiguration();
+		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId, configuration);
 		new JqwikDiscoverer(configuration.testEngineConfiguration().previousRun(), configuration.propertyDefaultValues())
 			.discover(request, engineDescriptor);
 
@@ -54,7 +45,8 @@ public class JqwikTestEngine implements TestEngine {
 
 	@Override
 	public void execute(ExecutionRequest request) {
-		TestDescriptor root = request.getRootTestDescriptor();
+		// This cast is safe, as the JUnit engine javadoc states the root descriptor is the one returned from the discover method
+		JqwikEngineDescriptor root = (JqwikEngineDescriptor) request.getRootTestDescriptor();
 		EngineExecutionListener engineExecutionListener = request.getEngineExecutionListener();
 		try {
 			registerLifecycleHooks(root, request.getConfigurationParameters());
@@ -66,7 +58,8 @@ public class JqwikTestEngine implements TestEngine {
 		}
 	}
 
-	private void executeTests(TestDescriptor root, EngineExecutionListener listener) {
+	private void executeTests(JqwikEngineDescriptor root, EngineExecutionListener listener) {
+		JqwikConfiguration configuration = root.getConfiguration();
 		try (TestRunRecorder recorder = configuration.testEngineConfiguration().recorder()) {
 			new JqwikExecutor(
 				lifecycleRegistry,
@@ -80,6 +73,14 @@ public class JqwikTestEngine implements TestEngine {
 
 	private void registerLifecycleHooks(TestDescriptor rootDescriptor, ConfigurationParameters configurationParameters) {
 		new JqwikLifecycleRegistrator(lifecycleRegistry, configurationParameters).registerLifecycleHooks(rootDescriptor);
+	}
+
+	JqwikConfiguration buildConfiguration() {
+		try {
+			return configurationSupplier.get();
+		} catch (Throwable engineStartupThrowable) {
+			return JqwikExceptionSupport.throwAsUncheckedException(engineStartupThrowable);
+		}
 	}
 
 }
