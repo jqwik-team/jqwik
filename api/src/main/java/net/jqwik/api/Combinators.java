@@ -223,6 +223,9 @@ public class Combinators {
 		return list;
 	}
 
+	/**
+	 * Combinator for two values.
+	 */
 	public static class Combinator2<T1, T2> {
 		private final Arbitrary<T1> a1;
 		private final Arbitrary<T2> a2;
@@ -232,12 +235,19 @@ public class Combinators {
 			this.a2 = a2;
 		}
 
-		// This is a shorter implementation of as, which however would have worse shrinking
-		// behaviour because it builds on flatMap:
-		//		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
-		//			return a1.flatMap(v1 -> a2.map(v2 -> combinator.apply(v1, v2)));
-		//		}
+		/**
+		 * Combine two values.
+		 *
+		 * @param combinator function
+		 * @param <R> return type
+		 * @return arbitrary instance
+		 */
 		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
+			// This is a shorter implementation of as, which however would have worse shrinking
+			// behaviour because it builds on flatMap:
+			//		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
+			//			return a1.flatMap(v1 -> a2.map(v2 -> combinator.apply(v1, v2)));
+			//		}
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -273,6 +283,9 @@ public class Combinators {
 		}
 	}
 
+	/**
+	 * Combinator for three values.
+	 */
 	public static class Combinator3<T1, T2, T3> {
 		private final Arbitrary<T1> a1;
 		private final Arbitrary<T2> a2;
@@ -284,6 +297,13 @@ public class Combinators {
 			this.a3 = a3;
 		}
 
+		/**
+		 * Combine three values.
+		 *
+		 * @param combinator function
+		 * @param <R> return type
+		 * @return arbitrary instance
+		 */
 		public <R> Arbitrary<R> as(F3<T1, T2, T3, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
@@ -330,6 +350,9 @@ public class Combinators {
 
 	}
 
+	/**
+	 * Combinator for four values.
+	 */
 	public static class Combinator4<T1, T2, T3, T4> {
 		private final Arbitrary<T1> a1;
 		private final Arbitrary<T2> a2;
@@ -343,7 +366,13 @@ public class Combinators {
 			this.a4 = a4;
 		}
 
-		@SuppressWarnings("unchecked")
+		/**
+		 * Combine four values.
+		 *
+		 * @param combinator function
+		 * @param <R> return type
+		 * @return arbitrary instance
+		 */
 		public <R> Arbitrary<R> as(F4<T1, T2, T3, T4, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
@@ -360,13 +389,8 @@ public class Combinators {
 							g3.next(random),
 							g4.next(random)
 						);
-						Function<List<Object>, R> combineFunction = params ->
-																		combinator.apply(
-																			(T1) params.get(0), (T2) params.get(1),
-																			(T3) params.get(2), (T4) params.get(3)
-																		);
 
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
 					};
 				}
 
@@ -400,6 +424,9 @@ public class Combinators {
 
 	}
 
+	/**
+	 * Combinator for five values.
+	 */
 	public static class Combinator5<T1, T2, T3, T4, T5> {
 		private final Arbitrary<T1> a1;
 		private final Arbitrary<T2> a2;
@@ -415,7 +442,13 @@ public class Combinators {
 			this.a5 = a5;
 		}
 
-		@SuppressWarnings("unchecked")
+		/**
+		 * Combine five values.
+		 *
+		 * @param combinator function
+		 * @param <R> return type
+		 * @return arbitrary instance
+		 */
 		public <R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
@@ -434,15 +467,7 @@ public class Combinators {
 							g4.next(random),
 							g5.next(random)
 						);
-						Function<List<Object>, R> combineFunction =
-							params ->
-								combinator.apply(
-									(T1) params.get(0), (T2) params.get(1),
-									(T3) params.get(2), (T4) params.get(3),
-									(T5) params.get(4)
-								);
-
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
 					};
 				}
 
@@ -477,6 +502,9 @@ public class Combinators {
 
 	}
 
+	/**
+	 * Combinator for six values.
+	 */
 	public static class Combinator6<T1, T2, T3, T4, T5, T6> {
 		private final Arbitrary<T1> a1;
 		private final Arbitrary<T2> a2;
@@ -494,7 +522,13 @@ public class Combinators {
 			this.a6 = a6;
 		}
 
-		@SuppressWarnings("unchecked")
+		/**
+		 * Combine six values.
+		 *
+		 * @param combinator function
+		 * @param <R> return type
+		 * @return arbitrary instance
+		 */
 		public <R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
@@ -515,15 +549,7 @@ public class Combinators {
 							g5.next(random),
 							g6.next(random)
 						);
-						Function<List<Object>, R> combineFunction =
-							params ->
-								combinator.apply(
-									(T1) params.get(0), (T2) params.get(1),
-									(T3) params.get(2), (T4) params.get(3),
-									(T5) params.get(4), (T6) params.get(5)
-								);
-
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
 					};
 				}
 
@@ -559,6 +585,9 @@ public class Combinators {
 
 	}
 
+	/**
+	 * Combinator for seven values.
+	 */
 	public static class Combinator7<T1, T2, T3, T4, T5, T6, T7> {
 		private final Arbitrary<T1> a1;
 		private final Arbitrary<T2> a2;
@@ -581,7 +610,13 @@ public class Combinators {
 			this.a7 = a7;
 		}
 
-		@SuppressWarnings("unchecked")
+		/**
+		 * Combine seven values.
+		 *
+		 * @param combinator function
+		 * @param <R> return type
+		 * @return arbitrary instance
+		 */
 		public <R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
@@ -604,15 +639,7 @@ public class Combinators {
 							g6.next(random),
 							g7.next(random)
 						);
-						Function<List<Object>, R> combineFunction =
-							params ->
-								combinator.apply(
-									(T1) params.get(0), (T2) params.get(1),
-									(T3) params.get(2), (T4) params.get(3),
-									(T5) params.get(4), (T6) params.get(5),
-									(T7) params.get(6)
-								);
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
 					};
 				}
 
@@ -648,6 +675,9 @@ public class Combinators {
 
 	}
 
+	/**
+	 * Combinator for eight values.
+	 */
 	public static class Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> {
 		private final Arbitrary<T1> a1;
 		private final Arbitrary<T2> a2;
@@ -672,7 +702,13 @@ public class Combinators {
 			this.a8 = a8;
 		}
 
-		@SuppressWarnings("unchecked")
+		/**
+		 * Combine eight values.
+		 *
+		 * @param combinator function
+		 * @param <R> return type
+		 * @return arbitrary instance
+		 */
 		public <R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
@@ -697,16 +733,7 @@ public class Combinators {
 							g7.next(random),
 							g8.next(random)
 						);
-						Function<List<Object>, R> combineFunction =
-							params ->
-								combinator.apply(
-									(T1) params.get(0), (T2) params.get(1),
-									(T3) params.get(2), (T4) params.get(3),
-									(T5) params.get(4), (T6) params.get(5),
-									(T7) params.get(6), (T8) params.get(7)
-								);
-
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
 					};
 				}
 
@@ -742,6 +769,9 @@ public class Combinators {
 		}
 	}
 
+	/**
+	 * Combinator for any number of values.
+	 */
 	public static class ListCombinator<T> {
 		private final List<Arbitrary<T>> listOfArbitraries;
 
@@ -749,24 +779,31 @@ public class Combinators {
 			this.listOfArbitraries = listOfArbitraries;
 		}
 
+		/**
+		 * Combine any number of values.
+		 *
+		 * @param combinator function
+		 * @param <R> return type
+		 * @return arbitrary instance
+		 */
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(Function<List<T>, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
 					List<RandomGenerator<T>> listOfGenerators =
-						listOfArbitraries
-							.stream()
-							.map(a -> a.generator(genSize))
-							.collect(Collectors.toList());
+							listOfArbitraries
+									.stream()
+									.map(a -> a.generator(genSize))
+									.collect(Collectors.toList());
 
 					return random -> {
 						List<Shrinkable<Object>> shrinkables =
-							listOfGenerators
-								.stream()
-								.map(g -> g.next(random))
-								.map(s -> (Shrinkable<Object>) s)
-								.collect(Collectors.toList());
+								listOfGenerators
+										.stream()
+										.map(g -> g.next(random))
+										.map(s -> (Shrinkable<Object>) s)
+										.collect(Collectors.toList());
 
 						Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
 
@@ -778,9 +815,9 @@ public class Combinators {
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
 					return CombinatorsFacade.implementation.combineExhaustive(
-						asTypedList(listOfArbitraries.toArray()),
-						combinedFunction,
-						maxNumberOfSamples
+							asTypedList(listOfArbitraries.toArray()),
+							combinedFunction,
+							maxNumberOfSamples
 					);
 				}
 
@@ -788,8 +825,8 @@ public class Combinators {
 				public EdgeCases<R> edgeCases() {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
 					return CombinatorsFacade.implementation.combineEdgeCases(
-						asTypedList(listOfArbitraries.toArray()),
-						combinedFunction
+							asTypedList(listOfArbitraries.toArray()),
+							combinedFunction
 					);
 				}
 			};

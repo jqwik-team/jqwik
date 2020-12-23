@@ -13,9 +13,11 @@
       ```  
 
     - Email generation
-        - Fix TODO in DefaultEmailArbitrary
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails()
         - @Email -> net.jqwik.api.web.@Email
+        - Move to new module "web"
+              - Include in aggregate artifact
+        - Fix TODO in DefaultEmailArbitrary
         - Emails.localPart(String) 
         - Emails.host(String) 
 
