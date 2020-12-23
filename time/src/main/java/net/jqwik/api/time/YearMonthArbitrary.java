@@ -34,77 +34,27 @@ public interface YearMonthArbitrary extends Arbitrary<YearMonth> {
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated year values.
 	 */
-	default YearMonthArbitrary yearBetween(Year min, Year max) {
-		return yearGreaterOrEqual(min).yearLessOrEqual(max);
-	}
+	YearMonthArbitrary yearBetween(Year min, Year max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated year values.
+	 * The {@code int} values can be between {@code Year.MIN_VALUE} and {@code Year.MAX_VALUE}.
 	 */
 	default YearMonthArbitrary yearBetween(int min, int max) {
 		return yearBetween(Year.of(min), Year.of(max));
 	}
 
 	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated year values.
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated month values.
 	 */
-	YearMonthArbitrary yearGreaterOrEqual(Year min);
-
-	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated year values.
-	 */
-	default YearMonthArbitrary yearGreaterOrEqual(int min) {
-		return yearGreaterOrEqual(Year.of(min));
-	}
-
-	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated year values.
-	 */
-	YearMonthArbitrary yearLessOrEqual(Year max);
-
-	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated year values.
-	 */
-	default YearMonthArbitrary yearLessOrEqual(int max) {
-		return yearLessOrEqual(Year.of(max));
-	}
+	YearMonthArbitrary monthBetween(Month min, Month max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated month values.
-	 */
-	default YearMonthArbitrary monthBetween(Month min, Month max) {
-		return monthGreaterOrEqual(min).monthLessOrEqual(max);
-	}
-
-	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated month values.
+	 * The {@code int} values can be between 1 and 12.
 	 */
 	default YearMonthArbitrary monthBetween(int min, int max) {
 		return monthBetween(Month.of(min), Month.of(max));
-	}
-
-	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated month values.
-	 */
-	YearMonthArbitrary monthGreaterOrEqual(Month min);
-
-	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated month values.
-	 */
-	default YearMonthArbitrary monthGreaterOrEqual(int min) {
-		return monthGreaterOrEqual(Month.of(min));
-	}
-
-	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated month values.
-	 */
-	YearMonthArbitrary monthLessOrEqual(Month max);
-
-	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated month values.
-	 */
-	default YearMonthArbitrary monthLessOrEqual(int max) {
-		return monthLessOrEqual(Month.of(max));
 	}
 
 	/**

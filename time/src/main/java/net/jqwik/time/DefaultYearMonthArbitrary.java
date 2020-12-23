@@ -2,10 +2,15 @@ package net.jqwik.time;
 
 import java.time.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.time.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = INTERNAL)
 public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> implements YearMonthArbitrary {
 
 	private YearMonth yearMonthMin = YearMonth.of(Year.MIN_VALUE, Month.JANUARY);
@@ -43,31 +48,19 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 	}
 
 	@Override
-	public YearMonthArbitrary yearGreaterOrEqual(Year min) {
+	public YearMonthArbitrary yearBetween(Year min, Year max) {
 		DefaultYearMonthArbitrary clone = typedClone();
+		max = Year.of(Math.min(max.getValue(), Year.MAX_VALUE));
 		min = Year.of(Math.max(min.getValue(), Year.MIN_VALUE));
+		clone.yearMax = max;
 		clone.yearMin = min;
 		return clone;
 	}
 
 	@Override
-	public YearMonthArbitrary yearLessOrEqual(Year max) {
-		DefaultYearMonthArbitrary clone = typedClone();
-		max = Year.of(Math.min(max.getValue(), Year.MAX_VALUE));
-		clone.yearMax = max;
-		return clone;
-	}
-
-	@Override
-	public YearMonthArbitrary monthGreaterOrEqual(Month min) {
+	public YearMonthArbitrary monthBetween(Month min, Month max) {
 		DefaultYearMonthArbitrary clone = typedClone();
 		clone.monthMin = min;
-		return clone;
-	}
-
-	@Override
-	public YearMonthArbitrary monthLessOrEqual(Month max) {
-		DefaultYearMonthArbitrary clone = typedClone();
 		clone.monthMax = max;
 		return clone;
 	}

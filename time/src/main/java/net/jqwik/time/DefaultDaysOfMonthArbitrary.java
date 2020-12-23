@@ -1,9 +1,14 @@
 package net.jqwik.time;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.time.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = INTERNAL)
 public class DefaultDaysOfMonthArbitrary extends ArbitraryDecorator<Integer> implements DaysOfMonthArbitrary {
 
 	private int startDayOfMonth = 1;
@@ -15,17 +20,11 @@ public class DefaultDaysOfMonthArbitrary extends ArbitraryDecorator<Integer> imp
 	}
 
 	@Override
-	public DaysOfMonthArbitrary greaterOrEqual(int min) {
+	public DaysOfMonthArbitrary between(int min, int max) {
 		DefaultDaysOfMonthArbitrary clone = typedClone();
 		min = Math.max(1, min);
-		clone.startDayOfMonth = min;
-		return clone;
-	}
-
-	@Override
-	public DaysOfMonthArbitrary lessOrEqual(int max) {
-		DefaultDaysOfMonthArbitrary clone = typedClone();
 		max = Math.min(31, max);
+		clone.startDayOfMonth = min;
 		clone.endDayOfMonth = max;
 		return clone;
 	}

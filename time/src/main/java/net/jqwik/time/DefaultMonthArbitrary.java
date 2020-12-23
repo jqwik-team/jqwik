@@ -3,10 +3,15 @@ package net.jqwik.time;
 import java.time.*;
 import java.util.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.time.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = INTERNAL)
 public class DefaultMonthArbitrary extends ArbitraryDecorator<Month> implements MonthArbitrary {
 
 	private Month min = Month.JANUARY;
@@ -39,15 +44,9 @@ public class DefaultMonthArbitrary extends ArbitraryDecorator<Month> implements 
 	}
 
 	@Override
-	public MonthArbitrary atTheEarliest(Month min) {
+	public MonthArbitrary between(Month min, Month max) {
 		DefaultMonthArbitrary clone = typedClone();
 		clone.min = min;
-		return clone;
-	}
-
-	@Override
-	public MonthArbitrary atTheLatest(Month max) {
-		DefaultMonthArbitrary clone = typedClone();
 		clone.max = max;
 		return clone;
 	}

@@ -2,10 +2,15 @@ package net.jqwik.time;
 
 import java.time.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.time.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = INTERNAL)
 public class DefaultMonthDayArbitrary extends ArbitraryDecorator<MonthDay> implements MonthDayArbitrary {
 
 	private MonthDay monthDayMin = MonthDay.of(Month.JANUARY, 1);
@@ -56,15 +61,9 @@ public class DefaultMonthDayArbitrary extends ArbitraryDecorator<MonthDay> imple
 	}
 
 	@Override
-	public MonthDayArbitrary monthGreaterOrEqual(Month min) {
+	public MonthDayArbitrary monthBetween(Month min, Month max) {
 		DefaultMonthDayArbitrary clone = typedClone();
 		clone.monthMin = min;
-		return clone;
-	}
-
-	@Override
-	public MonthDayArbitrary monthLessOrEqual(Month max) {
-		DefaultMonthDayArbitrary clone = typedClone();
 		clone.monthMax = max;
 		return clone;
 	}
@@ -77,16 +76,11 @@ public class DefaultMonthDayArbitrary extends ArbitraryDecorator<MonthDay> imple
 	}
 
 	@Override
-	public MonthDayArbitrary dayOfMonthGreaterOrEqual(int min) {
+	public MonthDayArbitrary dayOfMonthBetween(int min, int max) {
 		DefaultMonthDayArbitrary clone = typedClone();
 		clone.dayOfMonthMin = min;
-		return clone;
-	}
-
-	@Override
-	public MonthDayArbitrary dayOfMonthLessOrEqual(int max) {
-		DefaultMonthDayArbitrary clone = typedClone();
 		clone.dayOfMonthMax = max;
 		return clone;
 	}
+
 }
