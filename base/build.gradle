@@ -50,5 +50,6 @@ signing {
 
 dependencies {
 	api(project(":api"))
+	api(project(":time"))
 	runtimeOnly(project(":engine"))
 }
