@@ -38,6 +38,7 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated year values.
+	 * The {@code int} values can be between {@code Year.MIN_VALUE} and {@code Year.MAX_VALUE}.
 	 */
 	default DateArbitrary yearBetween(int min, int max) {
 		return yearBetween(Year.of(min), Year.of(max));
@@ -50,6 +51,7 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated month values.
+	 * The {@code int} values can be between 1 and 12.
 	 */
 	default DateArbitrary monthBetween(int min, int max) {
 		return monthBetween(Month.of(min), Month.of(max));
@@ -62,6 +64,7 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated day of month values.
+	 * The {@code int} values can be between 1 and 31.
 	 */
 	DateArbitrary dayOfMonthBetween(int min, int max);
 

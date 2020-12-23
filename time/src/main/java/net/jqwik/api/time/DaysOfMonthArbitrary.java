@@ -14,19 +14,8 @@ public interface DaysOfMonthArbitrary extends Arbitrary<Integer> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated day of month values.
+	 * The {@code int} values can be between 1 and 31.
 	 */
-	default DaysOfMonthArbitrary between(int min, int max) {
-		return greaterOrEqual(min).lessOrEqual(max);
-	}
-
-	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated day of month values.
-	 */
-	DaysOfMonthArbitrary greaterOrEqual(int min);
-
-	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated day of month values.
-	 */
-	DaysOfMonthArbitrary lessOrEqual(int max);
+	DaysOfMonthArbitrary between(int min, int max);
 
 }

@@ -2,10 +2,15 @@ package net.jqwik.time;
 
 import java.time.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.time.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = INTERNAL)
 public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implements DateArbitrary {
 
 	private LocalDate dateMin = LocalDate.MIN;
