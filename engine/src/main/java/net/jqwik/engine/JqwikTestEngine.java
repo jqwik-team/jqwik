@@ -75,7 +75,7 @@ public class JqwikTestEngine implements TestEngine {
 		new JqwikLifecycleRegistrator(lifecycleRegistry, configurationParameters).registerLifecycleHooks(rootDescriptor);
 	}
 
-	JqwikConfiguration buildConfiguration() {
+	private JqwikConfiguration buildConfiguration() {
 		try {
 			return configurationSupplier.get();
 		} catch (Throwable engineStartupThrowable) {
