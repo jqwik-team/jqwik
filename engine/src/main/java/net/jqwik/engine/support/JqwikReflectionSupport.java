@@ -2,7 +2,6 @@ package net.jqwik.engine.support;
 
 import java.io.*;
 import java.lang.annotation.*;
-import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.nio.file.*;
 import java.util.*;
@@ -20,7 +19,6 @@ import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 public class JqwikReflectionSupport {
 
 	public static Stream<Object> streamInstancesFromInside(Object inner) {
-		//noinspection RedundantOperationOnEmptyContainer
 		return addInstances(inner, new ArrayList<>()).stream();
 	}
 

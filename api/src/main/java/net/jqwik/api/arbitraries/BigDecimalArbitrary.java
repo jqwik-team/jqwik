@@ -17,6 +17,7 @@ public interface BigDecimalArbitrary extends NumericalArbitrary<BigDecimal, BigD
 	 *
 	 * @param min The lower border of possible values
 	 * @param max The upper border of possible values
+	 * @return new instance of arbitrary
 	 */
 	default BigDecimalArbitrary between(BigDecimal min, BigDecimal max) {
 		return between(min, true, max, true);
@@ -30,6 +31,7 @@ public interface BigDecimalArbitrary extends NumericalArbitrary<BigDecimal, BigD
 	 * @param minIncluded Should the lower border be included
 	 * @param max         The upper border of possible values
 	 * @param maxIncluded Should the upper border be included
+	 * @return new instance of arbitrary
 	 */
 	@API(status = MAINTAINED, since = "1.2.7")
 	BigDecimalArbitrary between(BigDecimal min, boolean minIncluded, BigDecimal max, boolean maxIncluded);
@@ -38,6 +40,7 @@ public interface BigDecimalArbitrary extends NumericalArbitrary<BigDecimal, BigD
 	 * Set the allowed lower {@code min} (included) border of generated numbers.
 	 *
 	 * @param min The lower border of possible values
+	 * @return new instance of arbitrary
 	 */
 	BigDecimalArbitrary greaterOrEqual(BigDecimal min);
 
@@ -45,6 +48,7 @@ public interface BigDecimalArbitrary extends NumericalArbitrary<BigDecimal, BigD
 	 * Set the allowed lower {@code min} (excluded) border of generated numbers.
 	 *
 	 * @param min The lower border of possible values
+	 * @return new instance of arbitrary
 	 */
 	@API(status = MAINTAINED, since = "1.2.7")
 	BigDecimalArbitrary greaterThan(BigDecimal min);
@@ -53,6 +57,7 @@ public interface BigDecimalArbitrary extends NumericalArbitrary<BigDecimal, BigD
 	 * Set the allowed upper {@code max} (included) bounder of generated numbers.
 	 *
 	 * @param max The upper border of possible values
+	 * @return new instance of arbitrary
 	 */
 	BigDecimalArbitrary lessOrEqual(BigDecimal max);
 
@@ -60,12 +65,16 @@ public interface BigDecimalArbitrary extends NumericalArbitrary<BigDecimal, BigD
 	 * Set the allowed upper {@code max} (excluded) border of generated numbers.
 	 *
 	 * @param max The upper border of possible values
+	 * @return new instance of arbitrary
 	 */
 	@API(status = MAINTAINED, since = "1.2.7")
 	BigDecimalArbitrary lessThan(BigDecimal max);
 
 	/**
 	 * Set the scale (maximum number of decimal places) to {@code scale}.
+	 *
+	 * @param scale number of decimal places
+	 * @return new instance of arbitrary
 	 */
 	BigDecimalArbitrary ofScale(int scale);
 
@@ -73,6 +82,7 @@ public interface BigDecimalArbitrary extends NumericalArbitrary<BigDecimal, BigD
 	 * Set shrinking target to {@code target} which must be between the allowed bounds.
 	 *
 	 * @param target The value which is considered to be the most simple value for shrinking
+	 * @return new instance of arbitrary
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
 	BigDecimalArbitrary shrinkTowards(BigDecimal target);

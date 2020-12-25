@@ -150,6 +150,7 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but only allows
 	 * values that are accepted by the {@code filterPredicate}.
 	 *
+	 * @param filterPredicate The predicate used for filtering
 	 * @return a new arbitrary instance
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
 	 */
@@ -161,6 +162,8 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of type {@code U} that maps the values of the original arbitrary using the {@code mapper}
 	 * function.
 	 *
+	 * @param <U> type of resulting object
+	 * @param mapper the function used to map
 	 * @return a new arbitrary instance
 	 */
 	default <U> Arbitrary<U> map(Function<T, U> mapper) {
@@ -171,6 +174,8 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of type {@code U} that uses the values of the existing arbitrary to create a new arbitrary
 	 * using the {@code mapper} function.
 	 *
+	 * @param <U> type of resulting object
+	 * @param mapper the function used to map to arbitrary
 	 * @return a new arbitrary instance
 	 */
 	default <U> Arbitrary<U> flatMap(Function<T, Arbitrary<U>> mapper) {
@@ -180,6 +185,7 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of the same type but inject null values with a probability of {@code nullProbability}.
 	 *
+	 * @param nullProbability the probability. &le; 0 and &ge; 1.
 	 * @return a new arbitrary instance
 	 */
 	default Arbitrary<T> injectNull(double nullProbability) {
@@ -228,6 +234,7 @@ public interface Arbitrary<T> {
 	/**
 	 * Fix the genSize of an arbitrary so that it can no longer be influenced from outside
 	 *
+	 * @param genSize The size used in arbitrary instead of the dynamic one
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.2.0")
@@ -252,6 +259,8 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Create a new arbitrary of type {@code List<T>} using the existing arbitrary for generating the elements of the list.
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default ListArbitrary<T> list() {
 		return ArbitraryFacade.implementation.list(this);
@@ -289,6 +298,7 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code T[]} using the existing arbitrary for generating the elements of the array.
 	 *
+	 * @param <A> Type of resulting array class
 	 * @param arrayClass The arrays class to create, e.g. {@code String[].class}. This is required due to limitations in Java's
 	 *                   reflection capabilities.
 	 * @return a new arbitrary instance
@@ -314,6 +324,7 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code List<T>} by adding elements of type T until condition {@code until} is fulfilled.
 	 *
+	 * @param until predicate to check if final condition has been reached
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.0")
@@ -344,7 +355,7 @@ public interface Arbitrary<T> {
 	 * The underlying generator is created with size 1000.
 	 * Outside a property a new instance of {@linkplain Random} will be created
 	 * to feed the generator.
-	 * <p>
+	 * </p>
 	 *
 	 * <p>
 	 * Using this method within a property does not break reproducibility of results,

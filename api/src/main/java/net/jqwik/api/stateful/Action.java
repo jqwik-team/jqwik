@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * At runtime the execution of an action is regulated by a precondition.
  *
- * @param <S>
+ * @param <S> Type of the state object
  */
 @API(status = MAINTAINED, since = "1.0")
 public interface Action<S> {

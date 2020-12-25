@@ -40,17 +40,23 @@ public @interface Property {
 	String STEREOTYPE_NOT_SET = "";
 
 	/**
-	 * Number of tries (test runs with different parameters). By default it is 1000. You can override globally in the property file
+	 * Tries are the test runs with different parameters. By default it is 1000. You can override globally in the property file
 	 * (see <a href="https://jqwik.net/docs/current/user-guide.html#jqwik-configuration">jqwik.properties</a>, or here, in {@link Property}
 	 * annotation.
+	 *
+	 * @return number of tries to run
 	 */
 	int tries() default TRIES_NOT_SET;
 
 	/**
-	 * The maximal number of tried versus actually checked property runs in case you are using Assumptions. If the ratio is exceeded jqwik
-	 * will report this property as a failure.
+	 * The maximum ratio of tried versus actually checked property runs in case you are using Assumptions. If the ratio is exceeded jqwik
+	 * will report this property as a failure.
+	 *
 	 * <p>
-	 * The default is 5 which can be overridden in <a href="https://jqwik.net/docs/current/user-guide.html#jqwik-configuration">jqwik.properties</a>.
+	 * The default is 5 which can be overridden in <a href="https://jqwik.net/docs/current/user-guide.html#jqwik-configuration">jqwik.properties</a>.
+	 *
+	 * @return the maximum ration
+	 *
 	 */
 	int maxDiscardRatio() default MAX_DISCARD_RATIO_NOT_SET;
 
@@ -60,6 +66,8 @@ public @interface Property {
 	 * Controls how shrinking is done when falsified property is found.
 	 * <p>
 	 * Default value is {@link ShrinkingMode#BOUNDED}, i.e. shrinking is tried to a depth of 1000 steps maximum per value.
+	 *
+	 * @return the shrinking mode
 	 */
 	ShrinkingMode shrinking() default ShrinkingMode.NOT_SET;
 

@@ -1,7 +1,5 @@
 - 1.4.0
 
-    - Fill in some gaps in Javadoc (e.g. Combinators)
-
     - Publish test report in github action
       ```
       -   name: Publish Test Report

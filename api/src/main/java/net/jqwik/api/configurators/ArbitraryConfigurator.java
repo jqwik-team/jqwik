@@ -14,7 +14,6 @@ import static org.apiguardian.api.API.Status.*;
  * <p>
  * Implementations must be registered in <code>/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator</code>
  * so that they will be automatically considered for arbitrary configuration.
- * <p>
  */
 @API(status = MAINTAINED, since = "1.0")
 public interface ArbitraryConfigurator extends Comparable<ArbitraryConfigurator> {

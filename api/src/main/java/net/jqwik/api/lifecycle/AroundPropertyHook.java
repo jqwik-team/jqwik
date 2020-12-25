@@ -21,6 +21,7 @@ public interface AroundPropertyHook extends LifecycleHook {
 	 * @param context  The property's context object
 	 * @param property An executor to run the property
 	 * @return The result of running the property
+	 * @throws Throwable any throwable could show up in hook implementation
 	 */
 	PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable;
 

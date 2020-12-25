@@ -66,6 +66,8 @@ public interface RandomDistribution {
 	/**
 	 * A distribution that generates values closer to the center of a numerical range
 	 * with a higher probability. The bigger the range the stronger the bias.
+	 *
+	 * @return a random distribution instance
 	 */
 	static RandomDistribution biased() {
 		return RandomDistributionFacade.implementation.biased();
@@ -74,6 +76,8 @@ public interface RandomDistribution {
 	/**
 	 * A distribution that generates values across the allowed range
 	 * with a uniform probability distribution.
+	 *
+	 * @return a random distribution instance
 	 */
 	static RandomDistribution uniform() {
 		return RandomDistributionFacade.implementation.uniform();
@@ -90,6 +94,7 @@ public interface RandomDistribution {
 	 * of your properties.
 	 *
 	 * @param borderSigma The approximate factor of standard deviation at the border(s)
+	 * @return a random distribution instance
 	 */
 	static RandomDistribution gaussian(double borderSigma) {
 		return RandomDistributionFacade.implementation.gaussian(borderSigma);
@@ -100,6 +105,8 @@ public interface RandomDistribution {
 	 * i.e. approximately 99.7% of values are within the borders.
 	 *
 	 * @see #gaussian(double)
+	 *
+	 * @return a random distribution instance
 	 */
 	static RandomDistribution gaussian() {
 		return RandomDistributionFacade.implementation.gaussian(3);

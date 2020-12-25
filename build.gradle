@@ -67,6 +67,16 @@ allprojects {
 		api("org.apiguardian:apiguardian-api:${apiGuardianVersion}")
 	}
 
+	tasks.withType(Javadoc) {
+		options.addStringOption('Xdoclint:none', '-quiet')
+	}
+
+	// Enable to get more compiler warnings.
+	//	tasks.withType(JavaCompile) {
+	//		options.compilerArgs << '-Xlint:unchecked'
+	//		options.deprecation = true
+	//	}
+
 }
 
 wrapper {

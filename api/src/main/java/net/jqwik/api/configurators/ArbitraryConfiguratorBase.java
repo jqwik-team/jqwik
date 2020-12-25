@@ -21,7 +21,7 @@ import static org.junit.platform.commons.support.ReflectionSupport.*;
  * <p>
  * Implementations must be registered in <code>/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator</code>
  * so that they will be automatically considered for arbitrary configuration.
- * <p>
+ *
  * <p>
  * Some examples that come with jqwik:
  *

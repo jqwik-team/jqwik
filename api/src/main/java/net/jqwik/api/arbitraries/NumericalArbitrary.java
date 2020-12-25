@@ -20,6 +20,7 @@ public interface NumericalArbitrary<T, A extends NumericalArbitrary<T, A>> exten
 	 * </ul>
 	 *
 	 * @param distribution The distribution to use when generating random values
+	 * @return a random distribution instance
 	 */
 	A withDistribution(RandomDistribution distribution);
 

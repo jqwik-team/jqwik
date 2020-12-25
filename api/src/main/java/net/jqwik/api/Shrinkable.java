@@ -54,6 +54,8 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	 * <p>
 	 * Same size shrinkables are allowed but they have to iterate towards a single value to prevent endless shrinking.
 	 * This also means that a shrinkable must never be in its own shrink stream!
+	 *
+	 * @return a finite stream of shrinking options
 	 */
 	@API(status = INTERNAL, since = "1.3.3")
 	Stream<Shrinkable<T>> shrink();
