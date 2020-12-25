@@ -12,6 +12,9 @@
             report_paths: '**/build/test-results/test/TEST-*.xml'
       ```  
 
+    - Extract TestingSupport into module "testing"
+        - Add `atLeastOneGenerated()`
+
     - Email generation
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails()
         - @Email -> net.jqwik.api.web.@Email
@@ -27,6 +30,10 @@
 
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140
+        - Fix shrinking (maybe base date generation on days since Jan 1, year 0000)
+        - Min year 1900, Max year 2500
+        - DateArbitrary.  
+        - DateArbitrary.shrinkTowards()
 
     - Edge Cases
 
