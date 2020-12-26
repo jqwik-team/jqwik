@@ -18,13 +18,13 @@ public class JqwikTestEngine implements TestEngine {
 	private static final Logger LOG = Logger.getLogger(JqwikTestEngine.class.getName());
 
 	private final LifecycleHooksRegistry lifecycleRegistry = new LifecycleHooksRegistry();
-	private final Supplier<JqwikConfiguration> configurationSupplier;
+	private final Function<ConfigurationParameters,JqwikConfiguration> configurationSupplier;
 
 	public JqwikTestEngine() {
 		this(DefaultJqwikConfiguration::new);
 	}
 
-	JqwikTestEngine(Supplier<JqwikConfiguration> configurationSupplier) {
+	JqwikTestEngine(Function<ConfigurationParameters,JqwikConfiguration> configurationSupplier) {
 		this.configurationSupplier = configurationSupplier;
 	}
 
@@ -35,7 +35,7 @@ public class JqwikTestEngine implements TestEngine {
 
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
-		JqwikConfiguration configuration = buildConfiguration();
+		JqwikConfiguration configuration = buildConfiguration(request.getConfigurationParameters());
 		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId, configuration);
 		new JqwikDiscoverer(configuration.testEngineConfiguration().previousRun(), configuration.propertyDefaultValues())
 			.discover(request, engineDescriptor);
@@ -75,9 +75,9 @@ public class JqwikTestEngine implements TestEngine {
 		new JqwikLifecycleRegistrator(lifecycleRegistry, configurationParameters).registerLifecycleHooks(rootDescriptor);
 	}
 
-	private JqwikConfiguration buildConfiguration() {
+	private JqwikConfiguration buildConfiguration(ConfigurationParameters configurationParameters) {
 		try {
-			return configurationSupplier.get();
+			return configurationSupplier.apply(configurationParameters);
 		} catch (Throwable engineStartupThrowable) {
 			return JqwikExceptionSupport.throwAsUncheckedException(engineStartupThrowable);
 		}

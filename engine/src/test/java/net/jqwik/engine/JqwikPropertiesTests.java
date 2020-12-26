@@ -1,5 +1,9 @@
 package net.jqwik.engine;
 
+import java.util.*;
+
+import org.junit.platform.engine.*;
+
 import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -11,7 +15,22 @@ class JqwikPropertiesTests {
 	@Example
 	@SuppressLogging
 	void defaultValues() {
-		properties = new JqwikProperties("nosuchfile.properties");
+		properties = new JqwikProperties(new ConfigurationParameters() {
+			@Override
+			public Optional<String> get(String key) {
+				return Optional.empty();
+			}
+
+			@Override
+			public Optional<Boolean> getBoolean(String key) {
+				return Optional.empty();
+			}
+
+			@Override
+			public int size() {
+				return 0;
+			}
+		}, "nosuchfile.properties");
 
 		assertThat(properties.runFailuresFirst()).isEqualTo(false);
 		assertThat(properties.databasePath()).isEqualTo(".jqwik-database");
