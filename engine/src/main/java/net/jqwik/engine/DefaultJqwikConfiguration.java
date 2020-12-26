@@ -17,7 +17,7 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 	private TestEngineConfiguration testEngineConfiguration = null;
 
 	DefaultJqwikConfiguration(ConfigurationParameters configurationParameters) {
-		this(new JqwikProperties(configurationParameters));
+		this(JqwikProperties.loadWithBackwardsCompatibility(configurationParameters));
 	}
 
 	private DefaultJqwikConfiguration(JqwikProperties properties) {

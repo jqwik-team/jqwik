@@ -10,12 +10,10 @@ import static org.assertj.core.api.Assertions.*;
 
 class JqwikPropertiesTests {
 
-	private JqwikProperties properties;
-
 	@Example
 	@SuppressLogging
 	void defaultValues() {
-		properties = new JqwikProperties(new ConfigurationParameters() {
+		JqwikProperties properties = new JqwikProperties(new ConfigurationParameters() {
 			@Override
 			public Optional<String> get(String key) {
 				return Optional.empty();
@@ -30,7 +28,7 @@ class JqwikPropertiesTests {
 			public int size() {
 				return 0;
 			}
-		}, "nosuchfile.properties");
+		});
 
 		assertThat(properties.runFailuresFirst()).isEqualTo(false);
 		assertThat(properties.databasePath()).isEqualTo(".jqwik-database");

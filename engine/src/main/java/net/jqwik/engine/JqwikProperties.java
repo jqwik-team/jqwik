@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.logging.*;
 
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.config.*;
 
 import net.jqwik.api.*;
 
@@ -13,19 +14,23 @@ public class JqwikProperties {
 
 	public static final int DEFAULT_TRIES = 1000;
 
-	private static final String[] SUPPORTED_PROPERTIES = new String[]{
-			"database",
-			"runFailuresFirst",
-			"defaultTries",
-			"defaultMaxDiscardRatio",
-			"useJunitPlatformReporter",
-			"defaultAfterFailure",
-			"reportOnlyFailures",
-			"defaultGeneration",
-			"defaultEdgeCases",
-			"defaultShrinking",
-			"boundedShrinkingSeconds"
-	};
+	private static final Map<String, String> COMPATIBILITY_PROPERTY_NAMES;
+
+	static {
+		Map<String, String> priorNames = new HashMap<>();
+		priorNames.put("database", "database");
+		priorNames.put("failures.runfirst", "runFailuresFirst");
+		priorNames.put("tries.default", "defaultTries");
+		priorNames.put("maxdiscardratio.default", "defaultMaxDiscardRatio");
+		priorNames.put("reporting.usejunitplatform", "useJunitPlatformReporter");
+		priorNames.put("failures.after.default", "defaultAfterFailure");
+		priorNames.put("reporting.onlyfailures", "reportOnlyFailures");
+		priorNames.put("generation.default", "defaultGeneration");
+		priorNames.put("edgecases.default", "defaultEdgeCases");
+		priorNames.put("shrinking.default", "defaultShrinking");
+		priorNames.put("shrinking.bounded.seconds", "boundedShrinkingSeconds");
+		COMPATIBILITY_PROPERTY_NAMES = Collections.unmodifiableMap(priorNames);
+	}
 
 	private static final String PROPERTIES_FILE_NAME = "jqwik.properties";
 	private static final String CONFIGURATION_PARAMETERS_PREFIX = "jqwik.";
@@ -101,189 +106,136 @@ public class JqwikProperties {
 		return boundedShrinkingSeconds;
 	}
 
-	JqwikProperties(ConfigurationParameters configurationParameters) {
-		this(configurationParameters, PROPERTIES_FILE_NAME);
+	JqwikProperties(ConfigurationParameters parameters) {
+		databasePath = parameters.get("database").orElse(DEFAULT_DATABASE_PATH);
+		runFailuresFirst = parameters.getBoolean("failures.runfirst").orElse(DEFAULT_RERUN_FAILURES_FIRST);
+		defaultTries = parameters.get("tries.default", Integer::parseInt).orElse(DEFAULT_TRIES);
+		defaultMaxDiscardRatio = parameters.get("maxdiscardratio.default", Integer::parseInt).orElse(DEFAULT_MAX_DISCARD_RATIO);
+		useJunitPlatformReporter = parameters.getBoolean("reporting.usejunitplatform").orElse(DEFAULT_USE_JUNIT_PLATFORM_REPORTER);
+		defaultAfterFailure = parameters.get("failures.after.default", AfterFailureMode::valueOf).orElse(DEFAULT_AFTER_FAILURE);
+		reportOnlyFailures = parameters.getBoolean("reporting.onlyfailures").orElse(DEFAULT_REPORT_ONLY_FAILURES);
+		defaultGeneration = parameters.get("generation.default", GenerationMode::valueOf).orElse(DEFAULT_GENERATION);
+		defaultEdgeCases = parameters.get("edgecases.default", EdgeCasesMode::valueOf).orElse(DEFAULT_EDGE_CASES);
+		defaultShrinking = parameters.get("shrinking.default", ShrinkingMode::valueOf).orElse(DEFAULT_SHRINKING);
+		boundedShrinkingSeconds = parameters.get("shrinking.bounded.seconds", Integer::parseInt).orElse(DEFAULT_BOUNDED_SHRINKING_SECONDS);
 	}
 
-	JqwikProperties(ConfigurationParameters parameters, String propertiesFileName) {
-		ConfigurationParameters compatibilityParameters = loadCompatibilityProperties(propertiesFileName);
-
-		databasePath = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "database",
-				"database",
-				Function.identity()
-		).orElse(DEFAULT_DATABASE_PATH);
-
-		runFailuresFirst = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "runfailuresfirst",
-				"runFailuresFirst",
-				Boolean::parseBoolean
-		).orElse(DEFAULT_RERUN_FAILURES_FIRST);
-
-		defaultTries = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "tries.default",
-				"defaultTries",
-				Integer::parseInt
-		).orElse(DEFAULT_TRIES);
-
-		defaultMaxDiscardRatio = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "maxdiscardratio.default",
-				"defaultMaxDiscardRatio",
-				Integer::parseInt
-		).orElse(DEFAULT_MAX_DISCARD_RATIO);
-
-		useJunitPlatformReporter = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "usejunitplatformreporter",
-				"useJunitPlatformReporter",
-				Boolean::parseBoolean
-		).orElse(DEFAULT_USE_JUNIT_PLATFORM_REPORTER);
-
-		defaultAfterFailure = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "afterfailure.default",
-				"defaultAfterFailure",
-				AfterFailureMode::valueOf
-		).orElse(DEFAULT_AFTER_FAILURE);
-
-		reportOnlyFailures = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "reportonlyfailures",
-				"reportOnlyFailures",
-				Boolean::parseBoolean
-		).orElse(DEFAULT_REPORT_ONLY_FAILURES);
-
-		defaultGeneration = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "generation.default",
-				"defaultGeneration",
-				GenerationMode::valueOf
-		).orElse(DEFAULT_GENERATION);
-
-		defaultEdgeCases = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "edgecases.default",
-				"defaultEdgeCases",
-				EdgeCasesMode::valueOf
-		).orElse(DEFAULT_EDGE_CASES);
-
-		defaultShrinking = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "shrinking.default",
-				"defaultShrinking",
-				ShrinkingMode::valueOf
-		).orElse(DEFAULT_SHRINKING);
-
-		boundedShrinkingSeconds = property(
-				parameters,
-				compatibilityParameters,
-				CONFIGURATION_PARAMETERS_PREFIX + "boundedshrinkingseconds",
-				"boundedShrinkingSeconds",
-				Integer::parseInt
-		).orElse(DEFAULT_BOUNDED_SHRINKING_SECONDS);
+	static JqwikProperties loadWithBackwardsCompatibility(ConfigurationParameters fromJunit) {
+		// When backwards compatibility is eliminated, `fromJunitPrefix` can be passed directly to the constructor
+		ConfigurationParameters fromJunitPrefixed = new PrefixedConfigurationParameters(fromJunit, CONFIGURATION_PARAMETERS_PREFIX);
+		ConfigurationParameters fromJqwikProperties = new JqwikPropertiesFileConfigurationParameters();
+		return new JqwikProperties(new CompatibilityConfigurationParameters(fromJunitPrefixed, fromJunit, fromJqwikProperties));
 	}
 
-	private static <T> Optional<T> property(
-			ConfigurationParameters parameters,
-			ConfigurationParameters compatibilityParameters,
-			String key,
-			String compatibilityKey,
-			Function<String, T> converter
-	) {
-		Optional<T> value = parameters.get(key, converter);
-		Optional<T> valueUnderCompatibilityKey =
-				key.equals(compatibilityKey)
-						? Optional.empty()
-						: parameters.get(compatibilityKey, converter);
-		Optional<T> compatibilityValue = compatibilityParameters.get(compatibilityKey, converter);
+	private static class CompatibilityConfigurationParameters implements ConfigurationParameters {
+		private final ConfigurationParameters fromJunitPrefixed;
+		private final ConfigurationParameters fromJunitUnPrefixed;
+		private final ConfigurationParameters fromJqwikProperties;
 
-		if (value.isPresent()) {
-			complainIfAlsoSpecifiedInCompatibilityParameters(key, compatibilityKey, compatibilityValue);
+		private CompatibilityConfigurationParameters(
+				ConfigurationParameters fromJunitPrefixed, ConfigurationParameters fromJunit, ConfigurationParameters fromJqwikProperties
+		) {
+			this.fromJunitPrefixed = fromJunitPrefixed;
+			this.fromJunitUnPrefixed = fromJunit;
+			this.fromJqwikProperties = fromJqwikProperties;
+		}
 
-			return value;
-		} else if (valueUnderCompatibilityKey.isPresent()) {
-			LOG.log(Level.SEVERE, String.format(
-					"Property [%s] is using compatibility key name. Rename to [%s] to eliminate this message.",
-					compatibilityKey,
-					key
-			));
+		@Override
+		public Optional<String> get(String key) {
+			return get(key, Function.identity());
+		}
 
-			complainIfAlsoSpecifiedInCompatibilityParameters(compatibilityKey, compatibilityKey, compatibilityValue);
+		@Override
+		public Optional<Boolean> getBoolean(String key) {
+			return get(key, Boolean::parseBoolean);
+		}
 
-			return valueUnderCompatibilityKey;
-		} else if (compatibilityValue.isPresent()) {
-			LOG.log(Level.WARNING, String.format(
-					"Loaded property [%s] from [%s]. Move to [junit-platform.properties] as [%s] to eliminate this message.",
-					compatibilityKey,
-					PROPERTIES_FILE_NAME,
-					key
-			));
+		@Override
+		public int size() {
+			// we never call this. due to the compatibility logic, what's the "right" answer?
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public <T> Optional<T> get(String key, Function<String, T> transformer) {
+			Optional<T> value = fromJunitPrefixed.get(key, transformer);
+			Optional<String> priorName = Optional.ofNullable(COMPATIBILITY_PROPERTY_NAMES.get(key));
+
+			if (value.isPresent()) {
+				priorName.ifPresent(compatibilityKey -> complainIfAlsoSpecifiedInCompatibilityParameters(key, compatibilityKey));
+
+				return value;
+			}
+
+			return priorName.flatMap(compatibilityKey -> compatibilityGet(key, compatibilityKey, transformer));
+		}
+
+		private <T> Optional<T> compatibilityGet(String key, String compatibilityKey, Function<String, T> transformer) {
+			Optional<T> valueUnderCompatibilityKey = fromJunitUnPrefixed.get(compatibilityKey, transformer);
+
+			if (valueUnderCompatibilityKey.isPresent()) {
+				LOG.log(Level.SEVERE, String.format(
+						"Property [%s] is using compatibility key name. Rename to [%s] to eliminate this message.",
+						compatibilityKey,
+						key
+				));
+
+				complainIfAlsoSpecifiedInCompatibilityParameters(compatibilityKey, compatibilityKey);
+
+				return valueUnderCompatibilityKey;
+			}
+
+			Optional<T> compatibilityValue = fromJqwikProperties.get(compatibilityKey, transformer);
+
+			if (compatibilityValue.isPresent()) {
+				LOG.log(Level.WARNING, String.format(
+						"Loaded property [%s] from [%s]. Move to [junit-platform.properties] as [%s] to eliminate this message.",
+						compatibilityKey,
+						PROPERTIES_FILE_NAME,
+						key
+				));
+			}
 
 			return compatibilityValue;
 		}
 
-		return Optional.empty();
-	}
-
-	private static <T> void complainIfAlsoSpecifiedInCompatibilityParameters(
-			String key,
-			String compatibilityKey,
-			Optional<T> compatibilityValue
-	) {
-		if (compatibilityValue.isPresent()) {
-			LOG.log(Level.SEVERE, String.format(
-					"Loaded property [%s] from JUnit Configuration. Ignoring value for [%s] found in [%s]. Remove to eliminate this message.",
-					key,
-					compatibilityKey,
-					PROPERTIES_FILE_NAME
-			));
+		private void complainIfAlsoSpecifiedInCompatibilityParameters(String key, String compatibilityKey) {
+			fromJqwikProperties.get(compatibilityKey)
+							   .ifPresent(v -> LOG.log(Level.SEVERE, String.format(
+									   "Loaded property [%s] from JUnit Configuration. Ignoring value for [%s] found in [%s]. Remove to eliminate this message.",
+									   key,
+									   compatibilityKey,
+									   PROPERTIES_FILE_NAME
+							   )));
 		}
 	}
 
-	private ConfigurationParameters loadCompatibilityProperties(String propertiesFileName) {
-		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFileName);
-		if (inputStream == null) {
-			return new JqwikPropertiesConfigurationParameters(new Properties());
-		}
+	private static class JqwikPropertiesFileConfigurationParameters implements ConfigurationParameters {
+		private final Properties properties = new Properties();
 
-		Properties properties = new Properties();
-		try {
-			properties.load(inputStream);
-			warnOnUnsupportedProperties(properties);
-			return new JqwikPropertiesConfigurationParameters(properties);
-		} catch (Throwable throwable) {
-			String message = String.format("Error while reading properties file [%s]", propertiesFileName);
-			throw new JqwikException(message, throwable);
-		}
-	}
+		JqwikPropertiesFileConfigurationParameters() {
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE_NAME);
 
-	private void warnOnUnsupportedProperties(Properties properties) {
-		for (String propertyName : properties.stringPropertyNames()) {
-			if (!Arrays.asList(SUPPORTED_PROPERTIES).contains(propertyName)) {
-				String message = String.format("Property [%s] is not supported in '%s' file", propertyName, PROPERTIES_FILE_NAME);
-				LOG.log(Level.WARNING, message);
+			if (inputStream != null) {
+				try {
+					properties.load(inputStream);
+				} catch (Throwable throwable) {
+					String message = String.format("Error while reading properties file [%s]", PROPERTIES_FILE_NAME);
+					throw new JqwikException(message, throwable);
+				}
+
+				warnOnUnsupportedProperties();
 			}
 		}
-	}
 
-	private static class JqwikPropertiesConfigurationParameters implements ConfigurationParameters {
-		private final Properties properties;
-
-		private JqwikPropertiesConfigurationParameters(Properties properties) {this.properties = properties;}
+		private void warnOnUnsupportedProperties() {
+			for (String propertyName : properties.stringPropertyNames()) {
+				if (!COMPATIBILITY_PROPERTY_NAMES.containsValue(propertyName)) {
+					String message = String.format("Property [%s] is not supported in '%s' file", propertyName, PROPERTIES_FILE_NAME);
+					LOG.log(Level.WARNING, message);
+				}
+			}
+		}
 
 		@Override
 		public Optional<String> get(String key) {
@@ -300,5 +252,4 @@ public class JqwikProperties {
 			return properties.size();
 		}
 	}
-
 }
