@@ -49,6 +49,11 @@ title: jqwik Release Notes
     - Method `StatisticsCollector.coverage(..)`
     - Class `StatisticsCoverage`
     - Class `StatisticsEntry`
+    
+- Properties are now loaded via JUnit's [Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) mechanism.
+  Properties specified in `jqwik.properties` continue to work, but are considered
+  deprecated. Log messages will be emitted for any used properties with their 
+  new name. 
 
 #### Breaking Changes
 

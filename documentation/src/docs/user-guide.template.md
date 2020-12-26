@@ -317,7 +317,7 @@ annotation has a few optional values:
 
 - `int tries`: The number of times _jqwik_ tries to generate parameter values for this method.
   
-  The default is `1000` which can be overridden in [`jqwik.properties`](#jqwik-configuration).
+  The default is `1000` which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
 
 - `String seed`: The _random seed_ to use for generating values. If you do not specify a values
   _jqwik_ will use a random _random seed_. The actual seed used is being reported by 
@@ -327,7 +327,7 @@ annotation has a few optional values:
   in case you are using [Assumptions](#assumptions). If the ratio is exceeded _jqwik_ will
   report this property as a failure. 
   
-  The default is `5` which can be overridden in [`jqwik.properties`](#jqwik-configuration).
+  The default is `5` which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
 
 - `ShrinkingMode shrinking`: You can influence the way [shrinking](#result-shrinking) is done
   - `ShrinkingMode.OFF`: No shrinking at all
@@ -3800,27 +3800,44 @@ to one of those enum values.
 
 ## jqwik Configuration
 
-_jqwik_ will look for a file `jqwik.properties` in your classpath in which you can configure
+_jqwik_ uses JUnit's [configuration parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) to configure itself.
+
+The simplest form is a file `junit-platform.properties` in your classpath in which you can configure
 a few basic parameters:
 
 ```
-database = .jqwik-database          # The database file in which to store data of previous runs.
-                                    # Set to empty to fully disable test run recording.
-defaultTries = 1000                 # The default number of tries for each property
-defaultMaxDiscardRatio = 5          # The default ratio before assumption misses make a property fail
-useJunitPlatformReporter = false    # Set to true if you want to use platform reporting
-defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified properties:
-                                    # PREVIOUS_SEED, SAMPLE_ONLY or SAMPLE_FIRST
-reportOnlyFailures = false          # Set to true if only falsified properties should be reported
-defaultGeneration = AUTO            # Set default behaviour for generation:
-                                    # AUTO, RANDOMIZED, or EXHAUSTIVE
-defaultEdgeCases = MIXIN            # Set default behaviour for edge cases generation:
-                                    # FIRST, MIXIN, or NONE
-defaultShrinking = BOUNDED          # Set default shrinking behaviour:
-                                    # BOUNDED, FULL, or OFF
-boundedShrinkingSeconds = 10        # The maximum number of seconds to shrink if
-                                    # shrinking behaviour is set to BOUNDED
+jqwik.database = .jqwik-database           # The database file in which to store data of previous runs.
+                                           # Set to empty to fully disable test run recording.
+jqwik.tries.default = 1000                 # The default number of tries for each property
+jqwik.maxdiscardratio.default = 5          # The default ratio before assumption misses make a property fail
+jqwik.maxdiscardratio.default = false      # Set to true if you want to use platform reporting
+jqwik.afterfailure.default = PREVIOUS_SEED # Set default behaviour for falsified properties:
+                                           # PREVIOUS_SEED, SAMPLE_ONLY or SAMPLE_FIRST
+jqwik.reportonlyfailures = false           # Set to true if only falsified properties should be reported
+jqwik.generation.default = AUTO            # Set default behaviour for generation:
+                                           # AUTO, RANDOMIZED, or EXHAUSTIVE
+jqwik.edgecases.default = MIXIN            # Set default behaviour for edge cases generation:
+                                           # FIRST, MIXIN, or NONE
+jqwik.shrinking.default = BOUNDED          # Set default shrinking behaviour:
+                                           # BOUNDED, FULL, or OFF
+jqwik.boundedshrinkingseconds = 10         # The maximum number of seconds to shrink if
+                                           # shrinking behaviour is set to BOUNDED
 ```
+
+Prior releases of _jqwik_ used a custom `jqwik.properties`. While this continues to work, it is deprecated
+and will be removed in a future release. Some names have changed:
+
+ - `database` -> `jqwik.database`
+ - `defaultTries` -> `jqwik.tries.default`
+ - `defaultMaxDiscardRatio` -> `jqwik.maxdiscardratio.default`
+ - `useJunitPlatformReporter` -> `jqwik.maxdiscardratio.default`
+ - `defaultAfterFailure` -> `jqwik.afterfailure.default`
+ - `reportOnlyFailures` -> `jqwik.reportonlyfailures`
+ - `defaultGeneration` -> `jqwik.generation.default`
+ - `defaultEdgeCases` -> `jqwik.edgecases.default`
+ - `defaultShrinking` -> `jqwik.shrinking.default`
+ - `boundedShrinkingSeconds` -> `jqwik.boundedshrinkingseconds`
+
 
 ## Advanced Topics
 
