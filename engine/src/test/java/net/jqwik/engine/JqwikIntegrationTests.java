@@ -68,7 +68,7 @@ class JqwikIntegrationTests {
 	}
 
 	private JqwikTestEngine createTestEngine(final boolean useJunitPlatformReporter) {
-		return new JqwikTestEngine(() -> configuration(useJunitPlatformReporter));
+		return new JqwikTestEngine(unusedConfigurationProperties -> configuration(useJunitPlatformReporter));
 	}
 
 	private JqwikTestEngine createTestEngine() {
