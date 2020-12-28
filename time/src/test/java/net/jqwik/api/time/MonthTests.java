@@ -28,29 +28,6 @@ public class MonthTests {
 	class CheckMonthMethods {
 
 		@Property
-		void atTheEarliest(@ForAll("months") Month month, @ForAll Random random) {
-
-			Arbitrary<Month> months = Dates.months().atTheEarliest(month);
-
-			assertAllGenerated(months.generator(1000), random, m -> {
-				assertThat(m).isGreaterThanOrEqualTo(month);
-				return true;
-			});
-
-		}
-
-		@Property
-		void atTheLatest(@ForAll("months") Month month, @ForAll Random random) {
-
-			Arbitrary<Month> months = Dates.months().atTheLatest(month);
-
-			assertAllGenerated(months.generator(1000), random, m -> {
-				assertThat(m).isLessThanOrEqualTo(month);
-				return true;
-			});
-		}
-
-		@Property
 		void between(@ForAll("months") Month startMonth, @ForAll("months") Month endMonth, @ForAll Random random) {
 
 			Assume.that(startMonth.compareTo(endMonth) <= 0);

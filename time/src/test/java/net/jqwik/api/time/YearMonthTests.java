@@ -90,30 +90,6 @@ class YearMonthTests {
 		class YearMethods {
 
 			@Property
-			void yearGreaterOrEqual(@ForAll("years") int year, @ForAll Random random) {
-
-				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().yearGreaterOrEqual(year);
-
-				assertAllGenerated(yearMonths.generator(1000), random, ym -> {
-					assertThat(ym.getYear()).isGreaterThanOrEqualTo(year);
-					return true;
-				});
-
-			}
-
-			@Property
-			void yearLessOrEqual(@ForAll("years") int year, @ForAll Random random) {
-
-				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().yearLessOrEqual(year);
-
-				assertAllGenerated(yearMonths.generator(1000), random, ym -> {
-					assertThat(ym.getYear()).isLessThanOrEqualTo(year);
-					return true;
-				});
-
-			}
-
-			@Property
 			void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll Random random) {
 
 				Assume.that(startYear <= endYear);
@@ -149,30 +125,6 @@ class YearMonthTests {
 
 		@Group
 		class MonthMethods {
-
-			@Property
-			void monthGreaterOrEqual(@ForAll("months") int month, @ForAll Random random) {
-
-				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().monthGreaterOrEqual(month);
-
-				assertAllGenerated(yearMonths.generator(1000), random, ym -> {
-					assertThat(ym.getMonth()).isGreaterThanOrEqualTo(Month.of(month));
-					return true;
-				});
-
-			}
-
-			@Property
-			void monthLessOrEqual(@ForAll("months") int month, @ForAll Random random) {
-
-				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().monthLessOrEqual(month);
-
-				assertAllGenerated(yearMonths.generator(1000), random, ym -> {
-					assertThat(ym.getMonth()).isLessThanOrEqualTo(Month.of(month));
-					return true;
-				});
-
-			}
 
 			@Property
 			void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {

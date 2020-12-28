@@ -27,30 +27,6 @@ class YearTests {
 	class CheckYearMethods {
 
 		@Property
-		void greaterOrEqual(@ForAll("years") Year year, @ForAll Random random) {
-
-			Arbitrary<Year> years = Dates.years().greaterOrEqual(year);
-
-			assertAllGenerated(years.generator(1000), random, y -> {
-				assertThat(y).isGreaterThanOrEqualTo(year);
-				return true;
-			});
-
-		}
-
-		@Property
-		void lessOrEqual(@ForAll("years") Year year, @ForAll Random random) {
-
-			Arbitrary<Year> years = Dates.years().lessOrEqual(year);
-
-			assertAllGenerated(years.generator(1000), random, y -> {
-				assertThat(y).isLessThanOrEqualTo(year);
-				return true;
-			});
-
-		}
-
-		@Property
 		void between(@ForAll("years") Year startYear, @ForAll("years") Year endYear, @ForAll Random random) {
 
 			Assume.that(startYear.compareTo(endYear) <= 0);
