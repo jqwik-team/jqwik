@@ -27,30 +27,6 @@ class DaysOfMonthTests {
 	class CheckDaysOfMonthMethods {
 
 		@Property
-		void greaterOrEqual(@ForAll("dayOfMonth") int dayOfMonth, @ForAll Random random) {
-
-			Arbitrary<Integer> dayOfMonths = Dates.daysOfMonth().greaterOrEqual(dayOfMonth);
-
-			assertAllGenerated(dayOfMonths.generator(1000), random, d -> {
-				assertThat(d).isGreaterThanOrEqualTo(dayOfMonth);
-				return true;
-			});
-
-		}
-
-		@Property
-		void lessOrEqual(@ForAll("dayOfMonth") int dayOfMonth, @ForAll Random random) {
-
-			Arbitrary<Integer> dayOfMonths = Dates.daysOfMonth().lessOrEqual(dayOfMonth);
-
-			assertAllGenerated(dayOfMonths.generator(1000), random, d -> {
-				assertThat(d).isLessThanOrEqualTo(dayOfMonth);
-				return true;
-			});
-
-		}
-
-		@Property
 		void between(@ForAll("dayOfMonth") int startDayOfMonth, @ForAll("dayOfMonth") int endDayOfMonth, @ForAll Random random) {
 
 			Assume.that(startDayOfMonth < endDayOfMonth);
