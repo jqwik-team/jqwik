@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.api.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -366,6 +367,52 @@ class DatesTests {
 			}
 			return dateList;
 
+		}
+
+	}
+
+	@Group
+	class checkEqualDistribution {
+
+		@Property
+		void months(@ForAll("dates") LocalDate date) {
+			Statistics.label("Months")
+					  .collect(date.getMonth())
+					  .coverage(this::checkMonthCoverage);
+		}
+
+		@Property
+		void dayOfMonths(@ForAll("dates") LocalDate date) {
+			Statistics.label("Day of months")
+					  .collect(date.getDayOfMonth())
+					  .coverage(this::checkDayOfMonthCoverage);
+		}
+
+		@Property
+		void dayOfWeeks(@ForAll("dates") LocalDate date) {
+			Statistics.label("Day of weeks")
+					  .collect(date.getDayOfWeek())
+					  .coverage(this::checkDayOfWeekCoverage);
+		}
+
+		private void checkMonthCoverage(StatisticsCoverage coverage) {
+			Month[] months = Month.class.getEnumConstants();
+			for (Month m : months) {
+				coverage.check(m).percentage(p -> p >= 5);
+			}
+		}
+
+		private void checkDayOfMonthCoverage(StatisticsCoverage coverage) {
+			for (int dayOfMonth = 1; dayOfMonth <= 31; dayOfMonth++) {
+				coverage.check(dayOfMonth).percentage(p -> p >= 1);
+			}
+		}
+
+		private void checkDayOfWeekCoverage(StatisticsCoverage coverage) {
+			DayOfWeek[] dayOfWeeks = DayOfWeek.class.getEnumConstants();
+			for (DayOfWeek dayOfWeek : dayOfWeeks) {
+				coverage.check(dayOfWeek).percentage(p -> p >= 10);
+			}
 		}
 
 	}
