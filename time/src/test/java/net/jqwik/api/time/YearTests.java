@@ -13,14 +13,35 @@ import static net.jqwik.api.testing.TestingSupport.*;
 @Group
 class YearTests {
 
-	@Property
-	void validYearIsGenerated(@ForAll("years") Year year) {
-		assertThat(year).isNotNull();
-	}
-
 	@Provide
 	Arbitrary<Year> years() {
 		return Dates.years();
+	}
+
+	@Group
+	class validYearsAreGenerated {
+
+		@Property
+		void yearIsNotNull(@ForAll("years") Year year) {
+			assertThat(year).isNotNull();
+		}
+
+		@Property
+		void defaultYearGenerationYearsOnlyBetween1900And2500(@ForAll("years") Year year) {
+			assertThat(year.getValue()).isGreaterThanOrEqualTo(1900);
+			assertThat(year.getValue()).isLessThanOrEqualTo(2500);
+		}
+
+		@Property
+		void yearIsNotZero(@ForAll("yearsAround0") Year year) {
+			assertThat(year).isNotEqualTo(Year.of(0));
+		}
+
+		@Provide
+		Arbitrary<Year> yearsAround0() {
+			return Dates.years().between(-10, 10);
+		}
+
 	}
 
 	@Group
@@ -62,23 +83,15 @@ class YearTests {
 		void defaultShrinking(@ForAll Random random) {
 			YearArbitrary years = Dates.years();
 			Year value = shrinkToMinimal(years, random);
-			assertThat(value).isEqualTo(Year.of(0));
+			assertThat(value).isEqualTo(Year.of(1900));
 		}
 
 		@Property
 		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
 			YearArbitrary years = Dates.years();
-			TestingFalsifier<Year> falsifier = year -> year.getValue() < 42;
+			TestingFalsifier<Year> falsifier = year -> year.getValue() < 1942;
 			Year value = shrinkToMinimal(years, random, falsifier);
-			assertThat(value).isEqualTo(Year.of(42));
-		}
-
-		@Property
-		void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
-			YearArbitrary years = Dates.years();
-			TestingFalsifier<Year> falsifier = year -> year.getValue() > -42;
-			Year value = shrinkToMinimal(years, random, falsifier);
-			assertThat(value).isEqualTo(Year.of(-42));
+			assertThat(value).isEqualTo(Year.of(1942));
 		}
 
 	}
@@ -92,9 +105,9 @@ class YearTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Year> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(11);
+			assertThat(generator.maxCount()).isEqualTo(11); // Cannot know the number of filtered elements in advance
 			assertThat(generator)
-					.containsExactly(Year.of(-5), Year.of(-4), Year.of(-3), Year.of(-2), Year.of(-1), Year.of(0), Year.of(1), Year.of(2), Year.of(3), Year.of(4), Year.of(5));
+					.containsExactly(Year.of(-5), Year.of(-4), Year.of(-3), Year.of(-2), Year.of(-1), Year.of(1), Year.of(2), Year.of(3), Year.of(4), Year.of(5));
 		}
 
 	}
@@ -107,9 +120,9 @@ class YearTests {
 
 			YearArbitrary years = Dates.years();
 			Set<Year> edgeCases = collectEdgeCases(years.edgeCases());
-			assertThat(edgeCases).hasSize(9);
+			assertThat(edgeCases).hasSize(4);
 			assertThat(edgeCases)
-					.contains(Year.of(-999999999), Year.of(-999999998), Year.of(-2), Year.of(-1), Year.of(0), Year.of(1), Year.of(2), Year.of(999999998), Year.of(999999999));
+					.containsExactlyInAnyOrder(Year.of(1900), Year.of(1901), Year.of(2499), Year.of(2500));
 
 		}
 
@@ -119,7 +132,7 @@ class YearTests {
 			YearArbitrary years = Dates.years().between(100, 200);
 			Set<Year> edgeCases = collectEdgeCases(years.edgeCases());
 			assertThat(edgeCases).hasSize(4);
-			assertThat(edgeCases).contains(Year.of(100), Year.of(101), Year.of(199), Year.of(200));
+			assertThat(edgeCases).containsExactlyInAnyOrder(Year.of(100), Year.of(101), Year.of(199), Year.of(200));
 
 		}
 

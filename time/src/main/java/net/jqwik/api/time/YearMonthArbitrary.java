@@ -10,6 +10,7 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Fluent interface to configure the generation of year and month values.
+ * By default, year and months with years between 1900 and 2500 are generated.
  */
 @API(status = EXPERIMENTAL, since = "1.4.0")
 public interface YearMonthArbitrary extends Arbitrary<YearMonth> {

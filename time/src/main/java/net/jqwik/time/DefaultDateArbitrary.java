@@ -15,8 +15,8 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	private LocalDate dateMin = LocalDate.MIN;
 	private LocalDate dateMax = LocalDate.MAX;
-	private Year yearMin = Year.of(LocalDate.MIN.getYear());
-	private Year yearMax = Year.of(LocalDate.MAX.getYear());
+	private Year yearMin = Year.of(1900);
+	private Year yearMax = Year.of(2500);
 	private Month monthMin = Month.JANUARY;
 	private Month monthMax = Month.DECEMBER;
 	private Month[] allowedMonths = new Month[]{Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER};
@@ -26,6 +26,7 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
+		setYearMinMax();
 		optimizeRuntime();
 		Arbitrary<Year> year = generateYears();
 		Arbitrary<Month> month = generateMonths();
@@ -40,6 +41,15 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 			localDates = localDates.edgeCases(localDateConfig -> localDateConfig.add(dateMax));
 		}
 		return localDates;
+	}
+
+	private void setYearMinMax() {
+		if (yearMin.getValue() == 1900 && !dateMin.equals(LocalDate.MIN)) {
+			yearMin = Year.of(dateMin.getYear());
+		}
+		if (yearMax.getValue() == 2500 && !dateMax.equals(LocalDate.MAX)) {
+			yearMax = Year.of(dateMax.getYear());
+		}
 	}
 
 	private Arbitrary<Year> generateYears() {

@@ -111,7 +111,7 @@ class DaysOfMonthTests {
 			DaysOfMonthArbitrary daysOfMonths = Dates.daysOfMonth();
 			Set<Integer> edgeCases = collectEdgeCases(daysOfMonths.edgeCases());
 			assertThat(edgeCases).hasSize(4);
-			assertThat(edgeCases).contains(1, 2, 30, 31);
+			assertThat(edgeCases).containsExactlyInAnyOrder(1, 2, 30, 31);
 
 		}
 
@@ -121,7 +121,7 @@ class DaysOfMonthTests {
 			DaysOfMonthArbitrary daysOfMonths = Dates.daysOfMonth().between(5, 12);
 			Set<Integer> edgeCases = collectEdgeCases(daysOfMonths.edgeCases());
 			assertThat(edgeCases).hasSize(4);
-			assertThat(edgeCases).contains(5, 6, 11, 12);
+			assertThat(edgeCases).containsExactlyInAnyOrder(5, 6, 11, 12);
 
 		}
 

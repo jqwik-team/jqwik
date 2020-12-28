@@ -1298,7 +1298,8 @@ void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Host =
 ### Generation of Dates
 
 The date generation is in an extra module which have to be add in a project's dependency.
-Then you can create an arbitrary for date values by calling a static method on class `Dates`:
+By default, years between 1900 and 2500 are generated. You can change this by setting min/max values.
+You can create an arbitrary for date values by calling a static method on class `Dates`:
 
 - [`DateArbitrary dates()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#dates())
 - [`YearArbitrary years()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#years())

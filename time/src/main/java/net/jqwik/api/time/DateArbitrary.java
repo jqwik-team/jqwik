@@ -10,6 +10,8 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Fluent interface to configure the generation of local date values.
+ * All generated dates use the Gregorian Calendar, even if they are before October 15, 1582.
+ * By default, local dates with years between 1900 and 2500 are generated.
  */
 @API(status = EXPERIMENTAL, since = "1.4.0")
 public interface DateArbitrary extends Arbitrary<LocalDate> {

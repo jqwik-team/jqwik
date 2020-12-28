@@ -15,22 +15,56 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 
 	private YearMonth yearMonthMin = YearMonth.of(Year.MIN_VALUE, Month.JANUARY);
 	private YearMonth yearMonthMax = YearMonth.of(Year.MAX_VALUE, Month.DECEMBER);
-	private Year yearMin = Year.of(Year.MIN_VALUE);
-	private Year yearMax = Year.of(Year.MAX_VALUE);
+	private Year yearMin = Year.of(1900);
+	private Year yearMax = Year.of(2500);
 	private Month monthMin = Month.JANUARY;
 	private Month monthMax = Month.DECEMBER;
 	private Month[] allowedMonths = new Month[]{Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER};
 
 	@Override
 	protected Arbitrary<YearMonth> arbitrary() {
+		setYearMinMax();
 		DateArbitrary dates = Dates.dates()
 								   .atTheEarliest(LocalDate.of(yearMonthMin.getYear(), yearMonthMin.getMonth(), 1))
-								   .atTheLatest(LocalDate.of(yearMonthMax.getYear(), yearMonthMax.getMonth(), 1))
+								   .atTheLatest(LocalDate.of(yearMonthMax.getYear(), yearMonthMax
+																							 .getMonth(), getMaxDayOfMonth(yearMonthMax)))
 								   .yearBetween(yearMin, yearMax)
 								   .monthBetween(monthMin, monthMax)
 								   .onlyMonths(allowedMonths)
 								   .dayOfMonthBetween(1, 1);
 		return dates.map(v -> YearMonth.of(v.getYear(), v.getMonth()));
+	}
+
+	private int getMaxDayOfMonth(YearMonth yearMonth) {
+		switch (yearMonth.getMonth()) {
+			case FEBRUARY:
+				return calculateMaxDayOfMonthForFebruary(yearMonth);
+			case APRIL:
+			case JUNE:
+			case SEPTEMBER:
+			case NOVEMBER:
+				return 30;
+			default:
+				return 31;
+		}
+	}
+
+	private int calculateMaxDayOfMonthForFebruary(YearMonth yearMonth) {
+		try {
+			LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), 29);
+		} catch (DateTimeException e) {
+			return 28;
+		}
+		return 29;
+	}
+
+	private void setYearMinMax() {
+		if (yearMin.getValue() == 1900 && !yearMonthMin.equals(YearMonth.of(Year.MIN_VALUE, Month.JANUARY))) {
+			yearMin = Year.of(yearMonthMin.getYear());
+		}
+		if (yearMax.getValue() == 2500 && !yearMonthMax.equals(YearMonth.of(Year.MAX_VALUE, Month.DECEMBER))) {
+			yearMax = Year.of(yearMonthMax.getYear());
+		}
 	}
 
 	@Override

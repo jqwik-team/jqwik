@@ -24,9 +24,9 @@ public class DefaultMonthDayArbitrary extends ArbitraryDecorator<MonthDay> imple
 	@Override
 	protected Arbitrary<MonthDay> arbitrary() {
 		DateArbitrary dates = Dates.dates()
-								   .atTheEarliest(LocalDate.of(0, monthDayMin.getMonth(), monthDayMin.getDayOfMonth()))
-								   .atTheLatest(LocalDate.of(0, monthDayMax.getMonth(), monthDayMax.getDayOfMonth()))
-								   .yearBetween(0, 0)
+								   .atTheEarliest(LocalDate.of(2020, monthDayMin.getMonth(), monthDayMin.getDayOfMonth()))
+								   .atTheLatest(LocalDate.of(2020, monthDayMax.getMonth(), monthDayMax.getDayOfMonth()))
+								   .yearBetween(2020, 2020)
 								   .monthBetween(monthMin, monthMax)
 								   .onlyMonths(allowedMonths)
 								   .dayOfMonthBetween(dayOfMonthMin, dayOfMonthMax);
