@@ -89,6 +89,7 @@ class DatesTests {
 			void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll Random random) {
 
 				Assume.that(startYear <= endYear);
+				Assume.that(!(startYear == 0 && endYear == 0));
 
 				Arbitrary<LocalDate> dates = Dates.dates().yearBetween(startYear, endYear);
 
@@ -102,6 +103,8 @@ class DatesTests {
 
 			@Property
 			void yearBetweenSame(@ForAll("years") int year, @ForAll Random random) {
+
+				Assume.that(year != 0);
 
 				Arbitrary<LocalDate> dates = Dates.dates().yearBetween(year, year);
 
@@ -234,7 +237,7 @@ class DatesTests {
 		void defaultShrinking(@ForAll Random random) {
 			DateArbitrary dates = Dates.dates();
 			LocalDate value = shrinkToMinimal(dates, random);
-			assertThat(value).isEqualTo(LocalDate.of(0, Month.JANUARY, 1));
+			assertThat(value).isEqualTo(LocalDate.of(1900, Month.JANUARY, 1));
 		}
 
 		@Property
@@ -244,15 +247,6 @@ class DatesTests {
 			TestingFalsifier<LocalDate> falsifier = date -> date.isBefore(LocalDate.of(2013, Month.MAY, 25));
 			LocalDate value = shrinkToMinimal(dates, random, falsifier);
 			assertThat(value).isEqualTo(LocalDate.of(2013, Month.MAY, 25));
-		}
-
-		@Property
-		@Disabled
-		void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
-			DateArbitrary dates = Dates.dates();
-			TestingFalsifier<LocalDate> falsifier = date -> date.isAfter(LocalDate.of(-2013, Month.MAY, 25));
-			LocalDate value = shrinkToMinimal(dates, random, falsifier);
-			assertThat(value).isEqualTo(LocalDate.of(-2013, Month.MAY, 25));
 		}
 
 	}
@@ -317,7 +311,7 @@ class DatesTests {
 
 			DateArbitrary dates = Dates.dates();
 			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
-			assertThat(edgeCases).hasSize(9 * 2 * 4);
+			assertThat(edgeCases).hasSize(4 * 2 * 4);
 			assertThat(edgeCases).containsExactlyInAnyOrderElementsOf(generateEdgeCaseDates());
 
 		}
@@ -360,7 +354,7 @@ class DatesTests {
 		List<LocalDate> generateEdgeCaseDates() {
 
 			List<LocalDate> dateList = new ArrayList<>();
-			Year[] yearEdgeCases = new Year[]{Year.of(-999999999), Year.of(-999999998), Year.of(-2), Year.of(-1), Year.of(0), Year.of(1), Year.of(2), Year.of(999999998), Year.of(999999999)};
+			Year[] yearEdgeCases = new Year[]{Year.of(1900), Year.of(1901), Year.of(2499), Year.of(2500)};
 			Month[] monthEdgeCases = new Month[]{Month.JANUARY, Month.DECEMBER};
 			int[] dayOfMonthEdgeCases = new int[]{1, 2, 30, 31};
 			for (Year y : yearEdgeCases) {

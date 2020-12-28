@@ -135,7 +135,7 @@ public class MonthTests {
 			MonthArbitrary months = Dates.months();
 			Set<Month> edgeCases = collectEdgeCases(months.edgeCases());
 			assertThat(edgeCases).hasSize(2);
-			assertThat(edgeCases).contains(Month.JANUARY, Month.DECEMBER);
+			assertThat(edgeCases).containsExactlyInAnyOrder(Month.JANUARY, Month.DECEMBER);
 
 		}
 
@@ -145,7 +145,7 @@ public class MonthTests {
 			MonthArbitrary months = Dates.months().between(Month.MARCH, Month.AUGUST);
 			Set<Month> edgeCases = collectEdgeCases(months.edgeCases());
 			assertThat(edgeCases).hasSize(2);
-			assertThat(edgeCases).contains(Month.MARCH, Month.AUGUST);
+			assertThat(edgeCases).containsExactlyInAnyOrder(Month.MARCH, Month.AUGUST);
 
 		}
 

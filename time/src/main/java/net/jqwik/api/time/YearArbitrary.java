@@ -10,6 +10,7 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Fluent interface to configure the generation of Year values.
+ * By default, years between 1900 and 2500 are generated.
  */
 @API(status = EXPERIMENTAL, since = "1.4.0")
 public interface YearArbitrary extends Arbitrary<Year> {

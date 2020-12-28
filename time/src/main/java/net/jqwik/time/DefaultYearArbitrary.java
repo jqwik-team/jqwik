@@ -13,12 +13,12 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultYearArbitrary extends ArbitraryDecorator<Year> implements YearArbitrary {
 
-	private Year min = Year.of(Year.MIN_VALUE);
-	private Year max = Year.of(Year.MAX_VALUE);
+	private Year min = Year.of(1900);
+	private Year max = Year.of(2500);
 
 	@Override
 	protected Arbitrary<Year> arbitrary() {
-		Arbitrary<Integer> years = Arbitraries.integers().between(min.getValue(), max.getValue());
+		Arbitrary<Integer> years = Arbitraries.integers().between(min.getValue(), max.getValue()).filter(v -> v != 0);
 		return years.map(v -> Year.of(v));
 	}
 
