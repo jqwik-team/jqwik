@@ -14,7 +14,7 @@ public class Dates {
 	}
 
 	/**
-	 * Create an arbitrary that generates local dates.
+	 * Create an arbitrary that generates instances of {@linkplain java.time.LocalDate}.
 	 *
 	 * @return a new arbitrary instance
 	 */
@@ -23,7 +23,7 @@ public class Dates {
 	}
 
 	/**
-	 * Create an arbitrary that generates years.
+	 * Create an arbitrary that generates instances of {@linkplain java.time.Year}.
 	 *
 	 * @return a new arbitrary instance
 	 */
@@ -32,7 +32,7 @@ public class Dates {
 	}
 
 	/**
-	 * Create an arbitrary that generates months.
+	 * Create an arbitrary that generates instances of {@linkplain java.time.Month}.
 	 *
 	 * @return a new arbitrary instance
 	 */
@@ -41,7 +41,7 @@ public class Dates {
 	}
 
 	/**
-	 * Create an arbitrary that generates days of month.
+	 * Create an arbitrary that generates days of month as {@linkplain Integer}.
 	 *
 	 * @return a new arbitrary instance
 	 */
@@ -50,7 +50,7 @@ public class Dates {
 	}
 
 	/**
-	 * Create an arbitrary that generates year and months.
+	 * Create an arbitrary that generates instances of {@linkplain java.time.YearMonth}.
 	 *
 	 * @return a new arbitrary instance
 	 */
@@ -59,7 +59,7 @@ public class Dates {
 	}
 
 	/**
-	 * Create an arbitrary that generates month and days.
+	 * Create an arbitrary that generates instances of {@linkplain java.time.MonthDay}.
 	 *
 	 * @return a new arbitrary instance
 	 */

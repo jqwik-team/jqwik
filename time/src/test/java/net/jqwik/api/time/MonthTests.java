@@ -96,8 +96,20 @@ public class MonthTests {
 
 			ExhaustiveGenerator<Month> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
-			assertThat(generator)
-					.containsExactly(Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER);
+			assertThat(generator).containsExactly(
+					Month.JANUARY,
+					Month.FEBRUARY,
+					Month.MARCH,
+					Month.APRIL,
+					Month.MAY,
+					Month.JUNE,
+					Month.JULY,
+					Month.AUGUST,
+					Month.SEPTEMBER,
+					Month.OCTOBER,
+					Month.NOVEMBER,
+					Month.DECEMBER
+			);
 		}
 
 		@Property(tries = 5)
@@ -107,21 +119,20 @@ public class MonthTests {
 
 			ExhaustiveGenerator<Month> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(5); // Cannot know the number of filtered elements in advance
-			assertThat(generator)
-					.containsExactly(Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY);
+			assertThat(generator).containsExactly(Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY);
 		}
 
 		@Property(tries = 5)
 		void only() {
-			Optional<ExhaustiveGenerator<Month>> optionalGenerator = Dates.months()
-																		  .only(Month.JANUARY, Month.MARCH, Month.APRIL, Month.DECEMBER)
-																		  .exhaustive();
+			Optional<ExhaustiveGenerator<Month>> optionalGenerator =
+					Dates.months()
+						 .only(Month.JANUARY, Month.MARCH, Month.APRIL, Month.DECEMBER)
+						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Month> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
-			assertThat(generator)
-					.containsExactly(Month.JANUARY, Month.MARCH, Month.APRIL, Month.DECEMBER);
+			assertThat(generator).containsExactly(Month.JANUARY, Month.MARCH, Month.APRIL, Month.DECEMBER);
 		}
 
 	}

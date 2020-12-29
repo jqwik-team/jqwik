@@ -210,28 +210,39 @@ class MonthDayTests {
 
 		@Property(tries = 5)
 		void between() {
-			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator = Dates.monthDays()
-																			 .between(MonthDay.of(Month.FEBRUARY, 27), MonthDay.of(Month.MARCH, 2))
-																			 .exhaustive();
+			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator =
+					Dates.monthDays()
+						 .between(MonthDay.of(Month.FEBRUARY, 27), MonthDay.of(Month.MARCH, 2))
+						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<MonthDay> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(62); // Cannot know the number of filtered elements in advance
-			assertThat(generator)
-					.containsExactly(MonthDay.of(Month.FEBRUARY, 27), MonthDay.of(Month.FEBRUARY, 28), MonthDay.of(Month.FEBRUARY, 29), MonthDay.of(Month.MARCH, 1), MonthDay.of(Month.MARCH, 2));
+			assertThat(generator).containsExactly(
+					MonthDay.of(Month.FEBRUARY, 27),
+					MonthDay.of(Month.FEBRUARY, 28),
+					MonthDay.of(Month.FEBRUARY, 29),
+					MonthDay.of(Month.MARCH, 1),
+					MonthDay.of(Month.MARCH, 2)
+			);
 		}
 
 		@Property(tries = 5)
 		void onlyMonthsWithSameDayOfMonths() {
-			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator = Dates.monthDays().dayOfMonthBetween(17, 17)
-																			 .onlyMonths(Month.APRIL, Month.AUGUST, Month.OCTOBER)
-																			 .exhaustive();
+			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator =
+					Dates.monthDays()
+						 .dayOfMonthBetween(17, 17)
+						 .onlyMonths(Month.APRIL, Month.AUGUST, Month.OCTOBER)
+						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<MonthDay> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
-			assertThat(generator)
-					.containsExactly(MonthDay.of(Month.APRIL, 17), MonthDay.of(Month.AUGUST, 17), MonthDay.of(Month.OCTOBER, 17));
+			assertThat(generator).containsExactly(
+					MonthDay.of(Month.APRIL, 17),
+					MonthDay.of(Month.AUGUST, 17),
+					MonthDay.of(Month.OCTOBER, 17)
+			);
 		}
 
 		List<MonthDay> generateAllMonthDays() {
@@ -261,19 +272,34 @@ class MonthDayTests {
 			MonthDayArbitrary monthDays = Dates.monthDays();
 			Set<MonthDay> edgeCases = collectEdgeCases(monthDays.edgeCases());
 			assertThat(edgeCases).hasSize(2 * 4);
-			assertThat(edgeCases)
-					.containsExactly(MonthDay.of(Month.JANUARY, 1), MonthDay.of(Month.DECEMBER, 1), MonthDay.of(Month.JANUARY, 2), MonthDay.of(Month.DECEMBER, 2), MonthDay.of(Month.JANUARY, 30), MonthDay.of(Month.DECEMBER, 30), MonthDay.of(Month.JANUARY, 31), MonthDay.of(Month.DECEMBER, 31));
+			assertThat(edgeCases).containsExactly(
+					MonthDay.of(Month.JANUARY, 1),
+					MonthDay.of(Month.DECEMBER, 1),
+					MonthDay.of(Month.JANUARY, 2),
+					MonthDay.of(Month.DECEMBER, 2),
+					MonthDay.of(Month.JANUARY, 30),
+					MonthDay.of(Month.DECEMBER, 30),
+					MonthDay.of(Month.JANUARY, 31),
+					MonthDay.of(Month.DECEMBER, 31)
+			);
 
 		}
 
 		@Property(tries = 5)
 		void between() {
 
-			MonthDayArbitrary monthDays = Dates.monthDays().between(MonthDay.of(Month.FEBRUARY, 25), MonthDay.of(Month.APRIL, 10));
+			MonthDayArbitrary monthDays =
+					Dates.monthDays().between(MonthDay.of(Month.FEBRUARY, 25), MonthDay.of(Month.APRIL, 10));
 			Set<MonthDay> edgeCases = collectEdgeCases(monthDays.edgeCases());
 			assertThat(edgeCases).hasSize(3 * 2);
-			assertThat(edgeCases)
-					.containsExactlyInAnyOrder(MonthDay.of(Month.FEBRUARY, 25), MonthDay.of(Month.FEBRUARY, 28), MonthDay.of(Month.FEBRUARY, 29), MonthDay.of(Month.APRIL, 1), MonthDay.of(Month.APRIL, 2), MonthDay.of(Month.APRIL, 10));
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					MonthDay.of(Month.FEBRUARY, 25),
+					MonthDay.of(Month.FEBRUARY, 28),
+					MonthDay.of(Month.FEBRUARY, 29),
+					MonthDay.of(Month.APRIL, 1),
+					MonthDay.of(Month.APRIL, 2),
+					MonthDay.of(Month.APRIL, 10)
+			);
 
 		}
 

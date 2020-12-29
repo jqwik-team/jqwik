@@ -106,8 +106,18 @@ class YearTests {
 
 			ExhaustiveGenerator<Year> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(11); // Cannot know the number of filtered elements in advance
-			assertThat(generator)
-					.containsExactly(Year.of(-5), Year.of(-4), Year.of(-3), Year.of(-2), Year.of(-1), Year.of(1), Year.of(2), Year.of(3), Year.of(4), Year.of(5));
+			assertThat(generator).containsExactly(
+					Year.of(-5),
+					Year.of(-4),
+					Year.of(-3),
+					Year.of(-2),
+					Year.of(-1),
+					Year.of(1),
+					Year.of(2),
+					Year.of(3),
+					Year.of(4),
+					Year.of(5)
+			);
 		}
 
 	}

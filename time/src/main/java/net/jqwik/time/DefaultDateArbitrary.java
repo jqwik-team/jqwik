@@ -114,6 +114,12 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	@Override
 	public DateArbitrary yearBetween(Year min, Year max) {
+		if (min.getValue() <= 0) {
+			throw new IllegalArgumentException("Minimum year in a date must be > 0");
+		}
+		if (max.getValue() <= 0) {
+			throw new IllegalArgumentException("Maximum year in a date must be > 0");
+		}
 		DefaultDateArbitrary clone = typedClone();
 		min = Year.of(Math.max(min.getValue(), LocalDate.MIN.getYear()));
 		clone.yearMin = min;

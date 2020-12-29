@@ -93,7 +93,6 @@ class YearMonthTests {
 			void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll Random random) {
 
 				Assume.that(startYear <= endYear);
-				Assume.that(!(startYear == 0 && endYear == 0));
 
 				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().yearBetween(startYear, endYear);
 
@@ -121,7 +120,7 @@ class YearMonthTests {
 
 			@Provide
 			Arbitrary<Integer> years() {
-				return Arbitraries.integers().between(LocalDate.MIN.getYear(), LocalDate.MAX.getYear());
+				return Arbitraries.integers().between(1, LocalDate.MAX.getYear());
 			}
 
 		}
@@ -203,19 +202,21 @@ class YearMonthTests {
 
 		@Property(tries = 5)
 		void between() {
-			Optional<ExhaustiveGenerator<YearMonth>> optionalGenerator = Dates.yearMonths()
-																			  .between(YearMonth.of(41, Month.OCTOBER), YearMonth
-																																.of(42, Month.FEBRUARY))
-																			  .exhaustive();
+			Optional<ExhaustiveGenerator<YearMonth>> optionalGenerator =
+					Dates.yearMonths()
+						 .between(YearMonth.of(41, Month.OCTOBER), YearMonth.of(42, Month.FEBRUARY))
+						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<YearMonth> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(24); // Cannot know the number of filtered elements in advance
-			assertThat(generator)
-					.containsExactly(YearMonth.of(41, Month.OCTOBER), YearMonth.of(41, Month.NOVEMBER), YearMonth
-																												.of(41, Month.DECEMBER), YearMonth
-																																				 .of(42, Month.JANUARY), YearMonth
-																																												 .of(42, Month.FEBRUARY));
+			assertThat(generator).containsExactly(
+					YearMonth.of(41, Month.OCTOBER),
+					YearMonth.of(41, Month.NOVEMBER),
+					YearMonth.of(41, Month.DECEMBER),
+					YearMonth.of(42, Month.JANUARY),
+					YearMonth.of(42, Month.FEBRUARY)
+			);
 		}
 
 		@Property(tries = 5)
@@ -227,8 +228,11 @@ class YearMonthTests {
 
 			ExhaustiveGenerator<YearMonth> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
-			assertThat(generator)
-					.containsExactly(YearMonth.of(42, Month.FEBRUARY), YearMonth.of(42, Month.MARCH), YearMonth.of(42, Month.SEPTEMBER));
+			assertThat(generator).containsExactly(
+					YearMonth.of(42, Month.FEBRUARY),
+					YearMonth.of(42, Month.MARCH),
+					YearMonth.of(42, Month.SEPTEMBER)
+			);
 		}
 
 	}
@@ -249,21 +253,24 @@ class YearMonthTests {
 		@Property(tries = 5)
 		void between() {
 
-			YearMonthArbitrary yearMonths = Dates.yearMonths().between(YearMonth.of(100, Month.MARCH), YearMonth.of(200, Month.OCTOBER));
+			YearMonthArbitrary yearMonths =
+					Dates.yearMonths().between(YearMonth.of(100, Month.MARCH), YearMonth.of(200, Month.OCTOBER));
 			Set<YearMonth> edgeCases = collectEdgeCases(yearMonths.edgeCases());
 			assertThat(edgeCases).hasSize(4 * 2);
-			assertThat(edgeCases).containsExactlyInAnyOrder(YearMonth.of(100, Month.MARCH), YearMonth.of(100, Month.DECEMBER), YearMonth
-																																	   .of(101, Month.JANUARY), YearMonth
-																																										.of(101, Month.DECEMBER), YearMonth
-																																																		  .of(199, Month.JANUARY), YearMonth
-																																																										   .of(199, Month.DECEMBER), YearMonth
-																																																																			 .of(200, Month.JANUARY), YearMonth
-																																																																											  .of(200, Month.OCTOBER));
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					YearMonth.of(100, Month.MARCH),
+					YearMonth.of(100, Month.DECEMBER),
+					YearMonth.of(101, Month.JANUARY),
+					YearMonth.of(101, Month.DECEMBER),
+					YearMonth.of(199, Month.JANUARY),
+					YearMonth.of(199, Month.DECEMBER),
+					YearMonth.of(200, Month.JANUARY),
+					YearMonth.of(200, Month.OCTOBER)
+			);
 
 		}
 
 		List<YearMonth> generateEdgeCaseYearMonths() {
-
 			List<YearMonth> yearMonthsList = new ArrayList<>();
 			Year[] yearEdgeCases = new Year[]{Year.of(1900), Year.of(1901), Year.of(2499), Year.of(2500)};
 			Month[] monthEdgeCases = new Month[]{Month.JANUARY, Month.DECEMBER};
@@ -273,9 +280,34 @@ class YearMonthTests {
 				}
 			}
 			return yearMonthsList;
-
 		}
 
 	}
 
+	@Group
+	class InvalidConfigurations {
+
+		@Example
+		void minYearMustNotBeBelow1() {
+			assertThatThrownBy(
+					() -> Dates.yearMonths().yearBetween(0, 2000)
+			).isInstanceOf(IllegalArgumentException.class);
+
+			assertThatThrownBy(
+					() -> Dates.yearMonths().yearBetween(-1000, 2000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void maxYearMustNotBeBelow1() {
+			assertThatThrownBy(
+					() -> Dates.yearMonths().yearBetween(2000, 0)
+			).isInstanceOf(IllegalArgumentException.class);
+
+			assertThatThrownBy(
+					() -> Dates.yearMonths().yearBetween(2000, -1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+	}
 }

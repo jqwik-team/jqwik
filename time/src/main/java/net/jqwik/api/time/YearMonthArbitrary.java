@@ -34,12 +34,13 @@ public interface YearMonthArbitrary extends Arbitrary<YearMonth> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated year values.
+	 * The values can be between {@code 1} and {@code Year.MAX_VALUE}.
 	 */
 	YearMonthArbitrary yearBetween(Year min, Year max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated year values.
-	 * The {@code int} values can be between {@code Year.MIN_VALUE} and {@code Year.MAX_VALUE}.
+	 * The {@code int} values can be between {@code 1} and {@code Year.MAX_VALUE}.
 	 */
 	default YearMonthArbitrary yearBetween(int min, int max) {
 		return yearBetween(Year.of(min), Year.of(max));

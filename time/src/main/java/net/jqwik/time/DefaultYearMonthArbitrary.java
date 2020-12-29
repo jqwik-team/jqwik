@@ -83,6 +83,12 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 
 	@Override
 	public YearMonthArbitrary yearBetween(Year min, Year max) {
+		if (min.getValue() <= 0) {
+			throw new IllegalArgumentException("Minimum year in a YearMonth must be > 0");
+		}
+		if (max.getValue() <= 0) {
+			throw new IllegalArgumentException("Maximum year in a YearMonth must be > 0");
+		}
 		DefaultYearMonthArbitrary clone = typedClone();
 		max = Year.of(Math.min(max.getValue(), Year.MAX_VALUE));
 		min = Year.of(Math.max(min.getValue(), Year.MIN_VALUE));
