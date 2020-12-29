@@ -15,14 +15,48 @@ import static net.jqwik.api.testing.TestingSupport.*;
 @Group
 class DatesTests {
 
-	@Property
-	void validLocalDateIsGenerated(@ForAll("dates") LocalDate localDate) {
-		assertThat(localDate).isNotNull();
-	}
-
 	@Provide
 	Arbitrary<LocalDate> dates() {
 		return Dates.dates();
+	}
+
+	@Group
+	class SimpleArbitraries {
+
+		@Property
+		void validDayOfWeekIsGenerated(@ForAll("daysOfWeek") DayOfWeek dayOfWeek) {
+			assertThat(dayOfWeek).isNotNull();
+		}
+
+		@Provide
+		Arbitrary<DayOfWeek> daysOfWeek() {
+			return Dates.daysOfWeek();
+		}
+
+		@Property
+		void validDayOfMonthIsGenerated(@ForAll("daysOfMonth") int dayOfMonth) {
+			assertThat(dayOfMonth).isBetween(1, 31);
+		}
+
+		@Provide
+		Arbitrary<Integer> daysOfMonth() {
+			return Dates.daysOfMonth();
+		}
+
+		@Property
+		void validMonthIsGenerated(@ForAll("months") Month month) {
+			assertThat(month).isNotNull();
+		}
+
+		@Provide
+		Arbitrary<Month> months() {
+			return Dates.months();
+		}
+
+		@Property
+		void validLocalDateIsGenerated(@ForAll("dates") LocalDate localDate) {
+			assertThat(localDate).isNotNull();
+		}
 	}
 
 	@Group

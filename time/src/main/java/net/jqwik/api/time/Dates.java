@@ -1,7 +1,10 @@
 package net.jqwik.api.time;
 
+import java.time.*;
+
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
 import net.jqwik.time.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -36,8 +39,17 @@ public class Dates {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	public static MonthArbitrary months() {
-		return new DefaultMonthArbitrary();
+	public static Arbitrary<Month> months() {
+		return Arbitraries.of(Month.class);
+	}
+
+	/**
+	 * Create an arbitrary that generates instances of {@linkplain java.time.DayOfWeek}.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	public static Arbitrary<DayOfWeek> daysOfWeek() {
+		return Arbitraries.of(DayOfWeek.class);
 	}
 
 	/**
@@ -45,8 +57,10 @@ public class Dates {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	public static DaysOfMonthArbitrary daysOfMonth() {
-		return new DefaultDaysOfMonthArbitrary();
+	public static Arbitrary<Integer> daysOfMonth() {
+		return Arbitraries.integers()
+						  .between(1, 31)
+						  .edgeCases(edgeCases -> edgeCases.includeOnly(1, 31));
 	}
 
 	/**
