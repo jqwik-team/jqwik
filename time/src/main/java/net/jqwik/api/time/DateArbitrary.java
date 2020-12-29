@@ -20,6 +20,9 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated local date values.
 	 */
 	default DateArbitrary between(LocalDate min, LocalDate max) {
+		if (min.isAfter(max)) {
+			return atTheEarliest(max).atTheLatest(min);
+		}
 		return atTheEarliest(min).atTheLatest(max);
 	}
 

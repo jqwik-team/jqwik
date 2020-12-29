@@ -285,7 +285,7 @@ class DatesTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(365); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(292); // Cannot know the exact number of filtered elements in advance
 			assertThat(generator).containsExactly(
 					LocalDate.of(1997, Month.MARCH, 17),
 					LocalDate.of(1997, Month.OCTOBER, 17),
@@ -304,7 +304,7 @@ class DatesTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(366); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(31); // Cannot know the exact number of filtered elements in advance
 			assertThat(generator).containsExactly(
 					LocalDate.of(2020, Month.DECEMBER, 3),
 					LocalDate.of(2020, Month.DECEMBER, 7),
@@ -327,9 +327,10 @@ class DatesTests {
 		void all() {
 			DateArbitrary dates = Dates.dates();
 			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
-			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					LocalDate.of(1900, 1, 1),
+					LocalDate.of(1904, 2, 29),
 					LocalDate.of(2500, 12, 31)
 			);
 		}
@@ -340,10 +341,25 @@ class DatesTests {
 					Dates.dates()
 						 .between(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(200, Month.NOVEMBER, 10));
 			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
-			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					LocalDate.of(100, Month.MARCH, 24),
+					LocalDate.of(104, Month.FEBRUARY, 29),
 					LocalDate.of(200, Month.NOVEMBER, 10)
+			);
+		}
+
+		@Property(tries = 5)
+		void betweenMonth() {
+			DateArbitrary dates =
+					Dates.dates()
+						 .yearBetween(400, 402)
+						 .monthBetween(3, 11);
+			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					LocalDate.of(400, Month.MARCH, 1),
+					LocalDate.of(402, Month.NOVEMBER, 30)
 			);
 		}
 

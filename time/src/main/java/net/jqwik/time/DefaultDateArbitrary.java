@@ -1,7 +1,6 @@
 package net.jqwik.time;
 
 import java.time.*;
-import java.time.temporal.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -11,6 +10,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.time.*;
 
+import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
@@ -31,16 +31,21 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
 
-		LocalDate effectiveMin = dateMin == null ? DEFAULT_MIN_DATE : dateMin;
-		LocalDate effectiveMax = dateMax == null ? DEFAULT_MAX_DATE : dateMax;
+		LocalDate effectiveMin = effectiveMinDate();
+		LocalDate effectiveMax = effectiveMaxDate();
 
-		long days = ChronoUnit.DAYS.between(effectiveMin, effectiveMax);
+		long days = DAYS.between(effectiveMin, effectiveMax);
 
 		Arbitrary<Long> day =
 				Arbitraries.longs()
 						   .between(0, days)
 						   .withDistribution(RandomDistribution.uniform())
-						   .edgeCases(edgeCases -> edgeCases.includeOnly(0L, days));
+						   .edgeCases(edgeCases -> {
+							   edgeCases.includeOnly(0L, days);
+							   Optional<Long> optionalLeapDay = firstLeapDayAfter(effectiveMin, days);
+							   optionalLeapDay.ifPresent(edgeCases::add);
+						   });
+
 		Arbitrary<LocalDate> localDates = day.map(effectiveMin::plusDays);
 
 		if (allowedMonths.size() < 12) {
@@ -57,6 +62,67 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 		return localDates;
 
+	}
+
+	private LocalDate effectiveMaxDate() {
+		LocalDate effective = dateMax == null ? DEFAULT_MAX_DATE : dateMax;
+		int latestMonth = latestAllowedMonth();
+		if (latestMonth < effective.getMonth().getValue()) {
+			return effective.withMonth(latestMonth);
+		}
+		if (dayOfMonthMax < effective.getDayOfMonth()) {
+			return effective.withDayOfMonth(dayOfMonthMax);
+		}
+
+		return effective;
+	}
+
+	private int latestAllowedMonth() {
+		return allowedMonths.stream()
+							.sorted((m1, m2) -> -Integer.compare(m1.getValue(), m2.getValue()))
+							.map(Month::getValue)
+							.findFirst().orElse(12);
+	}
+
+	private LocalDate effectiveMinDate() {
+		LocalDate effective = dateMin == null ? DEFAULT_MIN_DATE : dateMin;
+		int earliestMonth = earliestAllowedMonth();
+		if (earliestMonth > effective.getMonth().getValue()) {
+			return effective.withMonth(earliestMonth);
+		}
+		if (dayOfMonthMin > effective.getDayOfMonth()) {
+			return effective.withDayOfMonth(dayOfMonthMin);
+		}
+		return effective;
+	}
+
+	private int earliestAllowedMonth() {
+		return allowedMonths.stream()
+							.sorted(Comparator.comparing(Month::getValue))
+							.map(Month::getValue)
+							.findFirst().orElse(1);
+	}
+
+	private Optional<Long> firstLeapDayAfter(LocalDate date, long maxOffset) {
+		long offset = nextLeapDayOffset(date, 0);
+		if (offset > maxOffset) {
+			return Optional.empty();
+		} else {
+			return Optional.of(offset);
+		}
+	}
+
+	private long nextLeapDayOffset(LocalDate date, long base) {
+		if (date.isLeapYear()) {
+			if (date.getMonth().compareTo(Month.FEBRUARY) <= 0) {
+				LocalDate leapDaySameYear = date.withMonth(2).withDayOfMonth(29);
+				long offset = DAYS.between(date, leapDaySameYear);
+				return base + offset;
+			}
+		}
+		LocalDate nextJan1 = LocalDate.of(date.getYear() + 1, 1, 1);
+
+		return nextLeapDayOffset(nextJan1, base + DAYS.between(date, nextJan1));
 	}
 
 	@Override
@@ -121,7 +187,7 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	@Override
 	public DateArbitrary dayOfMonthBetween(int min, int max) {
-		if (min >max) {
+		if (min > max) {
 			int remember = min;
 			min = max;
 			max = remember;
