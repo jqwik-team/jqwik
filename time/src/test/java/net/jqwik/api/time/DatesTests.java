@@ -3,8 +3,6 @@ package net.jqwik.api.time;
 import java.time.*;
 import java.util.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
@@ -267,7 +265,7 @@ class DatesTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(744); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(4); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
 					LocalDate.of(42, Month.DECEMBER, 30),
 					LocalDate.of(42, Month.DECEMBER, 31),
@@ -287,7 +285,7 @@ class DatesTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(365); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
 					LocalDate.of(1997, Month.MARCH, 17),
 					LocalDate.of(1997, Month.OCTOBER, 17),
@@ -306,7 +304,7 @@ class DatesTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(31); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(366); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
 					LocalDate.of(2020, Month.DECEMBER, 3),
 					LocalDate.of(2020, Month.DECEMBER, 7),
@@ -327,66 +325,26 @@ class DatesTests {
 
 		@Property(tries = 5)
 		void all() {
-
 			DateArbitrary dates = Dates.dates();
 			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
-			assertThat(edgeCases).hasSize(4 * 2 * 4);
-			assertThat(edgeCases).containsExactlyInAnyOrderElementsOf(generateEdgeCaseDates());
-
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					LocalDate.of(1900, 1, 1),
+					LocalDate.of(2500, 12, 31)
+			);
 		}
 
 		@Property(tries = 5)
 		void between() {
-
-			DateArbitrary dates = Dates.dates().between(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(200, Month.NOVEMBER, 10));
+			DateArbitrary dates =
+					Dates.dates()
+						 .between(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(200, Month.NOVEMBER, 10));
 			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
-			assertThat(edgeCases).hasSize(13 * 2);
+			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					LocalDate.of(100, Month.MARCH, 24),
-					LocalDate.of(100, Month.DECEMBER, 1),
-					LocalDate.of(100, Month.DECEMBER, 2),
-					LocalDate.of(100, Month.DECEMBER, 30),
-					LocalDate.of(100, Month.DECEMBER, 31),
-					LocalDate.of(101, Month.JANUARY, 1),
-					LocalDate.of(101, Month.JANUARY, 2),
-					LocalDate.of(101, Month.JANUARY, 30),
-					LocalDate.of(101, Month.JANUARY, 31),
-					LocalDate.of(101, Month.DECEMBER, 1),
-					LocalDate.of(101, Month.DECEMBER, 2),
-					LocalDate.of(101, Month.DECEMBER, 30),
-					LocalDate.of(101, Month.DECEMBER, 31),
-					LocalDate.of(199, Month.JANUARY, 1),
-					LocalDate.of(199, Month.JANUARY, 2),
-					LocalDate.of(199, Month.JANUARY, 30),
-					LocalDate.of(199, Month.JANUARY, 31),
-					LocalDate.of(199, Month.DECEMBER, 1),
-					LocalDate.of(199, Month.DECEMBER, 2),
-					LocalDate.of(199, Month.DECEMBER, 30),
-					LocalDate.of(199, Month.DECEMBER, 31),
-					LocalDate.of(200, Month.JANUARY, 1),
-					LocalDate.of(200, Month.JANUARY, 2),
-					LocalDate.of(200, Month.JANUARY, 30),
-					LocalDate.of(200, Month.JANUARY, 31),
 					LocalDate.of(200, Month.NOVEMBER, 10)
 			);
-
-		}
-
-		List<LocalDate> generateEdgeCaseDates() {
-
-			List<LocalDate> dateList = new ArrayList<>();
-			Year[] yearEdgeCases = new Year[]{Year.of(1900), Year.of(1901), Year.of(2499), Year.of(2500)};
-			Month[] monthEdgeCases = new Month[]{Month.JANUARY, Month.DECEMBER};
-			int[] dayOfMonthEdgeCases = new int[]{1, 2, 30, 31};
-			for (Year y : yearEdgeCases) {
-				for (Month m : monthEdgeCases) {
-					for (int d : dayOfMonthEdgeCases) {
-						dateList.add(LocalDate.of(y.getValue(), m, d));
-					}
-				}
-			}
-			return dateList;
-
 		}
 
 	}
@@ -424,7 +382,7 @@ class DatesTests {
 
 		private void checkDayOfMonthCoverage(StatisticsCoverage coverage) {
 			for (int dayOfMonth = 1; dayOfMonth <= 31; dayOfMonth++) {
-				coverage.check(dayOfMonth).percentage(p -> p >= 1);
+				coverage.check(dayOfMonth).percentage(p -> p >= 0.5);
 			}
 		}
 
@@ -439,6 +397,13 @@ class DatesTests {
 
 	@Group
 	class InvalidConfigurations {
+
+		@Example
+		void minDateMustNotBeBeforeJan1_1() {
+			assertThatThrownBy(
+					() -> Dates.dates().between(LocalDate.of(0, 12, 31), LocalDate.of(2000, 1, 1))
+			).isInstanceOf(IllegalArgumentException.class);
+		}
 
 		@Example
 		void minYearMustNotBeBelow1() {

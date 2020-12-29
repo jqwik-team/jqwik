@@ -1,6 +1,9 @@
 package net.jqwik.time;
 
 import java.time.*;
+import java.time.temporal.*;
+import java.util.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
@@ -13,93 +16,57 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implements DateArbitrary {
 
-	private LocalDate dateMin = LocalDate.MIN;
-	private LocalDate dateMax = LocalDate.MAX;
-	private Year yearMin = Year.of(1900);
-	private Year yearMax = Year.of(2500);
-	private Month monthMin = Month.JANUARY;
-	private Month monthMax = Month.DECEMBER;
-	private Month[] allowedMonths = new Month[]{Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER};
+	private static final LocalDate DEFAULT_MIN_DATE = LocalDate.of(1900, 1, 1);
+	private static final LocalDate DEFAULT_MAX_DATE = LocalDate.of(2500, 12, 31);
+
+	private LocalDate dateMin = null;
+	private LocalDate dateMax = null;
+
+	private Set<Month> allowedMonths = new HashSet<>(Arrays.asList(Month.values()));
+	private Set<DayOfWeek> allowedDayOfWeeks = new HashSet<>(Arrays.asList(DayOfWeek.values()));
+
 	private int dayOfMonthMin = 1;
 	private int dayOfMonthMax = 31;
-	private DayOfWeek[] allowedDayOfWeeks = new DayOfWeek[]{DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY};
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
-		setYearMinMax();
-		optimizeRuntime();
-		Arbitrary<Year> year = generateYears();
-		Arbitrary<Month> month = generateMonths();
-		Arbitrary<Integer> dayOfMonth = generateDayOfMonths();
-		Arbitrary<LocalDate> localDates = Combinators.combine(year, month, dayOfMonth)
-													 .as(this::generateDateFromValues)
-													 .ignoreException(DateTimeException.class);
-		if (!dateMin.equals(LocalDate.MIN)) {
-			localDates = localDates.edgeCases(localDateConfig -> localDateConfig.add(dateMin));
+
+		LocalDate effectiveMin = dateMin == null ? DEFAULT_MIN_DATE : dateMin;
+		LocalDate effectiveMax = dateMax == null ? DEFAULT_MAX_DATE : dateMax;
+
+		long days = ChronoUnit.DAYS.between(effectiveMin, effectiveMax);
+
+		Arbitrary<Long> day =
+				Arbitraries.longs()
+						   .between(0, days)
+						   .withDistribution(RandomDistribution.uniform())
+						   .edgeCases(edgeCases -> edgeCases.includeOnly(0L, days));
+		Arbitrary<LocalDate> localDates = day.map(effectiveMin::plusDays);
+
+		if (allowedMonths.size() < 12) {
+			localDates = localDates.filter(date -> allowedMonths.contains(date.getMonth()));
 		}
-		if (!dateMax.equals(LocalDate.MAX)) {
-			localDates = localDates.edgeCases(localDateConfig -> localDateConfig.add(dateMax));
+
+		if (allowedDayOfWeeks.size() < 7) {
+			localDates = localDates.filter(date -> allowedDayOfWeeks.contains(date.getDayOfWeek()));
 		}
+
+		if (dayOfMonthMax - dayOfMonthMin != 30) {
+			localDates = localDates.filter(date -> date.getDayOfMonth() >= dayOfMonthMin && date.getDayOfMonth() <= dayOfMonthMax);
+		}
+
 		return localDates;
-	}
 
-	private void setYearMinMax() {
-		if (yearMin.getValue() == 1900 && !dateMin.equals(LocalDate.MIN)) {
-			yearMin = Year.of(dateMin.getYear());
-		}
-		if (yearMax.getValue() == 2500 && !dateMax.equals(LocalDate.MAX)) {
-			yearMax = Year.of(dateMax.getYear());
-		}
-	}
-
-	private Arbitrary<Year> generateYears() {
-		return Dates.years().between(yearMin, yearMax);
-	}
-
-	private Arbitrary<Month> generateMonths() {
-		return Dates.months().between(monthMin, monthMax).only(allowedMonths);
-	}
-
-	private Arbitrary<Integer> generateDayOfMonths() {
-		return Dates.daysOfMonth().between(dayOfMonthMin, dayOfMonthMax);
-	}
-
-	private LocalDate generateDateFromValues(Year y, Month m, int d) {
-		LocalDate date;
-		date = LocalDate.of(y.getValue(), m, d);
-		if (date.isBefore(dateMin) || date.isAfter(dateMax) || !isInAllowedDayOfWeeks(date.getDayOfWeek())) {
-			throw new DateTimeException("Invalid date for the input parameters");
-		}
-		return date;
-	}
-
-	private boolean isInAllowedDayOfWeeks(DayOfWeek dayOfWeek) {
-		if (allowedDayOfWeeks == null) {
-			return false;
-		}
-		for (DayOfWeek d : allowedDayOfWeeks) {
-			if (d.equals(dayOfWeek)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private void optimizeRuntime() {
-		yearMin = Year.of(Math.max(yearMin.getValue(), dateMin.getYear()));
-		yearMax = Year.of(Math.min(yearMax.getValue(), dateMax.getYear()));
-		if (yearMin.equals(yearMax)) {
-			monthMin = Month.of(Math.max(monthMin.getValue(), dateMin.getMonth().getValue()));
-			monthMax = Month.of(Math.min(monthMax.getValue(), dateMax.getMonth().getValue()));
-			if (monthMin.equals(monthMax)) {
-				dayOfMonthMin = Math.max(dayOfMonthMin, dateMin.getDayOfMonth());
-				dayOfMonthMax = Math.min(dayOfMonthMax, dateMax.getDayOfMonth());
-			}
-		}
 	}
 
 	@Override
 	public DateArbitrary atTheEarliest(LocalDate min) {
+		if (min.getYear() <= 0) {
+			throw new IllegalArgumentException("Minimum year in a date must be > 0");
+		}
+		if ((dateMax != null) && min.isAfter(dateMax)) {
+			throw new IllegalArgumentException("Minimum date must not be after maximum date");
+		}
 		DefaultDateArbitrary clone = typedClone();
 		clone.dateMin = min;
 		return clone;
@@ -107,6 +74,13 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	@Override
 	public DateArbitrary atTheLatest(LocalDate max) {
+		if (max.getYear() <= 0) {
+			throw new IllegalArgumentException("Maximum year in a date must be > 0");
+		}
+		if ((dateMin != null) && max.isBefore(dateMin)) {
+			throw new IllegalArgumentException("Maximum date must not be before minimum date");
+		}
+
 		DefaultDateArbitrary clone = typedClone();
 		clone.dateMax = max;
 		return clone;
@@ -114,49 +88,54 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	@Override
 	public DateArbitrary yearBetween(Year min, Year max) {
-		if (min.getValue() <= 0) {
-			throw new IllegalArgumentException("Minimum year in a date must be > 0");
+		if (!min.isBefore(max)) {
+			Year remember = min;
+			min = max;
+			max = remember;
 		}
-		if (max.getValue() <= 0) {
-			throw new IllegalArgumentException("Maximum year in a date must be > 0");
-		}
-		DefaultDateArbitrary clone = typedClone();
-		min = Year.of(Math.max(min.getValue(), LocalDate.MIN.getYear()));
-		clone.yearMin = min;
-		max = Year.of(Math.min(max.getValue(), LocalDate.MAX.getYear()));
-		clone.yearMax = max;
-		return clone;
+
+		LocalDate minDate = LocalDate.of(min.getValue(), 1, 1);
+		LocalDate maxDate = LocalDate.of(max.getValue(), 12, 31);
+		return between(minDate, maxDate);
 	}
 
 	@Override
 	public DateArbitrary monthBetween(Month min, Month max) {
+		if (min.compareTo(max) > 0) {
+			throw new IllegalArgumentException("Minimum month cannot be after maximum month");
+		}
+
 		DefaultDateArbitrary clone = typedClone();
-		clone.monthMin = min;
-		clone.monthMax = max;
+		clone.allowedMonths = Arrays.stream(Month.values())
+									.filter(m -> m.compareTo(min) >= 0 && m.compareTo(max) <= 0)
+									.collect(Collectors.toSet());
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary onlyMonths(Month... months) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.allowedMonths = months;
+		clone.allowedMonths = new HashSet<>(Arrays.asList(months));
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary dayOfMonthBetween(int min, int max) {
+		if (min >max) {
+			int remember = min;
+			min = max;
+			max = remember;
+		}
 		DefaultDateArbitrary clone = typedClone();
-		min = Math.max(1, min);
-		clone.dayOfMonthMin = min;
-		max = Math.min(31, max);
-		clone.dayOfMonthMax = max;
+		clone.dayOfMonthMin = Math.max(1, min);
+		clone.dayOfMonthMax = Math.min(31, max);
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.allowedDayOfWeeks = daysOfWeek;
+		clone.allowedDayOfWeeks = new HashSet<>(Arrays.asList(daysOfWeek));
 		return clone;
 	}
 

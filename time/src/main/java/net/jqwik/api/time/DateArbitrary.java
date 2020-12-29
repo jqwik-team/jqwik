@@ -36,12 +36,18 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated year values.
 	 * The years can be between {@code 1} and {@code Year.MAX_VALUE}.
+	 *
+	 * <p>Calling this method is equivalent to calling {@linkplain #between(LocalDate, LocalDate)}
+	 * assuming Jan 1 and Dec 31 as first and last day of those years.</p>
 	 */
 	DateArbitrary yearBetween(Year min, Year max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated year values.
 	 * The {@code int} values can be between {@code 1} and {@code Year.MAX_VALUE}.
+	 *
+	 * <p>Calling this method is equivalent to calling {@linkplain #between(LocalDate, LocalDate)}
+	 * assuming Jan 1 and Dec 31 as first and last day of those years.</p>
 	 */
 	default DateArbitrary yearBetween(int min, int max) {
 		return yearBetween(Year.of(min), Year.of(max));
