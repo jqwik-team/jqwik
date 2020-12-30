@@ -199,7 +199,7 @@ class YearMonthTests {
 	@Group
 	class ExhaustiveGeneration {
 
-		@Property(tries = 5)
+		@Example
 		void between() {
 			Optional<ExhaustiveGenerator<YearMonth>> optionalGenerator =
 					Dates.yearMonths()
@@ -208,7 +208,7 @@ class YearMonthTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<YearMonth> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(24); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(5); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
 					YearMonth.of(41, Month.OCTOBER),
 					YearMonth.of(41, Month.NOVEMBER),
@@ -218,7 +218,7 @@ class YearMonthTests {
 			);
 		}
 
-		@Property(tries = 5)
+		@Example
 		void onlyMonthsWithSameYear() {
 			Optional<ExhaustiveGenerator<YearMonth>> optionalGenerator = Dates.yearMonths().yearBetween(42, 42)
 																			  .onlyMonths(Month.FEBRUARY, Month.MARCH, Month.SEPTEMBER)
@@ -239,48 +239,30 @@ class YearMonthTests {
 	@Group
 	class EdgeCasesTests {
 
-		@Property(tries = 5)
+		@Example
 		void all() {
-
 			YearMonthArbitrary yearMonths = Dates.yearMonths();
 			Set<YearMonth> edgeCases = collectEdgeCases(yearMonths.edgeCases());
-			assertThat(edgeCases).hasSize(4 * 2);
-			assertThat(edgeCases).containsExactlyInAnyOrderElementsOf(generateEdgeCaseYearMonths());
-
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					YearMonth.of(1900, Month.JANUARY),
+					YearMonth.of(2500, Month.DECEMBER)
+			);
 		}
 
-		@Property(tries = 5)
+		@Example
 		void between() {
 
 			YearMonthArbitrary yearMonths =
 					Dates.yearMonths().between(YearMonth.of(100, Month.MARCH), YearMonth.of(200, Month.OCTOBER));
 			Set<YearMonth> edgeCases = collectEdgeCases(yearMonths.edgeCases());
-			assertThat(edgeCases).hasSize(4 * 2);
+			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					YearMonth.of(100, Month.MARCH),
-					YearMonth.of(100, Month.DECEMBER),
-					YearMonth.of(101, Month.JANUARY),
-					YearMonth.of(101, Month.DECEMBER),
-					YearMonth.of(199, Month.JANUARY),
-					YearMonth.of(199, Month.DECEMBER),
-					YearMonth.of(200, Month.JANUARY),
 					YearMonth.of(200, Month.OCTOBER)
 			);
 
 		}
-
-		List<YearMonth> generateEdgeCaseYearMonths() {
-			List<YearMonth> yearMonthsList = new ArrayList<>();
-			Year[] yearEdgeCases = new Year[]{Year.of(1900), Year.of(1901), Year.of(2499), Year.of(2500)};
-			Month[] monthEdgeCases = new Month[]{Month.JANUARY, Month.DECEMBER};
-			for (Year y : yearEdgeCases) {
-				for (Month m : monthEdgeCases) {
-					yearMonthsList.add(YearMonth.of(y.getValue(), m));
-				}
-			}
-			return yearMonthsList;
-		}
-
 	}
 
 	@Group

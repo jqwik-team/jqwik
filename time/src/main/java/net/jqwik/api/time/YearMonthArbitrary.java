@@ -19,7 +19,9 @@ public interface YearMonthArbitrary extends Arbitrary<YearMonth> {
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated year and month values.
 	 */
 	default YearMonthArbitrary between(YearMonth min, YearMonth max) {
-		return atTheEarliest(min).atTheLatest(max);
+		YearMonthArbitrary yearMonthArbitrary = atTheEarliest(min);
+		YearMonthArbitrary yearMonthArbitrary1 = yearMonthArbitrary.atTheLatest(max);
+		return yearMonthArbitrary1;
 	}
 
 	/**

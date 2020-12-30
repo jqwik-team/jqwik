@@ -197,7 +197,7 @@ class MonthDayTests {
 	@Group
 	class ExhaustiveGeneration {
 
-		@Property(tries = 5)
+		@Example
 		void containsAllValues() {
 			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator = Dates.monthDays().exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -207,7 +207,7 @@ class MonthDayTests {
 			assertThat(generator).containsExactlyElementsOf(generateAllMonthDays());
 		}
 
-		@Property(tries = 5)
+		@Example
 		void between() {
 			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator =
 					Dates.monthDays()
@@ -226,7 +226,7 @@ class MonthDayTests {
 			);
 		}
 
-		@Property(tries = 5)
+		@Example
 		void onlyMonthsWithSameDayOfMonths() {
 			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator =
 					Dates.monthDays()
@@ -245,7 +245,6 @@ class MonthDayTests {
 		}
 
 		List<MonthDay> generateAllMonthDays() {
-
 			List<MonthDay> monthDayList = new ArrayList<>();
 			for (int m = 1; m <= 12; m++) {
 				for (int d = 1; d <= 31; d++) {
@@ -265,7 +264,7 @@ class MonthDayTests {
 	@Group
 	class EdgeCasesTests {
 
-		@Property(tries = 5)
+		@Example
 		void all() {
 
 			MonthDayArbitrary monthDays = Dates.monthDays();
@@ -284,7 +283,7 @@ class MonthDayTests {
 
 		}
 
-		@Property(tries = 5)
+		@Example
 		void between() {
 
 			MonthDayArbitrary monthDays =

@@ -26,6 +26,8 @@
         - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
         - https://github.com/junit-team/junit5/blob/main/CODE_OF_CONDUCT.md
 
+    - Warn if method without parameters has more than 1 try
+
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140
         - Fix shrinking (maybe base date generation on days since Jan 1, year 0000)

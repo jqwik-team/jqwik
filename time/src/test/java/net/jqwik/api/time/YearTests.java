@@ -99,7 +99,7 @@ class YearTests {
 	@Group
 	class ExhaustiveGeneration {
 
-		@Property(tries = 5)
+		@Example
 		void between() {
 			Optional<ExhaustiveGenerator<Year>> optionalGenerator = Dates.years().between(-5, 5).exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -125,25 +125,21 @@ class YearTests {
 	@Group
 	class EdgeCasesTests {
 
-		@Property(tries = 5)
+		@Example
 		void all() {
-
 			YearArbitrary years = Dates.years();
 			Set<Year> edgeCases = collectEdgeCases(years.edgeCases());
 			assertThat(edgeCases).hasSize(4);
 			assertThat(edgeCases)
 					.containsExactlyInAnyOrder(Year.of(1900), Year.of(1901), Year.of(2499), Year.of(2500));
-
 		}
 
-		@Property(tries = 5)
+		@Example
 		void between() {
-
 			YearArbitrary years = Dates.years().between(100, 200);
 			Set<Year> edgeCases = collectEdgeCases(years.edgeCases());
 			assertThat(edgeCases).hasSize(4);
 			assertThat(edgeCases).containsExactlyInAnyOrder(Year.of(100), Year.of(101), Year.of(199), Year.of(200));
-
 		}
 
 	}

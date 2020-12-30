@@ -287,7 +287,7 @@ class DatesTests {
 	@Group
 	class ExhaustiveGeneration {
 
-		@Property(tries = 5)
+		@Example
 		void between() {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 					Dates.dates()
@@ -308,7 +308,7 @@ class DatesTests {
 			);
 		}
 
-		@Property(tries = 5)
+		@Example
 		void onlyMonthsWithSameYearAndDayOfMonth() {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 					Dates.dates()
@@ -327,7 +327,7 @@ class DatesTests {
 			);
 		}
 
-		@Property(tries = 5)
+		@Example
 		void onlyDaysOfWeekWithSameYearAndMonth() {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 					Dates.dates()
@@ -357,7 +357,7 @@ class DatesTests {
 	@Group
 	class EdgeCasesTests {
 
-		@Property(tries = 5)
+		@Example
 		void all() {
 			DateArbitrary dates = Dates.dates();
 			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
@@ -369,7 +369,7 @@ class DatesTests {
 			);
 		}
 
-		@Property(tries = 5)
+		@Example
 		void between() {
 			DateArbitrary dates =
 					Dates.dates()
@@ -383,7 +383,7 @@ class DatesTests {
 			);
 		}
 
-		@Property(tries = 5)
+		@Example
 		void betweenMonth() {
 			DateArbitrary dates =
 					Dates.dates()

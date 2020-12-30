@@ -1,6 +1,8 @@
 package net.jqwik.time;
 
 import java.time.*;
+import java.util.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
@@ -8,67 +10,52 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.time.*;
 
+import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
 public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> implements YearMonthArbitrary {
 
-	private YearMonth yearMonthMin = YearMonth.of(Year.MIN_VALUE, Month.JANUARY);
-	private YearMonth yearMonthMax = YearMonth.of(Year.MAX_VALUE, Month.DECEMBER);
-	private Year yearMin = Year.of(1900);
-	private Year yearMax = Year.of(2500);
-	private Month monthMin = Month.JANUARY;
-	private Month monthMax = Month.DECEMBER;
-	private Month[] allowedMonths = new Month[]{Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE, Month.JULY, Month.AUGUST, Month.SEPTEMBER, Month.OCTOBER, Month.NOVEMBER, Month.DECEMBER};
+
+	private static final YearMonth DEFAULT_MIN = YearMonth.of(1900, 1);
+	private static final YearMonth DEFAULT_MAX = YearMonth.of(2500, 12);
+
+	private YearMonth yearMonthMin = null;
+	private YearMonth yearMonthMax = null;
+
+	private Set<Month> allowedMonths = new HashSet<>(Arrays.asList(Month.values()));
 
 	@Override
 	protected Arbitrary<YearMonth> arbitrary() {
-		setYearMinMax();
-		DateArbitrary dates = Dates.dates()
-								   .atTheEarliest(LocalDate.of(yearMonthMin.getYear(), yearMonthMin.getMonth(), 1))
-								   .atTheLatest(LocalDate.of(yearMonthMax.getYear(), yearMonthMax
-																							 .getMonth(), getMaxDayOfMonth(yearMonthMax)))
-								   .yearBetween(yearMin, yearMax)
-								   .monthBetween(monthMin, monthMax)
-								   .onlyMonths(allowedMonths)
-								   .dayOfMonthBetween(1, 1);
-		return dates.map(v -> YearMonth.of(v.getYear(), v.getMonth()));
-	}
 
-	private int getMaxDayOfMonth(YearMonth yearMonth) {
-		switch (yearMonth.getMonth()) {
-			case FEBRUARY:
-				return calculateMaxDayOfMonthForFebruary(yearMonth);
-			case APRIL:
-			case JUNE:
-			case SEPTEMBER:
-			case NOVEMBER:
-				return 30;
-			default:
-				return 31;
-		}
-	}
+		YearMonth effectiveMin = yearMonthMin == null ? DEFAULT_MIN : yearMonthMin;
+		YearMonth effectiveMax = yearMonthMax == null ? DEFAULT_MAX : yearMonthMax;
 
-	private int calculateMaxDayOfMonthForFebruary(YearMonth yearMonth) {
-		try {
-			LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), 29);
-		} catch (DateTimeException e) {
-			return 28;
-		}
-		return 29;
-	}
+		long months = MONTHS.between(effectiveMin, effectiveMax);
 
-	private void setYearMinMax() {
-		if (yearMin.getValue() == 1900 && !yearMonthMin.equals(YearMonth.of(Year.MIN_VALUE, Month.JANUARY))) {
-			yearMin = Year.of(yearMonthMin.getYear());
+		Arbitrary<Long> month =
+				Arbitraries.longs()
+						   .between(0, months)
+						   .withDistribution(RandomDistribution.uniform())
+						   .edgeCases(edgeCases -> edgeCases.includeOnly(0L, months));
+
+		Arbitrary<YearMonth> yearMonths = month.map(effectiveMin::plusMonths);
+
+		if (allowedMonths.size() < 12) {
+			yearMonths = yearMonths.filter(yearMonth -> allowedMonths.contains(yearMonth.getMonth()));
 		}
-		if (yearMax.getValue() == 2500 && !yearMonthMax.equals(YearMonth.of(Year.MAX_VALUE, Month.DECEMBER))) {
-			yearMax = Year.of(yearMonthMax.getYear());
-		}
+
+		return yearMonths;
 	}
 
 	@Override
 	public YearMonthArbitrary atTheEarliest(YearMonth min) {
+		if (min.getYear() <= 0) {
+			throw new IllegalArgumentException("Minimum year in a year-month must be > 0");
+		}
+		if ((yearMonthMax != null) && min.isAfter(yearMonthMax)) {
+			throw new IllegalArgumentException("Minimum year-month must not be after maximum year-month");
+		}
 		DefaultYearMonthArbitrary clone = typedClone();
 		clone.yearMonthMin = min;
 		return clone;
@@ -76,6 +63,12 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 
 	@Override
 	public YearMonthArbitrary atTheLatest(YearMonth max) {
+		if (max.getYear() <= 0) {
+			throw new IllegalArgumentException("Maximum year in a date year-month be > 0");
+		}
+		if ((yearMonthMin != null) && max.isBefore(yearMonthMin)) {
+			throw new IllegalArgumentException("Maximum year-month must not be before minimum year-month");
+		}
 		DefaultYearMonthArbitrary clone = typedClone();
 		clone.yearMonthMax = max;
 		return clone;
@@ -83,32 +76,34 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 
 	@Override
 	public YearMonthArbitrary yearBetween(Year min, Year max) {
-		if (min.getValue() <= 0) {
-			throw new IllegalArgumentException("Minimum year in a YearMonth must be > 0");
+		if (!min.isBefore(max)) {
+			Year remember = min;
+			min = max;
+			max = remember;
 		}
-		if (max.getValue() <= 0) {
-			throw new IllegalArgumentException("Maximum year in a YearMonth must be > 0");
-		}
-		DefaultYearMonthArbitrary clone = typedClone();
-		max = Year.of(Math.min(max.getValue(), Year.MAX_VALUE));
-		min = Year.of(Math.max(min.getValue(), Year.MIN_VALUE));
-		clone.yearMax = max;
-		clone.yearMin = min;
-		return clone;
+
+		YearMonth minDate = YearMonth.of(min.getValue(), 1);
+		YearMonth maxDate = YearMonth.of(max.getValue(), 12);
+		return between(minDate, maxDate);
 	}
 
 	@Override
 	public YearMonthArbitrary monthBetween(Month min, Month max) {
+		if (min.compareTo(max) > 0) {
+			throw new IllegalArgumentException("Minimum month cannot be after maximum month");
+		}
+
 		DefaultYearMonthArbitrary clone = typedClone();
-		clone.monthMin = min;
-		clone.monthMax = max;
+		clone.allowedMonths = Arrays.stream(Month.values())
+									.filter(m -> m.compareTo(min) >= 0 && m.compareTo(max) <= 0)
+									.collect(Collectors.toSet());
 		return clone;
 	}
 
 	@Override
 	public YearMonthArbitrary onlyMonths(Month... months) {
 		DefaultYearMonthArbitrary clone = typedClone();
-		clone.allowedMonths = months;
+		clone.allowedMonths = new HashSet<>(Arrays.asList(months));
 		return clone;
 	}
 
