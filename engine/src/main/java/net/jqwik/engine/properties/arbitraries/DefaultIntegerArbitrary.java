@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -30,6 +31,43 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 	@Override
 	public EdgeCases<Integer> edgeCases() {
 		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::intValueExact);
+	}
+
+	@Override
+	public Arbitrary<Integer> edgeCases(Consumer<EdgeCases.Config<Integer>> configurator) {
+		Consumer<EdgeCases.Config<BigInteger>> integralConfigurator = bigIntegerConfig -> {
+			EdgeCases.Config<Integer> integerConfig = new EdgeCases.Config<Integer>() {
+				@Override
+				public EdgeCases.Config<Integer> none() {
+					bigIntegerConfig.none();
+					return this;
+				}
+
+				@Override
+				public EdgeCases.Config<Integer> filter(Predicate<Integer> filter) {
+					bigIntegerConfig.filter(bigInteger -> filter.test(bigInteger.intValueExact()));
+					return this;
+				}
+
+				@Override
+				public EdgeCases.Config<Integer> add(Integer edgeCase) {
+					bigIntegerConfig.add(BigInteger.valueOf(edgeCase));
+					return this;
+				}
+
+				@Override
+				public EdgeCases.Config<Integer> includeOnly(Integer... includedValues) {
+					BigInteger[] includedBigIntegers = new BigInteger[includedValues.length];
+					for (int i = 0; i < includedValues.length; i++) {
+						includedBigIntegers[i] = BigInteger.valueOf(includedValues[i]);
+					}
+					bigIntegerConfig.includeOnly(includedBigIntegers);
+					return this;
+				}
+			};
+			configurator.accept(integerConfig);
+		};
+		return generatingArbitrary.edgeCases(integralConfigurator).map(BigInteger::intValueExact);
 	}
 
 	@Override

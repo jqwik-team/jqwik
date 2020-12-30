@@ -1,13 +1,11 @@
 package net.jqwik.engine.properties.arbitraries;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public class EdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
+public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 	private boolean none;
 	private final List<Predicate<T>> filters = new ArrayList<>();
 	private final List<T> additionalEdgeCases = new ArrayList<>();

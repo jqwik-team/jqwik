@@ -179,7 +179,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> Arbitrary<T> configureEdgeCases(Arbitrary<T> self, Consumer<EdgeCases.Config<T>> configurator) {
-		EdgeCasesConfiguration<T> config = new EdgeCasesConfiguration<>();
+		GenericEdgeCasesConfiguration<T> config = new GenericEdgeCasesConfiguration<>();
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public EdgeCases<T> edgeCases() {

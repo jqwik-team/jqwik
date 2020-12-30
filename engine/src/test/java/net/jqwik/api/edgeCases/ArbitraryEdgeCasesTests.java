@@ -339,6 +339,24 @@ class ArbitraryEdgeCasesTests {
 		}
 
 		@Example
+		void addedIntegerEdgeCasesAreShrinkable() {
+			Arbitrary<Integer> arbitrary =
+					Arbitraries
+							.integers()
+							.between(-100, 100)
+					.edgeCases(edgeCasesConfig -> {
+						edgeCasesConfig.includeOnly();
+						edgeCasesConfig.add(42);
+					});
+
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(edgeCases.size()).isEqualTo(1);
+
+			Shrinkable<Integer> integerShrinkable = edgeCases.suppliers().get(0).get();
+			assertThat(integerShrinkable.shrink()).isNotEmpty();
+		}
+
+		@Example
 		void combineFilterAndAdd() {
 			Arbitrary<Integer> arbitrary =
 					Arbitraries
