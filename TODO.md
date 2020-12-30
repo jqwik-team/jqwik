@@ -1,5 +1,7 @@
 - 1.4.0
 
+    - NumberArbitrary.edgeCases(config -> config.add()): Add shrinkable edge case
+
     - Publish test report in github action
       ```
       -   name: Publish Test Report
