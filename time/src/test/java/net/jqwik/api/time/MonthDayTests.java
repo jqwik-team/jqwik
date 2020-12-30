@@ -203,7 +203,7 @@ class MonthDayTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<MonthDay> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(372); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(366); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactlyElementsOf(generateAllMonthDays());
 		}
 
@@ -216,7 +216,7 @@ class MonthDayTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<MonthDay> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(62); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(5); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
 					MonthDay.of(Month.FEBRUARY, 27),
 					MonthDay.of(Month.FEBRUARY, 28),
@@ -236,7 +236,7 @@ class MonthDayTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<MonthDay> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(12); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(214); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
 					MonthDay.of(Month.APRIL, 17),
 					MonthDay.of(Month.AUGUST, 17),
@@ -266,39 +266,27 @@ class MonthDayTests {
 
 		@Example
 		void all() {
-
 			MonthDayArbitrary monthDays = Dates.monthDays();
 			Set<MonthDay> edgeCases = collectEdgeCases(monthDays.edgeCases());
-			assertThat(edgeCases).hasSize(2 * 4);
+			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactly(
 					MonthDay.of(Month.JANUARY, 1),
-					MonthDay.of(Month.DECEMBER, 1),
-					MonthDay.of(Month.JANUARY, 2),
-					MonthDay.of(Month.DECEMBER, 2),
-					MonthDay.of(Month.JANUARY, 30),
-					MonthDay.of(Month.DECEMBER, 30),
-					MonthDay.of(Month.JANUARY, 31),
+					MonthDay.of(Month.FEBRUARY, 29),
 					MonthDay.of(Month.DECEMBER, 31)
 			);
-
 		}
 
 		@Example
 		void between() {
-
 			MonthDayArbitrary monthDays =
 					Dates.monthDays().between(MonthDay.of(Month.FEBRUARY, 25), MonthDay.of(Month.APRIL, 10));
 			Set<MonthDay> edgeCases = collectEdgeCases(monthDays.edgeCases());
-			assertThat(edgeCases).hasSize(3 * 2);
+			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					MonthDay.of(Month.FEBRUARY, 25),
-					MonthDay.of(Month.FEBRUARY, 28),
 					MonthDay.of(Month.FEBRUARY, 29),
-					MonthDay.of(Month.APRIL, 1),
-					MonthDay.of(Month.APRIL, 2),
 					MonthDay.of(Month.APRIL, 10)
 			);
-
 		}
 
 	}

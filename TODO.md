@@ -30,10 +30,7 @@
 
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140
-        - Fix shrinking (maybe base date generation on days since Jan 1, year 0000)
-        - Min year 1900, Max year 2500
-        - DateArbitrary.  
-        - DateArbitrary.shrinkTowards()
+        - DateArbitrary.shrinkTowards(date)
 
     - Edge Cases
 
