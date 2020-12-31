@@ -279,7 +279,84 @@ class ArbitraryEdgeCasesTests {
 	}
 
 	@Group
-	class Configuration {
+	class GenericConfiguration {
+
+		@Example
+		void noEdgeCases() {
+			Arbitrary<String> arbitrary =
+					Arbitraries
+							.of("one", "two", "three")
+							.edgeCases(edgeCasesConfig -> edgeCasesConfig.none());
+
+			EdgeCases<String> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).isEmpty();
+
+			// Random value generation still works
+			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), s -> {
+				assertThat(s).isIn("one", "two", "three");
+			});
+		}
+
+		@Example
+		void filter() {
+			Arbitrary<String> arbitrary =
+					Arbitraries
+							.of("one", "two", "three")
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.filter(s -> s.contains("t"));
+								edgeCasesConfig.filter(s -> s.contains("e"));
+							});
+
+			EdgeCases<String> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder("three");
+		}
+
+		@Example
+		void addingEdgeCases() {
+			Arbitrary<String> arbitrary =
+					Arbitraries
+							.of("one", "two", "three")
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.add("two");
+								edgeCasesConfig.add("four");
+							});
+
+			EdgeCases<String> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder("one", "two", "three", "four");
+		}
+
+		@Example
+		void combineFilterAndAdd() {
+			Arbitrary<String> arbitrary =
+					Arbitraries
+							.of("one", "two", "three")
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.filter(s -> s.contains("t"));
+								edgeCasesConfig.add("two");
+							});
+
+			EdgeCases<String> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder("two", "three");
+		}
+
+		@Example
+		void includeOnly() {
+			Arbitrary<String> arbitrary =
+					Arbitraries
+							.of("one", "two", "three")
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.includeOnly("one", "four");
+							});
+
+			EdgeCases<String> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder("one");
+		}
+
+	}
+
+
+	@Group
+	class NumberConfiguration {
 
 		@Example
 		void noEdgeCases() {
@@ -311,11 +388,6 @@ class ArbitraryEdgeCasesTests {
 
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(0, 2, 100);
-
-			// Random value generation still works
-			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
-				assertThat(i).isBetween(-100, 100);
-			});
 		}
 
 		@Example
@@ -331,11 +403,6 @@ class ArbitraryEdgeCasesTests {
 
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(-1, 0, -2, 1, 2, -99, -100, 99, 100, 41, 42);
-
-			// Random value generation still works
-			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
-				assertThat(i).isBetween(-100, 100);
-			});
 		}
 
 		@Example
@@ -371,10 +438,6 @@ class ArbitraryEdgeCasesTests {
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(-1, -2, -99, -100, 41, 42);
 
-			// Random value generation still works
-			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
-				assertThat(i).isBetween(-100, 100);
-			});
 		}
 
 		@Example
@@ -387,11 +450,6 @@ class ArbitraryEdgeCasesTests {
 
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(-100, 100);
-
-			// Random value generation still works
-			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
-				assertThat(i).isBetween(-100, 100);
-			});
 		}
 
 	}

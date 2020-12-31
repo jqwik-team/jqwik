@@ -47,8 +47,12 @@ public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 
 		List<Supplier<Shrinkable<T>>> suppliers = new ArrayList<>(configuredEdgeCases.suppliers());
 		for (T additionalEdgeCase : additionalEdgeCases) {
-			suppliers.add(() -> Shrinkable.unshrinkable(additionalEdgeCase));
+			suppliers.add(() -> createShrinkable(additionalEdgeCase));
 		}
 		return EdgeCasesSupport.fromSuppliers(suppliers);
+	}
+
+	protected Shrinkable<T> createShrinkable(T additionalEdgeCase) {
+		return Shrinkable.unshrinkable(additionalEdgeCase);
 	}
 }

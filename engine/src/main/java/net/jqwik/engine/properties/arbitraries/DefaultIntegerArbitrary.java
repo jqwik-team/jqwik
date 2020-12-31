@@ -35,6 +35,7 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 
 	@Override
 	public Arbitrary<Integer> edgeCases(Consumer<EdgeCases.Config<Integer>> configurator) {
+		// TODO: Generalize for all number arbitraries
 		Consumer<EdgeCases.Config<BigInteger>> integralConfigurator = bigIntegerConfig -> {
 			EdgeCases.Config<Integer> integerConfig = new EdgeCases.Config<Integer>() {
 				@Override

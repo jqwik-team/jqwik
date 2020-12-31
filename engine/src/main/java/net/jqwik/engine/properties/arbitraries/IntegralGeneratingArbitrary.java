@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -18,6 +19,8 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	BigInteger max;
 	BigInteger shrinkingTarget;
 	RandomDistribution distribution = RandomDistribution.biased();
+
+	private Consumer<EdgeCases.Config<BigInteger>> edgeCasesConfigurator = EdgeCases.Config.noConfig();
 
 	IntegralGeneratingArbitrary(BigInteger defaultMin, BigInteger defaultMax) {
 		this.min = defaultMin;
@@ -46,18 +49,28 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	@Override
 	public EdgeCases<BigInteger> edgeCases() {
+		Range<BigInteger> range = Range.of(min, max);
+		BigInteger shrinkingTarget = shrinkingTarget();
 		List<Shrinkable<BigInteger>> shrinkables =
-			streamEdgeCases()
+			streamDefaultEdgeCases()
 				.map(value -> new ShrinkableBigInteger(
 					value,
-					Range.of(min, max),
-					shrinkingTarget()
+					range,
+					shrinkingTarget
 				))
 				.collect(Collectors.toList());
-		return EdgeCasesSupport.fromShrinkables(shrinkables);
+		EdgeCases<BigInteger> defaultEdgeCases = EdgeCasesSupport.fromShrinkables(shrinkables);
+		IntegralEdgeCasesConfiguration configuration = new IntegralEdgeCasesConfiguration(range, shrinkingTarget);
+		return configuration.configure(edgeCasesConfigurator, defaultEdgeCases);
 	}
 
-	private Stream<BigInteger> streamEdgeCases() {
+	@Override
+	public Arbitrary<BigInteger> edgeCases(Consumer<EdgeCases.Config<BigInteger>> configurator) {
+		edgeCasesConfigurator = configurator;
+		return this;
+	}
+
+	private Stream<BigInteger> streamDefaultEdgeCases() {
 		return streamRawEdgeCases()
 			.distinct()
 			.filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0);

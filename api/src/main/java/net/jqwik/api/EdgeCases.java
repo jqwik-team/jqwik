@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.math.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -23,6 +24,10 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
 	@API(status = EXPERIMENTAL, since = "1.3.9")
 	interface Config<T> {
+
+		static <T> Consumer<Config<T>> noConfig() {
+			return config -> {};
+		};
 
 		/**
 		 * Don't use any of the default edge cases
