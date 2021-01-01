@@ -48,11 +48,6 @@ public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> 
 	}
 
 	@Override
-	public Arbitrary<T> edgeCases(Consumer<EdgeCases.Config<T>> configurator) {
-		return arbitrary().edgeCases(configurator);
-	}
-
-	@Override
 	public String toString() {
 		return String.format("Decorated:%s", super.toString());
 	}
