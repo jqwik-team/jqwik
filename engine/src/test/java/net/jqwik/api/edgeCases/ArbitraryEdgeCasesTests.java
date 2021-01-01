@@ -1,5 +1,6 @@
 package net.jqwik.api.edgeCases;
 
+import java.math.*;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.*;
@@ -502,6 +503,24 @@ class ArbitraryEdgeCasesTests {
 			assertThat(edgeCases.size()).isEqualTo(1);
 
 			Shrinkable<Byte> shrinkable = edgeCases.suppliers().get(0).get();
+			assertThat(shrinkable.shrink()).isNotEmpty();
+		}
+
+		@Example
+		void addedBigIntegerEdgeCasesAreShrinkable() {
+			Arbitrary<BigInteger> arbitrary =
+					Arbitraries
+							.bigIntegers()
+							.between(BigInteger.valueOf(-100), BigInteger.valueOf(100))
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.includeOnly();
+								edgeCasesConfig.add(BigInteger.valueOf(42));
+							});
+
+			EdgeCases<BigInteger> edgeCases = arbitrary.edgeCases();
+			assertThat(edgeCases.size()).isEqualTo(1);
+
+			Shrinkable<BigInteger> shrinkable = edgeCases.suppliers().get(0).get();
 			assertThat(shrinkable.shrink()).isNotEmpty();
 		}
 

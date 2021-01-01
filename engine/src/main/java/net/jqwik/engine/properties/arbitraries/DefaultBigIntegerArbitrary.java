@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -30,6 +31,11 @@ public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements
 	@Override
 	public EdgeCases<BigInteger> edgeCases() {
 		return generatingArbitrary.edgeCases();
+	}
+
+	@Override
+	public Arbitrary<BigInteger> edgeCases(Consumer<EdgeCases.Config<BigInteger>> configurator) {
+		return generatingArbitrary.edgeCases(configurator);
 	}
 
 	@Override

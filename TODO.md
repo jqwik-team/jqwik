@@ -1,6 +1,9 @@
 - 1.4.0
 
-    - NumberArbitrary.edgeCases(config -> config.add()): Add shrinkable edge case
+    - Add shrinkable edge case to decimal arbitraries:
+        - DefaultBigDecimalArbitrary
+        - DefaultDoubleArbitrary
+        - DefaultFloatArbitrary
 
     - Publish test report in github action
       ```
