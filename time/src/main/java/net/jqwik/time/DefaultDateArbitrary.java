@@ -120,7 +120,11 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 				return base + offset;
 			}
 		}
-		LocalDate nextJan1 = LocalDate.of(date.getYear() + 1, 1, 1);
+		int nextYear = date.getYear() + 1;
+		if (nextYear > Year.MAX_VALUE) {
+			return Long.MAX_VALUE;
+		}
+		LocalDate nextJan1 = LocalDate.of(nextYear, 1, 1);
 
 		return nextLeapDayOffset(nextJan1, base + DAYS.between(date, nextJan1));
 	}
