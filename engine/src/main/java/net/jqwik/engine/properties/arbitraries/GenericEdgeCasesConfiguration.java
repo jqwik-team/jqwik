@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 
@@ -41,11 +42,11 @@ public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 		if (none) {
 			configuredEdgeCases = EdgeCases.none();
 		}
-		for (Predicate<T> filter : filters) {
-			configuredEdgeCases = EdgeCasesSupport.filter(configuredEdgeCases, filter);
-		}
 
 		List<Supplier<Shrinkable<T>>> suppliers = new ArrayList<>(configuredEdgeCases.suppliers());
+		for (Predicate<T> filter : filters) {
+			suppliers = suppliers.stream().filter(s -> filter.test(s.get().value())).collect(Collectors.toList());
+		}
 		for (T additionalEdgeCase : additionalEdgeCases) {
 			suppliers.add(() -> createShrinkable(additionalEdgeCase));
 		}
