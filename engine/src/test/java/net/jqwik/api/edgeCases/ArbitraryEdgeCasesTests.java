@@ -354,7 +354,6 @@ class ArbitraryEdgeCasesTests {
 
 	}
 
-
 	@Group
 	class NumberConfiguration {
 
@@ -364,7 +363,7 @@ class ArbitraryEdgeCasesTests {
 					Arbitraries
 							.integers()
 							.between(-100, 100)
-					.edgeCases(edgeCasesConfig -> edgeCasesConfig.none());
+							.edgeCases(edgeCasesConfig -> edgeCasesConfig.none());
 
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).isEmpty();
@@ -381,10 +380,10 @@ class ArbitraryEdgeCasesTests {
 					Arbitraries
 							.integers()
 							.between(-100, 100)
-					.edgeCases(edgeCasesConfig -> {
-						edgeCasesConfig.filter(i -> i % 2 == 0);
-						edgeCasesConfig.filter(i -> i >= 0);
-					});
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.filter(i -> i % 2 == 0);
+								edgeCasesConfig.filter(i -> i >= 0);
+							});
 
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(0, 2, 100);
@@ -396,31 +395,13 @@ class ArbitraryEdgeCasesTests {
 					Arbitraries
 							.integers()
 							.between(-100, 100)
-					.edgeCases(edgeCasesConfig -> {
-						edgeCasesConfig.add(42);
-						edgeCasesConfig.add(41);
-					});
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.add(42);
+								edgeCasesConfig.add(41);
+							});
 
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(-1, 0, -2, 1, 2, -99, -100, 99, 100, 41, 42);
-		}
-
-		@Example
-		void addedIntegerEdgeCasesAreShrinkable() {
-			Arbitrary<Integer> arbitrary =
-					Arbitraries
-							.integers()
-							.between(-100, 100)
-					.edgeCases(edgeCasesConfig -> {
-						edgeCasesConfig.includeOnly();
-						edgeCasesConfig.add(42);
-					});
-
-			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-			assertThat(edgeCases.size()).isEqualTo(1);
-
-			Shrinkable<Integer> integerShrinkable = edgeCases.suppliers().get(0).get();
-			assertThat(integerShrinkable.shrink()).isNotEmpty();
 		}
 
 		@Example
@@ -429,11 +410,11 @@ class ArbitraryEdgeCasesTests {
 					Arbitraries
 							.integers()
 							.between(-100, 100)
-					.edgeCases(edgeCasesConfig -> {
-						edgeCasesConfig.filter(i -> i < 0);
-						edgeCasesConfig.add(42);
-						edgeCasesConfig.add(41);
-					});
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.filter(i -> i < 0);
+								edgeCasesConfig.add(42);
+								edgeCasesConfig.add(41);
+							});
 
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(-1, -2, -99, -100, 41, 42);
@@ -446,10 +427,82 @@ class ArbitraryEdgeCasesTests {
 					Arbitraries
 							.integers()
 							.between(-100, 100)
-					.edgeCases(edgeCasesConfig -> edgeCasesConfig.includeOnly(-100, 100));
+							.edgeCases(edgeCasesConfig -> edgeCasesConfig.includeOnly(-100, 100));
 
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(-100, 100);
+		}
+
+		@Example
+		void addedIntegerEdgeCasesAreShrinkable() {
+			Arbitrary<Integer> arbitrary =
+					Arbitraries
+							.integers()
+							.between(-100, 100)
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.includeOnly();
+								edgeCasesConfig.add(42);
+							});
+
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(edgeCases.size()).isEqualTo(1);
+
+			Shrinkable<Integer> shrinkable = edgeCases.suppliers().get(0).get();
+			assertThat(shrinkable.shrink()).isNotEmpty();
+		}
+
+		@Example
+		void addedLongEdgeCasesAreShrinkable() {
+			Arbitrary<Long> arbitrary =
+					Arbitraries
+							.longs()
+							.between(-100L, 100L)
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.includeOnly();
+								edgeCasesConfig.add(42L);
+							});
+
+			EdgeCases<Long> edgeCases = arbitrary.edgeCases();
+			assertThat(edgeCases.size()).isEqualTo(1);
+
+			Shrinkable<Long> shrinkable = edgeCases.suppliers().get(0).get();
+			assertThat(shrinkable.shrink()).isNotEmpty();
+		}
+
+		@Example
+		void addedShortEdgeCasesAreShrinkable() {
+			Arbitrary<Short> arbitrary =
+					Arbitraries
+							.shorts()
+							.between((short) -100, (short) 100)
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.includeOnly();
+								edgeCasesConfig.add((short) 42);
+							});
+
+			EdgeCases<Short> edgeCases = arbitrary.edgeCases();
+			assertThat(edgeCases.size()).isEqualTo(1);
+
+			Shrinkable<Short> shrinkable = edgeCases.suppliers().get(0).get();
+			assertThat(shrinkable.shrink()).isNotEmpty();
+		}
+
+		@Example
+		void addedByteEdgeCasesAreShrinkable() {
+			Arbitrary<Byte> arbitrary =
+					Arbitraries
+							.bytes()
+							.between((byte) -100, (byte) 100)
+							.edgeCases(edgeCasesConfig -> {
+								edgeCasesConfig.includeOnly();
+								edgeCasesConfig.add((byte) 42);
+							});
+
+			EdgeCases<Byte> edgeCases = arbitrary.edgeCases();
+			assertThat(edgeCases.size()).isEqualTo(1);
+
+			Shrinkable<Byte> shrinkable = edgeCases.suppliers().get(0).get();
+			assertThat(shrinkable.shrink()).isNotEmpty();
 		}
 
 	}

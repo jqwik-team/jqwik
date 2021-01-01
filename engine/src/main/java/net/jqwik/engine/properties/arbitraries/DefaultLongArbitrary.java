@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -11,7 +12,7 @@ public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongA
 	private static final long DEFAULT_MIN = Long.MIN_VALUE;
 	private static final long DEFAULT_MAX = Long.MAX_VALUE;
 
-	private final IntegralGeneratingArbitrary generatingArbitrary;
+	private IntegralGeneratingArbitrary generatingArbitrary;
 
 	public DefaultLongArbitrary() {
 		this.generatingArbitrary = new IntegralGeneratingArbitrary(BigInteger.valueOf(DEFAULT_MIN), BigInteger.valueOf(DEFAULT_MAX));
@@ -30,6 +31,18 @@ public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongA
 	@Override
 	public EdgeCases<Long> edgeCases() {
 		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::longValueExact);
+	}
+
+	@Override
+	public Arbitrary<Long> edgeCases(Consumer<EdgeCases.Config<Long>> configurator) {
+		Consumer<EdgeCases.Config<BigInteger>> integralConfigurator = new MappedEdgeCasesConsumer<>(
+				configurator,
+				BigInteger::longValueExact,
+				BigInteger::valueOf
+		);
+		DefaultLongArbitrary clone = typedClone();
+		clone.generatingArbitrary = (IntegralGeneratingArbitrary) generatingArbitrary.edgeCases(integralConfigurator);
+		return clone;
 	}
 
 	@Override

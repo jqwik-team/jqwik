@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -11,7 +12,7 @@ public class DefaultShortArbitrary extends AbstractArbitraryBase implements Shor
 	private static final short DEFAULT_MIN = Short.MIN_VALUE;
 	private static final short DEFAULT_MAX = Short.MAX_VALUE;
 
-	private final IntegralGeneratingArbitrary generatingArbitrary;
+	private IntegralGeneratingArbitrary generatingArbitrary;
 
 	public DefaultShortArbitrary() {
 		this.generatingArbitrary = new IntegralGeneratingArbitrary(BigInteger.valueOf(DEFAULT_MIN), BigInteger.valueOf(DEFAULT_MAX));
@@ -30,6 +31,18 @@ public class DefaultShortArbitrary extends AbstractArbitraryBase implements Shor
 	@Override
 	public EdgeCases<Short> edgeCases() {
 		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::shortValueExact);
+	}
+
+	@Override
+	public Arbitrary<Short> edgeCases(Consumer<EdgeCases.Config<Short>> configurator) {
+		Consumer<EdgeCases.Config<BigInteger>> integralConfigurator = new MappedEdgeCasesConsumer<>(
+				configurator,
+				BigInteger::shortValueExact,
+				(Function<Short, BigInteger>) BigInteger::valueOf
+		);
+		DefaultShortArbitrary clone = typedClone();
+		clone.generatingArbitrary = (IntegralGeneratingArbitrary) generatingArbitrary.edgeCases(integralConfigurator);
+		return clone;
 	}
 
 	@Override

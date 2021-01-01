@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -11,7 +12,7 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 	private static final byte DEFAULT_MIN = Byte.MIN_VALUE;
 	private static final byte DEFAULT_MAX = Byte.MAX_VALUE;
 
-	private final IntegralGeneratingArbitrary generatingArbitrary;
+	private IntegralGeneratingArbitrary generatingArbitrary;
 
 	public DefaultByteArbitrary() {
 		this.generatingArbitrary = new IntegralGeneratingArbitrary(BigInteger.valueOf(DEFAULT_MIN), BigInteger.valueOf(DEFAULT_MAX));
@@ -30,6 +31,18 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 	@Override
 	public EdgeCases<Byte> edgeCases() {
 		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::byteValueExact);
+	}
+
+	@Override
+	public Arbitrary<Byte> edgeCases(Consumer<EdgeCases.Config<Byte>> configurator) {
+		Consumer<EdgeCases.Config<BigInteger>> integralConfigurator = new MappedEdgeCasesConsumer<>(
+				configurator,
+				BigInteger::byteValueExact,
+				(Function<Byte, BigInteger>) BigInteger::valueOf
+		);
+		DefaultByteArbitrary clone = typedClone();
+		clone.generatingArbitrary = (IntegralGeneratingArbitrary) generatingArbitrary.edgeCases(integralConfigurator);
+		return clone;
 	}
 
 	@Override
