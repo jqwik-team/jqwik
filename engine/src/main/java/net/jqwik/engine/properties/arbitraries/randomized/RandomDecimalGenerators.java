@@ -51,10 +51,12 @@ public class RandomDecimalGenerators {
 	}
 
 	public static Range<BigInteger> unscaledBigIntegerRange(final Range<BigDecimal> range, final int scale) {
-		BigInteger minScaled = range.minIncluded ? unscaledBigInteger(range.min, scale) : unscaledBigInteger(range.min, scale)
-																							  .add(BigInteger.ONE);
-		BigInteger maxScaled = range.maxIncluded ? unscaledBigInteger(range.max, scale) : unscaledBigInteger(range.max, scale)
-																							  .subtract(BigInteger.ONE);
+		BigInteger minScaled = range.minIncluded
+									   ? unscaledBigInteger(range.min, scale)
+									   : unscaledBigInteger(range.min, scale).add(BigInteger.ONE);
+		BigInteger maxScaled = range.maxIncluded
+									   ? unscaledBigInteger(range.max, scale)
+									   : unscaledBigInteger(range.max, scale).subtract(BigInteger.ONE);
 		return Range.of(minScaled, true, maxScaled, true);
 	}
 
@@ -63,7 +65,7 @@ public class RandomDecimalGenerators {
 	}
 
 	public static BigInteger unscaledBigInteger(final BigDecimal bigDecimal, final int scale) {
-		return bigDecimal.setScale(scale).unscaledValue();
+		return bigDecimal.setScale(scale, BigDecimal.ROUND_HALF_UP).unscaledValue();
 	}
 
 	public static BigDecimal defaultShrinkingTarget(Range<BigDecimal> range, int scale) {

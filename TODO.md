@@ -1,9 +1,5 @@
 - 1.4.0
 
-    - Add shrinkable edge case to decimal arbitraries:
-        - DefaultDoubleArbitrary
-        - DefaultFloatArbitrary
-
     - Extract TestingSupport into module "testing"
         - Add `atLeastOneGenerated()`
 

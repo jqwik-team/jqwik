@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -12,7 +13,7 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 	private static final double DEFAULT_MIN = -Double.MAX_VALUE;
 	private static final double DEFAULT_MAX = Double.MAX_VALUE;
 
-	private final DecimalGeneratingArbitrary generatingArbitrary;
+	private DecimalGeneratingArbitrary generatingArbitrary;
 
 	public DefaultDoubleArbitrary() {
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(Range.of(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX)));
@@ -31,6 +32,18 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 	@Override
 	public EdgeCases<Double> edgeCases() {
 		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigDecimal::doubleValue);
+	}
+
+	@Override
+	public Arbitrary<Double> edgeCases(Consumer<EdgeCases.Config<Double>> configurator) {
+		Consumer<EdgeCases.Config<BigDecimal>> decimalConfigurator = new MappedEdgeCasesConsumer<>(
+				configurator,
+				BigDecimal::doubleValue,
+				BigDecimal::valueOf
+		);
+		DefaultDoubleArbitrary clone = typedClone();
+		clone.generatingArbitrary = (DecimalGeneratingArbitrary) generatingArbitrary.edgeCases(decimalConfigurator);
+		return clone;
 	}
 
 	@Override

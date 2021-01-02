@@ -124,10 +124,47 @@ class NumbersEdgeCasesTests {
 								});
 
 				EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
-				assertThat(edgeCases.size()).isEqualTo(1);
 				assertThat(values(edgeCases)).containsExactlyInAnyOrder(BigDecimal.valueOf(42.41));
 
 				Shrinkable<BigDecimal> shrinkable = edgeCases.suppliers().get(0).get();
+				assertThat(shrinkable.shrink()).isNotEmpty();
+			}
+
+			@Example
+			void addedDoubleEdgeCasesAreShrinkable() {
+				Arbitrary<Double> arbitrary =
+						Arbitraries
+								.doubles()
+								.between(-100, 100)
+								.edgeCases(edgeCasesConfig -> {
+									edgeCasesConfig.includeOnly();
+									edgeCasesConfig.add(42.41);
+								});
+
+				EdgeCases<Double> edgeCases = arbitrary.edgeCases();
+				assertThat(edgeCases.size()).isEqualTo(1);
+				assertThat(values(edgeCases)).containsExactlyInAnyOrder(42.41);
+
+				Shrinkable<Double> shrinkable = edgeCases.suppliers().get(0).get();
+				assertThat(shrinkable.shrink()).isNotEmpty();
+			}
+
+			@Example
+			void addedFloatEdgeCasesAreShrinkable() {
+				Arbitrary<Float> arbitrary =
+						Arbitraries
+								.floats()
+								.between(-100, 100)
+								.edgeCases(edgeCasesConfig -> {
+									edgeCasesConfig.includeOnly();
+									edgeCasesConfig.add(42.41f);
+								});
+
+				EdgeCases<Float> edgeCases = arbitrary.edgeCases();
+				assertThat(edgeCases.size()).isEqualTo(1);
+				assertThat(values(edgeCases)).containsExactlyInAnyOrder(42.41f);
+
+				Shrinkable<Float> shrinkable = edgeCases.suppliers().get(0).get();
 				assertThat(shrinkable.shrink()).isNotEmpty();
 			}
 

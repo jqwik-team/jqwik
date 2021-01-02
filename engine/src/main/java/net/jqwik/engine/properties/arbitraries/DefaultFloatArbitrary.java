@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -12,7 +13,7 @@ public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitr
 	private static final float DEFAULT_MIN = -Float.MAX_VALUE;
 	private static final float DEFAULT_MAX = Float.MAX_VALUE;
 
-	private final DecimalGeneratingArbitrary generatingArbitrary;
+	private DecimalGeneratingArbitrary generatingArbitrary;
 
 	public DefaultFloatArbitrary() {
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(Range.of(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX)));
@@ -31,6 +32,18 @@ public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitr
 	@Override
 	public EdgeCases<Float> edgeCases() {
 		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigDecimal::floatValue);
+	}
+
+	@Override
+	public Arbitrary<Float> edgeCases(Consumer<EdgeCases.Config<Float>> configurator) {
+		Consumer<EdgeCases.Config<BigDecimal>> decimalConfigurator = new MappedEdgeCasesConsumer<>(
+				configurator,
+				BigDecimal::floatValue,
+				val -> BigDecimal.valueOf(val)
+		);
+		DefaultFloatArbitrary clone = typedClone();
+		clone.generatingArbitrary = (DecimalGeneratingArbitrary) generatingArbitrary.edgeCases(decimalConfigurator);
+		return clone;
 	}
 
 	@Override
