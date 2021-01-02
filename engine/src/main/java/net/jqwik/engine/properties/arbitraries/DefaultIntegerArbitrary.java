@@ -7,7 +7,7 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements IntegerArbitrary {
+public class DefaultIntegerArbitrary extends TypedCloneable implements IntegerArbitrary {
 
 	private static final int DEFAULT_MIN = Integer.MIN_VALUE;
 	private static final int DEFAULT_MAX = Integer.MAX_VALUE;

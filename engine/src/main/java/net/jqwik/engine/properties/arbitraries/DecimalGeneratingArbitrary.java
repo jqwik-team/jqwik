@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -12,7 +13,7 @@ import net.jqwik.engine.properties.shrinking.*;
 
 import static net.jqwik.engine.properties.arbitraries.randomized.RandomDecimalGenerators.*;
 
-class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
+class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<BigDecimal> {
 
 	private static final int DEFAULT_SCALE = 2;
 
@@ -20,6 +21,8 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	int scale = DEFAULT_SCALE;
 	BigDecimal shrinkingTarget;
 	RandomDistribution distribution = RandomDistribution.biased();
+
+	private Consumer<EdgeCases.Config<BigDecimal>> edgeCasesConfigurator = EdgeCases.Config.noConfig();
 
 	DecimalGeneratingArbitrary(Range<BigDecimal> defaultRange) {
 		this.range = defaultRange;
@@ -62,7 +65,16 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 
 	@Override
 	public EdgeCases<BigDecimal> edgeCases() {
-		return EdgeCasesSupport.fromShrinkables(edgeCaseShrinkables());
+		EdgeCases<BigDecimal> defaultEdgeCases = EdgeCasesSupport.fromShrinkables(edgeCaseShrinkables());
+		DecimalEdgeCasesConfiguration configuration = new DecimalEdgeCasesConfiguration(range, scale, shrinkingTarget());
+		return configuration.configure(edgeCasesConfigurator, defaultEdgeCases);
+	}
+
+	@Override
+	public Arbitrary<BigDecimal> edgeCases(Consumer<EdgeCases.Config<BigDecimal>> configurator) {
+		DecimalGeneratingArbitrary clone = typedClone();
+		clone.edgeCasesConfigurator = configurator;
+		return clone;
 	}
 
 	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables() {

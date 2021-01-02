@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.*;
 
-public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements DoubleArbitrary {
+public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbitrary {
 
 	private static final double DEFAULT_MIN = -Double.MAX_VALUE;
 	private static final double DEFAULT_MAX = Double.MAX_VALUE;

@@ -7,7 +7,7 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongArbitrary {
+public class DefaultLongArbitrary extends TypedCloneable implements LongArbitrary {
 
 	private static final long DEFAULT_MIN = Long.MIN_VALUE;
 	private static final long DEFAULT_MAX = Long.MAX_VALUE;

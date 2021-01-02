@@ -13,7 +13,7 @@ import net.jqwik.engine.properties.shrinking.*;
 
 import static java.math.BigInteger.*;
 
-class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
+class IntegralGeneratingArbitrary extends TypedCloneable implements Arbitrary<BigInteger> {
 
 	BigInteger min;
 	BigInteger max;
@@ -66,8 +66,9 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	@Override
 	public Arbitrary<BigInteger> edgeCases(Consumer<EdgeCases.Config<BigInteger>> configurator) {
-		edgeCasesConfigurator = configurator;
-		return this;
+		IntegralGeneratingArbitrary clone = typedClone();
+		clone.edgeCasesConfigurator = configurator;
+		return clone;
 	}
 
 	private Stream<BigInteger> streamDefaultEdgeCases() {

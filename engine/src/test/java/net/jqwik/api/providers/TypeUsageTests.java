@@ -8,6 +8,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.engine.facades.*;
@@ -762,7 +763,7 @@ class TypeUsageTests {
 			TypeUsage localStringArbitrary = TypeUsage.of(LocalStringArbitrary.class);
 
 			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(Object.class))).isTrue();
-			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(AbstractArbitraryBase.class))).isTrue();
+			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(StringArbitrary.class))).isTrue();
 			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(String.class))).isFalse();
 
 			TypeUsage stringArbitrary = TypeUsage.of(Arbitrary.class, TypeUsage.of(String.class));

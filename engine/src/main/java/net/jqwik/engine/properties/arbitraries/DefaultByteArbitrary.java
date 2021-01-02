@@ -7,7 +7,7 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteArbitrary {
+public class DefaultByteArbitrary extends TypedCloneable implements ByteArbitrary {
 
 	private static final byte DEFAULT_MIN = Byte.MIN_VALUE;
 	private static final byte DEFAULT_MAX = Byte.MAX_VALUE;

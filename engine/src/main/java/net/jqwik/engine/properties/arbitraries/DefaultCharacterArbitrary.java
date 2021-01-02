@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements CharacterArbitrary {
+public class DefaultCharacterArbitrary extends TypedCloneable implements CharacterArbitrary {
 
 	static final char[] WHITESPACE_CHARS;
 

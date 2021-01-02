@@ -1,9 +1,11 @@
 - 1.4.0
 
     - Add shrinkable edge case to decimal arbitraries:
-        - DefaultBigDecimalArbitrary
         - DefaultDoubleArbitrary
         - DefaultFloatArbitrary
+
+    - Extract TestingSupport into module "testing"
+        - Add `atLeastOneGenerated()`
 
     - Publish test report in github action
       ```
@@ -15,8 +17,8 @@
             report_paths: '**/build/test-results/test/TEST-*.xml'
       ```  
 
-    - Extract TestingSupport into module "testing"
-        - Add `atLeastOneGenerated()`
+    - Split user guide template in several parts:
+      https://stackoverflow.com/questions/42567945/how-can-i-include-secondary-files-into-a-file-during-gradles-expand-copy
 
     - Email generation
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails()

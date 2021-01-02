@@ -10,7 +10,7 @@ import net.jqwik.engine.properties.shrinking.*;
 
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 
-abstract class MultivalueArbitraryBase<T, U> extends AbstractArbitraryBase implements StreamableArbitrary<T, U> {
+abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements StreamableArbitrary<T, U> {
 
 	protected Arbitrary<T> elementArbitrary;
 	protected int minSize = 0;

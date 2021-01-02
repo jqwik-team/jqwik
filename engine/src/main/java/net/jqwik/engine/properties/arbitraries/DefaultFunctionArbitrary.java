@@ -8,7 +8,7 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class DefaultFunctionArbitrary<F, R> extends AbstractArbitraryBase implements FunctionArbitrary<F, R>  {
+public class DefaultFunctionArbitrary<F, R> extends TypedCloneable implements FunctionArbitrary<F, R>  {
 
 	private final Class<F> functionalType;
 	private final Arbitrary<R> resultArbitrary;

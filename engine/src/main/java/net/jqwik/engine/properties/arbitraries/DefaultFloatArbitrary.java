@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.*;
 
-public class DefaultFloatArbitrary extends AbstractArbitraryBase implements FloatArbitrary {
+public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitrary {
 
 	private static final float DEFAULT_MIN = -Float.MAX_VALUE;
 	private static final float DEFAULT_MAX = Float.MAX_VALUE;

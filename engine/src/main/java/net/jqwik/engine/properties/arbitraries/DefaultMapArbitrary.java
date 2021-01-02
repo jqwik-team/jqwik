@@ -6,7 +6,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class DefaultMapArbitrary<K, V> extends AbstractArbitraryBase implements MapArbitrary<K, V> {
+public class DefaultMapArbitrary<K, V> extends TypedCloneable implements MapArbitrary<K, V> {
 
 	private final Arbitrary<K> keysArbitrary;
 	private final Arbitrary<V> valuesArbitrary;

@@ -2,18 +2,19 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.*;
 
-public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements BigDecimalArbitrary {
+public class DefaultBigDecimalArbitrary extends TypedCloneable implements BigDecimalArbitrary {
 
 	public static final BigDecimal DEFAULT_MIN = BigDecimal.valueOf(-Double.MAX_VALUE);
 	public static final BigDecimal DEFAULT_MAX = BigDecimal.valueOf(Double.MAX_VALUE);
 	private static final Range<BigDecimal> DEFAULT_RANGE = Range.of(DEFAULT_MIN, DEFAULT_MAX);
 
-	private final DecimalGeneratingArbitrary generatingArbitrary;
+	private DecimalGeneratingArbitrary generatingArbitrary;
 
 	public DefaultBigDecimalArbitrary() {
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(DEFAULT_RANGE);
@@ -32,6 +33,13 @@ public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements
 	@Override
 	public EdgeCases<BigDecimal> edgeCases() {
 		return generatingArbitrary.edgeCases();
+	}
+
+	@Override
+	public Arbitrary<BigDecimal> edgeCases(Consumer<EdgeCases.Config<BigDecimal>> configurator) {
+		DefaultBigDecimalArbitrary clone = typedClone();
+		clone.generatingArbitrary = (DecimalGeneratingArbitrary) generatingArbitrary.edgeCases(configurator);
+		return clone;
 	}
 
 	@Override

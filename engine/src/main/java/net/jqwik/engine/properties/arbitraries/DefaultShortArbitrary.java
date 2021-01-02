@@ -7,7 +7,7 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultShortArbitrary extends AbstractArbitraryBase implements ShortArbitrary {
+public class DefaultShortArbitrary extends TypedCloneable implements ShortArbitrary {
 
 	private static final short DEFAULT_MIN = Short.MIN_VALUE;
 	private static final short DEFAULT_MAX = Short.MAX_VALUE;

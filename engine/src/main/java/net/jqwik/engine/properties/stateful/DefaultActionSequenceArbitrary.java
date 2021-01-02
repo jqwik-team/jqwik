@@ -4,7 +4,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
-public class DefaultActionSequenceArbitrary<M> extends AbstractArbitraryBase implements ActionSequenceArbitrary<M> {
+public class DefaultActionSequenceArbitrary<M> extends TypedCloneable implements ActionSequenceArbitrary<M> {
 
 	private final Arbitrary<Action<M>> actionArbitrary;
 

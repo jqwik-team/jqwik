@@ -7,12 +7,12 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements BigIntegerArbitrary {
+public class DefaultBigIntegerArbitrary extends TypedCloneable implements BigIntegerArbitrary {
 
 	public static final BigInteger DEFAULT_MIN = BigInteger.valueOf(Long.MIN_VALUE);
 	public static final BigInteger DEFAULT_MAX = BigInteger.valueOf(Long.MAX_VALUE);
 
-	private final IntegralGeneratingArbitrary generatingArbitrary;
+	private IntegralGeneratingArbitrary generatingArbitrary;
 
 	public DefaultBigIntegerArbitrary() {
 		this.generatingArbitrary = new IntegralGeneratingArbitrary(DEFAULT_MIN, DEFAULT_MAX);
@@ -35,7 +35,9 @@ public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements
 
 	@Override
 	public Arbitrary<BigInteger> edgeCases(Consumer<EdgeCases.Config<BigInteger>> configurator) {
-		return generatingArbitrary.edgeCases(configurator);
+		DefaultBigIntegerArbitrary clone = typedClone();
+		clone.generatingArbitrary = (IntegralGeneratingArbitrary) generatingArbitrary.edgeCases(configurator);
+		return clone;
 	}
 
 	@Override

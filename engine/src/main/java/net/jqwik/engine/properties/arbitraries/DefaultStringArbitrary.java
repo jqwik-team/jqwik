@@ -8,7 +8,7 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
+public class DefaultStringArbitrary extends TypedCloneable implements StringArbitrary {
 
 	private CharacterArbitrary characterArbitrary = new DefaultCharacterArbitrary();
 
