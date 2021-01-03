@@ -5,10 +5,41 @@ title: jqwik User Guide - ${version}
 <span style="padding-left:1em;font-size:50%;font-weight:lighter">${version}</span>
 </h1>
 
+### Table of Contents
+
+- [Detailed TOC](#detailed-table-of-contents)
+- [How to Use](#how-to-use)
+- [Writing Properties](#writing-properties)
+- [Default Parameter Generation](#default-parameter-generation)
+- [Self-Made Annotations](#self-made-annotations)
+- [Customized Parameter Generation](#customized-parameter-generation)
+- [Recursive Arbitraries](#recursive-arbitraries)
+- [Using Arbitraries Directly](#using-arbitraries-directly)
+- [Contract Tests](#contract-tests)
+- [Stateful Testing](#stateful-testing)
+- [Assumptions](#assumptions)
+- [Result Shrinking](#result-shrinking)
+- [Platform Reporting with Reporter Objects](#platform-reporting-with-reporter-object)
+- [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
+- [Providing Default Arbitraries](#providing-default-arbitraries)
+- [Domain and Domain Context](#domain-and-domain-context)
+- [Generation from a Type's Interface](#generation-from-a-types-interface)
+- [Generation of Edge Cases](#generation-of-edge-cases)
+- [Exhaustive Generation](#exhaustive-generation)
+- [Data-Driven Properties](#data-driven-properties)
+- [Rerunning Falsified Properties](#rerunning-falsified-properties)
+- [jqwik Configuration](#jqwik-configuration)
+- [Additional Modules](#additional-modules)
+- [Advanced Topics](#advanced-topics)
+- [API Evolution](#api-evolution)
+- [Release Notes](#release-notes)
+
+
+
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-### Table of Contents  
+### Detailed Table of Contents  
 
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -95,6 +126,8 @@ about the real dependencies you can replace this dependency with
 
 ```
     testImplementation "net.jqwik:jqwik-api:\${jqwikVersion}"
+    testImplementation "net.jqwik:jqwik-web:\${jqwikVersion}"
+    testImplementation "net.jqwik:jqwik-time:\${jqwikVersion}"
     testRuntime "net.jqwik:jqwik-engine:\${jqwikVersion}"
 ```
 
@@ -175,12 +208,19 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-${version}.jar`
+- `jqwik-api-${version}.jar`
+- `jqwik-engine-${version}.jar`
 - `junit-platform-engine-${junitPlatformVersion}.jar`
 - `junit-platform-commons-${junitPlatformVersion}.jar`
 - `opentest4j-${opentest4jVersion}.jar`
 
-## Creating a Property
+Optional jars are:
+- `jqwik-web-${version}.jar`
+- `jqwik-time-${version}.jar`
+
+## Writing Properties
+
+### Creating a Property
 
 _Properties_ are the core concept of [property-based testing](/#properties).
 
@@ -235,7 +275,7 @@ class PropertyBasedTests {
 Mind that only parameters that are annotated with '@ForAll' are considered for value generation. 
 Other kinds of parameters can be injected through the [resolve parameter hook](#resolveparameterhook).
 
-### Failure Reporting
+#### Failure Reporting
 
 If a property fails then jqwik's reporting is more thorough:
 - Report the relevant exception, usually a subtype of `AssertionError`
@@ -295,7 +335,7 @@ If you want to provide nice reporting for your own domain classes you can either
   through Java’s `java.util.ServiceLoader` mechanism. 
     
     
-### Additional Reporting Options
+#### Additional Reporting Options
 
 You can switch on additional reporting aspects by adding a
 [`@Report(Reporting[])` annotation](/docs/${docsVersion}/javadoc/net/jqwik/api/Property.html)
@@ -423,7 +463,7 @@ Thus, the order in which a property method's attributes are determined is:
 4. which can be overridden by a method's
    [`@Property` annotation attributes](#optional-property-attributes).
    
-## Creating an Example-based Test
+### Creating an Example-based Test
 
 _jqwik_ also supports example-based testing.
 In order to write an example test annotate a `public`, `protected` or package-scoped method with
@@ -463,7 +503,7 @@ Internally _jqwik_ treats examples as properties with the number of tries hardco
 Thus, everything that works for property methods also works for example methods --
 including random generation of parameters annotated with `@ForAll`.
 
-## Assertions
+### Assertions
 
 __jqwik__ does not come with any assertions, so you have to use one of the
 third-party assertion libraries, e.g. [Hamcrest](http://hamcrest.org/) or 
@@ -472,7 +512,7 @@ third-party assertion libraries, e.g. [Hamcrest](http://hamcrest.org/) or
 If you have Jupiter in your test dependencies anyway, you can also use the
 static methods in `org.junit.jupiter.api.Assertions`.
 
-## Lifecycle
+### Lifecycle
 
 To understand the lifecycle it is important to know that _the tree of test elements_
 consists of two main types of elements:
@@ -513,7 +553,7 @@ When running your whole test suite there are additional things happening:
 _jqwik_ gives you more than one way to hook into the lifecycle of containers,
 properties and tries.
 
-### Simple Property Lifecycle
+#### Simple Property Lifecycle
 
 If you need nothing but some initialization and cleanup of the container instance
 per property or example:
@@ -552,7 +592,7 @@ In this example both the constructor and `close()` will be called twice times:
 Once for `anExample()` and once for `aProperty(...)`. However, all five calls
 to `aProperty(..)` will share the same instance of `SimpleLifecycleTests`.
 
-### Annotated Lifecycle Methods
+#### Annotated Lifecycle Methods
 
 The other way to influence all elements of a test run is through annotated lifecycle
 methods, which you might already know from JUnit 4 and 5. _jqwik_ currently has
@@ -644,7 +684,7 @@ All those lifecycle methods are being run through _jqwik_'s mechanism for
 writing [_lifecycle hooks_](#lifecycle-hooks) under the hood.
 
 
-### Single Property Lifecycle
+#### Single Property Lifecycle
 
 All [lifecycle methods](#annotated-lifecycle-methods) described in the previous section
 apply to all property methods of a container class. 
@@ -677,7 +717,7 @@ Have a look at [`PerProperty.Lifecycle`](/docs/${docsVersion}/javadoc/net/jqwik/
 to find out which aspects of a property's lifecycle you can control.
 
 
-## Grouping Tests
+### Grouping Tests
 
 Within a containing test class you can group other containers by embedding
 another non-static and non-private inner class and annotating it with `@Group`.
@@ -720,7 +760,7 @@ class TestsWithGroups {
 }
 ```
 
-## Naming and Labeling Tests
+### Naming and Labeling Tests
 
 Using Java-style camel case naming for your test container classes and property methods
 will sometimes lead to hard to read display names in your test reports
@@ -765,7 +805,7 @@ class NamingExamples {
 Labels can consist of any characters and don't have to be unique - but you probably want them 
 to be unique within their container.
 
-## Tagging Tests
+### Tagging Tests
 
 Test container classes, groups, example methods and property methods can be tagged
 using the annotation `@Tag("a-tag")`. You can have many tags on the same element.
@@ -797,7 +837,7 @@ class TaggingExamples {
 Tags must follow certain rules as described 
 [here](/docs/${docsVersion}/javadoc/net/jqwik/api/Tag.html)
 
-## Disabling Tests
+### Disabling Tests
 
 From time to time you might want to disable a test or all tests in a container
 temporarily. You can do that by adding the
@@ -1248,118 +1288,6 @@ Shrinking moves towards the start of the frequency list.
       return Arbitraries.defaultFor(List.class, String.class);
   }
   ```
-  
-### Email Address Generation
-
-To generate email addresses you can either
-
-- call up the static method [`Arbitraries.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#emails()).
-  The return type is [`EmailArbitrary`](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/EmailArbitrary.html)
-  which provides a few configuration methods.
-
-- or use the [`@Email`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Email.html) 
-  annotation on `@ForAll` parameters as in the examples below. 
-
-An email address consists of two parts: `local-part` and `host`. 
-The complete email address is therefore `local-part@host`.
-The `local-part` can be `unquoted` or `quoted` (in double quotes), which allows for more characters to be used.
-The `host` can be a standard domain name, but also an IP (v4 or v6) address, surrounded by square brackets `[]`.
-
-For example, valid email addresses are: 
-```
-abc@example
-abc@example.com
-" "@example.example
-"admin@server"@[192.168.201.0]
-admin@[32::FF:aBc:79a:83B:FFFF:345]
-```
-
-You can use the following restrictions in `@Email` annotation:
-- `unquotedLocalPart` to decide whether unquoted local parts are generated
-- `quotedLocalPart` to decide whether quoted local parts are generated
-- `domainHost` to decide whether domains are generated in the host part
-- `ipv4Host` to decide whether ipv4 addresses are generated in the host part
-- `ipv6Host` to decide whether ipv6 addresses are generated in the host part
-
-You can use it as follows:
-
-```java
-@Property
-void defaultEmailAddresses(@ForAll @Email String email) {
-    assertThat(email).contains("@");
-}
-
-@Property
-void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Host = false, ipv6Host = false) String email) {
-    assertThat(email).contains("@");
-}
-```
-
-### Generation of Dates
-
-The date generation is in an extra module which have to be add in a project's dependency.
-By default, years between 1900 and 2500 are generated. You can change this by setting min/max values.
-You can create an arbitrary for date values by calling a static method on class `Dates`:
-
-- [`DateArbitrary dates()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#dates())
-- [`YearArbitrary years()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#years())
-- [`MonthArbitrary months()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#months())
-- [`DaysOfMonthArbitrary daysOfMonth()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#daysOfMonth())
-- [`YearMonthArbitrary yearMonths()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#yearMonths())
-- [`MonthDayArbitrary monthDays()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#monthDays())
-
-In addition, you can constrain their values using the following functions:
-
-#### DateArbitrary
-
-- The target type is `LocalDate`
-- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
-- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
-- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
-- You can limit the generation of months to only a few months using `onlyMonths(months)`.
-- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
-- You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
-
-You can use it as follows:
-
-```java
-@Property
-void generateLocalDates(@ForAll("dates") LocalDate localDate) {
-    assertThat(localDate).isNotNull();
-}
-
-@Provide
-Arbitrary<LocalDate> dates() {
-    return Dates.dates();
-}
-```
-
-#### YearArbitrary
-
-- You can constrain its minimum and maximum value using `between(min, max)`.
-
-#### MonthArbitrary
-
-- You can constrain its minimum and maximum value using `between(min, max)`.
-- You can limit the generation of months to only a few months using `only(months)`.
-
-#### DaysOfMonthArbitrary
-
-- You can constrain its minimum and maximum value using `between(min, max)`.
-
-#### YearMonthArbitrary
-
-- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
-- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
-- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
-- You can limit the generation of months to only a few months using `onlyMonths(months)`.
-
-#### MonthDayArbitrary
-
-- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
-- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
-- You can limit the generation of months to only a few months using `onlyMonths(months)`.
-- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
 
 ### Numeric Arbitrary Types
 
@@ -1370,12 +1298,12 @@ and _decimal_ numbers. _jqwik_ supports all of Java's built-in number types.
 Each type has its own [fluent interface](https://en.wikipedia.org/wiki/Fluent_interface)
 but all numeric arbitrary types share some things:
 
-- You can constrain their minimum and maximum values using `between(min, max)`, 
+- You can constrain their minimum and maximum values using `between(min, max)`,
   `greaterOrEqual(min)` and `lessOrEqual(max)`.
-- You can determine the _target value_ through `shrinkTowards(target)`. 
+- You can determine the _target value_ through `shrinkTowards(target)`.
   This value is supposed to be the "center" of all possible values used for shrinking
-  and as a mean for [random distributions](random-numeric-distribution). 
-
+  and as a mean for [random distributions](random-numeric-distribution).
+  
 #### Integrals
 
 - [`ByteArbitrary bytes()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bytes())
@@ -1474,6 +1402,7 @@ Look at the statistics to see if it fits your expectation:
 
 You can notice that values `0` and `20` should have the lowest probability but they do not.
 This is because they will be generated a few times as edge cases.
+
 
 ### Collections, Streams, Iterators and Arrays
 
@@ -2259,6 +2188,7 @@ private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
     return Combinators.combine(word(), sentence).as((w, s) -> w + " " + s);
 }
 ```
+
 
 ## Using Arbitraries Directly
 
@@ -3373,7 +3303,7 @@ public class AlternativeStringArbitraryProvider implements ArbitraryProvider {
 If you register this class as arbitrary provider any `@ForAll String` will
 be resolved to `"A String"`.
 
-## Create your own Annotations for Arbitrary Configuration
+### Create your own Annotations for Arbitrary Configuration
 
 All you can do [to constrain default parameter generation](#constraining-default-generation)
 is adding another annotation to a parameter or its parameter types. What if the existing parameters
@@ -3386,7 +3316,7 @@ The mechanism you can plug into is similar to what you do when
   [`ArbitraryConfigurator`](/docs/${docsVersion}/javadoc/net/jqwik/api/configurators/ArbitraryConfigurator.html).
 2. Register the implementation using using Java’s `java.util.ServiceLoader` mechanism.
 
-### Arbitrary Configuration Example: `@Odd`
+#### Arbitrary Configuration Example: `@Odd`
 
 To demonstrate the idea let's create an annotation `@Odd` which will constrain any integer
 generation to only generate odd numbers. First things first, so here's 
@@ -3839,6 +3769,143 @@ and will be removed in a future release. Some names have changed:
  - `defaultShrinking` -> `jqwik.shrinking.default`
  - `boundedShrinkingSeconds` -> `jqwik.shrinking.bounded.seconds`
  - `runFailuresFirst` -> `jqwik.failures.runfirst`
+
+## Additional Modules
+
+_jqwik_ comes with a few additional modules:
+
+- The [`web` module](#web-module)
+- The [`time` module](#time-module)
+- The [`testing` module](#testing-module)
+
+Those modules are included in jqwik's default dependencies but can be excluded
+if you want.
+
+
+### Web Module
+
+#### Email Address Generation
+
+To generate email addresses you can either
+
+- call up the static method [`Arbitraries.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#emails()).
+  The return type is [`EmailArbitrary`](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/EmailArbitrary.html)
+  which provides a few configuration methods.
+
+- or use the [`@Email`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Email.html)
+  annotation on `@ForAll` parameters as in the examples below.
+
+An email address consists of two parts: `local-part` and `host`.
+The complete email address is therefore `local-part@host`.
+The `local-part` can be `unquoted` or `quoted` (in double quotes), which allows for more characters to be used.
+The `host` can be a standard domain name, but also an IP (v4 or v6) address, surrounded by square brackets `[]`.
+
+For example, valid email addresses are:
+```
+abc@example
+abc@example.com
+" "@example.example
+"admin@server"@[192.168.201.0]
+admin@[32::FF:aBc:79a:83B:FFFF:345]
+```
+
+You can use the following restrictions in `@Email` annotation:
+- `unquotedLocalPart` to decide whether unquoted local parts are generated
+- `quotedLocalPart` to decide whether quoted local parts are generated
+- `domainHost` to decide whether domains are generated in the host part
+- `ipv4Host` to decide whether ipv4 addresses are generated in the host part
+- `ipv6Host` to decide whether ipv6 addresses are generated in the host part
+
+You can use it as follows:
+
+```java
+@Property
+void defaultEmailAddresses(@ForAll @Email String email) {
+    assertThat(email).contains("@");
+}
+
+@Property
+void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Host = false, ipv6Host = false) String email) {
+    assertThat(email).contains("@");
+}
+```
+
+### Time Module
+
+This modules artefact name is `jqwik-time`. It's supposed to provide arbitraries,
+default generation and annotations for date and time types.
+
+#### Generation of Dates
+
+The date generation is in an extra module which have to be add in a project's dependency.
+By default, years between 1900 and 2500 are generated. You can change this by setting min/max values.
+You can create an arbitrary for date values by calling a static method on class `Dates`:
+
+- [`DateArbitrary dates()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#dates())
+- [`YearArbitrary years()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#years())
+- [`MonthArbitrary months()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#months())
+- [`DaysOfMonthArbitrary daysOfMonth()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#daysOfMonth())
+- [`YearMonthArbitrary yearMonths()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#yearMonths())
+- [`MonthDayArbitrary monthDays()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#monthDays())
+
+In addition, you can constrain their values using the following functions:
+
+##### DateArbitrary
+
+- The target type is `LocalDate`
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
+- You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
+
+You can use it as follows:
+
+```java
+@Property
+void generateLocalDates(@ForAll("dates") LocalDate localDate) {
+    assertThat(localDate).isNotNull();
+}
+
+@Provide
+Arbitrary<LocalDate> dates() {
+    return Dates.dates();
+}
+```
+
+##### YearArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`.
+
+##### MonthArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`.
+- You can limit the generation of months to only a few months using `only(months)`.
+
+##### DaysOfMonthArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`.
+
+#### YearMonthArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+
+##### MonthDayArbitrary
+
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
+
+### Testing Support Module
+
+This modules artefact name is `jqwik-testing-support`. It provides a few helpful methods
+for generator writers to test their generators - including edge cases and shrinking.
+This module is not in jqwik's default dependencies.
 
 
 ## Advanced Topics

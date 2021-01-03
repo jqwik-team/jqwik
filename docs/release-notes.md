@@ -50,10 +50,13 @@ title: jqwik Release Notes
     - Class `StatisticsCoverage`
     - Class `StatisticsEntry`
     
-- Properties are now loaded via JUnit's [Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) mechanism.
-  Properties specified in `jqwik.properties` continue to work, but are considered
-  deprecated. Log messages will be emitted for any used properties with their 
-  new name. 
+- Properties are now loaded via JUnit's 
+  [Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) mechanism.
+  Properties specified in `jqwik.properties` continue to work, but are considered deprecated. 
+  Log messages will be emitted for any used properties with their new name. 
+  
+- There's a new jqwik module `jqwik-time` (included in dependencies of aggregate module)
+  which simplified the generation of 
 
 #### Breaking Changes
 

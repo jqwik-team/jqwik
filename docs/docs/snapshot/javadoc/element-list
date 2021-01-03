@@ -7,3 +7,4 @@ net.jqwik.api.lifecycle
 net.jqwik.api.providers
 net.jqwik.api.stateful
 net.jqwik.api.statistics
+net.jqwik.api.testing
