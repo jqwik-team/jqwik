@@ -5,13 +5,15 @@ title: jqwik User Guide - ${version}
 <span style="padding-left:1em;font-size:50%;font-weight:lighter">${version}</span>
 </h1>
 
-### Table of Contents
+<h3>Table of Contents
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">
+    <a href="#detailed-table-of-contents">Detailed Table of Contents</a>
+</span>
+</h3>
 
-- [Detailed Table of Contents](#detailed-table-of-contents)
 - [How to Use](#how-to-use)
 - [Writing Properties](#writing-properties)
 - [Default Parameter Generation](#default-parameter-generation)
-- [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
 - [Recursive Arbitraries](#recursive-arbitraries)
 - [Using Arbitraries Directly](#using-arbitraries-directly)
@@ -19,7 +21,6 @@ title: jqwik User Guide - ${version}
 - [Stateful Testing](#stateful-testing)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
-- [Platform Reporting with Reporter Objects](#platform-reporting-with-reporter-object)
 - [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
 - [Providing Default Arbitraries](#providing-default-arbitraries)
 - [Domain and Domain Context](#domain-and-domain-context)
@@ -349,6 +350,32 @@ The following reporting aspects are available:
 
 Unlike sample reporting these reports will show _the freshly generated parameters_,
 i.e. potential changes to mutable objects during property execution cannot be seen here.
+
+#### Platform Reporting with Reporter Object
+
+If you want to provide additional information during a test or a property using
+`System.out.println()` is a common choice. The JUnit platform, however, provides
+a better mechanism to publish additional information in the form of key-value pairs.
+Those pairs will not only printed to stdout but are also available to downstream
+tools like test report generators in continue integration.
+
+You can hook into this reporting mechanism through jqwik's `Reporter` object.
+This object is available in [lifecycle hooks](#lifecycle-hooks) but you can
+also have it injected as a parameter into your test method:
+
+```java
+@Example
+void reportInCode(Reporter reporter, @ForAll List<@AlphaChars String> aList) {
+	reporter.publishReport("listOfStrings", aList);
+	reporter.publishValue("birthday", LocalDate.of(1969, 1, 20).toString());
+}
+```
+
+[net.jqwik.api.Reporter](/docs/${docsVersion}/javadoc/net/jqwik/api/Reporter.html)
+has different publishing methods.
+Those with `report` in their name use jqwik's reporting mechanism and formats
+described [above](#failure-reporting).
+
 
 ### Optional `@Property` Attributes
 
@@ -1059,7 +1086,7 @@ in property method `someBoundedGenericTypesCanBeResolved()` where `items`
 might be a list of Strings but `newItem` of some number type - and all that
 _in the same call to the method_!
 
-## Self-Made Annotations
+### Self-Made Annotations
 
 You can [make your own annotations](http://junit.org/junit5/docs/5.0.0/user-guide/#writing-tests-meta-annotations)
 instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using [`@Property`](/docs/${docsVersion}/javadoc/net/jqwik/api/Property.html)
@@ -2770,33 +2797,6 @@ Arbitrary<List<Signal>> signals() {
 ```
 
 Currently shrinking targets are supported for all [number types](#numeric-arbitrary-types).
-
-
-
-## Platform Reporting with Reporter Object
-
-If you want to provide additional information during a test or a property using
-`System.out.println()` is a common choice. The JUnit platform, however, provides
-a better mechanism to publish additional information in the form of key-value pairs.
-Those pairs will not only printed to stdout but are also available to downstream
-tools like test report generators in continue integration.
-
-You can hook into this reporting mechanism through jqwik's `Reporter` object. 
-This object is available in [lifecycle hooks](#lifecycle-hooks) but you can
-also have it injected as a parameter into your test method:
-
-```java
-@Example
-void reportInCode(Reporter reporter, @ForAll List<@AlphaChars String> aList) {
-	reporter.publishReport("listOfStrings", aList);
-	reporter.publishValue("birthday", LocalDate.of(1969, 1, 20).toString());
-}
-```
-
-[net.jqwik.api.Reporter](/docs/${docsVersion}/javadoc/net/jqwik/api/Reporter.html) 
-has different publishing methods. 
-Those with `report` in their name use jqwik's reporting mechanism and formats
-described [above](#failure-reporting).
 
 
 
