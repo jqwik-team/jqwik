@@ -21,6 +21,13 @@ title: jqwik Release Notes
 
 ## 1.4.0-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
+
 #### New and Enhanced Features
 
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
@@ -50,13 +57,14 @@ title: jqwik Release Notes
     - Class `StatisticsCoverage`
     - Class `StatisticsEntry`
     
-- Properties are now loaded via JUnit's 
+- Configuration parameters are now loaded via JUnit's 
   [Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) mechanism.
-  Properties specified in `jqwik.properties` continue to work, but are considered deprecated. 
-  Log messages will be emitted for any used properties with their new name. 
+  Parameters specified in `jqwik.properties` continue to work, but are considered deprecated. 
+  Log messages will be emitted for any used properties with their new name.
+  Some [parameter names](/docs/snapshot/user-guide.html#jqwik-configuration) have also changed.
   
-- There's a new jqwik module `jqwik-time` (included in dependencies of aggregate module)
-  which simplified the generation of 
+- There's a new [jqwik module `jqwik-time`](/docs/snapshot/user-guide.html#time-module) 
+  which simplifies the generation of dates and times. 
 
 #### Breaking Changes
 
