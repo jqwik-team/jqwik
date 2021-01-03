@@ -7,7 +7,7 @@ title: jqwik User Guide - ${version}
 
 ### Table of Contents
 
-- [Detailed TOC](#detailed-table-of-contents)
+- [Detailed Table of Contents](#detailed-table-of-contents)
 - [How to Use](#how-to-use)
 - [Writing Properties](#writing-properties)
 - [Default Parameter Generation](#default-parameter-generation)
@@ -3776,7 +3776,7 @@ _jqwik_ comes with a few additional modules:
 
 - The [`web` module](#web-module)
 - The [`time` module](#time-module)
-- The [`testing` module](#testing-module)
+- The [`testing-support` module](#testing-support-module)
 
 Those modules are included in jqwik's default dependencies but can be excluded
 if you want.

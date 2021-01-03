@@ -1,7 +1,10 @@
 - 1.4.0
 
-    - Extract TestingSupport into module "testing"
+    - Extract TestingSupport into module "testing-support"
         - Add `atLeastOneGenerated()`
+
+    - Split user guide template in several parts:
+      https://stackoverflow.com/questions/42567945/how-can-i-include-secondary-files-into-a-file-during-gradles-expand-copy
 
     - Publish test report in github action
       ```
@@ -12,9 +15,6 @@
             github_token: ${{ secrets.GITHUB_TOKEN }}
             report_paths: '**/build/test-results/test/TEST-*.xml'
       ```  
-
-    - Split user guide template in several parts:
-      https://stackoverflow.com/questions/42567945/how-can-i-include-secondary-files-into-a-file-during-gradles-expand-copy
 
     - Email generation
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails()
