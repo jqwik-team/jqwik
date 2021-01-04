@@ -3,9 +3,6 @@
     - Extract TestingSupport into module "testing-support"
         - Add `atLeastOneGenerated()`
 
-    - Split user guide template in several parts:
-      https://stackoverflow.com/questions/42567945/how-can-i-include-secondary-files-into-a-file-during-gradles-expand-copy
-
     - Publish test report in github action
       ```
       -   name: Publish Test Report
@@ -49,6 +46,8 @@
               - Combinators
         
         - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
+    
+        - Add documentation for Arbitrary.edgeCases(configuration)
 
     - Deprecate Arbitrary.unique()
     

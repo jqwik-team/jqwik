@@ -179,11 +179,12 @@ title: jqwik User Guide - 1.4.0-SNAPSHOT
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
 ## How to Use
 
 __jqwik__ is an alternative test engine for the
 [JUnit 5 platform](https://junit.org/junit5/docs/current/api/org/junit/platform/engine/TestEngine.html).
-That means that you can use it either stand-alone or combine it with any other JUnit 5 engine, e.g. 
+That means that you can use it either stand-alone or combine it with any other JUnit 5 engine, e.g.
 [Jupiter (the standard engine)](https://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-jupiter) or
 [Vintage (aka JUnit 4)](https://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-vintage).
 All you have to do is add all needed engines to your `testCompile` dependencies as shown in the
@@ -199,7 +200,7 @@ The minimum required version of the JUnit platform is `1.7.0`.
 
 ### Gradle
 
-Since version 4.6, Gradle has 
+Since version 4.6, Gradle has
 [built-in support for the JUnit platform](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html).
 Set up is rather simple; here are the relevant parts of a project's `build.gradle` file:
 
@@ -255,8 +256,8 @@ dependencies {
 }
 ```
 
-With version 1.0.0 `net.jqwik:jqwik` has become an aggregating module to 
-simplify jqwik integration for standard users. If you want to be more explicit 
+With version 1.0.0 `net.jqwik:jqwik` has become an aggregating module to
+simplify jqwik integration for standard users. If you want to be more explicit
 about the real dependencies you can replace this dependency with
 
 ```
@@ -266,12 +267,12 @@ about the real dependencies you can replace this dependency with
     testRuntime "net.jqwik:jqwik-engine:${jqwikVersion}"
 ```
 
-In jqwik's samples repository you can find a rather minimal 
+In jqwik's samples repository you can find a rather minimal
 [starter example for jqwik with Gradle](https://github.com/jlink/jqwik-samples/tree/main/jqwik-starter-gradle).
 
 See [the Gradle section in JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
-for more details on how to configure Gradle for the JUnit 5 platform. 
-There is also a comprehensive 
+for more details on how to configure Gradle for the JUnit 5 platform.
+There is also a comprehensive
 [list of options for Gradle's `test` task](https://docs.gradle.org/current/userguide/java_plugin.html#sec:java_test).
 
 #### Seeing jqwik Reporting in Gradle Output
@@ -302,9 +303,9 @@ mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
 
 ### Maven
 
-Starting with version 2.22.0, Maven Surefire and Maven Failsafe provide native support 
+Starting with version 2.22.0, Maven Surefire and Maven Failsafe provide native support
 for executing tests on the JUnit Platform and thus for running _jqwik_ properties.
-The configuration of Maven Surefire is described in 
+The configuration of Maven Surefire is described in
 [the Maven section of JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven).
 
 Additionally you have to add the following dependency to your `pom.xml` file:
@@ -321,15 +322,15 @@ Additionally you have to add the following dependency to your `pom.xml` file:
 </dependencies>
 ```
 
-In jqwik's samples repository you can find a rather minimal 
+In jqwik's samples repository you can find a rather minimal
 [starter example for jqwik with Maven](https://github.com/jlink/jqwik-samples/tree/main/jqwik-starter-maven).
 
 ### Snapshot Releases
 
-Snapshot releases are available through Sonatype's 
+Snapshot releases are available through Sonatype's
 [snapshot repositories](#https://oss.sonatype.org/content/repositories/snapshots).
 
-Adding 
+Adding
 
 ```
 https://oss.sonatype.org/content/repositories/snapshots
@@ -353,33 +354,35 @@ Optional jars are:
 - `jqwik-web-1.4.0-SNAPSHOT.jar`
 - `jqwik-time-1.4.0-SNAPSHOT.jar`
 
+
+
 ## Writing Properties
 
 ### Creating a Property
 
 _Properties_ are the core concept of [property-based testing](/#properties).
 
-You create a _Property_ by annotating a `public`, `protected` 
-or package-scoped method with 
-[`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
+You create a _Property_ by annotating a `public`, `protected`
+or package-scoped method with
+[`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html).
 In contrast to examples a property method is supposed to have one or
-more parameters, all of which must be annotated with 
+more parameters, all of which must be annotated with
 [`@ForAll`](/docs/1.4.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
 
-Just like an example test a property method has to 
+Just like an example test a property method has to
 - either return a `boolean` value that signifies success (`true`)
   or failure (`false`) of this property.
 - or return nothing (`void`). In that case you will probably
   use [assertions](#assertions) to check the property's invariant.
 
-If not [specified differently](#optional-property-attributes), 
-_jqwik_ __will run 1000 tries__, i.e. a 1000 different sets of 
-parameter values and execute the property method with each of those parameter sets. 
-The first failed execution will stop value generation 
-and be reported as failure - usually followed by an attempt to 
+If not [specified differently](#optional-property-attributes),
+_jqwik_ __will run 1000 tries__, i.e. a 1000 different sets of
+parameter values and execute the property method with each of those parameter sets.
+The first failed execution will stop value generation
+and be reported as failure - usually followed by an attempt to
 [shrink](#result-shrinking) the falsified parameter set.
 
 [Here](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/PropertyBasedTests.java)
@@ -407,7 +410,7 @@ class PropertyBasedTests {
 }
 ```
 
-Mind that only parameters that are annotated with '@ForAll' are considered for value generation. 
+Mind that only parameters that are annotated with '@ForAll' are considered for value generation.
 Other kinds of parameters can be injected through the [resolve parameter hook](#resolveparameterhook).
 
 #### Failure Reporting
@@ -416,10 +419,10 @@ If a property fails then jqwik's reporting is more thorough:
 - Report the relevant exception, usually a subtype of `AssertionError`
 - Report the property's base parameters
 - Report both the original failing sample and the shrunk sample.
-  
+
   **Caveat**: The samples are reported _after their use_ in the property method.
   That means that mutable objects that are being changed during a property show
-  their final state, not the state in which the arbitrary generated them. 
+  their final state, not the state in which the arbitrary generated them.
 
 In the case of `lengthOfConcatenatedStringIsGreaterThanLengthOfEach`
 from above the report looks like that:
@@ -461,15 +464,15 @@ Original Sample
 ```
 
 The source code names of property method parameters can only be reported when compiler argument
-`-parameters` is used. 
+`-parameters` is used.
 _jqwik_ goes for structured reporting with collections, arrays and maps.
 If you want to provide nice reporting for your own domain classes you can either
 
 - implement a potentially multiline `toString()` method or
 - register an implementation of [`net.jqwik.api.SampleReportingFormat`](/docs/snapshot/javadoc/net/jqwik/api/SampleReportingFormat.html)
-  through Java’s `java.util.ServiceLoader` mechanism. 
-    
-    
+  through Java’s `java.util.ServiceLoader` mechanism.
+
+
 #### Additional Reporting Options
 
 You can switch on additional reporting aspects by adding a
@@ -513,32 +516,32 @@ described [above](#failure-reporting).
 
 ### Optional `@Property` Attributes
 
-The [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html) 
+The [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html)
 annotation has a few optional values:
 
 - `int tries`: The number of times _jqwik_ tries to generate parameter values for this method.
-  
+
   The default is `1000` which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
 
 - `String seed`: The _random seed_ to use for generating values. If you do not specify a values
-  _jqwik_ will use a random _random seed_. The actual seed used is being reported by 
+  _jqwik_ will use a random _random seed_. The actual seed used is being reported by
   each run property.
 
 - `int maxDiscardRatio`: The maximal number of tried versus actually checked property runs
   in case you are using [Assumptions](#assumptions). If the ratio is exceeded _jqwik_ will
-  report this property as a failure. 
-  
+  report this property as a failure.
+
   The default is `5` which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
 
 - `ShrinkingMode shrinking`: You can influence the way [shrinking](#result-shrinking) is done
-  - `ShrinkingMode.OFF`: No shrinking at all
-  - `ShrinkingMode.FULL`: Shrinking continues until no smaller value can
-    be found that also falsifies the property.
-    This might take very long or not end at all in rare cases.
-  - `ShrinkingMode.BOUNDED`: Shrinking is tried for 10 seconds maximum and then times out.
-    The best shrunk sample at moment of time-out will be reported. This is the default.
-    The default time out of 10 seconds can be changed in 
-    [jqwik's configuration](#jqwik-configuration).
+    - `ShrinkingMode.OFF`: No shrinking at all
+    - `ShrinkingMode.FULL`: Shrinking continues until no smaller value can
+      be found that also falsifies the property.
+      This might take very long or not end at all in rare cases.
+    - `ShrinkingMode.BOUNDED`: Shrinking is tried for 10 seconds maximum and then times out.
+      The best shrunk sample at moment of time-out will be reported. This is the default.
+      The default time out of 10 seconds can be changed in
+      [jqwik's configuration](#jqwik-configuration).
 
   Most of the time you want to stick with the default. Only if
   bounded shrinking is reported - look at a falsified property's output! -
@@ -547,41 +550,41 @@ annotation has a few optional values:
 - `GenerationMode generation`: You can direct _jqwik_ about the principal approach
   it takes towards value generation.
 
-  - `GenerationMode.AUTO` is the default. This will choose [exhaustive generation](#exhaustive-generation) 
-    whenever this is deemed sensible, i.e., when the maximum number of generated values is 
-    equal or less thant the configured `tries` attribute.
-  - `GenerationMode.RANDOMIZED` directs _jqwik_ to always generate values using its
-    randomized generators.
-  - `GenerationMode.EXHAUSTIVE` directs _jqwik_ to use [exhaustive generation](#exhaustive-generation)
-    if the arbitraries in use support exhaustive generation at all and if the calculated
-    maximum number of different values to generate is below `Integer.MAX_VALUE`.
-  - `GenerationMode.DATA_DRIVEN` directs _jqwik_ to feed values from a data provider
-    specified with `@FromData`. See [data-driven properties](#data-driven-properties) 
-    for more information.
-    
-- `AfterFailureMode afterFailure`: Determines how jqwik will generate values of a property 
-  that has failed in the previous run.
-  
-  - `AfterFailureMode.PREVIOUS_SEED` is the default. jqwik will use the same seed and thereby generate
-    the same sequence of parameters as in the previous, failing run.
-  - `AfterFailureMode.SAMPLE_ONLY` means that jqwik will only use the last shrunk example of parameters.
-    This requires that all parameters can be serialized.
-  - `AfterFailureMode.SAMPLE_FIRST` means that jqwik will use the last shrunk example of parameters first
-    and then, if successful, go for a new randomly generated set of parameters.
-  - `AfterFailureMode.RANDOM_SEED` makes jqwik use a new random seed even directly after a failure.
-    This might lead to a "flaky" property that sometimes fails and sometimes succeeds.
+    - `GenerationMode.AUTO` is the default. This will choose [exhaustive generation](#exhaustive-generation)
+      whenever this is deemed sensible, i.e., when the maximum number of generated values is
+      equal or less thant the configured `tries` attribute.
+    - `GenerationMode.RANDOMIZED` directs _jqwik_ to always generate values using its
+      randomized generators.
+    - `GenerationMode.EXHAUSTIVE` directs _jqwik_ to use [exhaustive generation](#exhaustive-generation)
+      if the arbitraries in use support exhaustive generation at all and if the calculated
+      maximum number of different values to generate is below `Integer.MAX_VALUE`.
+    - `GenerationMode.DATA_DRIVEN` directs _jqwik_ to feed values from a data provider
+      specified with `@FromData`. See [data-driven properties](#data-driven-properties)
+      for more information.
 
-- `EdgeCasesMode edgeCases`: Determines if and when jqwik will generate 
+- `AfterFailureMode afterFailure`: Determines how jqwik will generate values of a property
+  that has failed in the previous run.
+
+    - `AfterFailureMode.PREVIOUS_SEED` is the default. jqwik will use the same seed and thereby generate
+      the same sequence of parameters as in the previous, failing run.
+    - `AfterFailureMode.SAMPLE_ONLY` means that jqwik will only use the last shrunk example of parameters.
+      This requires that all parameters can be serialized.
+    - `AfterFailureMode.SAMPLE_FIRST` means that jqwik will use the last shrunk example of parameters first
+      and then, if successful, go for a new randomly generated set of parameters.
+    - `AfterFailureMode.RANDOM_SEED` makes jqwik use a new random seed even directly after a failure.
+      This might lead to a "flaky" property that sometimes fails and sometimes succeeds.
+
+- `EdgeCasesMode edgeCases`: Determines if and when jqwik will generate
   the permutation of [edge cases](#generation-of-edge-cases).
-  
-  - `EdgeCasesMode.MIXIN` is the default. Edge cases will be mixed with randomly generated parameter sets
-    until all known permutations have been mixed in.
-  - `EdgeCasesMode.FIRST` results in all edge cases being generated before jqwik starts with randomly
-    generated samples.
-  - `EdgeCasesMode.NONE` will not generate edge cases for the full parameter set at all. However,
-    edge cases for individual parameters are still being mixed into the set from time to time.
-  
-The effective values for tries, seed, after-failure mode, generation mode edge-cases mode 
+
+    - `EdgeCasesMode.MIXIN` is the default. Edge cases will be mixed with randomly generated parameter sets
+      until all known permutations have been mixed in.
+    - `EdgeCasesMode.FIRST` results in all edge cases being generated before jqwik starts with randomly
+      generated samples.
+    - `EdgeCasesMode.NONE` will not generate edge cases for the full parameter set at all. However,
+      edge cases for individual parameters are still being mixed into the set from time to time.
+
+The effective values for tries, seed, after-failure mode, generation mode edge-cases mode
 and edge cases numbers are reported after each run property:
 
 ```
@@ -594,10 +597,10 @@ edge-cases#total = 2
 edge-cases#tried = 2 
 seed = 42859154278924201
 ```
-   
+
 #### Setting Defaults for `@Property` Attributes
 
-If you want to set the defaults for all property methods in a container class 
+If you want to set the defaults for all property methods in a container class
 (and all the [groups](#grouping-tests) in it) you can use annotation
 [`@PropertyDefaults`](/docs/snapshot/javadoc/net/jqwik/api/PropertyDefaults.html).
 
@@ -618,12 +621,12 @@ class PropertyDefaultsExamples {
 
 Thus, the order in which a property method's attributes are determined is:
 
-1. Use jqwik's built-in defaults 
-2. which can be overridden in the [configuration file](#jqwik-configuration) 
+1. Use jqwik's built-in defaults
+2. which can be overridden in the [configuration file](#jqwik-configuration)
 3. which can be changed in a container class' `@PropertyDefaults` annotation
 4. which can be overridden by a method's
    [`@Property` annotation attributes](#optional-property-attributes).
-   
+
 ### Creating an Example-based Test
 
 _jqwik_ also supports example-based testing.
@@ -636,7 +639,7 @@ A test case method must
   or failure (`false`) of this test case.
 - or return nothing (`void`) in which case you will probably
   use [assertions](#assertions) in order to verify the test condition.
-  
+
 [Here](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/ExampleBasedTests.java)
 is a test class with two example-based tests:
 
@@ -667,8 +670,8 @@ including random generation of parameters annotated with `@ForAll`.
 ### Assertions
 
 __jqwik__ does not come with any assertions, so you have to use one of the
-third-party assertion libraries, e.g. [Hamcrest](http://hamcrest.org/) or 
-[AssertJ](http://joel-costigliola.github.io/assertj/). 
+third-party assertion libraries, e.g. [Hamcrest](http://hamcrest.org/) or
+[AssertJ](http://joel-costigliola.github.io/assertj/).
 
 If you have Jupiter in your test dependencies anyway, you can also use the
 static methods in `org.junit.jupiter.api.Assertions`.
@@ -678,10 +681,10 @@ static methods in `org.junit.jupiter.api.Assertions`.
 To understand the lifecycle it is important to know that _the tree of test elements_
 consists of two main types of elements:
 
-- __Containers__: The root engine container, container classes 
+- __Containers__: The root engine container, container classes
   and embedded container classes (those annotated with `@Group`)
-- __Properties__: Methods annotated with 
-  [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html) or 
+- __Properties__: Methods annotated with
+  [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html) or
   [`@Example`](/docs/snapshot/javadoc/net/jqwik/api/Example.html).
   An _example_ is just a property with a single _try_ (see below).
 
@@ -720,10 +723,10 @@ If you need nothing but some initialization and cleanup of the container instanc
 per property or example:
 
 - Do the initialization work in a constructor without parameters.
-- If you have cleanup work to do for each property method, 
+- If you have cleanup work to do for each property method,
   the container class can implement `java.lang.AutoCloseable`.
   The `close`-Method will be called after each test method execution.
-  
+
 ```java
 import net.jqwik.api.*;
 
@@ -749,7 +752,7 @@ class SimpleLifecycleTests implements AutoCloseable {
 }
 ```
 
-In this example both the constructor and `close()` will be called twice times: 
+In this example both the constructor and `close()` will be called twice times:
 Once for `anExample()` and once for `aProperty(...)`. However, all five calls
 to `aProperty(..)` will share the same instance of `SimpleLifecycleTests`.
 
@@ -848,9 +851,9 @@ writing [_lifecycle hooks_](#lifecycle-hooks) under the hood.
 #### Single Property Lifecycle
 
 All [lifecycle methods](#annotated-lifecycle-methods) described in the previous section
-apply to all property methods of a container class. 
+apply to all property methods of a container class.
 In rare cases, however, you may feel the need to hook into the lifecycle of a single property,
-for example when you expect a property to fail. 
+for example when you expect a property to fail.
 
 Here is one example that checks that a property will fail with an `AssertionError`
 and succeed in that case:
@@ -882,7 +885,7 @@ to find out which aspects of a property's lifecycle you can control.
 
 Within a containing test class you can group other containers by embedding
 another non-static and non-private inner class and annotating it with `@Group`.
-Grouping examples and properties is a means to improve the organization and 
+Grouping examples and properties is a means to improve the organization and
 maintainability of your tests.
 
 Groups can be nested and there lifecycle is also nested, that means that
@@ -934,7 +937,7 @@ Each underscore will be replaced by a space for display purposes.
 If you want to tweak display names even more,
 test container classes, groups, example methods and property methods can be labeled
 using the annotation `@Label("a label")`. This label will be used to display the element
-in test reports or within the IDE. 
+in test reports or within the IDE.
 [In the following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/NamingExamples.java),
 every test relevant element has been labeled:
 
@@ -963,7 +966,7 @@ class NamingExamples {
 }
 ```
 
-Labels can consist of any characters and don't have to be unique - but you probably want them 
+Labels can consist of any characters and don't have to be unique - but you probably want them
 to be unique within their container.
 
 ### Tagging Tests
@@ -971,12 +974,12 @@ to be unique within their container.
 Test container classes, groups, example methods and property methods can be tagged
 using the annotation `@Tag("a-tag")`. You can have many tags on the same element.
 
-Those tag can be used to filter the set of tests 
-[run by the IDE](https://blog.jetbrains.com/idea/2018/01/intellij-idea-starts-2018-1-early-access-program/) or 
+Those tag can be used to filter the set of tests
+[run by the IDE](https://blog.jetbrains.com/idea/2018/01/intellij-idea-starts-2018-1-early-access-program/) or
 [the build tool](https://docs.gradle.org/4.6/release-notes.html#junit-5-support).
 Tags are handed down from container (class or group) to its children (test methods or groups).
 
-Have a look at 
+Have a look at
 [the following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/TaggingExamples.java).
 Including the tag `integration-test` will include
 all tests of the class.
@@ -995,7 +998,7 @@ class TaggingExamples {
 }
 ```
 
-Tags must follow certain rules as described 
+Tags must follow certain rules as described
 [here](/docs/snapshot/javadoc/net/jqwik/api/Tag.html)
 
 ### Disabling Tests
@@ -1025,6 +1028,8 @@ Be careful not to use the Jupiter annotation with the same name.
 _Jqwik_ will refuse to execute methods that have Jupiter annotations.
 
 
+
+
 ## Default Parameter Generation
 
 _jqwik_ tries to generate values for those property method parameters that are
@@ -1038,7 +1043,7 @@ jqwik will use default generation for the following types:
 - `Boolean` and `boolean`
 - `Character` and `char`
 - All `enum` types
-- Collection types `List<T>`, `Set<T>` and `Stream<T>` 
+- Collection types `List<T>`, `Set<T>` and `Stream<T>`
   as long as `T` can also be provided by default generation.
 - `Iterable<T>` and `Iterator<T>` of types that are provided by default.
 - `Optional<T>` of types that are provided by default.
@@ -1048,24 +1053,25 @@ jqwik will use default generation for the following types:
 - `Map.Entry<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `java.util.Random`
 - [Functional Types](#functional-types)
+- Most types of package `java.time` are handled in the [Time Module](#time-module)
 
-If you use [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) 
+If you use [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html)
 with a value, e.g. `@ForAll("aMethodName")`, the method
-referenced by `"aMethodName"` will be called to provide an Arbitrary of the 
-required type (see [Parameter Provider Methods](#parameter-provider-methods)). 
+referenced by `"aMethodName"` will be called to provide an Arbitrary of the
+required type (see [Parameter Provider Methods](#parameter-provider-methods)).
 
 ### Constraining Default Generation
 
-Default parameter generation can be influenced and constrained by additional annotations, 
+Default parameter generation can be influenced and constrained by additional annotations,
 depending on the requested parameter type.
 
 #### Allow Null Values
 
-- [`@WithNull(double value = 0.1)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/WithNull.html): 
-  Inject `null` into generated values with a probability of `value`. 
-  
+- [`@WithNull(double value = 0.1)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/WithNull.html):
+  Inject `null` into generated values with a probability of `value`.
+
   Works for all generated types.
-   
+
 #### Unique Values
 
 - [`@Unique`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Unique.html):
@@ -1126,7 +1132,7 @@ They work for generated `String`s and `Character`s.
 
 #### List, Set, Stream, Map and Array Size
 
-- [`@Size(int value = 0, int min = 0, int max = 0)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Size.html): 
+- [`@Size(int value = 0, int min = 0, int max = 0)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Size.html):
   Set either fixed size through `value` or configure the size range between `min` and `max`.
 
 - [`@NotEmpty`](/docs/snapshot/javadoc/net/jqwik/api/constraints/NotEmpty.html):
@@ -1168,7 +1174,7 @@ They work for generated `String`s and `Character`s.
 
 ### Constraining parameterized types
 
-When you want to constrain the generation of contained parameter types you can annotate 
+When you want to constrain the generation of contained parameter types you can annotate
 the parameter type directly, e.g.:
 
 ```java
@@ -1246,6 +1252,8 @@ The drawback of self-made annotations is that they do not forward their paramete
 which constrains their applicability to simple cases.
 
 
+
+
 ## Customized Parameter Generation
 
 Sometimes the possibilities of adjusting default parameter generation
@@ -1254,7 +1262,7 @@ of values programmatically. The means to do that are _provider methods_.
 
 ### Parameter Provider Methods
 
-Look at the 
+Look at the
 [following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/ProvideMethodExamples.java):
 
 ```java
@@ -1279,33 +1287,33 @@ Arbitrary<Integer> numbers() {
 }
 ```
 
-The String value of the [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) 
-annotation serves as a reference to a 
+The String value of the [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html)
+annotation serves as a reference to a
 method within the same class (or one of its superclasses or owning classes).
 This reference refers to either the method's name or the String value
 of the method's `@Provide` annotation.
 
-The providing method has to return an object of type 
-[`@Arbitrary<T>`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html) 
+The providing method has to return an object of type
+[`@Arbitrary<T>`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html)
 where `T` is the static type of the parameter to be provided. Optionally
 the provider method can take tow optional parameters:
 
 - a first parameter of type `TypeUsage` that describes the details of the target parameter to be provided
-- a second parameter of type `ArbitraryProvider.SubtypeProvider` 
+- a second parameter of type `ArbitraryProvider.SubtypeProvider`
 
 These two objects can be used to get detailed information about the parameter,
 like annotations and embedded type parameters, and to resolve other types,
 usually from type parameters embedded in the original parameter. Use with care!
 
-Parameter provision usually starts with a 
+Parameter provision usually starts with a
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
-by one or more [filtering](#filtering), [mapping](#mapping) or 
+by one or more [filtering](#filtering), [mapping](#mapping) or
 [combining](#combining-arbitraries) actions.
 
 
 ### Providing Arbitraries for Embedded Types
 
-There is an alternative syntax to `@ForAll("methodRef")` using a `From` annotation: 
+There is an alternative syntax to `@ForAll("methodRef")` using a `From` annotation:
 
 ```java
 @Property
@@ -1326,20 +1334,20 @@ boolean joiningListOfStrings(@ForAll List<@From("shortStrings") String> listOfSt
 }
 ```
 
-Here, the list is created using the default list arbitrary, but the 
+Here, the list is created using the default list arbitrary, but the
 String elements are generated using the arbitrary from the method `shortStrings`.
 
-### Static `Arbitraries` methods 
+### Static `Arbitraries` methods
 
-The starting point for generation usually is a static method call on class 
-[`Arbitraries`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html). 
+The starting point for generation usually is a static method call on class
+[`Arbitraries`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html).
 
 #### Generate values yourself
 
-- [`Arbitrary<T> randomValue(Function<Random, T> generator)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#randomValue(java.util.function.Function)): 
+- [`Arbitrary<T> randomValue(Function<Random, T> generator)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#randomValue(java.util.function.Function)):
   Take a `random` instance and create an object from it.
   Those values cannot be [shrunk](#result-shrinking), though.
-  
+
   Generating prime numbers might look like that:
   ```java
   @Provide
@@ -1357,26 +1365,26 @@ The starting point for generation usually is a static method call on class
   ```
 
 - [`Arbitrary<T> fromGenerator(RandomGenerator<T> generator)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#fromGenerator(net.jqwik.api.RandomGenerator)):
-  If the number of _tries_ influences value generation or if you want 
-  to allow for [shrinking](#result-shrinking) you have to provide 
-  your own `RandomGenerator` implementation. 
-  
+  If the number of _tries_ influences value generation or if you want
+  to allow for [shrinking](#result-shrinking) you have to provide
+  your own `RandomGenerator` implementation.
+
 #### Select or generate values randomly
 
 - [`Arbitrary<U> of(U... values)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#of(U...)):
   Choose randomly from a list of values. Shrink towards the first one.
-  
+
 - [`Arbitrary<U> ofSuppliers(Supplier<U>... valueSuppliers)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#ofSuppliers(java.util.function.Supplier...)):
   Choose randomly from a list of value suppliers and get the object from this supplier.
   This is useful when dealing with mutable objects where `Arbitrary.of(..)` would reuse a potentially changed object.
-  
+
 - [`Arbitrary<T> just(T constantValue)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#just(T)):
   Always provide the same constant value in each try. Mostly useful to combine with other arbitraries.
-    
+
 - [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#of(java.lang.Class)):
   Choose randomly from all values of an `enum`. Shrink towards first enum value.
 
-- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#create(java.util.function.Supplier)): 
+- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#create(java.util.function.Supplier)):
   In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
   This is useful when dealing with mutable objects where `Arbitrary.just()` may reuse a changed object.
 
@@ -1403,9 +1411,9 @@ Arbitrary<String> abcdWeighted() {
 ```
 
 The first value of the tuple specifies the frequency of a particular value in relation to the
-sum of all frequencies. In 
+sum of all frequencies. In
 [the given example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/ChoosingExamples.java#L17)
-the sum is 36, thus `"a"` will be generated with a probability of `1/36` 
+the sum is 36, thus `"a"` will be generated with a probability of `1/36`
 whereas `"d"` has a generation probability of `20/36` (= `5/9`).
 
 Shrinking moves towards the start of the frequency list.
@@ -1417,7 +1425,7 @@ Shrinking moves towards the start of the frequency list.
 
 #### java.util.Random
 
-- [`Arbitrary<Random> randoms()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#randoms()): 
+- [`Arbitrary<Random> randoms()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#randoms()):
   Random instances will never be shrunk
 
 #### Shuffling Permutations
@@ -1430,14 +1438,14 @@ Shrinking moves towards the start of the frequency list.
 
 #### Default Types
 
-- [`Arbitrary<T> defaultFor(Class<T> type, Class<?> ... parameterTypes)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#defaultFor-java.lang.Class(java.lang.Class...)): 
+- [`Arbitrary<T> defaultFor(Class<T> type, Class<?> ... parameterTypes)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#defaultFor-java.lang.Class(java.lang.Class...)):
   Return the default arbitrary available for type `type` [if one is provided](#providing-default-arbitraries)
-  by default. For parameterized types you can also specify the parameter types. 
-  
+  by default. For parameterized types you can also specify the parameter types.
+
   Keep in mind, though, that the parameter types are lost in the type signature and therefore
-  cannot be used in the respective [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) property method parameter. Raw types and wildcards, 
+  cannot be used in the respective [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) property method parameter. Raw types and wildcards,
   however, match; thus the following example will work:
-  
+
   ```java
   @Property
   boolean listWithWildcard(@ForAll("stringLists") List<?> stringList) {
@@ -1464,7 +1472,7 @@ but all numeric arbitrary types share some things:
 - You can determine the _target value_ through `shrinkTowards(target)`.
   This value is supposed to be the "center" of all possible values used for shrinking
   and as a mean for [random distributions](random-numeric-distribution).
-  
+
 #### Integrals
 
 - [`ByteArbitrary bytes()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bytes())
@@ -1481,34 +1489,34 @@ but all numeric arbitrary types share some things:
 
 Decimal arbitrary types come with a few additional capabilities:
 
-- You can include or exclude the borders using `between(min, minIncluded, max, maxIncluded)`, 
+- You can include or exclude the borders using `between(min, minIncluded, max, maxIncluded)`,
   `greaterThan(minExcluded)` and `lessThan(maxExclude)`.
 - You can set the _scale_, i.e. number of significant decimal places with `ofScale(scale)`.
   The default scale is `2`.
 
-#### Random Numeric Distribution 
+#### Random Numeric Distribution
 
 With release `1.3.0` jqwik provides you with a means to influence the probability distribution
-of randomly generated numbers. The way to do that is by calling 
+of randomly generated numbers. The way to do that is by calling
 [`withDistribution(distribution)`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/arbitraries/NumericalArbitrary.html#withDistribution(net.jqwik.api.RandomDistribution)).
 Currently three different distributions are supported:
 
-- [`RandomDistribution.biased()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#biased()): 
-  This is the default. 
-  It generates values closer to the center of a numerical range with a higher probability. 
+- [`RandomDistribution.biased()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#biased()):
+  This is the default.
+  It generates values closer to the center of a numerical range with a higher probability.
   The bigger the range the stronger the bias.
 
-- [`RandomDistribution.uniform()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#uniform()): 
-  This distribution will generate values across the allowed range 
+- [`RandomDistribution.uniform()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#uniform()):
+  This distribution will generate values across the allowed range
   with a uniform probability distribution.
-  
-- [`RandomDistribution.gaussian(borderSigma)`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#gaussian(double)): 
-  A (potentially asymmetric) gaussian distribution -- 
-  aka "normal distribution" () the mean of which is the specified center 
+
+- [`RandomDistribution.gaussian(borderSigma)`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#gaussian(double)):
+  A (potentially asymmetric) gaussian distribution --
+  aka "normal distribution" () the mean of which is the specified center
   and the probability at the borders is `borderSigma` times _standard deviation_.
   Gaussian generation is approximately 10 times slower than biased or uniform generation.
 
-- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#gaussian()): 
+- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#gaussian()):
   A gaussian distribution with `borderSigma` of 3, i.e. approximately 99.7% of values are within the borders.
 
 The specified distribution does not influence the generation of [edge cases](#generation-of-edge-cases).
@@ -1567,7 +1575,7 @@ This is because they will be generated a few times as edge cases.
 
 ### Collections, Streams, Iterators and Arrays
 
-Arbitraries for multi value types require to start with an `Arbitrary` instance for the element type. 
+Arbitraries for multi value types require to start with an `Arbitrary` instance for the element type.
 You can then create the corresponding multi value arbitrary from there:
 
 - [`ListArbitrary<T> Arbitrary.list()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#list())
@@ -1578,9 +1586,9 @@ You can then create the corresponding multi value arbitrary from there:
 
 ### Collecting Values in a List
 
-If you do not want any random combination of values in your list - as 
+If you do not want any random combination of values in your list - as
 can be done with `Arbitrary.list()` - you have the possibility to collect random values
-in a list until a certain condition is fulfilled. 
+in a list until a certain condition is fulfilled.
 [`Arbitrary.collect(Predicate condition)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#collect(java.util.function.Predicate))
 is what you need in those cases.
 
@@ -1595,7 +1603,7 @@ Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000)
 ### Optional
 
 Using [`Arbitrary.optional()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional())
-allows to generate an optional of any type. 
+allows to generate an optional of any type.
 `Optional.empty()` values are injected with a probability of `0.05`, i.e. 1 in 20.
 
 ### Tuples of same base type
@@ -1641,9 +1649,9 @@ For generating individual `Map.Entry` instances there is
 
 ### Functional Types
 
-Interfaces that have a single (non default) method are considered to be 
+Interfaces that have a single (non default) method are considered to be
 _Functional types_; they are sometimes called _SAM_ types for "single abstract method".
-If a functional type is used as a `@ForAll`-parameter _jqwik_ will automatically 
+If a functional type is used as a `@ForAll`-parameter _jqwik_ will automatically
 generate instances of those functions. The generated functions have the following
 characteristics:
 
@@ -1654,7 +1662,7 @@ characteristics:
   return values.
 - Shrinking of generated functions will try constant functions, i.e. functions
   that always return the same value.
-  
+
 Let's look at an example:
 
 ```java
@@ -1720,7 +1728,7 @@ which are organized in a flat hierarchy:
 - [TypeArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/TypeArbitrary.html)
 
 
-Here are a 
+Here are a
 [two examples](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/FluentConfigurationExamples.java)
 to give you a hint of what you can do:
 
@@ -1739,8 +1747,8 @@ Arbitrary<List<Integer>> fixedSizedListOfPositiveIntegers() {
 ### Generate `null` values
 
 Predefined generators will never create `null` values. If you want to allow that,
-call [`Arbitrary.injectNull(double probability)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#injectNull(double)). 
-The following provider method creates an arbitrary that will return a `null` String 
+call [`Arbitrary.injectNull(double probability)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#injectNull(double)).
+The following provider method creates an arbitrary that will return a `null` String
 in about 1 of 100 generated values.
 
 ```java
@@ -1828,8 +1836,8 @@ for the two String values - using `tuple2()` does that.
 ### Filtering
 
 If you want to include only part of all the values generated by an arbitrary,
-use 
-[`Arbitrary.filter(Predicate<T> filterPredicate)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#filter(java.util.function.Predicate)). 
+use
+[`Arbitrary.filter(Predicate<T> filterPredicate)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#filter(java.util.function.Predicate)).
 The following arbitrary will filter out all
 even numbers from the stream of generated integers:
 
@@ -1840,7 +1848,7 @@ Arbitrary<Integer> oddNumbers() {
 }
 ```
 
-Keep in mind that your filter condition should not be too restrictive. 
+Keep in mind that your filter condition should not be too restrictive.
 If the generator fails to find a suitable value after 10000 trials,
 the current property will be abandoned by throwing an exception.
 
@@ -1865,9 +1873,9 @@ the current property will be abandoned by throwing an exception.
 ### Mapping
 
 Sometimes it's easier to start with an existing arbitrary and use its generated values to
-build other objects from them. In that case, use 
+build other objects from them. In that case, use
 [`Arbitrary.map(Function<T, U> mapper)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#map(java.util.function.Function)).
-The following example uses generated integers to create numerical Strings: 
+The following example uses generated integers to create numerical Strings:
 
 ```java
 @Provide 
@@ -1885,7 +1893,7 @@ will move towards the lowest allowed number, that is `10000`.
 
 Similar as in the case of `Arbitrary.map(..)` there are situations in which you want to use
 a generated value in order to create another Arbitrary from it. Sounds complicated?
-Have a look at the 
+Have a look at the
 [following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/FlatMappingExamples.java#L26):
 
 ```java
@@ -1918,10 +1926,10 @@ To randomize the method call, you not only need a string but also the `begin` an
 However, both have dependencies:
 - `end` must not be larger than the string size
 - `begin` must not be larger than `end`
-You can make _jqwik_ create all three values by using 
-[`flatMap`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#flatMap(java.util.function.Function)) 
-combined with a tuple type 
-[like this](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/FlatMappingExamples.java#L32):
+  You can make _jqwik_ create all three values by using
+  [`flatMap`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#flatMap(java.util.function.Function))
+  combined with a tuple type
+  [like this](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/FlatMappingExamples.java#L32):
 
 
 ```java
@@ -1947,7 +1955,7 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
 ```
 
 Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
-very useful. 
+very useful.
 
 
 ### Randomly Choosing among Arbitraries
@@ -2011,10 +2019,10 @@ Arbitrary<Integer> oneOfThree() {
 
 Sometimes just mapping a single stream of generated values is not enough to generate
 a more complicated domain object. In those cases you can combine several arbitraries to
-a single result arbitrary using 
-[`Combinators.combine()`](/docs/snapshot/javadoc/net/jqwik/api/Combinators.html#combine(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary)) 
-with up to eight arbitraries. 
-[Create an issue on github](https://github.com/jlink/jqwik/issues) if you need more than eight. 
+a single result arbitrary using
+[`Combinators.combine()`](/docs/snapshot/javadoc/net/jqwik/api/Combinators.html#combine(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary))
+with up to eight arbitraries.
+[Create an issue on github](https://github.com/jlink/jqwik/issues) if you need more than eight.
 
 [The following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/MappingAndCombinatorExamples.java#L25)
 generates `Person` instances from three arbitraries as inputs.
@@ -2067,7 +2075,7 @@ If you need more you have a few options:
 
 - Consider to group some parameters into an object of their own and change your design
 - Generate inbetween arbitraries e.g. of type `Tuple` and combine those in another step
-- Introduce a build for your domain object and combine them 
+- Introduce a build for your domain object and combine them
   [in this way](#combining-arbitraries-with-builder)
 
 
@@ -2100,7 +2108,7 @@ static class PersonBuilder {
 ```
 
 Then you can go about generating people in the following way:
- 
+
 ```java
 @Provide
 Arbitrary<Person> validPeopleWithBuilder() {
@@ -2115,7 +2123,7 @@ Arbitrary<Person> validPeopleWithBuilder() {
 }
 ```
 
-Have a look at 
+Have a look at
 [Combinators.withBuilder(Supplier)](/docs/snapshot/javadoc/net/jqwik/api/Combinators.html#withBuilder(java.util.function.Supplier))
 and [Combinators.withBuilder(Arbitrary)](/docs/snapshot/javadoc/net/jqwik/api/Combinators.html#withBuilder(net.jqwik.api.Arbitrary))
 to check the API.
@@ -2161,22 +2169,22 @@ This is not only easier to understand but it usually improves shrinking.
 
 Once in a while, usually when [combining generated values](#combining-arbitraries),
 it's difficult to figure out in advance all the constraints that make the generation of objects
-valid. In a good object-oriented model, however, the objects themselves -- 
+valid. In a good object-oriented model, however, the objects themselves --
 i.e. their constructors or factory methods -- take care that only valid objects
 can be created. The attempt to create an invalid value will be rejected with an
-exception. 
+exception.
 
 As a good example have a look at JDK's `LocalDate` class, which allows to instantiate dates
-using `LocalDate.of(int year, int month, int dayOfMonth)`. 
-In general `dayOfMonth` can be between `1` and `31` but trying to generate a 
+using `LocalDate.of(int year, int month, int dayOfMonth)`.
+In general `dayOfMonth` can be between `1` and `31` but trying to generate a
 "February 31" will throw a `DateTimeException`. Therefore, when you want to randomly
-generated dates between "January 1 1900" and "December 31 2099" you have two choices: 
+generated dates between "January 1 1900" and "December 31 2099" you have two choices:
 
 - Integrate all rules about valid dates -- including leap years! -- into your generator.
   This will probably require a cascade of flat-mapping `years` to `months` to `days`.
-- Rely on the factory method's built-in validation and just ignore thrown 
+- Rely on the factory method's built-in validation and just ignore thrown
   `DateTimeException` instances:
-  
+
 ```java
 @Provide
 Arbitrary<LocalDate> datesBetween1900and2099() {
@@ -2189,25 +2197,28 @@ Arbitrary<LocalDate> datesBetween1900and2099() {
   	  .ignoreException(DateTimeException.class);
 }
 ```
- 
+
 ### Fix an Arbitrary's `genSize`
 
-Some generators (e.g. most number generators) are sensitive to the 
-`genSize` value that is used when creating them. 
+Some generators (e.g. most number generators) are sensitive to the
+`genSize` value that is used when creating them.
 The default value for `genSize` is the number of tries configured for the property
 they are used in. If there is a need to influence the behaviour of generators
-you can do so by using 
+you can do so by using
 [`Arbitrary.fixGenSize(int)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize(int))..
+
+
+
 
 ## Recursive Arbitraries
 
 Sometimes it seems like a good idea to compose arbitraries and thereby
 recursively calling an arbitrary creation method. Generating recursive data types
-is one application field but you can also use it for other stuff. 
+is one application field but you can also use it for other stuff.
 
 ### Probabilistic Recursion
 
-Look at the 
+Look at the
 [following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/RecursiveExamples.java)
 which generates sentences by recursively adding words to a sentence:
 
@@ -2242,19 +2253,19 @@ private StringArbitrary word() {
 
 There are two things to which you must pay attention:
 
-- Use [`Arbitraries.lazyOf(Supplier<Arbitrary<T>>...suppliers)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#lazyOf(java.util.function.Supplier,java.util.function.Supplier...)) 
-  to wrap the recursive call itself. 
+- Use [`Arbitraries.lazyOf(Supplier<Arbitrary<T>>...suppliers)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#lazyOf(java.util.function.Supplier,java.util.function.Supplier...))
+  to wrap the recursive call itself.
   Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
-- Every recursion needs one or more base cases in order to stop recursion at some point. 
+- Every recursion needs one or more base cases in order to stop recursion at some point.
   Here, the base case is `() -> word().map(w -> w + ".")`.
-  Base cases must have a high enough probability, 
+  Base cases must have a high enough probability,
   otherwise a stack overflow will get you during value generation.
-- The supplier `() -> sentence` is used three times to raise its probability 
+- The supplier `() -> sentence` is used three times to raise its probability
   and thus create longer sentences.
-  
+
 There is also a caveat of which you should be aware:
 Never use this construct if suppliers make use of variable state
-like method parameters or changing instance members. 
+like method parameters or changing instance members.
 In those cases use [lazy()](#using-lazy-instead-of-lazyof) as explained below.
 
 #### Using lazy() instead of lazyOf()
@@ -2287,10 +2298,10 @@ private StringArbitrary word() {
 }
 ``` 
 
-The disadvantage of `lazy()` combined with `oneOf()` or `frequencyOf()` 
-is its worse shrinking behaviour compared to `lazyOf()`. 
-Therefore, choose `lazyOf()` whenever you can. 
-  
+The disadvantage of `lazy()` combined with `oneOf()` or `frequencyOf()`
+is its worse shrinking behaviour compared to `lazyOf()`.
+Therefore, choose `lazyOf()` whenever you can.
+
 ### Deterministic Recursion
 
 An alternative to probabilistic recursion shown above, is to use deterministic
@@ -2351,6 +2362,7 @@ private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
 ```
 
 
+
 ## Using Arbitraries Directly
 
 Most of the time arbitraries are used indirectly, i.e. _jqwik_ uses them under
@@ -2368,10 +2380,10 @@ String aString = strings.sample();
 assertThat(aString).isIn("string1", "string2", "string3");
 ```
 
-Among other things, this allows you to use jqwik's generation functionality 
-with other test engines like Jupiter. 
+Among other things, this allows you to use jqwik's generation functionality
+with other test engines like Jupiter.
 Mind that _jqwik_ uses a default `genSize` of 1000 under the hood and that
-the `Random` object will be either taken from the current property's context or 
+the `Random` object will be either taken from the current property's context or
 freshly instantiated if used outside a property.
 
 ### Generating a Stream of Values
@@ -2420,6 +2432,8 @@ void canPressAnyKeyOnKeyboard(@ForAll Keyboard keyboard, @ForAll Key key) {
 
 In this example a simple for loop over `allKeys()` would also work. In more complicated scenarios
 _jqwik_ will do all the combinations and filtering for you.
+
+
 
 
 
@@ -2474,17 +2488,18 @@ type of type variables when they are used in subtypes that fill in
 the variables.
 
 
+
 ## Stateful Testing
 
 Despite its bad reputation _state_ is an important concept in object-oriented languages like Java.
-We often have to deal with stateful objects or components whose state can be changed through methods. 
+We often have to deal with stateful objects or components whose state can be changed through methods.
 
 Thinking in a more formal way we can look at those objects as _state machines_ and the methods as
 _actions_ that move the object from one state to another. Some actions have preconditions to constrain
 when they can be invoked and some objects have invariants that should never be violated regardless
 of the sequence of performed actions.
 
-To make this abstract concept concrete, let's look at a 
+To make this abstract concept concrete, let's look at a
 [simple stack implementation](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/MyStringStack.java):
 
 ```java
@@ -2505,7 +2520,7 @@ We can see at least three _actions_ with their preconditions and expected state 
 - [`Push`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PushAction.java):
   Push a string onto the stack. The string should be on top afterwards and the size
   should have increased by 1.
-  
+
   ```java
   import net.jqwik.api.stateful.*;
   import org.assertj.core.api.*;
@@ -2533,9 +2548,9 @@ We can see at least three _actions_ with their preconditions and expected state 
   ``` 
 
 - [`Pop`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PopAction.java):
-  If (and only if) the stack is not empty, pop the element on top off the stack. 
+  If (and only if) the stack is not empty, pop the element on top off the stack.
   The size of the stack should have decreased by 1.
-  
+
   ```java
   class PopAction implements Action<MyStringStack> {
     
@@ -2562,7 +2577,7 @@ We can see at least three _actions_ with their preconditions and expected state 
 
 - [`Clear`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/ClearAction.java):
   Remove all elements from the stack which should be empty afterwards.
-  
+
   ```java
   class ClearAction implements Action<MyStringStack> {
 
@@ -2584,8 +2599,8 @@ The fundamental property that _jqwik_ should try to falsify is:
 
     For any valid sequence of actions all required state changes
     (aka postconditions) should be fulfilled.
-    
-We can formulate that quite easily as a 
+
+We can formulate that quite easily as a
 [_jqwik_ property](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/MyStringStackProperties.java):
 
 ```java
@@ -2615,11 +2630,11 @@ class MyStringStackProperties {
 }
 ```
 
-The interesting API elements are 
+The interesting API elements are
 - [`ActionSequence`](/docs/snapshot/javadoc/net/jqwik/api/stateful/ActionSequence.html):
   A generic collection type especially crafted for holding and shrinking of a list of actions.
   As a convenience it will apply the actions to a state-based object when you call `run(state)`.
-  
+
 - [`Arbitraries.sequences()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#sequences(net.jqwik.api.Arbitrary)):
   This method will create the arbitrary for generating an `ActionSequence` given the
   arbitrary for generating actions.
@@ -2682,7 +2697,7 @@ void checkMyStackWithInvariant(@ForAll("sequences") ActionSequence<MyStringStack
 }
 ```
 
-If we first fix the bug in `MyStringStack.clear()` our property should eventually fail 
+If we first fix the bug in `MyStringStack.clear()` our property should eventually fail
 with the following result:
 
 ```
@@ -2695,6 +2710,8 @@ org.opentest4j.AssertionFailedError:
       push(AAAAA)
     final state: ["AAAAA", "AAAAA", "AAAAA", "AAAAA", "AAAAA"]
 ```
+
+
 
 
 ## Assumptions
@@ -2718,8 +2735,8 @@ boolean comparingUnequalStrings(
 }
 ```
 
-This is a reasonable use of 
-[`Assume.that(boolean condition)`](/docs/snapshot/javadoc/net/jqwik/api/Assume.html#that(boolean)) 
+This is a reasonable use of
+[`Assume.that(boolean condition)`](/docs/snapshot/javadoc/net/jqwik/api/Assume.html#that(boolean))
 because most generated value sets will pass through.
 
 Have a look at a seemingly similar example:
@@ -2754,15 +2771,15 @@ seed = 1066117555581106850
 The problem is that - given a random generation of two strings - only in very few cases
 one string will be contained in the other. _jqwik_ will report a property as `exhausted`
 if the ratio between generated and accepted parameters is higher than 5. You can change
-the maximum discard ratio by specifying a parameter `maxDiscardRatio` in the 
+the maximum discard ratio by specifying a parameter `maxDiscardRatio` in the
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html) annotation.
-That's why changing to `@Property(maxDiscardRatio = 100)` in the previous example 
-will probably result in a successful property run, even though only a handful 
+That's why changing to `@Property(maxDiscardRatio = 100)` in the previous example
+will probably result in a successful property run, even though only a handful
 cases - of 1000 generated - will actually be checked.
 
 In many cases turning up the accepted discard ration is a bad idea. With some creativity
-we can often avoid the problem by generating out test data a bit differently. 
-Look at this variant of the above property, which also uses 
+we can often avoid the problem by generating out test data a bit differently.
+Look at this variant of the above property, which also uses
 [`Assume.that()`](/docs/snapshot/javadoc/net/jqwik/api/Assume.html#that(boolean))
 but with a much lower discard ratio:
 
@@ -2779,6 +2796,8 @@ boolean findingContainedStrings_variant(
     return container.indexOf(contained) >= 0;
 }
 ```
+
+
 
 ## Result Shrinking
 
@@ -2811,15 +2830,15 @@ Original Sample
   aString: "RzZ"
 ```
 
-In this case the _original sample_ could be any string between 2 and 5 chars, 
-whereas the final _sample_ should be exactly `AA` since this is the shortest 
+In this case the _original sample_ could be any string between 2 and 5 chars,
+whereas the final _sample_ should be exactly `AA` since this is the shortest
 failing string and `A` has the lowest numeric value of all allowed characters.
 
 ### Integrated Shrinking
 
 _jqwik_'s shrinking approach is called _integrated shrinking_, as opposed to _type-based shrinking_
 which most property-based testing tools use.
-The general idea and its advantages are explained 
+The general idea and its advantages are explained
 [here](http://hypothesis.works/articles/integrated-shrinking/).
 
 Consider a somewhat more complicated example:
@@ -2874,7 +2893,7 @@ measuring a sample's size.
 
 ### Switch Shrinking Off
 
-Sometimes shrinking takes a really long time or won't finish at all (usually a _jqwik_ bug!). 
+Sometimes shrinking takes a really long time or won't finish at all (usually a _jqwik_ bug!).
 In those cases you can switch shrinking off for an individual property:
 
 ```java
@@ -2907,11 +2926,11 @@ even if it never ends...
 
 ### Change the Shrinking Target
 
-By default shrinking of numbers will move towards zero (0). 
-If zero is outside the bounds of generation the closest number to zero - 
+By default shrinking of numbers will move towards zero (0).
+If zero is outside the bounds of generation the closest number to zero -
 either the min or max value - is used as a target for shrinking.
-There are cases, however, when you'd like _jqwik_ to choose a different 
-shrinking target, usually when the default value of a number is not 0. 
+There are cases, however, when you'd like _jqwik_ to choose a different
+shrinking target, usually when the default value of a number is not 0.
 
 Consider generating signals with a standard frequency of 50 hz that can vary by
 plus/minus 5 hz. If possible, shrinking of falsified scenarios should move
@@ -2934,11 +2953,13 @@ Currently shrinking targets are supported for all [number types](#numeric-arbitr
 
 
 
+
+
 ## Collecting and Reporting Statistics
 
 In many situations you'd like to know if _jqwik_ will really generate
 the kind of values you expect and if the frequency and distribution of
-certain value classes meets your testing needs. 
+certain value classes meets your testing needs.
 [`Statistics.collect()`](/docs/snapshot/javadoc/net/jqwik/api/statistics/Statistics.html#collect(java.lang.Object...))
 is made for this exact purpose.
 
@@ -3183,7 +3204,7 @@ void integersInRanges(@ForAll @IntRange(min = -1000, max = 1000) int aNumber) {
 
 Both types can be subclassed to override behaviour like the number of buckets,
 the maximum drawing range of the bar, the order of elements, the label of a bucket
-and the header of the label column. 
+and the header of the label column.
 
 #### Make Your Own Statistics Report Format
 
@@ -3288,11 +3309,13 @@ In those cases you probably want to
 otherwise the reports might get very long - and without informative value.
 
 
+
+
 ## Providing Default Arbitraries
 
 Sometimes you want to use a certain, self-made `Arbitrary` for one of your own domain
 classes, in all of your properties, and without having to add `@Provide` method
-to all test classes. _jqwik_ enables this feature by using 
+to all test classes. _jqwik_ enables this feature by using
 Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
 - Implement the interface [`ArbitraryProvider`](/docs/snapshot/javadoc/net/jqwik/api/providers/ArbitraryProvider.html).<br/>
@@ -3304,7 +3327,7 @@ Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
   ```
 
 _jqwik_ will then add an instance of your arbitrary provider into the list of
-its default providers. Those default providers are considered for every test parameter annotated 
+its default providers. Those default providers are considered for every test parameter annotated
 with [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) that has no explicit `value`.
 By using this mechanism you can also replace the default providers
 packaged into _jqwik_.
@@ -3358,7 +3381,7 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 }
 ```
 
-in file 
+in file
 [`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider)
 with such an entry:
 
@@ -3366,7 +3389,7 @@ with such an entry:
 my.own.provider.MoneyArbitraryProvider
 ```
 
-The 
+The
 [following property](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/defaultprovider/MoneyProperties.java)
 will run without further ado - regardless the class you put it in:
 
@@ -3383,7 +3406,7 @@ void moneyCanBeMultiplied(@ForAll Money money) {
 ### Arbitrary Providers for Parameterized Types
 
 Providing arbitraries for generic types requires a little bit more effort
-since you have to create arbitraries for the "inner" types as well. 
+since you have to create arbitraries for the "inner" types as well.
 Let's have a look at the default provider for `java.util.Optional<T>`:
 
 ```java
@@ -3443,19 +3466,19 @@ All you can do [to constrain default parameter generation](#constraining-default
 is adding another annotation to a parameter or its parameter types. What if the existing parameters
 do not suffice your needs? Is there a way to enhance the set of constraint annotations? Yes, there is!
 
-The mechanism you can plug into is similar to what you do when 
+The mechanism you can plug into is similar to what you do when
 [providing your own default arbitrary providers](#providing-default-arbitraries). That means:
 
-1. Create an implementation of an interface, in this case 
-  [`ArbitraryConfigurator`](/docs/snapshot/javadoc/net/jqwik/api/configurators/ArbitraryConfigurator.html).
+1. Create an implementation of an interface, in this case
+   [`ArbitraryConfigurator`](/docs/snapshot/javadoc/net/jqwik/api/configurators/ArbitraryConfigurator.html).
 2. Register the implementation using using Java’s `java.util.ServiceLoader` mechanism.
 
 #### Arbitrary Configuration Example: `@Odd`
 
 To demonstrate the idea let's create an annotation `@Odd` which will constrain any integer
-generation to only generate odd numbers. First things first, so here's 
+generation to only generate odd numbers. First things first, so here's
 the [`@Odd` annotation](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/Odd.java)
-together with the 
+together with the
 [configurator implementation](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddConfigurator.java):
 
 ```java
@@ -3474,7 +3497,7 @@ public class OddConfigurator extends ArbitraryConfiguratorBase {
 Mind that the implementation uses an abstract base class - instead of the interface itself -
 which simplifies implementation if you're only interested in a single annotation.
 
-If you now 
+If you now
 [register the implementation](https://github.com/jlink/jqwik/blob/master/documentation/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator),
 the [following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddProperties.java)
 will work:
@@ -3526,6 +3549,8 @@ There are a few catches, though:
 - You can combine `@Odd` with other annotations like `@Positive` or `@Range` or another
   self-made configurator. In this case the order of configurator application might play a role,
   which can be influenced by overriding the `order()` method of a configurator.
+
+
  
 ## Domain and Domain Context
 
@@ -3537,7 +3562,7 @@ Until now you have seen two ways to specify which arbitraries will be created fo
 
 In many cases both approaches can be tedious to set up or require constant repetition of the same
 annotation value. There's another way that allows you to collect a number of arbitrary providers
-(and also arbitrary configurators) in a single place, called a `DomainContext` and tell 
+(and also arbitrary configurators) in a single place, called a `DomainContext` and tell
 a property method or container to only use providers and configurators from those domain contexts
 that are explicitly stated in a `@Domain(Class<? extends DomainContext>)` annotation.
 
@@ -3549,7 +3574,7 @@ and [AbstractDomainContextBase](/docs/snapshot/javadoc/net/jqwik/api/domains/Abs
 ### Domain example: American Addresses
 
 Let's say that US postal addresses play a crucial role in the software that we're developing.
-That's why there are a couple of classes that represent important domain concepts: 
+That's why there are a couple of classes that represent important domain concepts:
 `Street`, `State`, `City` and `Address`. Since we have to generate instances of those classes
 for our properties, we collect all arbitrary provision code in
 [AmericanAddresses](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/domains/AmericanAddresses.java).
@@ -3581,6 +3606,8 @@ The first two properties above will resolve their arbitraries solely through pro
 specified in `AmericanAddresses`, whereas the last one also uses the default (global) context.
 Since `AmericanAddresses` does not configure any arbitrary provider for `String` parameters,
 property method `globalDomainNotPresent` will fail with a `CannotFindArbitraryException`.
+
+
 
 ## Generation from a Type's Interface
 
@@ -3643,6 +3670,9 @@ and check the following api entry points:
 - [Arbitraries.forType()](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#forType(java.lang.Class))
 - [TypeArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/TypeArbitrary.html)
 
+
+
+
 ## Generation of Edge Cases
 
 It's well-known that many programming bugs and specification gaps happen at the border
@@ -3674,12 +3704,12 @@ EdgeCases[[], [0.0], [1.0], [-1.0], [0.01], [-0.01], [-3.4028235E38], [3.4028235
 ```
 
 You may notice that edge cases are not just hard-coded values but also make use
-of underlying arbitraries' edge cases to arrive at new ones. 
+of underlying arbitraries' edge cases to arrive at new ones.
 That's why a list of floats arbitrary has single element lists of floats as edge cases.
-Edge cases are also being combined and permuted when 
+Edge cases are also being combined and permuted when
 [`Combinators`](#combining-arbitraries) are used.
 Also, most methods from `Arbitrary` - like `map()`, `filter()` and `flatMap()` - provide
-sensible edge cases behaviour. 
+sensible edge cases behaviour.
 Thus, your self-made domain-specific arbitraries get edge cases automatically.
 
 _jqwik_ makes use of edge cases in two ways:
@@ -3689,7 +3719,7 @@ _jqwik_ makes use of edge cases in two ways:
 2. By default jqwik will mix the _combination of permutations of edge cases_
    of a property's parameters with purely randomized generation of parameters.
    You can even try all edge case combinations first as the next property shows.
-   
+
 ```java
 @Property(edgeCases = EdgeCasesMode.FIRST)
 void combinedEdgeCasesOfTwoParameters(
@@ -3705,7 +3735,7 @@ Run it and have a look at the output.
 
 ### Configuring Edge Case Injection
 
-How jqwik handles edge cases generation can be controlled with 
+How jqwik handles edge cases generation can be controlled with
 [an annotation property](#optional-property-attributes) and
 [a configuration parameter](#jqwik-configuration).
 
@@ -3720,6 +3750,8 @@ void combinedEdgeCasesOfTwoParameters(
     // whatever you do   
 }
 ```
+
+
 
 ## Exhaustive Generation
 
@@ -3740,19 +3772,19 @@ The property is supposed to check that all valid squares in chess are present
 on a new chess board. If _jqwik_ generated the values for `column` and `row`
 randomly, 1000 tries might or might not produce all 64 different combinations.
 Why not change strategies in cases like that and just iterate through all
-possible values? 
+possible values?
 
 This is exactly what _jqwik_ will do:
 - As long as it can figure out that the maximum number of possible values
-  is equal or below a property's `tries` attribute (1000 by default), 
+  is equal or below a property's `tries` attribute (1000 by default),
   all combinations will be generated.
 - You can also enforce an exhaustive or randomized generation mode by using the
   [Property.generation attribute](#optional-property-attributes).
   The default generation mode can be set in the [configuration file](jqwik-configuration).
-- If _jqwik_ cannot figure out how to do exhaustive generation for one of the 
+- If _jqwik_ cannot figure out how to do exhaustive generation for one of the
   participating arbitraries it will switch to randomized generation if in auto mode
   or throw an exception if in exhaustive mode.
-  
+
 Exhaustive generation is considered for:
 - All integral types
 - Characters and chars
@@ -3767,6 +3799,8 @@ Exhaustive generation is considered for:
 - Filtered arbitraries using `Arbitrary.filter()`
 - Flat mapped arbitraries using `Arbitrary.flatMap()`
 - And a few other derived arbitraries...
+
+
 
 
 ## Data-Driven Properties
@@ -3800,26 +3834,29 @@ void fizzBuzzWorks(@ForAll int index, @ForAll String result) {
 }
 ```
 
-All you have to do is annotate the property method with 
+All you have to do is annotate the property method with
 `@FromData("dataProviderReference")`. The method you reference must be
 annotated with `@Data` and return an object of type `Iterable<? extends Tuple>`.
-The [`Table` class](/docs/snapshot/javadoc/net/jqwik/api/Table.html) 
+The [`Table` class](/docs/snapshot/javadoc/net/jqwik/api/Table.html)
 is just a convenient way to create such an object, but you can return
-any collection or create an implementation of your own. 
+any collection or create an implementation of your own.
 
-Keep in mind that the `Tuple` subtype you choose must conform to the 
-number of `@ForAll` parameters in your property method, e.g. `Tuple.Tuple3` 
+Keep in mind that the `Tuple` subtype you choose must conform to the
+number of `@ForAll` parameters in your property method, e.g. `Tuple.Tuple3`
 for a method with three parameters. Otherwise _jqwik_ will fail the property
-and tell you that the provided data is inconsistent with the method's parameters. 
+and tell you that the provided data is inconsistent with the method's parameters.
 
-Data points are fed to the property in their provided order. 
+Data points are fed to the property in their provided order.
 The `tries` parameter of `@Property` will constrain the maximum data points
 being tried.
 Unlike parameterized tests in JUnit4 or Jupiter, _jqwik_ will report only the
 first falsified data point. Thus, fixing the first failure might lead to another
 falsified data point later on. There is also _no shrinking_ being done for data-driven
-properties since _jqwik_ has no information about the constraints under which 
+properties since _jqwik_ has no information about the constraints under which
 the external data was conceived or generated.
+
+
+
 
 ## Rerunning Falsified Properties
 
@@ -3862,6 +3899,9 @@ You can also determine the default behaviour of all properties by setting
 the `defaultAfterFailure` property in the [configuration file](jqwik-configuration)
 to one of those enum values.
 
+
+
+
 ## jqwik Configuration
 
 _jqwik_ uses JUnit's [configuration parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) to configure itself.
@@ -3892,17 +3932,20 @@ jqwik.shrinking.bounded.seconds = 10         # The maximum number of seconds to 
 Prior releases of _jqwik_ used a custom `jqwik.properties`. While this continues to work, it is deprecated
 and will be removed in a future release. Some names have changed:
 
- - `database` -> `jqwik.database`
- - `defaultTries` -> `jqwik.tries.default`
- - `defaultMaxDiscardRatio` -> `jqwik.maxdiscardratio.default`
- - `useJunitPlatformReporter` -> `jqwik.reporting.usejunitplatform`
- - `defaultAfterFailure` -> `jqwik.failures.after.default`
- - `reportOnlyFailures` -> `jqwik.reporting.onlyfailures`
- - `defaultGeneration` -> `jqwik.generation.default`
- - `defaultEdgeCases` -> `jqwik.edgecases.default`
- - `defaultShrinking` -> `jqwik.shrinking.default`
- - `boundedShrinkingSeconds` -> `jqwik.shrinking.bounded.seconds`
- - `runFailuresFirst` -> `jqwik.failures.runfirst`
+- `database` -> `jqwik.database`
+- `defaultTries` -> `jqwik.tries.default`
+- `defaultMaxDiscardRatio` -> `jqwik.maxdiscardratio.default`
+- `useJunitPlatformReporter` -> `jqwik.reporting.usejunitplatform`
+- `defaultAfterFailure` -> `jqwik.failures.after.default`
+- `reportOnlyFailures` -> `jqwik.reporting.onlyfailures`
+- `defaultGeneration` -> `jqwik.generation.default`
+- `defaultEdgeCases` -> `jqwik.edgecases.default`
+- `defaultShrinking` -> `jqwik.shrinking.default`
+- `boundedShrinkingSeconds` -> `jqwik.shrinking.bounded.seconds`
+- `runFailuresFirst` -> `jqwik.failures.runfirst`
+
+
+
 
 ## Additional Modules
 
@@ -4042,6 +4085,8 @@ for generator writers to test their generators - including edge cases and shrink
 This module is not in jqwik's default dependencies.
 
 
+
+
 ## Advanced Topics
 
 ### Implement your own Arbitraries and Generators
@@ -4050,18 +4095,18 @@ Looking at _jqwik_'s most prominent interfaces -- `Arbitrary` and `RandomGenerat
 think that rolling your own implementations is a reasonable thing to do.
 I'd like to tell you that it _never_ is, but I've learned that "never" is a word you should never use.
 There's just too many things to consider when implementing a new type of `Arbitrary`
-to make it work smoothly with the rest of the framework. 
+to make it work smoothly with the rest of the framework.
 
 Therefore, use the innumerable features to combine existing arbitraries into your special one.
 If you cannot figure out how to create an arbitrary with the desired behaviour
 either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
-or [open a Github issue](https://github.com/jlink/jqwik/issues). 
+or [open a Github issue](https://github.com/jlink/jqwik/issues).
 
 ### Lifecycle Hooks
 
 Similar to [Jupiter's Extension Model](https://junit.org/junit5/docs/current/user-guide/#extensions)
 _jqwik_ provides a means to extend and change the way how properties and containers are being
-configured, run and reported on. The API -- interfaces, classes and annotations -- for accessing 
+configured, run and reported on. The API -- interfaces, classes and annotations -- for accessing
 those _lifecycle hooks_ lives in the package `net.jqwik.api.lifecycle` and is -- as of this release --
 are now mostly in the [API evolution status](#api-evolution) `MAINTAINED`.
 
@@ -4069,33 +4114,33 @@ are now mostly in the [API evolution status](#api-evolution) `MAINTAINED`.
 
 There are a few fundamental principles that determine and constrain the lifecycle hook API:
 
-1. There are several [types of lifecycle hooks](#lifecycle-hook-types), 
-   each of which is an interface that extends 
+1. There are several [types of lifecycle hooks](#lifecycle-hook-types),
+   each of which is an interface that extends
    [`net.jqwik.api.lifecycle.LifecycleHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html).
 2. A concrete lifecycle hook is an implementation of one or more lifecycle hook interfaces.
 3. You can add a concrete lifecycle hook to a container class or a property method with the annotation
    [`@AddLifecycleHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AddLifecycleHook.html).
-   By default, a lifecycle hook is only added to the annotated element, not to its children. 
+   By default, a lifecycle hook is only added to the annotated element, not to its children.
    However, you can override this behaviour by either:
-   - Override `LifecycleHook.propagateTo()`
-   - Use the annotation attribute `@AddLifecycleHook.propagateTo()`
+    - Override `LifecycleHook.propagateTo()`
+    - Use the annotation attribute `@AddLifecycleHook.propagateTo()`
 4. To add a global lifecycle use Java’s `java.util.ServiceLoader` mechanism and add the concrete lifecylcle hook
-   class to file `META-INF/services/net.jqwik.api.lifecycle.LifecycleHook`. 
+   class to file `META-INF/services/net.jqwik.api.lifecycle.LifecycleHook`.
    Do not forget to override `LifecycleHook.propagateTo()` if the global hook should be applied to all test elements.
 5. In a single test run there will only be a single instance of each concrete lifecycle hook implementation.
-   That's why you have to use jqwik's [lifecycle storage](#lifecycle-storage) mechanism if shared state 
+   That's why you have to use jqwik's [lifecycle storage](#lifecycle-storage) mechanism if shared state
    across several calls to lifecycle methods is necessary.
 6. Since all instances of lifecycle hooks are created before the whole test run is started,
    you cannot use non-static inner classes of test containers to implement lifecycle interfaces.
 7. If relevant, the order in which hook methods are being applied is determined by dedicated methods
-   in the hook interface, e.g. 
+   in the hook interface, e.g.
    [`BeforeContainerHook.beforeContainerProximity()`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity()).
-   
+
 Mind that much of what you can do with hooks can also be done using the simpler
 mechanisms of [annotated lifecycle methods](#annotated-lifecycle-methods) or
-a [property lifecycle class](#single-property-lifecycle). 
-You usually start to consider using lifecycle hooks when you want to 
-reuse generic behaviour in many places or even across projects. 
+a [property lifecycle class](#single-property-lifecycle).
+You usually start to consider using lifecycle hooks when you want to
+reuse generic behaviour in many places or even across projects.
 
 
 #### Lifecycle Hook Types
@@ -4109,7 +4154,7 @@ has two methods that may be overridden:
 - [`appliesTo(Optional<AnnotatedElement>)`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html#appliesTo(java.util.Optional)):
   Determine if a hook will be applied to a concrete element. For example, you might want to constrain a certain hook
   to apply only to property methods and not to containers:
-  
+
   ```java
   @Override
   public boolean appliesTo(final Optional<AnnotatedElement> element) {
@@ -4128,8 +4173,8 @@ _jqwik_ currently supports eight types of lifecycle hooks:
     - `AroundContainerHook`
     - `AroundPropertyHook`
     - `AroundTryHook`
-    
-- [Other hooks](#other-hooks)    
+
+- [Other hooks](#other-hooks)
     - `ResolveParameterHook`
     - `RegistrarHook`
 
@@ -4141,7 +4186,7 @@ and what potential actions should be done before or after running it.
 ##### SkipExecutionHook
 
 
-Implement [`SkipExecutionHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html) 
+Implement [`SkipExecutionHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html)
 to filter out a test container or property method depending on some runtime condition.
 
 Given this hook implementation:
@@ -4171,21 +4216,21 @@ void macSpecificProperty(@ForAll int anInt) {
 
 Implement [`BeforeContainerHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html)
 for a hook that's supposed to do some work exactly once before any of its property methods and child containers
-will be run. 
+will be run.
 This is typically used to set up a resource to share among all properties within this container.
 
 ##### AfterContainerHook
 
 Implement [`AfterContainerHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AfterContainerHook.html)
 for a hook that's supposed to do some work exactly once after all of its property methods and child containers
-have been run. 
+have been run.
 This is typically used to tear down a resource that has been shared among all properties within this container.
 
 ##### AroundContainerHook
 
 [`AroundContainerHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AroundContainerHook.html)
-is a convenience interface to implement both [`BeforeContainerHook`](#beforecontainerhook) and 
-[`AfterContainerHook`](#aftercontainerhook) in one go. 
+is a convenience interface to implement both [`BeforeContainerHook`](#beforecontainerhook) and
+[`AfterContainerHook`](#aftercontainerhook) in one go.
 This is typically used to set up and tear down a resource that is intended to be shared across all the container's children.
 
 Here's an example that shows how to start and stop an external server once for all
@@ -4236,11 +4281,11 @@ using a container hook and registering it globally is probably the easiest way.
 
 [`AroundPropertyHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
 comes in handy if you need to define behaviour that should "wrap" the execution of a property,
-i.e., do something directly before or after running a property - or both. 
+i.e., do something directly before or after running a property - or both.
 Since you have access to an object that describes the final result of a property
 you can also change the result, e.g. make a failed property successful or vice versa.
 
-Here is a hook implementation that will measure the time spent on running a property 
+Here is a hook implementation that will measure the time spent on running a property
 and publish the result using a [`Reporter`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/Reporter.html):
 
 ```java
@@ -4270,13 +4315,13 @@ timestamp = ..., time = 2804 ms
 
 ##### AroundTryHook
 
-Wrapping the execution of a single try can be achieved by implementing 
+Wrapping the execution of a single try can be achieved by implementing
 [`AroundTryHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AroundTryHook.html).
 This hook can be used for a lot of things. An incomplete list:
 
 - Closely watch each execution of a property method
 - Reset a resource for each call
-- Swallow certain exceptions 
+- Swallow certain exceptions
 - Filter out tricky (and invalid) parameter constellations
 - Let a try fail depending on external circumstances
 
@@ -4321,7 +4366,7 @@ org.opentest4j.AssertionFailedError: sleepingProperty was too slow: 100 ms
 ##### ResolveParameterHook
 
 Besides the well-known `@ForAll`-parameters, property methods and [annotated lifecycle methods](#annotated-lifecycle-methods)
-can take other parameters as well. These can be injected by concrete implementations of 
+can take other parameters as well. These can be injected by concrete implementations of
 [`ResolveParameterHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html).
 
 Consider this stateful `Calculator`:
@@ -4374,50 +4419,50 @@ class CalculatorResolver implements ResolveParameterHook {
 There are a few constraints regarding parameter resolution of which you should be aware:
 
 - Parameters annotated with `@ForAll` or with `@ForAll` present as a meta annotation
-  (see [Self-Made Annotations](#self-made-annotations)) cannot be resolved; 
+  (see [Self-Made Annotations](#self-made-annotations)) cannot be resolved;
   they are fully controlled by jqwik's arbitrary-based generation mechanism.
 - If more than one applicable hook returns a non-empty instance of `Optional<ParameterSupplier>`
   the property will throw an instance of `CannotResolveParameterException`.
 - If you want to keep the same object around to inject it in more than a single method invocation,
-  e.g. for setting it up in a `@BeforeTry`-method, you are supposed to use jqwik's 
+  e.g. for setting it up in a `@BeforeTry`-method, you are supposed to use jqwik's
   [lifecycle storage mechanism](#lifecycle-storage).
 
 
 ##### RegistrarHook
 
-Use [`RegistrarHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html) 
-if you need to apply several hook implementations that implement the desired behaviour together 
-but cannot be implemented in a single class. 
+Use [`RegistrarHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html)
+if you need to apply several hook implementations that implement the desired behaviour together
+but cannot be implemented in a single class.
 For example, more than one implementation of the same hook type is needed,
 but those implementations have a different proximity or require a different propagation mode.
 
 This is really advanced stuff, the mechanism of which will probably evolve or change in the future.
 If you really really want to see an example, look at
-[`JqwikSpringExtension`](#https://github.com/jlink/jqwik-spring/blob/main/src/main/java/net/jqwik/spring/JqwikSpringExtension.java) 
+[`JqwikSpringExtension`](#https://github.com/jlink/jqwik-spring/blob/main/src/main/java/net/jqwik/spring/JqwikSpringExtension.java)
 
 #### Lifecycle Storage
 
 As [described above](#principles-of-lifecycle-hooks) one of the fundamental principles
-is that there will be only a single instance of any lifecycle hook implementation 
-during runtime. 
+is that there will be only a single instance of any lifecycle hook implementation
+during runtime.
 Since -- depending on configuration and previous rung -- containers and properties are
 not run in a strict sequential order this guarantee comes with a drawback:
 You cannot use a hook instance's member variables to hold state that should be shared
 across all tries of a property or across all properties of a container or across
-different lifecycle phases of a single try. 
-That's when lifecycle storage management enters the stage in the form of type 
+different lifecycle phases of a single try.
+That's when lifecycle storage management enters the stage in the form of type
 [`net.jqwik.api.lifecycle.Store`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/Store.html).
 
 A `Store` object...
 
 - holds a single piece of shared state
-- has a _globally unique identifier_ of your choice. 
+- has a _globally unique identifier_ of your choice.
   The identifier can be just a string or you compose whatever you deem necessary to make it unique.
 - has a [`Lifespan`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/Lifespan.html).
   The lifespan determines when the initializer of a store will be called:
-  - `Lifespan.RUN`: Only on first access
-  - `Lifespan.PROPERTY`: On first access of each single property method (or one of its lifecycle hook methods)
-  - `Lifespan.TRY`: On first access of each single try (or one of its lifecycle hook methods)
+    - `Lifespan.RUN`: Only on first access
+    - `Lifespan.PROPERTY`: On first access of each single property method (or one of its lifecycle hook methods)
+    - `Lifespan.TRY`: On first access of each single try (or one of its lifecycle hook methods)
 
 You create a store like this:
 
@@ -4454,7 +4499,7 @@ Let's look at an example...
 
 ##### TemporaryFileHook
 
-The following hook implementation gives you the capability to access _one_ (and only one) 
+The following hook implementation gives you the capability to access _one_ (and only one)
 temporary file per try using [parameter resolution](#resolveparameterhook):
 
 ```java
@@ -4490,14 +4535,14 @@ There are a few interesting things going on:
 
 - The identifier is a tuple of the `TemporaryFileHook.class` object and a string.
   This makes sure that no other hook will use the same identifier accidentally.
-- The temporary file is created only once per try. 
+- The temporary file is created only once per try.
   That means that all parameters in the scope of this try will contain _the same file_.
-- A callback is added through 
-  [`onClose(..)`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/Store.html#onClose(java.util.function.Consumer)) 
+- A callback is added through
+  [`onClose(..)`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/Store.html#onClose(java.util.function.Consumer))
   which takes care of deleting the file as soon as the lifespan's scope (the try) is finished.
-  
-With this information you can probably figure out how the following test container works -- 
-especially why the assertion in `@AfterTry`-method `assertFileNotEmpty()` succeeds. 
+
+With this information you can probably figure out how the following test container works --
+especially why the assertion in `@AfterTry`-method `assertFileNotEmpty()` succeeds.
 
 ```java
 @AddLifecycleHook(value = TemporaryFileHook.class, propagateTo = PropagationMode.ALL_DESCENDANTS)
@@ -4522,11 +4567,14 @@ class TemporaryFilesExample {
 }
 ```
 
+
+
+
 ## API Evolution
 
-In agreement with the JUnit 5 platform _jqwik_ uses the 
+In agreement with the JUnit 5 platform _jqwik_ uses the
 [@API Guardian project](https://github.com/apiguardian-team/apiguardian)
-to communicate version and status of all parts of its API. 
+to communicate version and status of all parts of its API.
 The different types of status are:
 
 -`STABLE`: Intended for features that will not be changed in a backwards-incompatible way in the current major version (1.*).
@@ -4540,8 +4588,11 @@ The different types of status are:
 -`INTERNAL`: Must not be used by any code other than _jqwik_ itself. Might be removed without prior notice.
 
 Since annotation `@API` has runtime retention you find the actual API status in an element's source code,
-its [Javadoc](/docs/snapshot/javadoc) but also through reflection. 
+its [Javadoc](/docs/snapshot/javadoc) but also through reflection.
 If a certain element, e.g. a method, is not annotated itself, then it carries the status of its containing class.
+
+
+
 
 
 ## Release Notes

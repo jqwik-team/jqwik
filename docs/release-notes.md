@@ -30,6 +30,17 @@ and
 
 #### New and Enhanced Features
 
+- There's a new [jqwik module `jqwik-time`](/docs/snapshot/user-guide.html#time-module)
+  which simplifies the generation of dates and times.
+
+- Configuration parameters are now loaded via JUnit's
+  [Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) mechanism.
+  Parameters specified in `jqwik.properties` continue to work, but are considered deprecated.
+  Log messages will be emitted for any used properties with their new name.
+  Some [parameter names](/docs/snapshot/user-guide.html#jqwik-configuration) have also changed.
+
+- The User Guide has been restructured.
+
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
     - Mostly everything in package `net.jqwik.api.lifecycle`
     - Method `Arbitrary.dontShrink()`
@@ -57,15 +68,6 @@ and
     - Class `StatisticsCoverage`
     - Class `StatisticsEntry`
     
-- Configuration parameters are now loaded via JUnit's 
-  [Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) mechanism.
-  Parameters specified in `jqwik.properties` continue to work, but are considered deprecated. 
-  Log messages will be emitted for any used properties with their new name.
-  Some [parameter names](/docs/snapshot/user-guide.html#jqwik-configuration) have also changed.
-  
-- There's a new [jqwik module `jqwik-time`](/docs/snapshot/user-guide.html#time-module) 
-  which simplifies the generation of dates and times. 
-
 #### Breaking Changes
 
 - Removed deprecated APIs

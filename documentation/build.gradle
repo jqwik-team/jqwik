@@ -23,10 +23,30 @@ static docsVersion(String versionString) {
 		return versionString
 }
 
-task expandUserGuide(type: Copy) {
-	from 'src/docs/'
+def userGuideTemplate = 'user-guide.template.md'
+
+task composeUserGuide(type: Copy) {
+	from ('src/docs/') {
+		include userGuideTemplate
+	}
 	into "$buildDir/docs"
-	include 'user-guide.template.md'
+	expand(
+			version: '${version}',
+			gitVersion: '${gitVersion}',
+			docsVersion: '${docsVersion}',
+			releaseNotesVersion: '${releaseNotesVersion}',
+			junitPlatformVersion: '${junitPlatformVersion}',
+			junitJupiterVersion: '${junitJupiterVersion}',
+			opentest4jVersion: '${opentest4jVersion}',
+	)
+}
+
+task expandUserGuide(type: Copy) {
+	dependsOn composeUserGuide
+	from ("$buildDir/docs") {
+		include userGuideTemplate
+	}
+	into "$buildDir/docs"
 	rename { file -> 'user-guide.md'}
 	expand(
 		version: jqwikVersion,
@@ -37,6 +57,9 @@ task expandUserGuide(type: Copy) {
 		junitJupiterVersion: junitJupiterVersion,
 		opentest4jVersion: opentest4jVersion,
 	)
+	doLast {
+		file("$buildDir/docs/$userGuideTemplate").delete()
+	}
 }
 
 task generateUserGuideToc(type:Exec) {
@@ -55,9 +78,10 @@ task generateJavaDoc(type:Javadoc) {
 }
 
 task expandJavaDocIndexHtml(type: Copy) {
-	from 'src/docs/'
+	from ('src/docs/') {
+		include 'index.template.html'
+	}
 	into "$buildDir/javadoc"
-	include 'index.template.html'
 	rename { file -> 'index.html' }
 	expand(
 		version: jqwikVersion
