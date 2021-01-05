@@ -116,12 +116,9 @@ test {
 
 dependencies {
 	testImplementation(project(":base"))
+	testImplementation(project(":time"))
+	testImplementation(project(":web"))
 	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
-
-	// To work around IntelliJ bug to not provide run test decorator
-	// https://youtrack.jetbrains.com/issue/IDEA-231482
-	testRuntimeOnly("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
-
 }
 

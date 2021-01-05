@@ -73,11 +73,11 @@ and
     
 #### Breaking Changes
 
-- `Arbitraries.email()` has been moved to `Emails.emails()` in new 
+- `Arbitraries.emails()` has been moved to `net.jqwik.web.api.Emails.emails()` in new 
   [Web module](/docs/snapshot/user-guide.html#web-module).
 
-- `@net.jqwik.api.constraints.Emails` annotation has been moved to 
-  `@net.jqwik.api.web.Emails` in new 
+- `@net.jqwik.api.constraints.Email` annotation has been moved to 
+  `@net.jqwik.web.api.Email` in new 
   [Web module](/docs/snapshot/user-guide.html#web-module).
 
 - Removed deprecated APIs

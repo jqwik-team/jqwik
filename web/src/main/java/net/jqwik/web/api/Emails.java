@@ -1,8 +1,7 @@
-package net.jqwik.api.web;
+package net.jqwik.web.api;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.arbitraries.*;
 import net.jqwik.web.*;
 
 import static org.apiguardian.api.API.Status.*;

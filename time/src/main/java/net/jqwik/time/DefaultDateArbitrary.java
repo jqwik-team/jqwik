@@ -8,7 +8,7 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.time.*;
+import net.jqwik.time.api.*;
 
 import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;

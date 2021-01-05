@@ -1,12 +1,12 @@
-package net.jqwik.web;
+package net.jqwik.web.api;
 
 import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
-import net.jqwik.api.web.*;
 import net.jqwik.testing.*;
+import net.jqwik.web.*;
 
 import static org.assertj.core.api.Assertions.*;
 

@@ -4,7 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.web.*;
+import net.jqwik.web.api.*;
 
 public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements EmailArbitrary {
 

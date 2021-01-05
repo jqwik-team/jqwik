@@ -1,16 +1,14 @@
-package net.jqwik.web;
+package net.jqwik.web.api;
 
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
-import net.jqwik.api.web.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.web.EmailsTests.*;
+import static net.jqwik.web.api.EmailsTests.*;
 
 @PropertyDefaults(edgeCases = EdgeCasesMode.NONE) // TODO: Remove as soon as edge cases are more restricted
 @Group

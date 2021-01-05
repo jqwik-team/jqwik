@@ -1,4 +1,4 @@
-package net.jqwik.api.web;
+package net.jqwik.web.api;
 
 import org.apiguardian.api.*;
 

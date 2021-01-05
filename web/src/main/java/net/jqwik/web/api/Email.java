@@ -1,4 +1,4 @@
-package net.jqwik.api.web;
+package net.jqwik.web.api;
 
 import java.lang.annotation.*;
 
@@ -12,7 +12,7 @@ import static org.apiguardian.api.API.Status.*;
  * Applies to string parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
- * @see net.jqwik.api.web.EmailArbitrary
+ * @see EmailArbitrary
  */
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
