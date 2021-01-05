@@ -84,6 +84,7 @@ and
 
 #### Bug Fixes
 
+There are currently no known bugs.
 
 ## 1.3.x
 

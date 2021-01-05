@@ -97,10 +97,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 ### Reporting
 
-- @StatisticsReportFormat
-    - label=<statistics label> to specify for which statistics to use
-    - Make it repeatable
-
 - `@Report(reportOnlyFailures = false)`
 
 - Report before/after state of samples

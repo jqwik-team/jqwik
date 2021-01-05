@@ -22,6 +22,9 @@
         - Emails.localPart(String) 
         - Emails.host(String) 
 
+    - Use JUnit Configuration Parameters Mechanism
+      https://github.com/jlink/jqwik/issues/139
+
     - Add code of conduct. Examples:
         - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
         - https://github.com/junit-team/junit5/blob/main/CODE_OF_CONDUCT.md
@@ -58,6 +61,12 @@
         - ListArbitrary.uniqueElementsBy(Predicate<E> uniqueCondition)
         - How can that work across collections?
 
+    - @StatisticsReportFormat
+      https://github.com/jlink/jqwik/issues/146
+        - label=<statistics label> to specify for which statistics to use
+        - Make it repeatable
+    
+
     - Domains
         - Deprecate AbstractDomainContextBase
             - Introduce DomainContextBase
@@ -69,9 +78,6 @@
         - Hand in property execution context to domains when being created.
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
-
-    - Use JUnit Configuration Parameters Mechanism
-      https://github.com/jlink/jqwik/issues/139
 
 - 1.4.x
 
