@@ -165,7 +165,7 @@ title: jqwik User Guide - 1.4.0-SNAPSHOT
   - [Time Module](#time-module)
     - [Generation of Dates](#generation-of-dates)
     - [YearMonthArbitrary](#yearmontharbitrary)
-  - [Testing Support Module](#testing-support-module)
+  - [Testing Module](#testing-module)
 - [Advanced Topics](#advanced-topics)
   - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
   - [Lifecycle Hooks](#lifecycle-hooks)
@@ -3953,7 +3953,7 @@ _jqwik_ comes with a few additional modules:
 
 - The [`web` module](#web-module)
 - The [`time` module](#time-module)
-- The [`testing-support` module](#testing-support-module)
+- The [`testing` module](#testing-module)
 
 ### Web Module
 
@@ -4023,12 +4023,12 @@ The date generation is in an extra module which have to be add in a project's de
 By default, years between 1900 and 2500 are generated. You can change this by setting min/max values.
 You can create an arbitrary for date values by calling a static method on class `Dates`:
 
-- [`DateArbitrary dates()`](/docs/snapshot/javadoc/net/jqwik/api/time/Dates.html#dates())
-- [`YearArbitrary years()`](/docs/snapshot/javadoc/net/jqwik/api/time/Dates.html#years())
-- [`MonthArbitrary months()`](/docs/snapshot/javadoc/net/jqwik/api/time/Dates.html#months())
-- [`DaysOfMonthArbitrary daysOfMonth()`](/docs/snapshot/javadoc/net/jqwik/api/time/Dates.html#daysOfMonth())
-- [`YearMonthArbitrary yearMonths()`](/docs/snapshot/javadoc/net/jqwik/api/time/Dates.html#yearMonths())
-- [`MonthDayArbitrary monthDays()`](/docs/snapshot/javadoc/net/jqwik/api/time/Dates.html#monthDays())
+- [`DateArbitrary dates()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#dates())
+- [`YearArbitrary years()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#years())
+- [`MonthArbitrary months()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#months())
+- [`DaysOfMonthArbitrary daysOfMonth()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#daysOfMonth())
+- [`YearMonthArbitrary yearMonths()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#yearMonths())
+- [`MonthDayArbitrary monthDays()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#monthDays())
 
 In addition, you can constrain their values using the following functions:
 
@@ -4083,7 +4083,7 @@ Arbitrary<LocalDate> dates() {
 - You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
 
-### Testing Support Module
+### Testing Module
 
 This modules artefact name is `jqwik-testing`. It provides a few helpful methods
 and classes for generator writers to test their generators - including 

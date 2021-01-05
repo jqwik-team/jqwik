@@ -71,7 +71,12 @@ task generateUserGuideToc(type:Exec) {
 }
 
 task generateJavaDoc(type:Javadoc) {
-	source = file("${rootDir}/api/src/main/java")
+	source(
+			file("${rootDir}/api/src/main/java"),
+			file("${rootDir}/web/src/main/java"),
+			file("${rootDir}/time/src/main/java")
+	)
+	include("**/api/**")
 	classpath = project.sourceSets.main.compileClasspath + project.sourceSets.test.compileClasspath
 	failOnError = false
 	destinationDir = file("${buildDir}/docs/javadoc")
