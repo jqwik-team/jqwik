@@ -1,11 +1,10 @@
-package net.jqwik.engine.providers;
+package net.jqwik.web;
 
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.web.*;
 
 public class EmailArbitraryProvider implements ArbitraryProvider {
 
@@ -15,11 +14,11 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, ArbitraryProvider.SubtypeProvider subtypeProvider) {
+	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		Optional<Email> optionalEmail = targetType.findAnnotation(Email.class);
 		return optionalEmail.map(email -> {
 			checkValidEmailConfiguration(email);
-			EmailArbitrary emailArbitrary = Arbitraries.emails();
+			EmailArbitrary emailArbitrary = Emails.emails();
 			if (email.quotedLocalPart()) {
 				emailArbitrary = emailArbitrary.quotedLocalPart();
 			}

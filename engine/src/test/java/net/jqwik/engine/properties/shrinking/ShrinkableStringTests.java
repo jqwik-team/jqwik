@@ -4,8 +4,8 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 

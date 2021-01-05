@@ -7,7 +7,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-class ShrinkingSupport {
+class ShrinkingCommons {
 
 	@FunctionalInterface
 	interface ContainerCreator<C, E> extends Function<List<Shrinkable<E>>, Shrinkable<C>> {}

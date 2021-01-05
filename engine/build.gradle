@@ -77,6 +77,8 @@ dependencies {
 	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 	implementation("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
 
+	testImplementation(project(":testing"))
+
 	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 	testImplementation("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")

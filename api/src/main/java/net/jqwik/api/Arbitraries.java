@@ -70,8 +70,6 @@ public class Arbitraries {
 
 		public abstract StringArbitrary strings();
 
-		public abstract EmailArbitrary emails();
-
 		public abstract CharacterArbitrary chars();
 
 		public abstract <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>[] typeParameters);
@@ -421,16 +419,6 @@ public class Arbitraries {
 	 */
 	public static StringArbitrary strings() {
 		return ArbitrariesFacade.implementation.strings();
-	}
-
-	/**
-	 * Create an arbitrary that generates valid E-Mail addresses.
-	 *
-	 * @return a new arbitrary instance
-	 */
-	@API(status = EXPERIMENTAL, since = "1.3.8")
-	public static EmailArbitrary emails() {
-		return ArbitrariesFacade.implementation.emails();
 	}
 
 	/**

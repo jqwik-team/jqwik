@@ -1,13 +1,16 @@
-package net.jqwik.engine.properties;
+package net.jqwik.testing;
 
 import java.util.function.*;
 
+import org.apiguardian.api.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.support.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = EXPERIMENTAL, since = "1.4.0")
 public interface TestingFalsifier<T> extends Falsifier<T>, Predicate<T> {
 
 	@Override

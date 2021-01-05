@@ -1,7 +1,10 @@
 - 1.4.0
 
-    - Extract TestingSupport into module "testing-support"
-        - Add `atLeastOneGenerated()`
+    - Publish javadoc for modules web and time
+
+    - Module "testing"
+        - Move `atLeastOneGenerated()` and others to TestingSupport
+        - Move ShrinkingTestHelper methods to ShrinkingSupport
 
     - Publish test report in github action
       ```

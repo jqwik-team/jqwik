@@ -147,11 +147,6 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public EmailArbitrary emails() {
-		return new DefaultEmailArbitrary();
-	}
-
-	@Override
 	public CharacterArbitrary chars() {
 		return new DefaultCharacterArbitrary();
 	}

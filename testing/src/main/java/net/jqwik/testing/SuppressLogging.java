@@ -1,11 +1,14 @@
-package net.jqwik.engine;
+package net.jqwik.testing;
 
 import java.lang.annotation.*;
 import java.util.*;
 import java.util.logging.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.hooks.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * Used to annotate properties that should not log anything
@@ -14,6 +17,7 @@ import net.jqwik.engine.hooks.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @AddLifecycleHook(SuppressLogging.Hook.class)
+@API(status = EXPERIMENTAL, since = "1.4.0")
 public @interface SuppressLogging {
 
 	/**
@@ -37,7 +41,7 @@ public @interface SuppressLogging {
 
 		@Override
 		public int aroundPropertyProximity() {
-			return Hooks.AroundProperty.SUPPRESS_LOGGING_PROXIMITY;
+			return 50;
 		}
 
 	}

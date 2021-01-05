@@ -3,7 +3,7 @@ package net.jqwik.api.constraints;
 import java.math.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.*;
+import net.jqwik.testing.*;
 
 @PropertyDefaults(tries = 100)
 class RangeProperties {

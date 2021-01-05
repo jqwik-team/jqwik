@@ -1,4 +1,4 @@
-package net.jqwik.api.testing;
+package net.jqwik.testing;
 
 import java.util.*;
 
@@ -19,7 +19,7 @@ class TestingSupportTests {
 	void shrinkToMinimal(@ForAll Random random) {
 		Arbitrary<String> strings = Arbitraries.strings().alpha().ofMaxLength(10);
 
-		String shrunkValue = TestingSupport.shrinkToMinimal(strings, random);
+		String shrunkValue = ShrinkingSupport.shrinkToMinimal(strings, random);
 		Assertions.assertThat(shrunkValue).isEqualTo("");
 	}
 

@@ -7,6 +7,7 @@ import org.assertj.core.data.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 

@@ -5,8 +5,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.engine.*;
-import net.jqwik.engine.properties.*;
+import net.jqwik.testing.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;

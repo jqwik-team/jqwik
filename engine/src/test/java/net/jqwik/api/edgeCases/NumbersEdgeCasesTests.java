@@ -11,6 +11,7 @@ import net.jqwik.api.arbitraries.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 class NumbersEdgeCasesTests {

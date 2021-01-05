@@ -1,7 +1,7 @@
 package net.jqwik.docs;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.web.*;
 
 import static org.assertj.core.api.Assertions.*;
 

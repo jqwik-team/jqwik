@@ -76,9 +76,8 @@ dependencies {
 	api(project(":api"))
 	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 
-	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
+	testImplementation(project(":testing"))
+
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
-	testImplementation("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-	testImplementation("org.junit.platform:junit-platform-testkit:${junitPlatformVersion}")
 	testRuntimeOnly(project(":engine"))
 }

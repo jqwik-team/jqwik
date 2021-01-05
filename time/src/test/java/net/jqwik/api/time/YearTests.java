@@ -4,11 +4,12 @@ import java.time.*;
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.testing.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.testing.TestingSupport.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 class YearTests {

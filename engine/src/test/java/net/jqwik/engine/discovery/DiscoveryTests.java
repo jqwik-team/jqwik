@@ -16,6 +16,7 @@ import net.jqwik.api.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.recording.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;

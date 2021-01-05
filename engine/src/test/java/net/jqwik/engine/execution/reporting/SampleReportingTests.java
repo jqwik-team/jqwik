@@ -28,10 +28,10 @@ class SampleReportingTests {
 			sampleReporter.reportTo(lineReporter);
 
 			assertThat(lineReporter.lines).containsSequence(
-				"Headline",
-				"--------",
-				"  aString: \"this is a string\"",
-				"  aNumber: 42"
+					"Headline",
+					"--------",
+					"  aString: \"this is a string\"",
+					"  aNumber: 42"
 			);
 		}
 
@@ -44,15 +44,15 @@ class SampleReportingTests {
 			sampleReporter.reportTo(lineReporter);
 
 			assertThat(lineReporter.lines).containsExactly(
-				"",
-				"  aString: \"this is a string\""
+					"",
+					"  aString: \"this is a string\""
 			);
 		}
 
 		@Example
 		void whenLineLongerThan100charsParamIsReportedOnNextLineWithIndent() {
 			String parameterValue = "This is a long string. This is a long string. This is a long string. This is a long string. " +
-										"This is a long string. This is a long string. This is a long string. This is a long string.";
+											"This is a long string. This is a long string. This is a long string. This is a long string.";
 			Map<String, Object> reports = new LinkedHashMap<>();
 			reports.put("aVeryLongString", parameterValue);
 			SampleReporter sampleReporter = new SampleReporter("Headline", reports);
@@ -60,10 +60,10 @@ class SampleReportingTests {
 			sampleReporter.reportTo(lineReporter);
 
 			assertThat(lineReporter.lines).containsSequence(
-				"Headline",
-				"--------",
-				"  aVeryLongString:",
-				String.format("    \"%s\"", parameterValue)
+					"Headline",
+					"--------",
+					"  aVeryLongString:",
+					String.format("    \"%s\"", parameterValue)
 			);
 		}
 
@@ -88,10 +88,10 @@ class SampleReportingTests {
 			sampleReporter.reportTo(lineReporter);
 
 			assertThat(lineReporter.lines).containsSequence(
-				"Headline",
-				"--------",
-				"  list1: [an object]",
-				"  list2: [an object]"
+					"Headline",
+					"--------",
+					"  list1: [an object]",
+					"  list2: [an object]"
 			);
 		}
 
@@ -108,7 +108,7 @@ class SampleReportingTests {
 			Assertions.assertThat(report.singleLineReport()).isEqualTo("\"this is a string\"");
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
-				"    \"this is a string\""
+					"    \"this is a string\""
 			);
 		}
 
@@ -120,7 +120,7 @@ class SampleReportingTests {
 			Assertions.assertThat(report.singleLineReport()).isEqualTo("2.5");
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
-				"    2.5"
+					"    2.5"
 			);
 		}
 
@@ -133,7 +133,7 @@ class SampleReportingTests {
 			Assertions.assertThat(report.singleLineReport()).isEqualTo(object.toString());
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
-				"    " + object.toString()
+					"    " + object.toString()
 			);
 		}
 
@@ -152,9 +152,9 @@ class SampleReportingTests {
 			Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
-				"    line1",
-				"    line2",
-				"    line3"
+					"    line1",
+					"    line2",
+					"    line3"
 			);
 		}
 
@@ -167,7 +167,7 @@ class SampleReportingTests {
 			Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
-				"    null"
+					"    null"
 			);
 		}
 
@@ -179,9 +179,9 @@ class SampleReportingTests {
 			Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
-				"    Optional[",
-				"      \"not empty\"",
-				"    ]"
+					"    Optional[",
+					"      \"not empty\"",
+					"    ]"
 			);
 		}
 
@@ -214,8 +214,8 @@ class SampleReportingTests {
 			Assertions.assertThat(report.singleLineReport()).isEqualTo("java.lang.String:\"this is a string\"");
 			report.report(lineReporter, 2, "#");
 			assertThat(lineReporter.lines).containsSequence(
-				"    java.lang.String:",
-				"      \"this is a string\"#"
+					"    java.lang.String:",
+					"      \"this is a string\"#"
 			);
 		}
 
@@ -248,10 +248,10 @@ class SampleReportingTests {
 				ValueReport report = ValueReport.of(map);
 				report.report(lineReporter, 0, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"{",
-					"  \"list1\"=[[42]],",
-					"  \"list2\"=[42]",
-					"}"
+						"{",
+						"  \"list1\"=[[42]],",
+						"  \"list2\"=[42]",
+						"}"
 				);
 			}
 
@@ -271,9 +271,9 @@ class SampleReportingTests {
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"    [",
-					"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
-					"    ]"
+						"    [",
+						"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
+						"    ]"
 				);
 			}
 
@@ -301,33 +301,33 @@ class SampleReportingTests {
 
 				report.report(lineReporter, 2, ",");
 				assertThat(lineReporter.lines).containsSequence(
-					"    java.lang.List[",
-					"      \"string 1\", \"string 2\"",
-					"    ],"
+						"    java.lang.List[",
+						"      \"string 1\", \"string 2\"",
+						"    ],"
 				);
 			}
 
 			@Example
 			void listOfLists() {
 				List<List<String>> list = asList(
-					asList("string 1", "string 2", "string 3", "string 4"),
-					asList("string 5", "string 6", "string 7"),
-					asList(
-						"a long string a long string a long string a long string a long string a long string",
-						"a long string a long string a long string a long string a long string a long string"
-					)
+						asList("string 1", "string 2", "string 3", "string 4"),
+						asList("string 5", "string 6", "string 7"),
+						asList(
+								"a long string a long string a long string a long string a long string a long string",
+								"a long string a long string a long string a long string a long string a long string"
+						)
 				);
 				ValueReport report = ValueReport.of(list);
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"    [",
-					"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\"],",
-					"      [",
-					"        \"a long string a long string a long string a long string a long string a long string\",",
-					"        \"a long string a long string a long string a long string a long string a long string\"",
-					"      ]",
-					"    ]"
+						"    [",
+						"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\"],",
+						"      [",
+						"        \"a long string a long string a long string a long string a long string a long string\",",
+						"        \"a long string a long string a long string a long string a long string a long string\"",
+						"      ]",
+						"    ]"
 				);
 			}
 
@@ -349,11 +349,11 @@ class SampleReportingTests {
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"    {",
-					"      \"key1\"=1,",
-					"      \"key2\"=2,",
-					"      \"key3\"=3",
-					"    }"
+						"    {",
+						"      \"key1\"=1,",
+						"      \"key2\"=2,",
+						"      \"key3\"=3",
+						"    }"
 				);
 			}
 
@@ -382,9 +382,9 @@ class SampleReportingTests {
 
 				report.report(lineReporter, 2, ",");
 				assertThat(lineReporter.lines).containsSequence(
-					"    java.lang.Map{",
-					"      \"key1\"=1",
-					"    },"
+						"    java.lang.Map{",
+						"      \"key1\"=1",
+						"    },"
 				);
 			}
 
@@ -392,28 +392,28 @@ class SampleReportingTests {
 			void mapOfLists() {
 				Map<String, List<String>> map = new HashMap<>();
 				map.put(
-					"list1",
-					asList(
-						"a long string a long string a long string a long string a long string a long string",
-						"a long string a long string a long string a long string a long string a long string"
-					)
+						"list1",
+						asList(
+								"a long string a long string a long string a long string a long string a long string",
+								"a long string a long string a long string a long string a long string a long string"
+						)
 				);
 				map.put(
-					"list2",
-					asList("1", "2")
+						"list2",
+						asList("1", "2")
 				);
 				ValueReport report = ValueReport.of(map);
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"    {",
-					"      \"list1\"=",
-					"        [",
-					"          \"a long string a long string a long string a long string a long string a long string\",",
-					"          \"a long string a long string a long string a long string a long string a long string\"",
-					"        ],",
-					"      \"list2\"=[\"1\", \"2\"]",
-					"    }"
+						"    {",
+						"      \"list1\"=",
+						"        [",
+						"          \"a long string a long string a long string a long string a long string a long string\",",
+						"          \"a long string a long string a long string a long string a long string a long string\"",
+						"        ],",
+						"      \"list2\"=[\"1\", \"2\"]",
+						"    }"
 				);
 			}
 
@@ -432,10 +432,10 @@ class SampleReportingTests {
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"    (",
-					"      \"one\",",
-					"      2",
-					"    )"
+						"    (",
+						"      \"one\",",
+						"      2",
+						"    )"
 				);
 			}
 
@@ -463,34 +463,34 @@ class SampleReportingTests {
 
 				report.report(lineReporter, 2, ",");
 				assertThat(lineReporter.lines).containsSequence(
-					"    Tuple(",
-					"      \"one\",",
-					"      2,",
-					"      3.0",
-					"    ),"
+						"    Tuple(",
+						"      \"one\",",
+						"      2,",
+						"      3.0",
+						"    ),"
 				);
 			}
 
 			@Example
 			void tupleOfLists() {
 				Tuple.Tuple2<String, List<String>> tuple = Tuple.of(
-					"string",
-					asList(
-						"a long string a long string a long string a long string a long string a long string",
-						"a long string a long string a long string a long string a long string a long string"
-					)
+						"string",
+						asList(
+								"a long string a long string a long string a long string a long string a long string",
+								"a long string a long string a long string a long string a long string a long string"
+						)
 				);
 				ValueReport report = ValueReport.of(tuple);
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"    (",
-					"      \"string\",",
-					"      [",
-					"        \"a long string a long string a long string a long string a long string a long string\",",
-					"        \"a long string a long string a long string a long string a long string a long string\"",
-					"      ]",
-					"    )"
+						"    (",
+						"      \"string\",",
+						"      [",
+						"        \"a long string a long string a long string a long string a long string a long string\",",
+						"        \"a long string a long string a long string a long string a long string a long string\"",
+						"      ]",
+						"    )"
 				);
 			}
 
@@ -510,9 +510,9 @@ class SampleReportingTests {
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"    String[] [",
-					"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
-					"    ]"
+						"    String[] [",
+						"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
+						"    ]"
 				);
 			}
 
@@ -527,9 +527,9 @@ class SampleReportingTests {
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"    int[] [",
-					"      1, 2, 3, 4",
-					"    ]"
+						"    int[] [",
+						"      1, 2, 3, 4",
+						"    ]"
 				);
 			}
 
@@ -540,33 +540,33 @@ class SampleReportingTests {
 
 				report.report(lineReporter, 2, ",");
 				assertThat(lineReporter.lines).containsSequence(
-					"    String[] [",
-					"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
-					"    ],"
+						"    String[] [",
+						"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
+						"    ],"
 				);
 			}
 
 			@Example
 			void arrayOfLists() {
 				List<String>[] list = new List[]{
-					asList("string 1", "string 2", "string 3", "string 4"),
-					asList("string 5", "string 6", "string 7"),
-					asList(
-						"a long string a long string a long string a long string a long string a long string",
-						"a long string a long string a long string a long string a long string a long string"
-					)
+						asList("string 1", "string 2", "string 3", "string 4"),
+						asList("string 5", "string 6", "string 7"),
+						asList(
+								"a long string a long string a long string a long string a long string a long string",
+								"a long string a long string a long string a long string a long string a long string"
+						)
 				};
 				ValueReport report = ValueReport.of(list);
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
-					"    java.util.List[] [",
-					"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\"],",
-					"      [",
-					"        \"a long string a long string a long string a long string a long string a long string\",",
-					"        \"a long string a long string a long string a long string a long string a long string\"",
-					"      ]",
-					"    ]"
+						"    java.util.List[] [",
+						"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\"],",
+						"      [",
+						"        \"a long string a long string a long string a long string a long string a long string\",",
+						"        \"a long string a long string a long string a long string a long string a long string\"",
+						"      ]",
+						"    ]"
 				);
 			}
 

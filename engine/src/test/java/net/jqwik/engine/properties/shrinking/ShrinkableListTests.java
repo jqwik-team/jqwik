@@ -8,8 +8,8 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
+import net.jqwik.testing.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;

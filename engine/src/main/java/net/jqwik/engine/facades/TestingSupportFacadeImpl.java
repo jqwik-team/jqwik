@@ -5,8 +5,8 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.facades.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.testing.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
@@ -16,7 +16,7 @@ import net.jqwik.engine.properties.shrinking.*;
  *
  * TODO: Extract all testing support into module of its own
  */
-public class TestingSupportFacadeImpl extends TestingSupport.TestingSupportFacade {
+public class TestingSupportFacadeImpl extends TestingSupportFacade {
 
 	@SuppressWarnings("unchecked")
 	public <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {

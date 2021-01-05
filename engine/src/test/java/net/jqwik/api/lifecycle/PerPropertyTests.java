@@ -5,7 +5,7 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.PerProperty.*;
-import net.jqwik.engine.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 

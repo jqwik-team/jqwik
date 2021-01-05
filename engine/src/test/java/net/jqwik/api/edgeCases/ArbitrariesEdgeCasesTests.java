@@ -10,7 +10,7 @@ import net.jqwik.api.constraints.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 class ArbitrariesEdgeCasesTests {

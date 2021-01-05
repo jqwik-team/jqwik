@@ -4,21 +4,24 @@ _jqwik_ comes with a few additional modules:
 - The [`time` module](#time-module)
 - The [`testing-support` module](#testing-support-module)
 
-Those modules are included in jqwik's default dependencies but can be excluded
-if you want.
-
-
 ### Web Module
+
+This modules artefact name is `jqwik-web`. It's supposed to provide arbitraries,
+default generation and annotations for web related types. Currently only
+[email generation](#email-address-generation) is supported.
+
+This module is part of jqwik's default dependencies.
+
 
 #### Email Address Generation
 
 To generate email addresses you can either
 
-- call up the static method [`Arbitraries.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#emails()).
-  The return type is [`EmailArbitrary`](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/EmailArbitrary.html)
+- call up the static method [`Emails.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/api/web/Emails.html#emails()).
+  The return type is [`EmailArbitrary`](/docs/${docsVersion}/javadoc/net/jqwik/api/web/EmailArbitrary.html)
   which provides a few configuration methods.
 
-- or use the [`@Email`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Email.html)
+- or use the [`@Email`](/docs/${docsVersion}/javadoc/net/jqwik/api/web/Email.html)
   annotation on `@ForAll` parameters as in the examples below.
 
 An email address consists of two parts: `local-part` and `host`.
@@ -61,18 +64,20 @@ void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Host =
 This modules artefact name is `jqwik-time`. It's supposed to provide arbitraries,
 default generation and annotations for date and time types.
 
+This module is part of jqwik's default dependencies.
+
 #### Generation of Dates
 
 The date generation is in an extra module which have to be add in a project's dependency.
 By default, years between 1900 and 2500 are generated. You can change this by setting min/max values.
 You can create an arbitrary for date values by calling a static method on class `Dates`:
 
-- [`DateArbitrary dates()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#dates())
-- [`YearArbitrary years()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#years())
-- [`MonthArbitrary months()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#months())
-- [`DaysOfMonthArbitrary daysOfMonth()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#daysOfMonth())
-- [`YearMonthArbitrary yearMonths()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#yearMonths())
-- [`MonthDayArbitrary monthDays()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Dates.html#monthDays())
+- [`DateArbitrary dates()`](/docs/${docsVersion}/javadoc/net/jqwik/api/time/Dates.html#dates())
+- [`YearArbitrary years()`](/docs/${docsVersion}/javadoc/net/jqwik/api/time/Dates.html#years())
+- [`MonthArbitrary months()`](/docs/${docsVersion}/javadoc/net/jqwik/api/time/Dates.html#months())
+- [`DaysOfMonthArbitrary daysOfMonth()`](/docs/${docsVersion}/javadoc/net/jqwik/api/time/Dates.html#daysOfMonth())
+- [`YearMonthArbitrary yearMonths()`](/docs/${docsVersion}/javadoc/net/jqwik/api/time/Dates.html#yearMonths())
+- [`MonthDayArbitrary monthDays()`](/docs/${docsVersion}/javadoc/net/jqwik/api/time/Dates.html#monthDays())
 
 In addition, you can constrain their values using the following functions:
 
@@ -129,7 +134,10 @@ Arbitrary<LocalDate> dates() {
 
 ### Testing Support Module
 
-This modules artefact name is `jqwik-testing-support`. It provides a few helpful methods
-for generator writers to test their generators - including edge cases and shrinking.
-This module is not in jqwik's default dependencies.
+This modules artefact name is `jqwik-testing`. It provides a few helpful methods
+and classes for generator writers to test their generators - including 
+edge cases and shrinking.
+
+This module is _not_ in jqwik's default dependencies. It's usually added as a
+test-implementation dependency.
 

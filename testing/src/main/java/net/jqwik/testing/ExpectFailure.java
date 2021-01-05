@@ -1,4 +1,4 @@
-package net.jqwik.engine;
+package net.jqwik.testing;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
@@ -8,9 +8,8 @@ import java.util.function.*;
 import org.junit.platform.commons.support.*;
 import org.opentest4j.*;
 
+import net.jqwik.api.facades.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.hooks.*;
-import net.jqwik.engine.support.*;
 
 import static net.jqwik.api.lifecycle.PropertyExecutionResult.Status.*;
 
@@ -66,11 +65,11 @@ public @interface ExpectFailure {
 											   .map(throwable -> String.format("it failed with [%s]", throwable))
 											   .orElse("it did not fail at all");
 			String message = String.format(
-				"%sProperty [%s] should have failed with failure of type %s, but %s",
-				headerText,
-				context.label(),
-				expectedFailureType.getName(),
-				reason
+					"%sProperty [%s] should have failed with failure of type %s, but %s",
+					headerText,
+					context.label(),
+					expectedFailureType.getName(),
+					reason
 			);
 			return testExecutionResult.mapToFailed(message);
 		}
@@ -110,16 +109,16 @@ public @interface ExpectFailure {
 			Optional<ExpectFailure> annotation = AnnotationSupport.findAnnotation(method, ExpectFailure.class);
 			return annotation.map((ExpectFailure expectFailure) -> {
 				Class<? extends Consumer<PropertyExecutionResult>> checkResult = expectFailure.checkResult();
-				return (Consumer<PropertyExecutionResult>) JqwikReflectionSupport.newInstanceInTestContext(checkResult, testInstance);
-			})
-							 .orElse(
-								 JqwikReflectionSupport.newInstanceInTestContext(ExpectFailure.NullChecker.class, testInstance)
-							 );
+				return (Consumer<PropertyExecutionResult>) ReflectionSupportFacade.implementation
+																   .newInstanceInTestContext(checkResult, testInstance);
+			}).orElse(
+					ReflectionSupportFacade.implementation.newInstanceInTestContext(NullChecker.class, testInstance)
+			);
 		}
 
 		@Override
 		public int aroundPropertyProximity() {
-			return Hooks.AroundProperty.EXPECT_FAILURE_PROXIMITY;
+			return -95;
 		}
 
 	}

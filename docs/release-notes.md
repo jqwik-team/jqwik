@@ -33,6 +33,9 @@ and
 - There's a new [jqwik module `jqwik-time`](/docs/snapshot/user-guide.html#time-module)
   which simplifies the generation of dates and times.
 
+- There's a new [jqwik module `jqwik-web`](/docs/snapshot/user-guide.html#web-module)
+  which is currently home of email addresses generation.
+
 - Configuration parameters are now loaded via JUnit's
   [Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) mechanism.
   Parameters specified in `jqwik.properties` continue to work, but are considered deprecated.
@@ -69,6 +72,13 @@ and
     - Class `StatisticsEntry`
     
 #### Breaking Changes
+
+- `Arbitraries.email()` has been moved to `Emails.emails()` in new 
+  [Web module](/docs/snapshot/user-guide.html#web-module).
+
+- `@net.jqwik.api.constraints.Emails` annotation has been moved to 
+  `@net.jqwik.api.web.Emails` in new 
+  [Web module](/docs/snapshot/user-guide.html#web-module).
 
 - Removed deprecated APIs
     - `Arbitrary.samples(..)`

@@ -7,8 +7,7 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.*;
-import net.jqwik.engine.properties.*;
+import net.jqwik.testing.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.api.Tuple.*;

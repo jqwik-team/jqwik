@@ -5,6 +5,7 @@ import java.util.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 

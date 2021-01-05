@@ -130,7 +130,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	}
 
 	protected Stream<Shrinkable<C>> sortElements() {
-		return ShrinkingSupport.sortElements(elements, this::createShrinkable);
+		return ShrinkingCommons.sortElements(elements, this::createShrinkable);
 	}
 
 	@Override

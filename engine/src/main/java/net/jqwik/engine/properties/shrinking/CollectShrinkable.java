@@ -53,7 +53,7 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 	}
 
 	private Stream<Shrinkable<List<T>>> sortElements() {
-		return ShrinkingSupport.sortElements(elements, this::createShrinkable);
+		return ShrinkingCommons.sortElements(elements, this::createShrinkable);
 	}
 
 	private CollectShrinkable<T> createShrinkable(List<Shrinkable<T>> pairSwap) {

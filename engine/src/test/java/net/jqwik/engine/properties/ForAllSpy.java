@@ -1,10 +1,10 @@
 package net.jqwik.engine.properties;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
+import java.util.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
-import org.assertj.core.api.Assertions;
+import org.assertj.core.api.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;

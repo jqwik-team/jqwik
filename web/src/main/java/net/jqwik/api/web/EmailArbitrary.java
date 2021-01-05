@@ -1,4 +1,4 @@
-package net.jqwik.api.arbitraries;
+package net.jqwik.api.web;
 
 import org.apiguardian.api.*;
 
@@ -13,7 +13,7 @@ import static org.apiguardian.api.API.Status.*;
  *    By default all variants of email addresses are generated.
  * </p>
  */
-@API(status = EXPERIMENTAL, since = "1.3.9")
+@API(status = EXPERIMENTAL, since = "1.4.0")
 public interface EmailArbitrary extends Arbitrary<String> {
 
 	/**

@@ -18,6 +18,7 @@ import org.junit.platform.testkit.engine.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.recording.*;
 import net.jqwik.engine.support.*;
+import net.jqwik.testing.*;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.testkit.engine.Event.*;

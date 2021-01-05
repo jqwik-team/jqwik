@@ -1,20 +1,20 @@
-package net.jqwik.api;
+package net.jqwik.web;
 
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
-import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.api.web.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 @Group
-public class ArbitrariesEmailsTests {
+public class EmailsTests {
 
 	private static final String ALLOWED_CHARS_DOMAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
 	private static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";
@@ -150,7 +150,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyIPAddresses() {
-			return Arbitraries.emails().ipv4Host().ipv6Host();
+			return Emails.emails().ipv4Host().ipv6Host();
 		}
 
 		@Property
@@ -162,7 +162,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyIPv4Addresses() {
-			return Arbitraries.emails().ipv4Host();
+			return Emails.emails().ipv4Host();
 		}
 
 		@Property
@@ -174,7 +174,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyIPv6Addresses() {
-			return Arbitraries.emails().ipv6Host();
+			return Emails.emails().ipv6Host();
 		}
 
 		@Property
@@ -185,7 +185,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyDomains() {
-			return Arbitraries.emails().domainHost();
+			return Emails.emails().domainHost();
 		}
 
 		@Property
@@ -196,7 +196,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyQuoted() {
-			return Arbitraries.emails().quotedLocalPart();
+			return Emails.emails().quotedLocalPart();
 		}
 
 		@Property
@@ -207,7 +207,7 @@ public class ArbitrariesEmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyUnquoted() {
-			return Arbitraries.emails().unquotedLocalPart();
+			return Emails.emails().unquotedLocalPart();
 		}
 
 	}
@@ -274,14 +274,14 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void defaultShrinking(@ForAll Random random) {
-			EmailArbitrary emails = Arbitraries.emails();
+			EmailArbitrary emails = Emails.emails();
 			String value = shrinkToMinimal(emails, random);
 			assertThat(value).isEqualTo("A@a.aa");
 		}
 
 		@Property
 		void domainShrinking(@ForAll Random random) {
-			EmailArbitrary emails = Arbitraries.emails();
+			EmailArbitrary emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyDomain();
 			String value = shrinkToMinimal(emails, random, falsifier);
 			assertThat(value).isEqualTo("A@a.aa");
@@ -289,7 +289,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void ipv4Shrinking(@ForAll Random random) {
-			EmailArbitrary emails = Arbitraries.emails();
+			EmailArbitrary emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyIPv4();
 			String value = shrinkToMinimal(emails, random, falsifier);
 			assertThat(value).isEqualTo("A@[0.0.0.0]");
@@ -297,7 +297,7 @@ public class ArbitrariesEmailsTests {
 
 		@Property
 		void ipv6Shrinking(@ForAll Random random) {
-			Arbitrary<String> emails = Arbitraries.emails();
+			Arbitrary<String> emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyIPv6();
 			String value = shrinkToMinimal(emails, random, falsifier);
 			assertThat(value).isEqualTo("A@[::]");
@@ -331,7 +331,7 @@ public class ArbitrariesEmailsTests {
 
 		@Example
 		void all() {
-			EmailArbitrary emails = Arbitraries.emails();
+			EmailArbitrary emails = Emails.emails();
 			int expectedNumberOfEdgeCases = (4 + 3) * (2 + 3 + 4);
 			Set<String> allEdgeCases = collectEdgeCases(emails.edgeCases());
 			assertThat(allEdgeCases).hasSize(expectedNumberOfEdgeCases);
@@ -341,10 +341,10 @@ public class ArbitrariesEmailsTests {
 
 		@Example
 		void unquotedLocalPart() {
-			EmailArbitrary emails = Arbitraries.emails().unquotedLocalPart().domainHost();
+			EmailArbitrary emails = Emails.emails().unquotedLocalPart().domainHost();
 			Set<String> localParts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(ArbitrariesEmailsTests::getLocalPartOfEmail)
+											 .map(EmailsTests::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
 
 			assertThat(localParts).containsExactlyInAnyOrder("A", "a", "0", "!");
@@ -352,10 +352,10 @@ public class ArbitrariesEmailsTests {
 
 		@Example
 		void quotedLocalPart() {
-			EmailArbitrary emails = Arbitraries.emails().quotedLocalPart().domainHost();
+			EmailArbitrary emails = Emails.emails().quotedLocalPart().domainHost();
 			Set<String> localParts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(ArbitrariesEmailsTests::getLocalPartOfEmail)
+											 .map(EmailsTests::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
 
 			assertThat(localParts).containsExactlyInAnyOrder("\"A\"", "\"a\"", "\" \"");
@@ -363,10 +363,10 @@ public class ArbitrariesEmailsTests {
 
 		@Example
 		void domainHost() {
-			EmailArbitrary emails = Arbitraries.emails().unquotedLocalPart().domainHost();
+			EmailArbitrary emails = Emails.emails().unquotedLocalPart().domainHost();
 			Set<String> hosts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(ArbitrariesEmailsTests::getEmailHost)
+											 .map(EmailsTests::getEmailHost)
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).containsExactlyInAnyOrder(
@@ -376,10 +376,10 @@ public class ArbitrariesEmailsTests {
 
 		@Example
 		void ipv4Host() {
-			EmailArbitrary emails = Arbitraries.emails().unquotedLocalPart().ipv4Host();
+			EmailArbitrary emails = Emails.emails().unquotedLocalPart().ipv4Host();
 			Set<String> hosts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(ArbitrariesEmailsTests::getEmailHost)
+											 .map(EmailsTests::getEmailHost)
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).containsExactlyInAnyOrder(
@@ -389,10 +389,10 @@ public class ArbitrariesEmailsTests {
 
 		@Example
 		void ipv6Host() {
-			EmailArbitrary emails = Arbitraries.emails().unquotedLocalPart().ipv6Host();
+			EmailArbitrary emails = Emails.emails().unquotedLocalPart().ipv6Host();
 			Set<String> hosts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(ArbitrariesEmailsTests::getEmailHost)
+											 .map(EmailsTests::getEmailHost)
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).containsExactlyInAnyOrder(
@@ -406,7 +406,7 @@ public class ArbitrariesEmailsTests {
 
 	@Provide
 	private EmailArbitrary emails() {
-		return Arbitraries.emails();
+		return Emails.emails();
 	}
 
 	private boolean isValidIPAddress(String address) {
