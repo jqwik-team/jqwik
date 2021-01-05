@@ -3968,11 +3968,11 @@ This module is part of jqwik's default dependencies.
 
 To generate email addresses you can either
 
-- call up the static method [`Emails.emails()`](/docs/snapshot/javadoc/net/jqwik/api/web/Emails.html#emails()).
-  The return type is [`EmailArbitrary`](/docs/snapshot/javadoc/net/jqwik/api/web/EmailArbitrary.html)
+- call up the static method [`Emails.emails()`](/docs/snapshot/javadoc/net/jqwik/web/api/Emails.html#emails()).
+  The return type is [`EmailArbitrary`](/docs/snapshot/javadoc/net/jqwik/web/api/EmailArbitrary.html)
   which provides a few configuration methods.
 
-- or use the [`@Email`](/docs/snapshot/javadoc/net/jqwik/api/web/Email.html)
+- or use the [`@Email`](/docs/snapshot/javadoc/net/jqwik/web/api/Email.html)
   annotation on `@ForAll` parameters as in the examples below.
 
 An email address consists of two parts: `local-part` and `host`.
@@ -4025,8 +4025,9 @@ You can create an arbitrary for date values by calling a static method on class 
 
 - [`DateArbitrary dates()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#dates())
 - [`YearArbitrary years()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#years())
-- [`MonthArbitrary months()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#months())
-- [`DaysOfMonthArbitrary daysOfMonth()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#daysOfMonth())
+- [`Arbitrary<Month> months()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#months())
+- [`Arbitrary<Integer> daysOfMonth()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#daysOfMonth())
+- [`Arbitrary<DayOfWeek> daysOfWeek()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#daysOfWeek())
 - [`YearMonthArbitrary yearMonths()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#yearMonths())
 - [`MonthDayArbitrary monthDays()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#monthDays())
 
