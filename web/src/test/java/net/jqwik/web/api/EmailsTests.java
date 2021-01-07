@@ -6,12 +6,12 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
-import net.jqwik.web.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
+import static net.jqwik.web.api.EmailTestingSupport.*;
 
 @Group
 public class EmailsTests {
@@ -344,7 +344,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Emails.emails().unquotedLocalPart().domainHost();
 			Set<String> localParts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(EmailsTests::getLocalPartOfEmail)
+											 .map(EmailTestingSupport::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
 
 			assertThat(localParts).containsExactlyInAnyOrder("A", "a", "0", "!");
@@ -355,7 +355,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Emails.emails().quotedLocalPart().domainHost();
 			Set<String> localParts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(EmailsTests::getLocalPartOfEmail)
+											 .map(EmailTestingSupport::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
 
 			assertThat(localParts).containsExactlyInAnyOrder("\"A\"", "\"a\"", "\" \"");
@@ -366,7 +366,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Emails.emails().unquotedLocalPart().domainHost();
 			Set<String> hosts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(EmailsTests::getEmailHost)
+											 .map(EmailTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).containsExactlyInAnyOrder(
@@ -379,7 +379,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Emails.emails().unquotedLocalPart().ipv4Host();
 			Set<String> hosts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(EmailsTests::getEmailHost)
+											 .map(EmailTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).containsExactlyInAnyOrder(
@@ -392,7 +392,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Emails.emails().unquotedLocalPart().ipv6Host();
 			Set<String> hosts = collectEdgeCases(emails.edgeCases())
 											 .stream()
-											 .map(EmailsTests::getEmailHost)
+											 .map(EmailTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).containsExactlyInAnyOrder(
@@ -418,7 +418,7 @@ public class EmailsTests {
 	}
 
 	private boolean isValidIPv6Address(String address) {
-		return DefaultEmailArbitrary.validUseOfColonInIPv6Address(address) && validCharsInIPv6Address(address);
+		return EmailCommons.validUseOfColonInIPv6Address(address) && validCharsInIPv6Address(address);
 	}
 
 	private boolean validCharsInIPv6Address(String address) {
@@ -454,33 +454,6 @@ public class EmailsTests {
 			}
 		}
 		return true;
-	}
-
-	public static boolean isIPAddress(String domain) {
-		if (domain.charAt(0) == '[' && domain.charAt(domain.length() - 1) == ']') {
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean isQuoted(String localPart) {
-		if (localPart.length() >= 3 && localPart.charAt(0) == '"' && localPart.charAt(localPart.length() - 1) == '"') {
-			return true;
-		}
-		return false;
-	}
-
-	public static String getLocalPartOfEmail(String email) {
-		int index = email.lastIndexOf('@');
-		if (index == -1) {
-			index = 0;
-		}
-		return email.substring(0, index);
-	}
-
-	public static String getEmailHost(String email) {
-		int index = email.lastIndexOf('@');
-		return email.substring(index + 1);
 	}
 
 }

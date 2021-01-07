@@ -1,17 +1,11 @@
 - 1.4.0
 
+    - Email generation
+        - Fix TODO in EmailCommons
+
     - Module "testing"
         - Move `atLeastOneGenerated()` and others to TestingSupport
         - Move ShrinkingTestHelper methods to ShrinkingSupport
-
-    - Email generation
-        - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails()
-        - @Email -> net.jqwik.api.web.@Email
-        - Move to new module "web"
-              - Include in aggregate artifact
-        - Fix TODO in DefaultEmailArbitrary
-        - Emails.localPart(String) 
-        - Emails.host(String) 
 
     - Use JUnit Configuration Parameters Mechanism
       https://github.com/jlink/jqwik/issues/139

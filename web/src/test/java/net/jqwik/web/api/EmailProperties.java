@@ -8,7 +8,7 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.web.api.EmailsTests.*;
+import static net.jqwik.web.api.EmailTestingSupport.*;
 
 @PropertyDefaults(edgeCases = EdgeCasesMode.NONE) // TODO: Remove as soon as edge cases are more restricted
 @Group
