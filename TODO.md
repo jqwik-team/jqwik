@@ -10,10 +10,6 @@
     - Use JUnit Configuration Parameters Mechanism
       https://github.com/jlink/jqwik/issues/139
 
-    - Add code of conduct. Examples:
-        - https://github.com/apache/groovy/blob/master/CODE_OF_CONDUCT.md
-        - https://github.com/junit-team/junit5/blob/main/CODE_OF_CONDUCT.md
-
     - Warn if method without parameters has more than 1 try
 
     - Time and Date Generation Module
