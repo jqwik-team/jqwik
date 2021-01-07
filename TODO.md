@@ -4,16 +4,6 @@
         - Move `atLeastOneGenerated()` and others to TestingSupport
         - Move ShrinkingTestHelper methods to ShrinkingSupport
 
-    - Publish test report in github action
-      ```
-      -   name: Publish Test Report
-          uses: scacap/action-surefire-report@v1
-          if: always()
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            report_paths: '**/build/test-results/test/TEST-*.xml'
-      ```  
-
     - Email generation
         - Arbitraries.emails() -> net.jqwik.api.web.Emails.emails()
         - @Email -> net.jqwik.api.web.@Email
