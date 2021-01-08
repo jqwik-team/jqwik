@@ -1,0 +1,18 @@
+package net.jqwik.api.facades;
+
+import java.util.*;
+import java.util.function.*;
+
+import net.jqwik.api.*;
+
+public abstract class TestingSupportFacade {
+
+	public static final TestingSupportFacade implementation;
+
+	static {
+		implementation = FacadeLoader.load(TestingSupportFacade.class);
+	}
+
+	public abstract <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition);
+
+}

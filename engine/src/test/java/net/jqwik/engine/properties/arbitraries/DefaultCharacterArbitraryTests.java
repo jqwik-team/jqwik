@@ -108,9 +108,9 @@ class DefaultCharacterArbitraryTests {
 							 chars.contains(c)
 		);
 
-		ArbitraryTestHelper.assertAtLeastOneGeneratedOf(all.generator(1000),
-														min1, max1, min2, max2, min3, max3,
-														'a', 'b', 'c', '1', '2', '.'
+		assertAtLeastOneGeneratedOf(all.generator(1000),
+									min1, max1, min2, max2, min3, max3,
+									'a', 'b', 'c', '1', '2', '.'
 		);
 	}
 

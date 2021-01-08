@@ -31,6 +31,18 @@ public class TestingSupport {
 		});
 	}
 
+	public static <T> void assertAllGenerated(RandomGenerator<? extends T> generator, Random random, Consumer<T> assertions) {
+		Predicate<T> checker = value -> {
+			try {
+				assertions.accept(value);
+				return true;
+			} catch (Throwable any) {
+				return false;
+			}
+		};
+		assertAllGenerated(generator, random, checker);
+	}
+
 	public static <T> void assertAtLeastOneGenerated(
 			RandomGenerator<? extends T> generator,
 			Random random,

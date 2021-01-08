@@ -12,6 +12,7 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 
+	private final TestingSupportFacadeImpl testingSupportFacade = new TestingSupportFacadeImpl();
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -19,7 +20,7 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 		RandomGenerator<? extends T> generator = arbitrary.generator(10);
 		Throwable[] originalError = new Throwable[1];
 		Shrinkable<T> falsifiedShrinkable =
-				(Shrinkable<T>) TestingSupportFacadeImpl.generateUntil(generator, random, value -> {
+				(Shrinkable<T>) testingSupportFacade.generateUntil(generator, random, value -> {
 					TryExecutionResult result = falsifier.execute(value);
 					if (result.isFalsified()) {
 						originalError[0] = result.throwable().orElse(null);
@@ -29,7 +30,6 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 		// System.out.println(falsifiedShrinkable.value());
 		return shrink(falsifiedShrinkable, falsifier, originalError[0]);
 	}
-
 
 	@Override
 	@SuppressWarnings("unchecked")

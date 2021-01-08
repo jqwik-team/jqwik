@@ -4,11 +4,12 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.facades.*;
 
-// TODO: Implement new TestingSupportFacade
-public class TestingSupportFacadeImpl {
+public class TestingSupportFacadeImpl extends TestingSupportFacade {
 
-	static <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
+	@Override
+	public  <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
 		long maxTries = 1000;
 		return generator
 					   .stream(random)

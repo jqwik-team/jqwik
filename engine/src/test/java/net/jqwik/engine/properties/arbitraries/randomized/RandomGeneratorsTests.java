@@ -19,7 +19,7 @@ class RandomGeneratorsTests {
 	void setsAreGeneratedWithCorrectMinAndMaxSize() {
 		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
 		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 2, 5);
-		ArbitraryTestHelper.assertAllGenerated(generator, set -> set.size() >= 2 && set.size() <= 5);
+		assertAllGenerated(generator, set -> set.size() >= 2 && set.size() <= 5);
 	}
 
 	@Example
@@ -171,7 +171,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators
 					.bigDecimals(range, 2, RandomDecimalGenerators.defaultShrinkingTarget(range, 2), RandomDistribution.uniform());
-			ArbitraryTestHelper.assertAllGenerated(
+			assertAllGenerated(
 				generator,
 				decimal -> decimal.compareTo(min) >= 0 && decimal.compareTo(max) <= 0 && decimal.scale() == 2
 			);
@@ -185,7 +185,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators
 					.bigDecimals(range, 1, RandomDecimalGenerators.defaultShrinkingTarget(range, 1), RandomDistribution.uniform());
-			ArbitraryTestHelper.assertAllGenerated(
+			assertAllGenerated(
 				generator,
 				decimal -> decimal.compareTo(min) > 0 && decimal.compareTo(max) < 0 && decimal.scale() == 1
 			);
@@ -199,7 +199,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators
 					.bigDecimals(range, 1, RandomDecimalGenerators.defaultShrinkingTarget(range, 1), RandomDistribution.uniform());
-			ArbitraryTestHelper.assertAllGenerated(
+			assertAllGenerated(
 				generator,
 				decimal -> decimal.compareTo(min) > 0 && decimal.compareTo(max) < 0 && decimal.scale() == 1
 			);
@@ -213,7 +213,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators
 					.bigDecimals(range, 1, RandomDecimalGenerators.defaultShrinkingTarget(range, 1), RandomDistribution.uniform());
-			ArbitraryTestHelper.assertAllGenerated(
+			assertAllGenerated(
 				generator,
 				decimal -> decimal.compareTo(min) > 0 && decimal.compareTo(max) < 0 && decimal.scale() == 1
 			);
@@ -227,7 +227,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators
 					.bigDecimals(range, 2, RandomDecimalGenerators.defaultShrinkingTarget(range, 2), RandomDistribution.uniform());
-			ArbitraryTestHelper.assertAllGenerated(
+			assertAllGenerated(
 				generator,
 				decimal -> { return decimal.equals(new BigDecimal("0.02"));}
 			);
@@ -252,7 +252,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators
 					.bigDecimals(range, 0, RandomDecimalGenerators.defaultShrinkingTarget(range, 0), RandomDistribution.uniform());
-			ArbitraryTestHelper.assertAllGenerated(generator, decimal -> {
+			assertAllGenerated(generator, decimal -> {
 				assertThat(decimal).isBetween(min, max);
 				assertThat(decimal.scale()).isEqualTo(0);
 			});
@@ -331,7 +331,7 @@ class RandomGeneratorsTests {
 	}
 
 	private void assertAllWithinRange(RandomGenerator<BigInteger> generator, BigInteger min, BigInteger max) {
-		ArbitraryTestHelper.assertAllGenerated(
+		assertAllGenerated(
 			generator,
 			integral -> {
 				// System.out.println(integral);

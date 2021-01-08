@@ -10,6 +10,9 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
+
 class FunctionsTests {
 
 	@Property(tries = 100)
@@ -47,7 +50,7 @@ class FunctionsTests {
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
-		ArbitraryTestHelper.assertAtLeastOneGenerated(
+		assertAtLeastOneGenerated(
 			functions.generator(10),
 			function -> !function.apply("value1").equals(function.apply("value2"))
 		);
@@ -127,7 +130,7 @@ class FunctionsTests {
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
-		ArbitraryTestHelper.assertAllGenerated(
+		assertAllGenerated(
 			functions.generator(10),
 			function -> function.apply(null) != null
 		);
@@ -194,7 +197,7 @@ class FunctionsTests {
 					 TryExecutionResult.satisfied() :
 					 TryExecutionResult.falsified(null);
 
-		Function<String, Integer> shrunkFunction = ShrinkingSupport.falsifyThenShrink(functions, random, falsifier);
+		Function<String, Integer> shrunkFunction = falsifyThenShrink(functions, random, falsifier);
 		assertThat(shrunkFunction.apply("value1")).isEqualTo(11);
 
 		assertThat(shrunkFunction.apply("value2")).isEqualTo(11);
@@ -232,7 +235,7 @@ class FunctionsTests {
 					.when(params -> params.get(0).equals("three"), params -> 3)
 					.when(params -> params.get(0).equals("four"), params -> 4);
 
-			ArbitraryTestHelper.assertAllGenerated(
+			assertAllGenerated(
 				functions.generator(10),
 				function -> function.apply("three") == 3 && function.apply("four") == 4
 			);
@@ -247,7 +250,7 @@ class FunctionsTests {
 					.when(params -> params.get(0).equals("three"), params -> 3)
 					.when(params -> params.get(0).equals("three"), params -> 33);
 
-			ArbitraryTestHelper.assertAllGenerated(
+			assertAllGenerated(
 				functions.generator(10),
 				function -> function.apply("three") == 3
 			);
@@ -261,7 +264,7 @@ class FunctionsTests {
 					.function(Function.class).returns(integers)
 					.when(params -> params.get(0).equals("null"), params -> null);
 
-			ArbitraryTestHelper.assertAllGenerated(
+			assertAllGenerated(
 				functions.generator(10),
 				function -> function.apply("null") == null
 			);
@@ -277,7 +280,7 @@ class FunctionsTests {
 						throw new IllegalArgumentException();
 					});
 
-			ArbitraryTestHelper.assertAllGenerated(
+			assertAllGenerated(
 				functions.generator(10),
 				function -> {
 					assertThatThrownBy(

@@ -2,6 +2,8 @@ package net.jqwik.api;
 
 import java.util.*;
 
+import net.jqwik.engine.*;
+
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
@@ -11,9 +13,9 @@ class CombinatorsBuilderTests {
 	@Example
 	void plainBuilder(@ForAll Random random) {
 		Arbitrary<Person> personArbitrary =
-			Combinators
-				.withBuilder(PersonBuilder::new)
-				.build(PersonBuilder::build);
+				Combinators
+						.withBuilder(PersonBuilder::new)
+						.build(PersonBuilder::build);
 
 		Person value = generateFirst(personArbitrary, random);
 		assertThat(value.age).isEqualTo(PersonBuilder.DEFAULT_AGE);
@@ -26,11 +28,11 @@ class CombinatorsBuilderTests {
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
 		Arbitrary<Person> personArbitrary =
-			Combinators
-				.withBuilder(PersonBuilder::new)
-				.use(name).in((b, n) -> b.withName(n))
-				.use(age).in((b, a) -> b.withAge(a))
-				.build(PersonBuilder::build);
+				Combinators
+						.withBuilder(PersonBuilder::new)
+						.use(name).in((b, n) -> b.withName(n))
+						.use(age).in((b, a) -> b.withAge(a))
+						.build(PersonBuilder::build);
 
 		Person value = generateFirst(personArbitrary, random);
 		assertThat(value.age).isBetween(0, 15);
@@ -43,14 +45,17 @@ class CombinatorsBuilderTests {
 		Arbitrary<StringBuilder> stringBuilders = Arbitraries.of("a", "b", "c").map(StringBuilder::new);
 
 		Arbitrary<String> personArbitrary =
-			Combinators
-				.withBuilder(stringBuilders)
-				.use(digit).in((b, d) -> b.append(d))
-				.build(b -> b.toString());
+				Combinators
+						.withBuilder(stringBuilders)
+						.use(digit).in((b, d) -> b.append(d))
+						.build(b -> b.toString());
 
-		ArbitraryTestHelper.assertAllGenerated(personArbitrary.generator(1), (String value) -> {
-			assertThat(value).matches("(a|b|c)(1|2|3)");
-		});
+		assertAllGenerated(
+				personArbitrary.generator(1),
+				SourceOfRandomness.current(),
+				(String value) -> assertThat(value).matches("(a|b|c)(1|2|3)")
+		);
+
 	}
 
 	@Example
@@ -58,27 +63,29 @@ class CombinatorsBuilderTests {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 
 		Arbitrary<Person> personArbitrary =
-			Combinators
-				.withBuilder(PersonBuilder::new)
-				.use(name).in((b, n) -> b.withName(n))
-				.build(PersonBuilder::build);
+				Combinators
+						.withBuilder(PersonBuilder::new)
+						.use(name).in((b, n) -> b.withName(n))
+						.build(PersonBuilder::build);
 
-		ArbitraryTestHelper.assertAllGenerated(
-			personArbitrary.generator(1),
-			person -> person.age == PersonBuilder.DEFAULT_AGE
+		assertAllGenerated(
+				personArbitrary.generator(1),
+				SourceOfRandomness.current(),
+				person -> person.age == PersonBuilder.DEFAULT_AGE
 		);
 	}
 
 	@Example
 	void buildWithoutFunctionUsesIdentityAsDefault() {
 		Arbitrary<Person> personArbitrary =
-			Combinators
-				.withBuilder(() -> new Person("john", 42))
-				.build();
+				Combinators
+						.withBuilder(() -> new Person("john", 42))
+						.build();
 
-		ArbitraryTestHelper.assertAllGenerated(
-			personArbitrary.generator(1),
-			person -> person.age == 42 && person.name.equals("john")
+		assertAllGenerated(
+				personArbitrary.generator(1),
+				SourceOfRandomness.current(),
+				person -> person.age == 42 && person.name.equals("john")
 		);
 	}
 
@@ -88,17 +95,16 @@ class CombinatorsBuilderTests {
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
 		Arbitrary<Person> personArbitrary =
-			Combinators
-				.withBuilder(() -> new Person("", 0))
-				.use(name).inSetter(Person::setName)
-				.use(age).inSetter(Person::setAge)
-				.build();
+				Combinators
+						.withBuilder(() -> new Person("", 0))
+						.use(name).inSetter(Person::setName)
+						.use(age).inSetter(Person::setAge)
+						.build();
 
 		Person value = generateFirst(personArbitrary, random);
 		assertThat(value.age).isBetween(0, 15);
 		assertThat(value.name).hasSize(10);
 	}
-
 
 	private static class Person {
 

@@ -323,11 +323,11 @@ class ArbitraryTests {
 			assertThat(generator.next(random).value()).hasSize(4);
 			assertThat(generator.next(random).value()).hasSize(5);
 
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("a"));
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("b"));
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("c"));
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("d"));
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("e"));
+			assertAtLeastOneGenerated(generator, s -> s.startsWith("a"));
+			assertAtLeastOneGenerated(generator, s -> s.startsWith("b"));
+			assertAtLeastOneGenerated(generator, s -> s.startsWith("c"));
+			assertAtLeastOneGenerated(generator, s -> s.startsWith("d"));
+			assertAtLeastOneGenerated(generator, s -> s.startsWith("e"));
 		}
 
 	}

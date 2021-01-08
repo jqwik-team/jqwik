@@ -1,8 +1,5 @@
 - 1.4.0
 
-    - Module "testing"
-        - Move `atLeastOneGenerated()` and others to TestingSupport
-
     - Use JUnit Configuration Parameters Mechanism
       https://github.com/jlink/jqwik/issues/139
 

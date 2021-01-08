@@ -10,6 +10,8 @@ import net.jqwik.api.arbitraries.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.ArbitraryTestHelper.*;
+
 @Group
 class ArbitraryEdgeCasesTests {
 
@@ -292,7 +294,7 @@ class ArbitraryEdgeCasesTests {
 			assertThat(values(edgeCases)).isEmpty();
 
 			// Random value generation still works
-			ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), s -> {
+			assertAllGenerated(arbitrary.generator(1000), s -> {
 				assertThat(s).isIn("one", "two", "three");
 			});
 		}

@@ -2,15 +2,16 @@ package net.jqwik.api.edgeCases;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
@@ -264,9 +265,11 @@ class NumbersEdgeCasesTests {
 				Assertions.assertThat(values(edgeCases)).isEmpty();
 
 				// Random value generation still works
-				assertAllGenerated(arbitrary.generator(1000), i -> {
-					assertThat(i).isBetween(-100, 100);
-				});
+				assertAllGenerated(
+						arbitrary.generator(1000),
+						SourceOfRandomness.current(),
+						(Consumer<Integer>) i -> assertThat(i).isBetween(-100, 100)
+				);
 			}
 
 			@Example
