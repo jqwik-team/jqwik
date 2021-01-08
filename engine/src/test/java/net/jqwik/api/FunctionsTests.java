@@ -10,8 +10,6 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
-
 class FunctionsTests {
 
 	@Property(tries = 100)
@@ -196,7 +194,7 @@ class FunctionsTests {
 					 TryExecutionResult.satisfied() :
 					 TryExecutionResult.falsified(null);
 
-		Function<String, Integer> shrunkFunction = falsifyThenShrink(functions, random, falsifier);
+		Function<String, Integer> shrunkFunction = ShrinkingSupport.falsifyThenShrink(functions, random, falsifier);
 		assertThat(shrunkFunction.apply("value1")).isEqualTo(11);
 
 		assertThat(shrunkFunction.apply("value2")).isEqualTo(11);
@@ -297,7 +295,7 @@ class FunctionsTests {
 					.function(Function.class).returns(integers)
 					.when(params -> params.get(0).equals("three"), params -> 3);
 
-			Function<String, Integer> shrunkFunction = shrinkToMinimal(functions, random);
+			Function<String, Integer> shrunkFunction = ShrinkingSupport.falsifyThenShrink(functions, random);
 
 			assertThat(shrunkFunction.apply("three")).isEqualTo(3);
 		}

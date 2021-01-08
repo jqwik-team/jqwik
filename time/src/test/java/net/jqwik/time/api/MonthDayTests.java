@@ -181,7 +181,7 @@ class MonthDayTests {
 		@Property
 		void defaultShrinking(@ForAll Random random) {
 			MonthDayArbitrary monthDays = Dates.monthDays();
-			MonthDay value = shrinkToMinimal(monthDays, random);
+			MonthDay value = falsifyThenShrink(monthDays, random);
 			assertThat(value).isEqualTo(MonthDay.of(Month.JANUARY, 1));
 		}
 
@@ -189,7 +189,7 @@ class MonthDayTests {
 		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			MonthDayArbitrary monthDays = Dates.monthDays();
 			TestingFalsifier<MonthDay> falsifier = md -> md.isBefore(MonthDay.of(Month.MAY, 25));
-			MonthDay value = shrinkToMinimal(monthDays, random, falsifier);
+			MonthDay value = falsifyThenShrink(monthDays, random, falsifier);
 			assertThat(value).isEqualTo(MonthDay.of(Month.MAY, 25));
 		}
 

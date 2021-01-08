@@ -9,11 +9,11 @@ import net.jqwik.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
-public abstract class TestingSupportFacade {
-	public static final TestingSupportFacade implementation;
+public abstract class ShrinkingSupportFacade {
+	public static final ShrinkingSupportFacade implementation;
 
 	static {
-		implementation = FacadeLoader.load(TestingSupportFacade.class);
+		implementation = FacadeLoader.load(ShrinkingSupportFacade.class);
 	}
 
 	public abstract <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier);

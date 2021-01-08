@@ -16,7 +16,8 @@ import net.jqwik.engine.properties.shrinking.*;
  *
  * TODO: Extract all testing support into module of its own
  */
-public class TestingSupportFacadeImpl extends TestingSupportFacade {
+public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
+
 
 	@SuppressWarnings("unchecked")
 	public <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {

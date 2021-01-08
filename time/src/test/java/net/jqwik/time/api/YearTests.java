@@ -83,7 +83,7 @@ class YearTests {
 		@Property
 		void defaultShrinking(@ForAll Random random) {
 			YearArbitrary years = Dates.years();
-			Year value = shrinkToMinimal(years, random);
+			Year value = falsifyThenShrink(years, random);
 			assertThat(value).isEqualTo(Year.of(1900));
 		}
 
@@ -91,7 +91,7 @@ class YearTests {
 		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
 			YearArbitrary years = Dates.years();
 			TestingFalsifier<Year> falsifier = year -> year.getValue() < 1942;
-			Year value = shrinkToMinimal(years, random, falsifier);
+			Year value = falsifyThenShrink(years, random, falsifier);
 			assertThat(value).isEqualTo(Year.of(1942));
 		}
 

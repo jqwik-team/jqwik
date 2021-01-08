@@ -19,7 +19,7 @@ class TestingSupportTests {
 	void shrinkToMinimal(@ForAll Random random) {
 		Arbitrary<String> strings = Arbitraries.strings().alpha().ofMaxLength(10);
 
-		String shrunkValue = ShrinkingSupport.shrinkToMinimal(strings, random);
+		String shrunkValue = ShrinkingSupport.falsifyThenShrink(strings, random);
 		Assertions.assertThat(shrunkValue).isEqualTo("");
 	}
 

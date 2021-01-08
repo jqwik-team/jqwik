@@ -183,7 +183,7 @@ class YearMonthTests {
 		@Property
 		void defaultShrinking(@ForAll Random random) {
 			YearMonthArbitrary yearMonths = Dates.yearMonths();
-			YearMonth value = shrinkToMinimal(yearMonths, random);
+			YearMonth value = falsifyThenShrink(yearMonths, random);
 			assertThat(value).isEqualTo(YearMonth.of(1900, Month.JANUARY));
 		}
 
@@ -191,7 +191,7 @@ class YearMonthTests {
 		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
 			YearMonthArbitrary yearMonths = Dates.yearMonths();
 			TestingFalsifier<YearMonth> falsifier = ym -> ym.isBefore(YearMonth.of(2013, Month.MAY));
-			YearMonth value = shrinkToMinimal(yearMonths, random, falsifier);
+			YearMonth value = falsifyThenShrink(yearMonths, random, falsifier);
 			assertThat(value).isEqualTo(YearMonth.of(2013, Month.MAY));
 		}
 

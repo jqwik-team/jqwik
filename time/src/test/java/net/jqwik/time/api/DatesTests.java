@@ -271,7 +271,7 @@ class DatesTests {
 		@Property
 		void defaultShrinking(@ForAll Random random) {
 			DateArbitrary dates = Dates.dates();
-			LocalDate value = shrinkToMinimal(dates, random);
+			LocalDate value = falsifyThenShrink(dates, random);
 			assertThat(value).isEqualTo(LocalDate.of(1900, Month.JANUARY, 1));
 		}
 
@@ -279,7 +279,7 @@ class DatesTests {
 		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
 			DateArbitrary dates = Dates.dates();
 			TestingFalsifier<LocalDate> falsifier = date -> date.isBefore(LocalDate.of(2013, Month.MAY, 25));
-			LocalDate value = shrinkToMinimal(dates, random, falsifier);
+			LocalDate value = falsifyThenShrink(dates, random, falsifier);
 			assertThat(value).isEqualTo(LocalDate.of(2013, Month.MAY, 25));
 		}
 

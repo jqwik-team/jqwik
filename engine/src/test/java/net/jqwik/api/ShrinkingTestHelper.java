@@ -11,6 +11,8 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.testing.*;
 
+import static net.jqwik.testing.ShrinkingSupport.*;
+
 public class ShrinkingTestHelper {
 
 	public static AssertionError failAndCatch(String message) {
@@ -62,22 +64,6 @@ public class ShrinkingTestHelper {
 	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
 		T value = shrinkToMinimal(arbitrary, random);
 		Assertions.assertThat(value).isEqualTo(expectedShrunkValue);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
-		RandomGenerator<? extends T> generator = arbitrary.generator(10);
-		Throwable[] originalError = new Throwable[1];
-		Shrinkable<T> falsifiedShrinkable =
-			(Shrinkable<T>) ArbitraryTestHelper.generateUntil(generator, random, value -> {
-				TryExecutionResult result = falsifier.execute(value);
-				if (result.isFalsified()) {
-					originalError[0] = result.throwable().orElse(null);
-				}
-				return result.isFalsified();
-			});
-		// System.out.println(falsifiedShrinkable.value());
-		return shrinkToMinimal(falsifiedShrinkable, falsifier, originalError[0]);
 	}
 
 	public static <T> T shrinkToMinimal(Arbitrary<? extends T> arbitrary, Random random) {

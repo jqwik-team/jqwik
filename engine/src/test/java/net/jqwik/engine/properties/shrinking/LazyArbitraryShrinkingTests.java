@@ -11,6 +11,7 @@ import net.jqwik.testing.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.api.Tuple.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 class LazyArbitraryShrinkingTests {
 

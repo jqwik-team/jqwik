@@ -274,7 +274,7 @@ public class EmailsTests {
 		@Property
 		void defaultShrinking(@ForAll Random random) {
 			EmailArbitrary emails = Emails.emails();
-			String value = shrinkToMinimal(emails, random);
+			String value = falsifyThenShrink(emails, random);
 			assertThat(value).isEqualTo("A@a.aa");
 		}
 
@@ -282,7 +282,7 @@ public class EmailsTests {
 		void domainShrinking(@ForAll Random random) {
 			EmailArbitrary emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyDomain();
-			String value = shrinkToMinimal(emails, random, falsifier);
+			String value = falsifyThenShrink(emails, random, falsifier);
 			assertThat(value).isEqualTo("A@a.aa");
 		}
 
@@ -290,7 +290,7 @@ public class EmailsTests {
 		void ipv4Shrinking(@ForAll Random random) {
 			EmailArbitrary emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyIPv4();
-			String value = shrinkToMinimal(emails, random, falsifier);
+			String value = falsifyThenShrink(emails, random, falsifier);
 			assertThat(value).isEqualTo("A@[0.0.0.0]");
 		}
 
@@ -298,7 +298,7 @@ public class EmailsTests {
 		void ipv6Shrinking(@ForAll Random random) {
 			Arbitrary<String> emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyIPv6();
-			String value = shrinkToMinimal(emails, random, falsifier);
+			String value = falsifyThenShrink(emails, random, falsifier);
 			assertThat(value).isEqualTo("A@[::]");
 		}
 
