@@ -5,6 +5,7 @@ import java.util.*;
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -17,4 +18,16 @@ public abstract class ShrinkingSupportFacade {
 	}
 
 	public abstract <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier);
+
+	public abstract <T> T shrink(
+			Shrinkable<T> falsifiedShrinkable,
+			Falsifier<T> falsifier,
+			Throwable originalError
+	);
+
+	public abstract <T> ShrunkFalsifiedSample shrinkToSample(
+			Shrinkable<T> falsifiedShrinkable,
+			Falsifier<T> falsifier,
+			Throwable originalError
+	);
 }

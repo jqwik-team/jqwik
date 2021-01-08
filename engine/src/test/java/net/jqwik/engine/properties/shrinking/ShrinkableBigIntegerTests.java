@@ -10,7 +10,7 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 @Group
 @Label("ShrinkableBigInteger")
@@ -83,7 +83,7 @@ class ShrinkableBigIntegerTests {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(5L, 500000L));
 
 			TestingFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(1000)) <= 0;
-			BigInteger shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			BigInteger shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(BigInteger.valueOf(1001));
 		}
 
@@ -94,7 +94,7 @@ class ShrinkableBigIntegerTests {
 			TestingFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.intValueExact() < 99;
 			Falsifier<BigInteger> filteredFalsifier = falsifier.withFilter(aBigInteger -> aBigInteger.intValueExact() % 2 == 0);
 
-			BigInteger shrunkValue = shrinkToMinimal(shrinkable, filteredFalsifier, null);
+			BigInteger shrunkValue = shrink(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).isEqualTo(BigInteger.valueOf(100));
 		}
 
@@ -103,7 +103,7 @@ class ShrinkableBigIntegerTests {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(1000, Range.of(5L, 500000L), 5000L);
 
 			TestingFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(5000)) >= 0;
-			BigInteger shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			BigInteger shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(BigInteger.valueOf(4999));
 		}
 

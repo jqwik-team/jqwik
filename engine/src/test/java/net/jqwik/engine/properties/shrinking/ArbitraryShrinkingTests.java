@@ -50,7 +50,7 @@ class ArbitraryShrinkingTests {
 
 		Shrinkable<Integer> shrinkable = arbitrary.generator(10).next(random);
 		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
-		int shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+		int shrunkValue = shrink(shrinkable, falsifier, null);
 		assertThat(shrunkValue).isEqualTo(shrinkable.value());
 	}
 
@@ -105,7 +105,7 @@ class ArbitraryShrinkingTests {
 		RandomGenerator<List<Integer>> generator = collected.generator(10);
 
 		Shrinkable<List<Integer>> shrinkable = generator.next(random);
-		List<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+		List<Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 		assertThat(shrunkValue).containsExactly(3, 3, 3, 3);
 	}
 
@@ -124,7 +124,7 @@ class ArbitraryShrinkingTests {
 
 		RandomGenerator<Integer> generator = integer.generator(10);
 		Shrinkable<Integer> shrinkable = generator.next(random);
-		Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+		Integer shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 		assertThat(shrunkValue).isEqualTo(0);
 	}
 

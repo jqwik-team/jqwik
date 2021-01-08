@@ -45,7 +45,7 @@ class FlatMappedShrinkableTests {
 			Assume.that(shrinkable.value() > 3);
 
 			TestingFalsifier<Integer> falsifier = anInt -> anInt < 3;
-			int shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			int shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(3);
 		}
 
@@ -58,7 +58,7 @@ class FlatMappedShrinkableTests {
 			Assume.that(shrinkable.value() >= 3); // depends on seed
 
 			TestingFalsifier<Integer> falsifier = anInt -> anInt < 3;
-			int shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			int shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(3);
 		}
 
@@ -76,7 +76,7 @@ class FlatMappedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			String shrunkValue = shrinkToMinimal(shrinkable, onlyEmptyStrings, null);
+			String shrunkValue = shrink(shrinkable, onlyEmptyStrings, null);
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
@@ -97,7 +97,7 @@ class FlatMappedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			String shrunkValue = shrinkToMinimal(shrinkable, onlyEmptyStrings, null);
+			String shrunkValue = shrink(shrinkable, onlyEmptyStrings, null);
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
@@ -118,7 +118,7 @@ class FlatMappedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			String shrunkValue = shrinkToMinimal(shrinkable, onlyEmptyStrings, null);
+			String shrunkValue = shrink(shrinkable, onlyEmptyStrings, null);
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
@@ -135,7 +135,7 @@ class FlatMappedShrinkableTests {
 			assertThat(shrinkable.value()).hasSize(5);
 
 			TestingFalsifier<String> falsifier = aString -> aString.length() < 3;
-			String shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			String shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("aaa");
 		}
 
@@ -155,7 +155,7 @@ class FlatMappedShrinkableTests {
 			Assume.that(shrinkable.value().chars().allMatch(c -> c >= 'f'));
 
 			TestingFalsifier<String> falsifier = aString -> aString.chars().allMatch(c -> c < 'f');
-			String shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			String shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("f");
 		}
 
@@ -173,7 +173,7 @@ class FlatMappedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, onlyListsWithLessThan10Elements, null);
+			List<Integer> shrunkValue = shrink(shrinkable, onlyListsWithLessThan10Elements, null);
 			assertThat(shrunkValue).isEqualTo(asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 		}
 
@@ -196,7 +196,7 @@ class FlatMappedShrinkableTests {
 					}
 					return TryExecutionResult.falsified(null);
 				};
-				List<String> result = shrinkToMinimal(edgeCase, onlyEmptyLists, null);
+				List<String> result = shrink(edgeCase, onlyEmptyLists, null);
 				assertThat(result).isEqualTo(asList("a"));
 			}
 		}

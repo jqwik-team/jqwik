@@ -6,6 +6,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 @Group
 @Label("MappedShrinkable")
@@ -24,7 +25,7 @@ class MappedShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + i);
 
-		String shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+		String shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 		assertThat(shrunkValue).isEqualTo("00");
 	}
 

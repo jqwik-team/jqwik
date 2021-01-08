@@ -11,7 +11,7 @@ import net.jqwik.testing.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 class ShrinkableActionSequenceTests {
 
@@ -60,7 +60,7 @@ class ShrinkableActionSequenceTests {
 			seq.run("");
 			return false;
 		};
-		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrink(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.run("")).isEqualTo("x");
 	}
@@ -80,7 +80,7 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		};
 
-		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrink(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
@@ -103,7 +103,7 @@ class ShrinkableActionSequenceTests {
 				return result.length() < 2;
 		};
 
-		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrink(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
@@ -127,7 +127,7 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		};
 
-		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrink(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
@@ -141,7 +141,7 @@ class ShrinkableActionSequenceTests {
 			String result = seq.run("");
 			return !result.contains("x");
 		};
-		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrink(shrinkable, falsifier, null);
 		assertThat(shrunkValue.run("")).isEqualTo("x");
 	}
 

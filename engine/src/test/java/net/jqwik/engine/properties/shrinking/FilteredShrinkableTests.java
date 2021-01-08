@@ -9,6 +9,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 @Group
 @Label("FilteredShrinkable")
@@ -30,7 +31,7 @@ class FilteredShrinkableTests {
 			Shrinkable<Integer> integerShrinkable = new FullShrinkable(3);
 			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
-			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			Integer shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(1);
 		}
 
@@ -39,7 +40,7 @@ class FilteredShrinkableTests {
 			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
-			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			Integer shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(1);
 		}
 
@@ -48,7 +49,7 @@ class FilteredShrinkableTests {
 			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(49);
 			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i > 0 && i % 7 == 0);
 
-			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			Integer shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(7);
 		}
 
@@ -57,7 +58,7 @@ class FilteredShrinkableTests {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 40).filter(i -> i > 30);
 			Shrinkable<Integer> shrinkable = ArbitraryTestHelper.generateUntil(integers.generator(10), random, i -> true);
 
-			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			Integer shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(31);
 		}
 

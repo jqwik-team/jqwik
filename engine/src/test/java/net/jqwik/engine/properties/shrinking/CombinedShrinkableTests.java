@@ -11,6 +11,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 @Group
 @Label("CombinedShrinkable")
@@ -51,7 +52,7 @@ class CombinedShrinkableTests {
 			List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
 			Shrinkable<Tuple2<Integer, Integer>> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
-			Tuple2<Integer, Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			Tuple2<Integer, Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(Tuple.of(0, 0));
 		}
 
@@ -69,7 +70,7 @@ class CombinedShrinkableTests {
 			List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
 			Shrinkable<Tuple2<Integer, Integer>> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
-			Tuple2<Integer, Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(tuple -> tuple.get1() + tuple.get2() < 4), null);
+			Tuple2<Integer, Integer> shrunkValue = shrink(shrinkable, falsifier(tuple -> tuple.get1() + tuple.get2() < 4), null);
 			assertThat(shrunkValue.get1() + shrunkValue.get2()).isEqualTo(4);
 		}
 
@@ -94,7 +95,7 @@ class CombinedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			Tuple2<Integer, Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			Tuple2<Integer, Integer> shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(Tuple.of(0, 1));
 		}
 

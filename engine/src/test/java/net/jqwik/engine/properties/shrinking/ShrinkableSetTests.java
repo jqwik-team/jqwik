@@ -12,6 +12,7 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 @Group
 @Label("ShrinkableSet")
@@ -31,7 +32,7 @@ class ShrinkableSetTests {
 		void downAllTheWay() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2), 0);
 
-			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			Set<Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).hasSize(0);
 		}
 
@@ -39,7 +40,7 @@ class ShrinkableSetTests {
 		void downToMinSize() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3, 4), 2);
 
-			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			Set<Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).containsExactly(0, 1);
 		}
 
@@ -47,7 +48,7 @@ class ShrinkableSetTests {
 		void downToNonEmpty() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3), 0);
 
-			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(Set::isEmpty), null);
+			Set<Integer> shrunkValue = shrink(shrinkable, falsifier(Set::isEmpty), null);
 			assertThat(shrunkValue).containsExactly(0);
 		}
 
@@ -56,7 +57,7 @@ class ShrinkableSetTests {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 3, 4), 0);
 
 			TestingFalsifier<Set<Integer>> falsifier = aSet -> aSet.size() <= 1;
-			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			Set<Integer> shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 1);
 		}
 
@@ -68,7 +69,7 @@ class ShrinkableSetTests {
 				if (integers.size() > 1) throw failAndCatch("my reason");
 				return true;
 			};
-			ShrunkFalsifiedSample sample = shrink(shrinkable, falsifier, failAndCatch("original"));
+			ShrunkFalsifiedSample sample = shrinkToSample(shrinkable, falsifier, failAndCatch("original"));
 
 			//noinspection unchecked
 			assertThat((Set<Integer>) sample.parameters().get(0)).containsExactly(0, 1);
@@ -86,7 +87,7 @@ class ShrinkableSetTests {
 			Falsifier<Set<Integer>> falsifier = falsifier(Set::isEmpty);
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.size() % 2 == 0);
 
-			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, filteredFalsifier, null);
+			Set<Integer> shrunkValue = shrink(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 1);
 		}
 
@@ -96,7 +97,7 @@ class ShrinkableSetTests {
 
 			Falsifier<Set<Integer>> falsifier = falsifier(Set::isEmpty);
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.contains(2) || aSet.contains(4));
-			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, filteredFalsifier, null);
+			Set<Integer> shrunkValue = shrink(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).containsExactly(2);
 		}
 
@@ -112,7 +113,7 @@ class ShrinkableSetTests {
 					return integers.size() != 2 || Math.abs(first - second) > 1;
 				};
 
-			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			Set<Integer> shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 1);
 		}
 
@@ -127,7 +128,7 @@ class ShrinkableSetTests {
 					return Math.abs(max.get() - min.get()) > 4;
 				};
 
-			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			Set<Integer> shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 1, 2, 3);
 		}
 
@@ -137,7 +138,7 @@ class ShrinkableSetTests {
 																   .collect(Collectors.toSet());
 			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5, 1000);
 
-			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(Set::isEmpty), null);
+			Set<Integer> shrunkValue = shrink(shrinkable, falsifier(Set::isEmpty), null);
 			assertThat(shrunkValue).containsExactly(0, 1, 2, 3, 4);
 		}
 

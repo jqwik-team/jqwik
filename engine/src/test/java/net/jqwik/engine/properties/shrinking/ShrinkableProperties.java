@@ -8,7 +8,7 @@ import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Group
@@ -16,7 +16,7 @@ class ShrinkableProperties {
 
 	@Property
 	void allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
-		shrinkToMinimal(shrinkable, ignore -> TryExecutionResult.falsified(null), null);
+		shrink(shrinkable, ignore -> TryExecutionResult.falsified(null), null);
 	}
 
 	@Property(tries = 100)

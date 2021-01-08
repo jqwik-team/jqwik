@@ -8,7 +8,6 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.testing.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
@@ -53,45 +52,9 @@ public class ShrinkingTestHelper {
 		return predicate::test;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> Falsifier<List<Object>> toParamFalsifier(Falsifier<T> tFalsifier) {
-		return params -> {
-			T t = (T) params.get(0);
-			return tFalsifier.execute(t);
-		};
-	}
-
 	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
 		T value = falsifyThenShrink(arbitrary, random);
 		Assertions.assertThat(value).isEqualTo(expectedShrunkValue);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T shrinkToMinimal(
-		Shrinkable<T> falsifiedShrinkable,
-		Falsifier<T> falsifier,
-		Throwable originalError
-	) {
-		ShrunkFalsifiedSample sample = shrink(falsifiedShrinkable, falsifier, originalError);
-		return (T) sample.parameters().get(0);
-	}
-
-	public static <T> ShrunkFalsifiedSample shrink(
-		Shrinkable<T> falsifiedShrinkable,
-		Falsifier<T> falsifier,
-		Throwable originalError
-	) {
-		FalsifiedSample sample = toFalsifiedSample(falsifiedShrinkable, originalError);
-		Consumer<FalsifiedSample> parametersReporter = ignore -> {};
-		PropertyShrinker shrinker = new PropertyShrinker(sample, ShrinkingMode.FULL, 10, parametersReporter, null);
-
-		return shrinker.shrink(toParamFalsifier(falsifier));
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> FalsifiedSample toFalsifiedSample(Shrinkable<T> falsifiedShrinkable, Throwable originalError) {
-		List<Shrinkable<Object>> shrinkables = Collections.singletonList((Shrinkable<Object>) falsifiedShrinkable);
-		return toFalsifiedSample(shrinkables, originalError);
 	}
 
 }

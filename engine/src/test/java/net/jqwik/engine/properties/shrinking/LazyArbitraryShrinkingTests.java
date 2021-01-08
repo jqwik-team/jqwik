@@ -9,7 +9,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.testing.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.api.Tuple.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
 
@@ -57,7 +56,7 @@ class LazyArbitraryShrinkingTests {
 				TryExecutionResult result = falsifier.execute(value);
 				return result.isFalsified();
 			});
-		List<Integer> shrunkValue = shrinkToMinimal(falsifiedShrinkable, falsifier, null);
+		List<Integer> shrunkValue = shrink(falsifiedShrinkable, falsifier, null);
 
 		Assertions.assertThat(shrunkValue.size()).isLessThanOrEqualTo(falsifiedShrinkable.value().size());
 		// TODO: Shrinking should be improved so that:

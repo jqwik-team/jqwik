@@ -8,7 +8,7 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 class ChooseValueShrinkableTests {
 
@@ -22,7 +22,7 @@ class ChooseValueShrinkableTests {
 	@Example
 	void shrinking() {
 		Shrinkable<Integer> shrinkable = new ChooseValueShrinkable<>(4, Arrays.asList(1, 2, 3, 4, 5));
-		Integer shrunkValue = shrinkToMinimal(shrinkable, (TestingFalsifier<Integer>) ignore -> false, null);
+		Integer shrunkValue = shrink(shrinkable, (TestingFalsifier<Integer>) ignore -> false, null);
 		assertThat(shrunkValue).isEqualTo(1);
 	}
 

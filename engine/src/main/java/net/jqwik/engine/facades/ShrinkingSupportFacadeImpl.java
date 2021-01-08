@@ -19,6 +19,7 @@ import net.jqwik.engine.properties.shrinking.*;
 public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
 		RandomGenerator<? extends T> generator = arbitrary.generator(10);
@@ -32,20 +33,23 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 					return result.isFalsified();
 				});
 		// System.out.println(falsifiedShrinkable.value());
-		return shrinkToMinimal(falsifiedShrinkable, falsifier, originalError[0]);
+		return shrink(falsifiedShrinkable, falsifier, originalError[0]);
 	}
 
+
+	@Override
 	@SuppressWarnings("unchecked")
-	private static <T> T shrinkToMinimal(
+	public <T> T shrink(
 			Shrinkable<T> falsifiedShrinkable,
 			Falsifier<T> falsifier,
 			Throwable originalError
 	) {
-		ShrunkFalsifiedSample sample = shrink(falsifiedShrinkable, falsifier, originalError);
+		ShrunkFalsifiedSample sample = shrinkToSample(falsifiedShrinkable, falsifier, originalError);
 		return (T) sample.parameters().get(0);
 	}
 
-	private static <T> ShrunkFalsifiedSample shrink(
+	@Override
+	public <T> ShrunkFalsifiedSample shrinkToSample(
 			Shrinkable<T> falsifiedShrinkable,
 			Falsifier<T> falsifier,
 			Throwable originalError

@@ -12,6 +12,7 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.ShrinkingSupport.*;
 
 @Group
 @Label("CollectShrinkable")
@@ -45,7 +46,7 @@ class CollectShrinkableTests {
 			Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
 			Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
-			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			List<Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).containsExactly(0, 0);
 		}
 
@@ -66,7 +67,7 @@ class CollectShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			List<Integer> shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 0);
 		}
 
@@ -84,7 +85,7 @@ class CollectShrinkableTests {
 				int sum = listOfInts.stream().mapToInt(i -> i).sum();
 				return sum % 2 != 0;
 			};
-			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, sumMustNotBeEven, null);
+			List<Integer> shrunkValue = shrink(shrinkable, sumMustNotBeEven, null);
 			assertThat(shrunkValue).containsExactly(1, 1);
 		}
 
@@ -100,7 +101,7 @@ class CollectShrinkableTests {
 				return sum >= 6;
 			};
 			Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, sumAtLeast6);
-			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			List<Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).containsExactly(3, 3);
 		}
 
@@ -118,7 +119,7 @@ class CollectShrinkableTests {
 				return sum >= 10;
 			};
 			Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, sumAtLeast10);
-			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			List<Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(asList(1, 2, 3, 4));
 		}
 
@@ -136,7 +137,7 @@ class CollectShrinkableTests {
 				return sum >= 10 && l.get(0) != 1;
 			};
 			Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, sumAtLeast10);
-			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			List<Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(asList(2, 1, 3, 4));
 		}
 	}

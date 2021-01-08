@@ -24,4 +24,19 @@ public class ShrinkingSupport {
 		return ShrinkingSupportFacade.implementation.falsifyThenShrink(arbitrary, random, falsifier);
 	}
 
+	public static <T> T shrink(
+			Shrinkable<T> falsifiedShrinkable,
+			Falsifier<T> falsifier,
+			Throwable originalError
+	) {
+		return ShrinkingSupportFacade.implementation.shrink(falsifiedShrinkable, falsifier, originalError);
+	}
+
+	public static <T> ShrunkFalsifiedSample shrinkToSample(
+			Shrinkable<T> falsifiedShrinkable,
+			Falsifier<T> falsifier,
+			Throwable originalError
+	) {
+		return ShrinkingSupportFacade.implementation.shrinkToSample(falsifiedShrinkable, falsifier, originalError);
+	}
 }
