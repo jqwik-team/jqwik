@@ -7,6 +7,8 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
+import static net.jqwik.testing.ShrinkingSupport.*;
+
 @PropertyDefaults(tries = 100, shrinking = ShrinkingMode.FULL)
 class CombinatorsShrinkingTests {
 
@@ -17,7 +19,7 @@ class CombinatorsShrinkingTests {
 				.combine(Arbitraries.integers(), Arbitraries.strings().alpha().ofMinLength(1))
 				.as((i, s) -> i + s);
 
-		String shrunkValue = ShrinkingTestHelper.shrinkToMinimal(as, random);
+		String shrunkValue = falsifyThenShrink(as, random);
 
 		Assertions.assertThat(shrunkValue).isIn("0A", "0a");
 	}
@@ -29,9 +31,10 @@ class CombinatorsShrinkingTests {
 				.combine(Arbitraries.integers(), Arbitraries.strings().alpha().ofMinLength(1))
 				.as((i, s) -> i + s);
 
-		Falsifier<String> falsifier = aString -> aString.length() >= 3 ? TryExecutionResult.falsified(null) : TryExecutionResult
-																												  .satisfied();
-		String shrunkValue = ShrinkingTestHelper.shrinkToMinimal(as, random, falsifier);
+		Falsifier<String> falsifier = aString -> aString.length() >= 3
+														 ? TryExecutionResult.falsified(null)
+														 : TryExecutionResult.satisfied();
+		String shrunkValue = falsifyThenShrink(as, random, falsifier);
 
 		Assertions.assertThat(shrunkValue).isIn("0AA", "10a", "10A", "-1a", "-1A");
 	}
@@ -52,7 +55,7 @@ class CombinatorsShrinkingTests {
 				.use(Arbitraries.integers().greaterOrEqual(10000000)).in(Integer::sum)
 				.build();
 
-		int shrunkValue = ShrinkingTestHelper.shrinkToMinimal(as, random);
+		int shrunkValue = falsifyThenShrink(as, random);
 
 		Assertions.assertThat(shrunkValue).isEqualTo(11111110);
 	}
@@ -79,7 +82,7 @@ class CombinatorsShrinkingTests {
 			}
 			return TryExecutionResult.satisfied();
 		};
-		Thing shrunkValue = ShrinkingTestHelper.shrinkToMinimal(things, random, falsifier);
+		Thing shrunkValue = falsifyThenShrink(things, random, falsifier);
 
 		Assertions.assertThat(shrunkValue.a).isEqualTo(42);
 		Assertions.assertThat(shrunkValue.b).isEqualTo(0);

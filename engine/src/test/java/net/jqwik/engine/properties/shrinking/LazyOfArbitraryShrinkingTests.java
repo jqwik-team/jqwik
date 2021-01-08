@@ -36,7 +36,7 @@ class LazyOfArbitraryShrinkingTests {
 				() -> Arbitraries.integers().between(1, 30).filter(i -> i > 20),
 				() -> Arbitraries.integers().between(1, 40).filter(i -> i > 30)
 			);
-		Integer value = shrinkToMinimal(arbitrary, random);
+		Integer value = falsifyThenShrink(arbitrary, random);
 		assertThat(value).isEqualTo(1);
 	}
 
@@ -49,7 +49,7 @@ class LazyOfArbitraryShrinkingTests {
 
 		Arbitrary<Integer> arbitrary = Combinators.combine(arbitrary1, arbitrary2).as(Integer::sum);
 
-		Integer value = shrinkToMinimal(arbitrary, random);
+		Integer value = falsifyThenShrink(arbitrary, random);
 		assertThat(value).isEqualTo(12);
 	}
 
@@ -57,7 +57,7 @@ class LazyOfArbitraryShrinkingTests {
 	void oneStep(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazyOf(Arbitraries::integers);
-		Integer value = shrinkToMinimal(arbitrary, random);
+		Integer value = falsifyThenShrink(arbitrary, random);
 		assertThat(value).isEqualTo(0);
 	}
 

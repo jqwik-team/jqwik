@@ -87,7 +87,7 @@ class ArbitraryShrinkingTests {
 	@Property(tries = 10)
 	boolean forType(@ForAll Random random) {
 		Arbitrary<Counter> arbitrary = Arbitraries.forType(Counter.class);
-		Counter value = shrinkToMinimal(arbitrary, random);
+		Counter value = falsifyThenShrink(arbitrary, random);
 
 		// 0:1, 1:0, 0:-1 or -1:0
 		return Math.abs(value.n1 + value.n2) == 1;
@@ -182,7 +182,7 @@ class ArbitraryShrinkingTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			Integer value = shrinkToMinimal(arbitrary, random, falsifier);
+			Integer value = falsifyThenShrink(arbitrary, random, falsifier);
 			assertThat(value).isEqualTo(1);
 		}
 	}
@@ -202,7 +202,7 @@ class ArbitraryShrinkingTests {
 			Arbitrary<List<Integer>> arbitrary =
 				Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique().list().ofSize(3);
 
-			List<Integer> value = shrinkToMinimal((Arbitrary<? extends List<Integer>>) arbitrary, random);
+			List<Integer> value = falsifyThenShrink((Arbitrary<? extends List<Integer>>) arbitrary, random);
 			assertThat(new HashSet<>(value)).hasSize(3);
 		}
 	}
@@ -217,7 +217,7 @@ class ArbitraryShrinkingTests {
 
 			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
 
-			return shrinkToMinimal(arbitrary, random).isEmpty();
+			return falsifyThenShrink(arbitrary, random).isEmpty();
 		}
 
 		@Property(tries = 10)

@@ -19,7 +19,7 @@ class LazyArbitraryShrinkingTests {
 	void oneStep(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazy(Arbitraries::integers);
-		Integer value = shrinkToMinimal(arbitrary, random);
+		Integer value = falsifyThenShrink(arbitrary, random);
 		Assertions.assertThat(value).isEqualTo(0);
 	}
 

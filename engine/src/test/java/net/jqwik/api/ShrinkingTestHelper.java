@@ -62,16 +62,8 @@ public class ShrinkingTestHelper {
 	}
 
 	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
-		T value = shrinkToMinimal(arbitrary, random);
+		T value = falsifyThenShrink(arbitrary, random);
 		Assertions.assertThat(value).isEqualTo(expectedShrunkValue);
-	}
-
-	public static <T> T shrinkToMinimal(Arbitrary<? extends T> arbitrary, Random random) {
-		return shrinkToMinimal(arbitrary, random, ignore -> TryExecutionResult.falsified(null));
-	}
-
-	public static <T> T shrinkToMinimal(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
-		return falsifyThenShrink(arbitrary, random, falsifier);
 	}
 
 	@SuppressWarnings("unchecked")
