@@ -10,7 +10,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.web.api.EmailTestingSupport.*;
 
-@PropertyDefaults(edgeCases = EdgeCasesMode.NONE) // TODO: Remove as soon as edge cases are more restricted
 @Group
 class EmailProperties {
 
@@ -19,22 +18,20 @@ class EmailProperties {
 
 		@Property
 		void onlyIPAddressesAreGenerated(@ForAll @Email(domainHost = false) String email) {
-			String domain = getEmailHost(email);
-			assertThat(isIPAddress(domain)).isTrue();
+			String ipAddress = extractIPAddress(getEmailHost(email));
+			assertThat(isValidIPAddress(ipAddress)).isTrue();
 		}
 
 		@Property
 		void onlyIPv4AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv6Host = false) String email) {
-			String domain = getEmailHost(email);
-			assertThat(isIPAddress(domain)).isTrue();
-			assertThat(domain).contains(".");
+			String ipAddress = extractIPAddress(getEmailHost(email));
+			assertThat(isValidIPv4Address(getEmailHost(ipAddress))).isTrue();
 		}
 
 		@Property
 		void onlyIPv6AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv4Host = false) String email) {
-			String domain = getEmailHost(email);
-			assertThat(isIPAddress(domain)).isTrue();
-			assertThat(domain).contains(":");
+			String ipAddress = extractIPAddress(getEmailHost(email));
+			assertThat(isValidIPv6Address(getEmailHost(ipAddress))).isTrue();
 		}
 
 		@Property

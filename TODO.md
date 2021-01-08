@@ -1,8 +1,5 @@
 - 1.4.0
 
-    - Email generation
-        - Fix TODO in EmailCommons
-
     - Module "testing"
         - Move `atLeastOneGenerated()` and others to TestingSupport
         - Move ShrinkingTestHelper methods to ShrinkingSupport

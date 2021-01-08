@@ -19,7 +19,6 @@ public class EmailsTests {
 	private static final String ALLOWED_CHARS_DOMAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
 	private static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";
 	private static final String ALLOWED_CHARS_LOCALPART_QUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~\"(),:;<>@[\\] ";
-	private static final String ALLOWED_CHARS_IPV6_ADDRESS = "0123456789abcdefABCDEF";
 	private static final String ALLOWED_NOT_NUMERIC_CHARS_TLD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-";
 
 	@Group
@@ -120,8 +119,8 @@ public class EmailsTests {
 		void validIPAddressAfterAt(@ForAll("emails") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
-			domain = domain.substring(1, domain.length() - 1);
-			assertThat(isValidIPAddress(domain)).isTrue();
+			String ipAddress = extractIPAddress(domain);
+			assertThat(isValidIPAddress(ipAddress)).isTrue();
 		}
 
 		private boolean stringContainsChar(String string, int c) {
@@ -241,9 +240,9 @@ public class EmailsTests {
 		void Ipv4AndIpv6HostsAreGenerated(@ForAll("emails") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
-			domain = domain.substring(1, domain.length() - 1);
+			String address = extractIPAddress(domain);
 			Statistics.label("IPv4 addresses")
-					  .collect(domain.contains("."))
+					  .collect(address.contains("."))
 					  .coverage(coverage -> {
 						  coverage.check(true).percentage(p -> p > 35);
 						  coverage.check(false).percentage(p -> p > 35);
@@ -409,51 +408,5 @@ public class EmailsTests {
 		return Emails.emails();
 	}
 
-	private boolean isValidIPAddress(String address) {
-		if (address.contains(":")) {
-			return isValidIPv6Address(address);
-		} else {
-			return isValidIPv4Address(address);
-		}
-	}
-
-	private boolean isValidIPv6Address(String address) {
-		return EmailCommons.validUseOfColonInIPv6Address(address) && validCharsInIPv6Address(address);
-	}
-
-	private boolean validCharsInIPv6Address(String address) {
-		String[] addressParts = address.split("\\:");
-		if (addressParts.length > 8 || (addressParts.length > 6 && address.endsWith("::"))) {
-			return false;
-		}
-		for (String part : addressParts) {
-			if (part.length() > 4) {
-				return false;
-			}
-			for (char c : part.toCharArray()) {
-				if (!ALLOWED_CHARS_IPV6_ADDRESS.contains(Character.toString(c))) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	private boolean isValidIPv4Address(String address) {
-		String[] addressParts = address.split("\\.");
-		if (addressParts.length != 4) {
-			return false;
-		}
-		for (String part : addressParts) {
-			if (part == null || part.length() == 0) {
-				return false;
-			}
-			int partInt = Integer.parseInt(part);
-			if (partInt < 0 || partInt > 255) {
-				return false;
-			}
-		}
-		return true;
-	}
 
 }

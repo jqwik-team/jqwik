@@ -88,7 +88,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		Arbitrary<String> plainAddress = addressParts.map(parts -> String.join(":", parts));
 		return plainAddress
 					   .map(this::removeThreeOrMoreColons)
-					   .filter(EmailCommons::validUseOfColonInIPv6Address)
+					   .filter(this::validUseOfColonInIPv6Address)
 					   .map(plain -> "[" + plain + "]")
 					   .edgeCases(stringConfig -> stringConfig.includeOnly(
 							   "[::]",
@@ -96,6 +96,41 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 							   "[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
 							   "[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]"
 					   ));
+	}
+
+	private boolean validUseOfColonInIPv6Address(String ip) {
+		if (hasSingleColonAtStartOrEnd(ip)) {
+			return false;
+		}
+		if (notOnlyFirstColonClusterHasDoubleColon(ip)) {
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean notOnlyFirstColonClusterHasDoubleColon(String ip) {
+		boolean first = true;
+		boolean inCheck = false;
+		for (int i = 0; i < ip.length() - 1; i++) {
+			boolean ipContainsTwoColonsAtI = ip.charAt(i) == ':' && (ip.charAt(i + 1) == ':');
+			if (first) {
+				if (ipContainsTwoColonsAtI) {
+					first = false;
+					inCheck = true;
+				}
+			} else if (ipContainsTwoColonsAtI && !inCheck) {
+				return true;
+			} else if (!ipContainsTwoColonsAtI) {
+				inCheck = false;
+			}
+		}
+		return false;
+	}
+
+	private static boolean hasSingleColonAtStartOrEnd(String ip) {
+		boolean startsWithOnlyOneColon = ip.charAt(0) == ':' && ip.charAt(1) != ':';
+		boolean endsWithOnlyOneColon = ip.charAt(ip.length() - 1) == ':' && ip.charAt(ip.length() - 2) != ':';
+		return startsWithOnlyOneColon || endsWithOnlyOneColon;
 	}
 
 	private Arbitrary<String> ipv6Part() {
