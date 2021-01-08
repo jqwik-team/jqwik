@@ -98,7 +98,7 @@ class EmailProperties {
 					  .collect(isIPAddress(domain))
 					  .coverage(coverage -> {
 						  coverage.check(true).percentage(p -> p > 10);
-						  coverage.check(false).percentage(p -> p > 60);
+						  coverage.check(false).percentage(p -> p > 50);
 					  });
 		}
 
