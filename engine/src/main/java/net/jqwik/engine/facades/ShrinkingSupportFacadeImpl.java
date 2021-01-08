@@ -10,12 +10,6 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-/**
- * This is mostly duplicated code from ShrinkingTestHelper and ArbitraryTestHelper
- * which currently reside in test module.
- *
- * TODO: Extract all testing support into module of its own
- */
 public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 
 
@@ -25,7 +19,7 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 		RandomGenerator<? extends T> generator = arbitrary.generator(10);
 		Throwable[] originalError = new Throwable[1];
 		Shrinkable<T> falsifiedShrinkable =
-				(Shrinkable<T>) generateUntil(generator, random, value -> {
+				(Shrinkable<T>) TestingSupportFacadeImpl.generateUntil(generator, random, value -> {
 					TryExecutionResult result = falsifier.execute(value);
 					if (result.isFalsified()) {
 						originalError[0] = result.throwable().orElse(null);
@@ -78,16 +72,6 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 	private static FalsifiedSample toFalsifiedSample(List<Shrinkable<Object>> shrinkables, Throwable originalError) {
 		List<Object> parameters = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 		return new FalsifiedSampleImpl(parameters, shrinkables, Optional.ofNullable(originalError));
-	}
-
-	private static <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
-		long maxTries = 1000;
-		return generator
-					   .stream(random)
-					   .limit(maxTries)
-					   .filter(shrinkable -> condition.apply(shrinkable.value()))
-					   .findFirst()
-					   .orElseThrow(() -> new JqwikException("Failed to generate value that fits condition after " + maxTries + " tries."));
 	}
 
 }

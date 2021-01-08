@@ -4,7 +4,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 class CombinatorsBuilderTests {
 

@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingFalsifier.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 @Label("FilteredShrinkable")
@@ -56,7 +57,7 @@ class FilteredShrinkableTests {
 		@Property(tries = 10)
 		void filteredIntegers(@ForAll Random random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 40).filter(i -> i > 30);
-			Shrinkable<Integer> shrinkable = ArbitraryTestHelper.generateUntil(integers.generator(10), random, i -> true);
+			Shrinkable<Integer> shrinkable = generateUntil(integers.generator(10), random, i -> true);
 
 			Integer shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(31);

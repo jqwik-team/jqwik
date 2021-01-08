@@ -2,6 +2,7 @@ package net.jqwik.testing;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
 import org.assertj.core.api.*;
@@ -9,6 +10,7 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 
 import static org.apiguardian.api.API.Status.*;
+import static org.assertj.core.api.Assertions.*;
 
 @API(status = EXPERIMENTAL, since = "1.4.0")
 public class TestingSupport {
@@ -29,6 +31,23 @@ public class TestingSupport {
 		});
 	}
 
+	public static <T> void assertAtLeastOneGenerated(
+			RandomGenerator<? extends T> generator,
+			Random random,
+			Function<T, Boolean> checker,
+			String failureMessage
+	) {
+		Optional<? extends Shrinkable<? extends T>> success =
+				generator
+						.stream(random)
+						.limit(3000)
+						.filter(shrinkable -> checker.apply(shrinkable.value()))
+						.findAny();
+		if (!success.isPresent()) {
+			fail(failureMessage);
+		}
+	}
+
 	public static <T> Set<T> collectEdgeCases(EdgeCases<T> edgeCases) {
 		Set<T> values = new HashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {
@@ -36,5 +55,30 @@ public class TestingSupport {
 		}
 		return values;
 	}
+
+	public static <T> T generateFirst(Arbitrary<T> arbitrary, Random random) {
+		RandomGenerator<T> generator = arbitrary.generator(1);
+		return generator.next(random).value();
+	}
+
+	public static <T> Map<T, Long> count(RandomGenerator<T> generator, int tries, Random random) {
+		return generator
+					   .stream(random)
+					   .limit(tries)
+					   .map(shrinkable -> shrinkable.value())
+					   .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+	}
+
+	// TODO: Call from TestingSupportFacade
+	public static <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
+		long maxTries = 1000;
+		return generator
+					   .stream(random)
+					   .limit(maxTries)
+					   .filter(shrinkable -> condition.apply(shrinkable.value()))
+					   .findFirst()
+					   .orElseThrow(() -> new JqwikException("Failed to generate value that fits condition after " + maxTries + " tries."));
+	}
+
 
 }

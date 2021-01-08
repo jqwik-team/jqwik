@@ -15,6 +15,7 @@ import static java.math.BigInteger.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 @Label("Arbitraries")
 class ArbitrariesTests {
@@ -483,29 +484,29 @@ class ArbitrariesTests {
 		}
 
 		@Property(tries = 10)
-		void twoEqualPairs() {
+		void twoEqualPairs(@ForAll Random random) {
 			Arbitrary<String> one = Arbitraries.frequency(Tuple.of(1, "a"), Tuple.of(1, "b"));
-			Map<String, Long> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
+			Map<String, Long> counts = count(one.generator(1000), 1000, random);
 			assertThat(counts.get("a") > 200).isTrue();
 			assertThat(counts.get("b") > 200).isTrue();
 		}
 
 		@Property(tries = 10)
-		void twoUnequalPairs() {
+		void twoUnequalPairs(@ForAll Random random) {
 			Arbitrary<String> one = Arbitraries.frequency(Tuple.of(1, "a"), Tuple.of(10, "b"));
-			Map<String, Long> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
+			Map<String, Long> counts = count(one.generator(1000), 1000, random);
 			assertThat(counts.get("a")).isLessThan(counts.get("b"));
 		}
 
 		@Property(tries = 10)
-		void fourUnequalPairs() {
+		void fourUnequalPairs(@ForAll Random random) {
 			Arbitrary<String> one = Arbitraries.frequency(
 					Tuple.of(1, "a"),
 					Tuple.of(5, "b"),
 					Tuple.of(10, "c"),
 					Tuple.of(20, "d")
 			);
-			Map<String, Long> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
+			Map<String, Long> counts = count(one.generator(1000), 1000, random);
 			assertThat(counts.get("a")).isLessThan(counts.get("b"));
 			assertThat(counts.get("b")).isLessThan(counts.get("c"));
 			assertThat(counts.get("c")).isLessThan(counts.get("d"));

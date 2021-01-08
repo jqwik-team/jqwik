@@ -11,6 +11,7 @@ import net.jqwik.testing.*;
 
 import static net.jqwik.api.Tuple.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 class LazyArbitraryShrinkingTests {
 
@@ -52,7 +53,7 @@ class LazyArbitraryShrinkingTests {
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
 		RandomGenerator<List<Integer>> generator = arbitrary.generator(10);
 		Shrinkable<List<Integer>> falsifiedShrinkable =
-			ArbitraryTestHelper.generateUntil(generator, random, value -> {
+			generateUntil(generator, random, value -> {
 				TryExecutionResult result = falsifier.execute(value);
 				return result.isFalsified();
 			});
