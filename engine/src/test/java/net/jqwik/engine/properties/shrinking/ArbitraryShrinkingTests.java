@@ -3,6 +3,8 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.ArrayList;
 import java.util.*;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.lifecycle.*;
@@ -11,8 +13,8 @@ import net.jqwik.testing.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingFalsifier.*;
 
 class ArbitraryShrinkingTests {
 
@@ -403,4 +405,10 @@ class ArbitraryShrinkingTests {
 			return n1 + ":" + n2;
 		}
 	}
+
+	private  <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
+		T value = falsifyThenShrink(arbitrary, random);
+		Assertions.assertThat(value).isEqualTo(expectedShrunkValue);
+	}
+
 }

@@ -13,6 +13,14 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.4.0")
 public interface TestingFalsifier<T> extends Falsifier<T>, Predicate<T> {
 
+	static <T> TestingFalsifier<T> alwaysFalsify() {
+		return ignore -> false;
+	}
+
+	static <T> TestingFalsifier<T> falsifier(Predicate<T> predicate) {
+		return predicate::test;
+	}
+
 	@Override
 	default TryExecutionResult execute(T parameters) {
 		try {

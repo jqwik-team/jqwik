@@ -11,8 +11,8 @@ import net.jqwik.testing.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingFalsifier.*;
 
 @Group
 @Label("CollectShrinkable")

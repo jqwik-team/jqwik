@@ -10,8 +10,8 @@ import net.jqwik.testing.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingFalsifier.*;
 
 /**
  * Inspired by https://github.com/HypothesisWorks/hypothesis/blob/master/hypothesis-python/tests/quality/test_shrink_quality.py
@@ -36,7 +36,7 @@ class ShrinkingQualityProperties {
 	void reversingAList(@ForAll Random random) {
 		Arbitrary<List<Integer>> integerLists = Arbitraries.integers().list();
 
-		TestingFalsifier<List<Integer>> reverseEqualsOriginal = falsifier((List<Integer> list) -> list.equals(reversed(list)));
+		TestingFalsifier<List<Integer>> reverseEqualsOriginal = (List<Integer> list) -> list.equals(reversed(list));
 		List<Integer> shrunkResult = falsifyThenShrink(integerLists, random, reverseEqualsOriginal);
 
 		assertThat(shrunkResult).isEqualTo(asList(0, 1));
@@ -55,13 +55,13 @@ class ShrinkingQualityProperties {
 					   .list().ofMaxSize(50)
 					   .list().ofMaxSize(50);
 
-		TestingFalsifier<List<List<Integer>>> containsLessThan5DistinctNumbers = falsifier((List<List<Integer>> ls) -> {
+		TestingFalsifier<List<List<Integer>>> containsLessThan5DistinctNumbers = (List<List<Integer>> ls) -> {
 			Set<Integer> allElements = new HashSet<>();
 			for (List<Integer> x : ls) {
 				allElements.addAll(x);
 			}
 			return allElements.size() < 5;
-		});
+		};
 		List<List<Integer>> shrunkResult = falsifyThenShrink(listOfLists, random, containsLessThan5DistinctNumbers);
 
 		// e.g. [[0, 1, -1, 2, -2]]

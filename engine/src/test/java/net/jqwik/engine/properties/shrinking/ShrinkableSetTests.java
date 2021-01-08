@@ -11,8 +11,8 @@ import net.jqwik.testing.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingFalsifier.*;
 
 @Group
 @Label("ShrinkableSet")
@@ -95,7 +95,7 @@ class ShrinkableSetTests {
 		void withFilterOnSetContents() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 5, 6), 0);
 
-			Falsifier<Set<Integer>> falsifier = falsifier(Set::isEmpty);
+			TestingFalsifier<Set<Integer>> falsifier = Set::isEmpty;
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.contains(2) || aSet.contains(4));
 			Set<Integer> shrunkValue = shrink(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).containsExactly(2);
@@ -147,6 +147,14 @@ class ShrinkableSetTests {
 	private Shrinkable<Set<Integer>> createShrinkableSet(List<Integer> listValues, int minSize) {
 		Set<Shrinkable<Integer>> elementShrinkables = listValues.stream().map(OneStepShrinkable::new).collect(Collectors.toSet());
 		return new ShrinkableSet<>(elementShrinkables, minSize, listValues.size());
+	}
+
+	private AssertionError failAndCatch(String message) {
+		try {
+			throw new AssertionError(message);
+		} catch (AssertionError error) {
+			return error;
+		}
 	}
 
 }

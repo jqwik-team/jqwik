@@ -17,7 +17,7 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.testing.TestingFalsifier.*;
 
 class PropertyShrinkerTests {
 
@@ -481,6 +481,36 @@ class PropertyShrinkerTests {
 			falsifiedSampleReporter,
 			null
 		);
+	}
+
+	private FalsifiedSample toFalsifiedSample(List<Shrinkable<Object>> shrinkables, Throwable originalError) {
+		List<Object> parameters = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+		return new FalsifiedSampleImpl(parameters, shrinkables, Optional.ofNullable(originalError));
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> TestingFalsifier<List<Object>> paramFalsifier(Predicate<T> tFalsifier) {
+		return params -> {
+			T seq = (T) params.get(0);
+			return tFalsifier.test(seq);
+		};
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T1, T2> TestingFalsifier<List<Object>> paramFalsifier(BiPredicate<T1, T2> t1t2Falsifier) {
+		return params -> {
+			T1 t1 = (T1) params.get(0);
+			T2 t2 = (T2) params.get(1);
+			return t1t2Falsifier.test(t1, t2);
+		};
+	}
+
+	private AssertionError failAndCatch(String message) {
+		try {
+			throw new AssertionError(message);
+		} catch (AssertionError error) {
+			return error;
+		}
 	}
 
 }

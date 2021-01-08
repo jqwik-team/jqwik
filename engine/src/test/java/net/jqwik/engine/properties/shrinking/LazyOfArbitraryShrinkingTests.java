@@ -9,9 +9,9 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.api.Tuple.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingFalsifier.*;
 
 @PropertyDefaults(tries = 100, afterFailure = AfterFailureMode.RANDOM_SEED)
 class LazyOfArbitraryShrinkingTests {

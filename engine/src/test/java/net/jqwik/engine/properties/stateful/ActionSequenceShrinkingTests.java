@@ -11,7 +11,6 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
 
 @SuppressWarnings("unchecked")
@@ -54,10 +53,10 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		TestingFalsifier<ActionSequence<String>> falsifier = falsifier((ActionSequence<String> seq) -> {
+		TestingFalsifier<ActionSequence<String>> falsifier = (ActionSequence<String> seq) -> {
 			seq.run("");
 			return false;
-		});
+		};
 
 		ActionSequence<String> shrunkValue = shrink(shrinkable, falsifier, null);
 
@@ -71,10 +70,10 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		TestingFalsifier<ActionSequence<String>> falsifier = falsifier((ActionSequence<String> seq) -> {
+		TestingFalsifier<ActionSequence<String>> falsifier = (ActionSequence<String> seq) -> {
 			seq.run("");
 			throw failAndCatch(null);
-		});
+		};
 
 		ActionSequence<String> shrunkValue = shrink(shrinkable, falsifier, failAndCatch(null));
 
@@ -87,10 +86,10 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		TestingFalsifier<ActionSequence<String>> falsifier = falsifier((ActionSequence<String> seq) -> {
+		TestingFalsifier<ActionSequence<String>> falsifier = (ActionSequence<String> seq) -> {
 			seq.run("");
 			return false;
-		});
+		};
 
 		ActionSequence<String> shrunkValue = shrink(shrinkable, falsifier, null);
 
@@ -134,5 +133,14 @@ class ActionSequenceShrinkingTests {
 	private Arbitrary<Action<String>> addStringOfLength2() {
 		return Arbitraries.strings().alpha().ofLength(2).map(s -> model -> model + s);
 	}
+
+	private AssertionError failAndCatch(String message) {
+		try {
+			throw new AssertionError(message);
+		} catch (AssertionError error) {
+			return error;
+		}
+	}
+
 
 }
