@@ -2,7 +2,6 @@
 
     - Module "testing"
         - Move `atLeastOneGenerated()` and others to TestingSupport
-        - Move ShrinkingTestHelper methods to ShrinkingSupport
 
     - Use JUnit Configuration Parameters Mechanism
       https://github.com/jlink/jqwik/issues/139

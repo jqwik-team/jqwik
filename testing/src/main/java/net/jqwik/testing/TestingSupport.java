@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
-import org.opentest4j.*;
+import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 
@@ -25,7 +25,7 @@ public class TestingSupport {
 						.findAny();
 
 		failure.ifPresent(shrinkable -> {
-			fail(String.format("Value [%s] failed to fulfill condition.", shrinkable.value().toString()));
+			Assertions.fail(String.format("Value [%s] failed to fulfill condition.", shrinkable.value().toString()));
 		});
 	}
 
@@ -35,10 +35,6 @@ public class TestingSupport {
 			values.add(edgeCase.value());
 		}
 		return values;
-	}
-
-	private static void fail(String message) {
-		throw new AssertionFailedError(message);
 	}
 
 }
