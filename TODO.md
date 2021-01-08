@@ -1,9 +1,15 @@
 - 1.4.0
 
-    - Use JUnit Configuration Parameters Mechanism
-      https://github.com/jlink/jqwik/issues/139
-
     - Warn if method without parameters has more than 1 try
+
+    - Deprecate Arbitrary.unique()
+    
+    Instead make something like List|Set|ArrayArbitrary.constraint(
+    list, element -> !list.contains(element);
+    )
+        - ListArbitrary.uniqueElements()
+        - ListArbitrary.uniqueElementsBy(Predicate<E> uniqueCondition)
+        - How can that work across collections?
 
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140
@@ -25,15 +31,6 @@
         - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
     
         - Add documentation for Arbitrary.edgeCases(configuration)
-
-    - Deprecate Arbitrary.unique()
-    
-      Instead make something like List|Set|ArrayArbitrary.constraint(
-        list, element -> !list.contains(element);
-      ) 
-        - ListArbitrary.uniqueElements()
-        - ListArbitrary.uniqueElementsBy(Predicate<E> uniqueCondition)
-        - How can that work across collections?
 
     - @StatisticsReportFormat
       https://github.com/jlink/jqwik/issues/146
