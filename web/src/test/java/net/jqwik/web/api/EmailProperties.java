@@ -14,7 +14,7 @@ import static net.jqwik.web.api.EmailTestingSupport.*;
 class EmailProperties {
 
 	@Group
-	class checkAnnotationProperties {
+	class CheckAnnotationProperties {
 
 		@Property
 		void onlyIPAddressesAreGenerated(@ForAll @Email(domainHost = false) String email) {
