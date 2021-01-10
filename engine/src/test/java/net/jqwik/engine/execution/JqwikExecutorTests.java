@@ -9,9 +9,11 @@ import net.jqwik.api.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.discovery.*;
 import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.testing.*;
 
 import static net.jqwik.engine.matchers.TestDescriptorMatchers.*;
 
+@SuppressLogging
 public class JqwikExecutorTests {
 
 	private Set<UniqueId> previouslyFailedTests = new HashSet<>();

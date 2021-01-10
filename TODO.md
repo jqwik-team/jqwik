@@ -1,12 +1,10 @@
 - 1.4.0
 
-    - Warn if method without parameters has more than 1 try
-
     - Deprecate Arbitrary.unique()
     
-    Instead make something like List|Set|ArrayArbitrary.constraint(
-    list, element -> !list.contains(element);
-    )
+        Instead make something like List|Set|ArrayArbitrary.constraint(
+        list, element -> !list.contains(element);
+        )
         - ListArbitrary.uniqueElements()
         - ListArbitrary.uniqueElementsBy(Predicate<E> uniqueCondition)
         - How can that work across collections?
@@ -31,6 +29,9 @@
         - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
     
         - Add documentation for Arbitrary.edgeCases(configuration)
+
+    - Warn on fixed seed depending on configuration
+      https://github.com/jlink/jqwik/issues/138
 
     - @StatisticsReportFormat
       https://github.com/jlink/jqwik/issues/146

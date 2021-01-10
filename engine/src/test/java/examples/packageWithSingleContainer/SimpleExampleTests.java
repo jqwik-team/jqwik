@@ -1,12 +1,13 @@
 package examples.packageWithSingleContainer;
 
-import net.jqwik.api.*;
-import net.jqwik.engine.*;
-
 import org.junit.jupiter.api.*;
+
+import net.jqwik.api.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressLogging
 public class SimpleExampleTests {
 
 	@Property

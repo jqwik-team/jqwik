@@ -13,7 +13,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Used to annotate properties that should not log anything
  */
-@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @AddLifecycleHook(SuppressLogging.Hook.class)
@@ -44,5 +44,9 @@ public @interface SuppressLogging {
 			return 50;
 		}
 
+		@Override
+		public PropagationMode propagateTo() {
+			return PropagationMode.ALL_DESCENDANTS;
+		}
 	}
 }

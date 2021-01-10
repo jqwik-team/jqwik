@@ -11,6 +11,7 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressLogging
 class StoreTests {
 
 	@Example

@@ -38,7 +38,7 @@ class PerPropertyTests {
 	}
 
 	private boolean beforeCalled = false;
-	@Property
+	@Property(tries = 1)
 	@PerProperty(CheckCallToBefore.class)
 	void before_is_called_with_PropertyLifecycleContext() {
 
@@ -60,14 +60,14 @@ class PerPropertyTests {
 
 	private static boolean afterCalled = false;
 
-	@Property
+	@Property(tries = 1)
 	@PerProperty(CallAfter.class)
 	@AddLifecycleHook(AssertAfterCalled.class)
 	void after_is_called_when_succeeding() {
 		afterCalled = false;
 	}
 
-	@Property
+	@Property(tries = 1)
 	@PerProperty(CallAfter.class)
 	@AddLifecycleHook(AssertAfterCalled.class)
 	void after_is_called_when_failing() {

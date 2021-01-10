@@ -25,6 +25,7 @@ import static org.junit.platform.testkit.engine.Event.*;
 import static org.junit.platform.testkit.engine.EventConditions.*;
 import static org.junit.platform.testkit.engine.EventType.*;
 
+@SuppressLogging
 class JqwikIntegrationTests {
 
 	private JqwikConfiguration configuration(final boolean useJunitPlatformReporter) {

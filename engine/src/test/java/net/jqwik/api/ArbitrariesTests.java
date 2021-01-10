@@ -10,6 +10,7 @@ import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.testing.*;
 
 import static java.math.BigInteger.*;
 import static org.assertj.core.api.Assertions.*;
@@ -18,6 +19,7 @@ import static net.jqwik.api.ArbitraryTestHelper.assertAllGenerated;
 import static net.jqwik.api.ArbitraryTestHelper.assertAtLeastOneGenerated;
 import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.testing.TestingSupport.*;
+import static net.jqwik.testing.TestingSupport.assertAtLeastOneGenerated;
 
 @Label("Arbitraries")
 class ArbitrariesTests {
@@ -697,17 +699,18 @@ class ArbitrariesTests {
 		}
 
 		@Property(tries = 10)
-		void bigIntegersWithUniformDistribution() {
+		void bigIntegersWithUniformDistribution(@ForAll Random random) {
 			Arbitrary<BigInteger> bigIntegerArbitrary =
 					Arbitraries.bigIntegers()
 							   .between(valueOf(-1000L), valueOf(1000L))
 							   .withDistribution(RandomDistribution.uniform());
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
 
-			assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -980);
-			assertAtLeastOneGenerated(generator, value -> value.longValue() < 1000 && value.longValue() > 980);
-			assertAllGenerated(
+			assertAtLeastOneGenerated(generator, random, value -> value.longValue() > -1000 && value.longValue() < -980);
+			assertAtLeastOneGenerated(generator, random, value -> value.longValue() < 1000 && value.longValue() > 980);
+			TestingSupport.assertAllGenerated(
 					generator,
+					random,
 					value -> value.compareTo(valueOf(-1000L)) >= 0 && value.compareTo(valueOf(1000L)) <= 0
 			);
 		}
@@ -988,7 +991,7 @@ class ArbitrariesTests {
 		}
 
 		@Property(tries = 10)
-		void bigDecimalsWithUniformDistribution() {
+		void bigDecimalsWithUniformDistribution(@ForAll Random random) {
 			Range<BigDecimal> range = Range.of(BigDecimal.valueOf(-1000.0), BigDecimal.valueOf(1000.0));
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
 														 .between(range.min, range.max)
@@ -996,10 +999,11 @@ class ArbitrariesTests {
 														 .withDistribution(RandomDistribution.uniform());
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
 
-			assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -980);
-			assertAtLeastOneGenerated(generator, value -> value.longValue() < 1000 && value.longValue() > 980);
-			assertAllGenerated(
+			assertAtLeastOneGenerated(generator, random, value -> value.longValue() > -1000 && value.longValue() < -980);
+			assertAtLeastOneGenerated(generator, random, value -> value.longValue() < 1000 && value.longValue() > 980);
+			TestingSupport.assertAllGenerated(
 					generator,
+					random,
 					value -> value.compareTo(BigDecimal.valueOf(-1000L)) >= 0
 									 && value.compareTo(BigDecimal.valueOf(1000L)) <= 0
 			);

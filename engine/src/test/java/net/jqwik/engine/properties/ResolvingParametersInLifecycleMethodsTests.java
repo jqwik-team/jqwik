@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -46,6 +47,7 @@ class ResolvingParametersInLifecycleMethodsTests {
 	}
 
 	@Property(tries = 5)
+	@SuppressLogging
 	void inProperty(int shouldBe42) {
 		assertThat(shouldBe42).isEqualTo(42);
 	}

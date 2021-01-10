@@ -44,6 +44,9 @@ and
 
 - The User Guide has been restructured.
 
+- There will now be a warning log entry when a property with more than 1 try has no
+  '@ForAll' parameters.
+
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
     - Mostly everything in package `net.jqwik.api.lifecycle`
     - Method `Arbitrary.dontShrink()`

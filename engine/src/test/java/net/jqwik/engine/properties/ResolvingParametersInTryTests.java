@@ -10,6 +10,7 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressLogging
 class ResolvingParametersInTryTests {
 
 	@Property(tries = 10)

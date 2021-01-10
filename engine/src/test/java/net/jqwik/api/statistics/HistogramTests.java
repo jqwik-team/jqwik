@@ -9,9 +9,11 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.hooks.statistics.*;
+import net.jqwik.testing.*;
 
 import static java.util.Arrays.*;
 
+@SuppressLogging
 class HistogramTests {
 
 	@Example

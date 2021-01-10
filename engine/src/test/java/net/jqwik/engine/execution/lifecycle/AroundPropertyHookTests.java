@@ -6,7 +6,9 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.testing.*;
 
+@SuppressLogging
 class AroundPropertyHookTests {
 
 	static Store<List<String>> calls = Store.create("calls", Lifespan.PROPERTY, ArrayList::new);

@@ -13,6 +13,7 @@ import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.*;
 import net.jqwik.engine.support.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -21,6 +22,7 @@ import static net.jqwik.engine.TestHelper.*;
 import static net.jqwik.engine.properties.PropertyCheckResult.CheckStatus.*;
 import static net.jqwik.engine.properties.PropertyConfigurationBuilder.*;
 
+@SuppressLogging
 @Group
 class CheckedPropertyTests {
 

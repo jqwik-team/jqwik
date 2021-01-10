@@ -9,10 +9,10 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressLogging
 class JqwikPropertiesTests {
 
 	@Example
-	@SuppressLogging
 	void defaultValues() {
 		JqwikProperties properties = new JqwikProperties(new ConfigurationParameters() {
 			@Override

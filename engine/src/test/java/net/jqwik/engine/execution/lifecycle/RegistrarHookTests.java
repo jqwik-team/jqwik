@@ -19,7 +19,7 @@ class RegistrarHookTests {
 
 	@PerProperty(Counted5.class)
 	@Property(tries = 5)
-	void property1() {
+	void property1(@ForAll int i) {
 	}
 
 	class Counted5 implements PerProperty.Lifecycle {
@@ -31,7 +31,7 @@ class RegistrarHookTests {
 
 	@PerProperty(Counted10.class)
 	@Property(tries = 10)
-	void property2() {
+	void property2(@ForAll int i) {
 	}
 
 	class Counted10 implements PerProperty.Lifecycle {
@@ -45,7 +45,7 @@ class RegistrarHookTests {
 	class Nested {
 		@PerProperty(Counted0.class)
 		@Property(tries = 10)
-		void registeredHookIsNotPropagatedToNestedTests() {
+		void registeredHookIsNotPropagatedToNestedTests(@ForAll int i) {
 		}
 
 		class Counted0 implements PerProperty.Lifecycle {

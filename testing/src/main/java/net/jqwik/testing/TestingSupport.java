@@ -60,6 +60,14 @@ public class TestingSupport {
 		}
 	}
 
+	public static <T> void assertAtLeastOneGenerated(
+			RandomGenerator<? extends T> generator,
+			Random random,
+			Function<T, Boolean> checker
+	) {
+		assertAtLeastOneGenerated(generator, random, checker, "Failed to generate at least one");
+	}
+
 	public static <T> Set<T> collectEdgeCases(EdgeCases<T> edgeCases) {
 		Set<T> values = new HashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {

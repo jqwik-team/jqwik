@@ -11,7 +11,7 @@ class PropertyAttributesTests {
 
 	@AddLifecycleHook(ChangeTriesAndSeedTo42.class)
 	@Property(tries = 10, seed = "10")
-	void attributesAreChangedByHook() {}
+	void attributesAreChangedByHook(@ForAll int i) {}
 
 	private static class ChangeTriesAndSeedTo42 implements AroundPropertyHook {
 		@Override

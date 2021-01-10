@@ -427,7 +427,7 @@ class DatesTests {
 		private void checkMonthCoverage(StatisticsCoverage coverage) {
 			Month[] months = Month.class.getEnumConstants();
 			for (Month m : months) {
-				coverage.check(m).percentage(p -> p >= 5);
+				coverage.check(m).percentage(p -> p >= 4);
 			}
 		}
 
