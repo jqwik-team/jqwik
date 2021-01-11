@@ -7,7 +7,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
-import net.jqwik.time.api.constraints.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -296,17 +295,6 @@ class YearMonthTests {
 			assertThatThrownBy(
 					() -> Dates.yearMonths().yearBetween(2000, -1000)
 			).isInstanceOf(IllegalArgumentException.class);
-		}
-
-	}
-
-	@Group
-	class checkConstraints {
-
-		@Property
-		void yearBetweenMinus500And700(@ForAll @YearRange(min = 500, max = 700) YearMonth yearMonth) {
-			assertThat(yearMonth.getYear()).isGreaterThanOrEqualTo(500);
-			assertThat(yearMonth.getYear()).isLessThanOrEqualTo(700);
 		}
 
 	}
