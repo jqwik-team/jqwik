@@ -545,15 +545,4 @@ class DatesTests {
 
 	}
 
-	@Group
-	class checkConstraints {
-
-		@Property
-		void yearBetweenMinus500And700(@ForAll @YearRange(min = 500, max = 700) LocalDate date) {
-			assertThat(date.getYear()).isGreaterThanOrEqualTo(500);
-			assertThat(date.getYear()).isLessThanOrEqualTo(700);
-		}
-
-	}
-
 }

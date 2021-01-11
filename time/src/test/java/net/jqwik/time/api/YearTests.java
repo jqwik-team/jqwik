@@ -6,7 +6,6 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
-import net.jqwik.time.api.constraints.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -164,24 +163,6 @@ class YearTests {
 			Set<Year> edgeCases = collectEdgeCases(years.edgeCases());
 			assertThat(edgeCases).hasSize(4);
 			assertThat(edgeCases).containsExactlyInAnyOrder(Year.of(100), Year.of(101), Year.of(199), Year.of(200));
-		}
-
-	}
-
-	@Group
-	class CheckConstraints {
-
-		@Property
-		void yearBetweenMinus100And100(@ForAll @YearRange(min = -100, max = 100) Year year) {
-			assertThat(year.getValue()).isGreaterThanOrEqualTo(-100);
-			assertThat(year.getValue()).isLessThanOrEqualTo(100);
-			assertThat(year).isNotEqualTo(Year.of(0));
-		}
-
-		@Property
-		void yearBetween3000And3500(@ForAll @YearRange(min = 3000, max = 3500) Year year) {
-			assertThat(year.getValue()).isGreaterThanOrEqualTo(3000);
-			assertThat(year.getValue()).isLessThanOrEqualTo(3500);
 		}
 
 	}
