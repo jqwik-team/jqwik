@@ -168,27 +168,6 @@ class ArbitraryEdgeCasesTests {
 		}
 
 		@Example
-		void iteratorEdgeCases() {
-			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
-			Arbitrary<Iterator<Integer>> arbitrary = ints.iterator();
-			Set<Iterator<Integer>> iterators = collectEdgeCases(arbitrary.edgeCases());
-			Set<List<Integer>> lists =
-					iterators.stream()
-							 .map(iterator -> {
-								 List<Integer> list = new ArrayList<>();
-								 while (iterator.hasNext()) { list.add(iterator.next()); }
-								 return list;
-							 })
-							 .collect(Collectors.toSet());
-			assertThat(lists).containsExactlyInAnyOrder(
-					Collections.emptyList(),
-					Collections.singletonList(-10),
-					Collections.singletonList(10)
-			);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(3);
-		}
-
-		@Example
 		void arraysAreCombinationsOfElementsUpToMaxLength() {
 			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 			StreamableArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
