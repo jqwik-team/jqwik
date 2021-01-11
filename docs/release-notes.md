@@ -94,6 +94,8 @@ and
 
 - Unconstrained wildcards are no longer handled in a special way
   but just like unconstrained type variables.
+  
+- `Arbitrary.array(..)` now returns `ArrayArbitrary` instead of `StreamableArbitrary`
 
 #### Bug Fixes
 

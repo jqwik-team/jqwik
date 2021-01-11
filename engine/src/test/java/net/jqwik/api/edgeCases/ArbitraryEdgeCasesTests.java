@@ -111,34 +111,17 @@ class ArbitraryEdgeCasesTests {
 		assertThat(collectEdgeCases(edgeCases)).hasSize(3);
 	}
 
-	@Group
-	class CollectionTypes {
-
-		@Example
-		void arraysAreCombinationsOfElementsUpToMaxLength() {
-			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
-			StreamableArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-					new Integer[]{},
-					new Integer[]{-10},
-					new Integer[]{10}
-			);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(3);
-		}
-
-		@Example
-		void tupleEdgeCases() {
-			Arbitrary<Integer> ints = Arbitraries.just(42);
-			assertThat(collectEdgeCases(ints.tuple1().edgeCases()))
-					.containsExactlyInAnyOrder(Tuple.of(42));
-			assertThat(collectEdgeCases(ints.tuple2().edgeCases()))
-					.containsExactlyInAnyOrder(Tuple.of(42, 42));
-			assertThat(collectEdgeCases(ints.tuple3().edgeCases()))
-					.containsExactlyInAnyOrder(Tuple.of(42, 42, 42));
-			assertThat(collectEdgeCases(ints.tuple4().edgeCases()))
-					.containsExactlyInAnyOrder(Tuple.of(42, 42, 42, 42));
-		}
-
+	@Example
+	void tupleEdgeCases() {
+		Arbitrary<Integer> ints = Arbitraries.just(42);
+		assertThat(collectEdgeCases(ints.tuple1().edgeCases()))
+				.containsExactlyInAnyOrder(Tuple.of(42));
+		assertThat(collectEdgeCases(ints.tuple2().edgeCases()))
+				.containsExactlyInAnyOrder(Tuple.of(42, 42));
+		assertThat(collectEdgeCases(ints.tuple3().edgeCases()))
+				.containsExactlyInAnyOrder(Tuple.of(42, 42, 42));
+		assertThat(collectEdgeCases(ints.tuple4().edgeCases()))
+				.containsExactlyInAnyOrder(Tuple.of(42, 42, 42, 42));
 	}
 
 	@Group

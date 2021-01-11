@@ -527,43 +527,6 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Group
-	class Arrays {
-		@Example
-		void arraysAreCombinationsOfElementsUpToMaxLength() {
-			Optional<ExhaustiveGenerator<Integer[]>> optionalGenerator =
-				Arbitraries.integers().between(1, 2).array(Integer[].class)
-						   .ofMaxSize(2).exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<Integer[]> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(7);
-			assertThat(generator).containsExactly(
-				new Integer[]{},
-				new Integer[]{1},
-				new Integer[]{2},
-				new Integer[]{1, 1},
-				new Integer[]{1, 2},
-				new Integer[]{2, 1},
-				new Integer[]{2, 2}
-			);
-		}
-
-		@Example
-		void elementArbitraryNotExhaustive() {
-			Optional<ExhaustiveGenerator<Double[]>> optionalGenerator =
-				Arbitraries.doubles().between(1, 10).array(Double[].class).ofMaxSize(1).exhaustive();
-			assertThat(optionalGenerator).isNotPresent();
-		}
-
-		@Example
-		void tooManyCombinations() {
-			Optional<ExhaustiveGenerator<Integer[]>> optionalGenerator =
-				Arbitraries.integers().between(1, 10).array(Integer[].class).ofMaxSize(10).exhaustive();
-			assertThat(optionalGenerator).isNotPresent();
-		}
-	}
-
-	@Group
 	@Label("Optional")
 	class OptionalTests {
 		@Example

@@ -4,18 +4,29 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements SelfConfiguringArbitrary<A> {
+public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements ArrayArbitrary<T, A>, SelfConfiguringArbitrary<A> {
 
 	private final Class<A> arrayClass;
 
 	public DefaultArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass, boolean elementsUnique) {
 		super(elementArbitrary, elementsUnique);
 		this.arrayClass = arrayClass;
+	}
+
+	@Override
+	public ArrayArbitrary<T, A> ofMinSize(int minSize) {
+		return (ArrayArbitrary<T, A>) super.ofMinSize(minSize);
+	}
+
+	@Override
+	public ArrayArbitrary<T, A> ofMaxSize(int maxSize) {
+		return (ArrayArbitrary<T, A>) super.ofMaxSize(maxSize);
 	}
 
 	@Override
@@ -60,4 +71,5 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 		});
 		return configurator.configure(this, targetType);
 	}
+
 }

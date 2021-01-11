@@ -324,7 +324,7 @@ You can then create the corresponding multi value arbitrary from there:
 - [`SetArbitrary<T> Arbitrary.set()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#set())
 - [`StreamArbitrary<T> Arbitrary.streamOf()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#stream())
 - [`IteratorArbitrary<T> Arbitrary.iterator()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#iterator())
-- [`StreamableArbitrary<T, A> Arbitrary.array(Class<A> arrayClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#array(java.lang.Class))
+- [`ArrayArbitrary<T, A> Arbitrary.array(Class<A> arrayClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#array(java.lang.Class))
 
 ### Collecting Values in a List
 

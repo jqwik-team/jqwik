@@ -29,7 +29,7 @@ class IteratorArbitraryTests {
 	}
 
 	@Example
-	void iteratorEdgeCases() {
+	void edgeCases() {
 		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 		Arbitrary<Iterator<Integer>> arbitrary = ints.iterator();
 		Set<Iterator<Integer>> iterators = collectEdgeCases(arbitrary.edgeCases());
@@ -54,7 +54,7 @@ class IteratorArbitraryTests {
 	class ExhaustiveGeneration {
 
 		@Example
-		void streamsAreCombinationsOfElementsUpToMaxLength() {
+		void iteratorsAreCombinationsOfElementsUpToMaxLength() {
 			Optional<ExhaustiveGenerator<Iterator<Integer>>> optionalGenerator =
 					Arbitraries.integers().between(1, 3).iterator().ofMaxSize(2).exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -101,15 +101,15 @@ class IteratorArbitraryTests {
 
 		@Property
 		void shrinksToEmptyStreamByDefault(@ForAll Random random) {
-			IteratorArbitrary<Integer> lists = Arbitraries.integers().between(1, 10).iterator();
-			Iterator<Integer> value = falsifyThenShrink(lists, random);
+			IteratorArbitrary<Integer> iterators = Arbitraries.integers().between(1, 10).iterator();
+			Iterator<Integer> value = falsifyThenShrink(iterators, random);
 			assertThat(value.hasNext()).isFalse();
 		}
 
 		@Property
 		void shrinkToMinSize(@ForAll Random random, @ForAll @IntRange(min = 1, max = 20) int min) {
-			IteratorArbitrary<Integer> lists = Arbitraries.integers().between(1, 10).iterator().ofMinSize(min);
-			Iterator<Integer> value = falsifyThenShrink(lists, random);
+			IteratorArbitrary<Integer> iterators = Arbitraries.integers().between(1, 10).iterator().ofMinSize(min);
+			Iterator<Integer> value = falsifyThenShrink(iterators, random);
 			List<Integer> list = toList(value);
 			assertThat(list).hasSize(min);
 			assertThat(list).containsOnly(1);

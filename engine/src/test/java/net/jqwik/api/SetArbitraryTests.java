@@ -173,15 +173,15 @@ class SetArbitraryTests {
 
 		@Property
 		void shrinksToEmptySetByDefault(@ForAll Random random) {
-			SetArbitrary<Integer> lists = Arbitraries.integers().between(1, 10).set();
-			Set<Integer> value = falsifyThenShrink(lists, random);
+			SetArbitrary<Integer> sets = Arbitraries.integers().between(1, 10).set();
+			Set<Integer> value = falsifyThenShrink(sets, random);
 			assertThat(value).isEmpty();
 		}
 
 		@Property
 		void shrinkToMinSize(@ForAll Random random, @ForAll @IntRange(min = 1, max = 20) int min) {
-			SetArbitrary<Integer> lists = Arbitraries.integers().between(1, 100).set().ofMinSize(min);
-			Set<Integer> value = falsifyThenShrink(lists, random);
+			SetArbitrary<Integer> sets = Arbitraries.integers().between(1, 100).set().ofMinSize(min);
+			Set<Integer> value = falsifyThenShrink(sets, random);
 			assertThat(value).hasSize(min);
 			List<Integer> smallestElements = IntStream.rangeClosed(1, min).boxed().collect(Collectors.toList());
 			assertThat(value).containsExactlyInAnyOrderElementsOf(smallestElements);

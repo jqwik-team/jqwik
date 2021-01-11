@@ -29,7 +29,7 @@ class StreamArbitraryTests {
 	}
 
 	@Example
-	void streamEdgeCases() {
+	void edgeCases() {
 		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 		Arbitrary<Stream<Integer>> arbitrary = ints.stream();
 		Set<Stream<Integer>> streams = collectEdgeCases(arbitrary.edgeCases());
@@ -87,15 +87,15 @@ class StreamArbitraryTests {
 
 		@Property
 		void shrinksToEmptyStreamByDefault(@ForAll Random random) {
-			StreamArbitrary<Integer> lists = Arbitraries.integers().between(1, 10).stream();
-			Stream<Integer> value = falsifyThenShrink(lists, random);
+			StreamArbitrary<Integer> streams = Arbitraries.integers().between(1, 10).stream();
+			Stream<Integer> value = falsifyThenShrink(streams, random);
 			assertThat(value).isEmpty();
 		}
 
 		@Property
 		void shrinkToMinSize(@ForAll Random random, @ForAll @IntRange(min = 1, max = 20) int min) {
-			StreamArbitrary<Integer> lists = Arbitraries.integers().between(1, 10).stream().ofMinSize(min);
-			Stream<Integer> value = falsifyThenShrink(lists, random);
+			StreamArbitrary<Integer> streams = Arbitraries.integers().between(1, 10).stream().ofMinSize(min);
+			Stream<Integer> value = falsifyThenShrink(streams, random);
 			List<Integer> list = toList(value);
 			assertThat(list).hasSize(min);
 			assertThat(list).containsOnly(1);
