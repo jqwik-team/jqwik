@@ -528,48 +528,6 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Group
-	class Lists {
-		@Example
-		void listsAreCombinationsOfElementsUpToMaxLength() {
-			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
-				Arbitraries.integers().between(1, 3).list().ofMaxSize(2).exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(13);
-			assertThat(generator).containsExactly(
-				asList(),
-				asList(1),
-				asList(2),
-				asList(3),
-				asList(1, 1),
-				asList(1, 2),
-				asList(1, 3),
-				asList(2, 1),
-				asList(2, 2),
-				asList(2, 3),
-				asList(3, 1),
-				asList(3, 2),
-				asList(3, 3)
-			);
-		}
-
-		@Example
-		void elementArbitraryNotExhaustive() {
-			Optional<ExhaustiveGenerator<List<Double>>> optionalGenerator =
-				Arbitraries.doubles().between(1, 10).list().ofMaxSize(1).exhaustive();
-			assertThat(optionalGenerator).isNotPresent();
-		}
-
-		@Example
-		void tooManyCombinations() {
-			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
-				Arbitraries.integers().between(1, 10).list().ofMaxSize(10).exhaustive();
-			assertThat(optionalGenerator).isNotPresent();
-		}
-	}
-
-	@Group
 	class Streams {
 		@Example
 		void streamsAreCombinationsOfElementsUpToMaxLength() {
