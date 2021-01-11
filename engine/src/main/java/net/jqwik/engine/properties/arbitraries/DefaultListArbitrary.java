@@ -64,4 +64,9 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 			return Combinators.combine(arbitraries).as(ArrayList::new);
 		});
 	}
+
+	@Override
+	public ListArbitrary<T> constraint(BiPredicate<List<T>, T> constraint) {
+		return this;
+	}
 }

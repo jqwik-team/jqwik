@@ -17,7 +17,7 @@ class ListArbitraryTests {
 	@Example
 	void list() {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
-		Arbitrary<List<String>> listArbitrary = stringArbitrary.list();
+		ListArbitrary<String> listArbitrary = stringArbitrary.list();
 
 		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
 		assertGeneratedLists(generator, 0, Integer.MAX_VALUE);
@@ -26,7 +26,7 @@ class ListArbitraryTests {
 	@Example
 	void ofSize() {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
-		Arbitrary<List<String>> listArbitrary = stringArbitrary.list().ofSize(42);
+		ListArbitrary<String> listArbitrary = stringArbitrary.list().ofSize(42);
 
 		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
 		assertGeneratedLists(generator, 42, 42);
@@ -35,7 +35,7 @@ class ListArbitraryTests {
 	@Example
 	void ofMinSize_ofMaxSize() {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
-		Arbitrary<List<String>> listArbitrary = stringArbitrary.list().ofMinSize(2).ofMaxSize(5);
+		ListArbitrary<String> listArbitrary = stringArbitrary.list().ofMinSize(2).ofMaxSize(5);
 
 		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
 		assertGeneratedLists(generator, 2, 5);
@@ -43,10 +43,10 @@ class ListArbitraryTests {
 
 	@Example
 	void reduceList(@ForAll Random random) {
-		StreamableArbitrary<Integer, List<Integer>> streamableArbitrary =
+		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 5).list().ofMinSize(1).ofMaxSize(10);
 
-		Arbitrary<Integer> integerArbitrary = streamableArbitrary.reduce(0, Integer::sum);
+		Arbitrary<Integer> integerArbitrary = listArbitrary.reduce(0, Integer::sum);
 
 		RandomGenerator<Integer> generator = integerArbitrary.generator(1000);
 
@@ -56,6 +56,28 @@ class ListArbitraryTests {
 
 		assertAtLeastOneGenerated(generator, random, sum -> sum == 1);
 		assertAtLeastOneGenerated(generator, random, sum -> sum > 30);
+	}
+
+	@Example
+	void listWithConstraint(@ForAll Random random) {
+		ListArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
+						   .constraint((List<Integer> list, Integer element) -> {
+							   Optional<Integer> max = list.stream().max(Integer::compare);
+							   return max.map(m -> element >= m).orElse(true);
+						   });
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, list -> {
+			assertThat(isGrowing(list)).isTrue();
+		});
+	}
+
+	private boolean isGrowing(List<Integer> list) {
+		List<Integer> sorted = new ArrayList<>(list);
+		Collections.sort(sorted);
+		return list.equals(sorted);
 	}
 
 	@Example

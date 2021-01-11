@@ -64,4 +64,8 @@ public interface ListArbitrary<T> extends StreamableArbitrary<T, List<T>> {
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
 	<U> Arbitrary<List<U>> flatMapEach(BiFunction<List<T>, T, Arbitrary<U>> flatMapper);
+
+	@API(status = MAINTAINED, since = "1.4.0")
+	ListArbitrary<T> constraint(BiPredicate<List<T>, T> constraint);
+
 }
