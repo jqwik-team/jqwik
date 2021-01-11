@@ -1,4 +1,4 @@
-package net.jqwik.time;
+package net.jqwik.time.engine.properties.arbitraries;
 
 import java.time.*;
 import java.util.*;
@@ -8,7 +8,7 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.time.api.*;
+import net.jqwik.time.api.arbitraries.*;
 
 import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;

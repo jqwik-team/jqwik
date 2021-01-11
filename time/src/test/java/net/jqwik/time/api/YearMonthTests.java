@@ -6,6 +6,7 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.testing.*;
+import net.jqwik.time.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 

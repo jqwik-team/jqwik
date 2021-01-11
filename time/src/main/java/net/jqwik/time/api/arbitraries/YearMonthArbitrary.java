@@ -1,4 +1,4 @@
-package net.jqwik.time.api;
+package net.jqwik.time.api.arbitraries;
 
 import java.time.*;
 
@@ -20,8 +20,8 @@ public interface YearMonthArbitrary extends Arbitrary<YearMonth> {
 	 */
 	default YearMonthArbitrary between(YearMonth min, YearMonth max) {
 		YearMonthArbitrary yearMonthArbitrary = atTheEarliest(min);
-		YearMonthArbitrary yearMonthArbitrary1 = yearMonthArbitrary.atTheLatest(max);
-		return yearMonthArbitrary1;
+		yearMonthArbitrary = yearMonthArbitrary.atTheLatest(max);
+		return yearMonthArbitrary;
 	}
 
 	/**

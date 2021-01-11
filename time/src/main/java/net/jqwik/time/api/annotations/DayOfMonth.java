@@ -1,4 +1,4 @@
-package net.jqwik.time.api;
+package net.jqwik.time.api.annotations;
 
 import java.lang.annotation.*;
 
