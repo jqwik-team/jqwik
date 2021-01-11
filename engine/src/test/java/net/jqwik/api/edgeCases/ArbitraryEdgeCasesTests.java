@@ -114,43 +114,6 @@ class ArbitraryEdgeCasesTests {
 	@Group
 	class CollectionTypes {
 
-
-		@Example
-		void setEdgeCases() {
-			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
-			Arbitrary<Set<Integer>> arbitrary = ints.set();
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-					Collections.emptySet(),
-					Collections.singleton(-10),
-					Collections.singleton(-9),
-					Collections.singleton(-2),
-					Collections.singleton(-1),
-					Collections.singleton(0),
-					Collections.singleton(1),
-					Collections.singleton(2),
-					Collections.singleton(9),
-					Collections.singleton(10)
-			);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(10);
-		}
-
-		@Example
-		void setEdgeCasesWithMinSize1() {
-			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
-			Arbitrary<Set<Integer>> arbitrary = ints.set().ofMinSize(1);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-					Collections.singleton(-10),
-					Collections.singleton(-9),
-					Collections.singleton(-2),
-					Collections.singleton(-1),
-					Collections.singleton(0),
-					Collections.singleton(1),
-					Collections.singleton(2),
-					Collections.singleton(9),
-					Collections.singleton(10)
-			);
-		}
-
 		@Example
 		void arraysAreCombinationsOfElementsUpToMaxLength() {
 			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);

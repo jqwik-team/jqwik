@@ -564,62 +564,6 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Group
-	class Sets {
-		@Example
-		void setsAreCombinationsOfElementsUpToMaxLength() {
-			Optional<ExhaustiveGenerator<Set<Integer>>> optionalGenerator =
-				Arbitraries.integers().between(1, 3).set().ofMaxSize(2).exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<Set<Integer>> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(7);
-			assertThat(generator).containsExactly(
-				asSet(),
-				asSet(1),
-				asSet(2),
-				asSet(3),
-				asSet(1, 2),
-				asSet(1, 3),
-				asSet(2, 3)
-			);
-		}
-
-		@Example
-		void lessElementsThanSetSize() {
-			Optional<ExhaustiveGenerator<Set<Integer>>> optionalGenerator =
-				Arbitraries.integers().between(1, 2).set().ofMaxSize(5).exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<Set<Integer>> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(4);
-			assertThat(generator).containsExactly(
-				asSet(),
-				asSet(1),
-				asSet(2),
-				asSet(1, 2)
-			);
-		}
-
-		private Set<Integer> asSet(Integer... ints) {
-			return new HashSet<>(asList(ints));
-		}
-
-		@Example
-		void elementArbitraryNotExhaustive() {
-			Optional<ExhaustiveGenerator<Set<Double>>> optionalGenerator =
-				Arbitraries.doubles().between(1, 10).set().ofMaxSize(1).exhaustive();
-			assertThat(optionalGenerator).isNotPresent();
-		}
-
-		@Example
-		void tooManyCombinations() {
-			Optional<ExhaustiveGenerator<Set<Integer>>> optionalGenerator =
-				Arbitraries.integers().between(1, 75).set().ofMaxSize(10).exhaustive();
-			assertThat(optionalGenerator).isNotPresent();
-		}
-	}
-
-	@Group
 	@Label("Optional")
 	class OptionalTests {
 		@Example
