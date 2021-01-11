@@ -1,4 +1,4 @@
-package net.jqwik.time.engine.properties.arbitraries;
+package net.jqwik.time.internal.properties.arbitraries;
 
 import java.time.*;
 

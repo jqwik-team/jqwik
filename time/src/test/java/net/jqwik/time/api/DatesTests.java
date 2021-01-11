@@ -7,8 +7,8 @@ import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
-import net.jqwik.time.api.annotations.*;
 import net.jqwik.time.api.arbitraries.*;
+import net.jqwik.time.api.constraints.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -544,4 +544,16 @@ class DatesTests {
 		}
 
 	}
+
+	@Group
+	class checkConstraints {
+
+		@Property
+		void yearBetweenMinus500And700(@ForAll @YearRange(min = 500, max = 700) LocalDate date) {
+			assertThat(date.getYear()).isGreaterThanOrEqualTo(500);
+			assertThat(date.getYear()).isLessThanOrEqualTo(700);
+		}
+
+	}
+
 }

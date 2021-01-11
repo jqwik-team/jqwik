@@ -1,11 +1,11 @@
-package net.jqwik.time.api.providers;
+package net.jqwik.time;
 
 import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.*;
-import net.jqwik.time.api.annotations.*;
+import net.jqwik.time.api.constraints.*;
 
 public class DayOfMonthArbitraryProvider implements ArbitraryProvider {
 	@Override
