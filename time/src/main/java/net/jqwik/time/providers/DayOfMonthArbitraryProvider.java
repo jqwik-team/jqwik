@@ -1,4 +1,4 @@
-package net.jqwik.time;
+package net.jqwik.time.providers;
 
 import java.util.*;
 
