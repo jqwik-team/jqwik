@@ -15,14 +15,19 @@ import static net.jqwik.testing.TestingSupport.*;
 @Group
 class YearMonthTests {
 
+	@Provide
+	Arbitrary<YearMonth> yearMonths() {
+		return Dates.yearMonths();
+	}
+
 	@Property
 	void validYearMonthIsGenerated(@ForAll("yearMonths") YearMonth yearMonth) {
 		assertThat(yearMonth).isNotNull();
 	}
 
-	@Provide
-	Arbitrary<YearMonth> yearMonths() {
-		return Dates.yearMonths();
+	@Property
+	void validYearMonthIsGeneratedWithAnnotation(@ForAll YearMonth yearMonth) {
+		assertThat(yearMonth).isNotNull();
 	}
 
 	@Group

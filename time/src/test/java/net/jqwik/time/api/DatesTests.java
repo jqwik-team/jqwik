@@ -61,6 +61,31 @@ class DatesTests {
 	}
 
 	@Group
+	class SimpleAnnotations {
+
+		@Property
+		void validDayOfWeekIsGenerated(@ForAll DayOfWeek dayOfWeek) {
+			assertThat(dayOfWeek).isNotNull();
+		}
+
+		@Property
+		void validDayOfMonthIsGenerated(@ForAll @DayOfMonth int dayOfMonth) {
+			assertThat(dayOfMonth).isBetween(1, 31);
+		}
+
+		@Property
+		void validMonthIsGenerated(@ForAll Month month) {
+			assertThat(month).isNotNull();
+		}
+
+		@Property
+		void validLocalDateIsGenerated(@ForAll LocalDate localDate) {
+			assertThat(localDate).isNotNull();
+		}
+
+	}
+
+	@Group
 	class CheckDateMethods {
 
 		@Group
