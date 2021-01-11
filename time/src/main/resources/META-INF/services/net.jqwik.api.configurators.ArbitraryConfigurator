@@ -1,2 +1,4 @@
 net.jqwik.time.internal.properties.configurators.YearRangeConfigurator
 net.jqwik.time.internal.properties.configurators.MonthRangeConfigurator
+net.jqwik.time.internal.properties.configurators.DayOfMonthRangeConfigurator
+net.jqwik.time.internal.properties.configurators.DayOfWeekRangeConfigurator
