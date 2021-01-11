@@ -1,4 +1,4 @@
-package net.jqwik.time.api;
+package net.jqwik.time.api.arbitraries;
 
 import java.time.*;
 

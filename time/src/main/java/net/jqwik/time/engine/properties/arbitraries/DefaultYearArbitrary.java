@@ -1,4 +1,4 @@
-package net.jqwik.time;
+package net.jqwik.time.engine.properties.arbitraries;
 
 import java.time.*;
 
@@ -6,7 +6,7 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.time.api.*;
+import net.jqwik.time.api.arbitraries.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -19,7 +19,7 @@ public class DefaultYearArbitrary extends ArbitraryDecorator<Year> implements Ye
 	@Override
 	protected Arbitrary<Year> arbitrary() {
 		Arbitrary<Integer> years = Arbitraries.integers().between(min.getValue(), max.getValue()).filter(v -> v != 0);
-		return years.map(v -> Year.of(v));
+		return years.map(Year::of);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
-net.jqwik.time.providers.DatesArbitraryProvider
-net.jqwik.time.providers.DayOfMonthArbitraryProvider
-net.jqwik.time.providers.MonthDayArbitraryProvider
-net.jqwik.time.providers.YearArbitraryProvider
-net.jqwik.time.providers.YearMonthArbitraryProvider
+net.jqwik.time.api.providers.DatesArbitraryProvider
+net.jqwik.time.api.providers.DayOfMonthArbitraryProvider
+net.jqwik.time.api.providers.MonthDayArbitraryProvider
+net.jqwik.time.api.providers.YearArbitraryProvider
+net.jqwik.time.api.providers.YearMonthArbitraryProvider
