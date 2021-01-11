@@ -4,7 +4,6 @@ import java.math.*;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 
@@ -524,42 +523,6 @@ class ExhaustiveGenerationTests {
 			ExhaustiveGenerator<Character> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(4);
 			assertThat(generator).containsExactly('a', 'c', 'e', 'X');
-		}
-	}
-
-	@Group
-	class Streams {
-		@Example
-		void streamsAreCombinationsOfElementsUpToMaxLength() {
-			Optional<ExhaustiveGenerator<Stream<Integer>>> optionalGenerator =
-				Arbitraries.integers().between(1, 2).stream().ofMaxSize(2).exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<Stream<Integer>> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(7);
-			assertThat(generator.map(s -> s.collect(Collectors.toList()))).containsExactly(
-				asList(),
-				asList(1),
-				asList(2),
-				asList(1, 1),
-				asList(1, 2),
-				asList(2, 1),
-				asList(2, 2)
-			);
-		}
-
-		@Example
-		void elementArbitraryNotExhaustive() {
-			Optional<ExhaustiveGenerator<Stream<Double>>> optionalGenerator =
-				Arbitraries.doubles().between(1, 10).stream().ofMaxSize(1).exhaustive();
-			assertThat(optionalGenerator).isNotPresent();
-		}
-
-		@Example
-		void tooManyCombinations() {
-			Optional<ExhaustiveGenerator<Stream<Integer>>> optionalGenerator =
-				Arbitraries.integers().between(1, 10).stream().ofMaxSize(10).exhaustive();
-			assertThat(optionalGenerator).isNotPresent();
 		}
 	}
 

@@ -1,15 +1,13 @@
 package net.jqwik.api.edgeCases;
 
-import java.util.ArrayList;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.api.ArbitraryTestHelper.assertAllGenerated;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
@@ -151,20 +149,6 @@ class ArbitraryEdgeCasesTests {
 					Collections.singleton(9),
 					Collections.singleton(10)
 			);
-		}
-
-		@Example
-		void streamEdgeCases() {
-			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
-			Arbitrary<Stream<Integer>> arbitrary = ints.stream();
-			Set<Stream<Integer>> streams = collectEdgeCases(arbitrary.edgeCases());
-			Set<List<Integer>> lists = streams.stream().map(stream -> stream.collect(Collectors.toList())).collect(Collectors.toSet());
-			assertThat(lists).containsExactlyInAnyOrder(
-					Collections.emptyList(),
-					Collections.singletonList(-10),
-					Collections.singletonList(10)
-			);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(3);
 		}
 
 		@Example

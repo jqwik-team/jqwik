@@ -80,30 +80,6 @@ class StreamableArbitraryTests {
 	}
 
 	@Group
-	class Streams {
-
-		@Example
-		void stream(@ForAll Random random) {
-			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
-			StreamArbitrary<Integer> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5);
-
-			RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
-
-			assertGeneratedStream(generator.next(random));
-			assertGeneratedStream(generator.next(random));
-			assertGeneratedStream(generator.next(random));
-			assertGeneratedStream(generator.next(random));
-		}
-
-		private void assertGeneratedStream(Shrinkable<Stream<Integer>> stream) {
-			Set<Integer> set = stream.value().collect(Collectors.toSet());
-			assertThat(set.size()).isBetween(0, 5);
-			assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-		}
-
-	}
-
-	@Group
 	class Arrays {
 
 		@Example

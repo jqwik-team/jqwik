@@ -54,7 +54,7 @@ class IteratorArbitraryTests {
 	class ExhaustiveGeneration {
 
 		@Example
-		void listsAreCombinationsOfElementsUpToMaxLength() {
+		void streamsAreCombinationsOfElementsUpToMaxLength() {
 			Optional<ExhaustiveGenerator<Iterator<Integer>>> optionalGenerator =
 					Arbitraries.integers().between(1, 3).iterator().ofMaxSize(2).exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -100,7 +100,7 @@ class IteratorArbitraryTests {
 	class Shrinking {
 
 		@Property
-		void shrinksToEmptyListByDefault(@ForAll Random random) {
+		void shrinksToEmptyStreamByDefault(@ForAll Random random) {
 			IteratorArbitrary<Integer> lists = Arbitraries.integers().between(1, 10).iterator();
 			Iterator<Integer> value = falsifyThenShrink(lists, random);
 			assertThat(value.hasNext()).isFalse();
