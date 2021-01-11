@@ -6,7 +6,7 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.time.api.arbitraries.*;
-import net.jqwik.time.engine.properties.arbitraries.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static org.apiguardian.api.API.Status.*;
 

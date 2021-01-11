@@ -1,4 +1,4 @@
-package net.jqwik.time.api.annotations;
+package net.jqwik.time.api.constraints;
 
 import java.lang.annotation.*;
 
@@ -7,9 +7,9 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Constrain Integers to be valid days of month.
+ * Constrain the range of generated year parameters.
  * <p>
- * Applies to int parameters which are also annotated with {@code @ForAll}.
+ * Applies to Year, YearMonth or LocalDate parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  */
@@ -17,6 +17,8 @@ import static org.apiguardian.api.API.Status.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = EXPERIMENTAL, since = "1.4.1")
-public @interface DayOfMonth {
+public @interface YearRange {
+	int min() default 1900;
 
+	int max() default 2500;
 }
