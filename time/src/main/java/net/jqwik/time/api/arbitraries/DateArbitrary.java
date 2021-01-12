@@ -101,4 +101,9 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 	 */
 	Arbitrary<Calendar> asCalendar();
 
+	/**
+	 * Provides the date as Date
+	 */
+	Arbitrary<Date> asDate();
+
 }
