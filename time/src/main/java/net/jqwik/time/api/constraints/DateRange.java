@@ -1,20 +1,19 @@
 package net.jqwik.time.api.constraints;
 
 import java.lang.annotation.*;
-import java.time.*;
 
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Constrain the range of generated day of week parameters.
+ * Constrain the range of generated date parameters.
  * <p>
  * Applies to LocalDate parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
- * @see DateRange
  * @see DayOfMonthRange
+ * @see DayOfWeekRange
  * @see MonthDayRange
  * @see MonthRange
  * @see YearMonthRange
@@ -24,8 +23,8 @@ import static org.apiguardian.api.API.Status.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = EXPERIMENTAL, since = "1.4.1")
-public @interface DayOfWeekRange {
-	DayOfWeek min() default DayOfWeek.MONDAY;
+public @interface DateRange {
+	String min() default "1900-01-01";
 
-	DayOfWeek max() default DayOfWeek.SUNDAY;
+	String max() default "2500-12-31";
 }

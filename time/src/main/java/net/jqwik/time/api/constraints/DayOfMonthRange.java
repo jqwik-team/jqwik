@@ -14,6 +14,12 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see net.jqwik.api.ForAll
  * @see DayOfMonth
+ * @see DateRange
+ * @see DayOfWeekRange
+ * @see MonthDayRange
+ * @see MonthRange
+ * @see YearMonthRange
+ * @see YearRange
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
