@@ -86,6 +86,16 @@ class DatesTests {
 		}
 
 		@Property
+		void noLeapYearIsGenerated(@ForAll @WithoutLeapYears LocalDate date) {
+			assertThat(new GregorianCalendar().isLeapYear(date.getYear())).isFalse();
+		}
+
+		@Property
+		void noLeapDayIsGenerated(@ForAll @WithoutLeapDays LocalDate date) {
+			assertThat(MonthDay.of(date.getMonth(), date.getDayOfMonth())).isNotEqualTo(MonthDay.of(Month.FEBRUARY, 29));
+		}
+
+		@Property
 		void validCalendarIsGenerated(@ForAll Calendar calendar) {
 			assertThat(calendar).isNotNull();
 		}
@@ -291,6 +301,46 @@ class DatesTests {
 					assertThat(date.getDayOfWeek()).isIn(dayOfWeeks);
 					return true;
 				});
+			}
+
+		}
+
+		@Group
+		class LeapYearMethod {
+
+			@Provide
+			DateArbitrary noLeapYears() {
+				return Dates.dates().withoutLeapYears();
+			}
+
+			@Property
+			void yearIsNotALeapYear(@ForAll("noLeapYears") LocalDate date) {
+				assertThat(new GregorianCalendar().isLeapYear(date.getYear())).isFalse();
+			}
+
+		}
+
+		@Group
+		class LeapDayMethod {
+
+			@Provide
+			DateArbitrary noLeapDays() {
+				return Dates.dates().withoutLeapDays();
+			}
+
+			@Property
+			void dayIsNotALeapDay(@ForAll("noLeapDays") LocalDate date) {
+				assertThat(MonthDay.of(date.getMonth(), date.getDayOfMonth())).isNotEqualTo(MonthDay.of(Month.FEBRUARY, 29));
+			}
+
+			@Provide
+			DateArbitrary noLeapDaysBetween() {
+				return Dates.dates().between(LocalDate.of(2020, Month.FEBRUARY, 20), LocalDate.of(2020, Month.MARCH, 5)).withoutLeapDays();
+			}
+
+			@Property
+			void dayIsNotALeapDayBetween(@ForAll("noLeapDaysBetween") LocalDate date) {
+				assertThat(date).isNotEqualTo(LocalDate.of(2020, Month.FEBRUARY, 29));
 			}
 
 		}

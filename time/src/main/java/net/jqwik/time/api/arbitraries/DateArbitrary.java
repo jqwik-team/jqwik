@@ -87,6 +87,16 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 	DateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
 
 	/**
+	 * No leap years are generated.
+	 */
+	DateArbitrary withoutLeapYears();
+
+	/**
+	 * No leap days are generated.
+	 */
+	DateArbitrary withoutLeapDays();
+
+	/**
 	 * Provides the date as Calendar
 	 */
 	Arbitrary<Calendar> asCalendar();
