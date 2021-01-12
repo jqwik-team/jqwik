@@ -209,4 +209,17 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 		return clone;
 	}
 
+	@Override
+	public Arbitrary<Calendar> asCalendar() {
+		DefaultDateArbitrary clone = typedClone();
+		return clone.map(this::localDateToCalendar);
+	}
+
+	private Calendar localDateToCalendar(LocalDate date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(date.getYear(), date.getMonth().getValue(), date.getDayOfMonth(), 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return calendar;
+	}
+
 }

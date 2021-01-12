@@ -1,6 +1,7 @@
 package net.jqwik.time.api.arbitraries;
 
 import java.time.*;
+import java.util.*;
 
 import org.apiguardian.api.*;
 
@@ -84,5 +85,10 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 	 * Set an array of allowed {@code daysOfWeek}.
 	 */
 	DateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
+
+	/**
+	 * Provides the date as Calendar
+	 */
+	Arbitrary<Calendar> asCalendar();
 
 }
