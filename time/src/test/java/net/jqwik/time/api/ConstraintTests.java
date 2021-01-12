@@ -14,7 +14,13 @@ public class ConstraintTests {
 	class DateConstraints {
 
 		@Property
-		void yearRangeBetweenMinus500And700(@ForAll @YearRange(min = 500, max = 700) LocalDate date) {
+		void dateRangeBetween(@ForAll @DateRange(min = "2013-05-25", max = "2020-08-23") LocalDate date) {
+			assertThat(date).isAfterOrEqualTo(LocalDate.of(2013, Month.MAY, 25));
+			assertThat(date).isBeforeOrEqualTo(LocalDate.of(2020, Month.AUGUST, 23));
+		}
+
+		@Property
+		void yearRangeBetween500And700(@ForAll @YearRange(min = 500, max = 700) LocalDate date) {
 			assertThat(date.getYear()).isGreaterThanOrEqualTo(500);
 			assertThat(date.getYear()).isLessThanOrEqualTo(700);
 		}
@@ -53,7 +59,13 @@ public class ConstraintTests {
 	class YearMonthConstraints {
 
 		@Property
-		void yearRangeBetweenMinus500And700(@ForAll @YearRange(min = 500, max = 700) YearMonth yearMonth) {
+		void yearMonthRangeBetween(@ForAll @YearMonthRange(min = "2013-05", max = "2020-08") YearMonth yearMonth) {
+			assertThat(yearMonth).isGreaterThanOrEqualTo(YearMonth.of(2013, Month.MAY));
+			assertThat(yearMonth).isLessThanOrEqualTo(YearMonth.of(2020, Month.AUGUST));
+		}
+
+		@Property
+		void yearRangeBetween500And700(@ForAll @YearRange(min = 500, max = 700) YearMonth yearMonth) {
 			assertThat(yearMonth.getYear()).isGreaterThanOrEqualTo(500);
 			assertThat(yearMonth.getYear()).isLessThanOrEqualTo(700);
 		}
@@ -68,6 +80,12 @@ public class ConstraintTests {
 
 	@Group
 	class MonthDayConstraints {
+
+		@Property
+		void monthDayRangeBetween(@ForAll @MonthDayRange(min = "05-25", max = "08-23") MonthDay monthDay) {
+			assertThat(monthDay).isGreaterThanOrEqualTo(MonthDay.of(Month.MAY, 25));
+			assertThat(monthDay).isLessThanOrEqualTo(MonthDay.of(Month.AUGUST, 23));
+		}
 
 		@Property
 		void monthRangeBetweenMarchAndJuly(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) MonthDay monthDay) {

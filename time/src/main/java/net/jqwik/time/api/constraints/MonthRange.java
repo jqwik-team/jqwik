@@ -13,6 +13,12 @@ import static org.apiguardian.api.API.Status.*;
  * Applies to YearMonth, MonthDay or LocalDate parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
+ * @see DateRange
+ * @see DayOfMonthRange
+ * @see DayOfWeekRange
+ * @see MonthDayRange
+ * @see YearMonthRange
+ * @see YearRange
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
