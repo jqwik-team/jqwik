@@ -3,6 +3,8 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.stream.*;
 
+import org.junit.jupiter.api.*;
+
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.*;
@@ -88,17 +90,14 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	@Disabled
 	void uniquenessConstraintCannotBeFulfilled(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
-				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
-						   .uniqueness(i -> i % 100);
+				Arbitraries.integers().between(1, 1000).list().ofSize(10)
+						   .uniqueness(i -> i % 5);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
 
-		assertAllGenerated(generator, random, list -> {
-			assertThat(isUniqueModulo(list, 100)).isTrue();
-		});
+		Assertions.assertThrows(TooManyFilterMissesException.class, () -> generator.next(random));
 	}
 
 	private boolean isUniqueModulo(List<Integer> list, int modulo) {

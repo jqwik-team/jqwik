@@ -51,7 +51,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 					return Tuple.of(false, next);
 				},
 				(maxMisses) -> {
-					String message = String.format("%s missed more than %s times.", toString(), maxMisses);
+					String message = String.format("Trying to fulfill uniqueness constraint missed more than %s times.", maxMisses);
 					return new TooManyFilterMissesException(message);
 				}
 		);
