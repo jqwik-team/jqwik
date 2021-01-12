@@ -13,8 +13,11 @@ import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements StreamableArbitrary<T, U> {
 
 	protected Arbitrary<T> elementArbitrary;
+
 	protected int minSize = 0;
 	protected int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
+	protected Set<Function<T, Object>> uniquenessExtractors = new HashSet<>();
+
 	private final boolean elementsUnique;
 
 	protected MultivalueArbitraryBase(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
@@ -53,13 +56,20 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 		});
 	}
 
+	public StreamableArbitrary<T, U> uniqueness(Function<T, Object> featureExtractor) {
+		MultivalueArbitraryBase<T, U> clone = typedClone();
+		clone.uniquenessExtractors = new HashSet<>(uniquenessExtractors);
+		clone.uniquenessExtractors.add(featureExtractor);
+		return clone;
+	}
+
 	protected abstract Iterable<T> toIterable(U streamable);
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
 		EdgeCases<List<T>> edgeCases = edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize));
 		return RandomGenerators
-					   .list(elementGenerator, minSize, maxSize, cutoffSize(genSize))
+					   .list(elementGenerator, minSize, maxSize, uniquenessExtractors, cutoffSize(genSize))
 					   .withEdgeCases(genSize, edgeCases);
 	}
 

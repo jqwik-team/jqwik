@@ -74,16 +74,11 @@ public class RandomGenerators {
 		return RandomDecimalGenerators.bigDecimals(1000, range, scale, distribution, shrinkingTarget);
 	}
 
-	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
-		int defaultCutoff = defaultCutoffSize(minSize, maxSize);
-		return list(elementGenerator, minSize, maxSize, defaultCutoff);
-	}
-
 	public static <T> RandomGenerator<List<T>> list(
-		RandomGenerator<T> elementGenerator, int minSize, int maxSize, int cutoffSize
+		RandomGenerator<T> elementGenerator, int minSize, int maxSize, Set<Function<T, Object>> uniquenessExtractors, int cutoffSize
 	) {
 		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable = elements -> new ShrinkableList<>(elements, minSize, maxSize);
-		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize);
+		return container(elementGenerator, createShrinkable, minSize, maxSize, uniquenessExtractors, cutoffSize);
 	}
 
 	public static <T> RandomGenerator<T> oneOf(List<RandomGenerator<T>> all) {
@@ -102,7 +97,7 @@ public class RandomGenerators {
 		RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int cutoffLength
 	) {
 		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength, maxLength);
-		return container(elementGenerator, createShrinkable, minLength, maxLength, cutoffLength);
+		return container(elementGenerator, createShrinkable, minLength, maxLength, Collections.emptySet(), cutoffLength);
 	}
 
 	public static RandomGenerator<String> strings(
@@ -123,10 +118,10 @@ public class RandomGenerators {
 	private static <T, C> RandomGenerator<C> container(
 		RandomGenerator<T> elementGenerator,
 		Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,
-		int minSize, int maxSize, int cutoffSize
+		int minSize, int maxSize, Set<Function<T, Object>> uniquenessExtractors, int cutoffSize
 	) {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
-		return new ContainerGenerator<>(elementGenerator, createShrinkable, sizeGenerator);
+		return new ContainerGenerator<>(elementGenerator, createShrinkable, sizeGenerator, uniquenessExtractors);
 	}
 
 	private static Function<Random, Integer> sizeGenerator(int minSize, int maxSize, int cutoffSize) {

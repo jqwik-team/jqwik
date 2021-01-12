@@ -66,7 +66,7 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 	}
 
 	@Override
-	public ListArbitrary<T> constraint(BiPredicate<List<T>, T> constraint) {
-		return this;
+	public ListArbitrary<T> uniqueness(Function<T, Object> featureExtractor) {
+		return (ListArbitrary<T>) super.uniqueness(featureExtractor);
 	}
 }

@@ -1,6 +1,7 @@
 package net.jqwik.api;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
@@ -59,25 +60,50 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void listWithConstraint(@ForAll Random random) {
+	void uniquenessConstraint(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
-						   .constraint((List<Integer> list, Integer element) -> {
-							   Optional<Integer> max = list.stream().max(Integer::compare);
-							   return max.map(m -> element >= m).orElse(true);
-						   });
+						   .uniqueness(i -> i % 100);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
 
 		assertAllGenerated(generator, random, list -> {
-			assertThat(isGrowing(list)).isTrue();
+			assertThat(isUniqueModulo(list, 100)).isTrue();
 		});
 	}
 
-	private boolean isGrowing(List<Integer> list) {
-		List<Integer> sorted = new ArrayList<>(list);
-		Collections.sort(sorted);
-		return list.equals(sorted);
+	@Example
+	void multipleUniquenessConstraints(@ForAll Random random) {
+		ListArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
+						   .uniqueness(i -> i % 99)
+						   .uniqueness(i -> i % 100);
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, list -> {
+			assertThat(isUniqueModulo(list, 100)).isTrue();
+			assertThat(isUniqueModulo(list, 99)).isTrue();
+		});
+	}
+
+	@Example
+	@Disabled
+	void uniquenessConstraintCannotBeFulfilled(@ForAll Random random) {
+		ListArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
+						   .uniqueness(i -> i % 100);
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, list -> {
+			assertThat(isUniqueModulo(list, 100)).isTrue();
+		});
+	}
+
+	private boolean isUniqueModulo(List<Integer> list, int modulo) {
+		List<Integer> modulo100 = list.stream().map(i -> i % modulo).collect(Collectors.toList());
+		return new HashSet<>(modulo100).size() == list.size();
 	}
 
 	@Example
