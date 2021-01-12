@@ -100,6 +100,11 @@ class DatesTests {
 			assertThat(calendar).isNotNull();
 		}
 
+		@Property
+		void validDateIsGenerated(@ForAll Date date) {
+			assertThat(date).isNotNull();
+		}
+
 	}
 
 	@Group
@@ -354,7 +359,7 @@ class DatesTests {
 			}
 
 			@Property
-			void validCalendarGenerated(@ForAll("calendar") Calendar calendar) {
+			void validCalendarIsGenerated(@ForAll("calendar") Calendar calendar) {
 				assertThat(calendar).isNotNull();
 			}
 
@@ -382,6 +387,63 @@ class DatesTests {
 					startCalendar.set(Calendar.MILLISECOND, 0);
 					assertThat(date).isGreaterThanOrEqualTo(startCalendar);
 					assertThat(date).isLessThanOrEqualTo(endCalendar);
+					return true;
+				});
+			}
+
+		}
+
+		@Group
+		class MapToDate {
+
+			@Provide
+			Arbitrary<Date> datesDate() {
+				return Dates.dates().asDate();
+			}
+
+			@Provide
+			Arbitrary<Date> earlyDates() {
+				return Dates.dates().yearBetween(100, 200).asDate();
+			}
+
+			@Property
+			void validDateIsGenerated(@ForAll("datesDate") Date date) {
+				assertThat(date).isNotNull();
+			}
+
+			@Property
+			void earlyDatesAreValid(@ForAll("earlyDates") Date date) {
+				assertThat(date).isNotNull();
+			}
+
+			@Property
+			void timeIs0AM(@ForAll("datesDate") Date date) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				assertThat(calendar.get(Calendar.HOUR)).isEqualTo(0);
+				assertThat(calendar.get(Calendar.MINUTE)).isEqualTo(0);
+				assertThat(calendar.get(Calendar.SECOND)).isEqualTo(0);
+				assertThat(calendar.get(Calendar.MILLISECOND)).isEqualTo(0);
+			}
+
+			@Property
+			void between(@ForAll("dates") LocalDate startDate, @ForAll("dates") LocalDate endDate, @ForAll Random random) {
+
+				Assume.that(!startDate.isAfter(endDate));
+
+				Arbitrary<Date> dates = Dates.dates().between(startDate, endDate).asDate();
+
+				assertAllGenerated(dates.generator(1000), random, date -> {
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(date);
+					Calendar startCalendar = Calendar.getInstance();
+					startCalendar.set(startDate.getYear(), startDate.getMonth().getValue(), startDate.getDayOfMonth(), 0, 0, 0);
+					startCalendar.set(Calendar.MILLISECOND, 0);
+					Calendar endCalendar = Calendar.getInstance();
+					endCalendar.set(endDate.getYear(), endDate.getMonth().getValue(), endDate.getDayOfMonth(), 0, 0, 0);
+					startCalendar.set(Calendar.MILLISECOND, 0);
+					assertThat(calendar).isGreaterThanOrEqualTo(startCalendar);
+					assertThat(calendar).isLessThanOrEqualTo(endCalendar);
 					return true;
 				});
 			}
