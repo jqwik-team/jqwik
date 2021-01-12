@@ -85,6 +85,11 @@ class DatesTests {
 			assertThat(localDate).isNotNull();
 		}
 
+		@Property
+		void validCalendarIsGenerated(@ForAll Calendar calendar) {
+			assertThat(calendar).isNotNull();
+		}
+
 	}
 
 	@Group
@@ -284,6 +289,49 @@ class DatesTests {
 
 				assertAllGenerated(dates.generator(1000), random, date -> {
 					assertThat(date.getDayOfWeek()).isIn(dayOfWeeks);
+					return true;
+				});
+			}
+
+		}
+
+		@Group
+		class MapToCalendar {
+
+			@Provide
+			Arbitrary<Calendar> calendar() {
+				return Dates.dates().asCalendar();
+			}
+
+			@Property
+			void validCalendarGenerated(@ForAll("calendar") Calendar calendar) {
+				assertThat(calendar).isNotNull();
+			}
+
+			@Property
+			void timeIs0AM(@ForAll("calendar") Calendar calendar) {
+				assertThat(calendar.get(Calendar.HOUR)).isEqualTo(0);
+				assertThat(calendar.get(Calendar.MINUTE)).isEqualTo(0);
+				assertThat(calendar.get(Calendar.SECOND)).isEqualTo(0);
+				assertThat(calendar.get(Calendar.MILLISECOND)).isEqualTo(0);
+			}
+
+			@Property
+			void between(@ForAll("dates") LocalDate startDate, @ForAll("dates") LocalDate endDate, @ForAll Random random) {
+
+				Assume.that(!startDate.isAfter(endDate));
+
+				Arbitrary<Calendar> dates = Dates.dates().between(startDate, endDate).asCalendar();
+
+				assertAllGenerated(dates.generator(1000), random, date -> {
+					Calendar startCalendar = Calendar.getInstance();
+					startCalendar.set(startDate.getYear(), startDate.getMonth().getValue(), startDate.getDayOfMonth(), 0, 0, 0);
+					startCalendar.set(Calendar.MILLISECOND, 0);
+					Calendar endCalendar = Calendar.getInstance();
+					endCalendar.set(endDate.getYear(), endDate.getMonth().getValue(), endDate.getDayOfMonth(), 0, 0, 0);
+					startCalendar.set(Calendar.MILLISECOND, 0);
+					assertThat(date).isGreaterThanOrEqualTo(startCalendar);
+					assertThat(date).isLessThanOrEqualTo(endCalendar);
 					return true;
 				});
 			}
