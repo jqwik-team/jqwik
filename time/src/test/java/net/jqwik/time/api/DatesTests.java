@@ -9,6 +9,7 @@ import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -103,6 +104,11 @@ class DatesTests {
 		@Property
 		void validDateIsGenerated(@ForAll Date date) {
 			assertThat(date).isNotNull();
+		}
+
+		@Property
+		void validPeriodIsGenerated(@ForAll Period period) {
+			assertThat(period).isNotNull();
 		}
 
 	}
@@ -380,10 +386,12 @@ class DatesTests {
 
 				assertAllGenerated(dates.generator(1000), random, date -> {
 					Calendar startCalendar = Calendar.getInstance();
-					startCalendar.set(startDate.getYear(), startDate.getMonth().getValue(), startDate.getDayOfMonth(), 0, 0, 0);
+					startCalendar.set(startDate.getYear(), DefaultDateArbitrary.monthToCalendarMonth(startDate.getMonth()), startDate
+																																	.getDayOfMonth(), 0, 0, 0);
 					startCalendar.set(Calendar.MILLISECOND, 0);
 					Calendar endCalendar = Calendar.getInstance();
-					endCalendar.set(endDate.getYear(), endDate.getMonth().getValue(), endDate.getDayOfMonth(), 0, 0, 0);
+					endCalendar.set(endDate.getYear(), DefaultDateArbitrary
+															   .monthToCalendarMonth(endDate.getMonth()), endDate.getDayOfMonth(), 0, 0, 0);
 					startCalendar.set(Calendar.MILLISECOND, 0);
 					assertThat(date).isGreaterThanOrEqualTo(startCalendar);
 					assertThat(date).isLessThanOrEqualTo(endCalendar);
@@ -437,15 +445,32 @@ class DatesTests {
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(date);
 					Calendar startCalendar = Calendar.getInstance();
-					startCalendar.set(startDate.getYear(), startDate.getMonth().getValue(), startDate.getDayOfMonth(), 0, 0, 0);
+					startCalendar.set(startDate.getYear(), DefaultDateArbitrary.monthToCalendarMonth(startDate.getMonth()), startDate
+																																	.getDayOfMonth(), 0, 0, 0);
 					startCalendar.set(Calendar.MILLISECOND, 0);
 					Calendar endCalendar = Calendar.getInstance();
-					endCalendar.set(endDate.getYear(), endDate.getMonth().getValue(), endDate.getDayOfMonth(), 0, 0, 0);
+					endCalendar.set(endDate.getYear(), DefaultDateArbitrary
+															   .monthToCalendarMonth(endDate.getMonth()), endDate.getDayOfMonth(), 0, 0, 0);
 					startCalendar.set(Calendar.MILLISECOND, 0);
 					assertThat(calendar).isGreaterThanOrEqualTo(startCalendar);
 					assertThat(calendar).isLessThanOrEqualTo(endCalendar);
 					return true;
 				});
+			}
+
+		}
+
+		@Group
+		class MapToPeriod {
+
+			@Provide
+			Arbitrary<Period> periods() {
+				return Dates.dates().asPeriod();
+			}
+
+			@Property
+			void validPeriodIsGenerated(@ForAll("periods") Period period) {
+				assertThat(period).isNotNull();
 			}
 
 		}
@@ -609,6 +634,26 @@ class DatesTests {
 			Statistics.label("Day of weeks")
 					  .collect(date.getDayOfWeek())
 					  .coverage(this::checkDayOfWeekCoverage);
+		}
+
+		@Property
+		void asPeriodIsNotDifferentFrom0(@ForAll Period period) {
+			Statistics.label("Period not always 0")
+					  .collect(period.isZero())
+					  .coverage(coverage -> {
+						  coverage.check(true).count(c -> c >= 1);
+						  coverage.check(false).count(c -> c >= 600);
+					  });
+		}
+
+		@Property
+		void asPeriodIsPositiveAndNegative(@ForAll Period period) {
+			Statistics.label("Period is negative")
+					  .collect(period.isNegative())
+					  .coverage(coverage -> {
+						  coverage.check(true).percentage(p -> p >= 40);
+						  coverage.check(false).percentage(p -> p >= 40);
+					  });
 		}
 
 		private void checkMonthCoverage(StatisticsCoverage coverage) {
