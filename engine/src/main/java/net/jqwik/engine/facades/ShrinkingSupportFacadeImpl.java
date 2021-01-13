@@ -27,7 +27,7 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 					}
 					return result.isFalsified();
 				});
-		// System.out.println(falsifiedShrinkable.value());
+		// System.out.println("### " + falsifiedShrinkable.value());
 		return shrink(falsifiedShrinkable, falsifier, originalError[0]);
 	}
 

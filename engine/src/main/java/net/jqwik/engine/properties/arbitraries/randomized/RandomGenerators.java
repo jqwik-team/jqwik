@@ -8,6 +8,7 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class RandomGenerators {
@@ -75,9 +76,10 @@ public class RandomGenerators {
 	}
 
 	public static <T> RandomGenerator<List<T>> list(
-		RandomGenerator<T> elementGenerator, int minSize, int maxSize, Set<Function<T, Object>> uniquenessExtractors, int cutoffSize
+			RandomGenerator<T> elementGenerator, int minSize, int maxSize, Set<FeatureExtractor<T>> uniquenessExtractors, int cutoffSize
 	) {
-		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable = elements -> new ShrinkableList<>(elements, minSize, maxSize);
+		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable =
+				elements -> new ShrinkableList<>(elements, minSize, maxSize, uniquenessExtractors);
 		return container(elementGenerator, createShrinkable, minSize, maxSize, uniquenessExtractors, cutoffSize);
 	}
 
@@ -118,7 +120,7 @@ public class RandomGenerators {
 	private static <T, C> RandomGenerator<C> container(
 		RandomGenerator<T> elementGenerator,
 		Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,
-		int minSize, int maxSize, Set<Function<T, Object>> uniquenessExtractors, int cutoffSize
+		int minSize, int maxSize, Set<FeatureExtractor<T>> uniquenessExtractors, int cutoffSize
 	) {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
 		return new ContainerGenerator<>(elementGenerator, createShrinkable, sizeGenerator, uniquenessExtractors);

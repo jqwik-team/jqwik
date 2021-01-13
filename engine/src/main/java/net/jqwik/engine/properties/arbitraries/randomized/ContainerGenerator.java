@@ -2,23 +2,22 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.shrinking.*;
+import net.jqwik.engine.properties.arbitraries.*;
 
 class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	private final RandomGenerator<T> elementGenerator;
 	private final Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable;
 	private final Function<Random, Integer> sizeGenerator;
-	private final Set<Function<T, Object>> uniquenessExtractors;
+	private final Collection<FeatureExtractor<T>> uniquenessExtractors;
 
 	ContainerGenerator(
 			RandomGenerator<T> elementGenerator,
 			Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,
 			Function<Random, Integer> sizeGenerator,
-			Set<Function<T, Object>> uniquenessExtractors
+			Collection<FeatureExtractor<T>> uniquenessExtractors
 	) {
 		this.elementGenerator = elementGenerator;
 		this.createShrinkable = createShrinkable;
@@ -59,13 +58,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	}
 
 	private boolean checkUniqueness(List<T> elements, T value) {
-		for (Function<T, Object> extractor : uniquenessExtractors) {
-			Set<Object> elementFeatures = elements.stream().map(extractor).collect(Collectors.toSet());
-			if (elementFeatures.contains(extractor.apply(value))) {
-				return false;
-			}
-		}
-		return true;
+		return FeatureExtractor.checkUniquenessIn(uniquenessExtractors, value, elements);
 	}
 
 }

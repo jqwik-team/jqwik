@@ -16,7 +16,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 	protected int minSize = 0;
 	protected int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
-	protected Set<Function<T, Object>> uniquenessExtractors = new HashSet<>();
+	protected Set<FeatureExtractor<T>> uniquenessExtractors = new HashSet<>();
 
 	private final boolean elementsUnique;
 
@@ -56,7 +56,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 		});
 	}
 
-	public StreamableArbitrary<T, U> uniqueness(Function<T, Object> featureExtractor) {
+	public StreamableArbitrary<T, U> uniqueness(FeatureExtractor<T> featureExtractor) {
 		MultivalueArbitraryBase<T, U> clone = typedClone();
 		clone.uniquenessExtractors = new HashSet<>(uniquenessExtractors);
 		clone.uniquenessExtractors.add(featureExtractor);
@@ -67,7 +67,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
-		EdgeCases<List<T>> edgeCases = edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize));
+		EdgeCases<List<T>> edgeCases = edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors));
 		return RandomGenerators
 					   .list(elementGenerator, minSize, maxSize, uniquenessExtractors, cutoffSize(genSize))
 					   .withEdgeCases(genSize, edgeCases);
@@ -103,6 +103,9 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 				elementArbitrary.edgeCases(),
 				shrinkableT -> {
 					List<Shrinkable<T>> elements = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableT));
+					if (!FeatureExtractor.checkUniqueness(uniquenessExtractors, elements)) {
+						return null;
+					}
 					return shrinkableCreator.apply(elements, minSize);
 				}
 		);

@@ -32,7 +32,7 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 
 	@Override
 	public EdgeCases<List<T>> edgeCases() {
-		return edgeCases((elements, minSize1) -> new ShrinkableList<T>(elements, minSize1, maxSize));
+		return edgeCases((elements, minSize1) -> new ShrinkableList<T>(elements, minSize1, maxSize, uniquenessExtractors));
 	}
 
 	@Override
@@ -66,7 +66,8 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 	}
 
 	@Override
-	public ListArbitrary<T> uniqueness(Function<T, Object> featureExtractor) {
+	public ListArbitrary<T> uniqueness(Function<T, Object> uniqueFeature) {
+		FeatureExtractor<T> featureExtractor = uniqueFeature::apply;
 		return (ListArbitrary<T>) super.uniqueness(featureExtractor);
 	}
 }

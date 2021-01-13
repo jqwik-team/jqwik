@@ -272,6 +272,19 @@ class ListArbitraryTests {
 			assertThat(value).containsOnly(1);
 		}
 
+		@Property
+		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
+			ListArbitrary<Integer> lists =
+					Arbitraries.integers().between(1, 100).list().ofMinSize(min).ofMaxSize(10)
+							   .uniqueness(i -> i);
+			List<Integer> value = falsifyThenShrink(lists, random);
+			assertThat(value).hasSize(min);
+			assertThat(isUniqueModulo(value, 100))
+					.describedAs("%s is not unique mod 100", value)
+					.isTrue();
+			assertThat(value).allMatch(i -> i <= min);
+		}
+
 	}
 
 	private void assertGeneratedLists(RandomGenerator<List<String>> generator, int minSize, int maxSize) {

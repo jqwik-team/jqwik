@@ -23,7 +23,7 @@ class JqwikStreamSupportTests {
 		Stream<Integer> s3 = Stream.of(11, 12, 13, 14, 15)
 								   .peek(peeker);
 
-		Stream<Integer> stream = JqwikStreamSupport.concat(s1, s2);
+		Stream<Integer> stream = JqwikStreamSupport.concat(Stream.empty(), s1, s2, Stream.empty(), s3);
 
 		Optional<Integer> anInt = stream
 									  .filter(i -> i % 2 == 0)
@@ -40,5 +40,25 @@ class JqwikStreamSupportTests {
 		Stream<Integer> s2 = JqwikStreamSupport.takeWhile(s1, i -> i < 5);
 
 		assertThat(s2.collect(Collectors.toList())).containsExactly(1, 2, 3, 4);
+	}
+
+	@Example
+	void zip() {
+		Stream<Integer> s1 = Stream.of(1, 2, 3);
+		Stream<Integer> s2 = Stream.of(1, 1, 1);
+
+		Stream<Integer> zipped = JqwikStreamSupport.zip(s1, s2, Integer::sum);
+
+		assertThat(zipped.collect(Collectors.toList())).containsExactly(2, 3, 4);
+	}
+
+	@Example
+	void zipWithNullSkip() {
+		Stream<Integer> s1 = Stream.of(1, 2, 3);
+		Stream<Integer> s2 = Stream.of(1, 1, 1);
+
+		Stream<Integer> zipped = JqwikStreamSupport.zip(s1, s2, (a, b) -> (a.equals(b)) ? null : Integer.sum(a, b));
+
+		assertThat(zipped.collect(Collectors.toList())).containsExactly(3, 4);
 	}
 }

@@ -12,7 +12,7 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 	}
 
 	private ShrinkableSet(List<Shrinkable<E>> elements, int minSize, int maxSize) {
-		super(elements, minSize, maxSize);
+		super(elements, minSize, maxSize, Collections.emptySet());
 	}
 
 	@Override

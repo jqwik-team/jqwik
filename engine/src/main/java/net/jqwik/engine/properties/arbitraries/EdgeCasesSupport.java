@@ -97,7 +97,9 @@ public class EdgeCasesSupport {
 	public static <T, U> EdgeCases<U> mapShrinkable(EdgeCases<T> self, Function<Shrinkable<T>, Shrinkable<U>> mapper) {
 		List<Supplier<Shrinkable<U>>> mappedSuppliers =
 				self.suppliers().stream()
-					.map(tSupplier -> (Supplier<Shrinkable<U>>) () -> mapper.apply(tSupplier.get()))
+					.map(tSupplier -> mapper.apply(tSupplier.get()))
+					.filter(Objects::nonNull)
+					.map(uShrinkable -> (Supplier<Shrinkable<U>>) () -> uShrinkable)
 					.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(mappedSuppliers);
 	}

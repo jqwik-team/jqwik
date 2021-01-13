@@ -4,24 +4,27 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
 
 abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	protected final List<Shrinkable<E>> elements;
 	protected final int minSize;
 	protected final int maxSize;
+	protected final Collection<FeatureExtractor<E>> uniquenessExtractors;
 
-	ShrinkableContainer(List<Shrinkable<E>> elements, int minSize, int maxSize) {
+	ShrinkableContainer(List<Shrinkable<E>> elements, int minSize, int maxSize, Collection<FeatureExtractor<E>> uniquenessExtractors) {
 		this.elements = elements;
 		this.minSize = minSize;
 		this.maxSize = maxSize;
+		this.uniquenessExtractors = uniquenessExtractors;
 	}
 
 	private C createValue(List<Shrinkable<E>> shrinkables) {
 		return shrinkables
-				   .stream()
-				   .map(Shrinkable::value)
-				   .collect(containerCollector());
+					   .stream()
+					   .map(Shrinkable::value)
+					   .collect(containerCollector());
 	}
 
 	@Override
@@ -32,9 +35,9 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	@Override
 	public Stream<Shrinkable<C>> shrink() {
 		return JqwikStreamSupport.concat(
-			shrinkSizeOfList(),
-			shrinkElementsOneAfterTheOther(),
-			shrinkPairsOfElements()
+				shrinkSizeOfList(),
+				shrinkElementsOneAfterTheOther(),
+				shrinkPairsOfElements()
 		);
 	}
 
@@ -94,9 +97,9 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 
 	protected Stream<Shrinkable<C>> shrinkSizeOfList() {
 		return new SizeOfListShrinker<Shrinkable<E>>(minSize)
-				   .shrink(elements)
-				   .map(this::createShrinkable)
-				   .sorted(Comparator.comparing(Shrinkable::distance));
+					   .shrink(elements)
+					   .map(this::createShrinkable)
+					   .sorted(Comparator.comparing(Shrinkable::distance));
 	}
 
 	protected Stream<Shrinkable<C>> shrinkElementsOneAfterTheOther() {
@@ -106,7 +109,11 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 			Shrinkable<E> element = elements.get(i);
 			Stream<Shrinkable<C>> shrinkElement = element.shrink().flatMap(shrunkElement -> {
 				List<Shrinkable<E>> elementsCopy = new ArrayList<>(elements);
-				elementsCopy.set(index, shrunkElement);
+				elementsCopy.remove(index);
+				if (!FeatureExtractor.checkUniquenessIn(uniquenessExtractors, shrunkElement, elementsCopy)) {
+					return Stream.empty();
+				}
+				elementsCopy.add(index, shrunkElement);
 				return Stream.of(createShrinkable(elementsCopy));
 			});
 			shrinkPerElementStreams.add(shrinkElement);
@@ -116,17 +123,22 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 
 	protected Stream<Shrinkable<C>> shrinkPairsOfElements() {
 		return Combinatorics
-				   .distinctPairs(elements.size())
-				   .flatMap(pair -> JqwikStreamSupport.zip(
-					   elements.get(pair.get1()).shrink(),
-					   elements.get(pair.get2()).shrink(),
-					   (Shrinkable<E> s1, Shrinkable<E> s2) -> {
-						   List<Shrinkable<E>> newElements = new ArrayList<>(elements);
-						   newElements.set(pair.get1(), s1);
-						   newElements.set(pair.get2(), s2);
-						   return createShrinkable(newElements);
-					   }
-				   ));
+					   .distinctPairs(elements.size())
+					   .flatMap(pair -> JqwikStreamSupport.zip(
+							   elements.get(pair.get1()).shrink(),
+							   elements.get(pair.get2()).shrink(),
+							   (Shrinkable<E> s1, Shrinkable<E> s2) -> {
+								   List<Shrinkable<E>> newElements = new ArrayList<>(elements);
+								   newElements.set(pair.get1(), s1);
+								   newElements.set(pair.get2(), s2);
+								   if (FeatureExtractor.checkUniqueness(uniquenessExtractors, newElements)) {
+									   return createShrinkable(newElements);
+								   } else {
+									   // null value will skip the entry in zipped stream
+									   return null;
+								   }
+							   }
+					   ));
 	}
 
 	protected Stream<Shrinkable<C>> sortElements() {
@@ -154,10 +166,10 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	@Override
 	public String toString() {
 		return String.format(
-			"%s<%s>(%s:%s)",
-			getClass().getSimpleName(),
-			value().getClass().getSimpleName(),
-			value(), distance()
+				"%s<%s>(%s:%s)",
+				getClass().getSimpleName(),
+				value().getClass().getSimpleName(),
+				value(), distance()
 		);
 	}
 

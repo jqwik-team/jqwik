@@ -28,7 +28,13 @@ public class JqwikStreamSupport {
 			) {
 				@Override
 				public boolean tryAdvance(Consumer<? super T> action) {
-					return lefts.tryAdvance(left -> rights.tryAdvance(right -> action.accept(combiner.apply(left, right))));
+					return lefts.tryAdvance(left -> rights.tryAdvance(right -> {
+						T combinedValue = combiner.apply(left, right);
+						if (combinedValue == null) {
+							return;
+						}
+						action.accept(combinedValue);
+					}));
 				}
 			}, leftStream.isParallel() || rightStream.isParallel());
 	}
