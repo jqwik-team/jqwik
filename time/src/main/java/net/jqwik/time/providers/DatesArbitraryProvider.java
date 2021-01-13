@@ -12,7 +12,8 @@ public class DatesArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
 		return targetType.isAssignableFrom(LocalDate.class) || targetType.isAssignableFrom(Calendar.class) || targetType
-																													  .isAssignableFrom(Date.class);
+																													  .isAssignableFrom(Date.class) || targetType
+																																							   .isAssignableFrom(Period.class);
 	}
 
 	@Override
@@ -22,6 +23,8 @@ public class DatesArbitraryProvider implements ArbitraryProvider {
 			return Collections.singleton(dateArbitrary.asCalendar());
 		} else if (targetType.isAssignableFrom(Date.class)) {
 			return Collections.singleton(dateArbitrary.asDate());
+		} else if (targetType.isAssignableFrom(Period.class)) {
+			return Collections.singleton(dateArbitrary.asPeriod());
 		}
 		return Collections.singleton(dateArbitrary);
 	}

@@ -106,4 +106,9 @@ public interface DateArbitrary extends Arbitrary<LocalDate> {
 	 */
 	Arbitrary<Date> asDate();
 
+	/**
+	 * Provides two dates as period
+	 */
+	Arbitrary<Period> asPeriod();
+
 }

@@ -242,9 +242,38 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	private Calendar localDateToCalendar(LocalDate date) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(date.getYear(), date.getMonth().getValue(), date.getDayOfMonth(), 0, 0, 0);
+		calendar.set(date.getYear(), monthToCalendarMonth(date.getMonth()), date.getDayOfMonth(), 0, 0, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar;
+	}
+
+	public static int monthToCalendarMonth(Month month) {
+		switch (month) {
+			case JANUARY:
+				return Calendar.JANUARY;
+			case FEBRUARY:
+				return Calendar.FEBRUARY;
+			case MARCH:
+				return Calendar.MARCH;
+			case APRIL:
+				return Calendar.APRIL;
+			case MAY:
+				return Calendar.MAY;
+			case JUNE:
+				return Calendar.JUNE;
+			case JULY:
+				return Calendar.JULY;
+			case AUGUST:
+				return Calendar.AUGUST;
+			case SEPTEMBER:
+				return Calendar.SEPTEMBER;
+			case OCTOBER:
+				return Calendar.OCTOBER;
+			case NOVEMBER:
+				return Calendar.NOVEMBER;
+			default:
+				return Calendar.DECEMBER;
+		}
 	}
 
 	@Override
@@ -252,4 +281,11 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 		DefaultDateArbitrary clone = typedClone();
 		return clone.map(date -> localDateToCalendar(date).getTime());
 	}
+
+	@Override
+	public Arbitrary<Period> asPeriod() {
+		DefaultDateArbitrary clone = typedClone();
+		return Combinators.combine(clone, clone).as(Period::between);
+	}
+
 }
