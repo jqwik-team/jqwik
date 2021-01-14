@@ -58,7 +58,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	}
 
 	private boolean checkUniqueness(List<T> elements, T value) {
-		return FeatureExtractor.checkUniquenessIn(uniquenessExtractors, value, elements);
+		return FeatureExtractor.checkUniquenessInElements(uniquenessExtractors, value, elements);
 	}
 
 }

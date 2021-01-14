@@ -1,13 +1,14 @@
 - 1.4.0
 
-    - Deprecate Arbitrary.unique()
-    
-        Instead make something like List|Set|ArrayArbitrary.constraint(
-        list, element -> !list.contains(element);
-        )
+    - Uniqueness constraints
         - ListArbitrary.uniqueElements()
-        - ListArbitrary.uniqueElementsBy(Predicate<E> uniqueCondition)
-        - How can that work across collections?
+        - SetArbitrary
+        - StreamArbitrary
+        - IteratorArbitrary
+        - ArrayArbitrary
+        - User guide entry for uniqueness constraints  
+    - Deprecate Arbitrary.unique()
+        - Uniqueness constraints across collections?
 
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140

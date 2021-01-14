@@ -15,10 +15,10 @@ public interface FeatureExtractor<T> extends Function<T, Object> {
 		}
 		T value = shrinkable.value();
 		List<T> elements = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
-		return checkUniquenessIn(extractors, value, elements);
+		return checkUniquenessInElements(extractors, value, elements);
 	}
 
-	static <T> boolean checkUniquenessIn(Collection<FeatureExtractor<T>> extractors, T value, List<T> elements) {
+	static <T> boolean checkUniquenessInElements(Collection<FeatureExtractor<T>> extractors, T value, List<T> elements) {
 		for (FeatureExtractor<T> extractor : extractors) {
 			if (extractor.isNotUniqueIn(value, elements)) {
 				return false;
@@ -32,6 +32,10 @@ public interface FeatureExtractor<T> extends Function<T, Object> {
 			return true;
 		}
 		List<T> elements = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+		return checkUniquenessInElements(extractors, elements);
+	}
+
+	static <T> boolean checkUniquenessInElements(Collection<FeatureExtractor<T>> extractors, List<T> elements) {
 		for (FeatureExtractor<T> extractor : extractors) {
 			if (extractor.areNotUnique(elements)) {
 				return false;
