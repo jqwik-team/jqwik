@@ -6,8 +6,11 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
+
+import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>> implements ListArbitrary<T> {
 
@@ -28,7 +31,7 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 	@Override
 	public Optional<ExhaustiveGenerator<List<T>>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
-				.map(generator -> generator.filter(l -> FeatureExtractor.checkUniquenessInElements(uniquenessExtractors, l)));
+								   .map(generator -> generator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l)));
 	}
 
 	@Override
@@ -59,9 +62,9 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 	public <U> Arbitrary<List<U>> flatMapEach(BiFunction<List<T>, T, Arbitrary<U>> flatMapper) {
 		return this.flatMap(elements -> {
 			List<Arbitrary<U>> arbitraries =
-				elements.stream()
-						.map(e -> flatMapper.apply(elements, e))
-						.collect(Collectors.toList());
+					elements.stream()
+							.map(e -> flatMapper.apply(elements, e))
+							.collect(Collectors.toList());
 			return Combinators.combine(arbitraries).as(ArrayList::new);
 		});
 	}

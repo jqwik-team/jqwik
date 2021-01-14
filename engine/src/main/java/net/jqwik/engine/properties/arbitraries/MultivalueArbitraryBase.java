@@ -5,9 +5,11 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import static net.jqwik.engine.properties.UniquenessChecker.*;
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 
 abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements StreamableArbitrary<T, U> {
@@ -103,7 +105,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 				elementArbitrary.edgeCases(),
 				shrinkableT -> {
 					List<Shrinkable<T>> elements = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableT));
-					if (!FeatureExtractor.checkUniqueness(uniquenessExtractors, elements)) {
+					if (!checkUniquenessOfShrinkables(uniquenessExtractors, elements)) {
 						return null;
 					}
 					return shrinkableCreator.apply(elements, minSize);

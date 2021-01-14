@@ -4,8 +4,10 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
+
+import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 
@@ -36,6 +38,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 		);
 	}
 
+	// TODO: Simplify and clean up
 	private Stream<Shrinkable<List<E>>> moveIndividualValuesTowardsEnd() {
 		ShrinkingDistance distance = distance();
 		return Combinatorics
@@ -65,7 +68,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 										   pairMove.set(secondIndex, tuple.get2().get());
 										   return pairMove;
 									   })
-									   .filter(shrinkables -> FeatureExtractor.checkUniqueness(uniquenessExtractors, shrinkables))
+									   .filter(shrinkables -> checkUniquenessOfShrinkables(uniquenessExtractors, shrinkables))
 									   .map(this::createShrinkable);
 
 					   })

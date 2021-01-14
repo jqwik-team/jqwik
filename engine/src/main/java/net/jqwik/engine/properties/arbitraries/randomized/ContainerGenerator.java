@@ -5,7 +5,8 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.arbitraries.*;
+
+import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	private final RandomGenerator<T> elementGenerator;
@@ -58,7 +59,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	}
 
 	private boolean checkUniqueness(List<T> elements, T value) {
-		return FeatureExtractor.checkUniquenessInElements(uniquenessExtractors, value, elements);
+		return checkValueUniqueIn(uniquenessExtractors, value, elements);
 	}
 
 }

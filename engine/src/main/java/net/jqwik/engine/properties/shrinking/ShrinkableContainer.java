@@ -4,8 +4,10 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
+
+import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	protected final List<Shrinkable<E>> elements;
@@ -110,7 +112,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 			Stream<Shrinkable<C>> shrinkElement = element.shrink().flatMap(shrunkElement -> {
 				List<Shrinkable<E>> elementsCopy = new ArrayList<>(elements);
 				elementsCopy.remove(index);
-				if (!FeatureExtractor.checkUniquenessIn(uniquenessExtractors, shrunkElement, elementsCopy)) {
+				if (!checkShrinkableUniqueIn(uniquenessExtractors, shrunkElement, elementsCopy)) {
 					return Stream.empty();
 				}
 				elementsCopy.add(index, shrunkElement);
@@ -131,7 +133,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 								   List<Shrinkable<E>> newElements = new ArrayList<>(elements);
 								   newElements.set(pair.get1(), s1);
 								   newElements.set(pair.get2(), s2);
-								   if (FeatureExtractor.checkUniqueness(uniquenessExtractors, newElements)) {
+								   if (checkUniquenessOfShrinkables(uniquenessExtractors, newElements)) {
 									   return createShrinkable(newElements);
 								   } else {
 									   // null value will skip the entry in zipped stream
