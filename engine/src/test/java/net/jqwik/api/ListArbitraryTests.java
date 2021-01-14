@@ -186,7 +186,7 @@ class ListArbitraryTests {
 	class EdgeCasesGeneration {
 
 		@Example
-		void listEdgeCases() {
+		void edgeCases() {
 			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list();
 			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
@@ -199,7 +199,7 @@ class ListArbitraryTests {
 		}
 
 		@Example
-		void listEdgeCasesWhenMinSize1() {
+		void edgeCasesWhenMinSize1() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(1);
 			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
@@ -216,14 +216,14 @@ class ListArbitraryTests {
 		}
 
 		@Example
-		void listEdgeCasesWhenMinSizeGreaterThan1() {
+		void edgeCasesWhenMinSizeGreaterThan1() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(2);
 			assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
 		}
 
 		@Example
-		void listEdgeCasesWhenFixedSize() {
+		void edgeCasesWhenFixedSize() {
 			Arbitrary<Integer> ints = Arbitraries.of(10, 100);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofSize(3);
 			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
@@ -233,7 +233,7 @@ class ListArbitraryTests {
 		}
 
 		@Example
-		void listEdgeCasesAreGeneratedFreshlyOnEachCallToIterator() {
+		void edgeCasesAreGeneratedFreshlyOnEachCallToIterator() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-1, 1);
 			Arbitrary<List<Integer>> arbitrary = ints.list();
 			EdgeCases<List<Integer>> edgeCases = arbitrary.edgeCases();
@@ -249,6 +249,13 @@ class ListArbitraryTests {
 					Collections.singletonList(0),
 					Collections.singletonList(1)
 			);
+		}
+
+		@Example
+		void edgeCasesAreFilteredByUniquenessConstraints() {
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
+			Arbitrary<List<Integer>> arbitrary = ints.list().ofSize(2).uniqueness(i -> i);
+			assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
 		}
 
 	}
