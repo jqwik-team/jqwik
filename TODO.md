@@ -7,7 +7,8 @@
         - IteratorArbitrary
         - ArrayArbitrary
         - User guide entry for uniqueness constraints  
-    - Deprecate Arbitrary.unique()
+        - Deprecate Arbitrary.unique()
+        - Release notes for new uniqueness concept  
         - Uniqueness constraints across collections?
 
     - Time and Date Generation Module
