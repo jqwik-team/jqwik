@@ -7,9 +7,9 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Constrain dates to be not a leap day.
+ * Decide whether leap years are generated or not
  * <p>
- * Applies to LocalDate parameters which are also annotated with {@code @ForAll}.
+ * Applies to LocalDate and YearMonth parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  */
@@ -17,6 +17,6 @@ import static org.apiguardian.api.API.Status.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = EXPERIMENTAL, since = "1.4.1")
-public @interface WithoutLeapDays {
-
+public @interface LeapYears {
+	boolean withLeapYears() default true;
 }

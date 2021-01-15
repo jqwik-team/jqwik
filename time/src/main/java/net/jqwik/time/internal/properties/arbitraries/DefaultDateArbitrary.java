@@ -29,7 +29,6 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	private int dayOfMonthMax = 31;
 
 	private boolean withLeapYears = true;
-	private boolean withLeapDays = true;
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
@@ -65,10 +64,6 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 		if (!withLeapYears) {
 			localDates = localDates.filter(date -> !new GregorianCalendar().isLeapYear(date.getYear()));
-		}
-
-		if (!withLeapDays) {
-			localDates = localDates.filter(date -> !(date.getMonth() == Month.FEBRUARY && date.getDayOfMonth() == 29));
 		}
 
 		return localDates;
@@ -221,16 +216,9 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	@Override
-	public DateArbitrary withoutLeapYears() {
+	public DateArbitrary leapYears(boolean withLeapYears) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.withLeapYears = false;
-		return clone;
-	}
-
-	@Override
-	public DateArbitrary withoutLeapDays() {
-		DefaultDateArbitrary clone = typedClone();
-		clone.withLeapDays = false;
+		clone.withLeapYears = withLeapYears;
 		return clone;
 	}
 

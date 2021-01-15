@@ -7,6 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
+import net.jqwik.time.api.constraints.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -21,9 +22,18 @@ class YearMonthTests {
 		return Dates.yearMonths();
 	}
 
-	@Property
-	void validYearMonthIsGenerated(@ForAll("yearMonths") YearMonth yearMonth) {
-		assertThat(yearMonth).isNotNull();
+	class SimpleAnnotations {
+
+		@Property
+		void validYearMonthIsGenerated(@ForAll("yearMonths") YearMonth yearMonth) {
+			assertThat(yearMonth).isNotNull();
+		}
+
+		@Property
+		void noLeapYearsAreGenerated(@ForAll("yearMonths") @LeapYears(withLeapYears = false) YearMonth yearMonth) {
+			assertThat(new GregorianCalendar().isLeapYear(yearMonth.getYear())).isFalse();
+		}
+
 	}
 
 	@Property
@@ -89,6 +99,16 @@ class YearMonthTests {
 					return true;
 				});
 
+			}
+
+			@Property
+			void withoutLeapYears(@ForAll("withoutLeapYears") YearMonth yearMonth) {
+				assertThat(new GregorianCalendar().isLeapYear(yearMonth.getYear())).isFalse();
+			}
+
+			@Provide
+			Arbitrary<YearMonth> withoutLeapYears() {
+				return Dates.yearMonths().leapYears(false);
 			}
 
 		}
