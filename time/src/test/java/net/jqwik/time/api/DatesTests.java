@@ -92,13 +92,8 @@ class DatesTests {
 		}
 
 		@Property
-		void noLeapYearIsGenerated(@ForAll @WithoutLeapYears LocalDate date) {
+		void noLeapYearIsGenerated(@ForAll @LeapYears(withLeapYears = false) LocalDate date) {
 			assertThat(new GregorianCalendar().isLeapYear(date.getYear())).isFalse();
-		}
-
-		@Property
-		void noLeapDayIsGenerated(@ForAll @WithoutLeapDays LocalDate date) {
-			assertThat(MonthDay.of(date.getMonth(), date.getDayOfMonth())).isNotEqualTo(MonthDay.of(Month.FEBRUARY, 29));
 		}
 
 		@Property
@@ -326,37 +321,12 @@ class DatesTests {
 
 			@Provide
 			DateArbitrary noLeapYears() {
-				return Dates.dates().withoutLeapYears();
+				return Dates.dates().leapYears(false);
 			}
 
 			@Property
 			void yearIsNotALeapYear(@ForAll("noLeapYears") LocalDate date) {
 				assertThat(new GregorianCalendar().isLeapYear(date.getYear())).isFalse();
-			}
-
-		}
-
-		@Group
-		class LeapDayMethod {
-
-			@Provide
-			DateArbitrary noLeapDays() {
-				return Dates.dates().withoutLeapDays();
-			}
-
-			@Property
-			void dayIsNotALeapDay(@ForAll("noLeapDays") LocalDate date) {
-				assertThat(MonthDay.of(date.getMonth(), date.getDayOfMonth())).isNotEqualTo(MonthDay.of(Month.FEBRUARY, 29));
-			}
-
-			@Provide
-			DateArbitrary noLeapDaysBetween() {
-				return Dates.dates().between(LocalDate.of(2020, Month.FEBRUARY, 20), LocalDate.of(2020, Month.MARCH, 5)).withoutLeapDays();
-			}
-
-			@Property
-			void dayIsNotALeapDayBetween(@ForAll("noLeapDaysBetween") LocalDate date) {
-				assertThat(date).isNotEqualTo(LocalDate.of(2020, Month.FEBRUARY, 29));
 			}
 
 		}
@@ -639,6 +609,16 @@ class DatesTests {
 			Statistics.label("Day of weeks")
 					  .collect(date.getDayOfWeek())
 					  .coverage(this::checkDayOfWeekCoverage);
+		}
+
+		@Property
+		void leapYears(@ForAll("dates") LocalDate date) {
+			Statistics.label("Leap years")
+					  .collect(new GregorianCalendar().isLeapYear(date.getYear()))
+					  .coverage(coverage -> {
+						  coverage.check(true).percentage(p -> p >= 20);
+						  coverage.check(false).percentage(p -> p >= 65);
+					  });
 		}
 
 		@Property

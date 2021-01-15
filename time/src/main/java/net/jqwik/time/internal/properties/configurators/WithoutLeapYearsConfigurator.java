@@ -12,13 +12,16 @@ public class WithoutLeapYearsConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalDate.class);
+		return targetType.isAssignableFrom(LocalDate.class) || targetType.isAssignableFrom(YearMonth.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, WithoutLeapYears withoutLeapYears) {
+	public Arbitrary<?> configure(Arbitrary<?> arbitrary, LeapYears leapYears) {
 		if (arbitrary instanceof DateArbitrary) {
 			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
-			return dateArbitrary.withoutLeapYears();
+			return dateArbitrary.leapYears(leapYears.withLeapYears());
+		} else if (arbitrary instanceof YearMonthArbitrary) {
+			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
+			return yearMonthArbitrary.leapYears(leapYears.withLeapYears());
 		} else {
 			return arbitrary;
 		}

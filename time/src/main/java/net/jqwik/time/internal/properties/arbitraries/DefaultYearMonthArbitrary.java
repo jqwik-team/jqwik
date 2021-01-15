@@ -16,7 +16,6 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> implements YearMonthArbitrary {
 
-
 	private static final YearMonth DEFAULT_MIN = YearMonth.of(1900, 1);
 	private static final YearMonth DEFAULT_MAX = YearMonth.of(2500, 12);
 
@@ -24,6 +23,8 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 	private YearMonth yearMonthMax = null;
 
 	private Set<Month> allowedMonths = new HashSet<>(Arrays.asList(Month.values()));
+
+	private boolean withLeapYears = true;
 
 	@Override
 	protected Arbitrary<YearMonth> arbitrary() {
@@ -43,6 +44,10 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 
 		if (allowedMonths.size() < 12) {
 			yearMonths = yearMonths.filter(yearMonth -> allowedMonths.contains(yearMonth.getMonth()));
+		}
+
+		if (!withLeapYears) {
+			yearMonths = yearMonths.filter(date -> !new GregorianCalendar().isLeapYear(date.getYear()));
 		}
 
 		return yearMonths;
@@ -104,6 +109,13 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 	public YearMonthArbitrary onlyMonths(Month... months) {
 		DefaultYearMonthArbitrary clone = typedClone();
 		clone.allowedMonths = new HashSet<>(Arrays.asList(months));
+		return clone;
+	}
+
+	@Override
+	public YearMonthArbitrary leapYears(boolean withLeapYears) {
+		DefaultYearMonthArbitrary clone = typedClone();
+		clone.withLeapYears = withLeapYears;
 		return clone;
 	}
 
