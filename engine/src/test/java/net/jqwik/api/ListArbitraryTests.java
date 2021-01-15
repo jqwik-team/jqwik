@@ -75,6 +75,20 @@ class ListArbitraryTests {
 	}
 
 	@Example
+	void uniquenessConstraintWithNullElements(@ForAll Random random) {
+		ListArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).injectNull(0.5)
+						   .list().ofMaxSize(20)
+						   .uniqueness(i -> i % 100);
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, list -> {
+			assertThat(isUniqueModulo(list, 100)).isTrue();
+		});
+	}
+
+	@Example
 	void multipleUniquenessConstraints(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
@@ -100,8 +114,25 @@ class ListArbitraryTests {
 		Assertions.assertThrows(TooManyFilterMissesException.class, () -> generator.next(random));
 	}
 
+	@Example
+	void uniquenessElements(@ForAll Random random) {
+		ListArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20).uniqueElements();
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, list -> {
+			assertThat(isUniqueModulo(list, 1000)).isTrue();
+		});
+	}
+
 	private boolean isUniqueModulo(List<Integer> list, int modulo) {
-		List<Integer> modulo100 = list.stream().map(i -> i % modulo).collect(Collectors.toList());
+		List<Integer> modulo100 = list.stream().map(i -> {
+			if (i == null) {
+				return null;
+			}
+			return i % modulo;
+		}).collect(Collectors.toList());
 		return new HashSet<>(modulo100).size() == list.size();
 	}
 
@@ -312,6 +343,16 @@ class ListArbitraryTests {
 					.describedAs("%s is not unique mod 100", value)
 					.isTrue();
 			assertThat(value).allMatch(i -> i <= min);
+		}
+
+		@Property
+		void shrinkWithUniquenessAndNulls(@ForAll Random random) {
+			ListArbitrary<Integer> lists =
+					Arbitraries.integers().between(1, 100).injectNull(0.5)
+							   .list().ofMinSize(3).ofMaxSize(10)
+							   .uniqueness(i -> i);
+			List<Integer> value = falsifyThenShrink(lists, random);
+			assertThat(value).containsExactly(null, 1, 2);
 		}
 
 	}

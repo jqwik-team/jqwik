@@ -65,7 +65,31 @@ public interface ListArbitrary<T> extends StreamableArbitrary<T, List<T>> {
 	@API(status = MAINTAINED, since = "1.4.0")
 	<U> Arbitrary<List<U>> flatMapEach(BiFunction<List<T>, T, Arbitrary<U>> flatMapper);
 
+	/**
+	 * Add the constraint that elements of the generated list must be unique,
+	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	ListArbitrary<T> uniqueElements();
+
+	/**
+	 * Add the constraint that elements of the generated list must be unique
+	 * relating to an element's "feature" being extracted using the
+	 * {@code featureExtractor} function.
+	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
 	@API(status = MAINTAINED, since = "1.4.0")
 	ListArbitrary<T> uniqueness(Function<T, Object> featureExtractor);
-
 }

@@ -1,7 +1,6 @@
 - 1.4.0
 
     - Uniqueness constraints
-        - ListArbitrary.uniqueElements()
         - SetArbitrary
         - StreamArbitrary
         - IteratorArbitrary
