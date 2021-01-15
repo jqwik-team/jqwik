@@ -72,7 +72,12 @@ class DatesTests {
 		}
 
 		@Property
-		void validDayOfMonthIsGenerated(@ForAll @DayOfMonth int dayOfMonth) {
+		void validDayOfMonthIsGenerated(@ForAll @DayOfMonthRange int dayOfMonth) {
+			assertThat(dayOfMonth).isBetween(1, 31);
+		}
+
+		@Property
+		void validDayOfMonthIsGeneratedInteger(@ForAll @DayOfMonthRange Integer dayOfMonth) {
 			assertThat(dayOfMonth).isBetween(1, 31);
 		}
 
