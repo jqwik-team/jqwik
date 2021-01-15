@@ -9,11 +9,9 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Constrain the range of generated day of month parameters.
  * <p>
- * Applies to LocalDate parameters which are also annotated with {@code @ForAll}.
- * Also applies to int or Integer parameters which are also annotated with {@code @ForAll} and {@code @DayOfMonth}.
+ * Applies to LocalDate, int and Integer parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
- * @see DayOfMonth
  * @see DateRange
  * @see DayOfWeekRange
  * @see MonthDayRange

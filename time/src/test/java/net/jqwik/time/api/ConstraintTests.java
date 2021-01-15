@@ -117,13 +117,13 @@ public class ConstraintTests {
 	class DayOfMonthConstraints {
 
 		@Property
-		void dayOfMonthRangeBetween15And20(@ForAll @DayOfMonth @DayOfMonthRange(min = 15, max = 20) int dayOfMonth) {
+		void dayOfMonthRangeBetween15And20(@ForAll @DayOfMonthRange(min = 15, max = 20) int dayOfMonth) {
 			assertThat(dayOfMonth).isGreaterThanOrEqualTo(15);
 			assertThat(dayOfMonth).isLessThanOrEqualTo(20);
 		}
 
 		@Property
-		void dayOfMonthRangeBetween15And20Integer(@ForAll @DayOfMonth @DayOfMonthRange(min = 15, max = 20) Integer dayOfMonth) {
+		void dayOfMonthRangeBetween15And20Integer(@ForAll @DayOfMonthRange(min = 15, max = 20) Integer dayOfMonth) {
 			assertThat(dayOfMonth).isGreaterThanOrEqualTo(15);
 			assertThat(dayOfMonth).isLessThanOrEqualTo(20);
 		}
