@@ -49,27 +49,27 @@ public class RandomGenerators {
 		BigInteger minBig = BigInteger.valueOf(min);
 		BigInteger maxBig = BigInteger.valueOf(max);
 		return bigIntegers(
-			minBig,
-			maxBig,
-			RandomIntegralGenerators.defaultShrinkingTarget(Range.of(minBig, maxBig)),
-			RandomDistribution.uniform()
+				minBig,
+				maxBig,
+				RandomIntegralGenerators.defaultShrinkingTarget(Range.of(minBig, maxBig)),
+				RandomDistribution.uniform()
 		).map(BigInteger::intValueExact);
 	}
 
 	public static RandomGenerator<BigInteger> bigIntegers(
-		BigInteger min,
-		BigInteger max,
-		BigInteger shrinkingTarget,
-		RandomDistribution distribution
+			BigInteger min,
+			BigInteger max,
+			BigInteger shrinkingTarget,
+			RandomDistribution distribution
 	) {
 		return RandomIntegralGenerators.bigIntegers(1000, min, max, shrinkingTarget, distribution);
 	}
 
 	public static RandomGenerator<BigDecimal> bigDecimals(
-		Range<BigDecimal> range,
-		int scale,
-		BigDecimal shrinkingTarget,
-		RandomDistribution distribution
+			Range<BigDecimal> range,
+			int scale,
+			BigDecimal shrinkingTarget,
+			RandomDistribution distribution
 	) {
 		return RandomDecimalGenerators.bigDecimals(1000, range, scale, distribution, shrinkingTarget);
 	}
@@ -95,14 +95,14 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<String> strings(
-		RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int cutoffLength
+			RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int cutoffLength
 	) {
 		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength, maxLength);
 		return container(elementGenerator, createShrinkable, minLength, maxLength, Collections.emptySet(), cutoffLength);
 	}
 
 	public static RandomGenerator<String> strings(
-		RandomGenerator<Character> elementGenerator, int minLength, int maxLength
+			RandomGenerator<Character> elementGenerator, int minLength, int maxLength
 	) {
 		int defaultCutoff = defaultCutoffSize(minLength, maxLength);
 		return strings(elementGenerator, minLength, maxLength, defaultCutoff);
@@ -117,9 +117,9 @@ public class RandomGenerators {
 	}
 
 	private static <T, C> RandomGenerator<C> container(
-		RandomGenerator<T> elementGenerator,
-		Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,
-		int minSize, int maxSize, Set<FeatureExtractor<T>> uniquenessExtractors, int cutoffSize
+			RandomGenerator<T> elementGenerator,
+			Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,
+			int minSize, int maxSize, Set<FeatureExtractor<T>> uniquenessExtractors, int cutoffSize
 	) {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
 		return new ContainerGenerator<>(elementGenerator, createShrinkable, sizeGenerator, uniquenessExtractors);
@@ -144,38 +144,17 @@ public class RandomGenerators {
 
 	public static <T> RandomGenerator<Set<T>> set(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
 		int defaultCutoffSize = defaultCutoffSize(minSize, maxSize);
-		return set(elementGenerator, minSize, maxSize, defaultCutoffSize);
+		return set(elementGenerator, minSize, maxSize, Collections.emptySet(), defaultCutoffSize);
 	}
 
 	public static <T> RandomGenerator<Set<T>> set(
-		RandomGenerator<T> elementGenerator, int minSize, int maxSize, int cutoffSize
+			RandomGenerator<T> elementGenerator, int minSize, int maxSize, Set<FeatureExtractor<T>> uniquenessExtractors, int cutoffSize
 	) {
-		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
-		return random -> {
-			int listSize = sizeGenerator.apply(random);
-			Set<Shrinkable<T>> elements = new HashSet<>();
-			Set<T> values = new HashSet<>();
-			MaxTriesLoop.loop(
-				() -> elements.size() < listSize,
-				ignore -> {
-					Shrinkable<T> next = elementGenerator.next(random);
-					if (values.contains(next.value())) {
-						return Tuple.of(false, ignore);
-					}
-					elements.add(next);
-					values.add(next.value());
-					return Tuple.of(false, ignore);
-				},
-				maxMisses -> {
-					String message = String.format(
-						"Generating values for set of size %s missed more than %s times.",
-						listSize, maxMisses
-					);
-					return new JqwikException(message);
-				}
-			);
-			return new ShrinkableSet<>(elements, minSize, maxSize);
-		};
+		Set<FeatureExtractor<T>> extractors = new HashSet<>(uniquenessExtractors);
+		extractors.add(FeatureExtractor.identity());
+		Function<List<Shrinkable<T>>, Shrinkable<Set<T>>> createShrinkable =
+				elements -> new ShrinkableSet<T>(elements, minSize, maxSize, uniquenessExtractors);
+		return container(elementGenerator, createShrinkable, minSize, maxSize, extractors, cutoffSize);
 	}
 
 	public static <T> RandomGenerator<T> samplesFromShrinkables(List<Shrinkable<T>> samples) {

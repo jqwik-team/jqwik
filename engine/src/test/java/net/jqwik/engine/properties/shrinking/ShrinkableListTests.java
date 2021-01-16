@@ -254,6 +254,16 @@ class ShrinkableListTests {
 			assertThat(shrunkValue).containsExactly(0, 2, 4);
 		}
 
+		@Example
+		void shrinkingNeverCreatesListThatViolatesUniqueness() {
+			List<Integer> values = Arrays.asList(56, 4, 23, 2, 95);
+			Shrinkable<List<Integer>> shrinkable = createShrinkableList(values, 2, 5, i -> i);
+
+			Predicate<List<Integer>> condition = list -> new HashSet<>(list).size() == list.size();
+			assertWhileShrinking(shrinkable, condition);
+		}
+
+
 	}
 
 	@Group
@@ -388,6 +398,7 @@ class ShrinkableListTests {
 			assertThat(shrunkValue).isEqualTo(asList(asList(1, 10, 10)));
 		}
 
+		// Has failed in rare cases
 		@Property(tries = 100)
 		void sumOfIntegersAcrossSets(@ForAll Random random) {
 			Arbitrary<List<Set<Integer>>> listOfSets =
@@ -434,7 +445,6 @@ class ShrinkableListTests {
 								  Range.of(BigInteger.ZERO, BigInteger.valueOf(100)),
 								  BigInteger.valueOf(0)
 						  ).map(BigInteger::intValueExact))
-						  // .map(OneStepShrinkable::new)
 						  .collect(Collectors.toList());
 		return new ShrinkableList<>(elementShrinkables, min, max, Arrays.asList(extractors));
 	}

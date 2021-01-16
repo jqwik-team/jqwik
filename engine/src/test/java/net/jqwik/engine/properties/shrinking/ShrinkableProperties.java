@@ -19,7 +19,8 @@ class ShrinkableProperties {
 		shrink(shrinkable, ignore -> TryExecutionResult.falsified(null), null);
 	}
 
-	@Property(tries = 100)
+	// Fixed seed since it can take very long
+	@Property(tries = 1000, seed = "42")
 	void allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
 		shrinkable.shrink().forEach(shrunk -> {
 			assertThat(shrunk.distance().compareTo(shrinkable.distance())).isLessThanOrEqualTo(0);
@@ -71,7 +72,7 @@ class ShrinkableProperties {
 						 .collect(Collectors.toList());
 			return Combinators.combine(elementArbitraries).as(elements -> {
 				Set<Shrinkable> elementSet = new HashSet<>(elements);
-				return new ShrinkableSet(elementSet, 0, size);
+				return new ShrinkableSet(elementSet, 0, size, Collections.emptySet());
 			});
 		});
 	}

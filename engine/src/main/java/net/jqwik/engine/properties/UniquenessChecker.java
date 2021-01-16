@@ -16,7 +16,7 @@ public class UniquenessChecker {
 		return checkValueUniqueIn(extractors, value, elements);
 	}
 
-	public static <T> boolean checkValueUniqueIn(Collection<FeatureExtractor<T>> extractors, T value, List<T> elements) {
+	public static <T> boolean checkValueUniqueIn(Collection<FeatureExtractor<T>> extractors, T value, Collection<T> elements) {
 		for (FeatureExtractor<T> extractor : extractors) {
 			if (!extractor.isUniqueIn(value, elements)) {
 				return false;
@@ -33,7 +33,7 @@ public class UniquenessChecker {
 		return checkUniquenessOfValues(extractors, elements);
 	}
 
-	public static <T> boolean checkUniquenessOfValues(Collection<FeatureExtractor<T>> extractors, List<T> elements) {
+	public static <T> boolean checkUniquenessOfValues(Collection<FeatureExtractor<T>> extractors, Collection<T> elements) {
 		for (FeatureExtractor<T> extractor : extractors) {
 			if (!extractor.areUnique(elements)) {
 				return false;

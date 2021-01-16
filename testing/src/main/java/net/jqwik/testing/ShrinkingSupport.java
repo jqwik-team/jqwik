@@ -1,6 +1,8 @@
 package net.jqwik.testing;
 
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
@@ -9,6 +11,7 @@ import net.jqwik.api.facades.*;
 import net.jqwik.api.lifecycle.*;
 
 import static org.apiguardian.api.API.Status.*;
+import static org.assertj.core.api.Assertions.*;
 
 @API(status = EXPERIMENTAL, since = "1.4.0")
 public class ShrinkingSupport {
@@ -39,4 +42,16 @@ public class ShrinkingSupport {
 	) {
 		return ShrinkingSupportFacade.implementation.shrinkToSample(falsifiedShrinkable, falsifier, originalError);
 	}
+
+	public static <T> void assertWhileShrinking(Shrinkable<T> shrinkable, Predicate<T> condition) {
+		while(true) {
+			List<Shrinkable<T>> collect = shrinkable.shrink().collect(Collectors.toList());
+			assertThat(collect).allMatch(s -> condition.test(s.value()));
+			if (collect.isEmpty()) {
+				break;
+			}
+			shrinkable = collect.iterator().next();
+		}
+	}
+
 }

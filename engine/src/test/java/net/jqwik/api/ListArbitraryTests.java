@@ -206,7 +206,7 @@ class ListArbitraryTests {
 
 			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(13);
-			assertThat(generator).containsExactly(
+			assertThat(generator).containsExactlyInAnyOrder(
 					asList(),
 					asList(1),
 					asList(2),

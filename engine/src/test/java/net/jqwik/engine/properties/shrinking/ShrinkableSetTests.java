@@ -1,10 +1,13 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import net.jqwik.testing.*;
 
@@ -136,7 +139,7 @@ class ShrinkableSetTests {
 		void bigSet() {
 			Set<Shrinkable<Integer>> elementShrinkables = IntStream.range(0, 1000).mapToObj(OneStepShrinkable::new)
 																   .collect(Collectors.toSet());
-			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5, 1000);
+			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5, 1000, Collections.emptySet());
 
 			Set<Integer> shrunkValue = shrink(shrinkable, falsifier(Set::isEmpty), null);
 			assertThat(shrunkValue).containsExactly(0, 1, 2, 3, 4);
@@ -144,9 +147,49 @@ class ShrinkableSetTests {
 
 	}
 
-	private Shrinkable<Set<Integer>> createShrinkableSet(List<Integer> listValues, int minSize) {
-		Set<Shrinkable<Integer>> elementShrinkables = listValues.stream().map(OneStepShrinkable::new).collect(Collectors.toSet());
-		return new ShrinkableSet<>(elementShrinkables, minSize, listValues.size());
+	@Example
+	void shrinkToTwoElements() {
+		List<Integer> values = Arrays.asList(56, 4, 23, 2);
+		Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(values, 2, i -> i % 5);
+
+		Set<Integer> shrunkValue = shrink(shrinkable, TestingFalsifier.alwaysFalsify(), null);
+		assertThat(shrunkValue).containsExactly(0, 1);
+	}
+
+	@Example
+	void shrinkingNeverCreatesSetThatViolatesUniqueness() {
+		List<Integer> values = Arrays.asList(56, 4, 23, 2, 95);
+		Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(values, 2, i -> i % 5);
+
+		Predicate<Set<Integer>> condition = set -> isUniqueModulo(set, 5);
+		assertWhileShrinking(shrinkable, condition);
+	}
+
+	private boolean isUniqueModulo(Set<Integer> list, int modulo) {
+		List<Integer> moduloList = list.stream().map(i -> {
+			if (i == null) {
+				return null;
+			}
+			return i % modulo;
+		}).collect(Collectors.toList());
+		return new HashSet<>(moduloList).size() == list.size();
+	}
+
+	@SafeVarargs
+	private final Shrinkable<Set<Integer>> createShrinkableSet(
+			List<Integer> listValues,
+			int min,
+			FeatureExtractor<Integer>... extractors
+	) {
+		List<Shrinkable<Integer>> elementShrinkables =
+				listValues.stream()
+						  .map(i -> new ShrinkableBigInteger(
+								  BigInteger.valueOf(i),
+								  Range.of(BigInteger.ZERO, BigInteger.valueOf(100)),
+								  BigInteger.valueOf(0)
+						  ).map(BigInteger::intValueExact))
+						  .collect(Collectors.toList());
+		return new ShrinkableSet<>(elementShrinkables, min, listValues.size(), Arrays.asList(extractors));
 	}
 
 	private AssertionError failAndCatch(String message) {

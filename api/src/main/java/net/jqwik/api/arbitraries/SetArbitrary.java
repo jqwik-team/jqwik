@@ -64,4 +64,20 @@ public interface SetArbitrary<T> extends StreamableArbitrary<T, Set<T>> {
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
 	<U> Arbitrary<Set<U>> flatMapEach(BiFunction<Set<T>, T, Arbitrary<U>> flatMapper);
+
+	/**
+	 * Add the constraint that elements of the generated set must be unique
+	 * relating to an element's "feature" being extracted using the
+	 * {@code by} function.
+	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	SetArbitrary<T> uniqueness(Function<T, Object> by);
+
 }

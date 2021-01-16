@@ -4,15 +4,16 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 
 public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
-	public ShrinkableSet(Set<Shrinkable<E>> elements, int minSize, int maxSize) {
-		this(new ArrayList<>(elements), minSize, maxSize);
+	public ShrinkableSet(Collection<Shrinkable<E>> elements, int minSize, int maxSize, Collection<FeatureExtractor<E>> uniquenessExtractors) {
+		this(new ArrayList<>(elements), minSize, maxSize, uniquenessExtractors);
 	}
 
-	private ShrinkableSet(List<Shrinkable<E>> elements, int minSize, int maxSize) {
-		super(elements, minSize, maxSize, Collections.emptySet());
+	private ShrinkableSet(List<Shrinkable<E>> elements, int minSize, int maxSize, Collection<FeatureExtractor<E>> uniquenessExtractors) {
+		super(elements, minSize, maxSize, uniquenessExtractors);
 	}
 
 	@Override
@@ -32,6 +33,6 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
 	@Override
 	Shrinkable<Set<E>> createShrinkable(List<Shrinkable<E>> shrunkElements) {
-		return new ShrinkableSet<>(shrunkElements, minSize, maxSize);
+		return new ShrinkableSet<>(shrunkElements, minSize, maxSize, uniquenessExtractors);
 	}
 }

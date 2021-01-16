@@ -70,6 +70,32 @@ class SetArbitraryTests {
 		});
 	}
 
+	@Example
+	void multipleUniquenessConstraints(@ForAll Random random) {
+		SetArbitrary<Integer> setArbitrary =
+				Arbitraries.integers().between(1, 1000).set().ofMaxSize(20)
+						   .uniqueness(i -> i % 99)
+						   .uniqueness(i -> i % 100);
+
+		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, set -> {
+			assertThat(isUniqueModulo(set, 100)).isTrue();
+			assertThat(isUniqueModulo(set, 99)).isTrue();
+		});
+	}
+
+	private boolean isUniqueModulo(Set<Integer> list, int modulo) {
+		List<Integer> moduloList = list.stream().map(i -> {
+			if (i == null) {
+				return null;
+			}
+			return i % modulo;
+		}).collect(Collectors.toList());
+		return new HashSet<>(moduloList).size() == list.size();
+	}
+
+
 	@Group
 	class ExhaustiveGeneration {
 		@Example
@@ -88,6 +114,30 @@ class SetArbitraryTests {
 					asSet(1, 2),
 					asSet(1, 3),
 					asSet(2, 3)
+			);
+		}
+
+		@Example
+		void combinationsAreFilteredByUniquenessConstraints() {
+			Optional<ExhaustiveGenerator<Set<Integer>>> optionalGenerator =
+					Arbitraries.integers().between(1, 4).set().ofMaxSize(2).uniqueness(i -> i % 3)
+							   .exhaustive();
+
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Set<Integer>> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(11);
+			assertThat(generator).containsExactlyInAnyOrder(
+					asSet(),
+					asSet(1),
+					asSet(2),
+					asSet(3),
+					asSet(4),
+					asSet(1, 2),
+					asSet(1, 3),
+					asSet(2, 3),
+					asSet(2, 4),
+					asSet(3, 4)
 			);
 		}
 
@@ -165,6 +215,13 @@ class SetArbitraryTests {
 			);
 		}
 
+		@Example
+		void edgeCasesAreFilteredByUniquenessConstraints() {
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
+			Arbitrary<Set<Integer>> arbitrary = ints.set().ofSize(2)
+													.uniqueness(i -> i % 2);
+			assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
+		}
 	}
 
 	@Group
@@ -185,6 +242,19 @@ class SetArbitraryTests {
 			assertThat(value).hasSize(min);
 			List<Integer> smallestElements = IntStream.rangeClosed(1, min).boxed().collect(Collectors.toList());
 			assertThat(value).containsExactlyInAnyOrderElementsOf(smallestElements);
+		}
+
+		@Property
+		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 9) int min) {
+			SetArbitrary<Integer> lists =
+					Arbitraries.integers().between(1, 1000).set().ofMinSize(min).ofMaxSize(9)
+							   .uniqueness(i -> i % 10);
+			Set<Integer> value = falsifyThenShrink(lists, random);
+			assertThat(value).hasSize(min);
+			assertThat(isUniqueModulo(value, 10))
+					.describedAs("%s is not unique mod 10", value)
+					.isTrue();
+			assertThat(value).allMatch(i -> i <= min);
 		}
 
 	}

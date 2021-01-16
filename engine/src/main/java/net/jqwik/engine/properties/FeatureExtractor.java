@@ -19,12 +19,12 @@ public interface FeatureExtractor<T> extends Function<T, Object> {
 		}
 	}
 
-	default boolean isUniqueIn(T value, List<T> elements) {
+	default boolean isUniqueIn(T value, Collection<T> elements) {
 		Set<Object> elementFeatures = elements.stream().map(this::applySafe).collect(Collectors.toSet());
 		return !elementFeatures.contains(this.applySafe(value));
 	}
 
-	default boolean areUnique(List<T> elements) {
+	default boolean areUnique(Collection<T> elements) {
 		Set<Object> elementFeatures = elements.stream().map(this::applySafe).collect(Collectors.toSet());
 		return elementFeatures.size() == elements.size();
 	}

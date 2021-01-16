@@ -6,9 +6,12 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
+
+import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> implements SetArbitrary<T> {
 
@@ -25,19 +28,21 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 	public RandomGenerator<Set<T>> generator(int genSize) {
 		int cutoffSize = cutoffSize(genSize);
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
-		return RandomGenerators.set(elementGenerator, minSize, maxSize, cutoffSize).withEdgeCases(genSize, edgeCases());
+		return RandomGenerators.set(elementGenerator, minSize, maxSize, uniquenessExtractors, cutoffSize)
+							   .withEdgeCases(genSize, edgeCases());
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<Set<T>>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.set(elementArbitrary, minSize, maxSize, maxNumberOfSamples);
+		return ExhaustiveGenerators.set(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
+								   .map(generator -> generator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l)));
 	}
 
 	@Override
 	public EdgeCases<Set<T>> edgeCases() {
 		return edgeCases((elementList, minSize1) -> {
 			Set<Shrinkable<T>> elementSet = new HashSet<>(elementList);
-			return new ShrinkableSet<>(elementSet, minSize1, maxSize);
+			return new ShrinkableSet<>(elementSet, minSize1, maxSize, uniquenessExtractors);
 		});
 	}
 
@@ -69,5 +74,11 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 						.collect(Collectors.toList());
 			return Combinators.combine(arbitraries).as(HashSet::new);
 		});
+	}
+
+	@Override
+	public SetArbitrary<T> uniqueness(Function<T, Object> by) {
+		FeatureExtractor<T> featureExtractor = by::apply;
+		return (SetArbitrary<T>) super.uniqueness(featureExtractor);
 	}
 }
