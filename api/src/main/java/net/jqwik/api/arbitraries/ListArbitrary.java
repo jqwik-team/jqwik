@@ -81,7 +81,7 @@ public interface ListArbitrary<T> extends StreamableArbitrary<T, List<T>> {
 	/**
 	 * Add the constraint that elements of the generated list must be unique
 	 * relating to an element's "feature" being extracted using the
-	 * {@code featureExtractor} function.
+	 * {@code by} function.
 	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
@@ -91,5 +91,5 @@ public interface ListArbitrary<T> extends StreamableArbitrary<T, List<T>> {
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	ListArbitrary<T> uniqueness(Function<T, Object> featureExtractor);
+	ListArbitrary<T> uniqueness(Function<T, Object> by);
 }

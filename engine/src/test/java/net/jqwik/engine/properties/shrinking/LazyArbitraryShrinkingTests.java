@@ -47,7 +47,8 @@ class LazyArbitraryShrinkingTests {
 		);
 	}
 
-	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
+	// Seed fixed since it can take very long sometimes
+	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED, seed = "42")
 	void severalStepsToListReversedLazy(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
