@@ -3,7 +3,6 @@
     - Uniqueness constraints
         - StreamArbitrary
         - IteratorArbitrary
-        - ArrayArbitrary
         - User guide entry for uniqueness constraints  
         - Deprecate Arbitrary.unique()
         - Release notes for new uniqueness concept  

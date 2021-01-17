@@ -31,6 +31,7 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 	@Override
 	public Optional<ExhaustiveGenerator<List<T>>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
+								   // TODO: move uniqueness filtering to EG.list() method
 								   .map(generator -> generator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l)));
 	}
 

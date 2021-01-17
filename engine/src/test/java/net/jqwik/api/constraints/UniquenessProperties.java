@@ -6,6 +6,8 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
+import static java.util.Arrays.*;
+
 @PropertyDefaults(tries = 100)
 @Group
 class UniquenessProperties {
@@ -38,9 +40,9 @@ class UniquenessProperties {
 		@Provide
 		Arbitrary<List<String>> listOfStrings() {
 			return Arbitraries.of(
-					Arrays.asList("a", "b", "c"),
-					Arrays.asList("b", "b", "x"),
-					Arrays.asList("x", "y", "z")
+					asList("a", "b", "c"),
+					asList("b", "b", "x"),
+					asList("x", "y", "z")
 			);
 		}
 	}
@@ -72,7 +74,7 @@ class UniquenessProperties {
 		}
 
 		private Set<String> asSet(String ... strings) {
-			return new HashSet<>(Arrays.asList(strings));
+			return new HashSet<>(asList(strings));
 		}
 
 		private class GetFirstTwoChars implements Function<Object, Object> {
@@ -81,7 +83,41 @@ class UniquenessProperties {
 				return ((String) o).substring(0, 2);
 			}
 		}
+	}
 
+	@Group
+	class ArraysTests {
+
+		@Property
+		boolean arrays(@ForAll @Uniqueness String[] aStringArray) {
+			return hasNoDuplicates(asList(aStringArray), Function.identity());
+		}
+
+		@Property
+		boolean arraysWithByClause(@ForAll @Uniqueness(by = GetLength.class) String[] aStringArray) {
+			return hasNoDuplicates(asList(aStringArray), new GetLength());
+		}
+
+		private class GetLength implements Function<Object, Object> {
+			@Override
+			public Object apply(Object o) {
+				return ((String) o).length();
+			}
+		}
+
+		@Property
+		boolean arraysNotFromListArbitraryUsePlainFilter(@ForAll("listOfStrings") @Uniqueness String[] aStringArray) {
+			return hasNoDuplicates(asList(aStringArray), Function.identity());
+		}
+
+		@Provide
+		Arbitrary<String[]> listOfStrings() {
+			return Arbitraries.of(
+					new String[] {"a", "b", "c"},
+					new String[] {"b", "b", "x"},
+					new String[] {"x", "y", "z"}
+			);
+		}
 	}
 
 	private boolean hasNoDuplicates(Collection<?> collection, Function<Object, Object> by) {

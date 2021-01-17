@@ -1,5 +1,7 @@
 package net.jqwik.api.arbitraries;
 
+import java.util.function.*;
+
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -37,5 +39,33 @@ public interface ArrayArbitrary<T, A> extends StreamableArbitrary<T, A> {
 	 * @return new arbitrary instance
 	 */
 	ArrayArbitrary<T, A> ofMaxSize(int maxSize);
+
+	/**
+	 * Add the constraint that elements of the generated array must be unique,
+	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	ArrayArbitrary<T, A> uniqueElements();
+
+	/**
+	 * Add the constraint that elements of the generated array must be unique
+	 * relating to an element's "feature" being extracted using the
+	 * {@code by} function.
+	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	ArrayArbitrary<T, A> uniqueness(Function<T, Object> by);
 
 }

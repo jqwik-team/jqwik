@@ -2,13 +2,17 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
+
+import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements ArrayArbitrary<T, A>, SelfConfiguringArbitrary<A> {
 
@@ -38,13 +42,15 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 	public Optional<ExhaustiveGenerator<A>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators
 					   .list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
+					   // TODO: move uniqueness filtering to EG.list() method
+					   .map(generator -> generator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l)))
 					   .map(generator -> generator.map(this::toArray));
 	}
 
 	@Override
 	public EdgeCases<A> edgeCases() {
 		return EdgeCasesSupport.map(
-				edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize)),
+				edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors)),
 				this::toArray
 		);
 	}
@@ -72,4 +78,14 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 		return configurator.configure(this, targetType);
 	}
 
+	@Override
+	public ArrayArbitrary<T, A> uniqueElements() {
+		return (ArrayArbitrary<T, A>) uniqueness(FeatureExtractor.identity());
+	}
+
+	@Override
+	public ArrayArbitrary<T, A> uniqueness(Function<T, Object> by) {
+		FeatureExtractor<T> featureExtractor = by::apply;
+		return (ArrayArbitrary<T, A>) super.uniqueness(featureExtractor);
+	}
 }

@@ -12,6 +12,11 @@ import static org.apiguardian.api.API.Status.*;
  *
  * Applies to List, Set, Stream, and arrays which are also annotated with {@code @ForAll}.
  *
+ * <p>
+ *     Unlike the deprecated annotation {@linkplain Unique} this annotation is added to the
+ *     collection/array/stream parameter and NOT to the element type.
+ * </p>
+ *
  * @see net.jqwik.api.ForAll
  */
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })

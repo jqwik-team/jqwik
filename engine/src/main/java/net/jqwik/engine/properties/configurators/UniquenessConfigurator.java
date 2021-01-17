@@ -26,6 +26,9 @@ public class UniquenessConfigurator implements ArbitraryConfigurator {
 			if (arbitrary instanceof SetArbitrary) {
 				return (Arbitrary<T>) configureSetArbitrary((SetArbitrary<?>) arbitrary, uniqueness);
 			}
+			if (arbitrary instanceof ArrayArbitrary) {
+				return (Arbitrary<T>) configureArrayArbitrary((ArrayArbitrary<?, ?>) arbitrary, uniqueness);
+			}
 			if (targetType.isAssignableFrom(List.class)) {
 				Arbitrary<List<?>> listArbitrary = (Arbitrary<List<?>>) arbitrary;
 				return (Arbitrary<T>) listArbitrary.filter(l -> isUnique(l, extractor(uniqueness)));
@@ -33,6 +36,10 @@ public class UniquenessConfigurator implements ArbitraryConfigurator {
 			if (targetType.isAssignableFrom(Set.class)) {
 				Arbitrary<Set<?>> setArbitrary = (Arbitrary<Set<?>>) arbitrary;
 				return (Arbitrary<T>) setArbitrary.filter(l -> isUnique(l, extractor(uniqueness)));
+			}
+			if (targetType.isArray()) {
+				Arbitrary<Object[]> arrayArbitrary = (Arbitrary<Object[]>) arbitrary;
+				return (Arbitrary<T>) arrayArbitrary.filter(array -> isUnique(Arrays.asList(array), extractor(uniqueness)));
 			}
 			return arbitrary;
 		}).orElse(arbitrary);
@@ -49,6 +56,11 @@ public class UniquenessConfigurator implements ArbitraryConfigurator {
 	}
 
 	private Arbitrary<?> configureSetArbitrary(SetArbitrary<?> arbitrary, Uniqueness uniqueness) {
+		Function<Object, Object> extractor = extractor(uniqueness);
+		return arbitrary.uniqueness(extractor::apply);
+	}
+
+	private Arbitrary<?> configureArrayArbitrary(ArrayArbitrary<?, ?> arbitrary, Uniqueness uniqueness) {
 		Function<Object, Object> extractor = extractor(uniqueness);
 		return arbitrary.uniqueness(extractor::apply);
 	}
