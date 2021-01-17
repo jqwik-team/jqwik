@@ -25,7 +25,7 @@ public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iter
 
 	@Override
 	public Optional<ExhaustiveGenerator<Iterator<T>>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
+		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples)
 								   .map(generator -> generator.map(List::iterator));
 	}
 

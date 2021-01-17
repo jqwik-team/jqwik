@@ -12,8 +12,6 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-import static net.jqwik.engine.properties.UniquenessChecker.*;
-
 public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements ArrayArbitrary<T, A>, SelfConfiguringArbitrary<A> {
 
 	private final Class<A> arrayClass;
@@ -41,9 +39,7 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 	@Override
 	public Optional<ExhaustiveGenerator<A>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators
-					   .list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
-					   // TODO: move uniqueness filtering to EG.list() method
-					   .map(generator -> generator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l)))
+					   .list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples)
 					   .map(generator -> generator.map(this::toArray));
 	}
 

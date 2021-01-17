@@ -10,8 +10,6 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-import static net.jqwik.engine.properties.UniquenessChecker.*;
-
 public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>> implements ListArbitrary<T> {
 
 	public DefaultListArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
@@ -30,9 +28,7 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 
 	@Override
 	public Optional<ExhaustiveGenerator<List<T>>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
-								   // TODO: move uniqueness filtering to EG.list() method
-								   .map(generator -> generator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l)));
+		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples);
 	}
 
 	@Override

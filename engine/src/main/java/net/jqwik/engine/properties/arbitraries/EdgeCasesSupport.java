@@ -196,14 +196,10 @@ public class EdgeCasesSupport {
 				}
 
 				@Override
-				public void update(Function<Boolean, Boolean> updater) {
-
-				}
+				public void update(Function<Boolean, Boolean> updater) { }
 
 				@Override
-				public void reset() {
-
-				}
+				public void reset() { }
 
 				@Override
 				public Store<Boolean> onClose(Consumer<Boolean> onCloseCallback) {

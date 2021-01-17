@@ -27,7 +27,7 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 	@Override
 	public Optional<ExhaustiveGenerator<Stream<T>>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators
-					   .list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
+					   .list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples)
 					   .map(generator -> generator.map(ReportableStream::new));
 	}
 

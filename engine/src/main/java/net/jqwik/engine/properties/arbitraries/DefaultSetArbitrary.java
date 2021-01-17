@@ -11,8 +11,6 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-import static net.jqwik.engine.properties.UniquenessChecker.*;
-
 public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> implements SetArbitrary<T> {
 
 	public DefaultSetArbitrary(Arbitrary<T> elementArbitrary) {
@@ -34,8 +32,7 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 
 	@Override
 	public Optional<ExhaustiveGenerator<Set<T>>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.set(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
-								   .map(generator -> generator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l)));
+		return ExhaustiveGenerators.set(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples);
 	}
 
 	@Override

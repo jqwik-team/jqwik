@@ -5,6 +5,9 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
+
+import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 public class ExhaustiveGenerators {
 
@@ -31,49 +34,60 @@ public class ExhaustiveGenerators {
 		return Optional.of(new IterableBasedExhaustiveGenerator<>(iterator, maxCount));
 	}
 
-	public static <T> Optional<ExhaustiveGenerator<List<T>>> list(Arbitrary<T> elementArbitrary, int minSize, int maxSize, long maxNumberOfSamples) {
+	public static <T> Optional<ExhaustiveGenerator<List<T>>> list(
+			Arbitrary<T> elementArbitrary,
+			int minSize, int maxSize,
+			Collection<FeatureExtractor<T>> uniquenessExtractors,
+			long maxNumberOfSamples
+	) {
 		Optional<Long> optionalMaxCount = ListExhaustiveGenerator.calculateMaxCount(elementArbitrary, minSize, maxSize, maxNumberOfSamples);
 		return optionalMaxCount.map(
-			maxCount ->
-			{
-				ListExhaustiveGenerator<T> exhaustiveGenerator = new ListExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize);
+				maxCount ->
+				{
+					ListExhaustiveGenerator<T> exhaustiveGenerator = new ListExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize);
 
-				// A hack to accommodate missing design idea for handling unique exhaustive generation:
-				if (elementArbitrary.isUnique()) {
-					Predicate<List<T>> allElementsUnique = list -> list.size() == new HashSet<>(list).size();
-					return exhaustiveGenerator.filter(allElementsUnique);
-				} else {
-					return exhaustiveGenerator;
+					// TODO: Remove as soon as Arbitrary.unique() has gone away. Probably in 1.5.0.
+					Set<FeatureExtractor<T>> extractors = new HashSet<>(uniquenessExtractors);
+					if (elementArbitrary.isUnique()) {
+						extractors.add(FeatureExtractor.identity());
+					}
+
+					return exhaustiveGenerator.filter(l -> checkUniquenessOfValues(extractors, l));
 				}
-			}
 		);
 	}
 
 	public static Optional<ExhaustiveGenerator<String>> strings(
-		Arbitrary<Character> characterArbitrary,
-		int minLength,
-		int maxLength,
-		long maxNumberOfSamples
+			Arbitrary<Character> characterArbitrary,
+			int minLength,
+			int maxLength,
+			long maxNumberOfSamples
 	) {
-		return list(characterArbitrary, minLength, maxLength, maxNumberOfSamples).map(
-			listGenerator -> listGenerator.map(
-				listOfChars -> listOfChars.stream()
-										  .map(String::valueOf)
-										  .collect(Collectors.joining())
-			));
+		return list(characterArbitrary, minLength, maxLength, Collections.emptySet(), maxNumberOfSamples).map(
+				listGenerator -> listGenerator.map(
+						listOfChars -> listOfChars.stream()
+												  .map(String::valueOf)
+												  .collect(Collectors.joining())
+				));
 	}
 
-	public static <T> Optional<ExhaustiveGenerator<Set<T>>> set(Arbitrary<T> elementArbitrary, int minSize, int maxSize, long maxNumberOfSamples) {
+	public static <T> Optional<ExhaustiveGenerator<Set<T>>> set(
+			Arbitrary<T> elementArbitrary,
+			int minSize, int maxSize,
+			Collection<FeatureExtractor<T>> featureExtractors,
+			long maxNumberOfSamples
+	) {
 		Optional<Long> optionalMaxCount = SetExhaustiveGenerator.calculateMaxCount(elementArbitrary, minSize, maxSize, maxNumberOfSamples);
 		return optionalMaxCount.map(
-			maxCount -> new SetExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize)
+				maxCount -> new SetExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize)
+									.filter(s -> UniquenessChecker.checkUniquenessOfValues(featureExtractors, s))
 		);
 	}
 
 	public static <R> Optional<ExhaustiveGenerator<R>> combine(
-		List<Arbitrary<Object>> arbitraries,
-		Function<List<Object>, R> combinator,
-		long maxNumberOfSamples
+			List<Arbitrary<Object>> arbitraries,
+			Function<List<Object>, R> combinator,
+			long maxNumberOfSamples
 	) {
 		Optional<Long> optionalMaxCount = CombinedExhaustiveGenerator.calculateMaxCount(arbitraries, maxNumberOfSamples);
 		return optionalMaxCount.map(maxCount -> new CombinedExhaustiveGenerator<>(maxCount, arbitraries, combinator));
