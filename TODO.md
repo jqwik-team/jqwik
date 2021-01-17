@@ -1,7 +1,6 @@
 - 1.4.0
 
     - Uniqueness constraints
-        - `@Uniqueness` for SetArbitrary
         - StreamArbitrary
         - IteratorArbitrary
         - ArrayArbitrary
