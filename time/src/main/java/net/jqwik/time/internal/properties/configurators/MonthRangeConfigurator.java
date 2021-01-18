@@ -17,9 +17,9 @@ public class MonthRangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, MonthRange range) {
-		if (arbitrary instanceof DateArbitrary) {
-			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
-			return dateArbitrary.monthBetween(range.min(), range.max());
+		if (arbitrary instanceof LocalDateArbitrary) {
+			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
+			return localDateArbitrary.monthBetween(range.min(), range.max());
 		} else if (arbitrary instanceof YearMonthArbitrary) {
 			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
 			return yearMonthArbitrary.monthBetween(range.min(), range.max());

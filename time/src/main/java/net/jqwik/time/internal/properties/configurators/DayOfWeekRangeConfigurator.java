@@ -17,13 +17,13 @@ public class DayOfWeekRangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DayOfWeekRange range) {
-		if (arbitrary instanceof DateArbitrary) {
-			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
+		if (arbitrary instanceof LocalDateArbitrary) {
+			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
 			List<DayOfWeek> dayOfWeeks = new ArrayList<DayOfWeek>();
 			for (int i = range.min().getValue(); i <= range.max().getValue(); i++) {
 				dayOfWeeks.add(DayOfWeek.of(i));
 			}
-			return dateArbitrary.onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
+			return localDateArbitrary.onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 		} else {
 			return arbitrary;
 		}

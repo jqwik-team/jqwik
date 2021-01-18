@@ -320,7 +320,7 @@ class DatesTests {
 		class LeapYearMethod {
 
 			@Provide
-			DateArbitrary noLeapYears() {
+			LocalDateArbitrary noLeapYears() {
 				return Dates.dates().leapYears(false);
 			}
 
@@ -361,11 +361,11 @@ class DatesTests {
 
 				assertAllGenerated(dates.generator(1000), random, date -> {
 					Calendar startCalendar = Calendar.getInstance();
-					startCalendar.set(startDate.getYear(), DefaultDateArbitrary.monthToCalendarMonth(startDate.getMonth()), startDate
-																																	.getDayOfMonth(), 0, 0, 0);
+					startCalendar.set(startDate.getYear(), DefaultLocalDateArbitrary.monthToCalendarMonth(startDate.getMonth()), startDate
+																																		 .getDayOfMonth(), 0, 0, 0);
 					startCalendar.set(Calendar.MILLISECOND, 0);
 					Calendar endCalendar = Calendar.getInstance();
-					endCalendar.set(endDate.getYear(), DefaultDateArbitrary
+					endCalendar.set(endDate.getYear(), DefaultLocalDateArbitrary
 															   .monthToCalendarMonth(endDate.getMonth()), endDate.getDayOfMonth(), 0, 0, 0);
 					startCalendar.set(Calendar.MILLISECOND, 0);
 					assertThat(date).isGreaterThanOrEqualTo(startCalendar);
@@ -420,11 +420,11 @@ class DatesTests {
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(date);
 					Calendar startCalendar = Calendar.getInstance();
-					startCalendar.set(startDate.getYear(), DefaultDateArbitrary.monthToCalendarMonth(startDate.getMonth()), startDate
-																																	.getDayOfMonth(), 0, 0, 0);
+					startCalendar.set(startDate.getYear(), DefaultLocalDateArbitrary.monthToCalendarMonth(startDate.getMonth()), startDate
+																																		 .getDayOfMonth(), 0, 0, 0);
 					startCalendar.set(Calendar.MILLISECOND, 0);
 					Calendar endCalendar = Calendar.getInstance();
-					endCalendar.set(endDate.getYear(), DefaultDateArbitrary
+					endCalendar.set(endDate.getYear(), DefaultLocalDateArbitrary
 															   .monthToCalendarMonth(endDate.getMonth()), endDate.getDayOfMonth(), 0, 0, 0);
 					startCalendar.set(Calendar.MILLISECOND, 0);
 					assertThat(calendar).isGreaterThanOrEqualTo(startCalendar);
@@ -457,14 +457,14 @@ class DatesTests {
 
 		@Property
 		void defaultShrinking(@ForAll Random random) {
-			DateArbitrary dates = Dates.dates();
+			LocalDateArbitrary dates = Dates.dates();
 			LocalDate value = falsifyThenShrink(dates, random);
 			assertThat(value).isEqualTo(LocalDate.of(1900, Month.JANUARY, 1));
 		}
 
 		@Property
 		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
-			DateArbitrary dates = Dates.dates();
+			LocalDateArbitrary dates = Dates.dates();
 			TestingFalsifier<LocalDate> falsifier = date -> date.isBefore(LocalDate.of(2013, Month.MAY, 25));
 			LocalDate value = falsifyThenShrink(dates, random, falsifier);
 			assertThat(value).isEqualTo(LocalDate.of(2013, Month.MAY, 25));
@@ -547,7 +547,7 @@ class DatesTests {
 
 		@Example
 		void all() {
-			DateArbitrary dates = Dates.dates();
+			LocalDateArbitrary dates = Dates.dates();
 			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -559,7 +559,7 @@ class DatesTests {
 
 		@Example
 		void between() {
-			DateArbitrary dates =
+			LocalDateArbitrary dates =
 					Dates.dates()
 						 .between(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(200, Month.NOVEMBER, 10));
 			Set<LocalDate> edgeCases = collectEdgeCases(dates.edgeCases());
@@ -573,7 +573,7 @@ class DatesTests {
 
 		@Example
 		void betweenMonth() {
-			DateArbitrary dates =
+			LocalDateArbitrary dates =
 					Dates.dates()
 						 .yearBetween(400, 402)
 						 .monthBetween(3, 11);
