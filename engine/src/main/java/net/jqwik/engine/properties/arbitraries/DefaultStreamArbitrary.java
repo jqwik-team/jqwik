@@ -1,10 +1,12 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
@@ -34,7 +36,7 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 	@Override
 	public EdgeCases<Stream<T>> edgeCases() {
 		return EdgeCasesSupport.map(
-				edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize)),
+				edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors)),
 				Collection::stream
 		);
 	}
@@ -48,4 +50,16 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 	public StreamArbitrary<T> ofMinSize(int minSize) {
 		return (StreamArbitrary<T>) super.ofMinSize(minSize);
 	}
+
+	@Override
+	public StreamArbitrary<T> uniqueness(Function<T, Object> by) {
+		FeatureExtractor<T> featureExtractor = by::apply;
+		return (StreamArbitrary<T>) super.uniqueness(featureExtractor);
+	}
+
+	@Override
+	public StreamArbitrary<T> uniqueElements() {
+		return (StreamArbitrary<T>) uniqueness(FeatureExtractor.identity());
+	}
+
 }

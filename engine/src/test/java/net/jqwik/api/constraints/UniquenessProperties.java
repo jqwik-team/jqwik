@@ -21,15 +21,8 @@ class UniquenessProperties {
 		}
 
 		@Property
-		boolean listsWithByClause(@ForAll @Uniqueness(by = GetLength.class) List<String> aStringList) {
-			return hasNoDuplicates(aStringList, new GetLength());
-		}
-
-		private class GetLength implements Function<Object, Object> {
-			@Override
-			public Object apply(Object o) {
-				return ((String) o).length();
-			}
+		boolean listsWithByClause(@ForAll @Uniqueness(by = GetStringLength.class) List<String> aStringList) {
+			return hasNoDuplicates(aStringList, new GetStringLength());
 		}
 
 		@Property
@@ -94,29 +87,57 @@ class UniquenessProperties {
 		}
 
 		@Property
-		boolean arraysWithByClause(@ForAll @Uniqueness(by = GetLength.class) String[] aStringArray) {
-			return hasNoDuplicates(asList(aStringArray), new GetLength());
-		}
-
-		private class GetLength implements Function<Object, Object> {
-			@Override
-			public Object apply(Object o) {
-				return ((String) o).length();
-			}
+		boolean arraysWithByClause(@ForAll @Uniqueness(by = GetStringLength.class) String[] aStringArray) {
+			return hasNoDuplicates(asList(aStringArray), new GetStringLength());
 		}
 
 		@Property
-		boolean arraysNotFromListArbitraryUsePlainFilter(@ForAll("listOfStrings") @Uniqueness String[] aStringArray) {
+		boolean arraysNotFromListArbitraryUsePlainFilter(@ForAll("arrayOfStrings") @Uniqueness String[] aStringArray) {
 			return hasNoDuplicates(asList(aStringArray), Function.identity());
 		}
 
 		@Provide
-		Arbitrary<String[]> listOfStrings() {
+		Arbitrary<String[]> arrayOfStrings() {
 			return Arbitraries.of(
 					new String[] {"a", "b", "c"},
 					new String[] {"b", "b", "x"},
 					new String[] {"x", "y", "z"}
 			);
+		}
+	}
+
+	@Group
+	class Streams {
+
+		@Property
+		boolean streams(@ForAll @Uniqueness Stream<String> stringStream) {
+			return hasNoDuplicates(stringStream.collect(Collectors.toList()), Function.identity());
+		}
+
+		@Property
+		boolean streamsWithByClause(@ForAll @Uniqueness(by = GetStringLength.class) Stream<String> stringStream) {
+			return hasNoDuplicates(stringStream.collect(Collectors.toList()), new GetStringLength());
+		}
+
+		@Property
+		boolean streamsNotFromListArbitraryUsePlainFilter(@ForAll("streamOfStrings") @Uniqueness Stream<String> stringStream) {
+			return hasNoDuplicates(stringStream.collect(Collectors.toList()), Function.identity());
+		}
+
+		@Provide
+		Arbitrary<Stream<String>> streamOfStrings() {
+			return Arbitraries.of(
+					Stream.of("a", "b", "c"),
+					Stream.of("b", "b", "x"),
+					Stream.of("x", "y", "z")
+			);
+		}
+	}
+
+	private class GetStringLength implements Function<Object, Object> {
+		@Override
+		public Object apply(Object o) {
+			return ((String) o).length();
 		}
 	}
 

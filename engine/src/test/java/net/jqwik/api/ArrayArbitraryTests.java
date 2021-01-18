@@ -71,6 +71,19 @@ class ArrayArbitraryTests {
 	}
 
 	@Example
+	void uniqueElements(@ForAll Random random) {
+		ArrayArbitrary<Integer, Integer[]> listArbitrary =
+				Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
+						   .uniqueElements();
+
+		RandomGenerator<Integer[]> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, array -> {
+			assertThat(isUniqueModulo(array, 1000)).isTrue();
+		});
+	}
+
+	@Example
 	void edgeCases() {
 		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 		ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);

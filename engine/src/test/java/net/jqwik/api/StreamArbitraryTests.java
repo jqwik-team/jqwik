@@ -28,6 +28,58 @@ class StreamArbitraryTests {
 		assertGeneratedStream(generator.next(random));
 	}
 
+	@Property(tries = 100)
+	void filterStream(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 11);
+		Arbitrary<Stream<Integer>> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5)
+				.filter(stream -> !stream.collect(Collectors.toList()).contains(11));
+
+		RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
+
+		assertGeneratedStream(generator.next(random));
+		assertGeneratedStream(generator.next(random));
+		assertGeneratedStream(generator.next(random));
+		assertGeneratedStream(generator.next(random));
+	}
+
+	@Example
+	void uniquenessConstraint(@ForAll Random random) {
+		StreamArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).stream().ofMaxSize(20)
+						   .uniqueness(i -> i % 100);
+
+		RandomGenerator<Stream<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, list -> {
+			assertThat(isUniqueModulo(list, 100)).isTrue();
+		});
+	}
+
+	@Example
+	void uniquenessElements(@ForAll Random random) {
+		StreamArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).stream().ofMaxSize(20).uniqueElements();
+
+		RandomGenerator<Stream<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, list -> {
+			assertThat(isUniqueModulo(list, 1000)).isTrue();
+		});
+	}
+
+	private boolean isUniqueModulo(Stream<Integer> stream, int modulo) {
+		List<Integer> list = stream.collect(Collectors.toList());
+		List<Integer> moduloList = list.stream().map(i -> {
+			if (i == null) {
+				return null;
+			}
+			return i % modulo;
+		}).collect(Collectors.toList());
+		return new HashSet<>(moduloList).size() == list.size();
+	}
+
+
+
 	@Example
 	void edgeCases() {
 		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
@@ -42,6 +94,12 @@ class StreamArbitraryTests {
 		assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(3);
 	}
 
+	@Example
+	void edgeCasesAreFilteredByUniquenessConstraints() {
+		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
+		Arbitrary<Stream<Integer>> arbitrary = ints.stream().ofSize(2).uniqueness(i -> i);
+		assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
+	}
 
 	@Group
 	class ExhaustiveGeneration {
@@ -62,6 +120,28 @@ class StreamArbitraryTests {
 					asList(1, 2),
 					asList(2, 1),
 					asList(2, 2)
+			);
+		}
+
+		@Example
+		void combinationsAreFilteredByUniquenessConstraints() {
+			Optional<ExhaustiveGenerator<Stream<Integer>>> optionalGenerator =
+					Arbitraries.integers().between(1, 3).stream().ofMaxSize(2).uniqueness(i -> i).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Stream<Integer>> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(13);
+			assertThat(generator.map(s -> s.collect(Collectors.toList()))).containsExactlyInAnyOrder(
+					asList(),
+					asList(1),
+					asList(2),
+					asList(3),
+					asList(1, 2),
+					asList(1, 3),
+					asList(2, 1),
+					asList(2, 3),
+					asList(3, 1),
+					asList(3, 2)
 			);
 		}
 
@@ -99,6 +179,20 @@ class StreamArbitraryTests {
 			List<Integer> list = toList(value);
 			assertThat(list).hasSize(min);
 			assertThat(list).containsOnly(1);
+		}
+
+		@Property
+		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
+			StreamArbitrary<Integer> lists =
+					Arbitraries.integers().between(1, 100).stream().ofMinSize(min).ofMaxSize(10)
+							   .uniqueness(i -> i);
+			Stream<Integer> value = falsifyThenShrink(lists, random);
+			List<Integer> list = toList(value);
+			assertThat(list).hasSize(min);
+			assertThat(isUniqueModulo(list.stream(), 100))
+					.describedAs("%s is not unique mod 100", value)
+					.isTrue();
+			assertThat(list).allMatch(i -> i <= min);
 		}
 
 	}

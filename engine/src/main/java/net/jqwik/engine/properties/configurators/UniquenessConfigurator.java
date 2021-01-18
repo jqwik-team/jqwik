@@ -29,6 +29,9 @@ public class UniquenessConfigurator implements ArbitraryConfigurator {
 			if (arbitrary instanceof ArrayArbitrary) {
 				return (Arbitrary<T>) configureArrayArbitrary((ArrayArbitrary<?, ?>) arbitrary, uniqueness);
 			}
+			if (arbitrary instanceof StreamArbitrary) {
+				return (Arbitrary<T>) configureStreamArbitrary((StreamArbitrary<?>) arbitrary, uniqueness);
+			}
 			if (targetType.isAssignableFrom(List.class)) {
 				Arbitrary<List<?>> listArbitrary = (Arbitrary<List<?>>) arbitrary;
 				return (Arbitrary<T>) listArbitrary.filter(l -> isUnique(l, extractor(uniqueness)));
@@ -40,6 +43,13 @@ public class UniquenessConfigurator implements ArbitraryConfigurator {
 			if (targetType.isArray()) {
 				Arbitrary<Object[]> arrayArbitrary = (Arbitrary<Object[]>) arbitrary;
 				return (Arbitrary<T>) arrayArbitrary.filter(array -> isUnique(Arrays.asList(array), extractor(uniqueness)));
+			}
+			if (targetType.isAssignableFrom(Stream.class)) {
+				Arbitrary<Stream<?>> streamArbitrary = (Arbitrary<Stream<?>>) arbitrary;
+				// Since a stream can only be consumed once this is more involved than seems necessary at first glance
+				return (Arbitrary<T>) streamArbitrary.map(s -> s.collect(Collectors.toList()))
+													 .filter(l -> isUnique(l, extractor(uniqueness)))
+													 .map(Collection::stream);
 			}
 			return arbitrary;
 		}).orElse(arbitrary);
@@ -61,6 +71,11 @@ public class UniquenessConfigurator implements ArbitraryConfigurator {
 	}
 
 	private Arbitrary<?> configureArrayArbitrary(ArrayArbitrary<?, ?> arbitrary, Uniqueness uniqueness) {
+		Function<Object, Object> extractor = extractor(uniqueness);
+		return arbitrary.uniqueness(extractor::apply);
+	}
+
+	private Arbitrary<?> configureStreamArbitrary(StreamArbitrary<?> arbitrary, Uniqueness uniqueness) {
 		Function<Object, Object> extractor = extractor(uniqueness);
 		return arbitrary.uniqueness(extractor::apply);
 	}

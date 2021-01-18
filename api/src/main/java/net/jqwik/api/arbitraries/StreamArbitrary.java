@@ -1,5 +1,6 @@
 package net.jqwik.api.arbitraries;
 
+import java.util.function.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
@@ -39,5 +40,33 @@ public interface StreamArbitrary<T> extends StreamableArbitrary<T, Stream<T>> {
 	 * @return new arbitrary instance
 	 */
 	StreamArbitrary<T> ofMaxSize(int maxSize);
+
+	/**
+	 * Add the constraint that elements of the generated stream must be unique,
+	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	StreamArbitrary<T> uniqueElements();
+
+	/**
+	 * Add the constraint that elements of the generated stream must be unique
+	 * relating to an element's "feature" being extracted using the
+	 * {@code by} function.
+	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	StreamArbitrary<T> uniqueness(Function<T, Object> by);
 
 }

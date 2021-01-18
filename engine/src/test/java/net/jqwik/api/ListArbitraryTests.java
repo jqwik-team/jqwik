@@ -127,13 +127,13 @@ class ListArbitraryTests {
 	}
 
 	private boolean isUniqueModulo(List<Integer> list, int modulo) {
-		List<Integer> modulo100 = list.stream().map(i -> {
+		List<Integer> moduloList = list.stream().map(i -> {
 			if (i == null) {
 				return null;
 			}
 			return i % modulo;
 		}).collect(Collectors.toList());
-		return new HashSet<>(modulo100).size() == list.size();
+		return new HashSet<>(moduloList).size() == list.size();
 	}
 
 	@Example
