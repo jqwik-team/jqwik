@@ -9,7 +9,6 @@ import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
-import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -17,7 +16,7 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
-class DatesTests {
+class LocalDatesTests {
 
 	@Provide
 	Arbitrary<LocalDate> dates() {
@@ -94,21 +93,6 @@ class DatesTests {
 		@Property
 		void noLeapYearIsGenerated(@ForAll @LeapYears(withLeapYears = false) LocalDate date) {
 			assertThat(new GregorianCalendar().isLeapYear(date.getYear())).isFalse();
-		}
-
-		@Property
-		void validCalendarIsGenerated(@ForAll Calendar calendar) {
-			assertThat(calendar).isNotNull();
-		}
-
-		@Property
-		void validDateIsGenerated(@ForAll Date date) {
-			assertThat(date).isNotNull();
-		}
-
-		@Property
-		void validPeriodIsGenerated(@ForAll Period period) {
-			assertThat(period).isNotNull();
 		}
 
 	}
@@ -191,8 +175,6 @@ class DatesTests {
 
 			@Property
 			void yearBetweenSame(@ForAll("years") int year, @ForAll Random random) {
-
-				Assume.that(year != 0);
 
 				Arbitrary<LocalDate> dates = Dates.dates().yearBetween(year, year);
 
@@ -331,125 +313,6 @@ class DatesTests {
 
 		}
 
-		@Group
-		class MapToCalendar {
-
-			@Provide
-			Arbitrary<Calendar> calendar() {
-				return Dates.dates().asCalendar();
-			}
-
-			@Property
-			void validCalendarIsGenerated(@ForAll("calendar") Calendar calendar) {
-				assertThat(calendar).isNotNull();
-			}
-
-			@Property
-			void timeIs0AM(@ForAll("calendar") Calendar calendar) {
-				assertThat(calendar.get(Calendar.HOUR)).isEqualTo(0);
-				assertThat(calendar.get(Calendar.MINUTE)).isEqualTo(0);
-				assertThat(calendar.get(Calendar.SECOND)).isEqualTo(0);
-				assertThat(calendar.get(Calendar.MILLISECOND)).isEqualTo(0);
-			}
-
-			@Property
-			void between(@ForAll("dates") LocalDate startDate, @ForAll("dates") LocalDate endDate, @ForAll Random random) {
-
-				Assume.that(!startDate.isAfter(endDate));
-
-				Arbitrary<Calendar> dates = Dates.dates().between(startDate, endDate).asCalendar();
-
-				assertAllGenerated(dates.generator(1000), random, date -> {
-					Calendar startCalendar = Calendar.getInstance();
-					startCalendar.set(startDate.getYear(), DefaultLocalDateArbitrary.monthToCalendarMonth(startDate.getMonth()), startDate
-																																		 .getDayOfMonth(), 0, 0, 0);
-					startCalendar.set(Calendar.MILLISECOND, 0);
-					Calendar endCalendar = Calendar.getInstance();
-					endCalendar.set(endDate.getYear(), DefaultLocalDateArbitrary
-															   .monthToCalendarMonth(endDate.getMonth()), endDate.getDayOfMonth(), 0, 0, 0);
-					startCalendar.set(Calendar.MILLISECOND, 0);
-					assertThat(date).isGreaterThanOrEqualTo(startCalendar);
-					assertThat(date).isLessThanOrEqualTo(endCalendar);
-					return true;
-				});
-			}
-
-		}
-
-		@Group
-		class MapToDate {
-
-			@Provide
-			Arbitrary<Date> datesDate() {
-				return Dates.dates().asDate();
-			}
-
-			@Provide
-			Arbitrary<Date> earlyDates() {
-				return Dates.dates().yearBetween(100, 200).asDate();
-			}
-
-			@Property
-			void validDateIsGenerated(@ForAll("datesDate") Date date) {
-				assertThat(date).isNotNull();
-			}
-
-			@Property
-			void earlyDatesAreValid(@ForAll("earlyDates") Date date) {
-				assertThat(date).isNotNull();
-			}
-
-			@Property
-			void timeIs0AM(@ForAll("datesDate") Date date) {
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(date);
-				assertThat(calendar.get(Calendar.HOUR)).isEqualTo(0);
-				assertThat(calendar.get(Calendar.MINUTE)).isEqualTo(0);
-				assertThat(calendar.get(Calendar.SECOND)).isEqualTo(0);
-				assertThat(calendar.get(Calendar.MILLISECOND)).isEqualTo(0);
-			}
-
-			@Property
-			void between(@ForAll("dates") LocalDate startDate, @ForAll("dates") LocalDate endDate, @ForAll Random random) {
-
-				Assume.that(!startDate.isAfter(endDate));
-
-				Arbitrary<Date> dates = Dates.dates().between(startDate, endDate).asDate();
-
-				assertAllGenerated(dates.generator(1000), random, date -> {
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime(date);
-					Calendar startCalendar = Calendar.getInstance();
-					startCalendar.set(startDate.getYear(), DefaultLocalDateArbitrary.monthToCalendarMonth(startDate.getMonth()), startDate
-																																		 .getDayOfMonth(), 0, 0, 0);
-					startCalendar.set(Calendar.MILLISECOND, 0);
-					Calendar endCalendar = Calendar.getInstance();
-					endCalendar.set(endDate.getYear(), DefaultLocalDateArbitrary
-															   .monthToCalendarMonth(endDate.getMonth()), endDate.getDayOfMonth(), 0, 0, 0);
-					startCalendar.set(Calendar.MILLISECOND, 0);
-					assertThat(calendar).isGreaterThanOrEqualTo(startCalendar);
-					assertThat(calendar).isLessThanOrEqualTo(endCalendar);
-					return true;
-				});
-			}
-
-		}
-
-		@Group
-		class MapToPeriod {
-
-			@Provide
-			Arbitrary<Period> periods() {
-				return Dates.dates().asPeriod();
-			}
-
-			@Property
-			void validPeriodIsGenerated(@ForAll("periods") Period period) {
-				assertThat(period).isNotNull();
-			}
-
-		}
-
 	}
 
 	@Group
@@ -463,7 +326,7 @@ class DatesTests {
 		}
 
 		@Property
-		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
+		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			LocalDateArbitrary dates = Dates.dates();
 			TestingFalsifier<LocalDate> falsifier = date -> date.isBefore(LocalDate.of(2013, Month.MAY, 25));
 			LocalDate value = falsifyThenShrink(dates, random, falsifier);
@@ -621,6 +484,7 @@ class DatesTests {
 					  });
 		}
 
+		/* TODO
 		@Property
 		void asPeriodIsNotDifferentFrom0(@ForAll Period period) {
 			Statistics.label("Period not always 0")
@@ -639,7 +503,7 @@ class DatesTests {
 						  coverage.check(true).percentage(p -> p >= 40);
 						  coverage.check(false).percentage(p -> p >= 40);
 					  });
-		}
+		}*/
 
 		private void checkMonthCoverage(StatisticsCoverage coverage) {
 			Month[] months = Month.class.getEnumConstants();

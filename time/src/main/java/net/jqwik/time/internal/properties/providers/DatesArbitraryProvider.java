@@ -6,26 +6,24 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.*;
-import net.jqwik.time.api.arbitraries.*;
 
 public class DatesArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
 		return targetType.isAssignableFrom(LocalDate.class) || targetType.isAssignableFrom(Calendar.class) || targetType
-																													  .isAssignableFrom(Date.class) || targetType
-																																							   .isAssignableFrom(Period.class);
+																													  .isAssignableFrom(Date.class);
 	}
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		LocalDateArbitrary localDateArbitrary = Dates.dates();
-		if (targetType.isAssignableFrom(Calendar.class)) {
-			return Collections.singleton(localDateArbitrary.asCalendar());
+		if (targetType.isAssignableFrom(LocalDate.class)) {
+			return Collections.singleton(Dates.dates());
+		} else if (targetType.isAssignableFrom(Calendar.class)) {
+			return Collections.singleton(Dates.datesAsCalendar());
 		} else if (targetType.isAssignableFrom(Date.class)) {
-			return Collections.singleton(localDateArbitrary.asDate());
-		} else if (targetType.isAssignableFrom(Period.class)) {
-			return Collections.singleton(localDateArbitrary.asPeriod());
+			return Collections.singleton(Dates.datesAsDate());
+		} else {
+			return null;
 		}
-		return Collections.singleton(localDateArbitrary);
 	}
 }
