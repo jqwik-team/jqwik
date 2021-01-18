@@ -16,18 +16,18 @@ public class DefaultMonthDayArbitrary extends ArbitraryDecorator<MonthDay> imple
 
 	private static final int YEAR = 2000;
 
-	private DateArbitrary dateArbitrary = Dates.dates().yearBetween(YEAR, YEAR);
+	private LocalDateArbitrary localDateArbitrary = Dates.dates().yearBetween(YEAR, YEAR);
 
 	@Override
 	protected Arbitrary<MonthDay> arbitrary() {
-		return dateArbitrary.map(v -> MonthDay.of(v.getMonth(), v.getDayOfMonth()));
+		return localDateArbitrary.map(v -> MonthDay.of(v.getMonth(), v.getDayOfMonth()));
 	}
 
 	@Override
 	public MonthDayArbitrary atTheEarliest(MonthDay min) {
 		DefaultMonthDayArbitrary clone = typedClone();
 		LocalDate minDate = LocalDate.of(YEAR, min.getMonth(), min.getDayOfMonth());
-		clone.dateArbitrary = dateArbitrary.atTheEarliest(minDate);
+		clone.localDateArbitrary = localDateArbitrary.atTheEarliest(minDate);
 		return clone;
 	}
 
@@ -35,28 +35,28 @@ public class DefaultMonthDayArbitrary extends ArbitraryDecorator<MonthDay> imple
 	public MonthDayArbitrary atTheLatest(MonthDay max) {
 		DefaultMonthDayArbitrary clone = typedClone();
 		LocalDate maxDate = LocalDate.of(YEAR, max.getMonth(), max.getDayOfMonth());
-		clone.dateArbitrary = dateArbitrary.atTheLatest(maxDate);
+		clone.localDateArbitrary = localDateArbitrary.atTheLatest(maxDate);
 		return clone;
 	}
 
 	@Override
 	public MonthDayArbitrary monthBetween(Month min, Month max) {
 		DefaultMonthDayArbitrary clone = typedClone();
-		clone.dateArbitrary = dateArbitrary.monthBetween(min, max);
+		clone.localDateArbitrary = localDateArbitrary.monthBetween(min, max);
 		return clone;
 	}
 
 	@Override
 	public MonthDayArbitrary onlyMonths(Month... months) {
 		DefaultMonthDayArbitrary clone = typedClone();
-		clone.dateArbitrary = dateArbitrary.onlyMonths(months);
+		clone.localDateArbitrary = localDateArbitrary.onlyMonths(months);
 		return clone;
 	}
 
 	@Override
 	public MonthDayArbitrary dayOfMonthBetween(int min, int max) {
 		DefaultMonthDayArbitrary clone = typedClone();
-		clone.dateArbitrary = dateArbitrary.dayOfMonthBetween(min, max);
+		clone.localDateArbitrary = localDateArbitrary.dayOfMonthBetween(min, max);
 		return clone;
 	}
 

@@ -14,7 +14,7 @@ import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
-public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implements DateArbitrary {
+public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> implements LocalDateArbitrary {
 
 	private static final LocalDate DEFAULT_MIN_DATE = LocalDate.of(1900, 1, 1);
 	private static final LocalDate DEFAULT_MAX_DATE = LocalDate.of(2500, 12, 31);
@@ -136,20 +136,20 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	@Override
-	public DateArbitrary atTheEarliest(LocalDate min) {
+	public LocalDateArbitrary atTheEarliest(LocalDate min) {
 		if (min.getYear() <= 0) {
 			throw new IllegalArgumentException("Minimum year in a date must be > 0");
 		}
 		if ((dateMax != null) && min.isAfter(dateMax)) {
 			throw new IllegalArgumentException("Minimum date must not be after maximum date");
 		}
-		DefaultDateArbitrary clone = typedClone();
+		DefaultLocalDateArbitrary clone = typedClone();
 		clone.dateMin = min;
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary atTheLatest(LocalDate max) {
+	public LocalDateArbitrary atTheLatest(LocalDate max) {
 		if (max.getYear() <= 0) {
 			throw new IllegalArgumentException("Maximum year in a date must be > 0");
 		}
@@ -157,13 +157,13 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 			throw new IllegalArgumentException("Maximum date must not be before minimum date");
 		}
 
-		DefaultDateArbitrary clone = typedClone();
+		DefaultLocalDateArbitrary clone = typedClone();
 		clone.dateMax = max;
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary yearBetween(Year min, Year max) {
+	public LocalDateArbitrary yearBetween(Year min, Year max) {
 		if (!min.isBefore(max)) {
 			Year remember = min;
 			min = max;
@@ -176,12 +176,12 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	@Override
-	public DateArbitrary monthBetween(Month min, Month max) {
+	public LocalDateArbitrary monthBetween(Month min, Month max) {
 		if (min.compareTo(max) > 0) {
 			throw new IllegalArgumentException("Minimum month cannot be after maximum month");
 		}
 
-		DefaultDateArbitrary clone = typedClone();
+		DefaultLocalDateArbitrary clone = typedClone();
 		clone.allowedMonths = Arrays.stream(Month.values())
 									.filter(m -> m.compareTo(min) >= 0 && m.compareTo(max) <= 0)
 									.collect(Collectors.toSet());
@@ -189,42 +189,42 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 	}
 
 	@Override
-	public DateArbitrary onlyMonths(Month... months) {
-		DefaultDateArbitrary clone = typedClone();
+	public LocalDateArbitrary onlyMonths(Month... months) {
+		DefaultLocalDateArbitrary clone = typedClone();
 		clone.allowedMonths = new HashSet<>(Arrays.asList(months));
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary dayOfMonthBetween(int min, int max) {
+	public LocalDateArbitrary dayOfMonthBetween(int min, int max) {
 		if (min > max) {
 			int remember = min;
 			min = max;
 			max = remember;
 		}
-		DefaultDateArbitrary clone = typedClone();
+		DefaultLocalDateArbitrary clone = typedClone();
 		clone.dayOfMonthMin = Math.max(1, min);
 		clone.dayOfMonthMax = Math.min(31, max);
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
-		DefaultDateArbitrary clone = typedClone();
+	public LocalDateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
+		DefaultLocalDateArbitrary clone = typedClone();
 		clone.allowedDayOfWeeks = new HashSet<>(Arrays.asList(daysOfWeek));
 		return clone;
 	}
 
 	@Override
-	public DateArbitrary leapYears(boolean withLeapYears) {
-		DefaultDateArbitrary clone = typedClone();
+	public LocalDateArbitrary leapYears(boolean withLeapYears) {
+		DefaultLocalDateArbitrary clone = typedClone();
 		clone.withLeapYears = withLeapYears;
 		return clone;
 	}
 
 	@Override
 	public Arbitrary<Calendar> asCalendar() {
-		DefaultDateArbitrary clone = typedClone();
+		DefaultLocalDateArbitrary clone = typedClone();
 		return clone.map(this::localDateToCalendar);
 	}
 
@@ -266,13 +266,13 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<LocalDate> implemen
 
 	@Override
 	public Arbitrary<Date> asDate() {
-		DefaultDateArbitrary clone = typedClone();
+		DefaultLocalDateArbitrary clone = typedClone();
 		return clone.map(date -> localDateToCalendar(date).getTime());
 	}
 
 	@Override
 	public Arbitrary<Period> asPeriod() {
-		DefaultDateArbitrary clone = typedClone();
+		DefaultLocalDateArbitrary clone = typedClone();
 		return Combinators.combine(clone, clone).as(Period::between);
 	}
 

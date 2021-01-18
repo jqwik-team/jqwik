@@ -16,9 +16,9 @@ public class WithoutLeapYearsConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, LeapYears leapYears) {
-		if (arbitrary instanceof DateArbitrary) {
-			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
-			return dateArbitrary.leapYears(leapYears.withLeapYears());
+		if (arbitrary instanceof LocalDateArbitrary) {
+			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
+			return localDateArbitrary.leapYears(leapYears.withLeapYears());
 		} else if (arbitrary instanceof YearMonthArbitrary) {
 			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
 			return yearMonthArbitrary.leapYears(leapYears.withLeapYears());

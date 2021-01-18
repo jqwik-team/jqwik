@@ -18,14 +18,14 @@ public class DatesArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		DateArbitrary dateArbitrary = Dates.dates();
+		LocalDateArbitrary localDateArbitrary = Dates.dates();
 		if (targetType.isAssignableFrom(Calendar.class)) {
-			return Collections.singleton(dateArbitrary.asCalendar());
+			return Collections.singleton(localDateArbitrary.asCalendar());
 		} else if (targetType.isAssignableFrom(Date.class)) {
-			return Collections.singleton(dateArbitrary.asDate());
+			return Collections.singleton(localDateArbitrary.asDate());
 		} else if (targetType.isAssignableFrom(Period.class)) {
-			return Collections.singleton(dateArbitrary.asPeriod());
+			return Collections.singleton(localDateArbitrary.asPeriod());
 		}
-		return Collections.singleton(dateArbitrary);
+		return Collections.singleton(localDateArbitrary);
 	}
 }

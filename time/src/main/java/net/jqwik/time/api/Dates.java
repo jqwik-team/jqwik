@@ -22,8 +22,8 @@ public class Dates {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	public static DateArbitrary dates() {
-		return new DefaultDateArbitrary();
+	public static LocalDateArbitrary dates() {
+		return new DefaultLocalDateArbitrary();
 	}
 
 	/**
