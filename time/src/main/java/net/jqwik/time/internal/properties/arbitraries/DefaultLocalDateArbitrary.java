@@ -143,6 +143,7 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 		if ((dateMax != null) && min.isAfter(dateMax)) {
 			throw new IllegalArgumentException("Minimum date must not be after maximum date");
 		}
+
 		DefaultLocalDateArbitrary clone = typedClone();
 		clone.dateMin = min;
 		return clone;
@@ -220,60 +221,6 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 		DefaultLocalDateArbitrary clone = typedClone();
 		clone.withLeapYears = withLeapYears;
 		return clone;
-	}
-
-	@Override
-	public Arbitrary<Calendar> asCalendar() {
-		DefaultLocalDateArbitrary clone = typedClone();
-		return clone.map(this::localDateToCalendar);
-	}
-
-	private Calendar localDateToCalendar(LocalDate date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(date.getYear(), monthToCalendarMonth(date.getMonth()), date.getDayOfMonth(), 0, 0, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar;
-	}
-
-	public static int monthToCalendarMonth(Month month) {
-		switch (month) {
-			case JANUARY:
-				return Calendar.JANUARY;
-			case FEBRUARY:
-				return Calendar.FEBRUARY;
-			case MARCH:
-				return Calendar.MARCH;
-			case APRIL:
-				return Calendar.APRIL;
-			case MAY:
-				return Calendar.MAY;
-			case JUNE:
-				return Calendar.JUNE;
-			case JULY:
-				return Calendar.JULY;
-			case AUGUST:
-				return Calendar.AUGUST;
-			case SEPTEMBER:
-				return Calendar.SEPTEMBER;
-			case OCTOBER:
-				return Calendar.OCTOBER;
-			case NOVEMBER:
-				return Calendar.NOVEMBER;
-			default:
-				return Calendar.DECEMBER;
-		}
-	}
-
-	@Override
-	public Arbitrary<Date> asDate() {
-		DefaultLocalDateArbitrary clone = typedClone();
-		return clone.map(date -> localDateToCalendar(date).getTime());
-	}
-
-	@Override
-	public Arbitrary<Period> asPeriod() {
-		DefaultLocalDateArbitrary clone = typedClone();
-		return Combinators.combine(clone, clone).as(Period::between);
 	}
 
 }

@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Decide whether leap years are generated or not
  * <p>
- * Applies to LocalDate and YearMonth parameters which are also annotated with {@code @ForAll}.
+ * Applies to LocalDate, Calendar, Date and YearMonth parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  */

@@ -62,8 +62,8 @@ public class ConstraintTests {
 
 		@Property
 		void dateRangeBetween(@ForAll @DateRange(min = "2013-05-25", max = "2020-08-23") Calendar calendar) {
-			Calendar calendarStart = getCalendar(2013, Calendar.MAY, 25);
-			Calendar calendarEnd = getCalendar(2020, Calendar.AUGUST, 23);
+			Calendar calendarStart = CalendarTests.getCalendar(2013, Calendar.MAY, 25);
+			Calendar calendarEnd = CalendarTests.getCalendar(2020, Calendar.AUGUST, 23);
 			assertThat(calendar).isGreaterThanOrEqualTo(calendarStart);
 			assertThat(calendar).isLessThanOrEqualTo(calendarEnd);
 		}
@@ -78,8 +78,8 @@ public class ConstraintTests {
 		void dateRangeBetween(@ForAll @DateRange(min = "2013-05-25", max = "2020-08-23") Date date) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(date);
-			Calendar calendarStart = getCalendar(2013, Calendar.MAY, 25);
-			Calendar calendarEnd = getCalendar(2020, Calendar.AUGUST, 23);
+			Calendar calendarStart = CalendarTests.getCalendar(2013, Calendar.MAY, 25);
+			Calendar calendarEnd = CalendarTests.getCalendar(2020, Calendar.AUGUST, 23);
 			assertThat(calendar).isGreaterThanOrEqualTo(calendarStart);
 			assertThat(calendar).isLessThanOrEqualTo(calendarEnd);
 		}
@@ -159,13 +159,6 @@ public class ConstraintTests {
 			assertThat(dayOfMonth).isLessThanOrEqualTo(20);
 		}
 
-	}
-
-	private Calendar getCalendar(int year, int month, int day) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(year, month, day, 0, 0, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar;
 	}
 
 }

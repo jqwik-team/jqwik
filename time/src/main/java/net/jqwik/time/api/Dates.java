@@ -27,6 +27,24 @@ public class Dates {
 	}
 
 	/**
+	 * Create an arbitrary that generates instances of {@linkplain java.util.Calendar}.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	public static CalendarArbitrary datesAsCalendar() {
+		return new DefaultCalendarArbitrary();
+	}
+
+	/**
+	 * Create an arbitrary that generates instances of {@linkplain java.util.Date}.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	public static DateArbitrary datesAsDate() {
+		return null;
+	}
+
+	/**
 	 * Create an arbitrary that generates instances of {@linkplain java.time.Year}.
 	 *
 	 * @return a new arbitrary instance
