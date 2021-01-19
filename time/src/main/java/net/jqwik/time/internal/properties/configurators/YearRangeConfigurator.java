@@ -26,6 +26,9 @@ public class YearRangeConfigurator extends ArbitraryConfiguratorBase {
 		} else if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.yearBetween(range.min(), range.max());
+		} else if (arbitrary instanceof DateArbitrary) {
+			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
+			return dateArbitrary.yearBetween(range.min(), range.max());
 		} else if (arbitrary instanceof YearMonthArbitrary) {
 			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
 			return yearMonthArbitrary.yearBetween(range.min(), range.max());

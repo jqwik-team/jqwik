@@ -26,6 +26,9 @@ public class DayOfMonthRangeConfigurator extends ArbitraryConfiguratorBase {
 		} else if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.dayOfMonthBetween(range.min(), range.max());
+		} else if (arbitrary instanceof DateArbitrary) {
+			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
+			return dateArbitrary.dayOfMonthBetween(range.min(), range.max());
 		} else if (arbitrary instanceof IntegerArbitrary) {
 			IntegerArbitrary dayOfMonthsArbitrary = (IntegerArbitrary) arbitrary;
 			return dayOfMonthsArbitrary.between(range.min(), range.max());

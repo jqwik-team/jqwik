@@ -21,11 +21,7 @@ public interface DateArbitrary extends Arbitrary<Date> {
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated date values.
 	 */
 	default DateArbitrary between(Date min, Date max) {
-		Calendar calendarMin = Calendar.getInstance();
-		calendarMin.setTime(min);
-		Calendar calendarMax = Calendar.getInstance();
-		calendarMin.setTime(max);
-		if (calendarMin.after(calendarMax)) {
+		if (min.after(max)) {
 			return atTheEarliest(max).atTheLatest(min);
 		}
 		return atTheEarliest(min).atTheLatest(max);

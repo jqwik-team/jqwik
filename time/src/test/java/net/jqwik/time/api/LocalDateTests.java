@@ -16,7 +16,7 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
-class LocalDatesTests {
+class LocalDateTests {
 
 	@Provide
 	Arbitrary<LocalDate> dates() {

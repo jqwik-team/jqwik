@@ -104,18 +104,56 @@ public class ConstraintTests {
 
 	}
 
-	@Disabled
 	@Group
 	class DateConstraints {
 
 		@Property
 		void dateRangeBetween(@ForAll @DateRange(min = "2013-05-25", max = "2020-08-23") Date date) {
+			Date dateStart = DateTests.getDate(2013, Calendar.MAY, 25);
+			Date dateEnd = DateTests.getDate(2020, Calendar.AUGUST, 23);
+			assertThat(date).isAfterOrEqualTo(dateStart);
+			assertThat(date).isBeforeOrEqualTo(dateEnd);
+		}
+
+		@Property
+		void yearRangeBetween500And700(@ForAll @YearRange(min = 500, max = 700) Date date) {
+			assertThat(dateToCalendar(date).get(Calendar.YEAR)).isGreaterThanOrEqualTo(500);
+			assertThat(dateToCalendar(date).get(Calendar.YEAR)).isLessThanOrEqualTo(700);
+		}
+
+		@Property
+		void monthRangeBetweenMarchAndJuly(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) Date date) {
+			assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isGreaterThanOrEqualTo(Month.MARCH);
+			assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isLessThanOrEqualTo(Month.JULY);
+		}
+
+		@Property
+		void dayOfMonthRangeBetween15And20Integer(@ForAll @DayOfMonthRange(min = 15, max = 20) Date date) {
+			assertThat(dateToCalendar(date).get(Calendar.DAY_OF_MONTH)).isGreaterThanOrEqualTo(15);
+			assertThat(dateToCalendar(date).get(Calendar.DAY_OF_MONTH)).isLessThanOrEqualTo(20);
+		}
+
+		@Property
+		void dayOfWeekRangeOnlyMonday(@ForAll @DayOfWeekRange(max = DayOfWeek.MONDAY) Date date) {
+			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date))).isEqualTo(DayOfWeek.MONDAY);
+		}
+
+		@Property
+		void dayOfWeekRangeOnlySunday(@ForAll @DayOfWeekRange(min = DayOfWeek.SUNDAY) Date date) {
+			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date))).isEqualTo(DayOfWeek.SUNDAY);
+		}
+
+		@Property
+		void dayOfWeekRangeBetweenTuesdayAndFriday(@ForAll @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) Date date) {
+			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date)))
+					.isGreaterThanOrEqualTo(DayOfWeek.TUESDAY);
+			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date))).isLessThanOrEqualTo(DayOfWeek.FRIDAY);
+		}
+
+		private Calendar dateToCalendar(Date date) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(date);
-			Calendar calendarStart = CalendarTests.getCalendar(2013, Calendar.MAY, 25);
-			Calendar calendarEnd = CalendarTests.getCalendar(2020, Calendar.AUGUST, 23);
-			assertThat(calendar).isGreaterThanOrEqualTo(calendarStart);
-			assertThat(calendar).isLessThanOrEqualTo(calendarEnd);
+			return calendar;
 		}
 
 	}
