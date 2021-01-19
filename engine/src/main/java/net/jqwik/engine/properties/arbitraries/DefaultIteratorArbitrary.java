@@ -1,9 +1,11 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
@@ -32,7 +34,7 @@ public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iter
 	@Override
 	public EdgeCases<Iterator<T>> edgeCases() {
 		return EdgeCasesSupport.map(
-				edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize)),
+				edgeCases((elements, minimalSize) -> new ShrinkableList<>(elements, minimalSize, maxSize, uniquenessExtractors)),
 				List::iterator
 		);
 	}
@@ -45,6 +47,17 @@ public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iter
 	@Override
 	public IteratorArbitrary<T> ofMinSize(int minSize) {
 		return (IteratorArbitrary<T>) super.ofMinSize(minSize);
+	}
+
+	@Override
+	public IteratorArbitrary<T> uniqueness(Function<T, Object> by) {
+		FeatureExtractor<T> featureExtractor = by::apply;
+		return (IteratorArbitrary<T>) super.uniqueness(featureExtractor);
+	}
+
+	@Override
+	public IteratorArbitrary<T> uniqueElements() {
+		return (IteratorArbitrary<T>) uniqueness(FeatureExtractor.identity());
 	}
 
 }

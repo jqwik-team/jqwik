@@ -29,9 +29,34 @@ class IteratorArbitraryTests {
 	}
 
 	@Example
+	void uniquenessConstraint(@ForAll Random random) {
+		IteratorArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).iterator().ofMaxSize(20)
+						   .uniqueness(i -> i % 100);
+
+		RandomGenerator<Iterator<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, iterator -> {
+			assertThat(isUniqueModulo(iterator, 100)).isTrue();
+		});
+	}
+
+	@Example
+	void uniquenessElements(@ForAll Random random) {
+		IteratorArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).iterator().ofMaxSize(20).uniqueElements();
+
+		RandomGenerator<Iterator<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, iterator -> {
+			assertThat(isUniqueModulo(iterator, 1000)).isTrue();
+		});
+	}
+
+	@Example
 	void edgeCases() {
 		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
-		Arbitrary<Iterator<Integer>> arbitrary = ints.iterator();
+		IteratorArbitrary<Integer> arbitrary = ints.iterator();
 		Set<Iterator<Integer>> iterators = collectEdgeCases(arbitrary.edgeCases());
 		Set<List<Integer>> lists =
 				iterators.stream()
@@ -49,6 +74,27 @@ class IteratorArbitraryTests {
 		assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(3);
 	}
 
+
+	@Example
+	void edgeCasesAreFilteredByUniquenessConstraints() {
+		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
+		IteratorArbitrary<Integer> arbitrary = ints.iterator().ofSize(2).uniqueness(i -> i);
+		assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
+	}
+
+	private boolean isUniqueModulo(Iterator<Integer> iterator, int modulo) {
+		Set<Integer> moduloSet = new HashSet<>();
+		int count = 0;
+		while (iterator.hasNext()) {
+			count++;
+			Integer i = iterator.next();
+			if (i == null) {
+				moduloSet.add(null);
+			}
+			moduloSet.add(i % modulo);
+		}
+		return moduloSet.size() == count;
+	}
 
 	@Group
 	class ExhaustiveGeneration {
@@ -76,6 +122,29 @@ class IteratorArbitraryTests {
 					asList(3, 1),
 					asList(3, 2),
 					asList(3, 3)
+			);
+		}
+
+		@Example
+		void combinationsAreFilteredByUniquenessConstraints() {
+			Optional<ExhaustiveGenerator<Iterator<Integer>>> optionalGenerator =
+					Arbitraries.integers().between(1, 3).iterator().ofMaxSize(2).uniqueness(i -> i).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Iterator<Integer>> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(13);
+			ExhaustiveGenerator<List<Integer>> listGenerator = generator.map(IteratorArbitraryTests.this::toList);
+			assertThat(listGenerator).containsExactly(
+					asList(),
+					asList(1),
+					asList(2),
+					asList(3),
+					asList(1, 2),
+					asList(1, 3),
+					asList(2, 1),
+					asList(2, 3),
+					asList(3, 1),
+					asList(3, 2)
 			);
 		}
 

@@ -32,6 +32,9 @@ public class UniquenessConfigurator implements ArbitraryConfigurator {
 			if (arbitrary instanceof StreamArbitrary) {
 				return (Arbitrary<T>) configureStreamArbitrary((StreamArbitrary<?>) arbitrary, uniqueness);
 			}
+			if (arbitrary instanceof IteratorArbitrary) {
+				return (Arbitrary<T>) configureIteratorArbitrary((IteratorArbitrary<?>) arbitrary, uniqueness);
+			}
 			if (targetType.isAssignableFrom(List.class)) {
 				Arbitrary<List<?>> listArbitrary = (Arbitrary<List<?>>) arbitrary;
 				return (Arbitrary<T>) listArbitrary.filter(l -> isUnique(l, extractor(uniqueness)));
@@ -51,8 +54,22 @@ public class UniquenessConfigurator implements ArbitraryConfigurator {
 													 .filter(l -> isUnique(l, extractor(uniqueness)))
 													 .map(Collection::stream);
 			}
+			if (targetType.isAssignableFrom(Iterator.class)) {
+				Arbitrary<Iterator<?>> iteratorArbitrary = (Arbitrary<Iterator<?>>) arbitrary;
+				// Since an iterator can only be iterated once this is more involved than seems necessary at first glance
+				Arbitrary<List<?>> listArbitrary = iteratorArbitrary.map(this::toList);
+				return (Arbitrary<T>) listArbitrary.filter(l -> isUnique(l, extractor(uniqueness))).map(List::iterator);
+			}
 			return arbitrary;
 		}).orElse(arbitrary);
+	}
+
+	private <T> List<T> toList(Iterator<T> i) {
+		List<T> list = new ArrayList<>();
+		while (i.hasNext()) {
+			list.add(i.next());
+		}
+		return list;
 	}
 
 	private boolean isUnique(Collection<?> list, Function<Object, Object> extractor) {
@@ -76,6 +93,11 @@ public class UniquenessConfigurator implements ArbitraryConfigurator {
 	}
 
 	private Arbitrary<?> configureStreamArbitrary(StreamArbitrary<?> arbitrary, Uniqueness uniqueness) {
+		Function<Object, Object> extractor = extractor(uniqueness);
+		return arbitrary.uniqueness(extractor::apply);
+	}
+
+	private Arbitrary<?> configureIteratorArbitrary(IteratorArbitrary<?> arbitrary, Uniqueness uniqueness) {
 		Function<Object, Object> extractor = extractor(uniqueness);
 		return arbitrary.uniqueness(extractor::apply);
 	}

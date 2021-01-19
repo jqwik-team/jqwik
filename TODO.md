@@ -1,12 +1,10 @@
 - 1.4.0
 
     - Uniqueness constraints
-        - StreamArbitrary
-        - IteratorArbitrary
+        - MapArbitrary  
         - User guide entry for uniqueness constraints  
         - Deprecate Arbitrary.unique()
         - Release notes for new uniqueness concept  
-        - Uniqueness constraints across collections?
 
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140

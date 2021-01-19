@@ -134,6 +134,42 @@ class UniquenessProperties {
 		}
 	}
 
+	@Group
+	class Iterators {
+
+		@Property
+		boolean iterators(@ForAll @Uniqueness Iterator<String> iterator) {
+			return hasNoDuplicates(toList(iterator), Function.identity());
+		}
+
+		@Property
+		boolean iteratorsWithByClause(@ForAll @Uniqueness(by = GetStringLength.class) Iterator<String> iterator) {
+			return hasNoDuplicates(toList(iterator), new GetStringLength());
+		}
+
+		@Property
+		boolean iteratorsNotFromListArbitraryUsePlainFilter(@ForAll("iteratorOfStrings") @Uniqueness Iterator<String> iterator) {
+			return hasNoDuplicates(toList(iterator), Function.identity());
+		}
+
+		@Provide
+		Arbitrary<Iterator<String>> iteratorOfStrings() {
+			return Arbitraries.of(
+					asList("b", "b", "x").iterator(),
+					asList("a", "b", "c").iterator(),
+					asList("x", "y", "z").iterator()
+			);
+		}
+
+		private List<String> toList(Iterator<String> iterator) {
+			Iterable<String> iterable = () -> iterator;
+			return StreamSupport
+						   .stream(iterable.spliterator(), false)
+						   .collect(Collectors.toList());
+		}
+
+	}
+
 	private class GetStringLength implements Function<Object, Object> {
 		@Override
 		public Object apply(Object o) {

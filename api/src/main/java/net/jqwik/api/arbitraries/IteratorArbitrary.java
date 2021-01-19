@@ -1,6 +1,7 @@
 package net.jqwik.api.arbitraries;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.apiguardian.api.*;
 
@@ -39,5 +40,33 @@ public interface IteratorArbitrary<T> extends StreamableArbitrary<T, Iterator<T>
 	 * @return new arbitrary instance
 	 */
 	IteratorArbitrary<T> ofMaxSize(int maxSize);
+
+	/**
+	 * Add the constraint that elements of the generated iterator must be unique,
+	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	IteratorArbitrary<T> uniqueElements();
+
+	/**
+	 * Add the constraint that elements of the generated iterator must be unique
+	 * relating to an element's "feature" being extracted using the
+	 * {@code by} function.
+	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	IteratorArbitrary<T> uniqueness(Function<T, Object> by);
 
 }

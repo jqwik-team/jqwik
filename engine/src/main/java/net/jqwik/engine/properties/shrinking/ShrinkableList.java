@@ -11,7 +11,8 @@ import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 
-	public ShrinkableList(List<Shrinkable<E>> elements, int minSize, int maxSize) {
+	// Only used in tests
+	ShrinkableList(List<Shrinkable<E>> elements, int minSize, int maxSize) {
 		this(elements, minSize, maxSize, Collections.emptySet());
 	}
 
