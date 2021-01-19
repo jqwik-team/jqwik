@@ -24,6 +24,9 @@ public class DayOfWeekRangeConfigurator extends ArbitraryConfiguratorBase {
 		} else if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.onlyDaysOfWeek(createDayOfWeekArray(range));
+		} else if (arbitrary instanceof DateArbitrary) {
+			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
+			return dateArbitrary.onlyDaysOfWeek(createDayOfWeekArray(range));
 		} else {
 			return arbitrary;
 		}

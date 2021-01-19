@@ -41,7 +41,7 @@ public class Dates {
 	 * @return a new arbitrary instance
 	 */
 	public static DateArbitrary datesAsDate() {
-		return null;
+		return new DefaultDateArbitrary();
 	}
 
 	/**

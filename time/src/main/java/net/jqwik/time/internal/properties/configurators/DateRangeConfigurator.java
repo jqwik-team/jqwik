@@ -26,14 +26,27 @@ public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.between(isoDateToCalendar(range.min()), isoDateToCalendar(range.max()));
 		} else if (arbitrary instanceof DateArbitrary) {
-			return arbitrary; //TODO
+			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
+			return dateArbitrary.between(isoDateToDate(range.min()), isoDateToDate(range.max()));
 		} else {
 			return arbitrary;
 		}
 	}
 
 	private Calendar isoDateToCalendar(String iso) {
-		return DefaultCalendarArbitrary.localDateToCalendar(isoDateToLocalDate(iso));
+		LocalDate localDate = isoDateToLocalDate(iso);
+		if (localDate == null) {
+			return null;
+		}
+		return DefaultCalendarArbitrary.localDateToCalendar(localDate);
+	}
+
+	private Date isoDateToDate(String iso) {
+		Calendar calendar = isoDateToCalendar(iso);
+		if (calendar == null) {
+			return null;
+		}
+		return calendar.getTime();
 	}
 
 	private LocalDate isoDateToLocalDate(String iso) {

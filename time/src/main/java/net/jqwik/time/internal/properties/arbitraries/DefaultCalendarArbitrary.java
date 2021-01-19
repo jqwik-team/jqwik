@@ -76,6 +76,12 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 
 	@Override
 	public CalendarArbitrary atTheEarliest(Calendar min) {
+		if (min.get(Calendar.YEAR) <= 0) {
+			throw new IllegalArgumentException("Minimum year in a date must be > 0");
+		}
+		if (min.get(Calendar.YEAR) > 292_278_993) {
+			throw new IllegalArgumentException("Minimum year in a calendar date must be <= 292278993");
+		}
 		if ((calendarMax != null) && min.after(calendarMax)) {
 			throw new IllegalArgumentException("Minimum date must not be after maximum date");
 		}
@@ -90,6 +96,9 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 		if (max.get(Calendar.YEAR) <= 0) {
 			throw new IllegalArgumentException("Maximum year in a date must be > 0");
 		}
+		if (max.get(Calendar.YEAR) > 292_278_993) {
+			throw new IllegalArgumentException("Maximum year in a calendar date must be <= 292278993");
+		}
 		if ((calendarMin != null) && max.before(calendarMin)) {
 			throw new IllegalArgumentException("Maximum date must not be before minimum date");
 		}
@@ -102,10 +111,16 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 	@Override
 	public CalendarArbitrary yearBetween(Year min, Year max) {
 		if (min.getValue() <= 0) {
-			throw new IllegalArgumentException("Maximum year in a date must be > 0");
+			throw new IllegalArgumentException("Minimum year in a date must be > 0");
 		}
 		if (max.getValue() <= 0) {
 			throw new IllegalArgumentException("Maximum year in a date must be > 0");
+		}
+		if (min.getValue() > 292_278_993) {
+			throw new IllegalArgumentException("Minimum year in a calendar date must be <= 292278993");
+		}
+		if (max.getValue() > 292_278_993) {
+			throw new IllegalArgumentException("Maximum year in a calendar date must be <= 292278993");
 		}
 
 		DefaultCalendarArbitrary clone = typedClone();
