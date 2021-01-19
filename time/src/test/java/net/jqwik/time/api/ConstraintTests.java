@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.time.api.constraints.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -56,7 +57,6 @@ public class ConstraintTests {
 
 	}
 
-	@Disabled
 	@Group
 	class CalendarConstraints {
 
@@ -66,6 +66,40 @@ public class ConstraintTests {
 			Calendar calendarEnd = CalendarTests.getCalendar(2020, Calendar.AUGUST, 23);
 			assertThat(calendar).isGreaterThanOrEqualTo(calendarStart);
 			assertThat(calendar).isLessThanOrEqualTo(calendarEnd);
+		}
+
+		@Property
+		void yearRangeBetween500And700(@ForAll @YearRange(min = 500, max = 700) Calendar calendar) {
+			assertThat(calendar.get(Calendar.YEAR)).isGreaterThanOrEqualTo(500);
+			assertThat(calendar.get(Calendar.YEAR)).isLessThanOrEqualTo(700);
+		}
+
+		@Property
+		void monthRangeBetweenMarchAndJuly(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) Calendar calendar) {
+			assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(calendar)).isGreaterThanOrEqualTo(Month.MARCH);
+			assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(calendar)).isLessThanOrEqualTo(Month.JULY);
+		}
+
+		@Property
+		void dayOfMonthRangeBetween15And20Integer(@ForAll @DayOfMonthRange(min = 15, max = 20) Calendar calendar) {
+			assertThat(calendar.get(Calendar.DAY_OF_MONTH)).isGreaterThanOrEqualTo(15);
+			assertThat(calendar.get(Calendar.DAY_OF_MONTH)).isLessThanOrEqualTo(20);
+		}
+
+		@Property
+		void dayOfWeekRangeOnlyMonday(@ForAll @DayOfWeekRange(max = DayOfWeek.MONDAY) Calendar calendar) {
+			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isEqualTo(DayOfWeek.MONDAY);
+		}
+
+		@Property
+		void dayOfWeekRangeOnlySunday(@ForAll @DayOfWeekRange(min = DayOfWeek.SUNDAY) Calendar calendar) {
+			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isEqualTo(DayOfWeek.SUNDAY);
+		}
+
+		@Property
+		void dayOfWeekRangeBetweenTuesdayAndFriday(@ForAll @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) Calendar calendar) {
+			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isGreaterThanOrEqualTo(DayOfWeek.TUESDAY);
+			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isLessThanOrEqualTo(DayOfWeek.FRIDAY);
 		}
 
 	}

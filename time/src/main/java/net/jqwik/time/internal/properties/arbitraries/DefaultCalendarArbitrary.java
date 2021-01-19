@@ -70,7 +70,7 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 			dateArbitrary = dateArbitrary.leapYears(withLeapYears);
 		}
 
-		return dateArbitrary.map(this::localDateToCalendar);
+		return dateArbitrary.map(DefaultCalendarArbitrary::localDateToCalendar);
 
 	}
 
@@ -156,7 +156,7 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 		return clone;
 	}
 
-	private Calendar localDateToCalendar(LocalDate date) {
+	public static Calendar localDateToCalendar(LocalDate date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(date.getYear(), monthToCalendarMonth(date.getMonth()), date.getDayOfMonth(), 0, 0, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
@@ -196,6 +196,10 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 		}
 	}
 
+	public static Month calendarMonthToMonth(Calendar calendar) {
+		return calendarMonthToMonth(calendar.get(Calendar.MONTH));
+	}
+
 	public static Month calendarMonthToMonth(int month) {
 		switch (month) {
 			case Calendar.JANUARY:
@@ -223,6 +227,10 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 			default:
 				return Month.DECEMBER;
 		}
+	}
+
+	public static DayOfWeek calendarDayOfWeekToDayOfWeek(Calendar calendar) {
+		return calendarDayOfWeekToDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK));
 	}
 
 	public static DayOfWeek calendarDayOfWeekToDayOfWeek(int dayOfWeek) {

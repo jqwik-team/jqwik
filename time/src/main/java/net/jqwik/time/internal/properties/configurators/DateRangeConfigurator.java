@@ -8,6 +8,7 @@ import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
 public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 
@@ -21,13 +22,18 @@ public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 		if (arbitrary instanceof LocalDateArbitrary) {
 			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
 			return localDateArbitrary.between(isoDateToLocalDate(range.min()), isoDateToLocalDate(range.max()));
-		} else if (checkIfCalendar(arbitrary)) {
-			return arbitrary; //TODO
-		} else if (checkIfDate(arbitrary)) {
+		} else if (arbitrary instanceof CalendarArbitrary) {
+			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
+			return calendarArbitrary.between(isoDateToCalendar(range.min()), isoDateToCalendar(range.max()));
+		} else if (arbitrary instanceof DateArbitrary) {
 			return arbitrary; //TODO
 		} else {
 			return arbitrary;
 		}
+	}
+
+	private Calendar isoDateToCalendar(String iso) {
+		return DefaultCalendarArbitrary.localDateToCalendar(isoDateToLocalDate(iso));
 	}
 
 	private LocalDate isoDateToLocalDate(String iso) {
@@ -47,20 +53,6 @@ public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 			return null;
 		}
 		return LocalDate.of(year, month, day);
-	}
-
-	private boolean checkIfCalendar(Arbitrary<?> arbitrary) {
-		if (!arbitrary.allValues().isPresent()) {
-			return false;
-		}
-		return arbitrary.allValues().get().allMatch(v -> v instanceof Calendar);
-	}
-
-	private boolean checkIfDate(Arbitrary<?> arbitrary) {
-		if (!arbitrary.allValues().isPresent()) {
-			return false;
-		}
-		return arbitrary.allValues().get().allMatch(v -> v instanceof Date);
 	}
 
 }
