@@ -484,27 +484,6 @@ class LocalDateTests {
 					  });
 		}
 
-		/* TODO
-		@Property
-		void asPeriodIsNotDifferentFrom0(@ForAll Period period) {
-			Statistics.label("Period not always 0")
-					  .collect(period.isZero())
-					  .coverage(coverage -> {
-						  coverage.check(true).count(c -> c >= 1);
-						  coverage.check(false).count(c -> c >= 600);
-					  });
-		}
-
-		@Property
-		void asPeriodIsPositiveAndNegative(@ForAll Period period) {
-			Statistics.label("Period is negative")
-					  .collect(period.isNegative())
-					  .coverage(coverage -> {
-						  coverage.check(true).percentage(p -> p >= 40);
-						  coverage.check(false).percentage(p -> p >= 40);
-					  });
-		}*/
-
 		private void checkMonthCoverage(StatisticsCoverage coverage) {
 			Month[] months = Month.class.getEnumConstants();
 			for (Month m : months) {

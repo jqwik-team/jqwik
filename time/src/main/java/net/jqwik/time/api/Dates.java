@@ -100,4 +100,13 @@ public class Dates {
 		return new DefaultMonthDayArbitrary();
 	}
 
+	/**
+	 * Create an arbitrary that generates instances of {@linkplain java.time.Period}.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	public static PeriodArbitrary periods() {
+		return new DefaultPeriodArbitrary();
+	}
+
 }
