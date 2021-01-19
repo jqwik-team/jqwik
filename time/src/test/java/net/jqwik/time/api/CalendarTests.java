@@ -150,8 +150,8 @@ class CalendarTests {
 				Arbitrary<Calendar> dates = Dates.datesAsCalendar().monthBetween(startMonth, endMonth);
 
 				assertAllGenerated(dates.generator(1000), random, date -> {
-					//TODO +1 assertThat(Month.of(date.get(Calendar.MONTH))).isGreaterThanOrEqualTo(Month.of(startMonth));
-					//TODO +1 assertThat(Month.of(date.get(Calendar.MONTH))).isLessThanOrEqualTo(Month.of(endMonth));
+					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(date)).isGreaterThanOrEqualTo(Month.of(startMonth));
+					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(date)).isLessThanOrEqualTo(Month.of(endMonth));
 					return true;
 				});
 
@@ -163,7 +163,7 @@ class CalendarTests {
 				Arbitrary<Calendar> dates = Dates.datesAsCalendar().monthBetween(month, month);
 
 				assertAllGenerated(dates.generator(1000), random, date -> {
-					//TODO +1 assertThat(Month.of(date.get(Calendar.MONTH))).isEqualTo(Month.of(month));
+					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(date)).isEqualTo(Month.of(month));
 					return true;
 				});
 
@@ -175,7 +175,7 @@ class CalendarTests {
 				Arbitrary<Calendar> dates = Dates.datesAsCalendar().onlyMonths(months.toArray(new Month[]{}));
 
 				assertAllGenerated(dates.generator(1000), random, date -> {
-					//TODO +1 assertThat(Month.of(date.get(Calendar.MONTH))).isIn(months);
+					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(date)).isIn(months);
 					return true;
 				});
 
@@ -238,7 +238,7 @@ class CalendarTests {
 				Arbitrary<Calendar> dates = Dates.datesAsCalendar().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 
 				assertAllGenerated(dates.generator(1000), random, date -> {
-					assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(date.get(Calendar.DAY_OF_WEEK))).isIn(dayOfWeeks);
+					assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(date)).isIn(dayOfWeeks);
 					return true;
 				});
 			}
@@ -422,7 +422,7 @@ class CalendarTests {
 		@Property
 		void dayOfWeeks(@ForAll("dates") Calendar date) {
 			Statistics.label("Day of weeks")
-					  .collect(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(date.get(Calendar.DAY_OF_WEEK)))
+					  .collect(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(date))
 					  .coverage(this::checkDayOfWeekCoverage);
 		}
 

@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Constrain the range of generated month parameters.
  * <p>
- * Applies to YearMonth, MonthDay or LocalDate parameters which are also annotated with {@code @ForAll}.
+ * Applies to YearMonth, MonthDay, LocalDate, Calendar or Date parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  * @see DateRange

@@ -13,19 +13,28 @@ public class DayOfWeekRangeConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalDate.class);
+		return targetType.isAssignableFrom(LocalDate.class) || targetType.isAssignableFrom(Calendar.class) || targetType
+																													  .isAssignableFrom(Date.class);
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DayOfWeekRange range) {
 		if (arbitrary instanceof LocalDateArbitrary) {
 			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
-			List<DayOfWeek> dayOfWeeks = new ArrayList<DayOfWeek>();
-			for (int i = range.min().getValue(); i <= range.max().getValue(); i++) {
-				dayOfWeeks.add(DayOfWeek.of(i));
-			}
-			return localDateArbitrary.onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
+			return localDateArbitrary.onlyDaysOfWeek(createDayOfWeekArray(range));
+		} else if (arbitrary instanceof CalendarArbitrary) {
+			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
+			return calendarArbitrary.onlyDaysOfWeek(createDayOfWeekArray(range));
 		} else {
 			return arbitrary;
 		}
 	}
+
+	private DayOfWeek[] createDayOfWeekArray(DayOfWeekRange range) {
+		List<DayOfWeek> dayOfWeeks = new ArrayList<>();
+		for (int i = range.min().getValue(); i <= range.max().getValue(); i++) {
+			dayOfWeeks.add(DayOfWeek.of(i));
+		}
+		return dayOfWeeks.toArray(new DayOfWeek[]{});
+	}
+
 }
