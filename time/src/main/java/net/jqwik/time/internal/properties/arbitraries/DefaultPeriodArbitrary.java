@@ -16,11 +16,11 @@ public class DefaultPeriodArbitrary extends ArbitraryDecorator<Period> implement
 	private int yearsMin = Integer.MIN_VALUE;
 	private int yearsMax = Integer.MAX_VALUE;
 
-	private int monthsMin = Integer.MIN_VALUE;
-	private int monthsMax = Integer.MAX_VALUE;
+	private int monthsMin = 0;
+	private int monthsMax = 11;
 
-	private int daysMin = Integer.MIN_VALUE;
-	private int daysMax = Integer.MAX_VALUE;
+	private int daysMin = 0;
+	private int daysMax = 30;
 
 	@Override
 	protected Arbitrary<Period> arbitrary() {
@@ -29,7 +29,16 @@ public class DefaultPeriodArbitrary extends ArbitraryDecorator<Period> implement
 		IntegerArbitrary months = Arbitraries.integers().between(monthsMin, monthsMax);
 		IntegerArbitrary days = Arbitraries.integers().between(daysMin, daysMax);
 
-		return Combinators.combine(years, months, days).as((y, m, d) -> Period.ofYears(y).plusMonths(m).plusDays(d));
+		Arbitrary<Period> periodArbitrary = Combinators.combine(years, months, days).as(Period::of);
+
+		periodArbitrary = periodArbitrary.edgeCases(edgeCases -> {
+			edgeCases.includeOnly(Period.of(yearsMin, monthsMin, daysMin), Period.of(yearsMax, monthsMax, daysMax));
+			if (yearsMin <= 0 && yearsMax >= 0 && monthsMin <= 0 && monthsMax >= 0 && daysMin <= 0 && daysMax >= 0) {
+				edgeCases.add(Period.of(0, 0, 0));
+			}
+		});
+
+		return periodArbitrary;
 
 	}
 

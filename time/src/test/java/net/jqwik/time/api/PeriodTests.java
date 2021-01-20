@@ -5,9 +5,12 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.testing.*;
+import net.jqwik.time.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
@@ -18,9 +21,24 @@ class PeriodTests {
 		return Dates.periods();
 	}
 
-	@Property
-	void validPeriodIsGenerated(@ForAll("periods") Period period) {
-		assertThat(period).isNotNull();
+	@Group
+	class DefaultGeneration {
+
+		@Property
+		void validPeriodIsGenerated(@ForAll("periods") Period period) {
+			assertThat(period).isNotNull();
+		}
+
+		@Property
+		void defaultMonthBetween0And11(@ForAll("periods") Period period) {
+			assertThat(period.getMonths()).isBetween(0, 11);
+		}
+
+		@Property
+		void defaultDaysBetween0And30(@ForAll("periods") Period period) {
+			assertThat(period.getMonths()).isBetween(0, 30);
+		}
+
 	}
 
 	@Property
@@ -127,11 +145,123 @@ class PeriodTests {
 	}
 
 	@Group
+	class Shrinking {
+
+		@Property
+		void defaultShrinking(@ForAll Random random) {
+			PeriodArbitrary periods = Dates.periods();
+			Period value = falsifyThenShrink(periods, random);
+			assertThat(value).isEqualTo(Period.of(0, 0, 0));
+		}
+
+		@Disabled
+		@Property
+		void shrinksToSmallestFailingValue(@ForAll Random random) {
+			PeriodArbitrary periods = Dates.periods();
+			TestingFalsifier<Period> falsifier = period -> comparePeriodsWithMax30DaysAnd11Months(period, Period.of(200, 3, 5)) <= 0;
+			Period value = falsifyThenShrink(periods, random, falsifier);
+			assertThat(value).isEqualTo(Period.of(200, 3, 5));
+		}
+
+		private int comparePeriodsWithMax30DaysAnd11Months(Period period1, Period period2) {
+			if (period1.getYears() < period2.getYears()) {
+				return -1;
+			} else if (period2.getYears() < period1.getYears()) {
+				return 1;
+			}
+			if (period1.getMonths() < period2.getMonths()) {
+				return -1;
+			} else if (period2.getMonths() < period1.getMonths()) {
+				return 1;
+			}
+			if (period1.getDays() < period2.getDays()) {
+				return -1;
+			} else if (period2.getDays() < period1.getDays()) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+
+	}
+
+	@Group
+	class ExhaustiveGeneration {
+
+		@Example
+		void between() {
+			Optional<ExhaustiveGenerator<Period>> optionalGenerator =
+					Dates.periods()
+						 .yearsBetween(200, 200)
+						 .monthsBetween(5, 5)
+						 .daysBetween(20, 24)
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Period> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(5);
+			assertThat(generator).containsExactly(
+					Period.of(200, 5, 20),
+					Period.of(200, 5, 21),
+					Period.of(200, 5, 22),
+					Period.of(200, 5, 23),
+					Period.of(200, 5, 24)
+			);
+		}
+
+	}
+
+	@Group
+	class EdgeCasesTests {
+
+		@Example
+		void all() {
+			PeriodArbitrary periods = Dates.periods();
+			Set<Period> edgeCases = collectEdgeCases(periods.edgeCases());
+			assertThat(edgeCases).hasSize(3);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					Period.of(Integer.MIN_VALUE, 0, 0),
+					Period.of(0, 0, 0),
+					Period.of(Integer.MAX_VALUE, 11, 30)
+			);
+		}
+
+		@Example
+		void betweenMethods() {
+			PeriodArbitrary periods = Dates.periods()
+										   .yearsBetween(5, 10)
+										   .monthsBetween(Integer.MIN_VALUE, 500)
+										   .daysBetween(-5000, Integer.MAX_VALUE);
+			Set<Period> edgeCases = collectEdgeCases(periods.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					Period.of(5, Integer.MIN_VALUE, -5000),
+					Period.of(10, 500, Integer.MAX_VALUE)
+			);
+		}
+
+	}
+
+	@Group
 	class CheckEqualDistribution {
 
 		@Property
-		void periodNotAlways0(@ForAll Period period) {
-			Statistics.label("Period not always 0")
+		void months(@ForAll("periods") Period period) {
+			Statistics.label("Months")
+					  .collect(period.getMonths())
+					  .coverage(this::checkMonthCoverage);
+		}
+
+		@Property
+		void dayOfMonths(@ForAll("periods") Period period) {
+			Statistics.label("Days")
+					  .collect(period.getDays())
+					  .coverage(this::checkDayCoverage);
+		}
+
+		@Property
+		void periodCanBeZeroAndNot(@ForAll Period period) {
+			Statistics.label("Period is zero")
 					  .collect(period.isZero())
 					  .coverage(coverage -> {
 						  coverage.check(true).count(c -> c >= 1);
@@ -147,6 +277,18 @@ class PeriodTests {
 						  coverage.check(true).percentage(p -> p >= 40);
 						  coverage.check(false).percentage(p -> p >= 40);
 					  });
+		}
+
+		private void checkMonthCoverage(StatisticsCoverage coverage) {
+			for (int dayOfMonth = 0; dayOfMonth <= 11; dayOfMonth++) {
+				coverage.check(dayOfMonth).percentage(p -> p >= 4);
+			}
+		}
+
+		private void checkDayCoverage(StatisticsCoverage coverage) {
+			for (int dayOfMonth = 0; dayOfMonth <= 30; dayOfMonth++) {
+				coverage.check(dayOfMonth).percentage(p -> p >= 0.5);
+			}
 		}
 
 	}
