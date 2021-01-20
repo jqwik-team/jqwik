@@ -1,8 +1,6 @@
 - 1.4.0
 
     - Uniqueness constraints
-        - User guide entry for uniqueness constraints
-          - Remove user guide sections for old uniqueness approach
         - Release notes for new uniqueness concept  
 
     - Time and Date Generation Module

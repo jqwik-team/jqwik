@@ -40,14 +40,13 @@ depending on the requested parameter type.
 
 #### Unique Values
 
-- [`@Unique`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Unique.html):
-  Prevent duplicate values to be generated _per try_. That means that
-  there can still be duplicate values across several tries. That also means
-  that `@Unique` only makes sense as annotation for a parameter type, e.g.:
+- [`@Uniqueness`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Uniqueness.html):
+  Constrain a container (List, Set, Stream, Iterator or array) so that its 
+  elements are unique or unique in relation to one of their features.
 
   ```java
     @Property
-    void uniqueInList(@ForAll @Size(5) List<@IntRange(min = 0, max = 10) @Unique Integer> aList) {
+    void uniqueInList(@ForAll @Size(5) @Uniqueness List<@IntRange(min = 0, max = 10) Integer> aList) {
         Assertions.assertThat(aList).doesNotHaveDuplicates();
         Assertions.assertThat(aList).allMatch(anInt -> anInt >= 0 && anInt <= 10);
     }
@@ -55,7 +54,29 @@ depending on the requested parameter type.
 
   Trying to generate a list with more than 11 elements would not work here.
 
-  Works for all generated types.
+  The following example will change the uniqueness criterion to use the first character
+  of the list's String elements by providing a feature extraction function
+  in the `by` attribute of the `@Uniqueness` annotation.
+
+  ```java
+    @Property
+    void listOfStringsTheFirstCharacterOfWhichMustDiffer_annotationsOnly(
+      @ForAll @Size(max = 25) @Uniqueness(by = FirstChar.class) 
+        List<@AlphaChars @StringLength(min = 1, max = 10) String> listOfStrings
+    ) {
+      Iterable<Character> firstCharacters = listOfStrings.stream().map(s -> s.charAt(0)).collect(Collectors.toList());
+      Assertions.assertThat(firstCharacters).doesNotHaveDuplicates();
+    }
+
+    private class FirstChar implements Function<Object, Object> {
+      @Override
+      public Object apply(Object o) {
+        return ((String) o).charAt(0);
+      }
+    }
+  ```
+
+  `@Uniqueness` can be used for parameters of type `List`, `Set`, `Stream`, `Iterator` or any array.
 
 #### String Length
 
