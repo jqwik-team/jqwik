@@ -82,9 +82,12 @@ public interface Arbitrary<T> {
 	 * All arbitraries whose base generator is supposed to produce no duplicates
 	 * should return true.
 	 *
-	 * @return true if base genator is supposed to produce no duplicates
+	 * @return true if base generator is supposed to produce no duplicates
+	 *
+	 * @deprecated Do not use. Will be removed in 1.5.0
 	 */
-	@API(status = INTERNAL)
+	@Deprecated
+	@API(status = DEPRECATED, since = "1.4.0")
 	default boolean isUnique() {
 		return false;
 	}
@@ -205,7 +208,24 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a new arbitrary instance
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
+	 *
+	 * @deprecated Replace with {@code uniqueElements()} call on containing container arbitrary. Will be removed in 1.5.0.
+	 *
+	 * @see ListArbitrary#uniqueness(Function)
+	 * @see ListArbitrary#uniqueElements()
+	 * @see SetArbitrary#uniqueness(Function)
+	 * @see StreamArbitrary#uniqueness(Function)
+	 * @see StreamArbitrary#uniqueElements()
+	 * @see IteratorArbitrary#uniqueness(Function)
+	 * @see IteratorArbitrary#uniqueElements()
+	 * @see ArrayArbitrary#uniqueness(Function)
+	 * @see ArrayArbitrary#uniqueElements()
+	 * @see MapArbitrary#keyUniqueness(Function)
+	 * @see MapArbitrary#valueUniqueness(Function)
+	 * @see MapArbitrary#uniqueValues()
 	 */
+	@Deprecated
+	@API(status = DEPRECATED, since = "1.4.0")
 	default Arbitrary<T> unique() {
 		return new Arbitrary<T>() {
 			@Override
