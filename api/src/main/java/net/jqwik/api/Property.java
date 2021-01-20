@@ -81,4 +81,15 @@ public @interface Property {
 
 	@API(status = EXPERIMENTAL, since = "1.3.0")
 	EdgeCasesMode edgeCases() default EdgeCasesMode.NOT_SET;
+
+	/**
+	 * Controls how to behave if a {@link #seed()} is present.
+	 * <p>
+	 * Default value is the value from the global {@code jqwik.seeds.whenfixed}
+	 * configuration property.
+	 *
+	 * @return the fixed seed mode
+	 */
+	@API(status = EXPERIMENTAL, since = "1.4.0")
+	FixedSeedMode whenFixedSeed() default FixedSeedMode.NOT_SET;
 }

@@ -23,7 +23,7 @@ class PropertyConfigurationBuilder {
 	private GenerationMode generationMode = null;
 	private AfterFailureMode afterFailureMode = null;
 	private EdgeCasesMode edgeCasesMode = null;
-
+	private FixedSeedMode fixedSeedMode = null;
 
 	PropertyConfigurationBuilder withSeed(String seed) {
 		this.seed = seed;
@@ -64,8 +64,14 @@ class PropertyConfigurationBuilder {
 		this.afterFailureMode = afterFailureMode;
 		return this;
 	}
+
 	public PropertyConfigurationBuilder withEdgeCases(EdgeCasesMode edgeCasesMode) {
 		this.edgeCasesMode = edgeCasesMode;
+		return this;
+	}
+
+	public PropertyConfigurationBuilder withWhenFixedSeed(FixedSeedMode fixedSeedMode) {
+		this.fixedSeedMode = fixedSeedMode;
 		return this;
 	}
 
@@ -78,7 +84,8 @@ class PropertyConfigurationBuilder {
 			afterFailureMode,
 			edgeCasesMode,
 			null,
-			seed
+			seed,
+			fixedSeedMode
 		);
 
 		return new PropertyConfiguration(

@@ -30,6 +30,8 @@ public @interface PropertyDefaults {
 
 	EdgeCasesMode edgeCases() default EdgeCasesMode.NOT_SET;
 
+	FixedSeedMode whenFixedSeed() default FixedSeedMode.NOT_SET;
+
 	class PropertyDefaultsHook implements AroundPropertyHook {
 
 		@Override
@@ -64,6 +66,12 @@ public @interface PropertyDefaults {
 				PropertyAttributes attributes = context.attributes();
 				if (!attributes.edgeCases().isPresent()) {
 					attributes.setEdgeCases(edgeCases);
+				}
+			});
+			findFixedSeedMode(propertyDefaults).ifPresent(mode -> {
+				PropertyAttributes attributes = context.attributes();
+				if (!attributes.whenFixedSeed().isPresent()) {
+					attributes.setWhenFixedSeed(mode);
 				}
 			});
 
@@ -102,6 +110,13 @@ public @interface PropertyDefaults {
 			return propertyDefaults.stream()
 								   .map(PropertyDefaults::edgeCases)
 								   .filter(edgeCases -> edgeCases != EdgeCasesMode.NOT_SET)
+								   .findFirst();
+		}
+
+		private Optional<FixedSeedMode> findFixedSeedMode(List<PropertyDefaults> propertyDefaults) {
+			return propertyDefaults.stream()
+								   .map(PropertyDefaults::whenFixedSeed)
+								   .filter(mode -> mode != FixedSeedMode.NOT_SET)
 								   .findFirst();
 		}
 

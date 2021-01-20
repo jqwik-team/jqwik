@@ -33,7 +33,8 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			properties.defaultGeneration(),
 			properties.defaultEdgeCases(),
 			properties.defaultShrinking(),
-			properties.boundedShrinkingSeconds()
+			properties.boundedShrinkingSeconds(),
+			properties.fixedSeedMode()
 		);
 	}
 

@@ -39,6 +39,10 @@ public class DefaultPropertyAttributes implements PropertyAttributes {
 						  ? null
 						  : property.seed();
 
+		FixedSeedMode whenFixedSeed = property.whenFixedSeed() == FixedSeedMode.NOT_SET
+											  ? null
+											  : property.whenFixedSeed();
+
 		return new DefaultPropertyAttributes(
 			tries,
 			maxDiscardRatio,
@@ -47,7 +51,8 @@ public class DefaultPropertyAttributes implements PropertyAttributes {
 			afterFailure,
 			edgeCases,
 			stereotype,
-			seed
+			seed,
+			whenFixedSeed
 		);
 	}
 
@@ -59,17 +64,19 @@ public class DefaultPropertyAttributes implements PropertyAttributes {
 	private EdgeCasesMode edgeCasesMode;
 	private String stereotype;
 	private String seed;
+	private FixedSeedMode whenFixedSeed;
 
 	// Only public for testing purposes
 	public DefaultPropertyAttributes(
-		Integer tries,
-		Integer maxDiscardRatio,
-		ShrinkingMode shrinkingMode,
-		GenerationMode generationMode,
-		AfterFailureMode afterFailureMode,
-		EdgeCasesMode edgeCasesMode,
-		String stereotype,
-		String seed
+			Integer tries,
+			Integer maxDiscardRatio,
+			ShrinkingMode shrinkingMode,
+			GenerationMode generationMode,
+			AfterFailureMode afterFailureMode,
+			EdgeCasesMode edgeCasesMode,
+			String stereotype,
+			String seed,
+			FixedSeedMode whenFixedSeed
 	) {
 		this.tries = tries;
 		this.maxDiscardRatio = maxDiscardRatio;
@@ -79,6 +86,7 @@ public class DefaultPropertyAttributes implements PropertyAttributes {
 		this.edgeCasesMode = edgeCasesMode;
 		this.stereotype = stereotype;
 		this.seed = seed;
+		this.whenFixedSeed = whenFixedSeed;
 	}
 
 	@Override
@@ -122,6 +130,11 @@ public class DefaultPropertyAttributes implements PropertyAttributes {
 	}
 
 	@Override
+	public Optional<FixedSeedMode> whenFixedSeed() {
+		return Optional.ofNullable(whenFixedSeed);
+	}
+
+	@Override
 	public void setTries(Integer tries) {
 		this.tries = tries;
 	}
@@ -159,5 +172,10 @@ public class DefaultPropertyAttributes implements PropertyAttributes {
 	@Override
 	public void setSeed(String seed) {
 		this.seed = seed;
+	}
+
+	@Override
+	public void setWhenFixedSeed(FixedSeedMode fixedSeedMode) {
+		this.whenFixedSeed = fixedSeedMode;
 	}
 }

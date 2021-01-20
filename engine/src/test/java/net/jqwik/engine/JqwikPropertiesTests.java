@@ -50,5 +50,7 @@ class JqwikPropertiesTests {
 		assertThat(properties.defaultShrinking()).isEqualTo(ShrinkingMode.BOUNDED);
 
 		assertThat(properties.boundedShrinkingSeconds()).isEqualTo(10);
+
+		assertThat(properties.fixedSeedMode()).isEqualTo(FixedSeedMode.ALLOW);
 	}
 }
