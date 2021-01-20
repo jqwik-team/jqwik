@@ -1,6 +1,7 @@
 package net.jqwik.api.arbitraries;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.apiguardian.api.*;
 
@@ -39,5 +40,48 @@ public interface MapArbitrary<K, V> extends SizableArbitrary<Map<K, V>> {
 	 * @return new arbitrary instance
 	 */
 	MapArbitrary<K, V> ofMaxSize(int maxSize);
+
+	/**
+	 * Add the constraint that keys of the generated map must be unique
+	 * relating to an element's "feature" being extracted by applying the
+	 * {@code by} function on a map entry's key.
+	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #keyUniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	MapArbitrary<K, V> keyUniqueness(Function<K, Object> by);
+
+	/**
+	 * Add the constraint that value of the generated map must be unique
+	 * relating to an element's "feature" being extracted by applying the
+	 * {@code by} function on a map entry's value.
+	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #valueUniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	MapArbitrary<K, V> valueUniqueness(Function<V, Object> by);
+
+	/**
+	 * Add the constraint that values of the generated map must be unique,
+	 * i.e. no two value must return true when being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #valueUniqueness(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.4.0")
+	MapArbitrary<K, V> uniqueValues();
 
 }

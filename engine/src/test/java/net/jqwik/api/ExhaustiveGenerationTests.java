@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.api.arbitraries.*;
-
 import static java.math.RoundingMode.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -551,55 +549,6 @@ class ExhaustiveGenerationTests {
 		void elementArbitraryNotExhaustive() {
 			Optional<ExhaustiveGenerator<Optional<Double>>> optionalGenerator =
 				Arbitraries.doubles().between(1, 10).optional().exhaustive();
-			assertThat(optionalGenerator).isNotPresent();
-		}
-	}
-
-	@Group
-	class Maps {
-		@Example
-		void allCombinationsOfKeysAndValues() {
-
-			IntegerArbitrary keys = Arbitraries.integers().between(1, 3);
-			IntegerArbitrary values = Arbitraries.integers().between(4, 5);
-			Optional<ExhaustiveGenerator<Map<Integer, Integer>>> mapGenerator =
-				Arbitraries.maps(keys, values).ofSize(2).exhaustive();
-			assertThat(mapGenerator).isPresent();
-
-			ExhaustiveGenerator<Map<Integer, Integer>> generator = mapGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(12);
-
-			assertThat(generator).containsExactlyInAnyOrder(
-				createMap(Tuple.of(1, 5), Tuple.of(2, 5)),
-				createMap(Tuple.of(1, 4), Tuple.of(2, 4)),
-				createMap(Tuple.of(1, 5), Tuple.of(2, 4)),
-				createMap(Tuple.of(1, 4), Tuple.of(2, 5)),
-				createMap(Tuple.of(1, 5), Tuple.of(3, 5)),
-				createMap(Tuple.of(1, 4), Tuple.of(3, 4)),
-				createMap(Tuple.of(1, 5), Tuple.of(3, 4)),
-				createMap(Tuple.of(1, 4), Tuple.of(3, 5)),
-				createMap(Tuple.of(2, 5), Tuple.of(3, 5)),
-				createMap(Tuple.of(2, 4), Tuple.of(3, 4)),
-				createMap(Tuple.of(2, 5), Tuple.of(3, 4)),
-				createMap(Tuple.of(2, 4), Tuple.of(3, 5))
-			);
-		}
-
-		@SafeVarargs
-		private final <T, U> Map<T, U> createMap(Tuple.Tuple2<T, U>... tuples) {
-			HashMap<T, U> result = new HashMap<>();
-			for (Tuple.Tuple2<T, U> tuple : tuples) {
-				result.put(tuple.get1(), tuple.get2());
-			}
-			return result;
-		}
-
-		@Example
-		void tooManyCombinations() {
-			IntegerArbitrary keys = Arbitraries.integers().between(1, 1000);
-			IntegerArbitrary values = Arbitraries.integers().between(1000, 2000);
-			Optional<ExhaustiveGenerator<Optional<Map<Integer, Integer>>>> optionalGenerator =
-				Arbitraries.maps(keys, values).ofMaxSize(10).optional().exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}

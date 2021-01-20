@@ -18,24 +18,6 @@ class ArbitrariesEdgeCasesTests {
 	enum MyEnum {FIRST, B, C, LAST}
 
 	@Example
-	@Label("Arbitraries.map(key, value)")
-	void maps() {
-		StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
-		Arbitrary<Integer> values = Arbitraries.of(10, 100);
-		Arbitrary<Map<String, Integer>> arbitrary = Arbitraries.maps(keys, values);
-		EdgeCases<Map<String, Integer>> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
-				Collections.emptyMap(),
-				Collections.singletonMap("a", 10),
-				Collections.singletonMap("a", 100),
-				Collections.singletonMap("z", 10),
-				Collections.singletonMap("z", 100)
-		);
-		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(5);
-	}
-
-	@Example
 	@Label("Arbitraries.entries(key, value)")
 	void entries() {
 		StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
