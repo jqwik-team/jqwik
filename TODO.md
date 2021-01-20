@@ -9,6 +9,8 @@
         - https://github.com/jlink/jqwik/issues/140
         - DateArbitrary.shrinkTowards(date)
 
+    - Default for Email-Generation should be "unquoted" local part and "domain" host.
+
     - Edge Cases
 
         - Restrict number of generated edge cases to number of tries
