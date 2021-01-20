@@ -21,6 +21,8 @@ jqwik.shrinking.default = BOUNDED            # Set default shrinking behaviour:
                                              # BOUNDED, FULL, or OFF
 jqwik.shrinking.bounded.seconds = 10         # The maximum number of seconds to shrink if
                                              # shrinking behaviour is set to BOUNDED
+jqwik.seeds.whenfixed = ALLOW                # How a test should act when a seed is fixed. Can set to ALLOW, WARN or FAIL
+                                             # Useful to prevent accidental commits of fixed seeds into source control.                                             
 ```
 
 Prior releases of _jqwik_ used a custom `jqwik.properties`. While this continues to work, it is deprecated

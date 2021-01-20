@@ -144,4 +144,8 @@ public class PropertyConfiguration {
 	public int boundedShrinkingSeconds() {
 		return propertyAttributesDefaults.boundedShrinkingSeconds();
 	}
+
+	public FixedSeedMode getFixedSeedMode() {
+		return propertyAttributes.whenFixedSeed().orElse(propertyAttributesDefaults.whenFixedSeed());
+	}
 }

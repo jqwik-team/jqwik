@@ -97,6 +97,15 @@ public interface PropertyAttributes {
 	 */
 	Optional<String> seed();
 
+	/**
+	 * The fixed seed mode of the property at hand.
+	 * Only present when set explicitly through {@linkplain Property#whenFixedSeed()} ()}
+	 * or {@linkplain #setWhenFixedSeed(FixedSeedMode)}.
+	 *
+	 * @return optional fixed seed mode
+	 */
+	Optional<FixedSeedMode> whenFixedSeed();
+
 	void setTries(Integer tries);
 
 	void setMaxDiscardRatio(Integer maxDiscardRatio);
@@ -112,5 +121,7 @@ public interface PropertyAttributes {
 	void setStereotype(String stereotype);
 
 	void setSeed(String seed);
+
+	void setWhenFixedSeed(FixedSeedMode fixedSeedMode);
 
 }

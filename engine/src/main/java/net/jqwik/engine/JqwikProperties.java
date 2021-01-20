@@ -61,6 +61,7 @@ public class JqwikProperties {
 	private final EdgeCasesMode defaultEdgeCases;
 	private final ShrinkingMode defaultShrinking;
 	private final int boundedShrinkingSeconds;
+	private final FixedSeedMode fixedSeedMode;
 
 	public String databasePath() {
 		return databasePath;
@@ -106,6 +107,10 @@ public class JqwikProperties {
 		return boundedShrinkingSeconds;
 	}
 
+	public FixedSeedMode fixedSeedMode() {
+		return fixedSeedMode;
+	}
+
 	JqwikProperties(ConfigurationParameters parameters) {
 		databasePath = parameters.get("database").orElse(DEFAULT_DATABASE_PATH);
 		runFailuresFirst = parameters.getBoolean("failures.runfirst").orElse(DEFAULT_RERUN_FAILURES_FIRST);
@@ -118,6 +123,7 @@ public class JqwikProperties {
 		defaultEdgeCases = parameters.get("edgecases.default", EdgeCasesMode::valueOf).orElse(DEFAULT_EDGE_CASES);
 		defaultShrinking = parameters.get("shrinking.default", ShrinkingMode::valueOf).orElse(DEFAULT_SHRINKING);
 		boundedShrinkingSeconds = parameters.get("shrinking.bounded.seconds", Integer::parseInt).orElse(DEFAULT_BOUNDED_SHRINKING_SECONDS);
+		fixedSeedMode = parameters.get("seeds.whenfixed", FixedSeedMode::valueOf).orElse(FixedSeedMode.ALLOW);
 	}
 
 	static JqwikProperties loadWithBackwardsCompatibility(ConfigurationParameters fromJunit) {

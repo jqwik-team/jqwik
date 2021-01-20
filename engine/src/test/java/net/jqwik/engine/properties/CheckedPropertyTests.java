@@ -154,6 +154,24 @@ class CheckedPropertyTests {
 		}
 
 		@Example
+		void usingFailOnFixedSeedWillFailWithExplicitSeed() {
+			CheckedProperty checkedProperty = createCheckedProperty(
+				"prop1",
+				p -> fail("should not be called"),
+				Collections.emptyList(),
+				p -> fail("should not be called"),
+				Optional.empty(),
+				aConfig().withSeed("414243").withWhenFixedSeed(FixedSeedMode.FAIL).build(),
+				lifecycleContextForMethod("prop1", int.class)
+			);
+
+			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
+			assertThat(check.checkStatus()).isEqualTo(FAILED);
+			assertThat(check.throwable()).isPresent();
+			assertThat(check.throwable().get()).isInstanceOf(FailOnFixedSeedException.class);
+		}
+
+		@Example
 		void usingASeedWillAlwaysProvideSameArbitraryValues() {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));

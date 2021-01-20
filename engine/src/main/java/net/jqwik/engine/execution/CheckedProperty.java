@@ -55,7 +55,17 @@ public class CheckedProperty {
 	}
 
 	public PropertyCheckResult check(Reporting[] reporting) {
-		PropertyConfiguration effectiveConfiguration = configurationWithEffectiveSeed();
+		PropertyConfiguration effectiveConfiguration;
+		try {
+			effectiveConfiguration = configurationWithEffectiveSeed();
+		} catch (FailOnFixedSeedException failOnFixedSeedException) {
+			return PropertyCheckResult.failed(
+					configuration.getStereotype(), propertyName, 0, 0,
+					configuration.getSeed(), configuration.getGenerationMode(),
+					configuration.getEdgeCasesMode(), 0, 0,
+					null, null, failOnFixedSeedException
+			);
+		}
 		maybeWarnOnMultipleTriesWithoutForallParameters(effectiveConfiguration);
 		try {
 			Reporter reporter = propertyLifecycleContext.reporter();
@@ -85,6 +95,23 @@ public class CheckedProperty {
 
 	private PropertyConfiguration configurationWithEffectiveSeed() {
 		if (!configuration.getSeed().equals(Property.SEED_NOT_SET)) {
+			if(configuration.getFixedSeedMode() == FixedSeedMode.FAIL) {
+				String message = String.format(
+						"Failing %s [%s] in container [%s] as the fixed seed mode is set to FAIL",
+						configuration.getStereotype(),
+						propertyLifecycleContext.extendedLabel(),
+						propertyLifecycleContext.containerClass().getName()
+				);
+				throw new FailOnFixedSeedException(message);
+			} else if(configuration.getFixedSeedMode() == FixedSeedMode.WARN) {
+				String message = String.format(
+						"Using fixed seed for %s [%s] in container [%s]",
+						configuration.getStereotype(),
+						propertyLifecycleContext.extendedLabel(),
+						propertyLifecycleContext.containerClass().getName()
+				);
+				LOG.warning(message);
+			}
 			return configuration.withSeed(configuration.getSeed());
 		}
 		if (configuration.getPreviousSeed() != null && configuration.getAfterFailureMode() != AfterFailureMode.RANDOM_SEED) {

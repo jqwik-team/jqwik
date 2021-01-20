@@ -27,6 +27,7 @@ public class TestHelper {
 	public static final GenerationMode DEFAULT_GENERATION = GenerationMode.AUTO;
 	public static final EdgeCasesMode DEFAULT_EDGE_CASES = EdgeCasesMode.MIXIN;
 	public static final ShrinkingMode DEFAULT_SHRINKING = ShrinkingMode.BOUNDED;
+	public static final FixedSeedMode DEFAULT_WHEN_FIXED_SEED = FixedSeedMode.ALLOW;
 
 	public static PropertyAttributesDefaults propertyAttributesDefaults() {
 		return PropertyAttributesDefaults.with(
@@ -36,7 +37,8 @@ public class TestHelper {
 			DEFAULT_GENERATION,
 			DEFAULT_EDGE_CASES,
 			DEFAULT_SHRINKING,
-			BOUNDED_SHRINKING_SECONDS
+			BOUNDED_SHRINKING_SECONDS,
+			DEFAULT_WHEN_FIXED_SEED
 		);
 	}
 
@@ -81,7 +83,8 @@ public class TestHelper {
 			null,
 			null,
 			null,
-			seed
+			seed,
+			null
 		);
 
 		PropertyConfiguration propertyConfig = new PropertyConfiguration(

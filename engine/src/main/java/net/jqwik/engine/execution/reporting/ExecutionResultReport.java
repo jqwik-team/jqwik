@@ -21,6 +21,7 @@ public class ExecutionResultReport {
 	private static final String EDGE_CASES_TOTAL_KEY = "edge-cases#total";
 	private static final String EDGE_CASES_TRIED_KEY = "edge-cases#tried";
 	private static final String AFTER_FAILURE_KEY = "after-failure";
+	private static final String FIXED_SEED_KEY = "when-fixed-seed";
 	private static final String SEED_KEY = "seed";
 	private static final String SAMPLE_HEADLINE = "Sample";
 	private static final String SHRUNK_SAMPLE_HEADLINE = "Shrunk Sample";
@@ -31,21 +32,23 @@ public class ExecutionResultReport {
 		ExtendedPropertyExecutionResult executionResult
 	) {
 		return buildJqwikReport(
-			methodDescriptor.getConfiguration().getAfterFailureMode(),
-			methodDescriptor.getTargetMethod(),
-			executionResult
+				methodDescriptor.getConfiguration().getAfterFailureMode(),
+				methodDescriptor.getConfiguration().getFixedSeedMode(),
+				methodDescriptor.getTargetMethod(),
+				executionResult
 		);
 	}
 
 	private static String buildJqwikReport(
-		AfterFailureMode afterFailureMode,
-		Method propertyMethod,
-		ExtendedPropertyExecutionResult executionResult
+			AfterFailureMode afterFailureMode,
+			FixedSeedMode fixedSeedMode,
+			Method propertyMethod,
+			ExtendedPropertyExecutionResult executionResult
 	) {
 		StringBuilder reportLines = new StringBuilder();
 
 		appendThrowableMessage(reportLines, executionResult);
-		appendFixedSizedProperties(reportLines, executionResult, afterFailureMode);
+		appendFixedSizedProperties(reportLines, executionResult, afterFailureMode, fixedSeedMode);
 		appendSamples(reportLines, propertyMethod, executionResult);
 
 		return reportLines.toString();
@@ -100,9 +103,10 @@ public class ExecutionResultReport {
 	}
 
 	private static void appendFixedSizedProperties(
-		StringBuilder reportLines,
-		ExtendedPropertyExecutionResult executionResult,
-		AfterFailureMode afterFailureMode
+			StringBuilder reportLines,
+			ExtendedPropertyExecutionResult executionResult,
+			AfterFailureMode afterFailureMode,
+			FixedSeedMode fixedSeedMode
 	) {
 		List<String> propertiesLines = new ArrayList<>();
 		int countTries = 0;
@@ -128,6 +132,9 @@ public class ExecutionResultReport {
 		appendProperty(propertiesLines, GENERATION_KEY, generationMode, helpGenerationMode);
 		if (afterFailureMode != AfterFailureMode.NOT_SET) {
 			appendProperty(propertiesLines, AFTER_FAILURE_KEY, afterFailureMode.name(), helpAfterFailureMode(afterFailureMode));
+		}
+		if (fixedSeedMode != FixedSeedMode.NOT_SET) {
+			appendProperty(propertiesLines, FIXED_SEED_KEY, fixedSeedMode.name(), helpFixedSeedMode(fixedSeedMode));
 		}
 		appendProperty(propertiesLines, EDGE_CASES_MODE_KEY, edgeCasesMode, helpEdgeCasesMode);
 		if (executionResult.edgeCases().mode().activated()) {
@@ -183,6 +190,19 @@ public class ExecutionResultReport {
 				return "try previously failed sample, then previous seed";
 			default:
 				return "RANDOM_SEED, PREVIOUS_SEED or SAMPLE_FIRST";
+		}
+	}
+
+	private static String helpFixedSeedMode(FixedSeedMode fixedSeedMode) {
+		switch (fixedSeedMode) {
+			case ALLOW:
+				return "allow fixing the random seed";
+			case FAIL:
+				return "fail when fixed random seed";
+			case WARN:
+				return "warn when fixed random seed";
+			default:
+				return "ALLOW, FAIL or WARN";
 		}
 	}
 
