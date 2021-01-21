@@ -2189,8 +2189,8 @@ collections and collection-like types:
 - `IteratorArbitrary<T>.uniqueElements()`
 - `ArrayArbitrary<T, A>.uniqueElements(Function<T, Object>)`
 - `ArrayArbitrary<T, A>.uniqueElements()`
-- `MapArbitrary<K, V>.keyUniqueness(Function<K, Object>)`
-- `MapArbitrary<K, V>.valueUniqueness(Function<V, Object>)`
+- `MapArbitrary<K, V>.uniqueKeys(Function<K, Object>)`
+- `MapArbitrary<K, V>.uniqueValues(Function<V, Object>)`
 - `MapArbitrary<K, V>.uniqueValues()`
 
 The following examples demonstrates how to generate a list of `Person` objects
