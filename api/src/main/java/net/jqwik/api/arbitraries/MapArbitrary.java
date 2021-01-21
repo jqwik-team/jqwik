@@ -48,13 +48,13 @@ public interface MapArbitrary<K, V> extends SizableArbitrary<Map<K, V>> {
 	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #keyUniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueKeys(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	MapArbitrary<K, V> keyUniqueness(Function<K, Object> by);
+	MapArbitrary<K, V> uniqueKeys(Function<K, Object> by);
 
 	/**
 	 * Add the constraint that value of the generated map must be unique
@@ -63,20 +63,20 @@ public interface MapArbitrary<K, V> extends SizableArbitrary<Map<K, V>> {
 	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #valueUniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueValues(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	MapArbitrary<K, V> valueUniqueness(Function<V, Object> by);
+	MapArbitrary<K, V> uniqueValues(Function<V, Object> by);
 
 	/**
 	 * Add the constraint that values of the generated map must be unique,
 	 * i.e. no two value must return true when being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #valueUniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueValues(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance

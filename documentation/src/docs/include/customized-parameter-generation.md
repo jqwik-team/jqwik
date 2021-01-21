@@ -896,18 +896,18 @@ This is not only easier to understand but it usually improves shrinking.
 In many problem domains there exist identifying features or attributes 
 that must not appear more than once.
 In those cases the multiple generation of objects can be restricted by
-either [annotating parameters with `@Uniqueness`](#unique-values)
+either [annotating parameters with `@UniqueElements`](#unique-elements)
 or by using one of the many `uniqueness(..)` configuration methods for 
 collections and collection-like types:
 
-- `ListArbitrary<T>.uniqueness(Function<T, Object>)`
+- `ListArbitrary<T>.uniqueElements(Function<T, Object>)`
 - `ListArbitrary<T>.uniqueElements()`
-- `SetArbitrary<T>.uniqueness(Function<T, Object>)`
-- `StreamArbitrary<T>.uniqueness(Function<T, Object>)`
+- `SetArbitrary<T>.uniqueElements(Function<T, Object>)`
+- `StreamArbitrary<T>.uniqueElements(Function<T, Object>)`
 - `StreamArbitrary<T>.uniqueElements()`
-- `IteratorArbitrary<T>.uniqueness(Function<T, Object>)`
+- `IteratorArbitrary<T>.uniqueElements(Function<T, Object>)`
 - `IteratorArbitrary<T>.uniqueElements()`
-- `ArrayArbitrary<T, A>.uniqueness(Function<T, Object>)`
+- `ArrayArbitrary<T, A>.uniqueElements(Function<T, Object>)`
 - `ArrayArbitrary<T, A>.uniqueElements()`
 - `MapArbitrary<K, V>.keyUniqueness(Function<K, Object>)`
 - `MapArbitrary<K, V>.valueUniqueness(Function<V, Object>)`
@@ -927,8 +927,9 @@ void listOfPeopleWithUniqueNames(@ForAll("people") List<Person> people) {
 Arbitrary<List<Person>> people() {
   Arbitrary<String> names = Arbitraries.strings().alpha().ofMinLength(3).ofMaxLength(20);
   Arbitrary<Integer> ages = Arbitraries.integers().between(0, 120);
+  
   Arbitrary<Person> persons = Combinators.combine(names, ages).as((name, age) -> new Person(name, age));
-  return persons.list().uniqueness(p -> p.name);
+  return persons.list().uniqueElements(p -> p.name);
 };
 ```
 

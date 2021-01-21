@@ -63,7 +63,7 @@ class MapArbitraryTests {
 				Arbitraries.maps(
 						Arbitraries.integers().between(1, 1000),
 						Arbitraries.strings().alpha().ofMaxLength(10)
-				).ofMinSize(2).ofMaxSize(10).keyUniqueness(i -> i % 100);
+				).ofMinSize(2).ofMaxSize(10).uniqueKeys(i -> i % 100);
 
 		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1000);
 
@@ -78,7 +78,7 @@ class MapArbitraryTests {
 				Arbitraries.maps(
 						Arbitraries.strings().alpha().ofMaxLength(10),
 						Arbitraries.integers().between(1, 1000)
-				).ofMinSize(2).ofMaxSize(10).valueUniqueness(i -> i % 100);
+				).ofMinSize(2).ofMaxSize(10).uniqueValues(i -> i % 100);
 
 		RandomGenerator<Map<String, Integer>> generator = mapArbitrary.generator(1000);
 
@@ -175,7 +175,7 @@ class MapArbitraryTests {
 			IntegerArbitrary keys = Arbitraries.integers().between(1, 3);
 			IntegerArbitrary values = Arbitraries.integers().between(4, 5);
 			Optional<ExhaustiveGenerator<Map<Integer, Integer>>> mapGenerator =
-					Arbitraries.maps(keys, values).ofSize(2).keyUniqueness(i -> i % 2)
+					Arbitraries.maps(keys, values).ofSize(2).uniqueKeys(i -> i % 2)
 							   .exhaustive();
 			assertThat(mapGenerator).isPresent();
 
@@ -200,7 +200,7 @@ class MapArbitraryTests {
 			IntegerArbitrary keys = Arbitraries.integers().between(4, 5);
 			IntegerArbitrary values = Arbitraries.integers().between(1, 3);
 			Optional<ExhaustiveGenerator<Map<Integer, Integer>>> mapGenerator =
-					Arbitraries.maps(keys, values).ofSize(2).valueUniqueness(i -> i % 2)
+					Arbitraries.maps(keys, values).ofSize(2).uniqueValues(i -> i % 2)
 							   .exhaustive();
 			assertThat(mapGenerator).isPresent();
 

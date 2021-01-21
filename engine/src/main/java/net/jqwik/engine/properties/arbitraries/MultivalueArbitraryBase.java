@@ -58,14 +58,14 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 		});
 	}
 
-	public StreamableArbitrary<T, U> uniqueness(FeatureExtractor<T> by) {
+	protected abstract Iterable<T> toIterable(U streamable);
+
+	protected StreamableArbitrary<T, U> uniqueElements(FeatureExtractor<T> by) {
 		MultivalueArbitraryBase<T, U> clone = typedClone();
 		clone.uniquenessExtractors = new HashSet<>(uniquenessExtractors);
 		clone.uniquenessExtractors.add(by);
 		return clone;
 	}
-
-	protected abstract Iterable<T> toIterable(U streamable);
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);

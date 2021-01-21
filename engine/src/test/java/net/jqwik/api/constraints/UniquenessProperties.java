@@ -16,18 +16,18 @@ class UniquenessProperties {
 	class Lists {
 
 		@Property
-		boolean lists(@ForAll @Uniqueness List<String> aStringList) {
-			return hasNoDuplicates(aStringList, Function.identity());
+		boolean lists(@ForAll @UniqueElements List<String> aStringList) {
+			return hasNoDuplicates(aStringList, s -> s);
 		}
 
 		@Property
-		boolean listsWithByClause(@ForAll @Uniqueness(by = GetStringLength.class) List<String> aStringList) {
+		boolean listsWithByClause(@ForAll @UniqueElements(by = GetStringLength.class) List<String> aStringList) {
 			return hasNoDuplicates(aStringList, new GetStringLength());
 		}
 
 		@Property
-		boolean listsNotFromListArbitraryUsePlainFilter(@ForAll("listOfStrings") @Uniqueness List<String> aStringList) {
-			return hasNoDuplicates(aStringList, Function.identity());
+		boolean listsNotFromListArbitraryUsePlainFilter(@ForAll("listOfStrings") @UniqueElements List<String> aStringList) {
+			return hasNoDuplicates(aStringList, s -> s);
 		}
 
 		@Provide
@@ -44,7 +44,7 @@ class UniquenessProperties {
 	class Sets {
 		@Property
 		boolean setsWithByClause(
-				@ForAll @Uniqueness(by = GetFirstTwoChars.class)
+				@ForAll @UniqueElements(by = GetFirstTwoChars.class)
 						Set<@StringLength(3) @AlphaChars String> aStringSet
 		) {
 			return hasNoDuplicates(aStringSet, new GetFirstTwoChars());
@@ -52,7 +52,7 @@ class UniquenessProperties {
 
 		@Property
 		boolean setsNotFromSetArbitraryUsePlainFilter(
-				@ForAll("setsOfStrings") @Uniqueness(by = GetFirstTwoChars.class) Set<String> aStringList
+				@ForAll("setsOfStrings") @UniqueElements(by = GetFirstTwoChars.class) Set<String> aStringList
 		) {
 			return hasNoDuplicates(aStringList, new GetFirstTwoChars());
 		}
@@ -70,10 +70,10 @@ class UniquenessProperties {
 			return new HashSet<>(asList(strings));
 		}
 
-		private class GetFirstTwoChars implements Function<Object, Object> {
+		private class GetFirstTwoChars implements Function<String, Object> {
 			@Override
-			public Object apply(Object o) {
-				return ((String) o).substring(0, 2);
+			public Object apply(String string) {
+				return string.substring(0, 2);
 			}
 		}
 	}
@@ -82,17 +82,17 @@ class UniquenessProperties {
 	class ArraysTests {
 
 		@Property
-		boolean arrays(@ForAll @Uniqueness String[] aStringArray) {
+		boolean arrays(@ForAll @UniqueElements String[] aStringArray) {
 			return hasNoDuplicates(asList(aStringArray), Function.identity());
 		}
 
 		@Property
-		boolean arraysWithByClause(@ForAll @Uniqueness(by = GetStringLength.class) String[] aStringArray) {
+		boolean arraysWithByClause(@ForAll @UniqueElements(by = GetStringLength.class) String[] aStringArray) {
 			return hasNoDuplicates(asList(aStringArray), new GetStringLength());
 		}
 
 		@Property
-		boolean arraysNotFromListArbitraryUsePlainFilter(@ForAll("arrayOfStrings") @Uniqueness String[] aStringArray) {
+		boolean arraysNotFromListArbitraryUsePlainFilter(@ForAll("arrayOfStrings") @UniqueElements String[] aStringArray) {
 			return hasNoDuplicates(asList(aStringArray), Function.identity());
 		}
 
@@ -110,17 +110,17 @@ class UniquenessProperties {
 	class Streams {
 
 		@Property
-		boolean streams(@ForAll @Uniqueness Stream<String> stringStream) {
+		boolean streams(@ForAll @UniqueElements Stream<String> stringStream) {
 			return hasNoDuplicates(stringStream.collect(Collectors.toList()), Function.identity());
 		}
 
 		@Property
-		boolean streamsWithByClause(@ForAll @Uniqueness(by = GetStringLength.class) Stream<String> stringStream) {
+		boolean streamsWithByClause(@ForAll @UniqueElements(by = GetStringLength.class) Stream<String> stringStream) {
 			return hasNoDuplicates(stringStream.collect(Collectors.toList()), new GetStringLength());
 		}
 
 		@Property
-		boolean streamsNotFromListArbitraryUsePlainFilter(@ForAll("streamOfStrings") @Uniqueness Stream<String> stringStream) {
+		boolean streamsNotFromListArbitraryUsePlainFilter(@ForAll("streamOfStrings") @UniqueElements Stream<String> stringStream) {
 			return hasNoDuplicates(stringStream.collect(Collectors.toList()), Function.identity());
 		}
 
@@ -138,18 +138,18 @@ class UniquenessProperties {
 	class Iterators {
 
 		@Property
-		boolean iterators(@ForAll @Uniqueness Iterator<String> iterator) {
-			return hasNoDuplicates(toList(iterator), Function.identity());
+		boolean iterators(@ForAll @UniqueElements Iterator<String> iterator) {
+			return hasNoDuplicates(toList(iterator), s -> s);
 		}
 
 		@Property
-		boolean iteratorsWithByClause(@ForAll @Uniqueness(by = GetStringLength.class) Iterator<String> iterator) {
+		boolean iteratorsWithByClause(@ForAll @UniqueElements(by = GetStringLength.class) Iterator<String> iterator) {
 			return hasNoDuplicates(toList(iterator), new GetStringLength());
 		}
 
 		@Property
-		boolean iteratorsNotFromListArbitraryUsePlainFilter(@ForAll("iteratorOfStrings") @Uniqueness Iterator<String> iterator) {
-			return hasNoDuplicates(toList(iterator), Function.identity());
+		boolean iteratorsNotFromListArbitraryUsePlainFilter(@ForAll("iteratorOfStrings") @UniqueElements Iterator<String> iterator) {
+			return hasNoDuplicates(toList(iterator), s -> s);
 		}
 
 		@Provide
@@ -170,14 +170,14 @@ class UniquenessProperties {
 
 	}
 
-	private class GetStringLength implements Function<Object, Object> {
+	private class GetStringLength implements Function<String, Object> {
 		@Override
-		public Object apply(Object o) {
-			return ((String) o).length();
+		public Object apply(String string) {
+			return string.length();
 		}
 	}
 
-	private boolean hasNoDuplicates(Collection<?> collection, Function<Object, Object> by) {
+	private <T> boolean hasNoDuplicates(Collection<T> collection, Function<T, Object> by) {
 		Set<Object> set = collection.stream().map(by).collect(Collectors.toSet());
 		return set.size() == collection.size();
 	}

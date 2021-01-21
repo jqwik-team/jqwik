@@ -50,14 +50,14 @@ public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iter
 	}
 
 	@Override
-	public IteratorArbitrary<T> uniqueness(Function<T, Object> by) {
+	public IteratorArbitrary<T> uniqueElements(Function<T, Object> by) {
 		FeatureExtractor<T> featureExtractor = by::apply;
-		return (IteratorArbitrary<T>) super.uniqueness(featureExtractor);
+		return (IteratorArbitrary<T>) super.uniqueElements(featureExtractor);
 	}
 
 	@Override
 	public IteratorArbitrary<T> uniqueElements() {
-		return (IteratorArbitrary<T>) uniqueness(FeatureExtractor.identity());
+		return (IteratorArbitrary<T>) uniqueElements(FeatureExtractor.identity());
 	}
 
 }

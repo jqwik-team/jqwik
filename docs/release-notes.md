@@ -30,6 +30,15 @@ and
 
 #### New and Enhanced Features
 
+- jqwik's approach to specify uniqueness of generated objects has been completely revamped:
+
+    - `Arbitrary.unique()` and the annotation `@Unique` are now deprecated and will
+      be removed in version 1.5.
+    - [Uniqueness constraints](/docs/snapshot/user-guide.html#uniqueness-constraints) 
+      are now handled by the elements' container.
+    - The new [annotation to require uniqueness](/docs/snapshot/user-guide.html#unique-elements) 
+      is called `@UniqueElements` and applied to the container's type.
+      
 - There's a new [jqwik module `jqwik-time`](/docs/snapshot/user-guide.html#time-module)
   which simplifies the generation of dates and times.
 

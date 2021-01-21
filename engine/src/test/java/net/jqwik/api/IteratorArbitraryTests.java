@@ -32,7 +32,7 @@ class IteratorArbitraryTests {
 	void uniquenessConstraint(@ForAll Random random) {
 		IteratorArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).iterator().ofMaxSize(20)
-						   .uniqueness(i -> i % 100);
+						   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<Iterator<Integer>> generator = listArbitrary.generator(1000);
 
@@ -78,7 +78,7 @@ class IteratorArbitraryTests {
 	@Example
 	void edgeCasesAreFilteredByUniquenessConstraints() {
 		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
-		IteratorArbitrary<Integer> arbitrary = ints.iterator().ofSize(2).uniqueness(i -> i);
+		IteratorArbitrary<Integer> arbitrary = ints.iterator().ofSize(2).uniqueElements(i -> i);
 		assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
 	}
 
@@ -128,7 +128,7 @@ class IteratorArbitraryTests {
 		@Example
 		void combinationsAreFilteredByUniquenessConstraints() {
 			Optional<ExhaustiveGenerator<Iterator<Integer>>> optionalGenerator =
-					Arbitraries.integers().between(1, 3).iterator().ofMaxSize(2).uniqueness(i -> i).exhaustive();
+					Arbitraries.integers().between(1, 3).iterator().ofMaxSize(2).uniqueElements(i -> i).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Iterator<Integer>> generator = optionalGenerator.get();

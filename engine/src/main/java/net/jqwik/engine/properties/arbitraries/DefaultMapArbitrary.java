@@ -62,7 +62,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	private ListArbitrary<V> createValueListArbitrary(int size) {
 		ListArbitrary<V> valueListArbitrary = valuesArbitrary.list().ofSize(size);
 		for (FeatureExtractor<V> extractor : valueUniquenessExtractors) {
-			valueListArbitrary = valueListArbitrary.uniqueness(extractor);
+			valueListArbitrary = valueListArbitrary.uniqueElements(extractor);
 		}
 		return valueListArbitrary;
 	}
@@ -70,7 +70,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	private SetArbitrary<K> createKeySetArbitrary() {
 		SetArbitrary<K> keySetArbitrary = keysArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize);
 		for (FeatureExtractor<K> extractor : keyUniquenessExtractors) {
-			keySetArbitrary = keySetArbitrary.uniqueness(extractor);
+			keySetArbitrary = keySetArbitrary.uniqueElements(extractor);
 		}
 		return keySetArbitrary;
 	}
@@ -89,7 +89,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	}
 
 	@Override
-	public MapArbitrary<K, V> keyUniqueness(Function<K, Object> by) {
+	public MapArbitrary<K, V> uniqueKeys(Function<K, Object> by) {
 		DefaultMapArbitrary<K, V> clone = typedClone();
 		clone.keyUniquenessExtractors = new HashSet<>(keyUniquenessExtractors);
 		clone.keyUniquenessExtractors.add(by::apply);
@@ -97,7 +97,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	}
 
 	@Override
-	public MapArbitrary<K, V> valueUniqueness(Function<V, Object> by) {
+	public MapArbitrary<K, V> uniqueValues(Function<V, Object> by) {
 		DefaultMapArbitrary<K, V> clone = typedClone();
 		clone.valueUniquenessExtractors = new HashSet<>(valueUniquenessExtractors);
 		clone.valueUniquenessExtractors.add(by::apply);
@@ -106,7 +106,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 
 	@Override
 	public MapArbitrary<K, V> uniqueValues() {
-		return valueUniqueness(FeatureExtractor.identity());
+		return uniqueValues(FeatureExtractor.identity());
 	}
 
 	private EdgeCases<Map<K, V>> singleEntryEdgeCases() {

@@ -23,12 +23,12 @@ import static org.apiguardian.api.API.Status.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = MAINTAINED, since = "1.4.0")
-public @interface Uniqueness {
+public @interface UniqueElements {
 	class NOT_SET implements Function<Object, Object> {
 		@Override
 		public Object apply(Object o) {
 			throw new IllegalArgumentException("This class must not be used");
 		}
 	}
-	Class<? extends Function<Object, Object>> by() default NOT_SET.class;
+	Class<? extends Function<?, Object>> by() default NOT_SET.class;
 }

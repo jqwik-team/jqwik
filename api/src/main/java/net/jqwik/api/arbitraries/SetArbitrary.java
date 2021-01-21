@@ -72,12 +72,12 @@ public interface SetArbitrary<T> extends StreamableArbitrary<T, Set<T>> {
 	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	SetArbitrary<T> uniqueness(Function<T, Object> by);
+	SetArbitrary<T> uniqueElements(Function<T, Object> by);
 
 }

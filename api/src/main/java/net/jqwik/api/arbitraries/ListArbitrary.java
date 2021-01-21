@@ -70,7 +70,7 @@ public interface ListArbitrary<T> extends StreamableArbitrary<T, List<T>> {
 	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
@@ -85,11 +85,11 @@ public interface ListArbitrary<T> extends StreamableArbitrary<T, List<T>> {
 	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	ListArbitrary<T> uniqueness(Function<T, Object> by);
+	ListArbitrary<T> uniqueElements(Function<T, Object> by);
 }

@@ -46,7 +46,7 @@ class StreamArbitraryTests {
 	void uniquenessConstraint(@ForAll Random random) {
 		StreamArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).stream().ofMaxSize(20)
-						   .uniqueness(i -> i % 100);
+						   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<Stream<Integer>> generator = listArbitrary.generator(1000);
 
@@ -97,7 +97,7 @@ class StreamArbitraryTests {
 	@Example
 	void edgeCasesAreFilteredByUniquenessConstraints() {
 		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
-		Arbitrary<Stream<Integer>> arbitrary = ints.stream().ofSize(2).uniqueness(i -> i);
+		Arbitrary<Stream<Integer>> arbitrary = ints.stream().ofSize(2).uniqueElements(i -> i);
 		assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
 	}
 
@@ -126,7 +126,7 @@ class StreamArbitraryTests {
 		@Example
 		void combinationsAreFilteredByUniquenessConstraints() {
 			Optional<ExhaustiveGenerator<Stream<Integer>>> optionalGenerator =
-					Arbitraries.integers().between(1, 3).stream().ofMaxSize(2).uniqueness(i -> i).exhaustive();
+					Arbitraries.integers().between(1, 3).stream().ofMaxSize(2).uniqueElements(i -> i).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Stream<Integer>> generator = optionalGenerator.get();
@@ -185,7 +185,7 @@ class StreamArbitraryTests {
 		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
 			StreamArbitrary<Integer> lists =
 					Arbitraries.integers().between(1, 100).stream().ofMinSize(min).ofMaxSize(10)
-							   .uniqueness(i -> i);
+							   .uniqueElements(i -> i);
 			Stream<Integer> value = falsifyThenShrink(lists, random);
 			List<Integer> list = toList(value);
 			assertThat(list).hasSize(min);

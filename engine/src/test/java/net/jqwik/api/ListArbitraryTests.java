@@ -65,7 +65,7 @@ class ListArbitraryTests {
 	void uniquenessConstraint(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
-						   .uniqueness(i -> i % 100);
+						   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
 
@@ -79,7 +79,7 @@ class ListArbitraryTests {
 		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).injectNull(0.5)
 						   .list().ofMaxSize(20)
-						   .uniqueness(i -> i % 100);
+						   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
 
@@ -92,8 +92,8 @@ class ListArbitraryTests {
 	void multipleUniquenessConstraints(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
-						   .uniqueness(i -> i % 99)
-						   .uniqueness(i -> i % 100);
+						   .uniqueElements(i -> i % 99)
+						   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
 
@@ -107,7 +107,7 @@ class ListArbitraryTests {
 	void uniquenessConstraintCannotBeFulfilled(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).list().ofSize(10)
-						   .uniqueness(i -> i % 5);
+						   .uniqueElements(i -> i % 5);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
 
@@ -201,7 +201,7 @@ class ListArbitraryTests {
 		@Example
 		void combinationsAreFilteredByUniquenessConstraints() {
 			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
-					Arbitraries.integers().between(1, 3).list().ofMaxSize(2).uniqueness(i -> i).exhaustive();
+					Arbitraries.integers().between(1, 3).list().ofMaxSize(2).uniqueElements(i -> i).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
@@ -307,7 +307,7 @@ class ListArbitraryTests {
 		@Example
 		void edgeCasesAreFilteredByUniquenessConstraints() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
-			Arbitrary<List<Integer>> arbitrary = ints.list().ofSize(2).uniqueness(i -> i);
+			Arbitrary<List<Integer>> arbitrary = ints.list().ofSize(2).uniqueElements(i -> i);
 			assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
 		}
 
@@ -336,7 +336,7 @@ class ListArbitraryTests {
 		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
 			ListArbitrary<Integer> lists =
 					Arbitraries.integers().between(1, 100).list().ofMinSize(min).ofMaxSize(10)
-							   .uniqueness(i -> i);
+							   .uniqueElements(i -> i);
 			List<Integer> value = falsifyThenShrink(lists, random);
 			assertThat(value).hasSize(min);
 			assertThat(isUniqueModulo(value, 100))
@@ -350,7 +350,7 @@ class ListArbitraryTests {
 			ListArbitrary<Integer> lists =
 					Arbitraries.integers().between(1, 100).injectNull(0.5)
 							   .list().ofMinSize(3).ofMaxSize(10)
-							   .uniqueness(i -> i);
+							   .uniqueElements(i -> i);
 			List<Integer> value = falsifyThenShrink(lists, random);
 			assertThat(value).containsExactly(null, 1, 2);
 		}

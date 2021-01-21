@@ -74,8 +74,8 @@ class SetArbitraryTests {
 	void multipleUniquenessConstraints(@ForAll Random random) {
 		SetArbitrary<Integer> setArbitrary =
 				Arbitraries.integers().between(1, 1000).set().ofMaxSize(20)
-						   .uniqueness(i -> i % 99)
-						   .uniqueness(i -> i % 100);
+						   .uniqueElements(i -> i % 99)
+						   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1000);
 
@@ -120,7 +120,7 @@ class SetArbitraryTests {
 		@Example
 		void combinationsAreFilteredByUniquenessConstraints() {
 			Optional<ExhaustiveGenerator<Set<Integer>>> optionalGenerator =
-					Arbitraries.integers().between(1, 4).set().ofMaxSize(2).uniqueness(i -> i % 3)
+					Arbitraries.integers().between(1, 4).set().ofMaxSize(2).uniqueElements(i -> i % 3)
 							   .exhaustive();
 
 			assertThat(optionalGenerator).isPresent();
@@ -219,7 +219,7 @@ class SetArbitraryTests {
 		void edgeCasesAreFilteredByUniquenessConstraints() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Set<Integer>> arbitrary = ints.set().ofSize(2)
-													.uniqueness(i -> i % 2);
+													.uniqueElements(i -> i % 2);
 			assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
 		}
 	}
@@ -248,7 +248,7 @@ class SetArbitraryTests {
 		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 9) int min) {
 			SetArbitrary<Integer> lists =
 					Arbitraries.integers().between(1, 1000).set().ofMinSize(min).ofMaxSize(9)
-							   .uniqueness(i -> i % 10);
+							   .uniqueElements(i -> i % 10);
 			Set<Integer> value = falsifyThenShrink(lists, random);
 			assertThat(value).hasSize(min);
 			assertThat(isUniqueModulo(value, 10))

@@ -46,7 +46,7 @@ public interface IteratorArbitrary<T> extends StreamableArbitrary<T, Iterator<T>
 	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
@@ -61,12 +61,12 @@ public interface IteratorArbitrary<T> extends StreamableArbitrary<T, Iterator<T>
 	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	IteratorArbitrary<T> uniqueness(Function<T, Object> by);
+	IteratorArbitrary<T> uniqueElements(Function<T, Object> by);
 
 }

@@ -13,9 +13,10 @@ import static org.apiguardian.api.API.Status.*;
  * Applies to any embedded types of a parameter that is annotated with {@code @ForAll}.
  * </p>
  *
- * @deprecated Replace with annotation {@linkplain Uniqueness} on container (List, Set, Stream and array) parameter.
+ * @deprecated Replace with annotation {@linkplain UniqueElements} on container (List, Set, Stream, Iterator and array) parameter.
  *
  * @see net.jqwik.api.ForAll
+ * @see net.jqwik.api.constraints.UniqueElements
  */
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)

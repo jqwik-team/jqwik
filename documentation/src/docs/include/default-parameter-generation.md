@@ -38,46 +38,6 @@ depending on the requested parameter type.
 
   Works for all generated types.
 
-#### Unique Values
-
-- [`@Uniqueness`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Uniqueness.html):
-  Constrain a container (List, Set, Stream, Iterator or array) so that its 
-  elements are unique or unique in relation to one of their features.
-
-  ```java
-    @Property
-    void uniqueInList(@ForAll @Size(5) @Uniqueness List<@IntRange(min = 0, max = 10) Integer> aList) {
-        Assertions.assertThat(aList).doesNotHaveDuplicates();
-        Assertions.assertThat(aList).allMatch(anInt -> anInt >= 0 && anInt <= 10);
-    }
-  ```
-
-  Trying to generate a list with more than 11 elements would not work here.
-
-  The following example will change the uniqueness criterion to use the first character
-  of the list's String elements by providing a feature extraction function
-  in the `by` attribute of the `@Uniqueness` annotation.
-
-  ```java
-    @Property
-    void listOfStringsTheFirstCharacterOfWhichMustDiffer_annotationsOnly(
-      @ForAll @Size(max = 25) @Uniqueness(by = FirstChar.class) 
-        List<@AlphaChars @StringLength(min = 1, max = 10) String> listOfStrings
-    ) {
-      Iterable<Character> firstCharacters = listOfStrings.stream().map(s -> s.charAt(0)).collect(Collectors.toList());
-      Assertions.assertThat(firstCharacters).doesNotHaveDuplicates();
-    }
-
-    private class FirstChar implements Function<Object, Object> {
-      @Override
-      public Object apply(Object o) {
-        return ((String) o).charAt(0);
-      }
-    }
-  ```
-
-  `@Uniqueness` can be used for parameters of type `List`, `Set`, `Stream`, `Iterator` or any array.
-
 #### String Length
 
 - [`@StringLength(int value = 0, int min = 0, int max = 0)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/StringLength.html):
@@ -117,13 +77,54 @@ combine several of them:
 
 They work for generated `String`s and `Character`s.
 
-#### List, Set, Stream, Map and Array Size
+#### List, Set, Stream, Iterator, Map and Array Size
 
 - [`@Size(int value = 0, int min = 0, int max = 0)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Size.html):
   Set either fixed size through `value` or configure the size range between `min` and `max`.
 
 - [`@NotEmpty`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/NotEmpty.html):
   Set minimum size to `1`.
+
+
+#### Unique Elements
+
+- [`@UniqueElements`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/UniqueElements.html):
+  Constrain a container object (`List`, `Set`, `Stream`, `Iterator` or array) so that its
+  elements are unique or unique in relation to a certain feature.
+
+  ```java
+    @Property
+    void uniqueInList(@ForAll @Size(5) @UniqueElements List<@IntRange(min = 0, max = 10) Integer> aList) {
+        Assertions.assertThat(aList).doesNotHaveDuplicates();
+        Assertions.assertThat(aList).allMatch(anInt -> anInt >= 0 && anInt <= 10);
+    }
+  ```
+
+  Trying to generate a list with more than 11 elements would not work here.
+
+  The following example will change the uniqueness criterion to use the first character
+  of the list's String elements by providing a feature extraction function
+  in the `by` attribute of the `@UniqueElements` annotation.
+
+  ```java
+    @Property
+    void listOfStringsTheFirstCharacterOfWhichMustBeUnique(
+      @ForAll @Size(max = 25) @UniqueElements(by = FirstChar.class) 
+        List<@AlphaChars @StringLength(min = 1, max = 10) String> listOfStrings
+    ) {
+      Iterable<Character> firstCharacters = listOfStrings.stream().map(s -> s.charAt(0)).collect(Collectors.toList());
+      Assertions.assertThat(firstCharacters).doesNotHaveDuplicates();
+    }
+
+    private class FirstChar implements Function<String, Object> {
+      @Override
+      public Object apply(String aString) {
+        return aString.charAt(0);
+      }
+    }
+  ```
+
+  `@UniqueElements` can be used for parameters of type `List`, `Set`, `Stream`, `Iterator` or any array.
 
 
 #### Integer Constraints

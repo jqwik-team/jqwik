@@ -45,7 +45,7 @@ public interface ArrayArbitrary<T, A> extends StreamableArbitrary<T, A> {
 	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
@@ -60,12 +60,12 @@ public interface ArrayArbitrary<T, A> extends StreamableArbitrary<T, A> {
 	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #uniqueness(Function)} constraints.
+	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	ArrayArbitrary<T, A> uniqueness(Function<T, Object> by);
+	ArrayArbitrary<T, A> uniqueElements(Function<T, Object> by);
 
 }

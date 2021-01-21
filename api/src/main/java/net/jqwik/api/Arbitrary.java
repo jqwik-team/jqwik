@@ -211,17 +211,17 @@ public interface Arbitrary<T> {
 	 *
 	 * @deprecated Replace with {@code uniqueElements()} call on containing container arbitrary. Will be removed in 1.5.0.
 	 *
-	 * @see ListArbitrary#uniqueness(Function)
+	 * @see ListArbitrary#uniqueElements(Function)
 	 * @see ListArbitrary#uniqueElements()
-	 * @see SetArbitrary#uniqueness(Function)
-	 * @see StreamArbitrary#uniqueness(Function)
+	 * @see SetArbitrary#uniqueElements(Function)
+	 * @see StreamArbitrary#uniqueElements(Function)
 	 * @see StreamArbitrary#uniqueElements()
-	 * @see IteratorArbitrary#uniqueness(Function)
+	 * @see IteratorArbitrary#uniqueElements(Function)
 	 * @see IteratorArbitrary#uniqueElements()
-	 * @see ArrayArbitrary#uniqueness(Function)
+	 * @see ArrayArbitrary#uniqueElements(Function)
 	 * @see ArrayArbitrary#uniqueElements()
-	 * @see MapArbitrary#keyUniqueness(Function)
-	 * @see MapArbitrary#valueUniqueness(Function)
+	 * @see MapArbitrary#uniqueKeys(Function)
+	 * @see MapArbitrary#uniqueValues(Function)
 	 * @see MapArbitrary#uniqueValues()
 	 */
 	@Deprecated

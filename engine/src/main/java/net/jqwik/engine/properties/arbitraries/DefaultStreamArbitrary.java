@@ -52,14 +52,14 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 	}
 
 	@Override
-	public StreamArbitrary<T> uniqueness(Function<T, Object> by) {
+	public StreamArbitrary<T> uniqueElements(Function<T, Object> by) {
 		FeatureExtractor<T> featureExtractor = by::apply;
-		return (StreamArbitrary<T>) super.uniqueness(featureExtractor);
+		return (StreamArbitrary<T>) super.uniqueElements(featureExtractor);
 	}
 
 	@Override
 	public StreamArbitrary<T> uniqueElements() {
-		return (StreamArbitrary<T>) uniqueness(FeatureExtractor.identity());
+		return (StreamArbitrary<T>) uniqueElements(FeatureExtractor.identity());
 	}
 
 }

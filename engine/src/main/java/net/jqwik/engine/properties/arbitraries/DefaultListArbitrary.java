@@ -67,13 +67,13 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 	}
 
 	@Override
-	public ListArbitrary<T> uniqueness(Function<T, Object> by) {
+	public ListArbitrary<T> uniqueElements(Function<T, Object> by) {
 		FeatureExtractor<T> featureExtractor = by::apply;
-		return (ListArbitrary<T>) super.uniqueness(featureExtractor);
+		return (ListArbitrary<T>) super.uniqueElements(featureExtractor);
 	}
 
 	@Override
 	public ListArbitrary<T> uniqueElements() {
-		return (ListArbitrary<T>) uniqueness(FeatureExtractor.identity());
+		return (ListArbitrary<T>) uniqueElements(FeatureExtractor.identity());
 	}
 }

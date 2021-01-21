@@ -61,7 +61,7 @@ class ArrayArbitraryTests {
 	void uniquenessConstraint(@ForAll Random random) {
 		ArrayArbitrary<Integer, Integer[]> listArbitrary =
 				Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
-						   .uniqueness(i -> i % 100);
+						   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<Integer[]> generator = listArbitrary.generator(1000);
 
@@ -98,7 +98,7 @@ class ArrayArbitraryTests {
 	@Example
 	void edgeCasesAreFilteredByUniquenessConstraints() {
 		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
-		ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class).ofSize(2).uniqueness(i -> i);
+		ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class).ofSize(2).uniqueElements(i -> i);
 		assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
 	}
 
@@ -140,7 +140,7 @@ class ArrayArbitraryTests {
 		void combinationsAreFilteredByUniquenessConstraints() {
 			Optional<ExhaustiveGenerator<Integer[]>> optionalGenerator =
 					Arbitraries.integers().between(1, 2).array(Integer[].class)
-							   .ofMaxSize(2).uniqueness(i -> i).exhaustive();
+							   .ofMaxSize(2).uniqueElements(i -> i).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Integer[]> generator = optionalGenerator.get();
@@ -192,7 +192,7 @@ class ArrayArbitraryTests {
 		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
 			ArrayArbitrary<Integer, Integer[]> lists =
 					Arbitraries.integers().between(1, 100).array(Integer[].class).ofMinSize(min).ofMaxSize(10)
-							   .uniqueness(i -> i);
+							   .uniqueElements(i -> i);
 			Integer[] value = falsifyThenShrink(lists, random);
 			assertThat(value).hasSize(min);
 			assertThat(isUniqueModulo(value, 100))

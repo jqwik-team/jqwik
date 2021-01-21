@@ -22,7 +22,7 @@ class UniquenessExamples {
 	}
 
 	@Property
-	void uniqueInList(@ForAll @Size(5) @Uniqueness List<@IntRange(min = 0, max = 10) Integer> aList) {
+	void uniqueInList(@ForAll @Size(5) @UniqueElements List<@IntRange(min = 0, max = 10) Integer> aList) {
 		Assertions.assertThat(aList).doesNotHaveDuplicates();
 		Assertions.assertThat(aList).allMatch(anInt -> anInt >= 0 && anInt <= 10);
 	}
@@ -35,21 +35,21 @@ class UniquenessExamples {
 	@Provide
 	Arbitrary<List<String>> listOfUniqueStrings() {
 		return Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(10)
-						  .list().ofMaxSize(25).uniqueness(s -> Character.toLowerCase(s.charAt(0)));
+						  .list().ofMaxSize(25).uniqueElements(s -> Character.toLowerCase(s.charAt(0)));
 	}
 
 	@Property
-	void listOfStringsTheFirstCharacterOfWhichMustDiffer_annotationsOnly(
-			@ForAll @Size(max = 25) @Uniqueness(by = FirstChar.class) List<@AlphaChars @StringLength(min = 1, max = 10) String> listOfStrings
+	void listOfStringsTheFirstCharacterOfWhichMustBeUnique(
+			@ForAll @Size(max = 25) @UniqueElements(by = FirstChar.class) List<@AlphaChars @StringLength(min = 1, max = 10) String> listOfStrings
 	) {
 		Iterable<Character> firstCharacters = listOfStrings.stream().map(s -> s.charAt(0)).collect(Collectors.toList());
 		Assertions.assertThat(firstCharacters).doesNotHaveDuplicates();
 	}
 
-	private class FirstChar implements Function<Object, Object> {
+	private class FirstChar implements Function<String, Object> {
 		@Override
-		public Object apply(Object o) {
-			return ((String) o).charAt(0);
+		public Object apply(String aString) {
+			return aString.charAt(0);
 		}
 	}
 
@@ -66,6 +66,6 @@ class UniquenessExamples {
 		Arbitrary<Integer> ages = Arbitraries.integers().between(0, 120);
 
 		Arbitrary<Person> persons = Combinators.combine(names, ages).as((name, age) -> new Person(name, age));
-		return persons.list().uniqueness(p -> p.name);
+		return persons.list().uniqueElements(p -> p.name);
 	};
 }
