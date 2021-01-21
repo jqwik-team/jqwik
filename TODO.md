@@ -1,13 +1,10 @@
 - 1.4.0
 
-    - Uniqueness constraints
-        - Release notes for new uniqueness concept  
+    - Default for Email-Generation should be "unquoted" local part and "domain" host.
 
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140
         - DateArbitrary.shrinkTowards(date)
-
-    - Default for Email-Generation should be "unquoted" local part and "domain" host.
 
     - Edge Cases
 

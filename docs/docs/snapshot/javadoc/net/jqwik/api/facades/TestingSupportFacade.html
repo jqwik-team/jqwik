@@ -13,8 +13,7 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../jquery/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="../../../../jquery/jquery-migrate-3.0.1.js"></script>
+<script type="text/javascript" src="../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../jquery/jquery-ui.js"></script>
 </head>
 <body>
@@ -131,8 +130,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <ul class="blockList">
 <li class="blockList">
 <hr>
-<pre>@API(status=INTERNAL)
-public abstract class <span class="typeNameLabel">TestingSupportFacade</span>
+<pre>public abstract class <span class="typeNameLabel">TestingSupportFacade</span>
 extends java.lang.Object</pre>
 </li>
 </ul>
@@ -199,10 +197,10 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>abstract &lt;T&gt;&nbsp;T</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#falsifyThenShrink(net.jqwik.api.Arbitrary,java.util.Random,net.jqwik.api.Falsifier)">falsifyThenShrink</a></span>&#8203;(<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&nbsp;arbitrary,
-                 java.util.Random&nbsp;random,
-                 <a href="../Falsifier.html" title="interface in net.jqwik.api">Falsifier</a>&lt;T&gt;&nbsp;falsifier)</code></th>
+<td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#generateUntil(net.jqwik.api.RandomGenerator,java.util.Random,java.util.function.Function)">generateUntil</a></span>&#8203;(<a href="../RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;T&gt;&nbsp;generator,
+             java.util.Random&nbsp;random,
+             java.util.function.Function&lt;T,&#8203;java.lang.Boolean&gt;&nbsp;condition)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </table>
@@ -267,15 +265,15 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="falsifyThenShrink(net.jqwik.api.Arbitrary,java.util.Random,net.jqwik.api.Falsifier)">
+<a id="generateUntil(net.jqwik.api.RandomGenerator,java.util.Random,java.util.function.Function)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>falsifyThenShrink</h4>
-<pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;T&nbsp;falsifyThenShrink&#8203;(<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&nbsp;arbitrary,
-                                        java.util.Random&nbsp;random,
-                                        <a href="../Falsifier.html" title="interface in net.jqwik.api">Falsifier</a>&lt;T&gt;&nbsp;falsifier)</pre>
+<h4>generateUntil</h4>
+<pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;<a href="../Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&nbsp;generateUntil&#8203;(<a href="../RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;T&gt;&nbsp;generator,
+                                                java.util.Random&nbsp;random,
+                                                java.util.function.Function&lt;T,&#8203;java.lang.Boolean&gt;&nbsp;condition)</pre>
 </li>
 </ul>
 </li>

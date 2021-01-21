@@ -13,8 +13,7 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../jquery/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="../../../../jquery/jquery-migrate-3.0.1.js"></script>
+<script type="text/javascript" src="../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../jquery/jquery-ui.js"></script>
 </head>
 <body>
@@ -27,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":18};
+var data = {"i0":6,"i1":6,"i2":18,"i3":6,"i4":6,"i5":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -191,6 +190,32 @@ extends <a href="SizableArbitrary.html" title="interface in net.jqwik.api.arbitr
 <div class="block">Fix the size to <code>size</code>.</div>
 </td>
 </tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a>&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>,&#8203;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">V</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#uniqueKeys(java.util.function.Function)">uniqueKeys</a></span>&#8203;(java.util.function.Function&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>,&#8203;java.lang.Object&gt;&nbsp;by)</code></th>
+<td class="colLast">
+<div class="block">Add the constraint that keys of the generated map must be unique
+ relating to an element's "feature" being extracted by applying the
+ <code>by</code> function on a map entry's key.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a>&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>,&#8203;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">V</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#uniqueValues()">uniqueValues</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Add the constraint that values of the generated map must be unique,
+ i.e. no two value must return true when being compared using Object.equals(Object).</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a>&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>,&#8203;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">V</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#uniqueValues(java.util.function.Function)">uniqueValues</a></span>&#8203;(java.util.function.Function&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">V</a>,&#8203;java.lang.Object&gt;&nbsp;by)</code></th>
+<td class="colLast">
+<div class="block">Add the constraint that value of the generated map must be unique
+ relating to an element's "feature" being extracted by applying the
+ <code>by</code> function on a map entry's value.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.net.jqwik.api.Arbitrary">
@@ -254,7 +279,7 @@ extends <a href="SizableArbitrary.html" title="interface in net.jqwik.api.arbitr
 <a id="ofMaxSize(int)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>ofMaxSize</h4>
 <pre class="methodSignature"><a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a>&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>,&#8203;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">V</a>&gt;&nbsp;ofMaxSize&#8203;(int&nbsp;maxSize)</pre>
@@ -264,6 +289,73 @@ extends <a href="SizableArbitrary.html" title="interface in net.jqwik.api.arbitr
 <dd><code><a href="SizableArbitrary.html#ofMaxSize(int)">ofMaxSize</a></code>&nbsp;in interface&nbsp;<code><a href="SizableArbitrary.html" title="interface in net.jqwik.api.arbitraries">SizableArbitrary</a>&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>&gt;</code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>maxSize</code> - The maximum size of the generated map</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>new arbitrary instance</dd>
+</dl>
+</li>
+</ul>
+<a id="uniqueKeys(java.util.function.Function)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>uniqueKeys</h4>
+<pre class="methodSignature">@API(status=MAINTAINED,
+     since="1.4.0")
+<a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a>&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>,&#8203;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">V</a>&gt;&nbsp;uniqueKeys&#8203;(java.util.function.Function&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>,&#8203;java.lang.Object&gt;&nbsp;by)</pre>
+<div class="block">Add the constraint that keys of the generated map must be unique
+ relating to an element's "feature" being extracted by applying the
+ <code>by</code> function on a map entry's key.
+ The extracted features are being compared using Object.equals(Object).
+
+ <p>
+     The constraint can be combined with other <a href="#uniqueKeys(java.util.function.Function)">uniqueKeys(Function)</a> constraints.
+ </p></div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>new arbitrary instance</dd>
+</dl>
+</li>
+</ul>
+<a id="uniqueValues(java.util.function.Function)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>uniqueValues</h4>
+<pre class="methodSignature">@API(status=MAINTAINED,
+     since="1.4.0")
+<a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a>&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>,&#8203;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">V</a>&gt;&nbsp;uniqueValues&#8203;(java.util.function.Function&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">V</a>,&#8203;java.lang.Object&gt;&nbsp;by)</pre>
+<div class="block">Add the constraint that value of the generated map must be unique
+ relating to an element's "feature" being extracted by applying the
+ <code>by</code> function on a map entry's value.
+ The extracted features are being compared using Object.equals(Object).
+
+ <p>
+     The constraint can be combined with other <a href="#uniqueValues(java.util.function.Function)">uniqueValues(Function)</a> constraints.
+ </p></div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>new arbitrary instance</dd>
+</dl>
+</li>
+</ul>
+<a id="uniqueValues()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>uniqueValues</h4>
+<pre class="methodSignature">@API(status=MAINTAINED,
+     since="1.4.0")
+<a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a>&lt;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">K</a>,&#8203;<a href="MapArbitrary.html" title="type parameter in MapArbitrary">V</a>&gt;&nbsp;uniqueValues()</pre>
+<div class="block">Add the constraint that values of the generated map must be unique,
+ i.e. no two value must return true when being compared using Object.equals(Object).
+
+ <p>
+     The constraint can be combined with other <a href="#uniqueValues(java.util.function.Function)">uniqueValues(Function)</a> constraints.
+ </p></div>
+<dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>new arbitrary instance</dd>
 </dl>

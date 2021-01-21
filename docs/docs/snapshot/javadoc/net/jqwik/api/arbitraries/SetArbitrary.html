@@ -13,8 +13,7 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../jquery/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="../../../../jquery/jquery-migrate-3.0.1.js"></script>
+<script type="text/javascript" src="../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../jquery/jquery-ui.js"></script>
 </head>
 <body>
@@ -27,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":18};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":18,"i5":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -207,6 +206,15 @@ extends <a href="StreamableArbitrary.html" title="interface in net.jqwik.api.arb
 <div class="block">Fix the size to <code>size</code>.</div>
 </td>
 </tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="SetArbitrary.html" title="interface in net.jqwik.api.arbitraries">SetArbitrary</a>&lt;<a href="SetArbitrary.html" title="type parameter in SetArbitrary">T</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#uniqueElements(java.util.function.Function)">uniqueElements</a></span>&#8203;(java.util.function.Function&lt;<a href="SetArbitrary.html" title="type parameter in SetArbitrary">T</a>,&#8203;java.lang.Object&gt;&nbsp;by)</code></th>
+<td class="colLast">
+<div class="block">Add the constraint that elements of the generated set must be unique
+ relating to an element's "feature" being extracted using the
+ <code>by</code> function.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.net.jqwik.api.Arbitrary">
@@ -322,7 +330,7 @@ extends <a href="StreamableArbitrary.html" title="interface in net.jqwik.api.arb
 <a id="flatMapEach(java.util.function.BiFunction)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>flatMapEach</h4>
 <pre class="methodSignature">@API(status=MAINTAINED,
@@ -337,6 +345,29 @@ extends <a href="StreamableArbitrary.html" title="interface in net.jqwik.api.arb
 <dd><code>flatMapper</code> - Mapper function to arbitrary of element type U</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>arbitrary of a set of Us</dd>
+</dl>
+</li>
+</ul>
+<a id="uniqueElements(java.util.function.Function)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>uniqueElements</h4>
+<pre class="methodSignature">@API(status=MAINTAINED,
+     since="1.4.0")
+<a href="SetArbitrary.html" title="interface in net.jqwik.api.arbitraries">SetArbitrary</a>&lt;<a href="SetArbitrary.html" title="type parameter in SetArbitrary">T</a>&gt;&nbsp;uniqueElements&#8203;(java.util.function.Function&lt;<a href="SetArbitrary.html" title="type parameter in SetArbitrary">T</a>,&#8203;java.lang.Object&gt;&nbsp;by)</pre>
+<div class="block">Add the constraint that elements of the generated set must be unique
+ relating to an element's "feature" being extracted using the
+ <code>by</code> function.
+ The extracted features are being compared using Object.equals(Object).
+
+ <p>
+     The constraint can be combined with other <a href="#uniqueElements(java.util.function.Function)">uniqueElements(Function)</a> constraints.
+ </p></div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>new arbitrary instance</dd>
 </dl>
 </li>
 </ul>

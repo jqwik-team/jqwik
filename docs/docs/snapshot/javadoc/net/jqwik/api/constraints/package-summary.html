@@ -13,8 +13,7 @@
 <!--[if IE]>
 <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="../../../../jquery/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="../../../../jquery/jquery-migrate-3.0.1.js"></script>
+<script type="text/javascript" src="../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../jquery/jquery-ui.js"></script>
 </head>
 <body>
@@ -97,6 +96,21 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </div>
 <div class="contentContainer">
 <ul class="blockList">
+<li class="blockList">
+<table class="typeSummary">
+<caption><span>Class Summary</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Class</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<th class="colFirst" scope="row"><a href="UniqueElements.NOT_SET.html" title="class in net.jqwik.api.constraints">UniqueElements.NOT_SET</a></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</li>
 <li class="blockList">
 <table class="typeSummary">
 <caption><span>Enum Summary</span><span class="tabEnd">&nbsp;</span></caption>
@@ -240,30 +254,36 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </tr>
 <tr class="altColor">
 <th class="colFirst" scope="row"><a href="Unique.html" title="annotation in net.jqwik.api.constraints">Unique</a></th>
-<td class="colLast">
-<div class="block">Make a generated value to be unique withing the same try.</div>
+<td class="colLast">Deprecated.
+<div class="deprecationComment">Replace with annotation <a href="UniqueElements.html" title="annotation in net.jqwik.api.constraints">UniqueElements</a> on container (List, Set, Stream, Iterator and array) parameter.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<th class="colFirst" scope="row"><a href="UniqueElements.html" title="annotation in net.jqwik.api.constraints">UniqueElements</a></th>
+<td class="colLast">
+<div class="block">Add a uniqueness constraint to a Collection, Stream or Array parameter.</div>
+</td>
+</tr>
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="UpperChars.html" title="annotation in net.jqwik.api.constraints">UpperChars</a></th>
 <td class="colLast">
 <div class="block">Constrain the chars used to generate Strings or Characters to upper and lower case chars.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="UseType.html" title="annotation in net.jqwik.api.constraints">UseType</a></th>
 <td class="colLast">
 <div class="block">Generate a value from the annotated class' or type's constructors or factory methods.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="Whitespace.html" title="annotation in net.jqwik.api.constraints">Whitespace</a></th>
 <td class="colLast">
 <div class="block">Constrain the chars used to generate Strings or Characters to chars
  that will return <code>true</code> for <code>Character.isWhitespace(char)</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <th class="colFirst" scope="row"><a href="WithNull.html" title="annotation in net.jqwik.api.constraints">WithNull</a></th>
 <td class="colLast">
 <div class="block">Allows jqwik to inject null parameters into generated values.</div>

@@ -13,8 +13,7 @@
 <!--[if IE]>
 <script type="text/javascript" src="jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
 <![endif]-->
-<script type="text/javascript" src="jquery/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="jquery/jquery-migrate-3.0.1.js"></script>
+<script type="text/javascript" src="jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="jquery/jquery-ui.js"></script>
 </head>
 <body>
@@ -229,6 +228,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/PropertyDefaults.PropertyDefaultsHook.html#appliesTo(java.util.Optional)">appliesTo(Optional&lt;AnnotatedElement&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/PropertyDefaults.PropertyDefaultsHook.html" title="class in net.jqwik.api">PropertyDefaults.PropertyDefaultsHook</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/UniqueElements.NOT_SET.html#apply(java.lang.Object)">apply(Object)</a></span> - Method in class net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/UniqueElements.NOT_SET.html" title="class in net.jqwik.api.constraints">UniqueElements.NOT_SET</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.F2.html#apply(T1,T2)">apply(T1, T2)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Combinators.F2.html" title="interface in net.jqwik.api">Combinators.F2</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.F3.html#apply(T1,T2,T3)">apply(T1, T2, T3)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Combinators.F3.html" title="interface in net.jqwik.api">Combinators.F3</a></dt>
@@ -332,6 +333,11 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#array(net.jqwik.api.Arbitrary,java.lang.Class)">array(Arbitrary&lt;T&gt;, Class&lt;A&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/jqwik/api/arbitraries/ArrayArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ArrayArbitrary</span></a>&lt;<a href="net/jqwik/api/arbitraries/ArrayArbitrary.html" title="type parameter in ArrayArbitrary">T</a>,&#8203;<a href="net/jqwik/api/arbitraries/ArrayArbitrary.html" title="type parameter in ArrayArbitrary">A</a>&gt; - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
+<dd>
+<div class="block">Fluent interface to add functionality to arbitraries that generate instances
+ of Arrays</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.ListCombinator.html#as(java.util.function.Function)">as(Function&lt;List&lt;T&gt;, R&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.ListCombinator.html" title="class in net.jqwik.api">Combinators.ListCombinator</a></dt>
 <dd>
 <div class="block">Combine any number of values.</div>
@@ -594,6 +600,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Create the final arbitrary.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/UniqueElements.html#by()">by()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/UniqueElements.html" title="annotation in net.jqwik.api.constraints">UniqueElements</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/arbitraries/ByteArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ByteArbitrary</span></a> - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
 <dd>
 <div class="block">Fluent interface to configure the generation of Byte and byte values.</div>
@@ -1238,7 +1246,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The error which resulted in falsifying a property.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/facades/TestingSupportFacade.html#falsifyThenShrink(net.jqwik.api.Arbitrary,java.util.Random,net.jqwik.api.Falsifier)">falsifyThenShrink(Arbitrary&lt;? extends T&gt;, Random, Falsifier&lt;T&gt;)</a></span> - Method in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/TestingSupportFacade.html" title="class in net.jqwik.api.facades">TestingSupportFacade</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ShrinkingSupportFacade.html#falsifyThenShrink(net.jqwik.api.Arbitrary,java.util.Random,net.jqwik.api.Falsifier)">falsifyThenShrink(Arbitrary&lt;? extends T&gt;, Random, Falsifier&lt;T&gt;)</a></span> - Method in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ShrinkingSupportFacade.html" title="class in net.jqwik.api.facades">ShrinkingSupportFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#filter(java.util.function.Predicate)">filter(Predicate&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
@@ -1467,6 +1475,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCasesMode.html#generateFirst()">generateFirst()</a></span> - Method in enum net.jqwik.api.<a href="net/jqwik/api/EdgeCasesMode.html" title="enum in net.jqwik.api">EdgeCasesMode</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/facades/TestingSupportFacade.html#generateUntil(net.jqwik.api.RandomGenerator,java.util.Random,java.util.function.Function)">generateUntil(RandomGenerator&lt;T&gt;, Random, Function&lt;T, Boolean&gt;)</a></span> - Method in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/TestingSupportFacade.html" title="class in net.jqwik.api.facades">TestingSupportFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/PropertyAttributes.html#generation()">generation()</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyAttributes.html" title="interface in net.jqwik.api.lifecycle">PropertyAttributes</a></dt>
 <dd>
 <div class="block">The generation mode of the property at hand.</div>
@@ -1689,6 +1699,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ReflectionSupportFacade.html#implementation">implementation</a></span> - Static variable in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ReflectionSupportFacade.html" title="class in net.jqwik.api.facades">ReflectionSupportFacade</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ShrinkingSupportFacade.html#implementation">implementation</a></span> - Static variable in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ShrinkingSupportFacade.html" title="class in net.jqwik.api.facades">ShrinkingSupportFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/facades/TestingSupportFacade.html#implementation">implementation</a></span> - Static variable in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/TestingSupportFacade.html" title="class in net.jqwik.api.facades">TestingSupportFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.CombinableBuilder.html#in(net.jqwik.api.Combinators.F2)">in(Combinators.F2&lt;B, T, C&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.CombinableBuilder.html" title="class in net.jqwik.api">Combinators.CombinableBuilder</a></dt>
@@ -1818,8 +1830,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#isUnique()">isUnique()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
-<div class="block">All arbitraries whose base generator is supposed to produce no duplicates
- should return true.</div>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Do not use. Will be removed in 1.5.0</div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/providers/TypeUsage.html#isVoid()">isVoid()</a></span> - Method in interface net.jqwik.api.providers.<a href="net/jqwik/api/providers/TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></dt>
 <dd>
@@ -2319,6 +2332,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ShrinkingMode.html#NOT_SET">NOT_SET</a></span> - net.jqwik.api.<a href="net/jqwik/api/ShrinkingMode.html" title="enum in net.jqwik.api">ShrinkingMode</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/UniqueElements.NOT_SET.html#%3Cinit%3E()">NOT_SET()</a></span> - Constructor for class net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/UniqueElements.NOT_SET.html" title="class in net.jqwik.api.constraints">UniqueElements.NOT_SET</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/constraints/NotEmpty.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">NotEmpty</span></a> - Annotation Type in <a href="net/jqwik/api/constraints/package-summary.html">net.jqwik.api.constraints</a></dt>
 <dd>
 <div class="block">Constrain the size of generated "sizable" types to be at least 1.</div>
@@ -2424,6 +2439,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Set the maximum allowed length <code>maxLength</code> (included) of generated strings.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ArrayArbitrary.html#ofMaxSize(int)">ofMaxSize(int)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArrayArbitrary.html" title="interface in net.jqwik.api.arbitraries">ArrayArbitrary</a></dt>
+<dd>
+<div class="block">Set upper size boundary <code>maxSize</code> (included).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/IteratorArbitrary.html#ofMaxSize(int)">ofMaxSize(int)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries">IteratorArbitrary</a></dt>
 <dd>
 <div class="block">Set upper size boundary <code>maxSize</code> (included).</div>
@@ -2457,6 +2476,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/StringArbitrary.html#ofMinLength(int)">ofMinLength(int)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StringArbitrary.html" title="interface in net.jqwik.api.arbitraries">StringArbitrary</a></dt>
 <dd>
 <div class="block">Set the minimum allowed length <code>mixLength</code> (included) of generated strings.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ArrayArbitrary.html#ofMinSize(int)">ofMinSize(int)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArrayArbitrary.html" title="interface in net.jqwik.api.arbitraries">ArrayArbitrary</a></dt>
+<dd>
+<div class="block">Set lower size boundary <code>minSize</code> (included).</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/IteratorArbitrary.html#ofMinSize(int)">ofMinSize(int)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries">IteratorArbitrary</a></dt>
 <dd>
@@ -2499,6 +2522,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/FloatArbitrary.html#ofScale(int)">ofScale(int)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/FloatArbitrary.html" title="interface in net.jqwik.api.arbitraries">FloatArbitrary</a></dt>
 <dd>
 <div class="block">Set the scale (maximum number of decimal places) to <code>scale</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ArrayArbitrary.html#ofSize(int)">ofSize(int)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArrayArbitrary.html" title="interface in net.jqwik.api.arbitraries">ArrayArbitrary</a></dt>
+<dd>
+<div class="block">Fix the size to <code>size</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/IteratorArbitrary.html#ofSize(int)">ofSize(int)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries">IteratorArbitrary</a></dt>
 <dd>
@@ -3086,6 +3113,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Create a new and finite stream of smaller or same size shrinkables; size is measured by <a href="net/jqwik/api/Shrinkable.html#distance()">Shrinkable.distance()</a>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ShrinkingSupportFacade.html#shrink(net.jqwik.api.Shrinkable,net.jqwik.api.Falsifier,java.lang.Throwable)">shrink(Shrinkable&lt;T&gt;, Falsifier&lt;T&gt;, Throwable)</a></span> - Method in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ShrinkingSupportFacade.html" title="class in net.jqwik.api.facades">ShrinkingSupportFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api"><span class="typeNameLink">Shrinkable</span></a>&lt;<a href="net/jqwik/api/Shrinkable.html" title="type parameter in Shrinkable">T</a>&gt; - Interface in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">Shrinkable.ShrinkableFacade</span></a> - Class in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
@@ -3112,6 +3141,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">The shrinking mode defines the shrinking behaviour of a property.</div>
 </dd>
+<dt><a href="net/jqwik/api/facades/ShrinkingSupportFacade.html" title="class in net.jqwik.api.facades"><span class="typeNameLink">ShrinkingSupportFacade</span></a> - Class in <a href="net/jqwik/api/facades/package-summary.html">net.jqwik.api.facades</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ShrinkingSupportFacade.html#%3Cinit%3E()">ShrinkingSupportFacade()</a></span> - Constructor for class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ShrinkingSupportFacade.html" title="class in net.jqwik.api.facades">ShrinkingSupportFacade</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ShrinkingSupportFacade.html#shrinkToSample(net.jqwik.api.Shrinkable,net.jqwik.api.Falsifier,java.lang.Throwable)">shrinkToSample(Shrinkable&lt;T&gt;, Falsifier&lt;T&gt;, Throwable)</a></span> - Method in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ShrinkingSupportFacade.html" title="class in net.jqwik.api.facades">ShrinkingSupportFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/DoubleArbitrary.html#shrinkTowards(double)">shrinkTowards(double)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/DoubleArbitrary.html" title="interface in net.jqwik.api.arbitraries">DoubleArbitrary</a></dt>
 <dd>
 <div class="block">Set shrinking target to <code>target</code> which must be between the allowed bounds.</div>
@@ -3519,8 +3554,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#unique()">unique()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
-<div class="block">Create a new arbitrary of the same type <code>T</code> that creates and shrinks the original arbitrary but will
- never generate the same value twice.</div>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Replace with <code>uniqueElements()</code> call on containing container arbitrary. Will be removed in 1.5.0.</div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.html#unique()">unique()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a></dt>
 <dd>&nbsp;</dd>
@@ -3532,7 +3568,82 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/constraints/Unique.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">Unique</span></a> - Annotation Type in <a href="net/jqwik/api/constraints/package-summary.html">net.jqwik.api.constraints</a></dt>
 <dd>
-<div class="block">Make a generated value to be unique withing the same try.</div>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Replace with annotation <a href="net/jqwik/api/constraints/UniqueElements.html" title="annotation in net.jqwik.api.constraints">UniqueElements</a> on container (List, Set, Stream, Iterator and array) parameter.</div>
+</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ArrayArbitrary.html#uniqueElements()">uniqueElements()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArrayArbitrary.html" title="interface in net.jqwik.api.arbitraries">ArrayArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that elements of the generated array must be unique,
+ i.e. no two elements must return true when being compared using Object.equals(Object).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/IteratorArbitrary.html#uniqueElements()">uniqueElements()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries">IteratorArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that elements of the generated iterator must be unique,
+ i.e. no two elements must return true when being compared using Object.equals(Object).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ListArbitrary.html#uniqueElements()">uniqueElements()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ListArbitrary.html" title="interface in net.jqwik.api.arbitraries">ListArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that elements of the generated list must be unique,
+ i.e. no two elements must return true when being compared using Object.equals(Object).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/StreamArbitrary.html#uniqueElements()">uniqueElements()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that elements of the generated stream must be unique,
+ i.e. no two elements must return true when being compared using Object.equals(Object).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ArrayArbitrary.html#uniqueElements(java.util.function.Function)">uniqueElements(Function&lt;T, Object&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArrayArbitrary.html" title="interface in net.jqwik.api.arbitraries">ArrayArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that elements of the generated array must be unique
+ relating to an element's "feature" being extracted using the
+ <code>by</code> function.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/IteratorArbitrary.html#uniqueElements(java.util.function.Function)">uniqueElements(Function&lt;T, Object&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries">IteratorArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that elements of the generated iterator must be unique
+ relating to an element's "feature" being extracted using the
+ <code>by</code> function.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ListArbitrary.html#uniqueElements(java.util.function.Function)">uniqueElements(Function&lt;T, Object&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ListArbitrary.html" title="interface in net.jqwik.api.arbitraries">ListArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that elements of the generated list must be unique
+ relating to an element's "feature" being extracted using the
+ <code>by</code> function.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/SetArbitrary.html#uniqueElements(java.util.function.Function)">uniqueElements(Function&lt;T, Object&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/SetArbitrary.html" title="interface in net.jqwik.api.arbitraries">SetArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that elements of the generated set must be unique
+ relating to an element's "feature" being extracted using the
+ <code>by</code> function.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/StreamArbitrary.html#uniqueElements(java.util.function.Function)">uniqueElements(Function&lt;T, Object&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that elements of the generated stream must be unique
+ relating to an element's "feature" being extracted using the
+ <code>by</code> function.</div>
+</dd>
+<dt><a href="net/jqwik/api/constraints/UniqueElements.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">UniqueElements</span></a> - Annotation Type in <a href="net/jqwik/api/constraints/package-summary.html">net.jqwik.api.constraints</a></dt>
+<dd>
+<div class="block">Add a uniqueness constraint to a Collection, Stream or Array parameter.</div>
+</dd>
+<dt><a href="net/jqwik/api/constraints/UniqueElements.NOT_SET.html" title="class in net.jqwik.api.constraints"><span class="typeNameLink">UniqueElements.NOT_SET</span></a> - Class in <a href="net/jqwik/api/constraints/package-summary.html">net.jqwik.api.constraints</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/MapArbitrary.html#uniqueKeys(java.util.function.Function)">uniqueKeys(Function&lt;K, Object&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that keys of the generated map must be unique
+ relating to an element's "feature" being extracted by applying the
+ <code>by</code> function on a map entry's key.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/MapArbitrary.html#uniqueValues()">uniqueValues()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that values of the generated map must be unique,
+ i.e. no two value must return true when being compared using Object.equals(Object).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/MapArbitrary.html#uniqueValues(java.util.function.Function)">uniqueValues(Function&lt;V, Object&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/MapArbitrary.html" title="interface in net.jqwik.api.arbitraries">MapArbitrary</a></dt>
+<dd>
+<div class="block">Add the constraint that value of the generated map must be unique
+ relating to an element's "feature" being extracted by applying the
+ <code>by</code> function on a map entry's value.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/web/api/Email.html#unquotedLocalPart()">unquotedLocalPart()</a></span> - Method in annotation type net.jqwik.web.api.<a href="net/jqwik/web/api/Email.html" title="annotation in net.jqwik.web.api">Email</a></dt>
 <dd>

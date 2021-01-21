@@ -69,10 +69,10 @@ title: jqwik User Guide - 1.4.0-SNAPSHOT
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
     - [Allow Null Values](#allow-null-values)
-    - [Unique Values](#unique-values)
     - [String Length](#string-length)
     - [Character Sets](#character-sets)
-    - [List, Set, Stream, Map and Array Size](#list-set-stream-map-and-array-size)
+    - [List, Set, Stream, Iterator, Map and Array Size](#list-set-stream-iterator-map-and-array-size)
+    - [Unique Elements](#unique-elements)
     - [Integer Constraints](#integer-constraints)
     - [Decimal Constraints](#decimal-constraints)
   - [Constraining parameterized types](#constraining-parameterized-types)
@@ -103,7 +103,6 @@ title: jqwik User Guide - 1.4.0-SNAPSHOT
   - [Generate `null` values](#generate-null-values)
   - [Inject duplicate values](#inject-duplicate-values)
   - [Filtering](#filtering)
-  - [Creating unique values](#creating-unique-values)
   - [Mapping](#mapping)
   - [Flat Mapping](#flat-mapping)
   - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
@@ -111,6 +110,7 @@ title: jqwik User Guide - 1.4.0-SNAPSHOT
   - [Combining Arbitraries](#combining-arbitraries)
     - [Combining Arbitraries with Builder](#combining-arbitraries-with-builder)
     - [Flat Combination](#flat-combination)
+  - [Uniqueness Constraints](#uniqueness-constraints)
   - [Ignoring Exceptions During Generation](#ignoring-exceptions-during-generation)
   - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
 - [Recursive Arbitraries](#recursive-arbitraries)
@@ -187,7 +187,7 @@ __jqwik__ is an alternative test engine for the
 That means that you can use it either stand-alone or combine it with any other JUnit 5 engine, e.g.
 [Jupiter (the standard engine)](https://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-jupiter) or
 [Vintage (aka JUnit 4)](https://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-vintage).
-All you have to do is add all needed engines to your `testCompile` dependencies as shown in the
+All you have to do is add all needed engines to your `testImplementation` dependencies as shown in the
 [gradle file](#gradle) below.
 
 The latest release of __jqwik__ is deployed to [Maven Central](https://search.maven.org/search?q=g:net.jqwik).
@@ -1072,25 +1072,6 @@ depending on the requested parameter type.
 
   Works for all generated types.
 
-#### Unique Values
-
-- [`@Unique`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Unique.html):
-  Prevent duplicate values to be generated _per try_. That means that
-  there can still be duplicate values across several tries. That also means
-  that `@Unique` only makes sense as annotation for a parameter type, e.g.:
-
-  ```java
-    @Property
-    void uniqueInList(@ForAll @Size(5) List<@IntRange(min = 0, max = 10) @Unique Integer> aList) {
-        Assertions.assertThat(aList).doesNotHaveDuplicates();
-        Assertions.assertThat(aList).allMatch(anInt -> anInt >= 0 && anInt <= 10);
-    }
-  ```
-
-  Trying to generate a list with more than 11 elements would not work here.
-
-  Works for all generated types.
-
 #### String Length
 
 - [`@StringLength(int value = 0, int min = 0, int max = 0)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/StringLength.html):
@@ -1130,13 +1111,54 @@ combine several of them:
 
 They work for generated `String`s and `Character`s.
 
-#### List, Set, Stream, Map and Array Size
+#### List, Set, Stream, Iterator, Map and Array Size
 
 - [`@Size(int value = 0, int min = 0, int max = 0)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Size.html):
   Set either fixed size through `value` or configure the size range between `min` and `max`.
 
 - [`@NotEmpty`](/docs/snapshot/javadoc/net/jqwik/api/constraints/NotEmpty.html):
   Set minimum size to `1`.
+
+
+#### Unique Elements
+
+- [`@UniqueElements`](/docs/snapshot/javadoc/net/jqwik/api/constraints/UniqueElements.html):
+  Constrain a container object (`List`, `Set`, `Stream`, `Iterator` or array) so that its
+  elements are unique or unique in relation to a certain feature.
+
+  ```java
+    @Property
+    void uniqueInList(@ForAll @Size(5) @UniqueElements List<@IntRange(min = 0, max = 10) Integer> aList) {
+        Assertions.assertThat(aList).doesNotHaveDuplicates();
+        Assertions.assertThat(aList).allMatch(anInt -> anInt >= 0 && anInt <= 10);
+    }
+  ```
+
+  Trying to generate a list with more than 11 elements would not work here.
+
+  The following example will change the uniqueness criterion to use the first character
+  of the list's String elements by providing a feature extraction function
+  in the `by` attribute of the `@UniqueElements` annotation.
+
+  ```java
+    @Property
+    void listOfStringsTheFirstCharacterOfWhichMustBeUnique(
+      @ForAll @Size(max = 25) @UniqueElements(by = FirstChar.class) 
+        List<@AlphaChars @StringLength(min = 1, max = 10) String> listOfStrings
+    ) {
+      Iterable<Character> firstCharacters = listOfStrings.stream().map(s -> s.charAt(0)).collect(Collectors.toList());
+      Assertions.assertThat(firstCharacters).doesNotHaveDuplicates();
+    }
+
+    private class FirstChar implements Function<String, Object> {
+      @Override
+      public Object apply(String aString) {
+        return aString.charAt(0);
+      }
+    }
+  ```
+
+  `@UniqueElements` can be used for parameters of type `List`, `Set`, `Stream`, `Iterator` or any array.
 
 
 #### Integer Constraints
@@ -1582,7 +1604,8 @@ You can then create the corresponding multi value arbitrary from there:
 - [`SetArbitrary<T> Arbitrary.set()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#set())
 - [`StreamArbitrary<T> Arbitrary.streamOf()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#stream())
 - [`IteratorArbitrary<T> Arbitrary.iterator()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#iterator())
-- [`StreamableArbitrary<T, A> Arbitrary.array(Class<A> arrayClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#array(java.lang.Class))
+- [`ArrayArbitrary<T, A> Arbitrary.array(Class<A> arrayClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#array(java.lang.Class))
+
 
 ### Collecting Values in a List
 
@@ -1645,7 +1668,6 @@ Arbitrary<Map<Integer, String>> numberMaps() {
 
 For generating individual `Map.Entry` instances there is
 [`Arbitraries.entries(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary)).
-
 
 ### Functional Types
 
@@ -1723,6 +1745,7 @@ which are organized in a flat hierarchy:
         - [ListArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ListArbitrary.html)
         - [StreamArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StreamArbitrary.html)
         - [IteratorArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/IteratorArbitrary.html)
+        - [ArrayArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ArrayArbitrary.html)
 - [StringArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
 - [FunctionArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/FunctionArbitrary.html)
 - [TypeArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/TypeArbitrary.html)
@@ -1850,24 +1873,6 @@ Arbitrary<Integer> oddNumbers() {
 
 Keep in mind that your filter condition should not be too restrictive.
 If the generator fails to find a suitable value after 10000 trials,
-the current property will be abandoned by throwing an exception.
-
-### Creating unique values
-
-If you want to make sure that all the values generated by an arbitrary are unique,
-use
-[`Arbitrary.unique()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#unique()).
-The following arbitrary will generate integers between 1 and 1000 but never the same integer twice:
-
-```java
-@Provide
-Arbitrary<Integer> oddNumbers() {
-  return Arbitraries.integers().between(1, 1000).unique();
-}
-```
-
-This means that a maximum of 1000 values can be generated. If the generator fails
-to find a yet unseen value after 10000 trials,
 the current property will be abandoned by throwing an exception.
 
 ### Mapping
@@ -2164,6 +2169,49 @@ Arbitrary<String> fullName2() {
 ```
 
 This is not only easier to understand but it usually improves shrinking.
+
+
+### Uniqueness Constraints
+
+In many problem domains there exist identifying features or attributes 
+that must not appear more than once.
+In those cases the multiple generation of objects can be restricted by
+either [annotating parameters with `@UniqueElements`](#unique-elements)
+or by using one of the many `uniqueness(..)` configuration methods for 
+collections and collection-like types:
+
+- `ListArbitrary<T>.uniqueElements(Function<T, Object>)`
+- `ListArbitrary<T>.uniqueElements()`
+- `SetArbitrary<T>.uniqueElements(Function<T, Object>)`
+- `StreamArbitrary<T>.uniqueElements(Function<T, Object>)`
+- `StreamArbitrary<T>.uniqueElements()`
+- `IteratorArbitrary<T>.uniqueElements(Function<T, Object>)`
+- `IteratorArbitrary<T>.uniqueElements()`
+- `ArrayArbitrary<T, A>.uniqueElements(Function<T, Object>)`
+- `ArrayArbitrary<T, A>.uniqueElements()`
+- `MapArbitrary<K, V>.keyUniqueness(Function<K, Object>)`
+- `MapArbitrary<K, V>.valueUniqueness(Function<V, Object>)`
+- `MapArbitrary<K, V>.uniqueValues()`
+
+The following examples demonstrates how to generate a list of `Person` objects
+whose names must be unique:
+
+```java
+@Property
+void listOfPeopleWithUniqueNames(@ForAll("people") List<Person> people) {
+  List<String> names = people.stream().map(p -> p.name).collect(Collectors.toList());
+  Assertions.assertThat(names).doesNotHaveDuplicates();
+}
+
+@Provide
+Arbitrary<List<Person>> people() {
+  Arbitrary<String> names = Arbitraries.strings().alpha().ofMinLength(3).ofMaxLength(20);
+  Arbitrary<Integer> ages = Arbitraries.integers().between(0, 120);
+  
+  Arbitrary<Person> persons = Combinators.combine(names, ages).as((name, age) -> new Person(name, age));
+  return persons.list().uniqueElements(p -> p.name);
+};
+```
 
 ### Ignoring Exceptions During Generation
 
