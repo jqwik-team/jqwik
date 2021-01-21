@@ -2,6 +2,8 @@
 
     - Default for Email-Generation should be "unquoted" local part and "domain" host.
 
+    - Set correct display name in Kotlin tests with modifier "internal"
+
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140
         - DateArbitrary.shrinkTowards(date)
