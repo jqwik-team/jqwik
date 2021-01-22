@@ -62,7 +62,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void uniquenessConstraint(@ForAll Random random) {
+	void uniqueElements(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
 						   .uniqueElements(i -> i % 100);
@@ -74,8 +74,21 @@ class ListArbitraryTests {
 		});
 	}
 
+	@Property(tries = 10)
+	void uniqueElementsWithoutMaxSize(@ForAll Random random, @ForAll @IntRange(max = 10) int minSize) {
+		ListArbitrary<Integer> listArbitrary =
+				Arbitraries.integers().between(1, 1000).list().ofMinSize(minSize)
+						   .uniqueElements(i -> i % 10);
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+
+		assertAllGenerated(generator, random, list -> {
+			assertThat(isUniqueModulo(list, 10)).isTrue();
+		});
+	}
+
 	@Example
-	void uniquenessConstraintWithNullElements(@ForAll Random random) {
+	void uniqueElementsWithNull(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).injectNull(0.5)
 						   .list().ofMaxSize(20)

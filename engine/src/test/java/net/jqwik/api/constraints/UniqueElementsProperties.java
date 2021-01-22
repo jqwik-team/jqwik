@@ -10,7 +10,7 @@ import static java.util.Arrays.*;
 
 @PropertyDefaults(tries = 100)
 @Group
-class UniquenessProperties {
+class UniqueElementsProperties {
 
 	@Group
 	class Lists {
@@ -18,6 +18,18 @@ class UniquenessProperties {
 		@Property
 		boolean lists(@ForAll @UniqueElements List<String> aStringList) {
 			return hasNoDuplicates(aStringList, s -> s);
+		}
+
+		@Property
+		boolean listsOfModuloIntegers(@ForAll @UniqueElements(by = Modulo13.class) List<@Positive Integer> integerList) {
+			return hasNoDuplicates(integerList, i -> i % 13);
+		}
+
+		private class Modulo13 implements Function<Integer, Object> {
+			@Override
+			public Object apply(Integer integer) {
+				return integer % 13;
+			}
 		}
 
 		@Property
