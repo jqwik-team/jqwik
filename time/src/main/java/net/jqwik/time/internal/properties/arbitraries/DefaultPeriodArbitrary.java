@@ -1,5 +1,6 @@
 package net.jqwik.time.internal.properties.arbitraries;
 
+import java.math.*;
 import java.time.*;
 
 import org.apiguardian.api.*;
@@ -15,21 +16,27 @@ public class DefaultPeriodArbitrary extends ArbitraryDecorator<Period> implement
 
 	private int yearsMin = Integer.MIN_VALUE;
 	private int yearsMax = Integer.MAX_VALUE;
+	private BigInteger yearPeriod = null;
 
 	private int monthsMin = 0;
 	private int monthsMax = 11;
+	private BigInteger monthPeriod = null;
 
 	private int daysMin = 0;
 	private int daysMax = 30;
+	private BigInteger dayPeriod = null;
+
+	private BigInteger helperMonthDay = null;
 
 	@Override
 	protected Arbitrary<Period> arbitrary() {
 
-		IntegerArbitrary years = Arbitraries.integers().between(yearsMin, yearsMax);
-		IntegerArbitrary months = Arbitraries.integers().between(monthsMin, monthsMax);
-		IntegerArbitrary days = Arbitraries.integers().between(daysMin, daysMax);
+		BigInteger bigIntegerStart = BigInteger.ZERO;
+		BigInteger bigIntegerEnd = calculateBigIntegerEnd();
 
-		Arbitrary<Period> periodArbitrary = Combinators.combine(years, months, days).as(Period::of);
+		BigIntegerArbitrary numbers = Arbitraries.bigIntegers().between(bigIntegerStart, bigIntegerEnd);
+
+		Arbitrary<Period> periodArbitrary = numbers.map(this::calculatePeriod);
 
 		periodArbitrary = periodArbitrary.edgeCases(edgeCases -> {
 			edgeCases.includeOnly(Period.of(yearsMin, monthsMin, daysMin), Period.of(yearsMax, monthsMax, daysMax));
@@ -39,6 +46,54 @@ public class DefaultPeriodArbitrary extends ArbitraryDecorator<Period> implement
 		});
 
 		return periodArbitrary;
+
+	}
+
+	private Period calculatePeriod(BigInteger bigInteger) {
+
+		int years = yearsMin;
+		int months = monthsMin;
+		int days = daysMin;
+
+		BigInteger yearAdd = bigInteger.divide(helperMonthDay);
+		years += yearAdd.intValue();
+
+		BigInteger monthDay = bigInteger.subtract(yearAdd.multiply(helperMonthDay));
+
+		BigInteger monthAdd = monthDay.divide(dayPeriod);
+		months += monthAdd.intValue();
+
+		BigInteger dayAdd = monthDay.subtract(monthAdd.multiply(dayPeriod));
+		days += dayAdd.intValue();
+
+		return Period.of(years, months, days);
+
+	}
+
+	private BigInteger calculateBigIntegerEnd() {
+
+		BigInteger bigInteger = BigInteger.ONE;
+
+		yearPeriod = BigInteger.ONE;
+		yearPeriod = yearPeriod.add(new BigInteger(yearsMax + ""));
+		yearPeriod = yearPeriod.subtract(new BigInteger(yearsMin + ""));
+		bigInteger = bigInteger.multiply(yearPeriod);
+
+		monthPeriod = BigInteger.ONE;
+		monthPeriod = monthPeriod.add(new BigInteger(monthsMax + ""));
+		monthPeriod = monthPeriod.subtract(new BigInteger(monthsMin + ""));
+		bigInteger = bigInteger.multiply(monthPeriod);
+
+		dayPeriod = BigInteger.ONE;
+		dayPeriod = dayPeriod.add(new BigInteger(daysMax + ""));
+		dayPeriod = dayPeriod.subtract(new BigInteger(daysMin + ""));
+		bigInteger = bigInteger.multiply(dayPeriod);
+
+		bigInteger = bigInteger.subtract(BigInteger.ONE);
+
+		helperMonthDay = monthPeriod.multiply(dayPeriod);
+
+		return bigInteger;
 
 	}
 
