@@ -142,6 +142,19 @@ class PeriodTests {
 
 		}
 
+		@Property
+		void onlyOnePeriodPossible(@ForAll int year, @ForAll int month, @ForAll int day, @ForAll Random random) {
+
+			Arbitrary<Period> periods = Dates.periods().yearsBetween(year, year).monthsBetween(month, month).daysBetween(day, day);
+
+			assertAllGenerated(periods.generator(1000), random, period -> {
+				assertThat(period.getYears()).isEqualTo(year);
+				assertThat(period.getMonths()).isEqualTo(month);
+				assertThat(period.getDays()).isEqualTo(day);
+			});
+
+		}
+
 	}
 
 	@Group
@@ -151,14 +164,13 @@ class PeriodTests {
 		void defaultShrinking(@ForAll Random random) {
 			PeriodArbitrary periods = Dates.periods();
 			Period value = falsifyThenShrink(periods, random);
-			assertThat(value).isEqualTo(Period.of(0, 0, 0));
+			assertThat(value).isEqualTo(Period.of(Integer.MIN_VALUE, 0, 0));
 		}
 
-		@Disabled
 		@Property
 		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			PeriodArbitrary periods = Dates.periods();
-			TestingFalsifier<Period> falsifier = period -> comparePeriodsWithMax30DaysAnd11Months(period, Period.of(200, 3, 5)) <= 0;
+			TestingFalsifier<Period> falsifier = period -> comparePeriodsWithMax30DaysAnd11Months(period, Period.of(200, 3, 5)) < 0;
 			Period value = falsifyThenShrink(periods, random, falsifier);
 			assertThat(value).isEqualTo(Period.of(200, 3, 5));
 		}
