@@ -34,7 +34,12 @@ public class DefaultPeriodArbitrary extends ArbitraryDecorator<Period> implement
 		BigInteger bigIntegerStart = BigInteger.ZERO;
 		BigInteger bigIntegerEnd = calculateBigIntegerEnd();
 
-		BigIntegerArbitrary numbers = Arbitraries.bigIntegers().between(bigIntegerStart, bigIntegerEnd);
+		Arbitrary<BigInteger> numbers = Arbitraries.bigIntegers()
+												   .withDistribution(RandomDistribution.uniform())
+												   .between(bigIntegerStart, bigIntegerEnd)
+												   .edgeCases(edgeCases -> {
+													   edgeCases.includeOnly(bigIntegerStart, bigIntegerEnd);
+												   });
 
 		Arbitrary<Period> periodArbitrary = numbers.map(this::calculatePeriod);
 
