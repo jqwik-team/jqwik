@@ -51,6 +51,9 @@ and
   Log messages will be emitted for any used properties with their new name.
   Some [parameter names](/docs/snapshot/user-guide.html#jqwik-configuration) have also changed.
 
+- Using internal Kotlin methods as properties will now produce the correct name
+  as seen in the Kotlin source code.
+
 - The User Guide has been restructured.
 
 - There will now be a warning log entry when a property with more than 1 try has no

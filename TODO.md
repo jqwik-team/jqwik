@@ -1,7 +1,5 @@
 - 1.4.0
 
-    - Set correct display name in Kotlin tests with modifier "internal"
-
     - Warn on fixed seed depending on configuration
       https://github.com/jlink/jqwik/issues/138
 

@@ -2,6 +2,7 @@ package net.jqwik.engine.descriptor;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
@@ -11,6 +12,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 
 import static net.jqwik.engine.descriptor.DiscoverySupport.*;
+import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements JqwikDescriptor {
 	private final Method targetMethod;
@@ -27,7 +29,21 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implement
 	}
 
 	private static String determineDisplayName(Method targetMethod) {
-		return DiscoverySupport.determineLabel(targetMethod, targetMethod::getName);
+		Supplier<String> defaultNameSupplier = () -> getDefaultName(targetMethod);
+		return DiscoverySupport.determineLabel(targetMethod, defaultNameSupplier);
+	}
+
+	private static String getDefaultName(Method targetMethod) {
+		// TODO: Move this hack to yet to create jqwik-kotlin module
+		if (isInternalKotlinMethod(targetMethod)) {
+			return nameWithoutInternalPart(targetMethod);
+		}
+		return targetMethod.getName();
+	}
+
+	private static String nameWithoutInternalPart(Method targetMethod) {
+		int lastDollarPosition = targetMethod.getName().lastIndexOf('$');
+		return targetMethod.getName().substring(0, lastDollarPosition);
 	}
 
 	public Method getTargetMethod() {
