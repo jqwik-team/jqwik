@@ -95,17 +95,17 @@ class UniqueElementsProperties {
 
 		@Property
 		boolean arrays(@ForAll @UniqueElements String[] aStringArray) {
-			return hasNoDuplicates(asList(aStringArray), Function.identity());
+			return hasNoDuplicates(asList((String[]) aStringArray), Function.identity());
 		}
 
 		@Property
 		boolean arraysWithByClause(@ForAll @UniqueElements(by = GetStringLength.class) String[] aStringArray) {
-			return hasNoDuplicates(asList(aStringArray), new GetStringLength());
+			return hasNoDuplicates(asList((String[]) aStringArray), new GetStringLength());
 		}
 
 		@Property
 		boolean arraysNotFromListArbitraryUsePlainFilter(@ForAll("arrayOfStrings") @UniqueElements String[] aStringArray) {
-			return hasNoDuplicates(asList(aStringArray), Function.identity());
+			return hasNoDuplicates(asList((String[]) aStringArray), Function.identity());
 		}
 
 		@Provide

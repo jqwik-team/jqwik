@@ -92,6 +92,9 @@ and
   `@net.jqwik.web.api.Email` in new 
   [Web module](/docs/snapshot/user-guide.html#web-module).
 
+- Parameters annotated with `@Email` will by default only generate
+  "standard" email addresses.
+
 - Removed deprecated APIs
     - `Arbitrary.samples(..)`
     - Interface `FalsificationResult`

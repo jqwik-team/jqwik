@@ -4,13 +4,15 @@ import java.lang.annotation.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
  * Make a generated value to be unique withing the same try.
  *
  * <p>
- * Applies to any embedded types of a parameter that is annotated with {@linkplain @ForAll}.
+ * Applies to any embedded types of a parameter that is annotated with {@linkplain ForAll}.
  * </p>
  *
  * @see net.jqwik.api.ForAll

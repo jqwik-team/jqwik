@@ -7,12 +7,12 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Constrain strings to be valid email addresses. By default only addresses
- * with unquoted local part and domain hosts are generate (e.g. {@code me@myhost.com}) ,
+ * Constrain generated strings to be valid email addresses. By default, only addresses
+ * with unquoted local part and domain hosts are generated (e.g. {@code me@myhost.com}),
  * because many - if not most - applications and web forms only accept those.
  *
  * <p>
- * Applies to parameters of type {@linkplain String } that are also annotated with {@code @ForAll}.
+ * Applies to parameters of type {@linkplain String} that are also annotated with {@code @ForAll}.
  * </p>
  *
  * @see net.jqwik.api.ForAll

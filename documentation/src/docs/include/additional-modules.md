@@ -6,7 +6,7 @@ _jqwik_ comes with a few additional modules:
 
 ### Web Module
 
-This modules artefact name is `jqwik-web`. It's supposed to provide arbitraries,
+This module's artefact name is `jqwik-web`. It's supposed to provide arbitraries,
 default generation and annotations for web related types. Currently only
 [email generation](#email-address-generation) is supported.
 
@@ -43,7 +43,11 @@ You can use the following restrictions in `@Email` annotation:
 - `quotedLocalPart` to decide whether quoted local parts are generated
 - `domainHost` to decide whether domains are generated in the host part
 - `ipv4Host` to decide whether ipv4 addresses are generated in the host part
-- `ipv6Host` to decide whether ipv6 addresses are generated in the host part
+- `ipv6Host` to decide whether ipv6 addresses are generated in the host part 
+  
+By default, only addresses with unquoted local part and domain hosts are 
+generated (e.g. `me@myhost.com`), because many - if not most - applications 
+and web forms only accept those.
 
 You can use it as follows:
 
@@ -54,14 +58,14 @@ void defaultEmailAddresses(@ForAll @Email String email) {
 }
 
 @Property
-void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Host = false, ipv6Host = false) String email) {
+void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = true, ipv4Host = true, domainHost = false) String email) {
     assertThat(email).contains("@");
 }
 ```
 
 ### Time Module
 
-This modules artefact name is `jqwik-time`. It's supposed to provide arbitraries,
+This module's artefact name is `jqwik-time`. It's supposed to provide arbitraries,
 default generation and annotations for date and time types.
 
 This module is part of jqwik's default dependencies.
@@ -135,7 +139,7 @@ Arbitrary<LocalDate> dates() {
 
 ### Testing Module
 
-This modules artefact name is `jqwik-testing`. It provides a few helpful methods
+This module's artefact name is `jqwik-testing`. It provides a few helpful methods
 and classes for generator writers to test their generators - including 
 edge cases and shrinking.
 
