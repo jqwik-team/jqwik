@@ -4,6 +4,11 @@ import inet.ipaddr.*;
 
 class EmailTestingSupport {
 
+	public static final String ALLOWED_CHARS_DOMAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
+	public static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";
+	public static final String ALLOWED_CHARS_LOCALPART_QUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~\"(),:;<>@[\\] ";
+	public static final String ALLOWED_NOT_NUMERIC_CHARS_TLD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-";
+
 	static boolean isIPAddress(String domain) {
 		if (domain.charAt(0) == '[' && domain.charAt(domain.length() - 1) == ']') {
 			return true;
@@ -33,6 +38,32 @@ class EmailTestingSupport {
 
 	static String extractIPAddress(String domain) {
 		return domain.substring(1, domain.length() - 1);
+	}
+
+	static boolean isValidDomain(String domain) {
+		if (!domain.contains(".")) {
+			return false;
+		}
+		String[] domainParts = domain.split("\\.");
+		for (String domainPart : domainParts) {
+			if (domainPart.length() > 63) {
+				return false;
+			}
+		}
+		String tld = domainParts[domainParts.length - 1];
+		if (!containsAtLeastOneOf(ALLOWED_NOT_NUMERIC_CHARS_TLD, tld)) {
+			return false;
+		}
+		return true;
+	}
+
+	static boolean containsAtLeastOneOf(String string, String chars) {
+		for (char c : chars.toCharArray()) {
+			if (string.contains(String.valueOf(c))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static boolean isValidIPAddress(String address) {

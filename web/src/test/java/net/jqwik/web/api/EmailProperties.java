@@ -17,19 +17,26 @@ class EmailProperties {
 	class CheckAnnotationProperties {
 
 		@Property
-		void onlyIPAddressesAreGenerated(@ForAll @Email(domainHost = false) String email) {
+		@Report(Reporting.GENERATED)
+		void byDefaultOnlyStandardAddressesAreGenerated(@ForAll @Email String email) {
+			assertThat(isQuoted(getLocalPartOfEmail(email))).isFalse();
+			assertThat(isValidDomain(getEmailHost(email))).isTrue();
+		}
+
+		@Property
+		void onlyIPAddressesAreGenerated(@ForAll @Email(domainHost = false, ipv4Host = true, ipv6Host = true) String email) {
 			String ipAddress = extractIPAddress(getEmailHost(email));
 			assertThat(isValidIPAddress(ipAddress)).isTrue();
 		}
 
 		@Property
-		void onlyIPv4AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv6Host = false) String email) {
+		void onlyIPv4AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv4Host = true) String email) {
 			String ipAddress = extractIPAddress(getEmailHost(email));
 			assertThat(isValidIPv4Address(getEmailHost(ipAddress))).isTrue();
 		}
 
 		@Property
-		void onlyIPv6AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv4Host = false) String email) {
+		void onlyIPv6AddressesAreGenerated(@ForAll @Email(domainHost = false, ipv6Host = true) String email) {
 			String ipAddress = extractIPAddress(getEmailHost(email));
 			assertThat(isValidIPv6Address(getEmailHost(ipAddress))).isTrue();
 		}
@@ -41,7 +48,7 @@ class EmailProperties {
 		}
 
 		@Property
-		void onlyQuotedLocalPartsAreGenerated(@ForAll @Email(unquotedLocalPart = false) String email) {
+		void onlyQuotedLocalPartsAreGenerated(@ForAll @Email(unquotedLocalPart = false, quotedLocalPart = true) String email) {
 			String localPart = getLocalPartOfEmail(email);
 			assertThat(isQuoted(localPart)).isTrue();
 		}
@@ -81,7 +88,7 @@ class EmailProperties {
 	class CheckAllVariantsAreCovered {
 
 		@Property
-		void quotedAndUnquotedUsernamesAreGenerated(@ForAll @Email String email) {
+		void quotedAndUnquotedUsernamesAreGenerated(@ForAll @Email(quotedLocalPart = true) String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Statistics.label("Quoted usernames")
 					  .collect(isQuoted(localPart))
@@ -92,7 +99,7 @@ class EmailProperties {
 		}
 
 		@Property
-		void domainsAndIPAddressesAreGenerated(@ForAll @Email String email) {
+		void domainsAndIPAddressesAreGenerated(@ForAll @Email(ipv4Host = true, ipv6Host = true) String email) {
 			String domain = getEmailHost(email);
 			Statistics.label("Domains")
 					  .collect(isIPAddress(domain))
@@ -103,7 +110,7 @@ class EmailProperties {
 		}
 
 		@Property
-		void IPv4AndIPv6AreGenerated(@ForAll @Email String email) {
+		void IPv4AndIPv6AreGenerated(@ForAll @Email(ipv6Host = true, ipv4Host = true, domainHost = false) String email) {
 			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
 			domain = domain.substring(1, domain.length() - 1);

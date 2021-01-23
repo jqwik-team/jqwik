@@ -16,11 +16,6 @@ import static net.jqwik.web.api.EmailTestingSupport.*;
 @Group
 public class EmailsTests {
 
-	private static final String ALLOWED_CHARS_DOMAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
-	private static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";
-	private static final String ALLOWED_CHARS_LOCALPART_QUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~\"(),:;<>@[\\] ";
-	private static final String ALLOWED_NOT_NUMERIC_CHARS_TLD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-";
-
 	@Group
 	class AllGeneratedEmailAddressesAreValid {
 
@@ -45,14 +40,14 @@ public class EmailsTests {
 		void validCharsBeforeAtUnquoted(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(!isQuoted(localPart));
-			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_UNQUOTED, c));
+			assertThat(localPart.chars()).allMatch(c -> isIn(c, ALLOWED_CHARS_LOCALPART_UNQUOTED));
 		}
 
 		@Property
 		void validCharsBeforeAtQuoted(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
-			assertThat(localPart.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_LOCALPART_QUOTED, c));
+			assertThat(localPart.chars()).allMatch(c -> isIn(c, ALLOWED_CHARS_LOCALPART_QUOTED));
 		}
 
 		@Property
@@ -78,7 +73,7 @@ public class EmailsTests {
 		void validCharsAfterAt(@ForAll("emails") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(!isIPAddress(domain));
-			assertThat(domain.chars()).allMatch(c -> stringContainsChar(ALLOWED_CHARS_DOMAIN, c));
+			assertThat(domain.chars()).allMatch(c -> isIn(c, ALLOWED_CHARS_DOMAIN));
 		}
 
 		@Property
@@ -112,7 +107,7 @@ public class EmailsTests {
 			String[] domainParts = domain.split("\\.");
 			Assume.that(domainParts.length >= 2);
 			String tld = domainParts[domainParts.length - 1];
-			assertThat(stringContainsMinimumOneChar(ALLOWED_NOT_NUMERIC_CHARS_TLD, tld)).isTrue();
+			assertThat(containsAtLeastOneOf(tld, ALLOWED_NOT_NUMERIC_CHARS_TLD)).isTrue();
 		}
 
 		@Property(tries = 5000)
@@ -123,17 +118,8 @@ public class EmailsTests {
 			assertThat(isValidIPAddress(ipAddress)).isTrue();
 		}
 
-		private boolean stringContainsChar(String string, int c) {
-			return string.contains(Character.toString((char) c));
-		}
-
-		private boolean stringContainsMinimumOneChar(String string, String chars) {
-			for (char c : chars.toCharArray()) {
-				if (stringContainsChar(string, c)) {
-					return true;
-				}
-			}
-			return false;
+		private boolean isIn(int c, String string) {
+			return string.contains(String.valueOf((char) c));
 		}
 
 	}

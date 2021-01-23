@@ -1,8 +1,9 @@
 - 1.4.0
 
-    - Default for Email-Generation should be "unquoted" local part and "domain" host.
-
     - Set correct display name in Kotlin tests with modifier "internal"
+
+    - Warn on fixed seed depending on configuration
+      https://github.com/jlink/jqwik/issues/138
 
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140
@@ -24,9 +25,6 @@
         - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
     
         - Add documentation for Arbitrary.edgeCases(configuration)
-
-    - Warn on fixed seed depending on configuration
-      https://github.com/jlink/jqwik/issues/138
 
     - @StatisticsReportFormat
       https://github.com/jlink/jqwik/issues/146
