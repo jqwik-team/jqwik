@@ -9,24 +9,16 @@
         - Restrict number of generated edge cases to number of tries
           - For embedded/individual use of generators only use a max of 100 edge cases
         
-        - Arbitrary.edgeCases(Consumer<Config>):
-          - Special handling possible? for:
-              - Numeric Arbitraries
-              - CharacterArbitrary
-              - Arbitrary.of() arbitraries
-              - Collections
-              - Combinators
-        
-        - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
-    
         - Add documentation for Arbitrary.edgeCases(configuration)
+
+
+- 1.4.x
 
     - @StatisticsReportFormat
       https://github.com/jlink/jqwik/issues/146
         - label=<statistics label> to specify for which statistics to use
         - Make it repeatable
     
-
     - Domains
         - Deprecate AbstractDomainContextBase
             - Introduce DomainContextBase
@@ -38,8 +30,6 @@
         - Hand in property execution context to domains when being created.
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
-
-- 1.4.x
 
     - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
       https://github.com/jlink/jqwik/issues/121
@@ -74,4 +64,6 @@
     - Allow to add frequency to chars for String and Character arbitraries
       eg. StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
 
+    - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
+    
 
