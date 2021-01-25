@@ -95,7 +95,18 @@ public class CheckedProperty {
 
 	private PropertyConfiguration configurationWithEffectiveSeed() {
 		if (!configuration.getSeed().equals(Property.SEED_NOT_SET)) {
-			if(configuration.getFixedSeedMode() == FixedSeedMode.FAIL) {
+			applyFixedSeedMode();
+			return configuration.withSeed(configuration.getSeed());
+		}
+		if (configuration.getPreviousSeed() != null && configuration.getAfterFailureMode() != AfterFailureMode.RANDOM_SEED) {
+			return configuration.withSeed(configuration.getPreviousSeed());
+		}
+		return configuration.withSeed(SourceOfRandomness.createRandomSeed());
+	}
+
+	private void applyFixedSeedMode() {
+		switch (configuration.getFixedSeedMode()) {
+			case FAIL: {
 				String message = String.format(
 						"Failing %s [%s] in container [%s] as the fixed seed mode is set to FAIL",
 						configuration.getStereotype(),
@@ -103,7 +114,8 @@ public class CheckedProperty {
 						propertyLifecycleContext.containerClass().getName()
 				);
 				throw new FailOnFixedSeedException(message);
-			} else if(configuration.getFixedSeedMode() == FixedSeedMode.WARN) {
+			}
+			case WARN: {
 				String message = String.format(
 						"Using fixed seed for %s [%s] in container [%s]",
 						configuration.getStereotype(),
@@ -111,13 +123,9 @@ public class CheckedProperty {
 						propertyLifecycleContext.containerClass().getName()
 				);
 				LOG.warning(message);
+				break;
 			}
-			return configuration.withSeed(configuration.getSeed());
 		}
-		if (configuration.getPreviousSeed() != null && configuration.getAfterFailureMode() != AfterFailureMode.RANDOM_SEED) {
-			return configuration.withSeed(configuration.getPreviousSeed());
-		}
-		return configuration.withSeed(SourceOfRandomness.createRandomSeed());
 	}
 
 	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {
