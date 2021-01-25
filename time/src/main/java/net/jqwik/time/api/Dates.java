@@ -102,6 +102,10 @@ public class Dates {
 
 	/**
 	 * Create an arbitrary that generates instances of {@linkplain java.time.Period}.
+	 * <p>
+	 * By default years value can be between Integer.MIN_VALUE and Integer.MAX_VALUE
+	 * By default months value can be between 0 and 11
+	 * By default days value can be between 0 and 30
 	 *
 	 * @return a new arbitrary instance
 	 */

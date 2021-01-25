@@ -155,6 +155,22 @@ class PeriodTests {
 
 		}
 
+		@Property
+		void periodsWithMaxValueRange(@ForAll("periodsWithMaxValueRangeProvider") Period period) {
+			assertThat(period.getYears()).isBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
+			assertThat(period.getMonths()).isBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
+			assertThat(period.getDays()).isBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
+		}
+
+		@Provide
+		Arbitrary<Period> periodsWithMaxValueRangeProvider() {
+			PeriodArbitrary periodArbitrary = Dates.periods();
+			periodArbitrary = periodArbitrary.yearsBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
+			periodArbitrary = periodArbitrary.monthsBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
+			periodArbitrary = periodArbitrary.daysBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
+			return periodArbitrary;
+		}
+
 	}
 
 	@Group
@@ -249,6 +265,21 @@ class PeriodTests {
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					Period.of(5, Integer.MIN_VALUE, -5000),
 					Period.of(10, 500, Integer.MAX_VALUE)
+			);
+		}
+
+		@Example
+		void periodsWithMaxValueRange() {
+			PeriodArbitrary periods = Dates.periods()
+										   .yearsBetween(Integer.MIN_VALUE, Integer.MAX_VALUE)
+										   .monthsBetween(Integer.MIN_VALUE, Integer.MAX_VALUE)
+										   .daysBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
+			Set<Period> edgeCases = collectEdgeCases(periods.edgeCases());
+			assertThat(edgeCases).hasSize(3);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					Period.of(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
+					Period.of(0, 0, 0),
+					Period.of(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)
 			);
 		}
 
