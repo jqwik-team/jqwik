@@ -59,25 +59,24 @@ public class CheckedProperty {
 		try {
 			effectiveConfiguration = configurationWithEffectiveSeed();
 		} catch (FailOnFixedSeedException failOnFixedSeedException) {
-			return PropertyCheckResult.failed(
-					configuration.getStereotype(), propertyName, 0, 0,
-					configuration.getSeed(), configuration.getGenerationMode(),
-					configuration.getEdgeCasesMode(), 0, 0,
-					null, null, failOnFixedSeedException
-			);
+			return failed(configuration, failOnFixedSeedException);
 		}
 		maybeWarnOnMultipleTriesWithoutForallParameters(effectiveConfiguration);
 		try {
 			Reporter reporter = propertyLifecycleContext.reporter();
 			return createGenericProperty(effectiveConfiguration).check(reporter, reporting);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
-			return PropertyCheckResult.failed(
-					effectiveConfiguration.getStereotype(), propertyName, 0, 0,
-					effectiveConfiguration.getSeed(), configuration.getGenerationMode(),
-					configuration.getEdgeCasesMode(), 0, 0,
-					null, null, cannotFindArbitraryException
-			);
+			return failed(effectiveConfiguration, cannotFindArbitraryException);
 		}
+	}
+
+	private PropertyCheckResult failed(PropertyConfiguration configuration, JqwikException exception) {
+		return PropertyCheckResult.failed(
+				configuration.getStereotype(), propertyName, 0, 0,
+				configuration.getSeed(), configuration.getGenerationMode(),
+				configuration.getEdgeCasesMode(), 0, 0,
+				null, null, exception
+		);
 	}
 
 	private void maybeWarnOnMultipleTriesWithoutForallParameters(PropertyConfiguration effectiveConfiguration) {
