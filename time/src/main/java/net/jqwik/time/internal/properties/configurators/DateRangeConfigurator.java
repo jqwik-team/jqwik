@@ -1,6 +1,7 @@
 package net.jqwik.time.internal.properties.configurators;
 
 import java.time.*;
+import java.time.format.*;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -35,27 +36,23 @@ public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 
 	private Calendar isoDateToCalendar(String iso) {
 		LocalDate localDate = isoDateToLocalDate(iso);
-		if (localDate == null) {
-			return null;
-		}
 		return DefaultCalendarArbitrary.localDateToCalendar(localDate);
 	}
 
 	private Date isoDateToDate(String iso) {
 		Calendar calendar = isoDateToCalendar(iso);
-		if (calendar == null) {
-			return null;
-		}
 		return calendar.getTime();
 	}
 
 	private LocalDate isoDateToLocalDate(String iso) {
-		if (iso == null || iso.length() == 0) {
-			return null;
+		if (iso == null) {
+			throw new NullPointerException("Argument is null");
+		} else if (iso.length() == 0) {
+			throw new DateTimeParseException("Date length can not be 0. (Example: 2013-05-25)", iso, 0);
 		}
 		String[] parts = iso.split("-");
 		if (parts.length != 3) {
-			return null;
+			throw new DateTimeParseException("Date must consist of three parts. (Example: 2013-05-25)", iso, 0);
 		}
 		int year, month, day;
 		try {
@@ -63,7 +60,7 @@ public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 			month = Integer.parseInt(parts[1]);
 			day = Integer.parseInt(parts[2]);
 		} catch (NumberFormatException e) {
-			return null;
+			throw new DateTimeParseException("Date parts may only consist of digits. (Example: 2013-05-25)", iso, 0);
 		}
 		return LocalDate.of(year, month, day);
 	}

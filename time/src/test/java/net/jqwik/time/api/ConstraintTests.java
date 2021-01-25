@@ -1,9 +1,11 @@
 package net.jqwik.time.api;
 
 import java.time.*;
+import java.time.format.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.testing.*;
 import net.jqwik.time.api.constraints.*;
 import net.jqwik.time.internal.properties.arbitraries.*;
 
@@ -55,6 +57,35 @@ public class ConstraintTests {
 			assertThat(date.getDayOfWeek()).isLessThanOrEqualTo(DayOfWeek.FRIDAY);
 		}
 
+		@Group
+		class InvalidConfigurations {
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException1(@ForAll @DateRange(min = "2013-05") LocalDate date) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException2(@ForAll @DateRange(min = "foo") LocalDate date) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException3(@ForAll @DateRange(max = "--05-25") LocalDate date) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException4(@ForAll @DateRange(max = "13") LocalDate date) {
+				//do nothing
+			}
+
+		}
+
 	}
 
 	@Group
@@ -100,6 +131,35 @@ public class ConstraintTests {
 		void dayOfWeekRangeBetweenTuesdayAndFriday(@ForAll @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) Calendar calendar) {
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isGreaterThanOrEqualTo(DayOfWeek.TUESDAY);
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isLessThanOrEqualTo(DayOfWeek.FRIDAY);
+		}
+
+		@Group
+		class InvalidConfigurations {
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException1(@ForAll @DateRange(min = "2013-05") Calendar date) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException2(@ForAll @DateRange(min = "foo") Calendar date) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException3(@ForAll @DateRange(max = "--05-25") Calendar date) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException4(@ForAll @DateRange(max = "13") Calendar date) {
+				//do nothing
+			}
+
 		}
 
 	}
@@ -156,6 +216,35 @@ public class ConstraintTests {
 			return calendar;
 		}
 
+		@Group
+		class InvalidConfigurations {
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException1(@ForAll @DateRange(min = "2013-05") Date date) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException2(@ForAll @DateRange(min = "foo") Date date) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException3(@ForAll @DateRange(max = "--05-25") Date date) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void dateRangeThrowsException4(@ForAll @DateRange(max = "13") Date date) {
+				//do nothing
+			}
+
+		}
+
 	}
 
 	@Group
@@ -179,13 +268,42 @@ public class ConstraintTests {
 			assertThat(yearMonth.getMonth()).isLessThanOrEqualTo(Month.JULY);
 		}
 
+		@Group
+		class InvalidConfigurations {
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void yearMonthRangeThrowsException1(@ForAll @YearMonthRange(min = "2013-05-25") YearMonth yearMonth) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void yearMonthRangeThrowsException2(@ForAll @YearMonthRange(min = "foo") YearMonth yearMonth) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void yearMonthRangeThrowsException3(@ForAll @YearMonthRange(max = "--05-25") YearMonth yearMonth) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void yearMonthRangeThrowsException4(@ForAll @YearMonthRange(max = "13") YearMonth yearMonth) {
+				//do nothing
+			}
+
+		}
+
 	}
 
 	@Group
 	class MonthDayConstraints {
 
 		@Property
-		void monthDayRangeBetween(@ForAll @MonthDayRange(min = "05-25", max = "08-23") MonthDay monthDay) {
+		void monthDayRangeBetween(@ForAll @MonthDayRange(min = "--05-25", max = "--08-23") MonthDay monthDay) {
 			assertThat(monthDay).isGreaterThanOrEqualTo(MonthDay.of(Month.MAY, 25));
 			assertThat(monthDay).isLessThanOrEqualTo(MonthDay.of(Month.AUGUST, 23));
 		}
@@ -194,6 +312,35 @@ public class ConstraintTests {
 		void monthRangeBetweenMarchAndJuly(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) MonthDay monthDay) {
 			assertThat(monthDay.getMonth()).isGreaterThanOrEqualTo(Month.MARCH);
 			assertThat(monthDay.getMonth()).isLessThanOrEqualTo(Month.JULY);
+		}
+
+		@Group
+		class InvalidConfigurations {
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void monthDayRangeThrowsException1(@ForAll @MonthDayRange(min = "2013-05-25") MonthDay monthDay) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void monthDayRangeThrowsException2(@ForAll @MonthDayRange(min = "foo") MonthDay monthDay) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void monthDayRangeThrowsException3(@ForAll @MonthDayRange(max = "2013-05") MonthDay monthDay) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void monthDayRangeThrowsException4(@ForAll @MonthDayRange(max = "13") MonthDay monthDay) {
+				//do nothing
+			}
+
 		}
 
 	}
