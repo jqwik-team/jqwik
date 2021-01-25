@@ -341,6 +341,12 @@ public class ConstraintTests {
 				//do nothing
 			}
 
+			@Example
+			@ExpectFailure(failureType = DateTimeParseException.class)
+			void monthDayRangeThrowsException5(@ForAll @MonthDayRange(max = "05-25") MonthDay monthDay) {
+				//do nothing
+			}
+
 		}
 
 	}
