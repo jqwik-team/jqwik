@@ -30,8 +30,10 @@ and
 
 #### New and Enhanced Features
 
-- There is a [new configuration parameter jqwik.seeds.whenfixed`](/docs/snapshot/user-guide.html#jqwik-configuration)
-  to warn or even fail when a property has been given a fixed random seed.
+- There is a new annotation attribute `@Property.whenSeedFixed` and a new
+  [configuration parameter](/docs/snapshot/user-guide.html#jqwik-configuration)
+  `jqwik.seeds.whenfixed`
+  to warn or even fail when a property has been given a fixed random seed. 
   See [this issued](https://github.com/jlink/jqwik/issues/138) for more details.
   Many thanks to [osi](https://github.com/osi) for this contribution.
 

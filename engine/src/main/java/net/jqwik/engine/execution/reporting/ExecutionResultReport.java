@@ -196,7 +196,7 @@ public class ExecutionResultReport {
 	private static String helpFixedSeedMode(FixedSeedMode fixedSeedMode) {
 		switch (fixedSeedMode) {
 			case ALLOW:
-				return "allow fixing the random seed";
+				return "fixing the random seed is allowed";
 			case FAIL:
 				return "fail when fixed random seed";
 			case WARN:

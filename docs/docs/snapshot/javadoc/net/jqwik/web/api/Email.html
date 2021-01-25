@@ -120,9 +120,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 @API(status=EXPERIMENTAL,
      since="1.4.0")
 public @interface <span class="memberNameLabel">Email</span></pre>
-<div class="block">Constrain strings to be valid email addresses.
+<div class="block">Constrain generated strings to be valid email addresses. By default, only addresses
+ with unquoted local part and domain hosts are generated (e.g. <code>me@myhost.com</code>),
+ because many - if not most - applications and web forms only accept those.
 
- Applies to string parameters which are also annotated with <code>@ForAll</code>.</div>
+ <p>
+ Applies to parameters of type String that are also annotated with <code>@ForAll</code>.
+ </p></div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../api/ForAll.html" title="annotation in net.jqwik.api"><code>ForAll</code></a>, 
@@ -229,7 +233,7 @@ public @interface <span class="memberNameLabel">Email</span></pre>
 <div class="block">Are hosts with ipv6 addresses allowed.</div>
 <dl>
 <dt>Default:</dt>
-<dd>true</dd>
+<dd>false</dd>
 </dl>
 </li>
 </ul>
@@ -248,7 +252,7 @@ public @interface <span class="memberNameLabel">Email</span></pre>
 <div class="block">Are hosts with ipv4 addresses allowed.</div>
 <dl>
 <dt>Default:</dt>
-<dd>true</dd>
+<dd>false</dd>
 </dl>
 </li>
 </ul>
@@ -267,7 +271,7 @@ public @interface <span class="memberNameLabel">Email</span></pre>
 <div class="block">Are quoted local parts allowed.</div>
 <dl>
 <dt>Default:</dt>
-<dd>true</dd>
+<dd>false</dd>
 </dl>
 </li>
 </ul>

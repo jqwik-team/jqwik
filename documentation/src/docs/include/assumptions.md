@@ -46,6 +46,7 @@ tries = 1000
 checks = 20 
 generation = RANDOMIZED
 after-failure = PREVIOUS_SEED
+when-fixed-seed = ALLOW
 edge-cases#mode = MIXIN 
 seed = 1066117555581106850
 ```

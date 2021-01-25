@@ -79,6 +79,7 @@ tries = 16                    | # of calls to property
 checks = 16                   | # of not rejected calls
 generation = RANDOMIZED       | parameters are randomly generated
 after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
 edge-cases#mode = MIXIN       | edge cases are mixed in
 edge-cases#total = 4          | # of all combined edge cases
 edge-cases#tried = 0          | # of edge cases tried in current run
@@ -167,11 +168,20 @@ annotation has a few optional values:
   _jqwik_ will use a random _random seed_. The actual seed used is being reported by
   each run property.
 
+- `FixedSeedMode whenFixedSeed`: Influence how to react when this property's random seed
+  is fixed through the `seed` attribute:
+  - `FixedSeedMode.ALLOW`: Just use the seed.
+  - `FixedSeedMode.WARN`: Log a warning.
+  - `FixedSeedMode.FAIL`: Fail this property with an exception.
+
+  This can be useful to prevent accidental commits of fixed seeds into source control.
+  The default is `ALLOW`, which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
+
 - `int maxDiscardRatio`: The maximal number of tried versus actually checked property runs
   in case you are using [Assumptions](#assumptions). If the ratio is exceeded _jqwik_ will
   report this property as a failure.
 
-  The default is `5` which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
+  The default is `5`, which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
 
 - `ShrinkingMode shrinking`: You can influence the way [shrinking](#result-shrinking) is done
     - `ShrinkingMode.OFF`: No shrinking at all
@@ -232,6 +242,7 @@ tries = 10
 checks = 10 
 generation = EXHAUSTIVE
 after-failure = PREVIOUS_SEED
+when-fixed-seed = ALLOW
 edge-cases#mode = MIXIN 
 edge-cases#total = 2 
 edge-cases#tried = 2 

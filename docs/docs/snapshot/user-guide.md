@@ -295,6 +295,7 @@ mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
     checks = 1000                 | # of not rejected calls
     generation = RANDOMIZED       | parameters are randomly generated
     after-failure = PREVIOUS_SEED | use the previous seed
+    when-fixed-seed = ALLOW       | fixing the random seed is allowed
     edge-cases#mode = MIXIN       | edge cases are generated first
     edge-cases#total = 0          | # of all combined edge cases
     edge-cases#tried = 0          | # of edge cases tried in current run
@@ -439,6 +440,7 @@ tries = 16                    | # of calls to property
 checks = 16                   | # of not rejected calls
 generation = RANDOMIZED       | parameters are randomly generated
 after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
 edge-cases#mode = MIXIN       | edge cases are mixed in
 edge-cases#total = 4          | # of all combined edge cases
 edge-cases#tried = 0          | # of edge cases tried in current run
@@ -527,11 +529,20 @@ annotation has a few optional values:
   _jqwik_ will use a random _random seed_. The actual seed used is being reported by
   each run property.
 
+- `FixedSeedMode whenFixedSeed`: Influence how to react when this property's random seed
+  is fixed through the `seed` attribute:
+  - `FixedSeedMode.ALLOW`: Just use the seed.
+  - `FixedSeedMode.WARN`: Log a warning.
+  - `FixedSeedMode.FAIL`: Fail this property with an exception.
+
+  This can be useful to prevent accidental commits of fixed seeds into source control.
+  The default is `ALLOW`, which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
+
 - `int maxDiscardRatio`: The maximal number of tried versus actually checked property runs
   in case you are using [Assumptions](#assumptions). If the ratio is exceeded _jqwik_ will
   report this property as a failure.
 
-  The default is `5` which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
+  The default is `5`, which can be overridden in [`junit-platform.properties`](#jqwik-configuration).
 
 - `ShrinkingMode shrinking`: You can influence the way [shrinking](#result-shrinking) is done
     - `ShrinkingMode.OFF`: No shrinking at all
@@ -592,6 +603,7 @@ tries = 10
 checks = 10 
 generation = EXHAUSTIVE
 after-failure = PREVIOUS_SEED
+when-fixed-seed = ALLOW
 edge-cases#mode = MIXIN 
 edge-cases#total = 2 
 edge-cases#tried = 2 
@@ -2812,6 +2824,7 @@ tries = 1000
 checks = 20 
 generation = RANDOMIZED
 after-failure = PREVIOUS_SEED
+when-fixed-seed = ALLOW
 edge-cases#mode = MIXIN 
 seed = 1066117555581106850
 ```
@@ -3975,6 +3988,8 @@ jqwik.shrinking.default = BOUNDED            # Set default shrinking behaviour:
                                              # BOUNDED, FULL, or OFF
 jqwik.shrinking.bounded.seconds = 10         # The maximum number of seconds to shrink if
                                              # shrinking behaviour is set to BOUNDED
+jqwik.seeds.whenfixed = ALLOW                # How a test should act when a seed is fixed. Can set to ALLOW, WARN or FAIL
+                                             # Useful to prevent accidental commits of fixed seeds into source control.                                             
 ```
 
 Prior releases of _jqwik_ used a custom `jqwik.properties`. While this continues to work, it is deprecated
@@ -4005,7 +4020,7 @@ _jqwik_ comes with a few additional modules:
 
 ### Web Module
 
-This modules artefact name is `jqwik-web`. It's supposed to provide arbitraries,
+This module's artefact name is `jqwik-web`. It's supposed to provide arbitraries,
 default generation and annotations for web related types. Currently only
 [email generation](#email-address-generation) is supported.
 
@@ -4042,7 +4057,11 @@ You can use the following restrictions in `@Email` annotation:
 - `quotedLocalPart` to decide whether quoted local parts are generated
 - `domainHost` to decide whether domains are generated in the host part
 - `ipv4Host` to decide whether ipv4 addresses are generated in the host part
-- `ipv6Host` to decide whether ipv6 addresses are generated in the host part
+- `ipv6Host` to decide whether ipv6 addresses are generated in the host part 
+  
+By default, only addresses with unquoted local part and domain hosts are 
+generated (e.g. `me@myhost.com`), because many - if not most - applications 
+and web forms only accept those.
 
 You can use it as follows:
 
@@ -4053,14 +4072,14 @@ void defaultEmailAddresses(@ForAll @Email String email) {
 }
 
 @Property
-void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = false, ipv4Host = false, ipv6Host = false) String email) {
+void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = true, ipv4Host = true, domainHost = false) String email) {
     assertThat(email).contains("@");
 }
 ```
 
 ### Time Module
 
-This modules artefact name is `jqwik-time`. It's supposed to provide arbitraries,
+This module's artefact name is `jqwik-time`. It's supposed to provide arbitraries,
 default generation and annotations for date and time types.
 
 This module is part of jqwik's default dependencies.
@@ -4134,7 +4153,7 @@ Arbitrary<LocalDate> dates() {
 
 ### Testing Module
 
-This modules artefact name is `jqwik-testing`. It provides a few helpful methods
+This module's artefact name is `jqwik-testing`. It provides a few helpful methods
 and classes for generator writers to test their generators - including 
 edge cases and shrinking.
 

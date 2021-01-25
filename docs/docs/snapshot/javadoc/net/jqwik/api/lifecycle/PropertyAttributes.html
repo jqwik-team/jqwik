@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -228,24 +228,36 @@ public interface <span class="typeNameLabel">PropertyAttributes</span></pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setWhenFixedSeed(net.jqwik.api.FixedSeedMode)">setWhenFixedSeed</a></span>&#8203;(<a href="../FixedSeedMode.html" title="enum in net.jqwik.api">FixedSeedMode</a>&nbsp;fixedSeedMode)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.util.Optional&lt;<a href="../ShrinkingMode.html" title="enum in net.jqwik.api">ShrinkingMode</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#shrinking()">shrinking</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The shrinking mode of the property at hand.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>java.util.Optional&lt;java.lang.String&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stereotype()">stereotype</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The stereotype of the property at hand.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>java.util.Optional&lt;java.lang.Integer&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#tries()">tries</a></span>()</code></th>
 <td class="colLast">
 <div class="block">The number of tries to be run in the property at hand.</div>
+</td>
+</tr>
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>java.util.Optional&lt;<a href="../FixedSeedMode.html" title="enum in net.jqwik.api">FixedSeedMode</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#whenFixedSeed()">whenFixedSeed</a></span>()</code></th>
+<td class="colLast">
+<div class="block">The fixed seed mode of the property at hand.</div>
 </td>
 </tr>
 </table>
@@ -398,6 +410,24 @@ public interface <span class="typeNameLabel">PropertyAttributes</span></pre>
 </dl>
 </li>
 </ul>
+<a id="whenFixedSeed()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>whenFixedSeed</h4>
+<pre class="methodSignature">@API(status=EXPERIMENTAL,
+     since="1.4.0")
+java.util.Optional&lt;<a href="../FixedSeedMode.html" title="enum in net.jqwik.api">FixedSeedMode</a>&gt;&nbsp;whenFixedSeed()</pre>
+<div class="block">The fixed seed mode of the property at hand.
+ Only present when set explicitly through <a href="../Property.html#whenFixedSeed()">Property.whenFixedSeed()</a> ()}
+ or <a href="#setWhenFixedSeed(net.jqwik.api.FixedSeedMode)">setWhenFixedSeed(FixedSeedMode)</a>.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>optional fixed seed mode</dd>
+</dl>
+</li>
+</ul>
 <a id="setTries(java.lang.Integer)">
 <!--   -->
 </a>
@@ -464,10 +494,19 @@ public interface <span class="typeNameLabel">PropertyAttributes</span></pre>
 <a id="setSeed(java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setSeed</h4>
 <pre class="methodSignature">void&nbsp;setSeed&#8203;(java.lang.String&nbsp;seed)</pre>
+</li>
+</ul>
+<a id="setWhenFixedSeed(net.jqwik.api.FixedSeedMode)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setWhenFixedSeed</h4>
+<pre class="methodSignature">void&nbsp;setWhenFixedSeed&#8203;(<a href="../FixedSeedMode.html" title="enum in net.jqwik.api">FixedSeedMode</a>&nbsp;fixedSeedMode)</pre>
 </li>
 </ul>
 </li>

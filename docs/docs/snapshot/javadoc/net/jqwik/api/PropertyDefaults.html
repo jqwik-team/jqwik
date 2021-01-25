@@ -166,6 +166,11 @@ public @interface <span class="memberNameLabel">PropertyDefaults</span></pre>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#tries()">tries</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="FixedSeedMode.html" title="enum in net.jqwik.api">FixedSeedMode</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#whenFixedSeed()">whenFixedSeed</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -258,13 +263,33 @@ public @interface <span class="memberNameLabel">PropertyDefaults</span></pre>
 <li class="blockList"><a id="edgeCases()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>edgeCases</h4>
 <pre><a href="EdgeCasesMode.html" title="enum in net.jqwik.api">EdgeCasesMode</a>&nbsp;edgeCases</pre>
 <dl>
 <dt>Default:</dt>
 <dd>net.jqwik.api.EdgeCasesMode.NOT_SET</dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="whenFixedSeed()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>whenFixedSeed</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.4.0")
+<a href="FixedSeedMode.html" title="enum in net.jqwik.api">FixedSeedMode</a>&nbsp;whenFixedSeed</pre>
+<dl>
+<dt>Default:</dt>
+<dd>net.jqwik.api.FixedSeedMode.NOT_SET</dd>
 </dl>
 </li>
 </ul>

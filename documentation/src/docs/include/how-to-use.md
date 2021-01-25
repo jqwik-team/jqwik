@@ -111,6 +111,7 @@ mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
     checks = 1000                 | # of not rejected calls
     generation = RANDOMIZED       | parameters are randomly generated
     after-failure = PREVIOUS_SEED | use the previous seed
+    when-fixed-seed = ALLOW       | fixing the random seed is allowed
     edge-cases#mode = MIXIN       | edge cases are generated first
     edge-cases#total = 0          | # of all combined edge cases
     edge-cases#tried = 0          | # of edge cases tried in current run
