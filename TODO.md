@@ -1,8 +1,8 @@
 - 1.4.0
 
     - Time and Date Generation Module
+        - Finish dates
         - https://github.com/jlink/jqwik/issues/140
-        - DateArbitrary.shrinkTowards(date)
 
     - Edge Cases
 
@@ -30,6 +30,13 @@
         - Hand in property execution context to domains when being created.
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
+
+    - Time Module:
+        - [LocalDate|Calendar|DateArbitrary].shrinkTowards(date)
+        - Generate Instant, LocalTime, ZonedTime etc.
+    
+    - Web Module:
+        - IpAddresses.ipv4Addresses()|ipv6Addresses()
 
     - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
       https://github.com/jlink/jqwik/issues/121
