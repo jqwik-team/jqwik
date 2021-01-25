@@ -30,6 +30,7 @@ public @interface PropertyDefaults {
 
 	EdgeCasesMode edgeCases() default EdgeCasesMode.NOT_SET;
 
+	@API(status = EXPERIMENTAL, since = "1.4.0")
 	FixedSeedMode whenFixedSeed() default FixedSeedMode.NOT_SET;
 
 	class PropertyDefaultsHook implements AroundPropertyHook {
