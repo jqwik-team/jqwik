@@ -104,6 +104,7 @@ public interface PropertyAttributes {
 	 *
 	 * @return optional fixed seed mode
 	 */
+	@API(status = EXPERIMENTAL, since = "1.4.0")
 	Optional<FixedSeedMode> whenFixedSeed();
 
 	void setTries(Integer tries);
