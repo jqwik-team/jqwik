@@ -30,6 +30,11 @@ and
 
 #### New and Enhanced Features
 
+- There is a [new configuration parameter jqwik.seeds.whenfixed`](/docs/snapshot/user-guide.html#jqwik-configuration)
+  to warn or even fail when a property has been given a fixed random seed.
+  See [this issued](https://github.com/jlink/jqwik/issues/138) for more details.
+  Many thanks to [osi](https://github.com/osi) for this contribution.
+
 - jqwik's approach to specify uniqueness of generated objects has been completely revamped:
 
     - `Arbitrary.unique()` and the annotation `@Unique` are now deprecated and will
@@ -41,6 +46,7 @@ and
       
 - There's a new [jqwik module `jqwik-time`](/docs/snapshot/user-guide.html#time-module)
   which simplifies the generation of dates and times.
+  Many thanks to [zinki97](https://github.com/zinki97) for this contribution.
 
 - There's a new [jqwik module `jqwik-web`](/docs/snapshot/user-guide.html#web-module)
   which is currently home of email addresses generation.
@@ -50,6 +56,7 @@ and
   Parameters specified in `jqwik.properties` continue to work, but are considered deprecated.
   Log messages will be emitted for any used properties with their new name.
   Some [parameter names](/docs/snapshot/user-guide.html#jqwik-configuration) have also changed.
+  Many thanks to [osi](https://github.com/osi) for this contribution.
 
 - Using internal Kotlin methods as properties will now produce the correct name
   as seen in the Kotlin source code.

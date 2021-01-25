@@ -1,8 +1,5 @@
 - 1.4.0
 
-    - Warn on fixed seed depending on configuration
-      https://github.com/jlink/jqwik/issues/138
-
     - Time and Date Generation Module
         - https://github.com/jlink/jqwik/issues/140
         - DateArbitrary.shrinkTowards(date)
