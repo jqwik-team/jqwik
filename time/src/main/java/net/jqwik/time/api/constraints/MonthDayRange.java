@@ -25,7 +25,7 @@ import static org.apiguardian.api.API.Status.*;
 @Documented
 @API(status = EXPERIMENTAL, since = "1.4.1")
 public @interface MonthDayRange {
-	String min() default "01-01";
+	String min() default "--01-01";
 
-	String max() default "12-31";
+	String max() default "--12-31";
 }

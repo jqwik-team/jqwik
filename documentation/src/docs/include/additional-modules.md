@@ -101,6 +101,25 @@ In addition, you can constrain their values using the following functions and an
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
 - You can decide whether leap years to generate or not using `leapYears(withLeapYears)` and `@LeapYears`.
 
+You can use it as follows:
+
+```java
+@Property
+void generateLocalDatesWithAnnotation(@ForAll LocalDate localDate) {
+    assertThat(localDate).isNotNull();
+}
+
+@Property
+void generateLocalDates(@ForAll("dates") LocalDate localDate) {
+    assertThat(localDate).isNotNull();
+}
+
+@Provide
+Arbitrary<LocalDate> dates() {
+    return Dates.dates();
+}
+```
+
 ##### CalendarArbitrary
 
 - The target type is `Calendar`
@@ -153,7 +172,7 @@ In addition, you can constrain their values using the following functions and an
 
 ##### Special note on `@DateRange`, `@MonthDayRange` and `@YearMonthRange`
 
-`@DateRange`, `@MonthDayRange` and `@YearMonthRange` use the ISO format for date strings. Examples: `2013-05-25`, `05-25` and `2013-05`.
+`@DateRange`, `@MonthDayRange` and `@YearMonthRange` use the ISO format for date strings. Examples: `2013-05-25`, `--05-25` and `2013-05`.
 
 ### Testing Module
 
