@@ -38,7 +38,8 @@ class DateTests {
 	@Group
 	class SimpleAnnotations {
 
-		@Disabled //Disabled when default generation was removed. TODO: Enable when it is available again
+		@Disabled("Disabled when default generation was removed. Will be enabled when default generation becomes available again.")
+		//TODO: Enable when it is available again.
 		@Property
 		void validDateIsGenerated(@ForAll Date date) {
 			assertThat(date).isNotNull();
