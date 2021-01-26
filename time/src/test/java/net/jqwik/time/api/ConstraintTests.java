@@ -6,6 +6,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.testing.*;
+import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
 import net.jqwik.time.internal.properties.arbitraries.*;
 
@@ -91,8 +92,14 @@ public class ConstraintTests {
 	@Group
 	class CalendarConstraints {
 
+		//TODO: remove when @ForAll is available
+		@Provide
+		CalendarArbitrary dates() {
+			return Dates.datesAsCalendar();
+		}
+
 		@Property
-		void dateRangeBetween(@ForAll @DateRange(min = "2013-05-25", max = "2020-08-23") Calendar calendar) {
+		void dateRangeBetween(@ForAll("dates") @DateRange(min = "2013-05-25", max = "2020-08-23") Calendar calendar) {
 			Calendar calendarStart = CalendarTests.getCalendar(2013, Calendar.MAY, 25);
 			Calendar calendarEnd = CalendarTests.getCalendar(2020, Calendar.AUGUST, 23);
 			assertThat(calendar).isGreaterThanOrEqualTo(calendarStart);
@@ -100,35 +107,35 @@ public class ConstraintTests {
 		}
 
 		@Property
-		void yearRangeBetween500And700(@ForAll @YearRange(min = 500, max = 700) Calendar calendar) {
+		void yearRangeBetween500And700(@ForAll("dates") @YearRange(min = 500, max = 700) Calendar calendar) {
 			assertThat(calendar.get(Calendar.YEAR)).isGreaterThanOrEqualTo(500);
 			assertThat(calendar.get(Calendar.YEAR)).isLessThanOrEqualTo(700);
 		}
 
 		@Property
-		void monthRangeBetweenMarchAndJuly(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) Calendar calendar) {
+		void monthRangeBetweenMarchAndJuly(@ForAll("dates") @MonthRange(min = Month.MARCH, max = Month.JULY) Calendar calendar) {
 			assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(calendar)).isGreaterThanOrEqualTo(Month.MARCH);
 			assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(calendar)).isLessThanOrEqualTo(Month.JULY);
 		}
 
 		@Property
-		void dayOfMonthRangeBetween15And20Integer(@ForAll @DayOfMonthRange(min = 15, max = 20) Calendar calendar) {
+		void dayOfMonthRangeBetween15And20Integer(@ForAll("dates") @DayOfMonthRange(min = 15, max = 20) Calendar calendar) {
 			assertThat(calendar.get(Calendar.DAY_OF_MONTH)).isGreaterThanOrEqualTo(15);
 			assertThat(calendar.get(Calendar.DAY_OF_MONTH)).isLessThanOrEqualTo(20);
 		}
 
 		@Property
-		void dayOfWeekRangeOnlyMonday(@ForAll @DayOfWeekRange(max = DayOfWeek.MONDAY) Calendar calendar) {
+		void dayOfWeekRangeOnlyMonday(@ForAll("dates") @DayOfWeekRange(max = DayOfWeek.MONDAY) Calendar calendar) {
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isEqualTo(DayOfWeek.MONDAY);
 		}
 
 		@Property
-		void dayOfWeekRangeOnlySunday(@ForAll @DayOfWeekRange(min = DayOfWeek.SUNDAY) Calendar calendar) {
+		void dayOfWeekRangeOnlySunday(@ForAll("dates") @DayOfWeekRange(min = DayOfWeek.SUNDAY) Calendar calendar) {
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isEqualTo(DayOfWeek.SUNDAY);
 		}
 
 		@Property
-		void dayOfWeekRangeBetweenTuesdayAndFriday(@ForAll @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) Calendar calendar) {
+		void dayOfWeekRangeBetweenTuesdayAndFriday(@ForAll("dates") @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) Calendar calendar) {
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isGreaterThanOrEqualTo(DayOfWeek.TUESDAY);
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(calendar)).isLessThanOrEqualTo(DayOfWeek.FRIDAY);
 		}
@@ -138,25 +145,25 @@ public class ConstraintTests {
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException1(@ForAll @DateRange(min = "2013-05") Calendar date) {
+			void dateRangeThrowsException1(@ForAll("dates") @DateRange(min = "2013-05") Calendar date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException2(@ForAll @DateRange(min = "foo") Calendar date) {
+			void dateRangeThrowsException2(@ForAll("dates") @DateRange(min = "foo") Calendar date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException3(@ForAll @DateRange(max = "--05-25") Calendar date) {
+			void dateRangeThrowsException3(@ForAll("dates") @DateRange(max = "--05-25") Calendar date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException4(@ForAll @DateRange(max = "13") Calendar date) {
+			void dateRangeThrowsException4(@ForAll("dates") @DateRange(max = "13") Calendar date) {
 				//do nothing
 			}
 
@@ -167,8 +174,14 @@ public class ConstraintTests {
 	@Group
 	class DateConstraints {
 
+		//TODO: remove when @ForAll is available
+		@Provide
+		DateArbitrary dates() {
+			return Dates.datesAsDate();
+		}
+
 		@Property
-		void dateRangeBetween(@ForAll @DateRange(min = "2013-05-25", max = "2020-08-23") Date date) {
+		void dateRangeBetween(@ForAll("dates") @DateRange(min = "2013-05-25", max = "2020-08-23") Date date) {
 			Date dateStart = DateTests.getDate(2013, Calendar.MAY, 25);
 			Date dateEnd = DateTests.getDate(2020, Calendar.AUGUST, 23);
 			assertThat(date).isAfterOrEqualTo(dateStart);
@@ -176,35 +189,35 @@ public class ConstraintTests {
 		}
 
 		@Property
-		void yearRangeBetween500And700(@ForAll @YearRange(min = 500, max = 700) Date date) {
+		void yearRangeBetween500And700(@ForAll("dates") @YearRange(min = 500, max = 700) Date date) {
 			assertThat(dateToCalendar(date).get(Calendar.YEAR)).isGreaterThanOrEqualTo(500);
 			assertThat(dateToCalendar(date).get(Calendar.YEAR)).isLessThanOrEqualTo(700);
 		}
 
 		@Property
-		void monthRangeBetweenMarchAndJuly(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) Date date) {
+		void monthRangeBetweenMarchAndJuly(@ForAll("dates") @MonthRange(min = Month.MARCH, max = Month.JULY) Date date) {
 			assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isGreaterThanOrEqualTo(Month.MARCH);
 			assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isLessThanOrEqualTo(Month.JULY);
 		}
 
 		@Property
-		void dayOfMonthRangeBetween15And20Integer(@ForAll @DayOfMonthRange(min = 15, max = 20) Date date) {
+		void dayOfMonthRangeBetween15And20Integer(@ForAll("dates") @DayOfMonthRange(min = 15, max = 20) Date date) {
 			assertThat(dateToCalendar(date).get(Calendar.DAY_OF_MONTH)).isGreaterThanOrEqualTo(15);
 			assertThat(dateToCalendar(date).get(Calendar.DAY_OF_MONTH)).isLessThanOrEqualTo(20);
 		}
 
 		@Property
-		void dayOfWeekRangeOnlyMonday(@ForAll @DayOfWeekRange(max = DayOfWeek.MONDAY) Date date) {
+		void dayOfWeekRangeOnlyMonday(@ForAll("dates") @DayOfWeekRange(max = DayOfWeek.MONDAY) Date date) {
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date))).isEqualTo(DayOfWeek.MONDAY);
 		}
 
 		@Property
-		void dayOfWeekRangeOnlySunday(@ForAll @DayOfWeekRange(min = DayOfWeek.SUNDAY) Date date) {
+		void dayOfWeekRangeOnlySunday(@ForAll("dates") @DayOfWeekRange(min = DayOfWeek.SUNDAY) Date date) {
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date))).isEqualTo(DayOfWeek.SUNDAY);
 		}
 
 		@Property
-		void dayOfWeekRangeBetweenTuesdayAndFriday(@ForAll @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) Date date) {
+		void dayOfWeekRangeBetweenTuesdayAndFriday(@ForAll("dates") @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) Date date) {
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date)))
 					.isGreaterThanOrEqualTo(DayOfWeek.TUESDAY);
 			assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date))).isLessThanOrEqualTo(DayOfWeek.FRIDAY);
@@ -221,25 +234,25 @@ public class ConstraintTests {
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException1(@ForAll @DateRange(min = "2013-05") Date date) {
+			void dateRangeThrowsException1(@ForAll("dates") @DateRange(min = "2013-05") Date date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException2(@ForAll @DateRange(min = "foo") Date date) {
+			void dateRangeThrowsException2(@ForAll("dates") @DateRange(min = "foo") Date date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException3(@ForAll @DateRange(max = "--05-25") Date date) {
+			void dateRangeThrowsException3(@ForAll("dates") @DateRange(max = "--05-25") Date date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException4(@ForAll @DateRange(max = "13") Date date) {
+			void dateRangeThrowsException4(@ForAll("dates") @DateRange(max = "13") Date date) {
 				//do nothing
 			}
 

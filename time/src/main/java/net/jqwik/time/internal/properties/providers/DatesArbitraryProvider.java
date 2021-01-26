@@ -10,18 +10,13 @@ import net.jqwik.time.api.*;
 public class DatesArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalDate.class) || targetType.isAssignableFrom(Calendar.class) || targetType
-																													  .isAssignableFrom(Date.class);
+		return targetType.isAssignableFrom(LocalDate.class);
 	}
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		if (targetType.isAssignableFrom(LocalDate.class)) {
 			return Collections.singleton(Dates.dates());
-		} else if (targetType.isAssignableFrom(Calendar.class)) {
-			return Collections.singleton(Dates.datesAsCalendar());
-		} else if (targetType.isAssignableFrom(Date.class)) {
-			return Collections.singleton(Dates.datesAsDate());
 		} else {
 			return null;
 		}

@@ -24,7 +24,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@API(status = EXPERIMENTAL, since = "1.4.1")
+@API(status = EXPERIMENTAL, since = "1.4.0")
 public @interface MonthRange {
 	Month min() default Month.JANUARY;
 

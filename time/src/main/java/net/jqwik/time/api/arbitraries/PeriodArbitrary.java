@@ -11,7 +11,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Fluent interface to configure the generation of period values.
  */
-@API(status = EXPERIMENTAL, since = "1.4.1")
+@API(status = EXPERIMENTAL, since = "1.4.0")
 public interface PeriodArbitrary extends Arbitrary<Period> {
 
 	/**
