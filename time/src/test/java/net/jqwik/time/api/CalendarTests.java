@@ -32,7 +32,7 @@ class CalendarTests {
 	@Group
 	class SimpleAnnotations {
 
-		@Disabled
+		@Disabled //Disabled when default generation was removed. TODO: Enable when it is available again
 		@Property
 		void validCalendarIsGenerated(@ForAll Calendar calendar) {
 			assertThat(calendar).isNotNull();
