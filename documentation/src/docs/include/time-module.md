@@ -7,7 +7,7 @@ This module is part of jqwik's default dependencies.
 
 The date generation is in an extra module which have to be add in a project's dependency.
 By default, years between 1900 and 2500 are generated. You can change this by setting min/max values.
-You can create an arbitrary for date values by using `@ForAll` annotation to date specific types (`LocalDate`, `Calendar`, `Date`, `MonthDay`, `Period`, `Year` and `YearMonth`) or by calling a static method on class `Dates`:
+You can create an arbitrary for date values by using `@ForAll` annotation to date specific types (`LocalDate`, `MonthDay`, `Period`, `Year` and `YearMonth`) or by calling a static method on class `Dates`:
 
 - [`LocalDateArbitrary dates()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#dates())
 - [`CalendarArbitrary datesAsCalendar()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#datesAsCalendar())
