@@ -38,13 +38,14 @@ class DateTests {
 	@Group
 	class SimpleAnnotations {
 
+		@Disabled
 		@Property
 		void validCalendarIsGenerated(@ForAll Date date) {
 			assertThat(date).isNotNull();
 		}
 
 		@Property
-		void noLeapYearIsGenerated(@ForAll @LeapYears(withLeapYears = false) Date date) {
+		void noLeapYearIsGenerated(@ForAll("dates") @LeapYears(withLeapYears = false) Date date) {
 			assertThat(new GregorianCalendar().isLeapYear(dateToCalendar(date).get(Calendar.YEAR))).isFalse();
 		}
 
