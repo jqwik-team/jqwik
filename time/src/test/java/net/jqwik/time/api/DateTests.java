@@ -25,7 +25,7 @@ class DateTests {
 	}
 
 	@Property
-	void validCalendarIsGenerated(@ForAll("dates") Date date) {
+	void validDateIsGenerated(@ForAll("dates") Date date) {
 		assertThat(date).isNotNull();
 	}
 
@@ -40,7 +40,7 @@ class DateTests {
 
 		@Disabled
 		@Property
-		void validCalendarIsGenerated(@ForAll Date date) {
+		void validDateIsGenerated(@ForAll Date date) {
 			assertThat(date).isNotNull();
 		}
 
