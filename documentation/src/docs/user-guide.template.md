@@ -143,7 +143,24 @@ ${new File("src/docs/include/jqwik-configuration.md").text}
 
 ## Additional Modules
 
-${new File("src/docs/include/additional-modules.md").text}
+_jqwik_ comes with a few additional modules:
+
+- The [`web` module](#web-module)
+- The [`time` module](#time-module)
+- The [`testing` module](#testing-module)
+
+### Web Module
+
+${new File("src/docs/include/web-module.md").text}
+
+### Time Module
+
+${new File("src/docs/include/time-module.md").text}
+
+
+### Testing Module
+
+${new File("src/docs/include/testing-module.md").text}
 
 
 ## Advanced Topics

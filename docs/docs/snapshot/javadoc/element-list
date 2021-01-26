@@ -9,4 +9,6 @@ net.jqwik.api.providers
 net.jqwik.api.stateful
 net.jqwik.api.statistics
 net.jqwik.time.api
+net.jqwik.time.api.arbitraries
+net.jqwik.time.api.constraints
 net.jqwik.web.api

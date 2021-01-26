@@ -47,7 +47,7 @@ and
       is called `@UniqueElements` and applied to the container's type.
       
 - There's a new [jqwik module `jqwik-time`](/docs/snapshot/user-guide.html#time-module)
-  which simplifies the generation of dates and times.
+  which simplifies the generation of dates (and times in a future release).
   Many thanks to [zinki97](https://github.com/zinki97) for this contribution.
 
 - There's a new [jqwik module `jqwik-web`](/docs/snapshot/user-guide.html#web-module)

@@ -106,6 +106,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li><a href="net/jqwik/api/stateful/package-tree.html">net.jqwik.api.stateful</a>, </li>
 <li><a href="net/jqwik/api/statistics/package-tree.html">net.jqwik.api.statistics</a>, </li>
 <li><a href="net/jqwik/time/api/package-tree.html">net.jqwik.time.api</a>, </li>
+<li><a href="net/jqwik/time/api/arbitraries/package-tree.html">net.jqwik.time.api.arbitraries</a>, </li>
+<li><a href="net/jqwik/time/api/constraints/package-tree.html">net.jqwik.time.api.constraints</a>, </li>
 <li><a href="net/jqwik/web/api/package-tree.html">net.jqwik.web.api</a></li>
 </ul>
 </div>
@@ -234,11 +236,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">net.jqwik.api.stateful.<a href="net/jqwik/api/stateful/ActionSequence.html" title="interface in net.jqwik.api.stateful"><span class="typeNameLink">ActionSequence</span></a>&lt;M&gt;</li>
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api"><span class="typeNameLink">Arbitrary</span></a>&lt;T&gt;
 <ul>
+<li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/CalendarArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">CalendarArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/CharacterArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">CharacterArbitrary</span></a></li>
-<li class="circle">net.jqwik.time.api.<a href="net/jqwik/time/api/DateArbitrary.html" title="interface in net.jqwik.time.api"><span class="typeNameLink">DateArbitrary</span></a></li>
+<li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/DateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">DateArbitrary</span></a></li>
 <li class="circle">net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api"><span class="typeNameLink">EmailArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/FunctionArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">FunctionArbitrary</span></a>&lt;F,&#8203;R&gt;</li>
-<li class="circle">net.jqwik.time.api.<a href="net/jqwik/time/api/MonthDayArbitrary.html" title="interface in net.jqwik.time.api"><span class="typeNameLink">MonthDayArbitrary</span></a></li>
+<li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">LocalDateArbitrary</span></a></li>
+<li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/MonthDayArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">MonthDayArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/NumericalArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">NumericalArbitrary</span></a>&lt;T,&#8203;A&gt;
 <ul>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/BigDecimalArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">BigDecimalArbitrary</span></a></li>
@@ -251,6 +255,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ShortArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ShortArbitrary</span></a></li>
 </ul>
 </li>
+<li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">PeriodArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/SizableArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">SizableArbitrary</span></a>&lt;U&gt;
 <ul>
 <li class="circle">net.jqwik.api.stateful.<a href="net/jqwik/api/stateful/ActionSequenceArbitrary.html" title="interface in net.jqwik.api.stateful"><span class="typeNameLink">ActionSequenceArbitrary</span></a>&lt;M&gt;</li>
@@ -268,8 +273,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StringArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StringArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">TypeArbitrary</span></a>&lt;T&gt;</li>
-<li class="circle">net.jqwik.time.api.<a href="net/jqwik/time/api/YearArbitrary.html" title="interface in net.jqwik.time.api"><span class="typeNameLink">YearArbitrary</span></a></li>
-<li class="circle">net.jqwik.time.api.<a href="net/jqwik/time/api/YearMonthArbitrary.html" title="interface in net.jqwik.time.api"><span class="typeNameLink">YearMonthArbitrary</span></a></li>
+<li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/YearArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">YearArbitrary</span></a></li>
+<li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/YearMonthArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">YearMonthArbitrary</span></a></li>
 </ul>
 </li>
 <li class="circle">net.jqwik.api.providers.<a href="net/jqwik/api/providers/ArbitraryProvider.html" title="interface in net.jqwik.api.providers"><span class="typeNameLink">ArbitraryProvider</span></a></li>
@@ -386,6 +391,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Chars.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">Chars</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/CharsList.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">CharsList</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/Data.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Data</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/DateRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">DateRange</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/DayOfMonthRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">DayOfMonthRange</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/DayOfWeekRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">DayOfWeekRange</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/Disabled.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Disabled</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.domains.<a href="net/jqwik/api/domains/Domain.html" title="annotation in net.jqwik.api.domains"><span class="typeNameLink">Domain</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainList.html" title="annotation in net.jqwik.api.domains"><span class="typeNameLink">DomainList</span></a> (implements java.lang.annotation.Annotation)</li>
@@ -399,12 +407,18 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/Group.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Group</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/IntRange.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">IntRange</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/Label.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Label</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/LeapYears.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">LeapYears</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleHooks.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">LifecycleHooks</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/LongRange.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">LongRange</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/LowerChars.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">LowerChars</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/MonthDayRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">MonthDayRange</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/MonthRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">MonthRange</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Negative.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">Negative</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/NotEmpty.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">NotEmpty</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/NumericChars.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">NumericChars</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodDayRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">PeriodDayRange</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodMonthRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">PeriodMonthRange</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodYearRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">PeriodYearRange</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PerProperty.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">PerProperty</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Positive.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">Positive</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/Property.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Property</span></a> (implements java.lang.annotation.Annotation)</li>
@@ -424,6 +438,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/UseType.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">UseType</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/Whitespace.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">Whitespace</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/WithNull.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">WithNull</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/YearMonthRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">YearMonthRange</span></a> (implements java.lang.annotation.Annotation)</li>
+<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/YearRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">YearRange</span></a> (implements java.lang.annotation.Annotation)</li>
 </ul>
 </section>
 <section role="region">

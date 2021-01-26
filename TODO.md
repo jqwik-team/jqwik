@@ -1,9 +1,5 @@
 - 1.4.0
 
-    - Time and Date Generation Module
-        - Finish dates
-        - https://github.com/jlink/jqwik/issues/140
-
     - Edge Cases
 
         - Restrict number of generated edge cases to number of tries

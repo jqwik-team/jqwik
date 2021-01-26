@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9};
+var data = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -155,49 +155,70 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="DateArbitrary.html" title="interface in net.jqwik.time.api">DateArbitrary</a></code></td>
+<td class="colFirst"><code>static <a href="arbitraries/LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#dates()">dates</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Create an arbitrary that generates instances of LocalDate.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>static <a href="arbitraries/CalendarArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">CalendarArbitrary</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#datesAsCalendar()">datesAsCalendar</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Create an arbitrary that generates instances of Calendar.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>static <a href="arbitraries/DateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">DateArbitrary</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#datesAsDate()">datesAsDate</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Create an arbitrary that generates instances of Date.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static <a href="../../api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.lang.Integer&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#daysOfMonth()">daysOfMonth</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Create an arbitrary that generates days of month as Integer.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="../../api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.time.DayOfWeek&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#daysOfWeek()">daysOfWeek</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Create an arbitrary that generates instances of DayOfWeek.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>static <a href="MonthDayArbitrary.html" title="interface in net.jqwik.time.api">MonthDayArbitrary</a></code></td>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>static <a href="arbitraries/MonthDayArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">MonthDayArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#monthDays()">monthDays</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Create an arbitrary that generates instances of MonthDay.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static <a href="../../api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.time.Month&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#months()">months</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Create an arbitrary that generates instances of Month.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>static <a href="YearMonthArbitrary.html" title="interface in net.jqwik.time.api">YearMonthArbitrary</a></code></td>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>static <a href="arbitraries/PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#periods()">periods</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Create an arbitrary that generates instances of Period.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>static <a href="arbitraries/YearMonthArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">YearMonthArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#yearMonths()">yearMonths</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Create an arbitrary that generates instances of YearMonth.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>static <a href="YearArbitrary.html" title="interface in net.jqwik.time.api">YearArbitrary</a></code></td>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>static <a href="arbitraries/YearArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">YearArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#years()">years</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Create an arbitrary that generates instances of Year.</div>
@@ -233,8 +254,36 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>dates</h4>
-<pre class="methodSignature">public static&nbsp;<a href="DateArbitrary.html" title="interface in net.jqwik.time.api">DateArbitrary</a>&nbsp;dates()</pre>
+<pre class="methodSignature">public static&nbsp;<a href="arbitraries/LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a>&nbsp;dates()</pre>
 <div class="block">Create an arbitrary that generates instances of LocalDate.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new arbitrary instance</dd>
+</dl>
+</li>
+</ul>
+<a id="datesAsCalendar()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>datesAsCalendar</h4>
+<pre class="methodSignature">public static&nbsp;<a href="arbitraries/CalendarArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">CalendarArbitrary</a>&nbsp;datesAsCalendar()</pre>
+<div class="block">Create an arbitrary that generates instances of Calendar.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new arbitrary instance</dd>
+</dl>
+</li>
+</ul>
+<a id="datesAsDate()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>datesAsDate</h4>
+<pre class="methodSignature">public static&nbsp;<a href="arbitraries/DateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">DateArbitrary</a>&nbsp;datesAsDate()</pre>
+<div class="block">Create an arbitrary that generates instances of Date.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new arbitrary instance</dd>
@@ -247,7 +296,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>years</h4>
-<pre class="methodSignature">public static&nbsp;<a href="YearArbitrary.html" title="interface in net.jqwik.time.api">YearArbitrary</a>&nbsp;years()</pre>
+<pre class="methodSignature">public static&nbsp;<a href="arbitraries/YearArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">YearArbitrary</a>&nbsp;years()</pre>
 <div class="block">Create an arbitrary that generates instances of Year.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -303,7 +352,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>yearMonths</h4>
-<pre class="methodSignature">public static&nbsp;<a href="YearMonthArbitrary.html" title="interface in net.jqwik.time.api">YearMonthArbitrary</a>&nbsp;yearMonths()</pre>
+<pre class="methodSignature">public static&nbsp;<a href="arbitraries/YearMonthArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">YearMonthArbitrary</a>&nbsp;yearMonths()</pre>
 <div class="block">Create an arbitrary that generates instances of YearMonth.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -314,11 +363,29 @@ extends java.lang.Object</pre>
 <a id="monthDays()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>monthDays</h4>
-<pre class="methodSignature">public static&nbsp;<a href="MonthDayArbitrary.html" title="interface in net.jqwik.time.api">MonthDayArbitrary</a>&nbsp;monthDays()</pre>
+<pre class="methodSignature">public static&nbsp;<a href="arbitraries/MonthDayArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">MonthDayArbitrary</a>&nbsp;monthDays()</pre>
 <div class="block">Create an arbitrary that generates instances of MonthDay.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new arbitrary instance</dd>
+</dl>
+</li>
+</ul>
+<a id="periods()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>periods</h4>
+<pre class="methodSignature">public static&nbsp;<a href="arbitraries/PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a>&nbsp;periods()</pre>
+<div class="block">Create an arbitrary that generates instances of Period.
+ <p>
+ By default years value can be between Integer.MIN_VALUE and Integer.MAX_VALUE
+ By default months value can be between 0 and 11
+ By default days value can be between 0 and 30</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new arbitrary instance</dd>
