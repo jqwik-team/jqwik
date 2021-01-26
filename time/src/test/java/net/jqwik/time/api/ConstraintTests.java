@@ -92,7 +92,7 @@ public class ConstraintTests {
 	@Group
 	class CalendarConstraints {
 
-		//TODO: use default generation is when it is available again
+		//TODO: use default generation when it is available again
 		@Provide
 		CalendarArbitrary dates() {
 			return Dates.datesAsCalendar();
@@ -174,7 +174,7 @@ public class ConstraintTests {
 	@Group
 	class DateConstraints {
 
-		//TODO: use default generation is when it is available again
+		//TODO: use default generation when it is available again
 		@Provide
 		DateArbitrary dates() {
 			return Dates.datesAsDate();
