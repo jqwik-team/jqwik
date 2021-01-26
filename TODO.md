@@ -1,6 +1,9 @@
 - 1.4.0
 
     - Edge Cases
+    
+        - With `@Property(edgeCases=NONE)` no edge cases should be generated.
+          Not even within the individual generators.
 
         - Restrict number of generated edge cases to number of tries
           - For embedded/individual use of generators only use a max of 100 edge cases
