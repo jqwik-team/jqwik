@@ -20,12 +20,28 @@ class LocalTimeTests {
 		return Times.times();
 	}
 
-	@Property
-	void validLocalTimeIsGenerated(@ForAll("times") LocalTime time) {
-		assertThat(time).isNotNull();
+	@Group
+	class SimpleArbitraries {
+
+		@Property
+		void validLocalTimeIsGenerated(@ForAll("times") LocalTime time) {
+			assertThat(time).isNotNull();
+		}
+
+		@Property
+		void worstCaseTimeGeneration(@ForAll("worstCases") LocalTime time) {
+			assertThat(time).isNotNull();
+		}
+
+		@Provide
+		Arbitrary<LocalTime> worstCases() {
+			return Times.times().between(LocalTime.of(22, 59, 59, 999_999_998), LocalTime.of(23, 00, 00, 000_000_001));
+		}
+
 	}
 
 	@Property
+	@Disabled("Not available at the moment")
 	void validLocalTimeIsGeneratedWithAnnotation(@ForAll LocalTime time) {
 		assertThat(time).isNotNull();
 	}
@@ -235,7 +251,7 @@ class LocalTimeTests {
 			}
 
 			@Provide
-			Arbitrary<Integer> microseconds() {
+			Arbitrary<Integer> milliseconds() {
 				return Arbitraries.integers().between(0, 999);
 			}
 

@@ -3,6 +3,7 @@ package net.jqwik.time.api;
 import org.apiguardian.api.*;
 
 import net.jqwik.time.api.arbitraries.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -19,7 +20,7 @@ public class Times {
 	 * @return a new arbitrary instance
 	 */
 	public static LocalTimeArbitrary times() {
-		return null;
+		return new DefaultLocalTimeArbitrary();
 	}
 
 }
