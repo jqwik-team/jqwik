@@ -8,6 +8,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.arbitraries.*;
 
+import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
@@ -51,22 +52,38 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		LocalTime effectiveMin = calculateEffectiveMin();
 		LocalTime effectiveMax = calculateEffectiveMax();
 
-		calculateEffectiveValues(effectiveMin, effectiveMax);
+		Arbitrary<LocalTime> localTimes;
 
-		long longEnd = calculateLongEnd();
+		if (timeMin != LocalTime.MIN && timeMax != LocalTime.MAX && valuesAreDefault()) {
 
-		Arbitrary<Long> longs = Arbitraries.longs()
-										   .withDistribution(RandomDistribution.uniform())
-										   .between(0L, longEnd);
+			long longEnd = NANOS.between(effectiveMin, effectiveMax);
 
-		Arbitrary<LocalTime> localTimes = longs.map(this::calculateLocalTime);
+			Arbitrary<Long> longs = Arbitraries.longs()
+											   .withDistribution(RandomDistribution.uniform())
+											   .between(0L, longEnd);
 
-		if (!effectiveMin.equals(LocalTime.MIN)) {
-			localTimes = localTimes.filter(v -> !v.isBefore(effectiveMin));
-		}
+			localTimes = longs.map(effectiveMin::plusNanos);
 
-		if (!effectiveMax.equals(LocalTime.MAX)) {
-			localTimes = localTimes.filter(v -> !v.isAfter(effectiveMax));
+		} else {
+
+			calculateEffectiveValues(effectiveMin, effectiveMax);
+
+			long longEnd = calculateLongEnd();
+
+			Arbitrary<Long> longs = Arbitraries.longs()
+											   .withDistribution(RandomDistribution.uniform())
+											   .between(0L, longEnd);
+
+			localTimes = longs.map(this::calculateLocalTime);
+
+			if (!effectiveMin.equals(LocalTime.MIN)) {
+				localTimes = localTimes.filter(v -> !v.isBefore(effectiveMin));
+			}
+
+			if (!effectiveMax.equals(LocalTime.MAX)) {
+				localTimes = localTimes.filter(v -> !v.isAfter(effectiveMax));
+			}
+
 		}
 
 		localTimes = localTimes.edgeCases(edgeCases -> {
@@ -75,6 +92,22 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 
 		return localTimes;
 
+	}
+
+	private boolean valuesAreDefault() {
+		if (hourMin != 0) return false;
+		if (hourMax != 23) return false;
+		if (minuteMin != 0) return false;
+		if (minuteMax != 59) return false;
+		if (secondMin != 0) return false;
+		if (secondMax != 59) return false;
+		if (millisecondMin != 0) return false;
+		if (millisecondMax != 999) return false;
+		if (microsecondMin != 0) return false;
+		if (microsecondMax != 999) return false;
+		if (nanosecondMin != 0) return false;
+		if (nanosecondMax != 999) return false;
+		return true;
 	}
 
 	private int calculateNanoValue(int milliseconds, int microseconds, int nanoseconds) {
