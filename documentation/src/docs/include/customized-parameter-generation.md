@@ -162,8 +162,8 @@ Shrinking moves towards the start of the frequency list.
 
 #### Characters and Strings
 
-- [`StringArbitrary strings()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#strings()))
-- [`CharacterArbitrary chars()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#chars()))
+- [`StringArbitrary strings()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#strings())
+- [`CharacterArbitrary chars()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#chars())
 
 #### java.util.Random
 

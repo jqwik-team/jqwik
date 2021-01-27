@@ -1455,8 +1455,8 @@ Shrinking moves towards the start of the frequency list.
 
 #### Characters and Strings
 
-- [`StringArbitrary strings()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#strings()))
-- [`CharacterArbitrary chars()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#chars()))
+- [`StringArbitrary strings()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#strings())
+- [`CharacterArbitrary chars()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#chars())
 
 #### java.util.Random
 
@@ -4109,10 +4109,15 @@ The following annotations can be used to constrain default generation of the enu
 
 - [`@DateRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DateRange.html)
 - [`@YearRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/YearRange.html)
+- [`@YearMonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/YearMonthRange.html)
 - [`@MonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/MonthRange.html)
+- [`@MonthDayRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/MonthDayRange.html)
 - [`@DayOfMonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DayOfMonthRange.html)
 - [`@DayOfWeekRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DayOfWeekRange.html)
 - [`@LeapYears`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/LeapYears.html)
+- [`@PeriodDayRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/PeriodDayRange.html)
+- [`@PeriodMonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/PeriodMonthRange.html)
+- [`@PeriodYearRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/PeriodYearRange.html)
 
 `@DateRange`, `@MonthDayRange` and `@YearMonthRange` use the ISO format for date strings. Examples: `2013-05-25`, `--05-25` and `2013-05`.
 

@@ -26,10 +26,15 @@ The following annotations can be used to constrain default generation of the enu
 
 - [`@DateRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DateRange.html)
 - [`@YearRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/YearRange.html)
+- [`@YearMonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/YearMonthRange.html)
 - [`@MonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/MonthRange.html)
+- [`@MonthDayRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/MonthDayRange.html)
 - [`@DayOfMonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DayOfMonthRange.html)
 - [`@DayOfWeekRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DayOfWeekRange.html)
 - [`@LeapYears`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/LeapYears.html)
+- [`@PeriodDayRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/PeriodDayRange.html)
+- [`@PeriodMonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/PeriodMonthRange.html)
+- [`@PeriodYearRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/PeriodYearRange.html)
 
 `@DateRange`, `@MonthDayRange` and `@YearMonthRange` use the ISO format for date strings. Examples: `2013-05-25`, `--05-25` and `2013-05`.
 
