@@ -1465,10 +1465,10 @@ Shrinking moves towards the start of the frequency list.
 
 #### Shuffling Permutations
 
-- [`Arbitrary<List<T>> shuffle(T ... values)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#shuffle(T...):
+- [`Arbitrary<List<T>> shuffle(T ... values)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#shuffle(T...)):
   Return unshrinkable permutations of the `values` handed in.
 
-- [`Arbitrary<List<T>> shuffle(List<T> values)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#shuffle(java.util.List):
+- [`Arbitrary<List<T>> shuffle(List<T> values)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#shuffle(java.util.List)):
   Return unshrinkable permutations of the `values` handed in.
 
 #### Default Types
@@ -2266,7 +2266,7 @@ Some generators (e.g. most number generators) are sensitive to the
 The default value for `genSize` is the number of tries configured for the property
 they are used in. If there is a need to influence the behaviour of generators
 you can do so by using
-[`Arbitrary.fixGenSize(int)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize(int))..
+[`Arbitrary.fixGenSize(int)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize(int)).
 
 
 
