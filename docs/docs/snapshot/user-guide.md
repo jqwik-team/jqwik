@@ -193,7 +193,8 @@ All you have to do is add all needed engines to your `testImplementation` depend
 
 The latest release of __jqwik__ is deployed to [Maven Central](https://search.maven.org/search?q=g:net.jqwik).
 
-Snapshot releases can be fetched from https://oss.sonatype.org/content/repositories/snapshots.
+Snapshot releases can be fetched from 
+[https://oss.sonatype.org/content/repositories/snapshots](https://oss.sonatype.org/content/repositories/snapshots).
 
 ### Required Version of JUnit Platform
 
@@ -278,8 +279,8 @@ There is also a comprehensive
 
 #### Seeing jqwik Reporting in Gradle Output
 
-Since Gradle does not yet support JUnit platform reporting
-([see this Github issue](https://github.com/gradle/gradle/issues/4605))
+Since Gradle does not yet support JUnit platform reporting --
+[see this Github issue](https://github.com/gradle/gradle/issues/4605) --
 jqwik has switched to do its own reporting by default. This behaviour
 [can be configured](#jqwik-configuration) through parameter `useJunitPlatformReporter`
 (default: `false`).
@@ -2327,7 +2328,7 @@ There are two things to which you must pay attention:
 There is also a caveat of which you should be aware:
 Never use this construct if suppliers make use of variable state
 like method parameters or changing instance members.
-In those cases use [lazy()](#using-lazy-instead-of-lazyof) as explained below.
+In those cases use [`lazy()`](#using-lazy-instead-of-lazyof) as explained below.
 
 #### Using lazy() instead of lazyOf()
 

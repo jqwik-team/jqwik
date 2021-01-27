@@ -52,7 +52,7 @@ There are two things to which you must pay attention:
 There is also a caveat of which you should be aware:
 Never use this construct if suppliers make use of variable state
 like method parameters or changing instance members.
-In those cases use [lazy()](#using-lazy-instead-of-lazyof) as explained below.
+In those cases use [`lazy()`](#using-lazy-instead-of-lazyof) as explained below.
 
 #### Using lazy() instead of lazyOf()
 
