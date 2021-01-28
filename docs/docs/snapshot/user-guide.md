@@ -192,7 +192,8 @@ All you have to do is add all needed engines to your `testImplementation` depend
 [gradle file](#gradle) below.
 
 The latest release of __jqwik__ is deployed to [Maven Central](https://search.maven.org/search?q=g:net.jqwik).
-Snapshot releases can be fetched from `https://oss.sonatype.org/content/repositories/snapshots`. 
+Snapshot releases are created on a regular basis and can be fetched from 
+[Sonatype's snapshot repository](https://oss.sonatype.org/content/repositories/snapshots). 
 
 ### Required Version of JUnit Platform
 
