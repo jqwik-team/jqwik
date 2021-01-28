@@ -39,13 +39,15 @@ private StringArbitrary word() {
 
 There are two things to which you must pay attention:
 
-- Use [`Arbitraries.lazyOf(Supplier<Arbitrary<T>>...suppliers)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#lazyOf(java.util.function.Supplier,java.util.function.Supplier...))
-  to wrap the recursive call itself.
-  Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
+- It is important to use `Arbitraries.lazyOf(Supplier<Arbitrary<T>>...suppliers)`
+  instead of the seemingly simpler `Arbitraries.oneOf(Arbitrary<T>...arbitraries)`.
+  Otherwise _jqwik_'s attempt to build the arbitrary would result in a stack overflow.
+
 - Every recursion needs one or more base cases in order to stop recursion at some point.
   Here, the base case is `() -> word().map(w -> w + ".")`.
   Base cases must have a high enough probability,
   otherwise a stack overflow will get you during value generation.
+
 - The supplier `() -> sentence` is used three times to raise its probability
   and thus create longer sentences.
 
