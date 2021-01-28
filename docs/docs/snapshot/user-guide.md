@@ -2313,8 +2313,10 @@ private StringArbitrary word() {
 
 There are two things to which you must pay attention:
 
-- It is important to use `Arbitraries.lazyOf(Supplier<Arbitrary<T>>...suppliers)`
-  instead of the seemingly simpler `Arbitraries.oneOf(Arbitrary<T>...arbitraries)`.
+- It is important to use 
+  [`lazyOf(suppliers)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#lazyOf(java.util.function.Supplier,java.util.function.Supplier...))
+  instead of the seemingly simpler 
+  [`oneOf(arbitraries)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#oneOf(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary...)).
   Otherwise _jqwik_'s attempt to build the arbitrary would result in a stack overflow.
 
 - Every recursion needs one or more base cases in order to stop recursion at some point.
