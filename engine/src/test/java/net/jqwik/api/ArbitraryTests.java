@@ -13,12 +13,33 @@ import net.jqwik.api.constraints.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.api.GenerationMode.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 @Label("Arbitrary")
 class ArbitraryTests {
+
+	@Example
+	void generatorWithEdgeCases(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
+		RandomGenerator<Integer> generator = arbitrary.generator(10, true);
+
+		assertAtLeastOneGenerated(generator, random, i -> i == -1000);
+		assertAtLeastOneGenerated(generator, random, i -> i == -1);
+		assertAtLeastOneGenerated(generator, random, i -> i == 0);
+		assertAtLeastOneGenerated(generator, random, i -> i == 1);
+		assertAtLeastOneGenerated(generator, random, i -> i == 1000);
+		assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
+	}
+
+	@Example
+	void generatorWithoutEdgeCases(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
+		RandomGenerator<Integer> generator = arbitrary.generator(10, false);
+		assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
+	}
+
 
 	@Example
 	void fixGenSize() {
@@ -26,6 +47,7 @@ class ArbitraryTests {
 
 		Arbitrary<Integer> arbitrary =
 			new Arbitrary<Integer>() {
+
 				@Override
 				public RandomGenerator<Integer> generator(final int genSize) {
 					injectedGenSize[0] = genSize;
@@ -38,21 +60,8 @@ class ArbitraryTests {
 				}
 			};
 
-		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000);
+		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000, true);
 		assertThat(injectedGenSize[0]).isEqualTo(42);
-	}
-
-	@Example
-	void generateInteger(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
-		RandomGenerator<Integer> generator = arbitrary.generator(10);
-
-		assertThat(generator.next(random).value()).isEqualTo(1);
-		assertThat(generator.next(random).value()).isEqualTo(2);
-		assertThat(generator.next(random).value()).isEqualTo(3);
-		assertThat(generator.next(random).value()).isEqualTo(4);
-		assertThat(generator.next(random).value()).isEqualTo(5);
-		assertThat(generator.next(random).value()).isEqualTo(1);
 	}
 
 	@Example
@@ -75,7 +84,7 @@ class ArbitraryTests {
 		void filterInteger(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
-			RandomGenerator<Integer> generator = filtered.generator(10);
+			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
 			assertThat(generator.next(random).value()).isEqualTo(1);
 			assertThat(generator.next(random).value()).isEqualTo(3);
@@ -87,7 +96,7 @@ class ArbitraryTests {
 		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
-			RandomGenerator<Integer> generator = filtered.generator(10);
+			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
 			assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
 		}
@@ -106,7 +115,7 @@ class ArbitraryTests {
 						return anInt;
 					});
 			Arbitrary<Integer> filtered = arbitrary.ignoreException(IllegalArgumentException.class);
-			RandomGenerator<Integer> generator = filtered.generator(10);
+			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
 			assertThat(generator.next(random).value()).isEqualTo(1);
 			assertThat(generator.next(random).value()).isEqualTo(3);
@@ -125,7 +134,7 @@ class ArbitraryTests {
 						return anInt;
 					});
 			Arbitrary<Integer> filtered = arbitrary.ignoreException(RuntimeException.class);
-			RandomGenerator<Integer> generator = filtered.generator(10);
+			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
 			assertThat(generator.next(random).value()).isEqualTo(1);
 			assertThat(generator.next(random).value()).isEqualTo(3);
@@ -141,7 +150,7 @@ class ArbitraryTests {
 						throw new IllegalArgumentException("No even numbers");
 					});
 			Arbitrary<Integer> filtered = arbitrary.ignoreException(RuntimeException.class);
-			RandomGenerator<Integer> generator = filtered.generator(10);
+			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
 			assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
 		}
@@ -154,7 +163,7 @@ class ArbitraryTests {
 		void uniqueInteger(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 5);
 			Arbitrary<Integer> unique = arbitrary.unique();
-			RandomGenerator<Integer> generator = unique.generator(10);
+			RandomGenerator<Integer> generator = unique.generator(10, true);
 
 			Set<Integer> generatedValues =
 				generator.stream(random)
@@ -170,7 +179,7 @@ class ArbitraryTests {
 			Arbitrary<Integer> primes = Arbitraries.of(2, 3, 5, 7, 11, 13, 17, 19);
 			Arbitrary<List<Integer>> uniquePrimes = primes.unique().list().ofSize(2);
 			Arbitrary<Integer> product = uniquePrimes.map(p -> p.get(0) * p.get(1));
-			RandomGenerator<Integer> generator = product.generator(10);
+			RandomGenerator<Integer> generator = product.generator(10, true);
 
 			Set<Integer> generatedValues =
 				generator.stream(rand)
@@ -190,8 +199,6 @@ class ArbitraryTests {
 			generator.next(random);
 			generator.next(random);
 			generator.next(random);
-
-			assertThatThrownBy(() -> generator.next(random)).isInstanceOf(JqwikException.class);
 		}
 
 		@Property(generation = RANDOMIZED)
@@ -293,7 +300,7 @@ class ArbitraryTests {
 		void mapIntegerToString(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
-			RandomGenerator<String> generator = mapped.generator(10);
+			RandomGenerator<String> generator = mapped.generator(10, true);
 
 			assertThat(generator.next(random).value()).isEqualTo("value=1");
 			assertThat(generator.next(random).value()).isEqualTo("value=2");
@@ -315,7 +322,7 @@ class ArbitraryTests {
 																			 .withCharRange('a', 'e') //
 																			 .ofMinLength(anInt).ofMaxLength(anInt));
 
-			RandomGenerator<String> generator = mapped.generator(10);
+			RandomGenerator<String> generator = mapped.generator(10, true);
 
 			assertThat(generator.next(random).value()).hasSize(1);
 			assertThat(generator.next(random).value()).hasSize(2);
@@ -323,11 +330,11 @@ class ArbitraryTests {
 			assertThat(generator.next(random).value()).hasSize(4);
 			assertThat(generator.next(random).value()).hasSize(5);
 
-			assertAtLeastOneGenerated(generator, s -> s.startsWith("a"));
-			assertAtLeastOneGenerated(generator, s -> s.startsWith("b"));
-			assertAtLeastOneGenerated(generator, s -> s.startsWith("c"));
-			assertAtLeastOneGenerated(generator, s -> s.startsWith("d"));
-			assertAtLeastOneGenerated(generator, s -> s.startsWith("e"));
+			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("a"));
+			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("b"));
+			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("c"));
+			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("d"));
+			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("e"));
 		}
 
 	}
@@ -340,7 +347,7 @@ class ArbitraryTests {
 			Arbitrary<Integer> a1 = new OrderedArbitraryForTesting<>(1, 2, 3);
 			Arbitrary<Integer> a2 = new OrderedArbitraryForTesting<>(4, 5, 6);
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
-			RandomGenerator<String> generator = combined.generator(10);
+			RandomGenerator<String> generator = combined.generator(10, true);
 
 			assertThat(generator.next(random).value()).isEqualTo("1:4");
 			assertThat(generator.next(random).value()).isEqualTo("2:5");
@@ -354,12 +361,12 @@ class ArbitraryTests {
 	class Collect {
 
 		@Example
-		void collectList() {
+		void collectList(@ForAll Random random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 3);
 			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 10);
-			RandomGenerator<List<Integer>> generator = collected.generator(10);
+			RandomGenerator<List<Integer>> generator = collected.generator(10, true);
 
-			assertAllGenerated(generator, value -> {
+			assertAllGenerated(generator, random, value -> {
 				assertThat(sum(value)).isBetween(10, 12);
 				assertThat(value.size()).isBetween(4, 10);
 			});
@@ -369,7 +376,7 @@ class ArbitraryTests {
 		void collectListWillThrowExceptionIfTooBig(@ForAll Random random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 3);
 			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) < 0);
-			RandomGenerator<List<Integer>> generator = collected.generator(10);
+			RandomGenerator<List<Integer>> generator = collected.generator(10, true);
 
 			assertThatThrownBy(() -> generator.next(random))
 				.isInstanceOf(JqwikException.class);

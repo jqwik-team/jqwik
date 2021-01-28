@@ -35,7 +35,7 @@ class NumbersEdgeCasesTests {
 													   .between(BigDecimal.valueOf(-10), BigDecimal.valueOf(10))
 													   .ofScale(scale);
 			EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					BigDecimal.valueOf(-10).setScale(2),
 					BigDecimal.valueOf(-1).setScale(2),
 					BigDecimal.valueOf(-0.01),
@@ -45,7 +45,7 @@ class NumbersEdgeCasesTests {
 					BigDecimal.valueOf(10).setScale(2)
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(7);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(7);
 		}
 
 		@Example
@@ -55,7 +55,7 @@ class NumbersEdgeCasesTests {
 													   .between(BigDecimal.valueOf(-10), false, BigDecimal.valueOf(10), false)
 													   .ofScale(scale);
 			EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					BigDecimal.valueOf(-9.9),
 					BigDecimal.valueOf(-1).setScale(1),
 					BigDecimal.valueOf(-0.1),
@@ -74,7 +74,7 @@ class NumbersEdgeCasesTests {
 													   .ofScale(scale)
 													   .shrinkTowards(BigDecimal.valueOf(5));
 			EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					BigDecimal.valueOf(1).setScale(1),
 					BigDecimal.valueOf(4.9),
 					BigDecimal.valueOf(5).setScale(1),
@@ -90,11 +90,11 @@ class NumbersEdgeCasesTests {
 												   .between(-10.0, 10.0)
 												   .ofScale(scale);
 			EdgeCases<Double> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					-10.0, -1.0, -0.01, 0.0, 0.01, 1.0, 10.0
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(7);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(7);
 		}
 
 		@Example
@@ -104,11 +104,11 @@ class NumbersEdgeCasesTests {
 												  .between(-10.0f, 10.0f)
 												  .ofScale(scale);
 			EdgeCases<Float> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					-10.0f, -1.0f, -0.01f, 0.0f, 0.01f, 1.0f, 10.0f
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(7);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(7);
 		}
 
 		@Group
@@ -181,18 +181,18 @@ class NumbersEdgeCasesTests {
 		void intEdgeCases() {
 			IntegerArbitrary arbitrary = Arbitraries.integers().between(-10, 10);
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					-10, -9, -2, -1, 0, 1, 2, 9, 10
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(9);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(9);
 		}
 
 		@Example
 		void intOnlyPositive() {
 			IntegerArbitrary arbitrary = Arbitraries.integers().between(5, 100);
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					5, 6, 99, 100
 			);
 		}
@@ -201,7 +201,7 @@ class NumbersEdgeCasesTests {
 		void intWithShrinkTarget() {
 			IntegerArbitrary arbitrary = Arbitraries.integers().between(5, 100).shrinkTowards(42);
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					5, 6, 42, 99, 100
 			);
 		}
@@ -210,7 +210,7 @@ class NumbersEdgeCasesTests {
 		void shorts() {
 			ShortArbitrary arbitrary = Arbitraries.shorts().between((short) -5, (short) 5);
 			EdgeCases<Short> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					(short) -5, (short) -4, (short) -2, (short) -1, (short) 0, (short) 1, (short) 2, (short) 4, (short) 5
 			);
 		}
@@ -219,7 +219,7 @@ class NumbersEdgeCasesTests {
 		void bytes() {
 			ByteArbitrary arbitrary = Arbitraries.bytes().between((byte) -5, (byte) 5);
 			EdgeCases<Byte> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					(byte) -5, (byte) -4, (byte) -2, (byte) -1, (byte) 0, (byte) 1, (byte) 2, (byte) 4, (byte) 5
 			);
 		}
@@ -228,7 +228,7 @@ class NumbersEdgeCasesTests {
 		void longs() {
 			LongArbitrary arbitrary = Arbitraries.longs().between(-5, 5);
 			EdgeCases<Long> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					(long) -5, (long) -4, (long) -2, (long) -1, (long) 0, (long) 1, (long) 2, (long) 4, (long) 5
 			);
 		}
@@ -237,7 +237,7 @@ class NumbersEdgeCasesTests {
 		void bigIntegers() {
 			BigIntegerArbitrary arbitrary = Arbitraries.bigIntegers().between(BigInteger.valueOf(-5), BigInteger.valueOf(5));
 			EdgeCases<BigInteger> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					BigInteger.valueOf(-5),
 					BigInteger.valueOf(-4),
 					BigInteger.valueOf(-2),
@@ -266,7 +266,7 @@ class NumbersEdgeCasesTests {
 
 				// Random value generation still works
 				assertAllGenerated(
-						arbitrary.generator(1000),
+						arbitrary.generator(1000, true),
 						SourceOfRandomness.current(),
 						(Consumer<Integer>) i -> assertThat(i).isBetween(-100, 100)
 				);

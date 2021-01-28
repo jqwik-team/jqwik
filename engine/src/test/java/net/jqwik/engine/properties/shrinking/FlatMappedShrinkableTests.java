@@ -51,7 +51,7 @@ class FlatMappedShrinkableTests {
 
 		@Property
 		void canFullyShrinkAcrossJustOnRightSide(@ForAll Random random) {
-			Shrinkable<Integer> left = Arbitraries.integers().between(0, 100).generator(10).next(random);
+			Shrinkable<Integer> left = Arbitraries.integers().between(0, 100).generator(10, true).next(random);
 			Function<Integer, Arbitrary<Integer>> flatMapper = Arbitraries::just;
 			Shrinkable<Integer> shrinkable = left.flatMap(flatMapper, 1000, 4142L);
 
@@ -162,7 +162,7 @@ class FlatMappedShrinkableTests {
 		@Property
 		void canSimplifyOnBothSides(@ForAll long seed, @ForAll Random random) {
 			Assume.that(seed != 0L);
-			Shrinkable<Integer> integerShrinkable = Arbitraries.integers().generator(42).next(random);
+			Shrinkable<Integer> integerShrinkable = Arbitraries.integers().generator(42, true).next(random);
 			Function<Integer, Arbitrary<List<Integer>>> flatMapper = anInt -> Arbitraries.just(anInt).list();
 			Shrinkable<List<Integer>> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
 			Assume.that(shrinkable.value().size() > 10);

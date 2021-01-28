@@ -45,7 +45,11 @@ and
       are now handled by the elements' container.
     - The new [annotation to require uniqueness](/docs/snapshot/user-guide.html#unique-elements) 
       is called `@UniqueElements` and applied to the container's type.
-      
+
+- Arbitraries modified through `Arbitrary.unique()`, which is deprecated anyway,
+  no longer generate edge cases. This is actually a bug fix since the
+  generated edge were not considered for uniqueness.
+
 - There's a new [jqwik module `jqwik-time`](/docs/snapshot/user-guide.html#time-module)
   which simplifies the generation of dates (and times in a future release).
   Many thanks to [zinki97](https://github.com/zinki97) for this contribution.

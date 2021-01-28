@@ -17,6 +17,7 @@ import static net.jqwik.web.api.EmailTestingSupport.*;
 public class EmailsTests {
 
 	@Group
+	@PropertyDefaults(tries = 100)
 	class AllGeneratedEmailAddressesAreValid {
 
 		@Property(tries = 10)
@@ -100,7 +101,7 @@ public class EmailsTests {
 			});
 		}
 
-		@Property(tries = 5000)
+		@Property(tries = 1000)
 		void tldNotAllNumeric(@ForAll("emails") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(!isIPAddress(domain));
@@ -110,7 +111,7 @@ public class EmailsTests {
 			assertThat(containsAtLeastOneOf(tld, ALLOWED_NOT_NUMERIC_CHARS_TLD)).isTrue();
 		}
 
-		@Property(tries = 5000)
+		@Property(tries = 1000)
 		void validIPAddressAfterAt(@ForAll("emails") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
@@ -125,6 +126,7 @@ public class EmailsTests {
 	}
 
 	@Group
+	@PropertyDefaults(tries = 100)
 	class CheckEmailArbitraryMethods {
 
 		@Property
@@ -268,7 +270,7 @@ public class EmailsTests {
 		void domainShrinking(@ForAll Random random) {
 			EmailArbitrary emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyDomain();
-			String value = falsifyThenShrink(emails, random, falsifier);
+			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
 			assertThat(value).isEqualTo("A@a.aa");
 		}
 
@@ -276,7 +278,7 @@ public class EmailsTests {
 		void ipv4Shrinking(@ForAll Random random) {
 			EmailArbitrary emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyIPv4();
-			String value = falsifyThenShrink(emails, random, falsifier);
+			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
 			assertThat(value).isEqualTo("A@[0.0.0.0]");
 		}
 
@@ -284,7 +286,7 @@ public class EmailsTests {
 		void ipv6Shrinking(@ForAll Random random) {
 			Arbitrary<String> emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyIPv6();
-			String value = falsifyThenShrink(emails, random, falsifier);
+			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
 			assertThat(value).isEqualTo("A@[::]");
 		}
 
@@ -318,7 +320,7 @@ public class EmailsTests {
 		void all() {
 			EmailArbitrary emails = Emails.emails();
 			int expectedNumberOfEdgeCases = (4 + 3) * (2 + 3 + 4);
-			Set<String> allEdgeCases = collectEdgeCases(emails.edgeCases());
+			Set<String> allEdgeCases = collectEdgeCaseValues(emails.edgeCases());
 			assertThat(allEdgeCases).hasSize(expectedNumberOfEdgeCases);
 
 			// allEdgeCases.forEach(System.out::println);
@@ -327,7 +329,7 @@ public class EmailsTests {
 		@Example
 		void unquotedLocalPart() {
 			EmailArbitrary emails = Emails.emails().unquotedLocalPart().domainHost();
-			Set<String> localParts = collectEdgeCases(emails.edgeCases())
+			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
@@ -338,7 +340,7 @@ public class EmailsTests {
 		@Example
 		void quotedLocalPart() {
 			EmailArbitrary emails = Emails.emails().quotedLocalPart().domainHost();
-			Set<String> localParts = collectEdgeCases(emails.edgeCases())
+			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
@@ -349,7 +351,7 @@ public class EmailsTests {
 		@Example
 		void domainHost() {
 			EmailArbitrary emails = Emails.emails().unquotedLocalPart().domainHost();
-			Set<String> hosts = collectEdgeCases(emails.edgeCases())
+			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
@@ -362,7 +364,7 @@ public class EmailsTests {
 		@Example
 		void ipv4Host() {
 			EmailArbitrary emails = Emails.emails().unquotedLocalPart().ipv4Host();
-			Set<String> hosts = collectEdgeCases(emails.edgeCases())
+			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
@@ -375,7 +377,7 @@ public class EmailsTests {
 		@Example
 		void ipv6Host() {
 			EmailArbitrary emails = Emails.emails().unquotedLocalPart().ipv6Host();
-			Set<String> hosts = collectEdgeCases(emails.edgeCases())
+			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());

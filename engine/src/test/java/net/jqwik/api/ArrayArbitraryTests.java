@@ -19,7 +19,7 @@ class ArrayArbitraryTests {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		ArrayArbitrary<Integer, Integer[]> arrayArbitrary = integerArbitrary.array(Integer[].class).ofMinSize(2).ofMaxSize(5);
 
-		RandomGenerator<Integer[]> generator = arrayArbitrary.generator(1);
+		RandomGenerator<Integer[]> generator = arrayArbitrary.generator(1, true);
 
 		assertAllGenerated(generator, random, array -> {
 			assertThat(array.length).isBetween(2, 5);
@@ -34,7 +34,7 @@ class ArrayArbitraryTests {
 
 		Arbitrary<Integer> integerArbitrary = arrayArbitrary.reduce(0, Integer::sum);
 
-		RandomGenerator<Integer> generator = integerArbitrary.generator(1000);
+		RandomGenerator<Integer> generator = integerArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, sum -> {
 			assertThat(sum).isBetween(1, 50);
@@ -49,7 +49,7 @@ class ArrayArbitraryTests {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		ArrayArbitrary<Integer, int[]> arrayArbitrary = integerArbitrary.array(int[].class).ofMinSize(0).ofMaxSize(5);
 
-		RandomGenerator<int[]> generator = arrayArbitrary.generator(1);
+		RandomGenerator<int[]> generator = arrayArbitrary.generator(1, true);
 
 		Shrinkable<int[]> array = generator.next(random);
 		assertThat(array.value().length).isBetween(0, 5);
@@ -63,7 +63,7 @@ class ArrayArbitraryTests {
 				Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
 						   .uniqueElements(i -> i % 100);
 
-		RandomGenerator<Integer[]> generator = listArbitrary.generator(1000);
+		RandomGenerator<Integer[]> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, array -> {
 			assertThat(isUniqueModulo(array, 100)).isTrue();
@@ -76,7 +76,7 @@ class ArrayArbitraryTests {
 				Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
 						   .uniqueElements();
 
-		RandomGenerator<Integer[]> generator = listArbitrary.generator(1000);
+		RandomGenerator<Integer[]> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, array -> {
 			assertThat(isUniqueModulo(array, 1000)).isTrue();
@@ -87,19 +87,19 @@ class ArrayArbitraryTests {
 	void edgeCases() {
 		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 		ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
-		assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 				new Integer[]{},
 				new Integer[]{-10},
 				new Integer[]{10}
 		);
-		assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(3);
+		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(3);
 	}
 
 	@Example
 	void edgeCasesAreFilteredByUniquenessConstraints() {
 		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 		ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class).ofSize(2).uniqueElements(i -> i);
-		assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
+		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
 	}
 
 	private boolean isUniqueModulo(Integer[] array, int modulo) {

@@ -22,7 +22,7 @@ class ListArbitraryTests {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 		ListArbitrary<String> listArbitrary = stringArbitrary.list();
 
-		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
+		RandomGenerator<List<String>> generator = listArbitrary.generator(1, true);
 		assertGeneratedLists(generator, 0, Integer.MAX_VALUE);
 	}
 
@@ -31,7 +31,7 @@ class ListArbitraryTests {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 		ListArbitrary<String> listArbitrary = stringArbitrary.list().ofSize(42);
 
-		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
+		RandomGenerator<List<String>> generator = listArbitrary.generator(1, true);
 		assertGeneratedLists(generator, 42, 42);
 	}
 
@@ -40,7 +40,7 @@ class ListArbitraryTests {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 		ListArbitrary<String> listArbitrary = stringArbitrary.list().ofMinSize(2).ofMaxSize(5);
 
-		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
+		RandomGenerator<List<String>> generator = listArbitrary.generator(1, true);
 		assertGeneratedLists(generator, 2, 5);
 	}
 
@@ -51,7 +51,7 @@ class ListArbitraryTests {
 
 		Arbitrary<Integer> integerArbitrary = listArbitrary.reduce(0, Integer::sum);
 
-		RandomGenerator<Integer> generator = integerArbitrary.generator(1000);
+		RandomGenerator<Integer> generator = integerArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, sum -> {
 			assertThat(sum).isBetween(1, 50);
@@ -67,7 +67,7 @@ class ListArbitraryTests {
 				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
 						   .uniqueElements(i -> i % 100);
 
-		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, list -> {
 			assertThat(isUniqueModulo(list, 100)).isTrue();
@@ -80,7 +80,7 @@ class ListArbitraryTests {
 				Arbitraries.integers().between(1, 1000).list().ofMinSize(minSize)
 						   .uniqueElements(i -> i % 10);
 
-		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, list -> {
 			assertThat(isUniqueModulo(list, 10)).isTrue();
@@ -94,7 +94,7 @@ class ListArbitraryTests {
 						   .list().ofMaxSize(20)
 						   .uniqueElements(i -> i % 100);
 
-		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, list -> {
 			assertThat(isUniqueModulo(list, 100)).isTrue();
@@ -108,7 +108,7 @@ class ListArbitraryTests {
 						   .uniqueElements(i -> i % 99)
 						   .uniqueElements(i -> i % 100);
 
-		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, list -> {
 			assertThat(isUniqueModulo(list, 100)).isTrue();
@@ -122,7 +122,7 @@ class ListArbitraryTests {
 				Arbitraries.integers().between(1, 1000).list().ofSize(10)
 						   .uniqueElements(i -> i % 5);
 
-		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
 		Assertions.assertThrows(TooManyFilterMissesException.class, () -> generator.next(random));
 	}
@@ -132,7 +132,7 @@ class ListArbitraryTests {
 		ListArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20).uniqueElements();
 
-		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, list -> {
 			assertThat(isUniqueModulo(list, 1000)).isTrue();
@@ -157,7 +157,7 @@ class ListArbitraryTests {
 						.list().ofSize(5)
 						.mapEach((all, each) -> Tuple.of(each, all));
 
-		RandomGenerator<List<Tuple.Tuple2<Integer, List<Integer>>>> generator = setArbitrary.generator(1);
+		RandomGenerator<List<Tuple.Tuple2<Integer, List<Integer>>>> generator = setArbitrary.generator(1, true);
 
 		assertAllGenerated(generator, random, set -> {
 			assertThat(set).hasSize(5);
@@ -175,7 +175,7 @@ class ListArbitraryTests {
 											 Arbitraries.of(all).map(friend -> Tuple.of(each, friend))
 						);
 
-		RandomGenerator<List<Tuple.Tuple2<Integer, Integer>>> generator = setArbitrary.generator(1);
+		RandomGenerator<List<Tuple.Tuple2<Integer, Integer>>> generator = setArbitrary.generator(1, true);
 
 		assertAllGenerated(generator, random, set -> {
 			assertThat(set).hasSize(5);
@@ -255,20 +255,20 @@ class ListArbitraryTests {
 		void edgeCases() {
 			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list();
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 					Collections.emptyList(),
 					Collections.singletonList(-10),
 					Collections.singletonList(10)
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(3);
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(3);
 		}
 
 		@Example
 		void edgeCasesWhenMinSize1() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(1);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 					Collections.singletonList(-10),
 					Collections.singletonList(-9),
 					Collections.singletonList(-2),
@@ -285,14 +285,14 @@ class ListArbitraryTests {
 		void edgeCasesWhenMinSizeGreaterThan1() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(2);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
 		}
 
 		@Example
 		void edgeCasesWhenFixedSize() {
 			Arbitrary<Integer> ints = Arbitraries.of(10, 100);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofSize(3);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 					asList(10, 10, 10),
 					asList(100, 100, 100)
 			);
@@ -308,7 +308,7 @@ class ListArbitraryTests {
 				listShrinkable.value().add(42);
 			}
 
-			Set<List<Integer>> values = collectEdgeCases(edgeCases);
+			Set<List<Integer>> values = collectEdgeCaseValues(edgeCases);
 			assertThat(values).containsExactlyInAnyOrder(
 					Collections.emptyList(),
 					Collections.singletonList(-1),
@@ -321,7 +321,7 @@ class ListArbitraryTests {
 		void edgeCasesAreFilteredByUniquenessConstraints() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofSize(2).uniqueElements(i -> i);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
 		}
 
 	}

@@ -2,10 +2,10 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 
@@ -19,7 +19,7 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 
 	@Override
 	public Shrinkable<T> next(final Random random) {
-		return new IgnoreExceptionShrinkable(nextUntilAccepted(random, base::next));
+		return new IgnoreExceptionShrinkable<>(nextUntilAccepted(random, base::next), exceptionType);
 	}
 
 	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
@@ -45,37 +45,4 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 		);
 	}
 
-	private class IgnoreExceptionShrinkable implements Shrinkable<T> {
-
-		private final Shrinkable<T> shrinkable;
-
-		private IgnoreExceptionShrinkable(Shrinkable<T> shrinkable) {
-			this.shrinkable = shrinkable;
-		}
-
-		@Override
-		public T value() {
-			return shrinkable.value();
-		}
-
-		@Override
-		public Stream<Shrinkable<T>> shrink() {
-			return shrinkable.shrink().filter(s -> {
-				try {
-					s.value();
-					return true;
-				} catch (Throwable throwable) {
-					if (exceptionType.isAssignableFrom(throwable.getClass())) {
-						return false;
-					}
-					throw throwable;
-				}
-			}).map(IgnoreExceptionShrinkable::new);
-		}
-
-		@Override
-		public ShrinkingDistance distance() {
-			return shrinkable.distance();
-		}
-	}
 }

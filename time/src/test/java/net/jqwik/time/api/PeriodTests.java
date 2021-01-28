@@ -163,7 +163,7 @@ class PeriodTests {
 		@Example
 		void defaultEdgeCases() {
 			PeriodArbitrary periods = Dates.periods();
-			Set<Period> edgeCases = collectEdgeCases(periods.edgeCases());
+			Set<Period> edgeCases = collectEdgeCaseValues(periods.edgeCases());
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					Period.of(-1000, 0, 0),
 					Period.of(0, 0, 0),
@@ -177,7 +177,7 @@ class PeriodTests {
 					Period.ofDays(15), Period.ofMonths(3)
 			);
 
-			Set<Period> edgeCases = collectEdgeCases(periods.edgeCases());
+			Set<Period> edgeCases = collectEdgeCaseValues(periods.edgeCases());
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					Period.of(0, 0, 15),
 					Period.of(0, 3, 0)

@@ -70,7 +70,7 @@ class FlatCombinatorsTests {
 		assertThat(value.value()).isEqualTo(36);
 	}
 
-	@Example
+	@Property(tries =1, seed="-4082664798422409837")
 	void listOfArbitrariesCanBeCombined() {
 		List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(one(), one(), two(), two(), three(), three());
 		Arbitrary<Integer> combineList = Combinators.combine(listOfArbitraries)

@@ -578,7 +578,7 @@ class SampleReportingTests {
 			@Example
 			void generatedStreamsCanBeReportedBeforeEvaluation(@ForAll Random random) {
 				Arbitrary<Stream<Integer>> streams = Arbitraries.just(1).stream().ofSize(3);
-				Stream<Integer> stream = streams.generator(10).next(random).value();
+				Stream<Integer> stream = streams.generator(10, true).next(random).value();
 
 				ValueReport report = ValueReport.of(stream);
 				Assertions.assertThat(report.singleLineReport()).isEqualTo("Stream.of [1, 1, 1]");
@@ -587,7 +587,7 @@ class SampleReportingTests {
 			@Example
 			void generatedStreamsCanBeReportedWithoutEvaluation(@ForAll Random random) {
 				Arbitrary<Stream<Integer>> streams = Arbitraries.just(1).stream().ofSize(3);
-				Stream<Integer> stream = streams.generator(10).next(random).value();
+				Stream<Integer> stream = streams.generator(10, true).next(random).value();
 
 				ValueReport report = ValueReport.of(stream);
 				assertThat(stream.count()).isEqualTo(3); // Force evaluation

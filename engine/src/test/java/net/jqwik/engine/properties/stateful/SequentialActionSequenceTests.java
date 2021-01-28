@@ -46,7 +46,7 @@ class SequentialActionSequenceTests {
 		};
 
 		Arbitrary<ActionSequence<Integer>> arbitrary = Arbitraries.sequences(Arbitraries.just(actionWithFailingPrecondition));
-		Shrinkable<ActionSequence<Integer>> shrinkable = arbitrary.generator(1000).next(random);
+		Shrinkable<ActionSequence<Integer>> shrinkable = arbitrary.generator(1000, true).next(random);
 		ActionSequence<Integer> sequence = shrinkable.value();
 
 		assertThatThrownBy(() -> sequence.run(42)).isInstanceOf(JqwikException.class);

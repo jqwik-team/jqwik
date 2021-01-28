@@ -37,7 +37,7 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 	public EdgeCases<Stream<T>> edgeCases() {
 		return EdgeCasesSupport.map(
 				edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors)),
-				Collection::stream
+				ReportableStream::new
 		);
 	}
 

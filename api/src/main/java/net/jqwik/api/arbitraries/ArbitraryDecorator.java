@@ -1,7 +1,6 @@
 package net.jqwik.api.arbitraries;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.apiguardian.api.*;
 

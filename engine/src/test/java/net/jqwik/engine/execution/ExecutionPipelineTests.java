@@ -24,6 +24,7 @@ class ExecutionPipelineTests {
 
 	@Property(tries = 10)
 	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("taskList") @Size(max = 50) List<ExecutionTask> tasks) {
+		Mockito.clearInvocations(listener);
 		tasks.forEach(t -> pipeline.submit(t));
 		pipeline.runToTermination();
 		InOrder events = Mockito.inOrder(listener);
@@ -38,12 +39,12 @@ class ExecutionPipelineTests {
 
 	@Provide
 	Arbitrary<List<ExecutionTask>> taskList() {
-		return task().list();
+		return task().list().uniqueElements(ExecutionTask::ownerId);
 	}
 
 	@Provide
 	Arbitrary<ExecutionTask> task() {
-		return OrderedArbitraryForTesting.between(1, 100).map(i -> new MockExecutionTask(Integer.toString(i)));
+		return Arbitraries.integers().between(1, 1000).map(i -> new MockExecutionTask(Integer.toString(i)));
 	}
 
 	@Example

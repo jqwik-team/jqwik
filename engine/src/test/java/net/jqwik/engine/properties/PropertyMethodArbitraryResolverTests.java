@@ -232,7 +232,7 @@ class PropertyMethodArbitraryResolverTests {
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "listOfThingFrom");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
 			Arbitrary<?> listOfThingsArbitrary = arbitraries.iterator().next();
-			List<?> listOfThings = (List<?>) listOfThingsArbitrary.generator(10).next(random).value();
+			List<?> listOfThings = (List<?>) listOfThingsArbitrary.generator(10, true).next(random).value();
 			assertThat(listOfThings).allMatch(aThing -> aThing instanceof Thing);
 		}
 
@@ -306,7 +306,7 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		private void assertThingArbitrary(Arbitrary<?> arbitrary) {
-			Thing aThing = (Thing) arbitrary.generator(10).next(SourceOfRandomness.current()).value();
+			Thing aThing = (Thing) arbitrary.generator(10, true).next(SourceOfRandomness.current()).value();
 			assertThat(aThing).isInstanceOf(Thing.class);
 		}
 

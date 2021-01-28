@@ -54,7 +54,7 @@ class ActionSequenceProperties {
 	@Example
 	void errorsAreWrappedInAssertionFailedError(@ForAll Random random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(error());
-		Shrinkable<ActionSequence<String>> sequence = arbitrary.generator(10).next(random);
+		Shrinkable<ActionSequence<String>> sequence = arbitrary.generator(10, true).next(random);
 
 		Assertions.assertThatThrownBy(() -> sequence.value().run(""))
 				  .isInstanceOf(AssertionFailedError.class).hasCauseInstanceOf(AssertionError.class);

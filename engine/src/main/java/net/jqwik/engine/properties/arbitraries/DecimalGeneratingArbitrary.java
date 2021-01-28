@@ -32,9 +32,7 @@ class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<Big
 	@Override
 	public RandomGenerator<BigDecimal> generator(int genSize) {
 		checkRange();
-		return RandomDecimalGenerators
-			.bigDecimals(genSize, range, scale, distribution, shrinkingTarget())
-			.withEdgeCases(genSize, edgeCases());
+		return RandomDecimalGenerators.bigDecimals(genSize, range, scale, distribution, shrinkingTarget());
 	}
 
 	private void checkRange() {

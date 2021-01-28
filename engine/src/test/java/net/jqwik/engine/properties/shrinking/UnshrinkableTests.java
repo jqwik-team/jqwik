@@ -58,7 +58,7 @@ class UnshrinkableTests {
 	void nullValueUnshrinkable(@ForAll Random random) {
 		SizableArbitrary<Set<String>> setArbitrary =
 			Arbitraries.strings().injectNull(1.0).set().ofSize(1);
-		Set<?> set = setArbitrary.generator(10).next(random).value();
+		Set<?> set = setArbitrary.generator(10, true).next(random).value();
 		assertThat(set).isNotEmpty();
 		assertThat(set.iterator().next()).isNull();
 	}

@@ -27,6 +27,10 @@ public class ShrinkingSupport {
 		return ShrinkingSupportFacade.implementation.falsifyThenShrink(arbitrary, random, falsifier);
 	}
 
+	public static <T> T falsifyThenShrink(RandomGenerator<? extends T> generator, Random random, Falsifier<T> falsifier) {
+		return ShrinkingSupportFacade.implementation.falsifyThenShrink(generator, random, falsifier);
+	}
+
 	public static <T> T shrink(
 			Shrinkable<T> falsifiedShrinkable,
 			Falsifier<T> falsifier,

@@ -49,7 +49,7 @@ class ArbitraryShrinkingTests {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).dontShrink();
 
-		Shrinkable<Integer> shrinkable = arbitrary.generator(10).next(random);
+		Shrinkable<Integer> shrinkable = arbitrary.generator(10, true).next(random);
 		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
 		int shrunkValue = shrink(shrinkable, falsifier, null);
 		assertThat(shrunkValue).isEqualTo(shrinkable.value());
@@ -103,7 +103,7 @@ class ArbitraryShrinkingTests {
 				.map(i -> 4 - i);
 
 		Arbitrary<List<Integer>> collected = integersShrunkTowardMax.collect(list -> sum(list) >= 12);
-		RandomGenerator<List<Integer>> generator = collected.generator(10);
+		RandomGenerator<List<Integer>> generator = collected.generator(10, true);
 
 		Shrinkable<List<Integer>> shrinkable = generator.next(random);
 		List<Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
@@ -123,7 +123,7 @@ class ArbitraryShrinkingTests {
 			10
 		);
 
-		RandomGenerator<Integer> generator = integer.generator(10);
+		RandomGenerator<Integer> generator = integer.generator(10, true);
 		Shrinkable<Integer> shrinkable = generator.next(random);
 		Integer shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 		assertThat(shrunkValue).isEqualTo(0);

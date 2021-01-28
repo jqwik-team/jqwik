@@ -86,8 +86,8 @@ class ShrinkableProperties {
 							  int min = Math.min(first, second);
 							  int max = Math.max(first, second);
 							  return Arbitraries
-										 .integers().between(min, max)
-										 .generator(100).next(random);
+											 .integers().between(min, max)
+											 .generator(100, true).next(random);
 						  });
 	}
 

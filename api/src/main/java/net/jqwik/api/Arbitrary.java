@@ -55,7 +55,12 @@ public interface Arbitrary<T> {
 	}
 
 	/**
-	 * Create the random generator for an arbitrary
+	 * Create the random generator for an arbitrary.
+	 * 
+	 * <p>
+	 *     Starting with version 1.4.0 the returned generator should no longer
+	 *     include edge cases explicitly since those will be injected in {@linkplain #generator(int, boolean)}
+	 * </p>
 	 *
 	 * @param genSize a very unspecific configuration parameter that can be used
 	 *                to influence the configuration and behaviour of a random generator
@@ -68,6 +73,22 @@ public interface Arbitrary<T> {
 	 * @return a new random generator instance
 	 */
 	RandomGenerator<T> generator(int genSize);
+
+	/**
+	 * Create the random generator for an arbitrary with or without edge cases.
+	 *
+	 * @param genSize See {@linkplain #generator(int)} about meaning of this parameter
+	 * @param withEdgeCases True if edge cases should be injected into the stream of generated values
+	 * @return a new random generator instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.4.0")
+	default RandomGenerator<T> generator(int genSize, boolean withEdgeCases) {
+		if (withEdgeCases) {
+			return generator(genSize).withEdgeCases(genSize, edgeCases());
+		} else {
+			return generator(genSize);
+		}
+	}
 
 	/**
 	 * @return The same instance but with type Arbitrary&lt;Object&gt;
@@ -245,7 +266,7 @@ public interface Arbitrary<T> {
 
 			@Override
 			public EdgeCases<T> edgeCases() {
-				return Arbitrary.this.edgeCases();
+				return EdgeCases.none();
 			}
 
 		};

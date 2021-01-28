@@ -30,9 +30,7 @@ class IntegralGeneratingArbitrary extends TypedCloneable implements Arbitrary<Bi
 
 	@Override
 	public RandomGenerator<BigInteger> generator(int genSize) {
-		return RandomGenerators
-			.bigIntegers(min, max, shrinkingTarget(), distribution)
-			.withEdgeCases(genSize, edgeCases());
+		return RandomGenerators.bigIntegers(min, max, shrinkingTarget(), distribution);
 	}
 
 	@Override

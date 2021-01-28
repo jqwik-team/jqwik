@@ -69,10 +69,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
-		EdgeCases<List<T>> edgeCases = edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors));
-		return RandomGenerators
-					   .list(elementGenerator, minSize, maxSize, uniquenessExtractors, cutoffSize(genSize))
-					   .withEdgeCases(genSize, edgeCases);
+		return RandomGenerators.list(elementGenerator, minSize, maxSize, uniquenessExtractors, cutoffSize(genSize));
 	}
 
 	protected int cutoffSize(int genSize) {

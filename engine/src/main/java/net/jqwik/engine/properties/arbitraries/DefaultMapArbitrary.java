@@ -76,19 +76,6 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	}
 
 	@Override
-	public EdgeCases<Map<K, V>> edgeCases() {
-		EdgeCases<Map<K, V>> emptyMapEdgeCase =
-				minSize == 0
-						? EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(new HashMap<>()))
-						: EdgeCases.none();
-		EdgeCases<Map<K, V>> singleEntryEdgeCases =
-				minSize <= 1
-						? singleEntryEdgeCases()
-						: EdgeCases.none();
-		return EdgeCasesSupport.concat(emptyMapEdgeCase, singleEntryEdgeCases);
-	}
-
-	@Override
 	public MapArbitrary<K, V> uniqueKeys(Function<K, Object> by) {
 		DefaultMapArbitrary<K, V> clone = typedClone();
 		clone.keyUniquenessExtractors = new HashSet<>(keyUniquenessExtractors);
