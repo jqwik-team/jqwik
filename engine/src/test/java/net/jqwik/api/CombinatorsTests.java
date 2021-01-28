@@ -73,7 +73,7 @@ class CombinatorsTests {
 	}
 
 	private Shrinkable<Integer> generate(Arbitrary<Integer> integerArbitrary) {
-		return integerArbitrary.generator(1).next(random);
+		return integerArbitrary.generator(1, true).next(random);
 	}
 
 	Arbitrary<Integer> one() {

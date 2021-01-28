@@ -51,7 +51,7 @@ class CombinatorsBuilderTests {
 						.build(b -> b.toString());
 
 		assertAllGenerated(
-				personArbitrary.generator(1),
+				personArbitrary.generator(1, true),
 				SourceOfRandomness.current(),
 				(String value) -> assertThat(value).matches("(a|b|c)(1|2|3)")
 		);
@@ -69,7 +69,7 @@ class CombinatorsBuilderTests {
 						.build(PersonBuilder::build);
 
 		assertAllGenerated(
-				personArbitrary.generator(1),
+				personArbitrary.generator(1, true),
 				SourceOfRandomness.current(),
 				person -> person.age == PersonBuilder.DEFAULT_AGE
 		);
@@ -83,7 +83,7 @@ class CombinatorsBuilderTests {
 						.build();
 
 		assertAllGenerated(
-				personArbitrary.generator(1),
+				personArbitrary.generator(1, true),
 				SourceOfRandomness.current(),
 				person -> person.age == 42 && person.name.equals("john")
 		);

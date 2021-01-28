@@ -63,7 +63,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().atTheEarliest(startDate);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(date).isAfterOrEqualTo(startDate);
 					return true;
 				});
@@ -75,7 +75,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().atTheLatest(endDate);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(date).isBeforeOrEqualTo(endDate);
 					return true;
 				});
@@ -89,7 +89,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().between(startDate, endDate);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(date).isAfterOrEqualTo(startDate);
 					assertThat(date).isBeforeOrEqualTo(endDate);
 					return true;
@@ -101,7 +101,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().between(sameDate, sameDate);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(date).isEqualTo(sameDate);
 					return true;
 				});
@@ -120,7 +120,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().yearBetween(startYear, endYear);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(dateToCalendar(date).get(Calendar.YEAR)).isGreaterThanOrEqualTo(startYear);
 					assertThat(dateToCalendar(date).get(Calendar.YEAR)).isLessThanOrEqualTo(endYear);
 					return true;
@@ -133,7 +133,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().yearBetween(year, year);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(dateToCalendar(date).get(Calendar.YEAR)).isEqualTo(year);
 					return true;
 				});
@@ -157,7 +157,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().monthBetween(startMonth, endMonth);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date)))
 							.isGreaterThanOrEqualTo(Month.of(startMonth));
 					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isLessThanOrEqualTo(Month.of(endMonth));
@@ -171,7 +171,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().monthBetween(month, month);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isEqualTo(Month.of(month));
 					return true;
 				});
@@ -183,7 +183,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().onlyMonths(months.toArray(new Month[]{}));
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isIn(months);
 					return true;
 				});
@@ -211,7 +211,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().dayOfMonthBetween(startDayOfMonth, endDayOfMonth);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(dateToCalendar(date).get(Calendar.DAY_OF_MONTH)).isGreaterThanOrEqualTo(startDayOfMonth);
 					assertThat(dateToCalendar(date).get(Calendar.DAY_OF_MONTH)).isLessThanOrEqualTo(endDayOfMonth);
 					return true;
@@ -224,7 +224,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().dayOfMonthBetween(dayOfMonth, dayOfMonth);
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(dateToCalendar(date).get(Calendar.DAY_OF_MONTH)).isEqualTo(dayOfMonth);
 					return true;
 				});
@@ -246,7 +246,7 @@ class DateTests {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 
-				assertAllGenerated(dates.generator(1000), random, date -> {
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date))).isIn(dayOfWeeks);
 					return true;
 				});
@@ -372,7 +372,7 @@ class DateTests {
 		@Example
 		void all() {
 			DateArbitrary dates = Dates.datesAsDate();
-			Set<Date> edgeCases = collectEdgeCases(dates.edgeCases());
+			Set<Date> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					getDate(1900, Calendar.JANUARY, 1),
@@ -386,7 +386,7 @@ class DateTests {
 			DateArbitrary dates =
 					Dates.datesAsDate()
 						 .between(getDate(100, Calendar.MARCH, 24), getDate(200, Calendar.NOVEMBER, 10));
-			Set<Date> edgeCases = collectEdgeCases(dates.edgeCases());
+			Set<Date> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					getDate(100, Calendar.MARCH, 24),
@@ -401,7 +401,7 @@ class DateTests {
 					Dates.datesAsDate()
 						 .yearBetween(400, 402)
 						 .monthBetween(3, 11);
-			Set<Date> edgeCases = collectEdgeCases(dates.edgeCases());
+			Set<Date> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					getDate(400, Calendar.MARCH, 1),

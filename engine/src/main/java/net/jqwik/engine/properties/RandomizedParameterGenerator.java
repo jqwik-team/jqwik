@@ -25,11 +25,11 @@ class RandomizedParameterGenerator {
 
 	private RandomGenerator<Object> selectGenerator(Random random, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
 		if (arbitrariesCache.containsKey(typeUsage)) {
-			return arbitrariesCache.get(typeUsage).generator(genSize);
+			return arbitrariesCache.get(typeUsage).generator(genSize, true);
 		}
 		int index = arbitraries.size() == 1 ? 0 : random.nextInt(arbitraries.size());
 		Arbitrary<Object> selectedArbitrary = arbitraries.get(index);
 		arbitrariesCache.put(typeUsage, selectedArbitrary);
-		return selectedArbitrary.generator(genSize);
+		return selectedArbitrary.generator(genSize, true);
 	}
 }

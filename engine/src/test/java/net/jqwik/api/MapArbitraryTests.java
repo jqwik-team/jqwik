@@ -21,7 +21,7 @@ class MapArbitraryTests {
 
 		MapArbitrary<Integer, String> mapArbitrary = Arbitraries.maps(keys, values).ofMinSize(0).ofMaxSize(10);
 
-		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1);
+		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1, true);
 
 		assertAllGenerated(generator, map -> {
 			assertThat(map.size()).isBetween(0, 10);
@@ -47,7 +47,7 @@ class MapArbitraryTests {
 		Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
 
 		MapArbitrary<Integer, String> mapArbitrary = Arbitraries.maps(keys, values);
-		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1);
+		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1, true);
 
 		assertAllGenerated(generator, map -> {
 			assertThat(map.size()).isBetween(0, 3);
@@ -65,7 +65,7 @@ class MapArbitraryTests {
 						Arbitraries.strings().alpha().ofMaxLength(10)
 				).ofMinSize(2).ofMaxSize(10).uniqueKeys(i -> i % 100);
 
-		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1000);
+		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, map -> {
 			assertThat(isUniqueModulo(map.keySet(), 100)).isTrue();
@@ -80,7 +80,7 @@ class MapArbitraryTests {
 						Arbitraries.integers().between(1, 1000)
 				).ofMinSize(2).ofMaxSize(10).uniqueValues(i -> i % 100);
 
-		RandomGenerator<Map<String, Integer>> generator = mapArbitrary.generator(1000);
+		RandomGenerator<Map<String, Integer>> generator = mapArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, map -> {
 			assertThat(isUniqueModulo(map.values(), 100)).isTrue();
@@ -95,7 +95,7 @@ class MapArbitraryTests {
 						Arbitraries.integers().between(1, 10)
 				).ofMinSize(2).ofMaxSize(10).uniqueValues();
 
-		RandomGenerator<Map<String, Integer>> generator = mapArbitrary.generator(1000);
+		RandomGenerator<Map<String, Integer>> generator = mapArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, map -> {
 			assertThat(isUniqueModulo(map.values(), 10)).isTrue();
@@ -112,21 +112,39 @@ class MapArbitraryTests {
 		return new HashSet<>(moduloList).size() == list.size();
 	}
 
-	@Example
-	void edgeCases() {
-		StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
-		Arbitrary<Integer> values = Arbitraries.of(10, 100);
-		Arbitrary<Map<String, Integer>> arbitrary = Arbitraries.maps(keys, values);
-		EdgeCases<Map<String, Integer>> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
-				Collections.emptyMap(),
-				Collections.singletonMap("a", 10),
-				Collections.singletonMap("a", 100),
-				Collections.singletonMap("z", 10),
-				Collections.singletonMap("z", 100)
-		);
-		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(5);
+	@Group
+	class EdgeCasesGeneration {
+
+		@Example
+		void edgeCases() {
+			StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
+			Arbitrary<Integer> values = Arbitraries.of(10, 100);
+			Arbitrary<Map<String, Integer>> arbitrary = Arbitraries.maps(keys, values);
+			EdgeCases<Map<String, Integer>> edgeCases = arbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
+					Collections.emptyMap(),
+					Collections.singletonMap("a", 10),
+					Collections.singletonMap("a", 100),
+					Collections.singletonMap("z", 10),
+					Collections.singletonMap("z", 100)
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(5);
+		}
+
+		@Example
+		void edgeCasesCanBeShrunk() {
+			StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
+			Arbitrary<Integer> values = Arbitraries.of(10, 100);
+			Arbitrary<Map<String, Integer>> arbitrary = Arbitraries.maps(keys, values);
+			EdgeCases<Map<String, Integer>> edgeCases = arbitrary.edgeCases();
+
+			Set<Shrinkable<Map<String, Integer>>> shrinkables = collectEdgeCaseShrinkables(edgeCases);
+			for (Shrinkable<Map<String, Integer>> shrinkable : shrinkables) {
+				Map<String, Integer> shrunkValue = shrink(shrinkable, TestingFalsifier.alwaysFalsify(), null);
+				assertThat(shrunkValue).isEmpty();
+			}
+		}
 	}
 
 	@Group
@@ -229,13 +247,14 @@ class MapArbitraryTests {
 	class Shrinking {
 
 		@Property(tries = 10)
-		boolean mapIsShrunkToEmptyMap(@ForAll Random random) {
+		void mapIsShrunkToEmptyMap(@ForAll Random random) {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(-10, 10);
 			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(1);
 
 			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
 
-			return falsifyThenShrink(arbitrary, random).isEmpty();
+			Map<Integer, String> shrunkValue = falsifyThenShrink(arbitrary, random);
+			assertThat(shrunkValue).isEmpty();
 		}
 
 		@Property(tries = 10)

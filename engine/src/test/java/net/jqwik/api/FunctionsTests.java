@@ -37,7 +37,7 @@ class FunctionsTests {
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
-		Function<String, Integer> function = functions.generator(10).next(random).value();
+		Function<String, Integer> function = functions.generator(10, true).next(random).value();
 
 		Integer valueForHello = function.apply("hello");
 		assertThat(valueForHello).isBetween(1, 10);
@@ -51,7 +51,7 @@ class FunctionsTests {
 			Functions.function(Function.class).returns(integers);
 
 		assertAtLeastOneGenerated(
-			functions.generator(10),
+			functions.generator(10, true),
 			function -> !function.apply("value1").equals(function.apply("value2"))
 		);
 	}
@@ -62,7 +62,7 @@ class FunctionsTests {
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
-		Function<String, Integer> function = functions.generator(10).next(random).value();
+		Function<String, Integer> function = functions.generator(10, true).next(random).value();
 		assertThat(function.toString()).contains("Function");
 	}
 
@@ -72,7 +72,7 @@ class FunctionsTests {
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
-		RandomGenerator<Function<String, Integer>> generator = functions.generator(10);
+		RandomGenerator<Function<String, Integer>> generator = functions.generator(10, true);
 		Function<String, Integer> function1 = generator.next(random).value();
 
 		assertThat(function1.hashCode()).isEqualTo(function1.hashCode());
@@ -94,7 +94,7 @@ class FunctionsTests {
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
-		RandomGenerator<Function<String, Integer>> generator = functions.generator(10);
+		RandomGenerator<Function<String, Integer>> generator = functions.generator(10, true);
 		Function<String, Integer> function1 = generator.next(random).value();
 
 		assertThat(function1.equals(function1)).isTrue();
@@ -107,7 +107,7 @@ class FunctionsTests {
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
-		Function<String, Integer> function = functions.generator(10).next(random).value();
+		Function<String, Integer> function = functions.generator(10, true).next(random).value();
 
 		Function<String, Integer> andThenFunction = function.andThen(value -> value - 1);
 		assertThat(function.apply("any")).isEqualTo(42);
@@ -120,7 +120,7 @@ class FunctionsTests {
 		Arbitrary<MyFunctionalInterface<String, String, Integer>> functions =
 			Functions.function(MyFunctionalInterface.class).returns(integers);
 
-		MyFunctionalInterface<String, String, Integer> function = functions.generator(10).next(random).value();
+		MyFunctionalInterface<String, String, Integer> function = functions.generator(10, true).next(random).value();
 		assertThat(function.hello()).isEqualTo("hello");
 	}
 
@@ -131,7 +131,7 @@ class FunctionsTests {
 			Functions.function(Function.class).returns(integers);
 
 		assertAllGenerated(
-			functions.generator(10),
+			functions.generator(10, true),
 			function -> function.apply(null) != null
 		);
 	}
@@ -142,7 +142,7 @@ class FunctionsTests {
 		Arbitrary<Supplier<Integer>> functions =
 			Functions.function(Supplier.class).returns(integers);
 
-		Supplier<Integer> supplier = functions.generator(10).next(random).value();
+		Supplier<Integer> supplier = functions.generator(10, true).next(random).value();
 
 		Integer value = supplier.get();
 		assertThat(value).isBetween(1, 10);
@@ -154,7 +154,7 @@ class FunctionsTests {
 		Arbitrary<Consumer<Integer>> functions =
 			Functions.function(Consumer.class).returns(Arbitraries.nothing());
 
-		Consumer<Integer> supplier = functions.generator(10).next(random).value();
+		Consumer<Integer> supplier = functions.generator(10, true).next(random).value();
 
 		supplier.accept(0);
 		supplier.accept(Integer.MAX_VALUE);
@@ -236,7 +236,7 @@ class FunctionsTests {
 					.when(params -> params.get(0).equals("four"), params -> 4);
 
 			assertAllGenerated(
-				functions.generator(10),
+				functions.generator(10, true),
 				function -> function.apply("three") == 3 && function.apply("four") == 4
 			);
 		}
@@ -251,7 +251,7 @@ class FunctionsTests {
 					.when(params -> params.get(0).equals("three"), params -> 33);
 
 			assertAllGenerated(
-				functions.generator(10),
+				functions.generator(10, true),
 				function -> function.apply("three") == 3
 			);
 		}
@@ -265,7 +265,7 @@ class FunctionsTests {
 					.when(params -> params.get(0).equals("null"), params -> null);
 
 			assertAllGenerated(
-				functions.generator(10),
+				functions.generator(10, true),
 				function -> function.apply("null") == null
 			);
 		}
@@ -281,7 +281,7 @@ class FunctionsTests {
 					});
 
 			assertAllGenerated(
-				functions.generator(10),
+				functions.generator(10, true),
 				function -> {
 					assertThatThrownBy(
 						() -> function.apply(null)

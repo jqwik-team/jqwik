@@ -12,7 +12,7 @@ class ActionSequenceInvariantTests {
 	@Example
 	boolean succeedingInvariant(@ForAll Random random) {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(changeValue());
-		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
+		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10, true).next(random);
 
 		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> Assertions.assertThat(true).isTrue());
 		MyModel result = sequenceWithInvariant.run(new MyModel());
@@ -26,7 +26,7 @@ class ActionSequenceInvariantTests {
 	@Example
 	void failingInvariantFailSequenceRun(@ForAll Random random) {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(Arbitraries.oneOf(changeValue(), nullify())).ofMinSize(20);
-		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(1000).next(random);
+		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(1000, true).next(random);
 
 		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> Assertions.assertThat(model.value).isNotNull());
 

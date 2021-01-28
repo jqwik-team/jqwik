@@ -24,14 +24,14 @@ class ArbitrariesEdgeCasesTests {
 		Arbitrary<Integer> values = Arbitraries.of(10, 100);
 		Arbitrary<Map.Entry<String, Integer>> arbitrary = Arbitraries.entries(keys, values);
 		EdgeCases<Map.Entry<String, Integer>> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 				mapEntry("a", 10),
 				mapEntry("a", 100),
 				mapEntry("z", 10),
 				mapEntry("z", 100)
 		);
 		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(4);
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
 	}
 
 	private <K, V> Map.Entry<K, V> mapEntry(K key, V value) {
@@ -58,9 +58,9 @@ class ArbitrariesEdgeCasesTests {
 	void constant() {
 		Arbitrary<String> arbitrary = Arbitraries.just("abc");
 		EdgeCases<String> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactly("abc");
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactly("abc");
 		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(1);
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(1);
 	}
 
 	@Example
@@ -68,9 +68,9 @@ class ArbitrariesEdgeCasesTests {
 	void create() {
 		Arbitrary<String> arbitrary = Arbitraries.create(() -> "new string");
 		EdgeCases<String> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactly("new string");
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactly("new string");
 		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(1);
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(1);
 	}
 
 	@Example
@@ -79,9 +79,9 @@ class ArbitrariesEdgeCasesTests {
 		Arbitrary<Integer> base = Arbitraries.of(5, 10);
 		Arbitrary<Integer> arbitrary = Arbitraries.recursive(() -> base, list -> list.map(i -> i + 1), 3);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactly(8, 13);
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactly(8, 13);
 		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(2);
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
 	}
 
 	@Example
@@ -89,9 +89,9 @@ class ArbitrariesEdgeCasesTests {
 	void shuffle() {
 		Arbitrary<List<Integer>> arbitrary = Arbitraries.shuffle(1, 2, 3);
 		EdgeCases<List<Integer>> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactly(asList(1, 2, 3));
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactly(asList(1, 2, 3));
 		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(1);
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(1);
 	}
 
 	@Example
@@ -102,11 +102,11 @@ class ArbitrariesEdgeCasesTests {
 				Arbitraries.of(100, 10000)
 		);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 				-1, 0, 1, 100, 10000
 		);
 		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(5);
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(5);
 	}
 
 	@Example
@@ -117,11 +117,11 @@ class ArbitrariesEdgeCasesTests {
 				Tuple.of(2, Arbitraries.integers().greaterOrEqual(100))
 		);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 				-1, 0, 1, 100, 101, Integer.MAX_VALUE - 1, Integer.MAX_VALUE
 		);
 		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(7);
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(7);
 	}
 
 	@Example
@@ -132,11 +132,11 @@ class ArbitrariesEdgeCasesTests {
 				Tuple.of(2, Arbitraries.integers().greaterOrEqual(100))
 		);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 				100, 101, Integer.MAX_VALUE - 1, Integer.MAX_VALUE
 		);
 		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(4);
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
 	}
 
 	@Example
@@ -147,7 +147,7 @@ class ArbitrariesEdgeCasesTests {
 				Functions.function(Function.class).returns(integers);
 
 		EdgeCases<Function<String, Integer>> edgeCases = arbitrary.edgeCases();
-		Set<Function<String, Integer>> functions = collectEdgeCases(edgeCases);
+		Set<Function<String, Integer>> functions = collectEdgeCaseValues(edgeCases);
 		assertThat(functions).hasSize(4);
 
 		for (Function<String, Integer> function : functions) {
@@ -155,7 +155,7 @@ class ArbitrariesEdgeCasesTests {
 		}
 
 		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCases(edgeCases)).hasSize(4);
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
 	}
 
 	@Group
@@ -166,10 +166,10 @@ class ArbitrariesEdgeCasesTests {
 		void ofBooleans() {
 			Arbitrary<Boolean> arbitrary = Arbitraries.of(true, false);
 			EdgeCases<Boolean> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases))
+			assertThat(collectEdgeCaseValues(edgeCases))
 					.containsExactlyInAnyOrder(true, false);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(2);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
 		}
 
 		@Example
@@ -177,20 +177,20 @@ class ArbitrariesEdgeCasesTests {
 		void ofValues() {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(4, 9, 2, 1, 66, 2);
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases))
+			assertThat(collectEdgeCaseValues(edgeCases))
 					.containsExactlyInAnyOrder(4, 2);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(2);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
 		}
 
 		@Example
 		void ofValuesWithNulls() {
 			Arbitrary<String> arbitrary = Arbitraries.of("first", "other", null, "last");
 			EdgeCases<String> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases))
+			assertThat(collectEdgeCaseValues(edgeCases))
 					.containsExactlyInAnyOrder("first", "last", null);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(3);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(3);
 		}
 
 		@Example
@@ -199,10 +199,10 @@ class ArbitrariesEdgeCasesTests {
 			char[] chars = {'x', 'a', 'b', 'c'};
 			Arbitrary<Character> arbitrary = Arbitraries.of(chars);
 			EdgeCases<Character> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases))
+			assertThat(collectEdgeCaseValues(edgeCases))
 					.containsExactlyInAnyOrder('x', 'c');
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(2);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
 		}
 
 		@Example
@@ -217,20 +217,20 @@ class ArbitrariesEdgeCasesTests {
 					Tuple.of(1, 2)
 			);
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases))
+			assertThat(collectEdgeCaseValues(edgeCases))
 					.containsExactlyInAnyOrder(4, 2);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(2);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
 		}
 
 		@Example
 		void enums() {
 			Arbitrary<MyEnum> arbitrary = Arbitraries.of(MyEnum.class);
 			EdgeCases<MyEnum> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases))
+			assertThat(collectEdgeCaseValues(edgeCases))
 					.containsExactlyInAnyOrder(MyEnum.FIRST, MyEnum.LAST);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(2);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
 		}
 	}
 
@@ -241,33 +241,33 @@ class ArbitrariesEdgeCasesTests {
 		void singleRangeChars() {
 			CharacterArbitrary arbitrary = Arbitraries.chars().range('a', 'z');
 			EdgeCases<Character> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					'a', 'z'
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(2);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
 		}
 
 		@Example
 		void multiRangeChars() {
 			CharacterArbitrary arbitrary = Arbitraries.chars().range('a', 'z').digit();
 			EdgeCases<Character> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					'a', 'z', '0', '9'
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(4);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
 		}
 
 		@Example
 		void strings() {
 			StringArbitrary arbitrary = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(0);
 			EdgeCases<String> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					"", "a", "z"
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCases(edgeCases)).hasSize(3);
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(3);
 		}
 
 		@Property
@@ -275,11 +275,11 @@ class ArbitrariesEdgeCasesTests {
 			StringArbitrary arbitrary = Arbitraries.strings().withCharRange('a', 'z').ofLength(stringLength);
 			EdgeCases<String> edgeCases = arbitrary.edgeCases();
 			if (stringLength == 0) {
-				assertThat(collectEdgeCases(edgeCases)).containsExactly("");
+				assertThat(collectEdgeCaseValues(edgeCases)).containsExactly("");
 			} else {
-				assertThat(collectEdgeCases(edgeCases)).hasSize(2);
-				assertThat(collectEdgeCases(edgeCases)).allMatch(aString -> aString.length() == stringLength);
-				assertThat(collectEdgeCases(edgeCases)).allMatch(aString -> aString.chars().allMatch(c -> c == 'a' || c == 'z'));
+				assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
+				assertThat(collectEdgeCaseValues(edgeCases)).allMatch(aString -> aString.length() == stringLength);
+				assertThat(collectEdgeCaseValues(edgeCases)).allMatch(aString -> aString.chars().allMatch(c -> c == 'a' || c == 'z'));
 			}
 		}
 
@@ -289,9 +289,9 @@ class ArbitrariesEdgeCasesTests {
 												   .ofMinLength(minLength)
 												   .ofMaxLength(20);
 			EdgeCases<String> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCases(edgeCases)).hasSize(2);
-			assertThat(collectEdgeCases(edgeCases)).allMatch(aString -> aString.length() == minLength);
-			assertThat(collectEdgeCases(edgeCases)).allMatch(aString -> aString.chars().allMatch(c -> c == 'a' || c == 'z'));
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
+			assertThat(collectEdgeCaseValues(edgeCases)).allMatch(aString -> aString.length() == minLength);
+			assertThat(collectEdgeCaseValues(edgeCases)).allMatch(aString -> aString.chars().allMatch(c -> c == 'a' || c == 'z'));
 		}
 
 	}

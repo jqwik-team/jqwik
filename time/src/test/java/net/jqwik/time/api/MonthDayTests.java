@@ -42,7 +42,7 @@ class MonthDayTests {
 
 				Arbitrary<MonthDay> dates = Dates.monthDays().atTheEarliest(monthDay);
 
-				assertAllGenerated(dates.generator(1000), random, md -> {
+				assertAllGenerated(dates.generator(1000, true), random, md -> {
 					assertThat(md).isGreaterThanOrEqualTo(monthDay);
 					return true;
 				});
@@ -54,7 +54,7 @@ class MonthDayTests {
 
 				Arbitrary<MonthDay> dates = Dates.monthDays().atTheLatest(monthDay);
 
-				assertAllGenerated(dates.generator(1000), random, md -> {
+				assertAllGenerated(dates.generator(1000, true), random, md -> {
 					assertThat(md).isLessThanOrEqualTo(monthDay);
 					return true;
 				});
@@ -68,7 +68,7 @@ class MonthDayTests {
 
 				Arbitrary<MonthDay> dates = Dates.monthDays().between(startMonthDay, endMonthDay);
 
-				assertAllGenerated(dates.generator(1000), random, md -> {
+				assertAllGenerated(dates.generator(1000, true), random, md -> {
 					assertThat(md).isGreaterThanOrEqualTo(startMonthDay);
 					assertThat(md).isLessThanOrEqualTo(endMonthDay);
 					return true;
@@ -80,7 +80,7 @@ class MonthDayTests {
 
 				Arbitrary<MonthDay> dates = Dates.monthDays().between(monthDay, monthDay);
 
-				assertAllGenerated(dates.generator(1000), random, md -> {
+				assertAllGenerated(dates.generator(1000, true), random, md -> {
 					assertThat(md).isEqualTo(monthDay);
 					return true;
 				});
@@ -99,7 +99,7 @@ class MonthDayTests {
 
 				Arbitrary<MonthDay> dates = Dates.monthDays().monthBetween(startMonth, endMonth);
 
-				assertAllGenerated(dates.generator(1000), random, md -> {
+				assertAllGenerated(dates.generator(1000, true), random, md -> {
 					assertThat(md.getMonth()).isGreaterThanOrEqualTo(Month.of(startMonth));
 					assertThat(md.getMonth()).isLessThanOrEqualTo(Month.of(endMonth));
 					return true;
@@ -112,7 +112,7 @@ class MonthDayTests {
 
 				Arbitrary<MonthDay> dates = Dates.monthDays().monthBetween(month, month);
 
-				assertAllGenerated(dates.generator(1000), random, md -> {
+				assertAllGenerated(dates.generator(1000, true), random, md -> {
 					assertThat(md.getMonth()).isEqualTo(Month.of(month));
 					return true;
 				});
@@ -124,7 +124,7 @@ class MonthDayTests {
 
 				Arbitrary<MonthDay> dates = Dates.monthDays().onlyMonths(months.toArray(new Month[]{}));
 
-				assertAllGenerated(dates.generator(1000), random, md -> {
+				assertAllGenerated(dates.generator(1000, true), random, md -> {
 					assertThat(md.getMonth()).isIn(months);
 					return true;
 				});
@@ -152,7 +152,7 @@ class MonthDayTests {
 
 				Arbitrary<MonthDay> dates = Dates.monthDays().dayOfMonthBetween(startDayOfMonth, endDayOfMonth);
 
-				assertAllGenerated(dates.generator(1000), random, md -> {
+				assertAllGenerated(dates.generator(1000, true), random, md -> {
 					assertThat(md.getDayOfMonth()).isGreaterThanOrEqualTo(startDayOfMonth);
 					assertThat(md.getDayOfMonth()).isLessThanOrEqualTo(endDayOfMonth);
 					return true;
@@ -165,7 +165,7 @@ class MonthDayTests {
 
 				Arbitrary<MonthDay> dates = Dates.monthDays().dayOfMonthBetween(dayOfMonth, dayOfMonth);
 
-				assertAllGenerated(dates.generator(1000), random, md -> {
+				assertAllGenerated(dates.generator(1000, true), random, md -> {
 					assertThat(md.getDayOfMonth()).isEqualTo(dayOfMonth);
 					return true;
 				});
@@ -274,7 +274,7 @@ class MonthDayTests {
 		@Example
 		void all() {
 			MonthDayArbitrary monthDays = Dates.monthDays();
-			Set<MonthDay> edgeCases = collectEdgeCases(monthDays.edgeCases());
+			Set<MonthDay> edgeCases = collectEdgeCaseValues(monthDays.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactly(
 					MonthDay.of(Month.JANUARY, 1),
@@ -287,7 +287,7 @@ class MonthDayTests {
 		void between() {
 			MonthDayArbitrary monthDays =
 					Dates.monthDays().between(MonthDay.of(Month.FEBRUARY, 25), MonthDay.of(Month.APRIL, 10));
-			Set<MonthDay> edgeCases = collectEdgeCases(monthDays.edgeCases());
+			Set<MonthDay> edgeCases = collectEdgeCaseValues(monthDays.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					MonthDay.of(Month.FEBRUARY, 25),

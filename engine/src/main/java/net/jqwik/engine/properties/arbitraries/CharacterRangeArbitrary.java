@@ -21,7 +21,7 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 
 	@Override
 	public RandomGenerator<Character> generator(int genSize) {
-		return RandomGenerators.chars(min, max).withEdgeCases(genSize, edgeCases());
+		return RandomGenerators.chars(min, max);
 	}
 
 	private List<Shrinkable<Character>> listOfEdgeCases() {

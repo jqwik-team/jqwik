@@ -127,6 +127,10 @@ public class EdgeCasesSupport {
 							throw throwable;
 						}
 					})
+					.map(shrinkableSupplier -> (Supplier<Shrinkable<T>>) () -> {
+						Shrinkable<T> tShrinkable = shrinkableSupplier.get();
+						return new IgnoreExceptionShrinkable<T>(tShrinkable, exceptionType);
+					})
 					.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(filteredSuppliers);
 	}
@@ -147,7 +151,9 @@ public class EdgeCasesSupport {
 									 .stream()
 									 .map(uSupplier -> {
 										 Function<T, Shrinkable<U>> shrinkableMapper =
-												 newT -> mapper.apply(newT).generator(1000).next(SourceOfRandomness.newRandom(42L));
+												 // TODO: Maybe generator(genSize)? Probably needs flag of with or without edge cases
+												 newT -> mapper.apply(newT).generator(1000)
+															   .next(SourceOfRandomness.newRandom(42L));
 										 return (Supplier<Shrinkable<U>>) () -> new FixedValueFlatMappedShrinkable<>(
 												 tSupplier.get(),
 												 shrinkableMapper,

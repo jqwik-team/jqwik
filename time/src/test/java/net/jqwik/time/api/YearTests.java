@@ -77,7 +77,7 @@ class YearTests {
 
 			Arbitrary<Year> years = Dates.years().between(startYear, endYear);
 
-			assertAllGenerated(years.generator(1000), random, year -> {
+			assertAllGenerated(years.generator(1000, true), random, year -> {
 				assertThat(year).isGreaterThanOrEqualTo(startYear);
 				assertThat(year).isLessThanOrEqualTo(endYear);
 				return true;
@@ -90,7 +90,7 @@ class YearTests {
 
 			Arbitrary<Year> years = Dates.years().between(year, year);
 
-			assertAllGenerated(years.generator(1000), random, y -> {
+			assertAllGenerated(years.generator(1000, true), random, y -> {
 				assertThat(y).isEqualTo(year);
 				return true;
 			});
@@ -151,7 +151,7 @@ class YearTests {
 		@Example
 		void all() {
 			YearArbitrary years = Dates.years();
-			Set<Year> edgeCases = collectEdgeCases(years.edgeCases());
+			Set<Year> edgeCases = collectEdgeCaseValues(years.edgeCases());
 			assertThat(edgeCases).hasSize(4);
 			assertThat(edgeCases)
 					.containsExactlyInAnyOrder(Year.of(1900), Year.of(1901), Year.of(2499), Year.of(2500));
@@ -160,7 +160,7 @@ class YearTests {
 		@Example
 		void between() {
 			YearArbitrary years = Dates.years().between(100, 200);
-			Set<Year> edgeCases = collectEdgeCases(years.edgeCases());
+			Set<Year> edgeCases = collectEdgeCaseValues(years.edgeCases());
 			assertThat(edgeCases).hasSize(4);
 			assertThat(edgeCases).containsExactlyInAnyOrder(Year.of(100), Year.of(101), Year.of(199), Year.of(200));
 		}

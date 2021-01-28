@@ -23,7 +23,7 @@ class LazyOfArbitraryShrinkingTests {
 				() -> Arbitraries.integers().between(1, 10).filter(i -> i == 10)
 			);
 
-		Shrinkable<Integer> next = arbitrary.generator(10).next(random);
+		Shrinkable<Integer> next = arbitrary.generator(10, true).next(random);
 		assertThat(next.distance()).isEqualTo(ShrinkingDistance.of(0, 9));
 	}
 
@@ -138,7 +138,7 @@ class LazyOfArbitraryShrinkingTests {
 		@Property(tries = 1000)
 		void depthIsBetweenZeroAndNumberOfNodes(@ForAll Random random) {
 			Arbitrary<Object> arbitrary = expression();
-			LazyOfShrinkable<Object> lazyOf = (LazyOfShrinkable<Object>) arbitrary.generator(10).next(random);
+			LazyOfShrinkable<Object> lazyOf = (LazyOfShrinkable<Object>) arbitrary.generator(10, true).next(random);
 
 			int numberOfNodes = countNodes(lazyOf.value());
 			assertThat(lazyOf.depth).isBetween(0, numberOfNodes);

@@ -20,7 +20,7 @@ class IteratorArbitraryTests {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		IteratorArbitrary<Integer> streamArbitrary = integerArbitrary.iterator().ofMinSize(0).ofMaxSize(5);
 
-		RandomGenerator<Iterator<Integer>> generator = streamArbitrary.generator(1);
+		RandomGenerator<Iterator<Integer>> generator = streamArbitrary.generator(1, true);
 
 		assertGeneratedIterator(generator.next(random));
 		assertGeneratedIterator(generator.next(random));
@@ -34,7 +34,7 @@ class IteratorArbitraryTests {
 				Arbitraries.integers().between(1, 1000).iterator().ofMaxSize(20)
 						   .uniqueElements(i -> i % 100);
 
-		RandomGenerator<Iterator<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<Iterator<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, iterator -> {
 			assertThat(isUniqueModulo(iterator, 100)).isTrue();
@@ -46,7 +46,7 @@ class IteratorArbitraryTests {
 		IteratorArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).iterator().ofMaxSize(20).uniqueElements();
 
-		RandomGenerator<Iterator<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<Iterator<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, iterator -> {
 			assertThat(isUniqueModulo(iterator, 1000)).isTrue();
@@ -57,7 +57,7 @@ class IteratorArbitraryTests {
 	void edgeCases() {
 		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 		IteratorArbitrary<Integer> arbitrary = ints.iterator();
-		Set<Iterator<Integer>> iterators = collectEdgeCases(arbitrary.edgeCases());
+		Set<Iterator<Integer>> iterators = collectEdgeCaseValues(arbitrary.edgeCases());
 		Set<List<Integer>> lists =
 				iterators.stream()
 						 .map(iterator -> {
@@ -71,7 +71,7 @@ class IteratorArbitraryTests {
 				Collections.singletonList(-10),
 				Collections.singletonList(10)
 		);
-		assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(3);
+		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(3);
 	}
 
 
@@ -79,7 +79,7 @@ class IteratorArbitraryTests {
 	void edgeCasesAreFilteredByUniquenessConstraints() {
 		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 		IteratorArbitrary<Integer> arbitrary = ints.iterator().ofSize(2).uniqueElements(i -> i);
-		assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
+		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
 	}
 
 	private boolean isUniqueModulo(Iterator<Integer> iterator, int modulo) {

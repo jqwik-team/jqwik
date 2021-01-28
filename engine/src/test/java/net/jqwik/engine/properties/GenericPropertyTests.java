@@ -506,7 +506,7 @@ class GenericPropertyTests {
 		List<Arbitrary<Object>> arbitraryList = Arrays.stream(arbitraries).collect(Collectors.toList());
 		List<RandomGenerator<Object>> generators = arbitraryList
 													   .stream()
-													   .map(arbitrary -> arbitrary.generator(9999))
+													   .map(arbitrary -> arbitrary.generator(9999, true))
 													   .collect(Collectors.toList());
 
 		return new ParametersGenerator() {

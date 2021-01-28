@@ -50,18 +50,18 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
-				return self.generator(genSize).filter(filterPredicate);
+				return super.generator(genSize).filter(filterPredicate);
 			}
 
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return self.exhaustive(maxNumberOfSamples)
+				return super.exhaustive(maxNumberOfSamples)
 						   .map(generator -> generator.filter(filterPredicate));
 			}
 
 			@Override
 			public EdgeCases<T> edgeCases() {
-				return EdgeCasesSupport.filter(self.edgeCases(), filterPredicate);
+				return EdgeCasesSupport.filter(super.edgeCases(), filterPredicate);
 			}
 		};
 	}
@@ -115,7 +115,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> Stream<T> sampleStream(Arbitrary<T> arbitrary) {
-		return arbitrary.generator(JqwikProperties.DEFAULT_TRIES)
+		return arbitrary.generator(JqwikProperties.DEFAULT_TRIES, true)
 						.stream(SourceOfRandomness.current())
 						.map(Shrinkable::value);
 	}
@@ -146,12 +146,12 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
-				return self.generator(genSize).ignoreException(exceptionType);
+				return super.generator(genSize).ignoreException(exceptionType);
 			}
 
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return self.exhaustive(maxNumberOfSamples)
+				return super.exhaustive(maxNumberOfSamples)
 						   .map(generator -> generator.ignoreException(exceptionType));
 			}
 
@@ -167,12 +167,12 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
-				return self.generator(genSize).dontShrink();
+				return super.generator(genSize).dontShrink();
 			}
 
 			@Override
 			public EdgeCases<T> edgeCases() {
-				return EdgeCasesSupport.dontShrink(self.edgeCases());
+				return EdgeCasesSupport.dontShrink(super.edgeCases());
 			}
 		};
 	}

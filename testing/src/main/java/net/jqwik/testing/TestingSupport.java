@@ -68,7 +68,15 @@ public class TestingSupport {
 		assertAtLeastOneGenerated(generator, random, checker, "Failed to generate at least one");
 	}
 
-	public static <T> Set<T> collectEdgeCases(EdgeCases<T> edgeCases) {
+	public static <T> Set<Shrinkable<T>> collectEdgeCaseShrinkables(EdgeCases<T> edgeCases) {
+		Set<Shrinkable<T>> shrinkables = new HashSet<>();
+		for (Shrinkable<T> edgeCase : edgeCases) {
+			shrinkables.add(edgeCase);
+		}
+		return shrinkables;
+	}
+
+	public static <T> Set<T> collectEdgeCaseValues(EdgeCases<T> edgeCases) {
 		Set<T> values = new HashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {
 			values.add(edgeCase.value());
@@ -77,7 +85,7 @@ public class TestingSupport {
 	}
 
 	public static <T> T generateFirst(Arbitrary<T> arbitrary, Random random) {
-		RandomGenerator<T> generator = arbitrary.generator(1);
+		RandomGenerator<T> generator = arbitrary.generator(1, true);
 		return generator.next(random).value();
 	}
 

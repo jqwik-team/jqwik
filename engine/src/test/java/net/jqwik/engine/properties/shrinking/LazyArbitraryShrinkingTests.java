@@ -52,7 +52,7 @@ class LazyArbitraryShrinkingTests {
 	void severalStepsToListReversedLazy(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
-		RandomGenerator<List<Integer>> generator = arbitrary.generator(10);
+		RandomGenerator<List<Integer>> generator = arbitrary.generator(10, true);
 		Shrinkable<List<Integer>> falsifiedShrinkable =
 			generateUntil(generator, random, value -> {
 				TryExecutionResult result = falsifier.execute(value);
@@ -90,7 +90,7 @@ class LazyArbitraryShrinkingTests {
 		 *
 		 * @see LazyOfArbitraryShrinkingTests.Calculator
 		 */
-		@Property(seed="340424993676761118") // This seed produces the desired result
+		@Property(seed="340424993676761") // This seed produces the desired result
 		@ExpectFailure(checkResult = ShrinkToSmallExpression.class)
 		void shrinkExpressionTree(@ForAll("expression") Object expression) {
 			Assume.that(divSubterms(expression));

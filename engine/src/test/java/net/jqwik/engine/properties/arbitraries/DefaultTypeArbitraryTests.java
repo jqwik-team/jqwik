@@ -23,7 +23,7 @@ class DefaultTypeArbitraryTests {
 					.use(String.class.getConstructor());
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aString -> {return aString.equals("");}
 			);
 		}
@@ -36,7 +36,7 @@ class DefaultTypeArbitraryTests {
 					.use(Samples.class.getDeclaredMethod("stringFromNoParams"));
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aString -> {return aString.equals("a string");}
 			);
 		}
@@ -49,7 +49,7 @@ class DefaultTypeArbitraryTests {
 					.use(Samples.class.getDeclaredMethod("stringFromNoParams"))
 					.use(String.class.getConstructor());
 
-			RandomGenerator<String> generator = typeArbitrary.generator(1000);
+			RandomGenerator<String> generator = typeArbitrary.generator(1000, true);
 
 			assertAllGenerated(
 				generator,
@@ -65,7 +65,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Samples.class.getDeclaredMethod("personFromAge", int.class));
 
-			RandomGenerator<Person> generator = typeArbitrary.generator(1000);
+			RandomGenerator<Person> generator = typeArbitrary.generator(1000, true);
 
 			assertAllGenerated(
 				generator,
@@ -82,7 +82,7 @@ class DefaultTypeArbitraryTests {
 					.use(Person.class.getConstructor(String.class));
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
@@ -94,7 +94,7 @@ class DefaultTypeArbitraryTests {
 					.use(Person.class.getConstructor(String.class, int.class));
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
@@ -106,7 +106,7 @@ class DefaultTypeArbitraryTests {
 					.use(Person.class.getDeclaredMethod("create", int.class, String.class));
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
@@ -136,7 +136,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(Person.class).useDefaults();
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
@@ -149,7 +149,7 @@ class DefaultTypeArbitraryTests {
 					.use(Samples.class.getDeclaredMethod("personFromNoParams"));
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> {return aPerson.toString().equals("a person");}
 			);
 		}
@@ -160,7 +160,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(Animal.class).useDefaults();
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				animal -> animal.toString().startsWith("Cat") || animal.toString().startsWith("Dog")
 			);
 		}
@@ -171,7 +171,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(Thing.class).useDefaults();
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				thing -> {return thing.toString().equals("Thing");}
 			);
 		}
@@ -187,7 +187,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(MyDomain.class).usePublicConstructors();
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> {
 					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
 					Assertions.assertThat(aPerson.int1).isEqualTo(aPerson.int2);
@@ -201,22 +201,22 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(MyDomain.class).useAllConstructors();
 
 			assertAtLeastOneGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.string1.equals(aPerson.string2)
 			);
 
 			assertAtLeastOneGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.int1 == aPerson.int2
 			);
 
 			assertAtLeastOneGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> !aPerson.string1.equals(aPerson.string2)
 			);
 
 			assertAtLeastOneGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.int1 != aPerson.int2
 			);
 		}
@@ -227,7 +227,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(MyDomain.class).useConstructors(ctor -> ctor.getParameterCount() == 1);
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> {
 					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
 					Assertions.assertThat(aPerson.int1).isEqualTo(0);
@@ -245,7 +245,7 @@ class DefaultTypeArbitraryTests {
 
 			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
@@ -260,7 +260,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(MyDomain.class).usePublicFactoryMethods();
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> {
 					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
 					Assertions.assertThat(aPerson.int1).isEqualTo(aPerson.int2);
@@ -274,22 +274,22 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(MyDomain.class).useAllFactoryMethods();
 
 			assertAtLeastOneGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.string1.equals(aPerson.string2)
 			);
 
 			assertAtLeastOneGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.int1 == aPerson.int2
 			);
 
 			assertAtLeastOneGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> !aPerson.string1.equals(aPerson.string2)
 			);
 
 			assertAtLeastOneGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.int1 != aPerson.int2
 			);
 		}
@@ -300,7 +300,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(MyDomain.class).useFactoryMethods(method -> method.getParameterCount() == 1);
 
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> {
 					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
 					Assertions.assertThat(aPerson.int1).isEqualTo(0);
@@ -318,7 +318,7 @@ class DefaultTypeArbitraryTests {
 
 			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(1);
 			assertAllGenerated(
-				typeArbitrary.generator(1000),
+				typeArbitrary.generator(1000, true),
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
@@ -331,7 +331,7 @@ class DefaultTypeArbitraryTests {
 			TypeArbitrary<String> typeArbitrary = new DefaultTypeArbitrary<>(String.class);
 
 			Assertions.assertThatThrownBy(
-				() -> typeArbitrary.generator(1000)
+				() -> typeArbitrary.generator(1000, true)
 			).isInstanceOf(JqwikException.class);
 		}
 
@@ -357,7 +357,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(Customer.class)
 					.use(Customer.class.getConstructor(Person.class));
 
-			RandomGenerator<Customer> generator = typeArbitrary.generator(1000);
+			RandomGenerator<Customer> generator = typeArbitrary.generator(1000, true);
 			Assertions.assertThatThrownBy(
 					() -> generator.next(SourceOfRandomness.current()).value()
 			).isInstanceOf(JqwikException.class);

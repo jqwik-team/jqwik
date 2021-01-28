@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.engine.properties.arbitraries.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -20,7 +21,7 @@ class StreamArbitraryTests {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		StreamArbitrary<Integer> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5);
 
-		RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
+		RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1, true);
 
 		assertGeneratedStream(generator.next(random));
 		assertGeneratedStream(generator.next(random));
@@ -34,7 +35,7 @@ class StreamArbitraryTests {
 		Arbitrary<Stream<Integer>> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5)
 				.filter(stream -> !stream.collect(Collectors.toList()).contains(11));
 
-		RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
+		RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1, true);
 
 		assertGeneratedStream(generator.next(random));
 		assertGeneratedStream(generator.next(random));
@@ -48,7 +49,7 @@ class StreamArbitraryTests {
 				Arbitraries.integers().between(1, 1000).stream().ofMaxSize(20)
 						   .uniqueElements(i -> i % 100);
 
-		RandomGenerator<Stream<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<Stream<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, list -> {
 			assertThat(isUniqueModulo(list, 100)).isTrue();
@@ -60,7 +61,7 @@ class StreamArbitraryTests {
 		StreamArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).stream().ofMaxSize(20).uniqueElements();
 
-		RandomGenerator<Stream<Integer>> generator = listArbitrary.generator(1000);
+		RandomGenerator<Stream<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, list -> {
 			assertThat(isUniqueModulo(list, 1000)).isTrue();
@@ -84,21 +85,29 @@ class StreamArbitraryTests {
 	void edgeCases() {
 		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 		Arbitrary<Stream<Integer>> arbitrary = ints.stream();
-		Set<Stream<Integer>> streams = collectEdgeCases(arbitrary.edgeCases());
+		Set<Stream<Integer>> streams = collectEdgeCaseValues(arbitrary.edgeCases());
 		Set<List<Integer>> lists = streams.stream().map(stream -> stream.collect(Collectors.toList())).collect(Collectors.toSet());
 		assertThat(lists).containsExactlyInAnyOrder(
 				Collections.emptyList(),
 				Collections.singletonList(-10),
 				Collections.singletonList(10)
 		);
-		assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(3);
+		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(3);
+	}
+
+	@Example
+	void edgeCasesAreReportable() {
+		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+		Arbitrary<Stream<Integer>> arbitrary = ints.stream();
+		Set<Stream<Integer>> streams = collectEdgeCaseValues(arbitrary.edgeCases());
+		assertThat(streams).allMatch(s -> s instanceof ReportableStream);
 	}
 
 	@Example
 	void edgeCasesAreFilteredByUniquenessConstraints() {
 		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 		Arbitrary<Stream<Integer>> arbitrary = ints.stream().ofSize(2).uniqueElements(i -> i);
-		assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
+		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
 	}
 
 	@Group

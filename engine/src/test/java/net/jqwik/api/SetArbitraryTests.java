@@ -21,7 +21,7 @@ class SetArbitraryTests {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		SetArbitrary<Integer> setArbitrary = integerArbitrary.set().ofMinSize(2).ofMaxSize(7);
 
-		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1);
+		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1, true);
 
 		assertGeneratedSet(generator, 2, 7);
 	}
@@ -31,7 +31,7 @@ class SetArbitraryTests {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 		SetArbitrary<Integer> setArbitrary = integerArbitrary.set().ofMinSize(2);
 
-		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1);
+		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1, true);
 
 		assertGeneratedSet(generator, 2, 5);
 	}
@@ -44,7 +44,7 @@ class SetArbitraryTests {
 						.set().ofSize(5)
 						.mapEach((all, each) -> Tuple.of(each, all));
 
-		RandomGenerator<Set<Tuple.Tuple2<Integer, Set<Integer>>>> generator = setArbitrary.generator(1);
+		RandomGenerator<Set<Tuple.Tuple2<Integer, Set<Integer>>>> generator = setArbitrary.generator(1, true);
 
 		assertAllGenerated(generator, set -> {
 			assertThat(set).hasSize(5);
@@ -62,7 +62,7 @@ class SetArbitraryTests {
 											 Arbitraries.of(all).map(friend -> Tuple.of(each, friend))
 						);
 
-		RandomGenerator<Set<Tuple.Tuple2<Integer, Integer>>> generator = setArbitrary.generator(1);
+		RandomGenerator<Set<Tuple.Tuple2<Integer, Integer>>> generator = setArbitrary.generator(1, true);
 
 		assertAllGenerated(generator, set -> {
 			assertThat(set).hasSize(5);
@@ -77,7 +77,7 @@ class SetArbitraryTests {
 						   .uniqueElements(i -> i % 99)
 						   .uniqueElements(i -> i % 100);
 
-		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1000);
+		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, set -> {
 			assertThat(isUniqueModulo(set, 100)).isTrue();
@@ -183,7 +183,7 @@ class SetArbitraryTests {
 		void setEdgeCases() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Set<Integer>> arbitrary = ints.set();
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 					Collections.emptySet(),
 					Collections.singleton(-10),
 					Collections.singleton(-9),
@@ -195,14 +195,14 @@ class SetArbitraryTests {
 					Collections.singleton(9),
 					Collections.singleton(10)
 			);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).hasSize(10);
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(10);
 		}
 
 		@Example
 		void setEdgeCasesWithMinSize1() {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Set<Integer>> arbitrary = ints.set().ofMinSize(1);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 					Collections.singleton(-10),
 					Collections.singleton(-9),
 					Collections.singleton(-2),
@@ -220,7 +220,7 @@ class SetArbitraryTests {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Set<Integer>> arbitrary = ints.set().ofSize(2)
 													.uniqueElements(i -> i % 2);
-			assertThat(collectEdgeCases(arbitrary.edgeCases())).isEmpty();
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
 		}
 	}
 
