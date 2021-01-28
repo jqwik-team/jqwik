@@ -1,3 +1,9 @@
+
+<p style="font-size: larger;margin-left: 1cm;">
+    <em>jqwik</em> is pronounced like "jay quick" <code style="font-size: large">[ˈdʒeɪkwɪk]</code>.
+</p>
+
+
 The main purpose of __jqwik__ is to bring [Property-Based Testing](/property-based-testing.html) (PBT) 
 to the JVM. _Property-Based Testing_ tries to combine the intuitiveness of 
 [Microtests](https://www.industriallogic.com/blog/history-microtests/) with the
