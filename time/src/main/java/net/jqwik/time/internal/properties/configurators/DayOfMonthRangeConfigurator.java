@@ -14,9 +14,10 @@ public class DayOfMonthRangeConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalDate.class) || targetType.isAssignableFrom(Calendar.class) || targetType
-																													  .isAssignableFrom(Date.class) || targetType
-																																							   .isAssignableFrom(Integer.class);
+		return targetType.isAssignableFrom(LocalDate.class)
+					   || targetType.isAssignableFrom(Calendar.class)
+					   || targetType.isAssignableFrom(Date.class)
+					   || targetType.isAssignableFrom(Integer.class);
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DayOfMonthRange range) {

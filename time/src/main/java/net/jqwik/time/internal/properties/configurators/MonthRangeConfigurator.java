@@ -13,10 +13,11 @@ public class MonthRangeConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalDate.class) || targetType.isAssignableFrom(Calendar.class) || targetType
-																													  .isAssignableFrom(Date.class) || targetType
-																																							   .isAssignableFrom(YearMonth.class) || targetType
-																																																			 .isAssignableFrom(MonthDay.class);
+		return targetType.isAssignableFrom(LocalDate.class)
+					   || targetType.isAssignableFrom(Calendar.class)
+					   || targetType.isAssignableFrom(Date.class)
+					   || targetType.isAssignableFrom(YearMonth.class)
+					   || targetType.isAssignableFrom(MonthDay.class);
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, MonthRange range) {

@@ -1,7 +1,6 @@
 package net.jqwik.time.internal.properties.configurators;
 
 import java.time.*;
-import java.time.format.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
@@ -26,25 +25,7 @@ public class MonthDayRangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	private MonthDay isoDateToMonthDay(String iso) {
-		// TODO: Use ISO formatter from DateTimeFormatter
-		if (iso == null) {
-			throw new NullPointerException("Argument is null");
-		} else if (!iso.startsWith("--")) {
-			throw new DateTimeParseException("MonthDay must start with --. (Example: --05-25)", iso, 0);
-		}
-		iso = iso.substring(2);
-		String[] parts = iso.split("-");
-		if (parts.length != 2) {
-			throw new DateTimeParseException("MonthDay must consist of two parts. (Example: --05-25)", iso, 2);
-		}
-		int month, day;
-		try {
-			month = Integer.parseInt(parts[0]);
-			day = Integer.parseInt(parts[1]);
-		} catch (NumberFormatException e) {
-			throw new DateTimeParseException("MonthDay parts may only consist of digits. (Example: --05-25)", iso, 2);
-		}
-		return MonthDay.of(month, day);
+		return MonthDay.parse(iso);
 	}
 
 }

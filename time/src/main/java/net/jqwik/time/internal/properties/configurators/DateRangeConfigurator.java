@@ -1,7 +1,6 @@
 package net.jqwik.time.internal.properties.configurators;
 
 import java.time.*;
-import java.time.format.*;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -15,8 +14,9 @@ public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalDate.class) || targetType.isAssignableFrom(Calendar.class) || targetType
-																													  .isAssignableFrom(Date.class);
+		return targetType.isAssignableFrom(LocalDate.class)
+					   || targetType.isAssignableFrom(Calendar.class)
+					   || targetType.isAssignableFrom(Date.class);
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DateRange range) {
@@ -45,25 +45,7 @@ public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	private LocalDate isoDateToLocalDate(String iso) {
-		// TODO: Use ISO formatter from DateTimeFormatter
-		if (iso == null) {
-			throw new NullPointerException("Argument is null");
-		} else if (iso.length() == 0) {
-			throw new DateTimeParseException("Date length can not be 0. (Example: 2013-05-25)", iso, 0);
-		}
-		String[] parts = iso.split("-");
-		if (parts.length != 3) {
-			throw new DateTimeParseException("Date must consist of three parts. (Example: 2013-05-25)", iso, 0);
-		}
-		int year, month, day;
-		try {
-			year = Integer.parseInt(parts[0]);
-			month = Integer.parseInt(parts[1]);
-			day = Integer.parseInt(parts[2]);
-		} catch (NumberFormatException e) {
-			throw new DateTimeParseException("Date parts may only consist of digits. (Example: 2013-05-25)", iso, 0);
-		}
-		return LocalDate.of(year, month, day);
+		return LocalDate.parse(iso);
 	}
 
 }
