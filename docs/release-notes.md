@@ -30,6 +30,9 @@ and
 
 #### New and Enhanced Features
 
+- Using `@Property(edgeCases = NONE)` will now also suppress the generation of 
+  edge cases in embedded arbitraries.
+
 - There is a new annotation attribute `@Property.whenSeedFixed` and a new
   [configuration parameter](/docs/snapshot/user-guide.html#jqwik-configuration)
   `jqwik.seeds.whenfixed`

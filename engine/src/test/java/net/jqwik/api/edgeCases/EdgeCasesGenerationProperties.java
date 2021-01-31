@@ -6,6 +6,7 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.statistics.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -141,16 +142,16 @@ class EdgeCasesGenerationProperties {
 		@Override
 		public void onSuccess() {
 			assertThat(generated).contains(
-				asList(-1, -100),
-				asList(-1, -2),
-				asList(-1, -0),
-				asList(-1, 2),
-				asList(-1, 100),
-				asList(1, -100),
-				asList(1, -2),
-				asList(1, -0),
-				asList(1, 2),
-				asList(1, 100)
+					asList(-1, -100),
+					asList(-1, -2),
+					asList(-1, -0),
+					asList(-1, 2),
+					asList(-1, 100),
+					asList(1, -100),
+					asList(1, -2),
+					asList(1, -0),
+					asList(1, 2),
+					asList(1, 100)
 			);
 		}
 	}
@@ -159,6 +160,17 @@ class EdgeCasesGenerationProperties {
 		return generated.subList(0, toIndex);
 	}
 
+	@Property(tries = 10000, edgeCases = EdgeCasesMode.NONE)
+	void edgeCasesShouldNotBeOverrepresentedWithEdgeCasesSetToNone(@ForAll String aString, @ForAll int anInt) {
+
+		Statistics.label("empty string")
+				  .collect(aString.isEmpty())
+				  .coverage(checker -> checker.check(true).percentage(p -> p < 1.5));
+
+		Statistics.label("zero int")
+				  .collect(anInt == 0)
+				  .coverage(checker -> checker.check(true).percentage(p -> p < 0.8));
+	}
 }
 
 
