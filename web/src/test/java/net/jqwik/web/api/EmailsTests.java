@@ -262,7 +262,7 @@ public class EmailsTests {
 		@Property
 		void defaultShrinking(@ForAll Random random) {
 			EmailArbitrary emails = Emails.emails();
-			String value = falsifyThenShrink(emails, random);
+			String value = falsifyThenShrink(emails.generator(1000), random, TestingFalsifier.alwaysFalsify());
 			assertThat(value).isEqualTo("A@a.aa");
 		}
 
