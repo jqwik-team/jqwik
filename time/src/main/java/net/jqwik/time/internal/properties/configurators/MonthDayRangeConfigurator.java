@@ -26,6 +26,7 @@ public class MonthDayRangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	private MonthDay isoDateToMonthDay(String iso) {
+		// TODO: Use ISO formatter from DateTimeFormatter
 		if (iso == null) {
 			throw new NullPointerException("Argument is null");
 		} else if (!iso.startsWith("--")) {

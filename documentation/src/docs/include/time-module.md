@@ -32,11 +32,11 @@ The following annotations can be used to constrain default generation of the enu
 - [`@DayOfMonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DayOfMonthRange.html)
 - [`@DayOfWeekRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DayOfWeekRange.html)
 - [`@LeapYears`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/LeapYears.html)
-- [`@PeriodDayRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/PeriodDayRange.html)
-- [`@PeriodMonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/PeriodMonthRange.html)
-- [`@PeriodYearRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/PeriodYearRange.html)
+- [`@PeriodRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/PeriodRange.html)
 
-`@DateRange`, `@MonthDayRange` and `@YearMonthRange` use the ISO format for date strings. Examples: `2013-05-25`, `--05-25` and `2013-05`.
+`@DateRange`, `@MonthDayRange`, `@YearMonthRange` and `@PeriodRange` 
+use the ISO format for date strings. 
+Examples: `2013-05-25`, `--05-25`, `2013-05` and `P1Y2M15D`.
 
 #### Programmatic Generation of Dates
 
@@ -128,8 +128,9 @@ Here's the list of available methods:
 
 ##### PeriodArbitrary
 
-- By default, years between `Integer.MIN_VALUE` and `Integer.MAX_VALUE`, months between `0` and `11` and days between `0` and `30` are generated.
-- You can constrain the minimum and maximum value for years using `yearsBetween(min, max)`.
-- You can constrain the minimum and maximum value for months using `monthsBetween(min, max)`.
-- You can constrain the minimum and maximum value for days using `daysBetween(min, max)`.
-
+- By default, periods between `-1000 years` and `1000 years` are generated.
+- Generated periods are always in a "reduced" form, 
+  i.e. months are always between `-11` and `11` and days between `-30` and `30`.   
+- You can constrain the minimum and maximum value using `between(Period min, Period max)`.
+- If you really want something like `Period.ofDays(3000)` generate an integer
+  and map it on `Period`.

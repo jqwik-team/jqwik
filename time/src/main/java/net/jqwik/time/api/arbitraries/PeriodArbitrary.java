@@ -15,18 +15,8 @@ import static org.apiguardian.api.API.Status.*;
 public interface PeriodArbitrary extends Arbitrary<Period> {
 
 	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated year values.
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated period.
 	 */
-	PeriodArbitrary yearsBetween(int min, int max);
-
-	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated month values.
-	 */
-	PeriodArbitrary monthsBetween(int min, int max);
-
-	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated day values.
-	 */
-	PeriodArbitrary daysBetween(int min, int max);
+	PeriodArbitrary between(Period min, Period max);
 
 }

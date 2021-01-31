@@ -4,12 +4,14 @@ import java.time.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.statistics.StatisticsReport.StatisticsReportMode.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
@@ -30,13 +32,18 @@ class PeriodTests {
 		}
 
 		@Property
-		void defaultMonthBetween0And11(@ForAll("periods") Period period) {
-			assertThat(period.getMonths()).isBetween(0, 11);
+		void defaultYearBetweenMinus1000And1000(@ForAll("periods") Period period) {
+			assertThat(period.getYears()).isBetween(-1000, 1000);
 		}
 
 		@Property
-		void defaultDaysBetween0And30(@ForAll("periods") Period period) {
-			assertThat(period.getMonths()).isBetween(0, 30);
+		void defaultMonthBetweenMinus11And11(@ForAll("periods") Period period) {
+			assertThat(period.getMonths()).isBetween(-11, 11);
+		}
+
+		@Property
+		void defaultDaysBetweenMinus30And30(@ForAll("periods") Period period) {
+			assertThat(period.getMonths()).isBetween(-30, 30);
 		}
 
 	}
@@ -50,102 +57,32 @@ class PeriodTests {
 	class PeriodMethods {
 
 		@Property
-		void yearsBetween(@ForAll int start, @ForAll int end, @ForAll Random random) {
+		void between(@ForAll int start, @ForAll int end, @ForAll Random random) {
+			Assume.that(start <= end);
 
-			Arbitrary<Period> periods = Dates.periods().yearsBetween(start, end);
-
-			final int start2, end2;
-			if (start <= end) {
-				start2 = start;
-				end2 = end;
-			} else {
-				start2 = end;
-				end2 = start;
-			}
+			Arbitrary<Period> periods = Dates.periods().between(Period.ofYears(start), Period.ofYears(end));
 
 			assertAllGenerated(periods.generator(1000), random, period -> {
-				assertThat(period.getYears()).isBetween(start2, end2);
+				assertThat(period.getYears()).isBetween(start, end);
 			});
 
 		}
 
-		@Property
-		void yearsBetweenSame(@ForAll int start, @ForAll Random random) {
-
-			Arbitrary<Period> periods = Dates.periods().yearsBetween(start, start);
-
-			assertAllGenerated(periods.generator(1000), random, period -> {
-				assertThat(period.getYears()).isEqualTo(start);
-			});
-
+		@Example
+		void test() {
+			onlyOnePeriodPossible(0, 0, 1, new Random(42L));
 		}
 
 		@Property
-		void monthsBetween(@ForAll int start, @ForAll int end, @ForAll Random random) {
+		void onlyOnePeriodPossible(
+				@ForAll @IntRange(min = 0, max = Integer.MAX_VALUE) int year,
+				@ForAll @IntRange(min = 0, max = 11) int month,
+				@ForAll @IntRange(min = 0, max = 30) int day,
+				@ForAll Random random
+		) {
 
-			Arbitrary<Period> periods = Dates.periods().monthsBetween(start, end);
-
-			final int start2, end2;
-			if (start <= end) {
-				start2 = start;
-				end2 = end;
-			} else {
-				start2 = end;
-				end2 = start;
-			}
-
-			assertAllGenerated(periods.generator(1000), random, period -> {
-				assertThat(period.getMonths()).isBetween(start2, end2);
-			});
-
-		}
-
-		@Property
-		void monthsBetweenSame(@ForAll int start, @ForAll Random random) {
-
-			Arbitrary<Period> periods = Dates.periods().monthsBetween(start, start);
-
-			assertAllGenerated(periods.generator(1000), random, period -> {
-				assertThat(period.getMonths()).isEqualTo(start);
-			});
-
-		}
-
-		@Property
-		void daysBetween(@ForAll int start, @ForAll int end, @ForAll Random random) {
-
-			Arbitrary<Period> periods = Dates.periods().daysBetween(start, end);
-
-			final int start2, end2;
-			if (start <= end) {
-				start2 = start;
-				end2 = end;
-			} else {
-				start2 = end;
-				end2 = start;
-			}
-
-			assertAllGenerated(periods.generator(1000), random, period -> {
-				assertThat(period.getDays()).isBetween(start2, end2);
-			});
-
-		}
-
-		@Property
-		void daysBetweenSame(@ForAll int start, @ForAll Random random) {
-
-			Arbitrary<Period> periods = Dates.periods().daysBetween(start, start);
-
-			assertAllGenerated(periods.generator(1000), random, period -> {
-				assertThat(period.getDays()).isEqualTo(start);
-			});
-
-		}
-
-		@Property
-		void onlyOnePeriodPossible(@ForAll int year, @ForAll int month, @ForAll int day, @ForAll Random random) {
-
-			Arbitrary<Period> periods = Dates.periods().yearsBetween(year, year).monthsBetween(month, month).daysBetween(day, day);
+			Period minMax = Period.of(year, month, day);
+			Arbitrary<Period> periods = Dates.periods().between(minMax, minMax);
 
 			assertAllGenerated(periods.generator(1000), random, period -> {
 				assertThat(period.getYears()).isEqualTo(year);
@@ -153,22 +90,6 @@ class PeriodTests {
 				assertThat(period.getDays()).isEqualTo(day);
 			});
 
-		}
-
-		@Property
-		void periodsWithMaxValueRange(@ForAll("periodsWithMaxValueRangeProvider") Period period) {
-			assertThat(period.getYears()).isBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
-			assertThat(period.getMonths()).isBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
-			assertThat(period.getDays()).isBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
-		}
-
-		@Provide
-		Arbitrary<Period> periodsWithMaxValueRangeProvider() {
-			PeriodArbitrary periodArbitrary = Dates.periods();
-			periodArbitrary = periodArbitrary.yearsBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
-			periodArbitrary = periodArbitrary.monthsBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
-			periodArbitrary = periodArbitrary.daysBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
-			return periodArbitrary;
 		}
 
 	}
@@ -180,7 +101,7 @@ class PeriodTests {
 		void defaultShrinking(@ForAll Random random) {
 			PeriodArbitrary periods = Dates.periods();
 			Period value = falsifyThenShrink(periods, random);
-			assertThat(value).isEqualTo(Period.of(Integer.MIN_VALUE, 0, 0));
+			assertThat(value).isEqualTo(Period.of(0, 0, 0));
 		}
 
 		@Property
@@ -219,10 +140,7 @@ class PeriodTests {
 		@Example
 		void between() {
 			Optional<ExhaustiveGenerator<Period>> optionalGenerator =
-					Dates.periods()
-						 .yearsBetween(200, 200)
-						 .monthsBetween(5, 5)
-						 .daysBetween(20, 24)
+					Dates.periods().between(Period.of(200, 5, 20), Period.of(200, 5, 24))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -240,60 +158,37 @@ class PeriodTests {
 	}
 
 	@Group
-	class EdgeCasesTests {
+	class EdgeCasesGeneration {
 
 		@Example
-		void all() {
+		void defaultEdgeCases() {
 			PeriodArbitrary periods = Dates.periods();
 			Set<Period> edgeCases = collectEdgeCases(periods.edgeCases());
-			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-					Period.of(Integer.MIN_VALUE, 0, 0),
+					Period.of(-1000, 0, 0),
 					Period.of(0, 0, 0),
-					Period.of(Integer.MAX_VALUE, 11, 30)
+					Period.of(1000, 0, 0)
 			);
 		}
 
 		@Example
-		void betweenMethods() {
-			PeriodArbitrary periods = Dates.periods()
-										   .yearsBetween(5, 10)
-										   .monthsBetween(Integer.MIN_VALUE, 500)
-										   .daysBetween(-5000, Integer.MAX_VALUE);
-			Set<Period> edgeCases = collectEdgeCases(periods.edgeCases());
-			assertThat(edgeCases).hasSize(2);
-			assertThat(edgeCases).containsExactlyInAnyOrder(
-					Period.of(5, Integer.MIN_VALUE, -5000),
-					Period.of(10, 500, Integer.MAX_VALUE)
+		void betweenEdgeCases() {
+			PeriodArbitrary periods = Dates.periods().between(
+					Period.ofDays(15), Period.ofMonths(3)
 			);
-		}
 
-		@Example
-		void periodsWithMaxValueRange() {
-			PeriodArbitrary periods = Dates.periods()
-										   .yearsBetween(Integer.MIN_VALUE, Integer.MAX_VALUE)
-										   .monthsBetween(Integer.MIN_VALUE, Integer.MAX_VALUE)
-										   .daysBetween(Integer.MIN_VALUE, Integer.MAX_VALUE);
 			Set<Period> edgeCases = collectEdgeCases(periods.edgeCases());
-			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-					Period.of(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
-					Period.of(0, 0, 0),
-					Period.of(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)
+					Period.of(0, 0, 15),
+					Period.of(0, 3, 0)
 			);
 		}
 
 	}
 
 	@Group
-	class CheckEqualDistribution {
-
-		@Property
-		void months(@ForAll("periods") Period period) {
-			Statistics.label("Months")
-					  .collect(period.getMonths())
-					  .coverage(this::checkMonthCoverage);
-		}
+	@StatisticsReport(OFF)
+	class CheckDistribution {
 
 		@Property
 		void dayOfMonths(@ForAll("periods") Period period) {
@@ -303,7 +198,14 @@ class PeriodTests {
 		}
 
 		@Property
-		void periodCanBeZeroAndNot(@ForAll Period period) {
+		void months(@ForAll("periods") Period period) {
+			Statistics.label("Months")
+					  .collect(period.getMonths())
+					  .coverage(this::checkMonthCoverage);
+		}
+
+		@Property
+		void periodCanBeZeroAndNotZero(@ForAll Period period) {
 			Statistics.label("Period is zero")
 					  .collect(period.isZero())
 					  .coverage(coverage -> {
@@ -323,13 +225,13 @@ class PeriodTests {
 		}
 
 		private void checkMonthCoverage(StatisticsCoverage coverage) {
-			for (int dayOfMonth = 0; dayOfMonth <= 11; dayOfMonth++) {
-				coverage.check(dayOfMonth).percentage(p -> p >= 4);
+			for (int dayOfMonth = -11; dayOfMonth <= 11; dayOfMonth++) {
+				coverage.check(dayOfMonth).percentage(p -> p >= 1);
 			}
 		}
 
 		private void checkDayCoverage(StatisticsCoverage coverage) {
-			for (int dayOfMonth = 0; dayOfMonth <= 30; dayOfMonth++) {
+			for (int dayOfMonth = -30; dayOfMonth <= 30; dayOfMonth++) {
 				coverage.check(dayOfMonth).percentage(p -> p >= 0.5);
 			}
 		}

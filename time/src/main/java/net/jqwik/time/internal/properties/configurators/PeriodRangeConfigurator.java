@@ -8,16 +8,20 @@ import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
 
-public class PeriodMonthRangeConfigurator extends ArbitraryConfiguratorBase {
+public class PeriodRangeConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
 		return targetType.isAssignableFrom(Period.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, PeriodMonthRange range) {
-		PeriodArbitrary periodArbitrary = (PeriodArbitrary) arbitrary;
-		return periodArbitrary.monthsBetween(range.min(), range.max());
+	public Arbitrary<?> configure(PeriodArbitrary arbitrary, PeriodRange range) {
+		Period minPeriod = parseIsoPeriod(range.min());
+		Period maxPeriod = parseIsoPeriod(range.max());
+		return arbitrary.between(minPeriod, maxPeriod);
 	}
 
+	private Period parseIsoPeriod(String iso) {
+		return Period.parse(iso);
+	}
 }

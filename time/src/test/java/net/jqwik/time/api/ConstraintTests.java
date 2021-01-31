@@ -403,39 +403,19 @@ public class ConstraintTests {
 	class PeriodConstraints {
 
 		@Property
-		void yearRangeBetweenMinus200And200(@ForAll @PeriodYearRange(min = -200, max = 200) Period period) {
-			assertThat(period.getYears()).isGreaterThanOrEqualTo(-200);
-			assertThat(period.getYears()).isLessThanOrEqualTo(200);
+		void defaultBetweenMinus1000And1000Years(@ForAll Period period) {
+			assertThat(period.getYears()).isBetween(-1000, 1000);
 		}
 
 		@Property
-		void yearRangeBetween1000And2000(@ForAll @PeriodYearRange(min = 1000, max = 2000) Period period) {
-			assertThat(period.getYears()).isGreaterThanOrEqualTo(1000);
-			assertThat(period.getYears()).isLessThanOrEqualTo(2000);
+		void range(@ForAll @PeriodRange(min = "P1Y2M", max = "P1Y5M3D") Period period) {
+			assertThat(period.getYears()).isEqualTo(1);
+			assertThat(period.getMonths()).isBetween(2, 5);
 		}
 
-		@Property
-		void monthRangeBetweenMinus200And200(@ForAll @PeriodMonthRange(min = -200, max = 200) Period period) {
-			assertThat(period.getMonths()).isGreaterThanOrEqualTo(-200);
-			assertThat(period.getMonths()).isLessThanOrEqualTo(200);
-		}
-
-		@Property
-		void monthRangeBetween1000And2000(@ForAll @PeriodMonthRange(min = 1000, max = 2000) Period period) {
-			assertThat(period.getMonths()).isGreaterThanOrEqualTo(1000);
-			assertThat(period.getMonths()).isLessThanOrEqualTo(2000);
-		}
-
-		@Property
-		void dayRangeBetweenMinus200And200(@ForAll @PeriodDayRange(min = -200, max = 200) Period period) {
-			assertThat(period.getDays()).isGreaterThanOrEqualTo(-200);
-			assertThat(period.getDays()).isLessThanOrEqualTo(200);
-		}
-
-		@Property
-		void dayRangeBetween1000And2000(@ForAll @PeriodDayRange(min = 1000, max = 2000) Period period) {
-			assertThat(period.getDays()).isGreaterThanOrEqualTo(1000);
-			assertThat(period.getDays()).isLessThanOrEqualTo(2000);
+		@Example
+		@ExpectFailure(failureType = DateTimeParseException.class)
+		void nonIsoPeriodThrowsException4(@ForAll @PeriodRange(max = "13") Period period) {
 		}
 
 	}

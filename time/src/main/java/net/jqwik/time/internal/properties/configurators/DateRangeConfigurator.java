@@ -45,6 +45,7 @@ public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	private LocalDate isoDateToLocalDate(String iso) {
+		// TODO: Use ISO formatter from DateTimeFormatter
 		if (iso == null) {
 			throw new NullPointerException("Argument is null");
 		} else if (iso.length() == 0) {

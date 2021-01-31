@@ -26,6 +26,7 @@ public class YearMonthRangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	private YearMonth isoDateToYearMonth(String iso) {
+		// TODO: Use ISO formatter from DateTimeFormatter
 		if (iso == null) {
 			throw new NullPointerException("Argument is null");
 		} else if (iso.length() == 0) {
