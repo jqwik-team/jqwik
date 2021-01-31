@@ -24,7 +24,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		int edgeCasesTotal = calculateEdgeCasesTotal(listOfEdgeCases);
 
 		return new RandomizedShrinkablesGenerator(
-			randomShrinkablesGenerator(parameters, arbitraryResolver, genSize),
+			randomShrinkablesGenerator(parameters, arbitraryResolver, genSize, edgeCasesMode.activated()),
 			new EdgeCasesGenerator(listOfEdgeCases),
 			edgeCasesMode,
 			edgeCasesTotal,
@@ -40,19 +40,21 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	private static PurelyRandomShrinkablesGenerator randomShrinkablesGenerator(
 		List<MethodParameter> parameters,
 		ArbitraryResolver arbitraryResolver,
-		int genSize
+		int genSize,
+		boolean withEdgeCases
 	) {
-		List<RandomizedParameterGenerator> parameterGenerators = parameterGenerators(parameters, arbitraryResolver, genSize);
+		List<RandomizedParameterGenerator> parameterGenerators = parameterGenerators(parameters, arbitraryResolver, genSize, withEdgeCases);
 		return new PurelyRandomShrinkablesGenerator(parameterGenerators);
 	}
 
 	private static List<RandomizedParameterGenerator> parameterGenerators(
-		List<MethodParameter> parameters,
-		ArbitraryResolver arbitraryResolver,
-		int genSize
+			List<MethodParameter> parameters,
+			ArbitraryResolver arbitraryResolver,
+			int genSize,
+			boolean withEdgeCases
 	) {
 		return parameters.stream()
-						 .map(parameter -> resolveParameter(arbitraryResolver, parameter, genSize))
+						 .map(parameter -> resolveParameter(arbitraryResolver, parameter, genSize, withEdgeCases))
 						 .collect(Collectors.toList());
 	}
 
@@ -88,12 +90,13 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	}
 
 	private static RandomizedParameterGenerator resolveParameter(
-		ArbitraryResolver arbitraryResolver,
-		MethodParameter parameter,
-		int genSize
+			ArbitraryResolver arbitraryResolver,
+			MethodParameter parameter,
+			int genSize,
+			boolean withEdgeCases
 	) {
 		Set<Arbitrary<Object>> arbitraries = resolveArbitraries(arbitraryResolver, parameter);
-		return new RandomizedParameterGenerator(parameter, arbitraries, genSize);
+		return new RandomizedParameterGenerator(parameter, arbitraries, genSize, withEdgeCases);
 	}
 
 	private static Set<Arbitrary<Object>> resolveArbitraries(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
