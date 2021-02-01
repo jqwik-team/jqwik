@@ -20,13 +20,12 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		EdgeCasesMode edgeCasesMode
 	) {
 
+		// TODO: Calculate max genSize edge cases
 		List<EdgeCases<Object>> listOfEdgeCases = listOfEdgeCases(parameters, arbitraryResolver, edgeCasesMode);
 		int edgeCasesTotal = calculateEdgeCasesTotal(listOfEdgeCases);
 
-		boolean withEmbeddedEdgeCases = edgeCasesMode.activated() && parameters.size() > 1;
-
 		return new RandomizedShrinkablesGenerator(
-			randomShrinkablesGenerator(parameters, arbitraryResolver, genSize, withEmbeddedEdgeCases),
+			randomShrinkablesGenerator(parameters, arbitraryResolver, genSize, edgeCasesMode.activated()),
 			new EdgeCasesGenerator(listOfEdgeCases),
 			edgeCasesMode,
 			edgeCasesTotal,

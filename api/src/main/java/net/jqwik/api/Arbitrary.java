@@ -56,10 +56,10 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Create the random generator for an arbitrary.
-	 * 
+	 *
 	 * <p>
-	 *     Starting with version 1.4.0 the returned generator should no longer
-	 *     include edge cases explicitly since those will be injected in {@linkplain #generator(int, boolean)}
+	 * Starting with version 1.4.0 the returned generator should no longer
+	 * include edge cases explicitly since those will be injected in {@linkplain #generator(int, boolean)}
 	 * </p>
 	 *
 	 * @param genSize a very unspecific configuration parameter that can be used
@@ -77,7 +77,9 @@ public interface Arbitrary<T> {
 	/**
 	 * Create the random generator for an arbitrary with or without edge cases.
 	 *
-	 * @param genSize See {@linkplain #generator(int)} about meaning of this parameter
+	 * <p>Never override this method. Override {@linkplain #generator(int)} instead.</p>
+	 *
+	 * @param genSize       See {@linkplain #generator(int)} about meaning of this parameter
 	 * @param withEdgeCases True if edge cases should be injected into the stream of generated values
 	 * @return a new random generator instance
 	 */
@@ -104,7 +106,6 @@ public interface Arbitrary<T> {
 	 * should return true.
 	 *
 	 * @return true if base generator is supposed to produce no duplicates
-	 *
 	 * @deprecated Do not use. Will be removed in 1.5.0
 	 */
 	@Deprecated
@@ -141,7 +142,14 @@ public interface Arbitrary<T> {
 		return Optional.empty();
 	}
 
+	// TODO: Override everywhere
+	@API(status = EXPERIMENTAL, since = "1.4.0")
+	default EdgeCases<T> edgeCases(int maxEdgeCases) {
+		return edgeCases();
+	}
+
 	@API(status = EXPERIMENTAL, since = "1.3.0")
+	@Deprecated
 	EdgeCases<T> edgeCases();
 
 	/**
@@ -167,7 +175,7 @@ public interface Arbitrary<T> {
 		if (!allValues().isPresent())
 			throw new AssertionError("Cannot generate all values of " + this.toString());
 		allValues().ifPresent(
-			stream -> stream.forEach(action::accept));
+				stream -> stream.forEach(action::accept));
 	}
 
 	/**
@@ -186,7 +194,7 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of type {@code U} that maps the values of the original arbitrary using the {@code mapper}
 	 * function.
 	 *
-	 * @param <U> type of resulting object
+	 * @param <U>    type of resulting object
 	 * @param mapper the function used to map
 	 * @return a new arbitrary instance
 	 */
@@ -198,7 +206,7 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of type {@code U} that uses the values of the existing arbitrary to create a new arbitrary
 	 * using the {@code mapper} function.
 	 *
-	 * @param <U> type of resulting object
+	 * @param <U>    type of resulting object
 	 * @param mapper the function used to map to arbitrary
 	 * @return a new arbitrary instance
 	 */
@@ -221,17 +229,14 @@ public interface Arbitrary<T> {
 	 * never generate the same value twice.
 	 *
 	 * <p>
-	 *     Uniqueness is only held up for a single use of this arbitrary.
-	 *     If the same arbitrary instance is used in several places,
-	 *     e.g. for creating several lists, the different lists may share values
-	 *     between them.
+	 * Uniqueness is only held up for a single use of this arbitrary.
+	 * If the same arbitrary instance is used in several places,
+	 * e.g. for creating several lists, the different lists may share values
+	 * between them.
 	 * </p>
 	 *
 	 * @return a new arbitrary instance
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
-	 *
-	 * @deprecated Replace with {@code uniqueElements()} call on containing container arbitrary. Will be removed in 1.5.0.
-	 *
 	 * @see ListArbitrary#uniqueElements(Function)
 	 * @see ListArbitrary#uniqueElements()
 	 * @see SetArbitrary#uniqueElements(Function)
@@ -244,6 +249,7 @@ public interface Arbitrary<T> {
 	 * @see MapArbitrary#uniqueKeys(Function)
 	 * @see MapArbitrary#uniqueValues(Function)
 	 * @see MapArbitrary#uniqueValues()
+	 * @deprecated Replace with {@code uniqueElements()} call on containing container arbitrary. Will be removed in 1.5.0.
 	 */
 	@Deprecated
 	@API(status = DEPRECATED, since = "1.4.0")
@@ -339,7 +345,7 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code T[]} using the existing arbitrary for generating the elements of the array.
 	 *
-	 * @param <A> Type of resulting array class
+	 * @param <A>        Type of resulting array class
 	 * @param arrayClass The arrays class to create, e.g. {@code String[].class}. This is required due to limitations in Java's
 	 *                   reflection capabilities.
 	 * @return a new arbitrary instance
@@ -440,10 +446,10 @@ public interface Arbitrary<T> {
 	@API(status = MAINTAINED, since = "1.3.0")
 	default T sample() {
 		return this.sampleStream()
-			.map(Optional::ofNullable)
-			.findFirst()
-			.orElseThrow(() -> new JqwikException("Cannot generate a value"))
-			.orElse(null);
+				   .map(Optional::ofNullable)
+				   .findFirst()
+				   .orElseThrow(() -> new JqwikException("Cannot generate a value"))
+				   .orElse(null);
 	}
 
 	/**
@@ -568,9 +574,7 @@ public interface Arbitrary<T> {
 	 * Experimental interface to change generated edge cases of a specific arbitrary.
 	 *
 	 * @param configurator A consumer that configures deviating edge cases behaviour
-	 *
 	 * @return a new arbitrary instance
-	 *
 	 * @see EdgeCases.Config
 	 */
 	@API(status = EXPERIMENTAL, since = "1.3.9")
