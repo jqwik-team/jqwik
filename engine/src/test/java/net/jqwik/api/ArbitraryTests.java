@@ -76,14 +76,14 @@ class ArbitraryTests {
 		}
 
 		@Property
-		void listGeneratorWithEdgeCases(@ForAll List<Integer> aList) {
+		void listGeneratorWithEmbeddedEdgeCases(@ForAll List<Integer> aList) {
 			Statistics.label("list contains Integer.MAX_VALUE")
 					  .collect(aList.stream().anyMatch(e -> e == Integer.MAX_VALUE))
 					  .coverage(checker -> checker.check(true).percentage(p -> p > 5));
 		}
 
 		@Property
-		void mappedGeneratorWithEdgeCases(@ForAll("number") String number) {
+		void mappedGeneratorWithEmbeddedEdgeCases(@ForAll("number") String number) {
 			Statistics.label("number is 0")
 					  .collect(number.equals("0"))
 					  .coverage(checker -> checker.check(true).percentage(p -> p > 1));
@@ -95,7 +95,7 @@ class ArbitraryTests {
 		}
 
 		@Property
-		void combinedGeneratorWithEdgeCases(@ForAll("tuple") Tuple2<Integer, Integer> aTuple) {
+		void combinedGeneratorWithEmbeddedEdgeCases(@ForAll("tuple") Tuple2<Integer, Integer> aTuple) {
 			Statistics.label("tuple contains 1000")
 					  .collect(aTuple.get1() == 1000 || aTuple.get2() == 1000)
 					  .coverage(checker -> checker.check(true).percentage(p -> p > 2.5));
@@ -106,6 +106,23 @@ class ArbitraryTests {
 			IntegerArbitrary int1 = Arbitraries.integers().lessOrEqual(1000);
 			IntegerArbitrary int2 = Arbitraries.integers().lessOrEqual(1000);
 			return Combinators.combine(int1, int2).as(Tuple::of);
+		}
+
+		@Property
+		void frequencyOfGeneratorWithEmbeddedEdgeCases(@ForAll("frequencies") List<Integer> aList) {
+			Statistics.label("list contains Integer.MAX_VALUE")
+					  .collect(aList.stream().anyMatch(e -> e == Integer.MAX_VALUE))
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 5));
+		}
+
+		@Provide
+		Arbitrary<List<Integer>> frequencies() {
+			Arbitrary<List<Integer>> int1 = Arbitraries.integers().list();
+			Arbitrary<List<Integer>> int2 = Arbitraries.integers().list();
+			return Arbitraries.frequencyOf(
+					Tuple.of(1, int1),
+					Tuple.of(5, int2)
+			);
 		}
 
 		@Example

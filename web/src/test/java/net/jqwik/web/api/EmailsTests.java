@@ -70,7 +70,7 @@ public class EmailsTests {
 			assertThat(localPart.charAt(localPart.length() - 1)).isNotEqualTo('.');
 		}
 
-		@Property
+		@Property(edgeCases = EdgeCasesMode.NONE)
 		void validCharsAfterAt(@ForAll("emails") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(!isIPAddress(domain));

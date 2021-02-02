@@ -107,12 +107,12 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 		return new Arbitrary<U>() {
 			@Override
 			public RandomGenerator<U> generator(int genSize) {
-				return self.generator(genSize).flatMap(mapper, genSize);
+				return self.generator(genSize).flatMap(mapper, genSize, false);
 			}
 
 			@Override
 			public RandomGenerator<U> generatorWithEmbeddedEdgeCases(int genSize) {
-				return self.generator(genSize, true).flatMap(mapper, genSize);
+				return self.generator(genSize, true).flatMap(mapper, genSize, true);
 			}
 
 			@Override

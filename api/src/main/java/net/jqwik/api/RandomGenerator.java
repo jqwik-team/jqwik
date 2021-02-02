@@ -22,10 +22,11 @@ public interface RandomGenerator<T> {
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, long nextLong);
 
 		public abstract <T, U> Shrinkable<U> flatMap(
-			Shrinkable<T> wrappedShrinkable,
-			Function<T, Arbitrary<U>> mapper,
-			int genSize,
-			long nextLong
+				Shrinkable<T> wrappedShrinkable,
+				Function<T, Arbitrary<U>> mapper,
+				int genSize,
+				long nextLong,
+				boolean withEmbeddedEdgeCases
 		);
 
 		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate);
@@ -69,10 +70,11 @@ public interface RandomGenerator<T> {
 	}
 
 	@API(status = INTERNAL)
-	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int genSize) {
+	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int genSize, boolean withEmbeddedEdgeCases) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
-			return RandomGeneratorFacade.implementation.flatMap(wrappedShrinkable, mapper, genSize, random.nextLong());
+			return RandomGeneratorFacade.implementation
+						   .flatMap(wrappedShrinkable, mapper, genSize, random.nextLong(), withEmbeddedEdgeCases);
 		};
 	}
 

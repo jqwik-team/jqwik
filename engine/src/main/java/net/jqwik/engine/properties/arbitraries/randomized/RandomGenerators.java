@@ -160,8 +160,12 @@ public class RandomGenerators {
 		return new FrequencyGenerator<>(frequencies);
 	}
 
-	public static <T> RandomGenerator<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies, int genSize) {
-		return frequency(frequencies).flatMap(Function.identity(), genSize);
+	public static <T> RandomGenerator<T> frequencyOf(
+			List<Tuple2<Integer, Arbitrary<T>>> frequencies,
+			int genSize,
+			boolean withEmbeddedEdgeCases
+	) {
+		return frequency(frequencies).flatMap(Function.identity(), genSize, withEmbeddedEdgeCases);
 	}
 
 	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases) {

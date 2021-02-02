@@ -26,6 +26,6 @@ public class ShrinkableFacadeImpl extends Shrinkable.ShrinkableFacade {
 
 	@Override
 	public <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed) {
-		return new FlatMappedShrinkable<>(self, flatMapper, tries, randomSeed);
+		return new FlatMappedShrinkable<>(self, flatMapper, tries, randomSeed, false);
 	}
 }

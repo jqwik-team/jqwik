@@ -18,11 +18,20 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
+		return rawGeneration(genSize, false);
+	}
+
+	@Override
+	public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+		return rawGeneration(genSize, true);
+	}
+
+	private RandomGenerator<T> rawGeneration(int genSize, boolean withEmbeddedEdgeCases) {
 		List<Tuple2<Integer, Arbitrary<T>>> frequencies =
 			all.stream()
 			   .map(a -> Tuple.of(1, a))
 			   .collect(Collectors.toList());
-		return RandomGenerators.frequencyOf(frequencies, genSize);
+		return RandomGenerators.frequencyOf(frequencies, genSize, withEmbeddedEdgeCases);
 	}
 
 	@Override

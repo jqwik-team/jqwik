@@ -13,8 +13,14 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	private final Shrinkable<T> toMap;
 	private final Function<T, Shrinkable<U>> mapper;
 
-	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Arbitrary<U>> toArbitraryMapper, int genSize, long randomSeed) {
-		this(toMap, t -> toArbitraryMapper.apply(t).generator(genSize), randomSeed);
+	public FlatMappedShrinkable(
+			Shrinkable<T> toMap,
+			Function<T, Arbitrary<U>> toArbitraryMapper,
+			int genSize,
+			long randomSeed,
+			boolean withEmbeddedEdgeCases
+	) {
+		this(toMap, t -> toArbitraryMapper.apply(t).generator(genSize, withEmbeddedEdgeCases), randomSeed);
 	}
 
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, RandomGenerator<U>> toGeneratorMapper, long randomSeed) {

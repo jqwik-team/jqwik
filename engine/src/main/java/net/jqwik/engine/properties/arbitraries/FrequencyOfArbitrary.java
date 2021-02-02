@@ -24,7 +24,12 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
-		return RandomGenerators.frequencyOf(frequencies, genSize);
+		return RandomGenerators.frequencyOf(frequencies, genSize, false);
+	}
+
+	@Override
+	public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+		return RandomGenerators.frequencyOf(frequencies, genSize, true);
 	}
 
 	@Override
