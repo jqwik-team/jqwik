@@ -59,30 +59,7 @@ class ArbitraryTests {
 	}
 
 	@Group
-	class Filtering {
-		@Example
-		void filterInteger(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
-			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
-			RandomGenerator<Integer> generator = filtered.generator(10, true);
-
-			assertThat(generator.next(random).value()).isEqualTo(1);
-			assertThat(generator.next(random).value()).isEqualTo(3);
-			assertThat(generator.next(random).value()).isEqualTo(5);
-			assertThat(generator.next(random).value()).isEqualTo(1);
-		}
-
-		@Example
-		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
-			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
-			RandomGenerator<Integer> generator = filtered.generator(10, true);
-
-			assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
-		}
-	}
-
-	@Group
+	@PropertyDefaults(edgeCases = EdgeCasesMode.MIXIN)
 	class GeneratorCreation {
 
 		@Example
@@ -117,6 +94,20 @@ class ArbitraryTests {
 			return Arbitraries.integers().map(i -> Integer.toString(i));
 		}
 
+		@Property
+		void combinedGeneratorWithEdgeCases(@ForAll("tuple") Tuple2<Integer, Integer> aTuple) {
+			Statistics.label("tuple contains 1000")
+					  .collect(aTuple.get1() == 1000 || aTuple.get2() == 1000)
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 2.5));
+		}
+
+		@Provide
+		Arbitrary<Tuple2<Integer, Integer>> tuple() {
+			IntegerArbitrary int1 = Arbitraries.integers().lessOrEqual(1000);
+			IntegerArbitrary int2 = Arbitraries.integers().lessOrEqual(1000);
+			return Combinators.combine(int1, int2).as(Tuple::of);
+		}
+
 		@Example
 		void generatorWithoutEdgeCases(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
@@ -124,6 +115,31 @@ class ArbitraryTests {
 			assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
 		}
 
+	}
+
+
+	@Group
+	class Filtering {
+		@Example
+		void filterInteger(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
+			RandomGenerator<Integer> generator = filtered.generator(10, true);
+
+			assertThat(generator.next(random).value()).isEqualTo(1);
+			assertThat(generator.next(random).value()).isEqualTo(3);
+			assertThat(generator.next(random).value()).isEqualTo(5);
+			assertThat(generator.next(random).value()).isEqualTo(1);
+		}
+
+		@Example
+		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
+			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
+			RandomGenerator<Integer> generator = filtered.generator(10, true);
+
+			assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
+		}
 	}
 
 	@Group

@@ -251,8 +251,17 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					RandomGenerator<T1> g1 = a1.generator(genSize);
-					RandomGenerator<T2> g2 = a2.generator(genSize);
+					return rawGenerator(genSize, false);
+				}
+
+				@Override
+				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
+					return rawGenerator(genSize, true);
+				}
+
+				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
+					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
 					return random -> {
 						List<Shrinkable<Object>> shrinkables = asTypedList(g1.next(random), g2.next(random));
 						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
@@ -308,9 +317,18 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					RandomGenerator<T1> g1 = a1.generator(genSize);
-					RandomGenerator<T2> g2 = a2.generator(genSize);
-					RandomGenerator<T3> g3 = a3.generator(genSize);
+					return rawGenerator(genSize, false);
+				}
+
+				@Override
+				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
+					return rawGenerator(genSize, true);
+				}
+
+				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
+					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
 					return random -> {
 						List<Shrinkable<Object>> shrinkables = asTypedList(
 							g1.next(random),
@@ -377,10 +395,19 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					RandomGenerator<T1> g1 = a1.generator(genSize);
-					RandomGenerator<T2> g2 = a2.generator(genSize);
-					RandomGenerator<T3> g3 = a3.generator(genSize);
-					RandomGenerator<T4> g4 = a4.generator(genSize);
+					return rawGenerator(genSize, false);
+				}
+
+				@Override
+				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
+					return rawGenerator(genSize, true);
+				}
+
+				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
+					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
 
 					return random -> {
 						List<Shrinkable<Object>> shrinkables = asTypedList(
@@ -453,11 +480,20 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					RandomGenerator<T1> g1 = a1.generator(genSize);
-					RandomGenerator<T2> g2 = a2.generator(genSize);
-					RandomGenerator<T3> g3 = a3.generator(genSize);
-					RandomGenerator<T4> g4 = a4.generator(genSize);
-					RandomGenerator<T5> g5 = a5.generator(genSize);
+					return rawGenerator(genSize, false);
+				}
+
+				@Override
+				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
+					return rawGenerator(genSize, true);
+				}
+
+				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
+					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T5> g5 = a5.generator(genSize, withEmbeddedEdgeCases);
 
 					return random -> {
 						List<Shrinkable<Object>> shrinkables = asTypedList(
@@ -533,12 +569,21 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					RandomGenerator<T1> g1 = a1.generator(genSize);
-					RandomGenerator<T2> g2 = a2.generator(genSize);
-					RandomGenerator<T3> g3 = a3.generator(genSize);
-					RandomGenerator<T4> g4 = a4.generator(genSize);
-					RandomGenerator<T5> g5 = a5.generator(genSize);
-					RandomGenerator<T6> g6 = a6.generator(genSize);
+					return rawGenerator(genSize, false);
+				}
+
+				@Override
+				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
+					return rawGenerator(genSize, true);
+				}
+
+				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
+					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T5> g5 = a5.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T6> g6 = a6.generator(genSize, withEmbeddedEdgeCases);
 
 					return random -> {
 						List<Shrinkable<Object>> shrinkables = asTypedList(
@@ -621,13 +666,22 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					RandomGenerator<T1> g1 = a1.generator(genSize);
-					RandomGenerator<T2> g2 = a2.generator(genSize);
-					RandomGenerator<T3> g3 = a3.generator(genSize);
-					RandomGenerator<T4> g4 = a4.generator(genSize);
-					RandomGenerator<T5> g5 = a5.generator(genSize);
-					RandomGenerator<T6> g6 = a6.generator(genSize);
-					RandomGenerator<T7> g7 = a7.generator(genSize);
+					return rawGenerator(genSize, false);
+				}
+
+				@Override
+				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
+					return rawGenerator(genSize, true);
+				}
+
+				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
+					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T5> g5 = a5.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T6> g6 = a6.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T7> g7 = a7.generator(genSize, withEmbeddedEdgeCases);
 
 					return random -> {
 						List<Shrinkable<Object>> shrinkables = asTypedList(
@@ -713,14 +767,23 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					RandomGenerator<T1> g1 = a1.generator(genSize);
-					RandomGenerator<T2> g2 = a2.generator(genSize);
-					RandomGenerator<T3> g3 = a3.generator(genSize);
-					RandomGenerator<T4> g4 = a4.generator(genSize);
-					RandomGenerator<T5> g5 = a5.generator(genSize);
-					RandomGenerator<T6> g6 = a6.generator(genSize);
-					RandomGenerator<T7> g7 = a7.generator(genSize);
-					RandomGenerator<T8> g8 = a8.generator(genSize);
+					return rawGenerator(genSize, false);
+				}
+
+				@Override
+				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
+					return rawGenerator(genSize, true);
+				}
+
+				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
+					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T5> g5 = a5.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T6> g6 = a6.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T7> g7 = a7.generator(genSize, withEmbeddedEdgeCases);
+					RandomGenerator<T8> g8 = a8.generator(genSize, withEmbeddedEdgeCases);
 
 					return random -> {
 						List<Shrinkable<Object>> shrinkables = asTypedList(
@@ -791,10 +854,19 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
+					return rawGenerator(genSize, false);
+				}
+
+				@Override
+				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
+					return rawGenerator(genSize, true);
+				}
+
+				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
 					List<RandomGenerator<T>> listOfGenerators =
 							listOfArbitraries
 									.stream()
-									.map(a -> a.generator(genSize))
+									.map(a -> a.generator(genSize, withEmbeddedEdgeCases))
 									.collect(Collectors.toList());
 
 					return random -> {

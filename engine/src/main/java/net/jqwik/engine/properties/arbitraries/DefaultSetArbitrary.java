@@ -32,9 +32,9 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 		return rawGenerator(genSize, true);
 	}
 
-	private RandomGenerator<Set<T>> rawGenerator(int genSize, boolean b) {
+	private RandomGenerator<Set<T>> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
 		int cutoffSize = cutoffSize(genSize);
-		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize, b);
+		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize, withEmbeddedEdgeCases);
 		return RandomGenerators.set(elementGenerator, minSize, maxSize, cutoffSize, uniquenessExtractors);
 	}
 
