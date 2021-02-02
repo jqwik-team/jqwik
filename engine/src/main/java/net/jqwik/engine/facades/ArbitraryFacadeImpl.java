@@ -54,6 +54,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			}
 
 			@Override
+			public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+				return super.generatorWithEmbeddedEdgeCases(genSize).filter(filterPredicate);
+			}
+
+			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return super.exhaustive(maxNumberOfSamples)
 						   .map(generator -> generator.filter(filterPredicate));
@@ -106,6 +111,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			}
 
 			@Override
+			public RandomGenerator<U> generatorWithEmbeddedEdgeCases(int genSize) {
+				return self.generator(genSize, true).flatMap(mapper, genSize);
+			}
+
+			@Override
 			public Optional<ExhaustiveGenerator<U>> exhaustive(long maxNumberOfSamples) {
 				return self.exhaustive(maxNumberOfSamples)
 						   .flatMap(generator -> ExhaustiveGenerators.flatMap(generator, mapper, maxNumberOfSamples));
@@ -155,6 +165,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			}
 
 			@Override
+			public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+				return super.generatorWithEmbeddedEdgeCases(genSize).ignoreException(exceptionType);
+			}
+
+			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return super.exhaustive(maxNumberOfSamples)
 						   .map(generator -> generator.ignoreException(exceptionType));
@@ -173,6 +188,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
 				return super.generator(genSize).dontShrink();
+			}
+
+			@Override
+			public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+				return super.generatorWithEmbeddedEdgeCases(genSize).dontShrink();
 			}
 
 			@Override

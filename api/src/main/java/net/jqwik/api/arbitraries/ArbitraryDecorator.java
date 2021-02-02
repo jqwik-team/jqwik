@@ -32,6 +32,11 @@ public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> 
 	}
 
 	@Override
+	public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+		return arbitrary().generatorWithEmbeddedEdgeCases(genSize);
+	}
+
+	@Override
 	public boolean isUnique() {
 		return arbitrary().isUnique();
 	}
