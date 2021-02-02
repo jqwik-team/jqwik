@@ -10,6 +10,7 @@ import net.jqwik.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.statistics.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,27 +20,6 @@ import static net.jqwik.testing.TestingSupport.*;
 @Group
 @Label("Arbitrary")
 class ArbitraryTests {
-
-	@Example
-	void generatorWithEdgeCases(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
-		RandomGenerator<Integer> generator = arbitrary.generator(10, true);
-
-		assertAtLeastOneGenerated(generator, random, i -> i == -1000);
-		assertAtLeastOneGenerated(generator, random, i -> i == -1);
-		assertAtLeastOneGenerated(generator, random, i -> i == 0);
-		assertAtLeastOneGenerated(generator, random, i -> i == 1);
-		assertAtLeastOneGenerated(generator, random, i -> i == 1000);
-		assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
-	}
-
-	@Example
-	void generatorWithoutEdgeCases(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
-		RandomGenerator<Integer> generator = arbitrary.generator(10, false);
-		assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
-	}
-
 
 	@Example
 	void fixGenSize() {
@@ -100,6 +80,50 @@ class ArbitraryTests {
 
 			assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
 		}
+	}
+
+	@Group
+	class GeneratorCreation {
+
+		@Example
+		void generatorWithEdgeCases(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
+			RandomGenerator<Integer> generator = arbitrary.generator(10, true);
+
+			assertAtLeastOneGenerated(generator, random, i -> i == -1000);
+			assertAtLeastOneGenerated(generator, random, i -> i == -1);
+			assertAtLeastOneGenerated(generator, random, i -> i == 0);
+			assertAtLeastOneGenerated(generator, random, i -> i == 1);
+			assertAtLeastOneGenerated(generator, random, i -> i == 1000);
+			assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
+		}
+
+		@Property
+		void listGeneratorWithEdgeCases(@ForAll List<Integer> aList) {
+			Statistics.label("list contains Integer.MAX_VALUE")
+					  .collect(aList.stream().anyMatch(e -> e == Integer.MAX_VALUE))
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 5));
+		}
+
+		@Property
+		void mappedGeneratorWithEdgeCases(@ForAll("number") String number) {
+			Statistics.label("number is 0")
+					  .collect(number.equals("0"))
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 1));
+		}
+
+		@Provide
+		Arbitrary<String> number() {
+			return Arbitraries.integers().map(i -> Integer.toString(i));
+		}
+
+		@Example
+		void generatorWithoutEdgeCases(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
+			RandomGenerator<Integer> generator = arbitrary.generator(10, false);
+			assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
+		}
+
 	}
 
 	@Group
@@ -443,7 +467,7 @@ class ArbitraryTests {
 			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(1.0);
 
-			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
+			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(50).sample();
 			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
 
 			assertThat(noMoreDuplicates).hasSize(1);

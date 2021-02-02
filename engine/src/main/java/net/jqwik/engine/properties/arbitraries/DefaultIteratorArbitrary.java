@@ -22,7 +22,12 @@ public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iter
 
 	@Override
 	public RandomGenerator<Iterator<T>> generator(int genSize) {
-		return createListGenerator(genSize).map(List::iterator);
+		return createListGenerator(genSize, false).map(List::iterator);
+	}
+
+	@Override
+	public RandomGenerator<Iterator<T>> generatorWithEmbeddedEdgeCases(int genSize) {
+		return createListGenerator(genSize, true).map(List::iterator);
 	}
 
 	@Override

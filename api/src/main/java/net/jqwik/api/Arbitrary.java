@@ -83,13 +83,30 @@ public interface Arbitrary<T> {
 	 * @param withEdgeCases True if edge cases should be injected into the stream of generated values
 	 * @return a new random generator instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.4.0")
+	@API(status = INTERNAL, since = "1.4.0")
 	default RandomGenerator<T> generator(int genSize, boolean withEdgeCases) {
 		if (withEdgeCases) {
-			return generator(genSize).withEdgeCases(genSize, edgeCases());
+			return generatorWithEmbeddedEdgeCases(genSize).withEdgeCases(genSize, edgeCases());
 		} else {
 			return generator(genSize);
 		}
+	}
+
+	/**
+	 * Create the random generator for an arbitrary where the embedded generators,
+	 * if there are any, also generate edge cases.
+	 *
+	 * <p>
+	 * Override only if there are any embedded arbitraries / generators,
+	 * e.g. a container using an element generator
+	 * </p>
+	 *
+	 * @param genSize See {@linkplain #generator(int)} about meaning of this parameter
+	 * @return a new random generator instance
+	 */
+	@API(status = INTERNAL, since = "1.4.0")
+	default RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+		return generator(genSize);
 	}
 
 	/**
@@ -474,13 +491,18 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
+			public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+				return Arbitrary.this.generator(genSize, true).injectDuplicates(duplicateProbability);
+			}
+
+			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples);
 			}
 
 			@Override
 			public EdgeCases<T> edgeCases() {
-				return Arbitrary.this.edgeCases();
+				return EdgeCases.none();
 			}
 		};
 	}

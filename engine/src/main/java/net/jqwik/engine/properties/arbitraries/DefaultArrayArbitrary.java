@@ -33,7 +33,12 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 
 	@Override
 	public RandomGenerator<A> generator(int genSize) {
-		return createListGenerator(genSize).map(this::toArray);
+		return createListGenerator(genSize, false).map(this::toArray);
+	}
+
+	@Override
+	public RandomGenerator<A> generatorWithEmbeddedEdgeCases(int genSize) {
+		return createListGenerator(genSize, true).map(this::toArray);
 	}
 
 	@Override

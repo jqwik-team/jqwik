@@ -7,7 +7,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
-import net.jqwik.engine.properties.shrinking.*;
 
 import static net.jqwik.engine.properties.UniquenessChecker.*;
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
@@ -67,8 +66,8 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 		return clone;
 	}
 
-	protected RandomGenerator<List<T>> createListGenerator(int genSize) {
-		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
+	protected RandomGenerator<List<T>> createListGenerator(int genSize, boolean withEmbeddedEdgeCases) {
+		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize, withEmbeddedEdgeCases);
 		return RandomGenerators.list(elementGenerator, minSize, maxSize, uniquenessExtractors, cutoffSize(genSize));
 	}
 
@@ -76,8 +75,8 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 		return RandomGenerators.defaultCutoffSize(minSize, maxSize, genSize);
 	}
 
-	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int genSize) {
-		return elementArbitrary.generator(genSize);
+	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int genSize, boolean withEdgeCases) {
+		return elementArbitrary.generator(genSize, withEdgeCases);
 	}
 
 	protected <C extends Collection<?>> EdgeCases<C> edgeCases(BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator) {

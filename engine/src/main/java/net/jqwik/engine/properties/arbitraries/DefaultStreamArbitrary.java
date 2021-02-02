@@ -23,7 +23,12 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 
 	@Override
 	public RandomGenerator<Stream<T>> generator(int genSize) {
-		return createListGenerator(genSize).map(ReportableStream::new);
+		return createListGenerator(genSize, false).map(ReportableStream::new);
+	}
+
+	@Override
+	public RandomGenerator<Stream<T>> generatorWithEmbeddedEdgeCases(int genSize) {
+		return createListGenerator(genSize, true).map(ReportableStream::new);
 	}
 
 	@Override

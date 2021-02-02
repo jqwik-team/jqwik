@@ -23,7 +23,12 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 
 	@Override
 	public RandomGenerator<List<T>> generator(int genSize) {
-		return createListGenerator(genSize);
+		return createListGenerator(genSize, false);
+	}
+
+	@Override
+	public RandomGenerator<List<T>> generatorWithEmbeddedEdgeCases(int genSize) {
+		return createListGenerator(genSize, true);
 	}
 
 	@Override
