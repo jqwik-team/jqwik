@@ -4,6 +4,7 @@
         - Restrict number of generated edge cases to number of tries
           - For embedded/individual use of generators only use a max of 100 edge cases
         
+        - EdgeCaseConfiguration.add(T...varargedTs)
         - Add documentation for Arbitrary.edgeCases(configuration)
 
 
