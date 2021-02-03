@@ -33,19 +33,19 @@ class ArbitraryTests {
 		int[] injectedGenSize = {0};
 
 		Arbitrary<Integer> arbitrary =
-			new Arbitrary<Integer>() {
+				new Arbitrary<Integer>() {
 
-				@Override
-				public RandomGenerator<Integer> generator(final int genSize) {
-					injectedGenSize[0] = genSize;
-					return ignore -> Shrinkable.unshrinkable(0);
-				}
+					@Override
+					public RandomGenerator<Integer> generator(final int genSize) {
+						injectedGenSize[0] = genSize;
+						return ignore -> Shrinkable.unshrinkable(0);
+					}
 
-				@Override
-				public EdgeCases<Integer> edgeCases() {
-					return EdgeCases.none();
-				}
-			};
+					@Override
+					public EdgeCases<Integer> edgeCases() {
+						return EdgeCases.none();
+					}
+				};
 
 		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000, true);
 		assertThat(injectedGenSize[0]).isEqualTo(42);
@@ -93,7 +93,7 @@ class ArbitraryTests {
 		void mappedGeneratorWithEmbeddedEdgeCases(@ForAll("number") String number) {
 			Statistics.label("number is 0")
 					  .collect(number.equals("0"))
-					  .coverage(checker -> checker.check(true).percentage(p -> p > 1));
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 0.5));
 		}
 
 		@Provide
@@ -136,11 +136,37 @@ class ArbitraryTests {
 		void stringGeneratorWithEmbeddedEdgeCases(@ForAll String aString) {
 			Statistics.label("string contains ' '")
 					  .collect(aString.chars().anyMatch(e -> e == ' '))
-					  .coverage(checker -> checker.check(true).percentage(p -> p > 1));
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 0.5));
+		}
+
+		@Property
+		void typeGeneratorWithEmbeddedEdgeCases(@ForAll @UseType(UseTypeMode.PUBLIC_CONSTRUCTORS) MyString myString) {
+			Statistics.label("string contains ' '")
+					  .collect(myString.string.chars().anyMatch(e -> e == ' '))
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 0.5));
+		}
+
+		@Property
+		void lazyOfGeneratorWithEmbeddedEdgeCases(@ForAll("lazyString") String aString) {
+			Statistics.label("string contains ' '")
+					  .collect(aString.chars().anyMatch(e -> e == ' '))
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 0.5));
+		}
+
+		@Provide
+		Arbitrary<String> lazyString() {
+			return Arbitraries.lazy(Arbitraries::strings);
 		}
 
 	}
 
+	static class MyString {
+		String string;
+
+		public MyString(String string) {
+			this.string = string;
+		}
+	}
 
 	@Group
 	class Filtering {
@@ -171,13 +197,13 @@ class ArbitraryTests {
 		@Example
 		void ignoreIllegalArgumentException(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary =
-				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
-					.map(anInt -> {
-						if (anInt % 2 == 0) {
-							throw new IllegalArgumentException("No even numbers");
-						}
-						return anInt;
-					});
+					new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
+							.map(anInt -> {
+								if (anInt % 2 == 0) {
+									throw new IllegalArgumentException("No even numbers");
+								}
+								return anInt;
+							});
 			Arbitrary<Integer> filtered = arbitrary.ignoreException(IllegalArgumentException.class);
 			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
@@ -190,13 +216,13 @@ class ArbitraryTests {
 		@Example
 		void ignoreSubtypeOfException(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary =
-				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
-					.map(anInt -> {
-						if (anInt % 2 == 0) {
-							throw new IllegalArgumentException("No even numbers");
-						}
-						return anInt;
-					});
+					new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
+							.map(anInt -> {
+								if (anInt % 2 == 0) {
+									throw new IllegalArgumentException("No even numbers");
+								}
+								return anInt;
+							});
 			Arbitrary<Integer> filtered = arbitrary.ignoreException(RuntimeException.class);
 			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
@@ -209,10 +235,10 @@ class ArbitraryTests {
 		@Example
 		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary =
-				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
-					.map(anInt -> {
-						throw new IllegalArgumentException("No even numbers");
-					});
+					new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
+							.map(anInt -> {
+								throw new IllegalArgumentException("No even numbers");
+							});
 			Arbitrary<Integer> filtered = arbitrary.ignoreException(RuntimeException.class);
 			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
@@ -230,10 +256,10 @@ class ArbitraryTests {
 			RandomGenerator<Integer> generator = unique.generator(10, true);
 
 			Set<Integer> generatedValues =
-				generator.stream(random)
-						 .map(Shrinkable::value)
-						 .limit(5)
-						 .collect(Collectors.toSet());
+					generator.stream(random)
+							 .map(Shrinkable::value)
+							 .limit(5)
+							 .collect(Collectors.toSet());
 
 			assertThat(generatedValues).containsExactly(1, 2, 3, 4, 5);
 		}
@@ -246,10 +272,10 @@ class ArbitraryTests {
 			RandomGenerator<Integer> generator = product.generator(10, true);
 
 			Set<Integer> generatedValues =
-				generator.stream(rand)
-						 .map(Shrinkable::value)
-						 .limit(4)
-						 .collect(Collectors.toSet());
+					generator.stream(rand)
+							 .map(Shrinkable::value)
+							 .limit(4)
+							 .collect(Collectors.toSet());
 
 			assertThat(generatedValues).hasSize(4);
 		}
@@ -302,7 +328,7 @@ class ArbitraryTests {
 		// There's a small chance that this test fails if 10000 tries won't pick the missing value out of 500 possibilities
 		@Property(tries = 100, generation = RANDOMIZED)
 		void listOfAllUniqueValuesCanBeGeneratedRandomly(
-			@ForAll("listOfUniqueIntegerPairs") List<Tuple3<Integer, Integer, Integer>> aList
+				@ForAll("listOfUniqueIntegerPairs") List<Tuple3<Integer, Integer, Integer>> aList
 		) {
 			assertThat(aList).hasSize(500);
 			assertThat(new HashSet<>(aList)).hasSize(500);
@@ -443,7 +469,7 @@ class ArbitraryTests {
 			RandomGenerator<List<Integer>> generator = collected.generator(10, true);
 
 			assertThatThrownBy(() -> generator.next(random))
-				.isInstanceOf(JqwikException.class);
+					.isInstanceOf(JqwikException.class);
 		}
 
 		private int sum(List<Integer> list) {

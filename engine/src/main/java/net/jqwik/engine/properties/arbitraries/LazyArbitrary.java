@@ -21,6 +21,11 @@ public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<
 		return getArbitrary().generator(genSize);
 	}
 
+	@Override
+	public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+		return getArbitrary().generator(genSize, true);
+	}
+
 	private Arbitrary<T> getArbitrary() {
 		if (this.arbitrary == null) {
 			Arbitrary<T> rawArbitrary = arbitrarySupplier.get();
