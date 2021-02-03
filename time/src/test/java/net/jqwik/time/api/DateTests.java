@@ -412,6 +412,7 @@ class DateTests {
 	}
 
 	@Group
+	@PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
 	class CheckEqualDistribution {
 
 		@Property

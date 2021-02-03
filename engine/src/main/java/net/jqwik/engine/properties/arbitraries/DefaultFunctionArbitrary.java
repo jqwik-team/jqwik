@@ -8,7 +8,7 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class DefaultFunctionArbitrary<F, R> extends TypedCloneable implements FunctionArbitrary<F, R>  {
+public class DefaultFunctionArbitrary<F, R> extends TypedCloneable implements FunctionArbitrary<F, R> {
 
 	private final Class<F> functionalType;
 	private final Arbitrary<R> resultArbitrary;
@@ -21,33 +21,38 @@ public class DefaultFunctionArbitrary<F, R> extends TypedCloneable implements Fu
 
 	@Override
 	public RandomGenerator<F> generator(int genSize) {
-		return RandomGenerators.oneOf(createGenerators(genSize));
+		return RandomGenerators.oneOf(createGenerators(genSize, false));
+	}
+
+	@Override
+	public RandomGenerator<F> generatorWithEmbeddedEdgeCases(int genSize) {
+		return RandomGenerators.oneOf(createGenerators(genSize, true));
 	}
 
 	@Override
 	public EdgeCases<F> edgeCases() {
-		ConstantFunctionGenerator<F, R> constantFunctionGenerator = createConstantFunctionGenerator(1000);
+		ConstantFunctionGenerator<F, R> constantFunctionGenerator = createConstantFunctionGenerator(1000, true);
 		return EdgeCasesSupport.mapShrinkable(
 				resultArbitrary.edgeCases(),
 				constantFunctionGenerator::createConstantFunction
 		);
 	}
 
-	private List<RandomGenerator<F>> createGenerators(int genSize) {
-		ConstantFunctionGenerator<F, R> constantFunctionGenerator = createConstantFunctionGenerator(genSize);
+	private List<RandomGenerator<F>> createGenerators(int genSize, boolean withEmbeddedEdgeCases) {
+		ConstantFunctionGenerator<F, R> constantFunctionGenerator = createConstantFunctionGenerator(genSize, withEmbeddedEdgeCases);
 		FunctionGenerator<F, R> functionGenerator =
-			new FunctionGenerator<>(functionalType, resultArbitrary.generator(genSize), conditions);
+				new FunctionGenerator<>(functionalType, resultArbitrary.generator(genSize, withEmbeddedEdgeCases), conditions);
 		return Arrays.asList(
-			constantFunctionGenerator,
-			functionGenerator,
-			functionGenerator,
-			functionGenerator,
-			functionGenerator
+				constantFunctionGenerator,
+				functionGenerator,
+				functionGenerator,
+				functionGenerator,
+				functionGenerator
 		);
 	}
 
-	private ConstantFunctionGenerator<F, R> createConstantFunctionGenerator(final int genSize) {
-		return new ConstantFunctionGenerator<>(functionalType, resultArbitrary.generator(genSize), conditions);
+	private ConstantFunctionGenerator<F, R> createConstantFunctionGenerator(final int genSize, boolean withEmbeddedEdgeCases) {
+		return new ConstantFunctionGenerator<>(functionalType, resultArbitrary.generator(genSize, withEmbeddedEdgeCases), conditions);
 	}
 
 	@Override
