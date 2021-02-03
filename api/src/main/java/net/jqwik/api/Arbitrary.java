@@ -52,6 +52,8 @@ public interface Arbitrary<T> {
 		public abstract <T> Arbitrary<T> dontShrink(Arbitrary<T> self);
 
 		public abstract <T> Arbitrary<T> configureEdgeCases(Arbitrary<T> self, Consumer<EdgeCases.Config<T>> configurator);
+
+		public abstract <T> Arbitrary<T> withoutEdgeCases(Arbitrary<T> self);
 	}
 
 	/**
@@ -602,6 +604,19 @@ public interface Arbitrary<T> {
 	@API(status = EXPERIMENTAL, since = "1.3.9")
 	default Arbitrary<T> edgeCases(Consumer<EdgeCases.Config<T>> configurator) {
 		return ArbitraryFacade.implementation.configureEdgeCases(Arbitrary.this, configurator);
+	}
+
+	/**
+	 * Create a new arbitrary of type {@code T} that will not explicitly generate
+	 * any edge cases, neither directly or in embedded arbitraries.
+	 * This is useful if you want to prune selected branches of edge case generation
+	 * because they are to costly or generate too many cases.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.4.0")
+	default Arbitrary<T> withoutEdgeCases() {
+		return ArbitraryFacade.implementation.withoutEdgeCases(Arbitrary.this);
 	}
 
 }

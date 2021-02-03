@@ -1,10 +1,6 @@
 - 1.4.0
 
     - Edge Cases
-        - Edge cases for embedded generators
-            - Check all arbitrary types
-            - Introduce Arbitrary.withoutEdgeCases() -> override Arbitrary.generator(gensize, withEdgeCases)
-
         - Restrict number of generated edge cases to number of tries
           - For embedded/individual use of generators only use a max of 100 edge cases
         

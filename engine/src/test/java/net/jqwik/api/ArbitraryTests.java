@@ -65,6 +65,24 @@ class ArbitraryTests {
 		assertThat(listWithNulls).hasSizeLessThanOrEqualTo(75);
 	}
 
+	@Property
+	void withoutEdgeCases(@ForAll("listsWithoutEdgeCases") List<Integer> listWithoutEdgeCases) {
+
+		Statistics.label("list is empty")
+				  .collect(listWithoutEdgeCases.isEmpty())
+				  .coverage(checker -> checker.check(true).percentage(p -> p < 5));
+
+		Statistics.label("list contains Integer.MAX_VALUE")
+				  .collect(listWithoutEdgeCases.stream().anyMatch(e -> e == Integer.MAX_VALUE))
+				  .coverage(checker -> checker.check(true).percentage(p -> p < 1));
+	}
+
+	@Provide
+	Arbitrary<List<Integer>> listsWithoutEdgeCases() {
+		Arbitrary<Integer> ints = Arbitraries.integers();
+		return ints.list().withoutEdgeCases();
+	}
+
 	@Group
 	@PropertyDefaults(edgeCases = EdgeCasesMode.MIXIN)
 	class GeneratorWithEmbeddedEdgeCases {

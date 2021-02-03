@@ -212,4 +212,14 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			}
 		};
 	}
+
+	@Override
+	public <T> Arbitrary<T> withoutEdgeCases(Arbitrary<T> self) {
+		return new ArbitraryDelegator<T>(self) {
+			@Override
+			public RandomGenerator<T> generator(int genSize, boolean withEdgeCases) {
+				return super.generator(genSize);
+			}
+		};
+	}
 }
