@@ -22,6 +22,13 @@ import static net.jqwik.testing.TestingSupport.*;
 class ArbitraryTests {
 
 	@Example
+	void generatorWithoutEdgeCases(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
+		RandomGenerator<Integer> generator = arbitrary.generator(10, false);
+		assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
+	}
+
+	@Example
 	void fixGenSize() {
 		int[] injectedGenSize = {0};
 
@@ -60,7 +67,7 @@ class ArbitraryTests {
 
 	@Group
 	@PropertyDefaults(edgeCases = EdgeCasesMode.MIXIN)
-	class GeneratorCreation {
+	class GeneratorWithEmbeddedEdgeCases {
 
 		@Example
 		void generatorWithEdgeCases(@ForAll Random random) {
@@ -125,11 +132,11 @@ class ArbitraryTests {
 			);
 		}
 
-		@Example
-		void generatorWithoutEdgeCases(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
-			RandomGenerator<Integer> generator = arbitrary.generator(10, false);
-			assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
+		@Property
+		void stringGeneratorWithEmbeddedEdgeCases(@ForAll String aString) {
+			Statistics.label("string contains ' '")
+					  .collect(aString.chars().anyMatch(e -> e == ' '))
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 1));
 		}
 
 	}

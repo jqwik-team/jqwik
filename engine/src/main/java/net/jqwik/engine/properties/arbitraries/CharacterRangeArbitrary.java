@@ -25,24 +25,25 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 	}
 
 	private List<Shrinkable<Character>> listOfEdgeCases() {
-		return Stream.of(min, max)
-					 .map(aCharacter -> new ShrinkableBigInteger(
-							 BigInteger.valueOf((int) aCharacter),
-							 Range.of(BigInteger.valueOf(min), BigInteger.valueOf(max)),
-							 BigInteger.valueOf(min)
-						  )
-					 )
-					 .map(shrinkableBigInteger -> shrinkableBigInteger.map(BigInteger::intValueExact))
-					 .map(shrinkableInteger -> shrinkableInteger.map(anInt -> ((char) (int) anInt)))
-					 .collect(Collectors.toList());
+		Stream<Character> edgeCases = Stream.of(min, max, ' ').filter(c -> c >= min && c <= max);
+		return edgeCases
+					   .map(aCharacter -> new ShrinkableBigInteger(
+									BigInteger.valueOf((int) aCharacter),
+									Range.of(BigInteger.valueOf(this.min), BigInteger.valueOf(max)),
+									BigInteger.valueOf(min)
+							)
+					   )
+					   .map(shrinkableBigInteger -> shrinkableBigInteger.map(BigInteger::intValueExact))
+					   .map(shrinkableInteger -> shrinkableInteger.map(anInt -> ((char) (int) anInt)))
+					   .collect(Collectors.toList());
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<Character>> exhaustive(long maxNumberOfSamples) {
 		long maxCount = max + 1 - min;
 		return ExhaustiveGenerators
-				   .fromIterable(() -> IntStream.range(min, max + 1).iterator(), maxCount, maxNumberOfSamples)
-				   .map(optionalGenerator -> optionalGenerator.map(anInt -> (char) (int) anInt));
+					   .fromIterable(() -> IntStream.range(min, max + 1).iterator(), maxCount, maxNumberOfSamples)
+					   .map(optionalGenerator -> optionalGenerator.map(anInt -> (char) (int) anInt));
 	}
 
 	@Override
