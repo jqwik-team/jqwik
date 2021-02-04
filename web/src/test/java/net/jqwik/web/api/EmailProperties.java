@@ -78,7 +78,7 @@ class EmailProperties {
 		class ShrinkToAatAdotAA extends ShrinkToChecker {
 			@Override
 			public Iterable<?> shrunkValues() {
-				return Arrays.asList("A@a.aa");
+				return Arrays.asList("a@a.aa");
 			}
 		}
 
