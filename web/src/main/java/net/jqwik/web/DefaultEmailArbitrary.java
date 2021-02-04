@@ -17,8 +17,8 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	@Override
 	protected Arbitrary<String> arbitrary() {
 		Arbitrary<String> arbitraryLocalPart = localPart();
-		Arbitrary<String> arbitraryDomain = host();
-		return Combinators.combine(arbitraryLocalPart, arbitraryDomain)
+		Arbitrary<String> arbitraryHost = host();
+		return Combinators.combine(arbitraryLocalPart, arbitraryHost)
 						  .as((localPart, domain) -> localPart + "@" + domain);
 	}
 
@@ -40,7 +40,9 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	private Arbitrary<String> localPartUnquoted() {
 		Arbitrary<String> unquoted =
 				Arbitraries.strings()
-						   .alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.")
+						   .withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+						   .withChars("0123456789!#$%&'*+-/=?^_`{|}~.")
+						   //.alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.")
 						   .ofMinLength(1).ofMaxLength(64);
 		unquoted = unquoted.filter(v -> !v.contains(".."));
 		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
@@ -51,12 +53,16 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	private Arbitrary<String> localPartQuoted() {
 		Arbitrary<String> quoted =
 				Arbitraries.strings()
-						   .alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
+						   .withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+						   .withChars("0123456789 !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
+						   // .alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
 						   .ofMinLength(1).ofMaxLength(62);
 		quoted = quoted.map(v -> "\"" + v.replace("\\", "\\\\")
 										 .replace("\"", "\\\"") + "\"");
 		quoted = quoted.filter(v -> v.length() <= 64);
-		return quoted.edgeCases(stringConfig -> stringConfig.includeOnly("\"A\"", "\"a\"", "\" \""));
+		return quoted.edgeCases(stringConfig -> stringConfig
+														.includeOnly("\"a\"")
+														.add("\" \""));
 	}
 
 	private Arbitrary<String> host() {
@@ -158,30 +164,16 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> webDomain() {
-		Arbitrary<Integer> numberOfSubdomains =
-				Arbitraries.integers()
-						   .between(1, 25)
-						   .edgeCases(integerConfig -> integerConfig.includeOnly(1, 25));
 		Arbitrary<String> topLevelDomain = topLevelDomain();
+		Arbitrary<String> subDomains = domainPart(1, 63).list()
+														.ofMinSize(1).ofMaxSize(10)
+														.map(list -> String.join(".", list));
 
-		return numberOfSubdomains.flatMap(depth -> Arbitraries.recursive(
-				() -> topLevelDomain,
-				this::prependDomainPart,
-				depth
-		).filter(v -> v.length() <= 253));
-	}
+		return Combinators.combine(subDomains, topLevelDomain)
+						  .as((sd, tld) -> sd + "." + tld)
+						  .filter(v -> v.length() < 253)
+						  .edgeCases(stringConfig -> stringConfig.includeOnly("a.aa", "0.aa"));
 
-	private Arbitrary<String> prependDomainPart(Arbitrary<String> tail) {
-		Arbitrary<String> domainPart = domainPart(1, 63);
-		return Combinators.combine(domainPart, tail)
-						  .as((part, rest) -> {
-							  String newDomain = part + "." + rest;
-							  // This is an optimization to have less filtering
-							  if (newDomain.length() > 253) {
-								  return rest;
-							  }
-							  return newDomain;
-						  });
 	}
 
 	private Arbitrary<String> topLevelDomain() {
@@ -198,10 +190,10 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> domainPart(int minLength, int maxLength) {
-		//Not using .alpha().numeric().withChars("-") because runtime is too high
-		//Using "." in withChars() to generate more subdomains
 		return Arbitraries.strings()
-						  .withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-")
+						  .withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+						  .withChars("0123456789-")
+						  //.alpha().numeric().withChars("-")
 						  .ofMinLength(minLength).ofMaxLength(maxLength)
 						  .filter(this::validUseOfHyphensInDomainPart);
 	}

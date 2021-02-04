@@ -14,6 +14,7 @@ import static net.jqwik.testing.TestingSupport.*;
 import static net.jqwik.web.api.EmailTestingSupport.*;
 
 @Group
+@PropertyDefaults(edgeCases = EdgeCasesMode.MIXIN)
 public class EmailsTests {
 
 	@Group
@@ -80,6 +81,7 @@ public class EmailsTests {
 		@Property
 		void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email) {
 			String domain = getEmailHost(email);
+			System.out.println(domain);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.charAt(0)).isNotEqualTo('-');
 			assertThat(domain.charAt(domain.length() - 1)).isNotEqualTo('-');
@@ -263,7 +265,7 @@ public class EmailsTests {
 		void defaultShrinking(@ForAll Random random) {
 			EmailArbitrary emails = Emails.emails();
 			String value = falsifyThenShrink(emails.generator(1000), random, TestingFalsifier.alwaysFalsify());
-			assertThat(value).isEqualTo("A@a.aa");
+			assertThat(value).isEqualTo("a@a.aa");
 		}
 
 		@Property
@@ -271,7 +273,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyDomain();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
-			assertThat(value).isEqualTo("A@a.aa");
+			assertThat(value).isEqualTo("a@a.aa");
 		}
 
 		@Property
@@ -279,7 +281,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyIPv4();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
-			assertThat(value).isEqualTo("A@[0.0.0.0]");
+			assertThat(value).isEqualTo("a@[0.0.0.0]");
 		}
 
 		@Property
@@ -287,7 +289,7 @@ public class EmailsTests {
 			Arbitrary<String> emails = Emails.emails();
 			Falsifier<String> falsifier = falsifyIPv6();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
-			assertThat(value).isEqualTo("A@[::]");
+			assertThat(value).isEqualTo("a@[::]");
 		}
 
 		private TestingFalsifier<String> falsifyDomain() {
@@ -319,7 +321,7 @@ public class EmailsTests {
 		@Example
 		void all() {
 			EmailArbitrary emails = Emails.emails();
-			int expectedNumberOfEdgeCases = (4 + 3) * (2 + 3 + 4);
+			int expectedNumberOfEdgeCases = (2 + 2) * (2 + 3 + 4);
 			Set<String> allEdgeCases = collectEdgeCaseValues(emails.edgeCases());
 			assertThat(allEdgeCases).hasSize(expectedNumberOfEdgeCases);
 
@@ -334,7 +336,7 @@ public class EmailsTests {
 											 .map(EmailTestingSupport::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
 
-			assertThat(localParts).containsExactlyInAnyOrder("A", "a", "0", "!");
+			assertThat(localParts).containsExactlyInAnyOrder("a", "0");
 		}
 
 		@Example
@@ -345,7 +347,7 @@ public class EmailsTests {
 											 .map(EmailTestingSupport::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
 
-			assertThat(localParts).containsExactlyInAnyOrder("\"A\"", "\"a\"", "\" \"");
+			assertThat(localParts).containsExactlyInAnyOrder("\"a\"", "\" \"");
 		}
 
 		@Example
@@ -356,9 +358,7 @@ public class EmailsTests {
 											 .map(EmailTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
 
-			assertThat(hosts).containsExactlyInAnyOrder(
-					"a.aa", "a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.aa"
-			);
+			assertThat(hosts).containsExactlyInAnyOrder("a.aa", "0.aa");
 		}
 
 		@Example

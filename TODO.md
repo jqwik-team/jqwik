@@ -10,8 +10,6 @@
         
         - Add documentation for Arbitrary.edgeCases(configuration)
 
-    - Emails: Improve performance of emails generation
-
 - 1.4.x
 
     - @StatisticsReportFormat
