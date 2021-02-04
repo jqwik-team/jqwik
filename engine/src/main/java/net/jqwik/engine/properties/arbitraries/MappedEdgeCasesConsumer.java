@@ -36,9 +36,13 @@ class MappedEdgeCasesConsumer<T, U> implements Consumer<EdgeCases.Config<U>> {
 				return this;
 			}
 
+			@SuppressWarnings("unchecked")
+			@SafeVarargs
 			@Override
-			public EdgeCases.Config<T> add(T edgeCase) {
-				uConfig.add(tuMapper.apply(edgeCase));
+			public final EdgeCases.Config<T> add(T... edgeCases) {
+				for (T edgeCase : edgeCases) {
+					uConfig.add(tuMapper.apply(edgeCase));
+				}
 				return this;
 			}
 

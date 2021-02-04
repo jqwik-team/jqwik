@@ -153,10 +153,11 @@ class ArbitraryEdgeCasesTests {
 							.edgeCases(edgeCasesConfig -> {
 								edgeCasesConfig.add("two");
 								edgeCasesConfig.add("four");
+								edgeCasesConfig.add("seven", "eight");
 							});
 
 			EdgeCases<String> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder("one", "two", "three", "four");
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder("one", "two", "three", "four", "seven", "eight");
 		}
 
 		@Example

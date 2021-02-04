@@ -1,12 +1,16 @@
 - 1.4.0
 
     - Edge Cases
+    
+        - Doubles: Double.MIN, -Double.MIN, Double.MIN_NORMAL, -Double.MIN_NORMAL
+        - Float: Float.MIN, -Float.MIN, Float.MIN_NORMAL, -Float.MIN_NORMAL
+            
         - Restrict number of generated edge cases to number of tries
           - For embedded/individual use of generators only use a max of 100 edge cases
         
-        - EdgeCaseConfiguration.add(T...varargedTs)
         - Add documentation for Arbitrary.edgeCases(configuration)
 
+    - Emails: Improve performance of emails generation
 
 - 1.4.x
 
