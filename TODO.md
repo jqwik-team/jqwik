@@ -2,9 +2,6 @@
 
     - Edge Cases
     
-        - Doubles: Double.MIN, -Double.MIN, Double.MIN_NORMAL, -Double.MIN_NORMAL
-        - Float: Float.MIN, -Float.MIN, Float.MIN_NORMAL, -Float.MIN_NORMAL
-            
         - Restrict number of generated edge cases to number of tries
           - For embedded/individual use of generators only use a max of 100 edge cases
         
