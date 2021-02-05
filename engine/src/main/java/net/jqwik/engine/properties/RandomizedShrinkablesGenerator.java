@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties;
 
 import java.util.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -12,6 +13,8 @@ import static java.lang.Math.*;
 
 public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator {
 
+	private static final Logger LOG = Logger.getLogger(RandomizedShrinkablesGenerator.class.getName());
+
 	public static RandomizedShrinkablesGenerator forParameters(
 		List<MethodParameter> parameters,
 		ArbitraryResolver arbitraryResolver,
@@ -21,8 +24,16 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	) {
 
 		// TODO: Calculate max genSize edge cases
-		List<EdgeCases<Object>> listOfEdgeCases = listOfEdgeCases(parameters, arbitraryResolver, edgeCasesMode);
+		List<EdgeCases<Object>> listOfEdgeCases = listOfEdgeCases(parameters, arbitraryResolver, edgeCasesMode, genSize);
 		int edgeCasesTotal = calculateEdgeCasesTotal(listOfEdgeCases);
+
+		if (edgeCasesTotal >= genSize && genSize > 1) {
+			String message = String.format(
+					"Combinatorial explosion of edge case generation. Stopped after %s generated cases.",
+					edgeCasesTotal
+			);
+			LOG.warning(message);
+		}
 
 		return new RandomizedShrinkablesGenerator(
 			randomShrinkablesGenerator(parameters, arbitraryResolver, genSize, edgeCasesMode.activated()),
@@ -60,15 +71,19 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	}
 
 	private static List<EdgeCases<Object>> listOfEdgeCases(
-		List<MethodParameter> parameters,
-		ArbitraryResolver arbitraryResolver,
-		EdgeCasesMode edgeCasesMode
+			List<MethodParameter> parameters,
+			ArbitraryResolver arbitraryResolver,
+			EdgeCasesMode edgeCasesMode,
+			int genSize
 	) {
 		List<EdgeCases<Object>> listOfEdgeCases = Collections.emptyList();
-		if (edgeCasesMode.generateFirst() || (edgeCasesMode.mixIn())) {
+
+		if (edgeCasesMode.activated() && !parameters.isEmpty()) {
+			// This is just a random guess:
+			int maxEdgeCasesPerParameter = genSize / parameters.size();
 			listOfEdgeCases = parameters
 								  .stream()
-								  .map(parameter -> resolveEdgeCases(arbitraryResolver, parameter))
+								  .map(parameter -> resolveEdgeCases(arbitraryResolver, parameter, maxEdgeCasesPerParameter))
 								  .collect(Collectors.toList());
 		}
 		return listOfEdgeCases;
@@ -80,12 +95,13 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	}
 
 	private static EdgeCases<Object> resolveEdgeCases(
-		ArbitraryResolver arbitraryResolver,
-		MethodParameter parameter
+			ArbitraryResolver arbitraryResolver,
+			MethodParameter parameter,
+			int maxEdgeCases
 	) {
 		List<EdgeCases<Object>> edgeCases = resolveArbitraries(arbitraryResolver, parameter)
 												.stream()
-												.map(Arbitrary::edgeCases)
+												.map(objectArbitrary -> objectArbitrary.edgeCases(maxEdgeCases))
 												.collect(Collectors.toList());
 		return EdgeCasesSupport.concat(edgeCases);
 	}
