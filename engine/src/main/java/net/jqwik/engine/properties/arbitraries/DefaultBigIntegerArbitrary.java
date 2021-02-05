@@ -29,8 +29,8 @@ public class DefaultBigIntegerArbitrary extends TypedCloneable implements BigInt
 	}
 
 	@Override
-	public EdgeCases<BigInteger> edgeCases() {
-		return generatingArbitrary.edgeCases();
+	public EdgeCases<BigInteger> edgeCases(int maxEdgeCases) {
+		return generatingArbitrary.edgeCases(maxEdgeCases);
 	}
 
 	@Override

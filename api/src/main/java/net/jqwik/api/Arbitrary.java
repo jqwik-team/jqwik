@@ -167,9 +167,12 @@ public interface Arbitrary<T> {
 		return edgeCases();
 	}
 
+	// TODO: Remove everywhere
 	@API(status = EXPERIMENTAL, since = "1.3.0")
 	@Deprecated
-	EdgeCases<T> edgeCases();
+	default EdgeCases<T> edgeCases() {
+		return edgeCases(Integer.MAX_VALUE);
+	}
 
 	/**
 	 * Create optional stream of all possible values this arbitrary could generate.

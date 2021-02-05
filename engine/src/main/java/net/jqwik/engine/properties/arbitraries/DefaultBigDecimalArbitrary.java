@@ -31,8 +31,8 @@ public class DefaultBigDecimalArbitrary extends TypedCloneable implements BigDec
 	}
 
 	@Override
-	public EdgeCases<BigDecimal> edgeCases() {
-		return generatingArbitrary.edgeCases();
+	public EdgeCases<BigDecimal> edgeCases(int maxEdgeCases) {
+		return generatingArbitrary.edgeCases(maxEdgeCases);
 	}
 
 	@Override

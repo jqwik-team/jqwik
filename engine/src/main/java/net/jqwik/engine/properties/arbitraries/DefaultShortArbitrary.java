@@ -29,8 +29,8 @@ public class DefaultShortArbitrary extends TypedCloneable implements ShortArbitr
 	}
 
 	@Override
-	public EdgeCases<Short> edgeCases() {
-		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::shortValueExact);
+	public EdgeCases<Short> edgeCases(int maxEdgeCases) {
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(maxEdgeCases), BigInteger::shortValueExact);
 	}
 
 	@Override

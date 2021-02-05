@@ -30,8 +30,8 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 	}
 
 	@Override
-	public EdgeCases<Double> edgeCases() {
-		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigDecimal::doubleValue);
+	public EdgeCases<Double> edgeCases(int maxEdgeCases) {
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(maxEdgeCases), BigDecimal::doubleValue);
 	}
 
 	@Override

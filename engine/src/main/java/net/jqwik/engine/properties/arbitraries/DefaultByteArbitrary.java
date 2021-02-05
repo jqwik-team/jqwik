@@ -29,8 +29,8 @@ public class DefaultByteArbitrary extends TypedCloneable implements ByteArbitrar
 	}
 
 	@Override
-	public EdgeCases<Byte> edgeCases() {
-		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::byteValueExact);
+	public EdgeCases<Byte> edgeCases(int maxEdgeCases) {
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(maxEdgeCases), BigInteger::byteValueExact);
 	}
 
 	@Override

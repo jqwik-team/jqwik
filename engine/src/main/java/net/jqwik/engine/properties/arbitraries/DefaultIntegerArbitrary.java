@@ -29,8 +29,8 @@ public class DefaultIntegerArbitrary extends TypedCloneable implements IntegerAr
 	}
 
 	@Override
-	public EdgeCases<Integer> edgeCases() {
-		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::intValueExact);
+	public EdgeCases<Integer> edgeCases(int maxEdgeCases) {
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(maxEdgeCases), BigInteger::intValueExact);
 	}
 
 	@Override

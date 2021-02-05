@@ -29,8 +29,8 @@ public class DefaultLongArbitrary extends TypedCloneable implements LongArbitrar
 	}
 
 	@Override
-	public EdgeCases<Long> edgeCases() {
-		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigInteger::longValueExact);
+	public EdgeCases<Long> edgeCases(int maxEdgeCases) {
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(maxEdgeCases), BigInteger::longValueExact);
 	}
 
 	@Override

@@ -30,8 +30,8 @@ public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitr
 	}
 
 	@Override
-	public EdgeCases<Float> edgeCases() {
-		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(), BigDecimal::floatValue);
+	public EdgeCases<Float> edgeCases(int maxEdgeCases) {
+		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(maxEdgeCases), BigDecimal::floatValue);
 	}
 
 	@Override
