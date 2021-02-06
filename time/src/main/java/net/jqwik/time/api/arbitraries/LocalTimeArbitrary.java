@@ -1,6 +1,7 @@
 package net.jqwik.time.api.arbitraries;
 
 import java.time.*;
+import java.time.temporal.*;
 
 import org.apiguardian.api.*;
 
@@ -53,21 +54,8 @@ public interface LocalTimeArbitrary extends Arbitrary<LocalTime> {
 	LocalTimeArbitrary secondBetween(int min, int max);
 
 	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated millisecond values.
-	 * The millisecond can be between {@code 0} and {@code 999}.
+	 * Constrain the precision of generated values.
 	 */
-	LocalTimeArbitrary millisecondBetween(int min, int max);
-
-	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated microsecond values.
-	 * The microsecond can be between {@code 0} and {@code 999}.
-	 */
-	LocalTimeArbitrary microsecondBetween(int min, int max);
-
-	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated nanosecond values.
-	 * The nanosecond can be between {@code 0} and {@code 999}.
-	 */
-	LocalTimeArbitrary nanosecondBetween(int min, int max);
+	LocalTimeArbitrary constrainPrecision(ChronoUnit precision);
 
 }

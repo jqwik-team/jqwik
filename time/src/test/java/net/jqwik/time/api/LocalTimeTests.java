@@ -1,9 +1,12 @@
 package net.jqwik.time.api;
 
 import java.time.*;
+import java.time.temporal.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
 
@@ -29,13 +32,23 @@ class LocalTimeTests {
 		}
 
 		@Property
-		void worstCaseTimeGeneration(@ForAll("worstCases") LocalTime time) {
+		void worstCaseTimeGeneration(@ForAll("worstCase") LocalTime time) {
+			assertThat(time).isNotNull();
+		}
+
+		@Property
+		void worstCaseTimeGeneration2(@ForAll("worstCase2") LocalTime time) {
 			assertThat(time).isNotNull();
 		}
 
 		@Provide
-		Arbitrary<LocalTime> worstCases() {
-			return Times.times().between(LocalTime.of(22, 59, 59, 999_999_998), LocalTime.of(23, 00, 00, 000_000_001));
+		Arbitrary<LocalTime> worstCase() {
+			return Times.times().between(LocalTime.of(22, 59, 59, 999_999_998), LocalTime.of(23, 0, 0, 1));
+		}
+
+		@Provide
+		Arbitrary<LocalTime> worstCase2() {
+			return Times.times().minuteBetween(0, 1).secondBetween(0, 1);
 		}
 
 	}
@@ -216,126 +229,243 @@ class LocalTimeTests {
 		}
 
 		@Group
-		class MillisecondMethods {
+		class PrecisionMethods {
 
-			@Property
-			void millisecondBetween(
-					@ForAll("milliseconds") int startMillisecond,
-					@ForAll("milliseconds") int endMillisecond,
-					@ForAll Random random
-			) {
+			@Group
+			class Hours {
 
-				Assume.that(startMillisecond <= endMillisecond);
+				@Property
+				void precision(@ForAll("precisionHours") LocalTime time) {
+					assertThat(time.getMinute()).isEqualTo(0);
+					assertThat(time.getSecond()).isEqualTo(0);
+					assertThat(time.getNano()).isEqualTo(0);
+				}
 
-				Arbitrary<LocalTime> times = Times.times().millisecondBetween(startMillisecond, endMillisecond);
+				@Property
+				void precisionMinTime(@ForAll("precisionMinutes") LocalTime startTime, @ForAll Random random) {
 
-				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time.getNano()).isGreaterThanOrEqualTo(startMillisecond * 1_000_000);
-					assertThat(time.getNano()).isLessThanOrEqualTo(endMillisecond * 1_000_000 + 999_999);
-					return true;
-				});
+					Assume.that(startTime.getHour() != 23);
+
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(ChronoUnit.HOURS);
+
+					assertAllGenerated(times.generator(1000), random, time -> {
+						assertThat(time.getMinute()).isEqualTo(0);
+						assertThat(time.getSecond()).isEqualTo(0);
+						assertThat(time.getNano()).isEqualTo(0);
+						assertThat(time).isAfterOrEqualTo(startTime);
+						return true;
+					});
+
+				}
+
+				@Property
+				void precisionMinTime2(@ForAll("times") LocalTime startTime, @ForAll Random random) {
+
+					Assume.that(startTime.getHour() != 23);
+
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(ChronoUnit.HOURS);
+
+					assertAllGenerated(times.generator(1000), random, time -> {
+						assertThat(time.getMinute()).isEqualTo(0);
+						assertThat(time.getSecond()).isEqualTo(0);
+						assertThat(time.getNano()).isEqualTo(0);
+						assertThat(time).isAfterOrEqualTo(startTime);
+						return true;
+					});
+
+				}
 
 			}
 
-			@Property
-			void millisecondBetweenSame(@ForAll("milliseconds") int millisecond, @ForAll Random random) {
+			@Group
+			class Minutes {
 
-				Arbitrary<LocalTime> times = Times.times().millisecondBetween(millisecond, millisecond);
+				@Property
+				void precision(@ForAll("precisionMinutes") LocalTime time) {
+					assertThat(time.getSecond()).isEqualTo(0);
+					assertThat(time.getNano()).isEqualTo(0);
+				}
 
-				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time.getNano()).isGreaterThanOrEqualTo(millisecond * 1_000_000);
-					assertThat(time.getNano()).isLessThanOrEqualTo(millisecond * 1_000_000 + 999_999);
-					return true;
-				});
+				@Property
+				void precisionMinTime(@ForAll("precisionSeconds") LocalTime startTime, @ForAll Random random) {
+
+					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59);
+
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(ChronoUnit.MINUTES);
+
+					assertAllGenerated(times.generator(1000), random, time -> {
+						assertThat(time.getSecond()).isEqualTo(0);
+						assertThat(time.getNano()).isEqualTo(0);
+						assertThat(time).isAfterOrEqualTo(startTime);
+						return true;
+					});
+
+				}
+
+				@Property
+				void precisionMinTime2(@ForAll("times") LocalTime startTime, @ForAll Random random) {
+
+					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59);
+
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(ChronoUnit.MINUTES);
+
+					assertAllGenerated(times.generator(1000), random, time -> {
+						assertThat(time.getSecond()).isEqualTo(0);
+						assertThat(time.getNano()).isEqualTo(0);
+						assertThat(time).isAfterOrEqualTo(startTime);
+						return true;
+					});
+
+				}
+
+			}
+
+			@Group
+			class Seconds {
+
+				@Property
+				void precision(@ForAll("precisionSeconds") LocalTime time) {
+					assertThat(time.getNano()).isEqualTo(0);
+				}
+
+				@Property
+				void precisionMinTime(@ForAll("precisionMilliseconds") LocalTime startTime, @ForAll Random random) {
+
+					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59);
+
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(ChronoUnit.SECONDS);
+
+					assertAllGenerated(times.generator(1000), random, time -> {
+						assertThat(time.getNano()).isEqualTo(0);
+						assertThat(time).isAfterOrEqualTo(startTime);
+						return true;
+					});
+
+				}
+
+				@Property
+				void precisionMinTime2(@ForAll("times") LocalTime startTime, @ForAll Random random) {
+
+					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59);
+
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(ChronoUnit.SECONDS);
+
+					assertAllGenerated(times.generator(1000), random, time -> {
+						assertThat(time.getNano()).isEqualTo(0);
+						assertThat(time).isAfterOrEqualTo(startTime);
+						return true;
+					});
+
+				}
+
+			}
+
+			@Group
+			class Milliseconds {
+
+				@Property
+				void precision(@ForAll("precisionMilliseconds") LocalTime time) {
+					assertThat(time.getNano() % 1_000_000).isEqualTo(0);
+				}
+
+				@Property
+				void precisionMinTime(@ForAll("precisionMicroseconds") LocalTime startTime, @ForAll Random random) {
+
+					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
+																																   .getNano() < 999_000_001);
+
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(ChronoUnit.MILLIS);
+
+					assertAllGenerated(times.generator(1000), random, time -> {
+						assertThat(time.getNano() % 1_000_000).isEqualTo(0);
+						assertThat(time).isAfterOrEqualTo(startTime);
+						return true;
+					});
+
+				}
+
+				@Property
+				void precisionMinTime2(@ForAll("times") LocalTime startTime, @ForAll Random random) {
+
+					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
+																																   .getNano() < 999_000_001);
+
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(ChronoUnit.MILLIS);
+
+					assertAllGenerated(times.generator(1000), random, time -> {
+						assertThat(time.getNano() % 1_000_000).isEqualTo(0);
+						assertThat(time).isAfterOrEqualTo(startTime);
+						return true;
+					});
+
+				}
+
+			}
+
+			@Group
+			class Microseconds {
+
+				@Property
+				void precision(@ForAll("precisionMicroseconds") LocalTime time) {
+					assertThat(time.getNano() % 1_000).isEqualTo(0);
+				}
+
+				@Property
+				void precisionMinTime(@ForAll("times") LocalTime startTime, @ForAll Random random) {
+
+					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
+																																   .getNano() < 999_999_001);
+
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(ChronoUnit.MICROS);
+
+					assertAllGenerated(times.generator(1000), random, time -> {
+						assertThat(time.getNano() % 1_000).isEqualTo(0);
+						assertThat(time).isAfterOrEqualTo(startTime);
+						return true;
+					});
+
+				}
+
+			}
+
+			@Group
+			class Nanos {
+
+				@Property
+				void precisionNanoseconds(@ForAll("precisionNanoseconds") LocalTime time) {
+					assertThat(time).isNotNull();
+				}
 
 			}
 
 			@Provide
-			Arbitrary<Integer> milliseconds() {
-				return Arbitraries.integers().between(0, 999);
-			}
-
-		}
-
-		@Group
-		class MicrosecondMethods {
-
-			@Property
-			void microsecondBetween(
-					@ForAll("microseconds") int startMicrosecond,
-					@ForAll("microseconds") int endMicrosecond,
-					@ForAll Random random
-			) {
-
-				Assume.that(startMicrosecond <= endMicrosecond);
-
-				Arbitrary<LocalTime> times = Times.times().microsecondBetween(startMicrosecond, endMicrosecond);
-
-				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time.getNano() % 1_000_000).isGreaterThanOrEqualTo(startMicrosecond * 1000);
-					assertThat(time.getNano() % 1_000_000).isLessThanOrEqualTo(endMicrosecond * 1000 + 999);
-					return true;
-				});
-
-			}
-
-			@Property
-			void microsecondBetweenSame(@ForAll("microseconds") int microsecond, @ForAll Random random) {
-
-				Arbitrary<LocalTime> times = Times.times().microsecondBetween(microsecond, microsecond);
-
-				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time.getNano() % 1_000_000).isGreaterThanOrEqualTo(microsecond * 1000);
-					assertThat(time.getNano() % 1_000_000).isLessThanOrEqualTo(microsecond * 1000 + 999);
-					return true;
-				});
-
+			Arbitrary<LocalTime> precisionHours() {
+				return Times.times().constrainPrecision(ChronoUnit.HOURS);
 			}
 
 			@Provide
-			Arbitrary<Integer> microseconds() {
-				return Arbitraries.integers().between(0, 999);
-			}
-
-		}
-
-		@Group
-		class NanosecondMethods {
-
-			@Property
-			void nanosecondBetween(
-					@ForAll("nanoseconds") int startNanosecond,
-					@ForAll("nanoseconds") int endNanosecond,
-					@ForAll Random random
-			) {
-
-				Assume.that(startNanosecond <= endNanosecond);
-
-				Arbitrary<LocalTime> times = Times.times().nanosecondBetween(startNanosecond, endNanosecond);
-
-				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time.getNano() % 1000).isGreaterThanOrEqualTo(startNanosecond);
-					assertThat(time.getNano() % 1000).isLessThanOrEqualTo(endNanosecond);
-					return true;
-				});
-
-			}
-
-			@Property
-			void nanosecondBetweenSame(@ForAll("nanoseconds") int nanosecond, @ForAll Random random) {
-
-				Arbitrary<LocalTime> times = Times.times().nanosecondBetween(nanosecond, nanosecond);
-
-				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time.getNano() % 1000).isEqualTo(nanosecond);
-					return true;
-				});
-
+			Arbitrary<LocalTime> precisionMinutes() {
+				return Times.times().constrainPrecision(ChronoUnit.MINUTES);
 			}
 
 			@Provide
-			Arbitrary<Integer> nanoseconds() {
-				return Arbitraries.integers().between(0, 999);
+			Arbitrary<LocalTime> precisionSeconds() {
+				return Times.times().constrainPrecision(ChronoUnit.SECONDS);
+			}
+
+			@Provide
+			Arbitrary<LocalTime> precisionMilliseconds() {
+				return Times.times().constrainPrecision(ChronoUnit.MILLIS);
+			}
+
+			@Provide
+			Arbitrary<LocalTime> precisionMicroseconds() {
+				return Times.times().constrainPrecision(ChronoUnit.MICROS);
+			}
+
+			@Provide
+			Arbitrary<LocalTime> precisionNanoseconds() {
+				return Times.times().constrainPrecision(ChronoUnit.NANOS);
 			}
 
 		}
@@ -352,6 +482,7 @@ class LocalTimeTests {
 			assertThat(value).isEqualTo(LocalTime.of(0, 0, 0, 0));
 		}
 
+		//TODO: Too much time?
 		@Property
 		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			LocalTimeArbitrary times = Times.times();
@@ -365,7 +496,131 @@ class LocalTimeTests {
 	@Group
 	class ExhaustiveGeneration {
 
-		//TODO
+		@Example
+		void between() {
+			Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
+					Times.times()
+						 .between(
+								 LocalTime.of(11, 22, 33, 392_211_322),
+								 LocalTime.of(11, 22, 33, 392_211_325)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly(
+					LocalTime.of(11, 22, 33, 392_211_322),
+					LocalTime.of(11, 22, 33, 392_211_323),
+					LocalTime.of(11, 22, 33, 392_211_324),
+					LocalTime.of(11, 22, 33, 392_211_325)
+			);
+		}
+
+		@Example
+		void precisionMicros() {
+			Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
+					Times.times()
+						 .between(
+								 LocalTime.of(11, 22, 33, 392_211_322),
+								 LocalTime.of(11, 22, 33, 392_214_325)
+						 )
+						 .constrainPrecision(ChronoUnit.MICROS)
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly(
+					LocalTime.of(11, 22, 33, 392_212_000),
+					LocalTime.of(11, 22, 33, 392_213_000),
+					LocalTime.of(11, 22, 33, 392_214_000)
+			);
+		}
+
+		@Example
+		void precisionMillis() {
+			Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
+					Times.times()
+						 .between(
+								 LocalTime.of(11, 22, 33, 392_211_322),
+								 LocalTime.of(11, 22, 33, 395_214_325)
+						 )
+						 .constrainPrecision(ChronoUnit.MILLIS)
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly(
+					LocalTime.of(11, 22, 33, 393_000_000),
+					LocalTime.of(11, 22, 33, 394_000_000),
+					LocalTime.of(11, 22, 33, 395_000_000)
+			);
+		}
+
+		@Example
+		void precisionSeconds() {
+			Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
+					Times.times()
+						 .between(
+								 LocalTime.of(11, 22, 33, 392_211_322),
+								 LocalTime.of(11, 22, 36, 395_214_325)
+						 )
+						 .constrainPrecision(ChronoUnit.SECONDS)
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly(
+					LocalTime.of(11, 22, 34, 0),
+					LocalTime.of(11, 22, 35, 0),
+					LocalTime.of(11, 22, 36, 0)
+			);
+		}
+
+		@Example
+		void precisionMinutes() {
+			Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
+					Times.times()
+						 .between(
+								 LocalTime.of(11, 22, 33, 392_211_322),
+								 LocalTime.of(11, 25, 36, 395_214_325)
+						 )
+						 .constrainPrecision(ChronoUnit.MINUTES)
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly(
+					LocalTime.of(11, 23, 0, 0),
+					LocalTime.of(11, 24, 0, 0),
+					LocalTime.of(11, 25, 0, 0)
+			);
+		}
+
+		@Example
+		void precisionHours() {
+			Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
+					Times.times()
+						 .between(
+								 LocalTime.of(11, 22, 33, 392_211_322),
+								 LocalTime.of(14, 25, 36, 395_214_325)
+						 )
+						 .constrainPrecision(ChronoUnit.HOURS)
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly(
+					LocalTime.of(12, 0, 0, 0),
+					LocalTime.of(13, 0, 0, 0),
+					LocalTime.of(14, 0, 0, 0)
+			);
+		}
 
 	}
 
@@ -397,19 +652,17 @@ class LocalTimeTests {
 		}
 
 		@Example
-		void betweenMicrosecond() {
+		void betweenSecond() {
 			LocalTimeArbitrary times =
 					Times.times()
 						 .hourBetween(11, 12)
 						 .minuteBetween(23, 31)
-						 .secondBetween(5, 10)
-						 .millisecondBetween(100, 200)
-						 .microsecondBetween(567, 888);
+						 .secondBetween(5, 10);
 			Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-					LocalTime.of(11, 23, 5, 100_567_000),
-					LocalTime.of(12, 31, 10, 200_888_999)
+					LocalTime.of(11, 23, 5, 0),
+					LocalTime.of(12, 31, 10, 999_999_999)
 			);
 		}
 
@@ -418,14 +671,398 @@ class LocalTimeTests {
 	@Group
 	class CheckEqualDistribution {
 
-		//TODO
+		@Property
+		void hours(@ForAll("times") LocalTime time) {
+			Statistics.label("Hours")
+					  .collect(time.getHour())
+					  .coverage(this::check24Coverage);
+		}
+
+		@Property
+		void minutes(@ForAll("times") LocalTime time) {
+			Statistics.label("Minutes")
+					  .collect(time.getMinute())
+					  .coverage(this::check60Coverage);
+		}
+
+		@Property
+		void seconds(@ForAll("times") LocalTime time) {
+			Statistics.label("Seconds")
+					  .collect(time.getSecond())
+					  .coverage(this::check60Coverage);
+		}
+
+		@Property
+		void milliseconds(@ForAll("times") LocalTime time) {
+
+			Statistics.label("Milliseconds x--")
+					  .collect(time.getNano() / 100_000_000)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Milliseconds -x-")
+					  .collect((time.getNano() / 10_000_000) % 10)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Milliseconds --x")
+					  .collect((time.getNano() / 1_000_000) % 10)
+					  .coverage(this::check10Coverage);
+
+		}
+
+		@Property
+		void microseconds(@ForAll("times") LocalTime time) {
+
+			Statistics.label("Microseconds x--")
+					  .collect((time.getNano() % 1_000_000) / 100_000)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Microseconds -x-")
+					  .collect(((time.getNano() % 1_000_000) / 10_000) % 10)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Microseconds --x")
+					  .collect(((time.getNano() % 1_000_000) / 1_000) % 10)
+					  .coverage(this::check10Coverage);
+
+		}
+
+		@Property
+		void nanoseconds(@ForAll("times") LocalTime time) {
+
+			Statistics.label("Nanoseconds x--")
+					  .collect((time.getNano() % 1_000) / 100)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Nanoseconds -x-")
+					  .collect(((time.getNano() % 1_000) / 10) % 10)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Nanoseconds --x")
+					  .collect((time.getNano() % 1_000) % 10)
+					  .coverage(this::check10Coverage);
+
+		}
+
+		private void check10Coverage(StatisticsCoverage coverage) {
+			for (int value = 0; value < 10; value++) {
+				coverage.check(value).percentage(p -> p >= 5);
+			}
+		}
+
+		private void check24Coverage(StatisticsCoverage coverage) {
+			for (int value = 0; value < 24; value++) {
+				coverage.check(value).percentage(p -> p >= 2);
+			}
+		}
+
+		private void check60Coverage(StatisticsCoverage coverage) {
+			for (int value = 0; value < 60; value++) {
+				coverage.check(value).percentage(p -> p >= 0.3);
+			}
+		}
 
 	}
 
 	@Group
 	class InvalidConfigurations {
 
-		//TODO Maybe
+		@Group
+		class InvalidValues {
+
+			@Property
+			void minTimeAfterMaxTime(@ForAll("times") LocalTime minTime, @ForAll("times") LocalTime maxTime) {
+
+				Assume.that(minTime.isAfter(maxTime));
+
+				assertThatThrownBy(
+						() -> Times.times().atTheLatest(maxTime).atTheEarliest(minTime)
+				).isInstanceOf(IllegalArgumentException.class);
+
+			}
+
+			@Property
+			void maxTimeBeforeMinTime(@ForAll("times") LocalTime minTime, @ForAll("times") LocalTime maxTime) {
+
+				Assume.that(maxTime.isBefore(minTime));
+
+				assertThatThrownBy(
+						() -> Times.times().atTheEarliest(minTime).atTheLatest(maxTime)
+				).isInstanceOf(IllegalArgumentException.class);
+
+			}
+
+			@Property
+			void minMaxSecond(@ForAll int minSecond, @ForAll int maxSecond) {
+
+				Assume.that(minSecond < 0 || minSecond > 59 || maxSecond < 0 || maxSecond > 59);
+
+				assertThatThrownBy(
+						() -> Times.times().hourBetween(minSecond, maxSecond)
+				).isInstanceOf(IllegalArgumentException.class);
+
+			}
+
+			@Property
+			void minMaxMinute(@ForAll int minMinute, @ForAll int maxMinute) {
+
+				Assume.that(minMinute < 0 || minMinute > 59 || maxMinute < 0 || maxMinute > 59);
+
+				assertThatThrownBy(
+						() -> Times.times().hourBetween(minMinute, maxMinute)
+				).isInstanceOf(IllegalArgumentException.class);
+
+			}
+
+			@Property
+			void minMaxHour(@ForAll int minHour, @ForAll int maxHour) {
+
+				Assume.that(minHour < 0 || minHour > 23 || maxHour < 0 || maxHour > 23);
+
+				assertThatThrownBy(
+						() -> Times.times().hourBetween(minHour, maxHour)
+				).isInstanceOf(IllegalArgumentException.class);
+
+			}
+
+		}
+
+		@Group
+		class TimeGenerationPrecision {
+
+			@Group
+			class Generally {
+
+				@Property
+				void minMaxHour(@ForAll ChronoUnit chronoUnit) {
+
+					Assume.that(!chronoUnit.equals(ChronoUnit.NANOS));
+					Assume.that(!chronoUnit.equals(ChronoUnit.MICROS));
+					Assume.that(!chronoUnit.equals(ChronoUnit.MILLIS));
+					Assume.that(!chronoUnit.equals(ChronoUnit.SECONDS));
+					Assume.that(!chronoUnit.equals(ChronoUnit.MINUTES));
+					Assume.that(!chronoUnit.equals(ChronoUnit.HOURS));
+
+					assertThatThrownBy(
+							() -> Times.times().constrainPrecision(chronoUnit)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+			}
+
+			@Group
+			class Hours {
+
+				@Property
+				void precisionMaxTimeSoonAfterMinTime(
+						@ForAll("times") LocalTime startTime,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalTime endTime = startTime.plusNanos(nanos);
+
+					Assume.that(endTime.isAfter(startTime));
+					Assume.that(startTime.getMinute() != 0 && startTime.getSecond() != 0 && startTime.getNano() != 0);
+					Assume.that(startTime.getHour() == endTime.getHour());
+
+					assertThatThrownBy(
+							() -> Times.times().between(startTime, endTime).constrainPrecision(ChronoUnit.HOURS).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Property
+				void precisionMinTimeTooLate(@ForAll("precisionMinTimeTooLateProvide") LocalTime time) {
+
+					Assume.that(time.getMinute() != 0 || time.getSecond() != 0 || time.getNano() != 0);
+
+					assertThatThrownBy(
+							() -> Times.times().atTheEarliest(time).constrainPrecision(ChronoUnit.HOURS).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23);
+				}
+
+			}
+
+			@Group
+			class Minutes {
+
+				@Property
+				void precisionMaxTimeSoonAfterMinTime(
+						@ForAll("times") LocalTime startTime,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalTime endTime = startTime.plusNanos(nanos);
+
+					Assume.that(endTime.isAfter(startTime));
+					Assume.that(startTime.getSecond() != 0 && startTime.getNano() != 0);
+					Assume.that(startTime.getMinute() == endTime.getMinute());
+
+					assertThatThrownBy(
+							() -> Times.times().between(startTime, endTime).constrainPrecision(ChronoUnit.MINUTES).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Property
+				void precisionMinTimeTooLate(@ForAll("precisionMinTimeTooLateProvide") LocalTime time) {
+
+					Assume.that(time.getSecond() != 0 || time.getNano() != 0);
+
+					assertThatThrownBy(
+							() -> Times.times().atTheEarliest(time).constrainPrecision(ChronoUnit.MINUTES).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59);
+				}
+
+			}
+
+			@Group
+			class Seconds {
+
+				@Property
+				void precisionMaxTimeSoonAfterMinTime(
+						@ForAll("times") LocalTime startTime,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalTime endTime = startTime.plusNanos(nanos);
+
+					Assume.that(endTime.isAfter(startTime));
+					Assume.that(startTime.getNano() != 0);
+					Assume.that(startTime.getSecond() == endTime.getSecond());
+
+					assertThatThrownBy(
+							() -> Times.times().between(startTime, endTime).constrainPrecision(ChronoUnit.SECONDS).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Property
+				void precisionMinTimeTooLate(
+						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
+						@ForAll @IntRange(min = 1, max = 999_999_999) int nanos
+				) {
+
+					time = time.withNano(nanos);
+					final LocalTime finalTime = time;
+
+					assertThatThrownBy(
+							() -> Times.times().atTheEarliest(finalTime).constrainPrecision(ChronoUnit.SECONDS).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
+				}
+
+			}
+
+			@Group
+			class Millis {
+
+				@Property
+				void precisionMaxTimeSoonAfterMinTime(
+						@ForAll("times") LocalTime startTime,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalTime endTime = startTime.plusNanos(nanos);
+
+					Assume.that(endTime.isAfter(startTime));
+					Assume.that(startTime.getNano() % 1_000_000 != 0);
+					Assume.that(startTime.getNano() % 1_000_000 + nanos < 1_000_000);
+
+					assertThatThrownBy(
+							() -> Times.times().between(startTime, endTime).constrainPrecision(ChronoUnit.MILLIS).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Property
+				void precisionMinTimeTooLate(
+						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
+						@ForAll @IntRange(min = 999_000_001, max = 999_999_999) int nanos
+				) {
+
+					time = time.withNano(nanos);
+					final LocalTime finalTime = time;
+
+					assertThatThrownBy(
+							() -> Times.times().atTheEarliest(finalTime).constrainPrecision(ChronoUnit.MILLIS).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
+				}
+
+			}
+
+			@Group
+			class Micros {
+
+				@Property
+				void precisionMaxTimeSoonAfterMinTime(
+						@ForAll("times") LocalTime startTime,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalTime endTime = startTime.plusNanos(nanos);
+
+					Assume.that(endTime.isAfter(startTime));
+					Assume.that(startTime.getNano() % 1_000 != 0);
+					Assume.that(startTime.getNano() % 1_000 + nanos < 1_000);
+
+					assertThatThrownBy(
+							() -> Times.times().between(startTime, endTime).constrainPrecision(ChronoUnit.MICROS).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Property
+				void precisionMinTimeTooLate(
+						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
+						@ForAll @IntRange(min = 999_999_001, max = 999_999_999) int nanos
+				) {
+
+					time = time.withNano(nanos);
+					final LocalTime finalTime = time;
+
+					assertThatThrownBy(
+							() -> Times.times().atTheEarliest(finalTime).constrainPrecision(ChronoUnit.MICROS).generator(1000)
+					).isInstanceOf(TooManyFilterMissesException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
+				}
+
+			}
+
+			@Group
+			class Nanos {
+
+			}
+
+		}
 
 	}
 
