@@ -293,7 +293,7 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public EdgeCases<T> edgeCases() {
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
 				return EdgeCases.none();
 			}
 
@@ -320,8 +320,8 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public EdgeCases<T> edgeCases() {
-				return Arbitrary.this.edgeCases();
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
+				return Arbitrary.this.edgeCases(maxEdgeCases);
 			}
 		};
 	}
@@ -405,7 +405,7 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public EdgeCases<List<T>> edgeCases() {
+			public EdgeCases<List<T>> edgeCases(int maxEdgeCases) {
 				return EdgeCases.none();
 			}
 		};
@@ -506,8 +506,12 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public EdgeCases<T> edgeCases() {
-				return EdgeCases.none();
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
+				if (duplicateProbability >= 1.0) {
+					// This is a pathological case anyway
+					return EdgeCases.none();
+				}
+				return Arbitrary.this.edgeCases(maxEdgeCases);
 			}
 		};
 	}

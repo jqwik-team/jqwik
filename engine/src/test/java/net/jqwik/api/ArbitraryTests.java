@@ -42,7 +42,7 @@ class ArbitraryTests {
 					}
 
 					@Override
-					public EdgeCases<Integer> edgeCases() {
+					public EdgeCases<Integer> edgeCases(int maxEdgeCases) {
 						return EdgeCases.none();
 					}
 				};

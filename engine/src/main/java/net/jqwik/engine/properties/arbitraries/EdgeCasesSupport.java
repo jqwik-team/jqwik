@@ -35,18 +35,18 @@ public class EdgeCasesSupport {
 		};
 	}
 
-	public static <T> EdgeCases<T> choose(final List<T> values) {
+	public static <T> EdgeCases<T> choose(final List<T> values, int maxEdgeCases) {
 		List<Shrinkable<T>> shrinkables = new ArrayList<>();
 		if (values.size() > 0) {
 			shrinkables.add(new ChooseValueShrinkable<>(values.get(0), values));
 		}
-		if (values.size() > 1) {
+		if (values.size() > 1 && (shrinkables.size() < maxEdgeCases)) {
 			int lastIndex = values.size() - 1;
 			shrinkables.add(new ChooseValueShrinkable<>(values.get(lastIndex), values));
 		}
 		//noinspection CatchMayIgnoreException
 		try {
-			if (values.contains(null)) {
+			if (values.contains(null) && (shrinkables.size() < maxEdgeCases)) {
 				shrinkables.add(Shrinkable.unshrinkable(null));
 			}
 		} catch (NullPointerException someListsDoNotAllowNullValues) { }

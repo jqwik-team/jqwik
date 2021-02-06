@@ -122,8 +122,8 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			}
 
 			@Override
-			public EdgeCases<U> edgeCases() {
-				return EdgeCasesSupport.flatMapArbitrary(self.edgeCases(), mapper);
+			public EdgeCases<U> edgeCases(int maxEdgeCases) {
+				return EdgeCasesSupport.flatMapArbitrary(self.edgeCases(maxEdgeCases), mapper);
 			}
 		};
 	}

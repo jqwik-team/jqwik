@@ -24,9 +24,9 @@ public class Arbitraries {
 			implementation = FacadeLoader.load(ArbitrariesFacade.class);
 		}
 
-		public abstract <T> EdgeCases<T> edgeCasesChoose(List<T> values);
+		public abstract <T> EdgeCases<T> edgeCasesChoose(List<T> values, int maxEdgeCases);
 
-		public abstract <T> EdgeCases<T> edgeCasesChoose(char[] validChars);
+		public abstract <T> EdgeCases<T> edgeCasesChoose(char[] validChars, int maxEdgeCases);
 
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples);
 
@@ -107,7 +107,7 @@ public class Arbitraries {
 			}
 
 			@Override
-			public EdgeCases<T> edgeCases() {
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
 				return EdgeCases.none();
 			}
 		};
@@ -171,7 +171,7 @@ public class Arbitraries {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomChoose(valueList),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(valueList, max),
-			ArbitrariesFacade.implementation.edgeCasesChoose(valueList)
+			maxEdgeCases -> ArbitrariesFacade.implementation.edgeCasesChoose(valueList, maxEdgeCases)
 		);
 	}
 
@@ -224,7 +224,7 @@ public class Arbitraries {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomChoose(values),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max),
-			ArbitrariesFacade.implementation.edgeCasesChoose(values)
+			maxEdgeCases -> ArbitrariesFacade.implementation.edgeCasesChoose(values, maxEdgeCases)
 		);
 	}
 
@@ -304,7 +304,7 @@ public class Arbitraries {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomFrequency(frequencies),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max),
-			ArbitrariesFacade.implementation.edgeCasesChoose(values)
+			maxEdgeCases -> ArbitrariesFacade.implementation.edgeCasesChoose(values, maxEdgeCases)
 		);
 
 	}
@@ -456,7 +456,7 @@ public class Arbitraries {
 		return fromGenerators(
 			random -> Shrinkable.unshrinkable(value),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(value), max),
-			EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(value))
+			maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(value))
 		);
 	}
 
@@ -477,7 +477,7 @@ public class Arbitraries {
 		return fromGenerators(
 			random -> Shrinkable.supplyUnshrinkable(supplier, true),
 			max -> ArbitrariesFacade.implementation.exhaustiveCreate(supplier, max),
-			EdgeCases.fromSupplier(() -> Shrinkable.supplyUnshrinkable(supplier, true))
+			maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.supplyUnshrinkable(supplier, true))
 		);
 	}
 
@@ -508,7 +508,7 @@ public class Arbitraries {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomShuffle(values),
 			max -> ArbitrariesFacade.implementation.exhaustiveShuffle(values, max),
-			EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(values))
+			maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(values))
 		);
 	}
 
@@ -559,9 +559,9 @@ public class Arbitraries {
 	}
 
 	private static <T> Arbitrary<T> fromGenerators(
-		RandomGenerator<T> randomGenerator,
-		Function<Long, Optional<ExhaustiveGenerator<T>>> exhaustiveGeneratorFunction,
-		final EdgeCases<T> edgeCases
+		final RandomGenerator<T> randomGenerator,
+		final Function<Long, Optional<ExhaustiveGenerator<T>>> exhaustiveGeneratorFunction,
+		final Function<Integer, EdgeCases<T>> edgeCasesSupplier
 	) {
 		return new Arbitrary<T>() {
 			@Override
@@ -575,8 +575,8 @@ public class Arbitraries {
 			}
 
 			@Override
-			public EdgeCases<T> edgeCases() {
-				return edgeCases;
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
+				return edgeCasesSupplier.apply(maxEdgeCases);
 			}
 		};
 	}

@@ -76,15 +76,23 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 			EdgeCasesMode edgeCasesMode,
 			int genSize
 	) {
-		List<EdgeCases<Object>> listOfEdgeCases = Collections.emptyList();
+		List<EdgeCases<Object>> listOfEdgeCases = new ArrayList<>();
 
 		if (edgeCasesMode.activated() && !parameters.isEmpty()) {
-			// This is just a random guess:
-			int maxEdgeCasesPerParameter = genSize / parameters.size();
-			listOfEdgeCases = parameters
-								  .stream()
-								  .map(parameter -> resolveEdgeCases(arbitraryResolver, parameter, maxEdgeCasesPerParameter))
-								  .collect(Collectors.toList());
+			int maxEdgeCasesNextParameter = genSize;
+			for (MethodParameter parameter : parameters) {
+				EdgeCases<Object> edgeCases = resolveEdgeCases(arbitraryResolver, parameter, maxEdgeCasesNextParameter);
+				// If a single parameter has no edge cases the combination of parameters have no edge cases
+				if (edgeCases.isEmpty()) {
+					return Collections.emptyList();
+				}
+				listOfEdgeCases.add(edgeCases);
+				maxEdgeCasesNextParameter = Math.max(1, maxEdgeCasesNextParameter / edgeCases.size());
+				// When in doubt generate a few more edge cases
+				if (maxEdgeCasesNextParameter % edgeCases.size() > 0) {
+					maxEdgeCasesNextParameter += 1;
+				}
+			}
 		}
 		return listOfEdgeCases;
 	}

@@ -51,6 +51,12 @@ public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> 
 		return arbitrary().edgeCases();
 	}
 
+	// TODO: Enable when all arbitraries have been migrated
+	// @Override
+	// public EdgeCases<T> edgeCases(int maxEdgeCases) {
+	// 	return arbitrary().edgeCases(maxEdgeCases);
+	// }
+
 	@Override
 	public String toString() {
 		return String.format("Decorated:%s", super.toString());

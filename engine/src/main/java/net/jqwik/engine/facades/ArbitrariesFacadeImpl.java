@@ -27,18 +27,18 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> EdgeCases<T> edgeCasesChoose(List<T> values) {
-		return EdgeCasesSupport.choose(values);
+	public <T> EdgeCases<T> edgeCasesChoose(List<T> values, int maxEdgeCases) {
+		return EdgeCasesSupport.choose(values, maxEdgeCases);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public EdgeCases<Character> edgeCasesChoose(final char[] characters) {
+	public EdgeCases<Character> edgeCasesChoose(final char[] characters, int maxEdgeCases) {
 		List<Character> validCharacters = new ArrayList<>(characters.length);
 		for (char character : characters) {
 			validCharacters.add(character);
 		}
-		return edgeCasesChoose(validCharacters);
+		return edgeCasesChoose(validCharacters, maxEdgeCases);
 	}
 
 	@Override
