@@ -8,6 +8,8 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import static java.util.Arrays.*;
+
 public class DefaultStringArbitrary extends TypedCloneable implements StringArbitrary {
 
 	private CharacterArbitrary characterArbitrary = new DefaultCharacterArbitrary();
@@ -32,7 +34,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	}
 
 	@Override
-	public EdgeCases<String> edgeCases() {
+	public EdgeCases<String> edgeCases(int maxEdgeCases) {
 		EdgeCases<String> emptyStringEdgeCases =
 				hasEmptyStringEdgeCase() ? emptyStringEdgeCase() : EdgeCases.none();
 		EdgeCases<String> singleCharEdgeCases =
@@ -40,7 +42,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 		EdgeCases<String> fixedSizeEdgeCases =
 				hasMultiCharEdgeCases() ? fixedSizedEdgeCases(minLength) : EdgeCases.none();
 
-		return EdgeCasesSupport.concat(singleCharEdgeCases, emptyStringEdgeCases, fixedSizeEdgeCases);
+		return EdgeCasesSupport.concat(asList(singleCharEdgeCases, emptyStringEdgeCases, fixedSizeEdgeCases), maxEdgeCases);
 	}
 
 	private boolean hasEmptyStringEdgeCase() {

@@ -24,7 +24,7 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 		return RandomGenerators.chars(min, max);
 	}
 
-	private List<Shrinkable<Character>> listOfEdgeCases() {
+	private List<Shrinkable<Character>> listOfEdgeCases(int maxEdgeCases) {
 		Stream<Character> edgeCases = Stream.of(min, max, ' ').filter(c -> c >= min && c <= max);
 		return edgeCases
 					   .map(aCharacter -> new ShrinkableBigInteger(
@@ -35,6 +35,7 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 					   )
 					   .map(shrinkableBigInteger -> shrinkableBigInteger.map(BigInteger::intValueExact))
 					   .map(shrinkableInteger -> shrinkableInteger.map(anInt -> ((char) (int) anInt)))
+					   .limit(maxEdgeCases)
 					   .collect(Collectors.toList());
 	}
 
@@ -47,7 +48,7 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 	}
 
 	@Override
-	public EdgeCases<Character> edgeCases() {
-		return EdgeCasesSupport.fromShrinkables(listOfEdgeCases());
+	public EdgeCases<Character> edgeCases(int maxEdgeCases) {
+		return EdgeCasesSupport.fromShrinkables(listOfEdgeCases(maxEdgeCases));
 	}
 }

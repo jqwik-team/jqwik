@@ -44,11 +44,11 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 	}
 
 	@Override
-	public EdgeCases<Set<T>> edgeCases() {
+	public EdgeCases<Set<T>> edgeCases(int maxEdgeCases) {
 		return edgeCases((elementList, minSize1) -> {
 			Set<Shrinkable<T>> elementSet = new HashSet<>(elementList);
 			return new ShrinkableSet<>(elementSet, minSize1, maxSize, uniquenessExtractors);
-		});
+		}, maxEdgeCases);
 	}
 
 	@Override

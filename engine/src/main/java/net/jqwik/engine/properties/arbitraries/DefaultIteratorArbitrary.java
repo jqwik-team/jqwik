@@ -37,9 +37,9 @@ public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iter
 	}
 
 	@Override
-	public EdgeCases<Iterator<T>> edgeCases() {
+	public EdgeCases<Iterator<T>> edgeCases(int maxEdgeCases) {
 		return EdgeCasesSupport.map(
-				edgeCases((elements, minimalSize) -> new ShrinkableList<>(elements, minimalSize, maxSize, uniquenessExtractors)),
+				edgeCases((elements, minimalSize) -> new ShrinkableList<>(elements, minimalSize, maxSize, uniquenessExtractors), maxEdgeCases),
 				List::iterator
 		);
 	}

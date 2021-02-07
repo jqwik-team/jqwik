@@ -61,26 +61,27 @@ public class EdgeCasesSupport {
 		return flatMapArbitrary(fromShrinkables(shrinkables), Function.identity());
 	}
 
-	public static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases) {
-		if (edgeCases.isEmpty()) {
+	public static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases, int maxEdgeCases) {
+		if (edgeCases.isEmpty() || maxEdgeCases == 0) {
 			return EdgeCases.none();
 		}
 		if (edgeCases.size() == 1) {
 			return edgeCases.get(0);
 		}
 		List<Supplier<Shrinkable<T>>> concatenatedSuppliers = new ArrayList<>();
+		int remainingMaxEdgeCases = maxEdgeCases;
 		for (EdgeCases<T> edgeCase : edgeCases) {
 			if (edgeCase.isEmpty()) {
 				continue;
 			}
-			concatenatedSuppliers.addAll(edgeCase.suppliers());
+			List<Supplier<Shrinkable<T>>> suppliers = edgeCase.suppliers()
+															  .stream()
+															  .limit(remainingMaxEdgeCases)
+															  .collect(Collectors.toList());
+			concatenatedSuppliers.addAll(suppliers);
+			remainingMaxEdgeCases = remainingMaxEdgeCases - suppliers.size();
 		}
 		return EdgeCasesSupport.fromSuppliers(concatenatedSuppliers);
-	}
-
-	@SafeVarargs
-	static <T> EdgeCases<T> concat(EdgeCases<T>... rest) {
-		return EdgeCasesSupport.concat(Arrays.asList(rest));
 	}
 
 	public static <T> EdgeCases<T> fromShrinkables(List<Shrinkable<T>> shrinkables) {

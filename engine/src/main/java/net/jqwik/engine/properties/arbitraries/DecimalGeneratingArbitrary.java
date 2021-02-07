@@ -62,8 +62,8 @@ class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<Big
 	}
 
 	@Override
-	public EdgeCases<BigDecimal> edgeCases() {
-		EdgeCases<BigDecimal> defaultEdgeCases = EdgeCasesSupport.fromShrinkables(edgeCaseShrinkables());
+	public EdgeCases<BigDecimal> edgeCases(int maxEdgeCases) {
+		EdgeCases<BigDecimal> defaultEdgeCases = EdgeCasesSupport.fromShrinkables(edgeCaseShrinkables(maxEdgeCases));
 		DecimalEdgeCasesConfiguration configuration = new DecimalEdgeCasesConfiguration(range, scale, shrinkingTarget());
 		return configuration.configure(edgeCasesConfigurator, defaultEdgeCases);
 	}
@@ -75,7 +75,7 @@ class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<Big
 		return clone;
 	}
 
-	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables() {
+	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables(int maxEdgeCases) {
 		Range<BigInteger> bigIntegerRange = unscaledBigIntegerRange(range, scale);
 		return streamRawEdgeCases()
 				   .filter(aDecimal -> range.includes(aDecimal))
@@ -85,6 +85,7 @@ class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<Big
 					   return new ShrinkableBigInteger(bigIntegerValue, bigIntegerRange, shrinkingTarget);
 				   })
 				   .map(shrinkableBigInteger -> shrinkableBigInteger.map(bigInteger -> scaledBigDecimal(bigInteger, scale)))
+				   .limit(maxEdgeCases)
 				   .collect(Collectors.toList());
 	}
 

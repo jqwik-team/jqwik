@@ -71,8 +71,8 @@ public class DefaultCharacterArbitrary extends TypedCloneable implements Charact
 	}
 
 	@Override
-	public EdgeCases<Character> edgeCases() {
-		return arbitrary().edgeCases();
+	public EdgeCases<Character> edgeCases(int maxEdgeCases) {
+		return arbitrary().edgeCases(maxEdgeCases);
 	}
 
 	@Override

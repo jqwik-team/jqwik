@@ -65,8 +65,8 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			}
 
 			@Override
-			public EdgeCases<T> edgeCases() {
-				return EdgeCasesSupport.filter(super.edgeCases(), filterPredicate);
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
+				return EdgeCasesSupport.filter(super.edgeCases(maxEdgeCases), filterPredicate);
 			}
 		};
 	}
@@ -176,8 +176,8 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			}
 
 			@Override
-			public EdgeCases<T> edgeCases() {
-				return EdgeCasesSupport.ignoreException(self.edgeCases(), exceptionType);
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
+				return EdgeCasesSupport.ignoreException(self.edgeCases(maxEdgeCases), exceptionType);
 			}
 		};
 	}
@@ -196,8 +196,8 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			}
 
 			@Override
-			public EdgeCases<T> edgeCases() {
-				return EdgeCasesSupport.dontShrink(super.edgeCases());
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
+				return EdgeCasesSupport.dontShrink(super.edgeCases(maxEdgeCases));
 			}
 		};
 	}
@@ -207,8 +207,8 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 		GenericEdgeCasesConfiguration<T> config = new GenericEdgeCasesConfiguration<>();
 		return new ArbitraryDelegator<T>(self) {
 			@Override
-			public EdgeCases<T> edgeCases() {
-				return config.configure(configurator, self.edgeCases());
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
+				return config.configure(configurator, self.edgeCases(maxEdgeCases));
 			}
 		};
 	}

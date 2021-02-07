@@ -8,6 +8,8 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
+import static java.util.Arrays.*;
+
 import static net.jqwik.engine.properties.UniquenessChecker.*;
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 
@@ -79,11 +81,14 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 		return elementArbitrary.generator(genSize, withEdgeCases);
 	}
 
-	protected <C extends Collection<?>> EdgeCases<C> edgeCases(BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator) {
+	protected <C extends Collection<?>> EdgeCases<C> edgeCases(
+			BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator,
+			int maxEdgeCases
+	) {
 		EdgeCases<C> emptyListEdgeCase = (minSize == 0) ? emptyListEdgeCase(shrinkableCreator) : EdgeCases.none();
 		EdgeCases<C> singleElementEdgeCases = (minSize <= 1 && maxSize >= 1) ? fixedSizeEdgeCases(1, shrinkableCreator) : EdgeCases.none();
 		EdgeCases<C> fixedSizeEdgeCases = generateFixedSizeEdgeCases() ? fixedSizeEdgeCases(minSize, shrinkableCreator) : EdgeCases.none();
-		return EdgeCasesSupport.concat(Arrays.asList(emptyListEdgeCase, singleElementEdgeCases, fixedSizeEdgeCases));
+		return EdgeCasesSupport.concat(asList(emptyListEdgeCase, singleElementEdgeCases, fixedSizeEdgeCases), maxEdgeCases);
 	}
 
 	private boolean generateFixedSizeEdgeCases() {

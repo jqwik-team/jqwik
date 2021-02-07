@@ -39,7 +39,7 @@ public class DefaultActionSequenceArbitrary<M> extends TypedCloneable implements
 	}
 
 	@Override
-	public EdgeCases<ActionSequence<M>> edgeCases() {
+	public EdgeCases<ActionSequence<M>> edgeCases(int maxEdgeCases) {
 		return EdgeCases.none();
 	}
 

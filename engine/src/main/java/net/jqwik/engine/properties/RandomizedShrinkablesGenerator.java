@@ -111,7 +111,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 												.stream()
 												.map(objectArbitrary -> objectArbitrary.edgeCases(maxEdgeCases))
 												.collect(Collectors.toList());
-		return EdgeCasesSupport.concat(edgeCases);
+		return EdgeCasesSupport.concat(edgeCases, maxEdgeCases);
 	}
 
 	private static RandomizedParameterGenerator resolveParameter(
