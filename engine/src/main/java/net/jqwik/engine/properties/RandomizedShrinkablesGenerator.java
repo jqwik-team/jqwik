@@ -29,10 +29,10 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 
 		if (edgeCasesTotal >= genSize && genSize > 1) {
 			String message = String.format(
-					"Combinatorial explosion of edge case generation. Stopped after %s generated cases.",
+					"Edge case generation exceeds number of tries. Stopped after %s generated cases.",
 					edgeCasesTotal
 			);
-			LOG.warning(message);
+			LOG.log(Level.INFO, message);
 		}
 
 		return new RandomizedShrinkablesGenerator(

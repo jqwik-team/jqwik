@@ -29,8 +29,9 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 
 	@Override
 	public <R> EdgeCases<R> combineEdgeCases(
-		final List<Arbitrary<Object>> arbitraries,
-		final Function<List<Object>, R> combineFunction
+			final List<Arbitrary<Object>> arbitraries,
+			final Function<List<Object>, R> combineFunction,
+			int maxEdgeCases
 	) {
 		if (arbitraries.isEmpty()) {
 			return EdgeCases.none();
@@ -48,6 +49,6 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 				}));
 			}
 		}
-		return combinedArbitrary.map(combineFunction).edgeCases();
+		return combinedArbitrary.map(combineFunction).edgeCases(maxEdgeCases);
 	}
 }

@@ -31,8 +31,9 @@ public class Combinators {
 		);
 
 		public abstract <R> EdgeCases<R> combineEdgeCases(
-			List<Arbitrary<Object>> arbitraries,
-			Function<List<Object>, R> combineFunction
+				List<Arbitrary<Object>> arbitraries,
+				Function<List<Object>, R> combineFunction,
+				int maxEdgeCases
 		);
 	}
 
@@ -278,12 +279,14 @@ public class Combinators {
 				}
 
 				@Override
-				public EdgeCases<R> edgeCases() {
+				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					return CombinatorsFacade.implementation.combineEdgeCases(
 						asTypedList(a1, a2),
-						combineFunction(combinator)
+						combineFunction(combinator),
+						maxEdgeCases
 					);
 				}
+
 			};
 		}
 
@@ -349,10 +352,11 @@ public class Combinators {
 				}
 
 				@Override
-				public EdgeCases<R> edgeCases() {
+				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					return CombinatorsFacade.implementation.combineEdgeCases(
 						asTypedList(a1, a2, a3),
-						combineFunction(combinator)
+						combineFunction(combinator),
+						maxEdgeCases
 					);
 				}
 
@@ -431,10 +435,11 @@ public class Combinators {
 				}
 
 				@Override
-				public EdgeCases<R> edgeCases() {
+				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					return CombinatorsFacade.implementation.combineEdgeCases(
 						asTypedList(a1, a2, a3, a4),
-						combineFunction(combinator)
+						combineFunction(combinator),
+						maxEdgeCases
 					);
 				}
 
@@ -517,10 +522,11 @@ public class Combinators {
 				}
 
 				@Override
-				public EdgeCases<R> edgeCases() {
+				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					return CombinatorsFacade.implementation.combineEdgeCases(
 						asTypedList(a1, a2, a3, a4, a5),
-						combineFunction(combinator)
+						combineFunction(combinator),
+						maxEdgeCases
 					);
 				}
 
@@ -608,10 +614,11 @@ public class Combinators {
 				}
 
 				@Override
-				public EdgeCases<R> edgeCases() {
+				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					return CombinatorsFacade.implementation.combineEdgeCases(
 						asTypedList(a1, a2, a3, a4, a5, a6),
-						combineFunction(combinator)
+						combineFunction(combinator),
+						maxEdgeCases
 					);
 				}
 
@@ -707,10 +714,11 @@ public class Combinators {
 				}
 
 				@Override
-				public EdgeCases<R> edgeCases() {
+				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					return CombinatorsFacade.implementation.combineEdgeCases(
 						asTypedList(a1, a2, a3, a4, a5, a6, a7),
-						combineFunction(combinator)
+						combineFunction(combinator),
+						maxEdgeCases
 					);
 				}
 			};
@@ -810,10 +818,11 @@ public class Combinators {
 				}
 
 				@Override
-				public EdgeCases<R> edgeCases() {
+				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					return CombinatorsFacade.implementation.combineEdgeCases(
 						asTypedList(a1, a2, a3, a4, a5, a6, a7, a8),
-						combineFunction(combinator)
+						combineFunction(combinator),
+						maxEdgeCases
 					);
 				}
 			};
@@ -894,11 +903,12 @@ public class Combinators {
 				}
 
 				@Override
-				public EdgeCases<R> edgeCases() {
+				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
 					return CombinatorsFacade.implementation.combineEdgeCases(
 							asTypedList(listOfArbitraries.toArray()),
-							combinedFunction
+							combinedFunction,
+							maxEdgeCases
 					);
 				}
 			};
