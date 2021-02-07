@@ -9,7 +9,7 @@ This module is part of jqwik's default dependencies.
 
 To generate email addresses you can either
 
-- call up the static method [`Emails.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/web/api/Emails.html#emails()).
+- call up the static method [`Web.emails()`](/docs/${docsVersion}/javadoc/net/jqwik/web/api/Web.html#emails()).
   The return type is [`EmailArbitrary`](/docs/${docsVersion}/javadoc/net/jqwik/web/api/EmailArbitrary.html)
   which provides a few configuration methods.
 

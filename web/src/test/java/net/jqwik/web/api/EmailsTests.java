@@ -139,7 +139,7 @@ public class EmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyIPAddresses() {
-			return Emails.emails().ipv4Host().ipv6Host();
+			return Web.emails().ipv4Host().ipv6Host();
 		}
 
 		@Property
@@ -151,7 +151,7 @@ public class EmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyIPv4Addresses() {
-			return Emails.emails().ipv4Host();
+			return Web.emails().ipv4Host();
 		}
 
 		@Property
@@ -163,7 +163,7 @@ public class EmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyIPv6Addresses() {
-			return Emails.emails().ipv6Host();
+			return Web.emails().ipv6Host();
 		}
 
 		@Property
@@ -174,7 +174,7 @@ public class EmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyDomains() {
-			return Emails.emails().domainHost();
+			return Web.emails().domainHost();
 		}
 
 		@Property
@@ -185,7 +185,7 @@ public class EmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyQuoted() {
-			return Emails.emails().quotedLocalPart();
+			return Web.emails().quotedLocalPart();
 		}
 
 		@Property
@@ -196,7 +196,7 @@ public class EmailsTests {
 
 		@Provide
 		private EmailArbitrary onlyUnquoted() {
-			return Emails.emails().unquotedLocalPart();
+			return Web.emails().unquotedLocalPart();
 		}
 
 	}
@@ -263,14 +263,14 @@ public class EmailsTests {
 
 		@Property
 		void defaultShrinking(@ForAll Random random) {
-			EmailArbitrary emails = Emails.emails();
+			EmailArbitrary emails = Web.emails();
 			String value = falsifyThenShrink(emails.generator(1000), random, TestingFalsifier.alwaysFalsify());
 			assertThat(value).isEqualTo("a@a.aa");
 		}
 
 		@Property
 		void domainShrinking(@ForAll Random random) {
-			EmailArbitrary emails = Emails.emails();
+			EmailArbitrary emails = Web.emails();
 			Falsifier<String> falsifier = falsifyDomain();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
 			assertThat(value).isEqualTo("a@a.aa");
@@ -278,7 +278,7 @@ public class EmailsTests {
 
 		@Property
 		void ipv4Shrinking(@ForAll Random random) {
-			EmailArbitrary emails = Emails.emails();
+			EmailArbitrary emails = Web.emails();
 			Falsifier<String> falsifier = falsifyIPv4();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
 			assertThat(value).isEqualTo("a@[0.0.0.0]");
@@ -286,7 +286,7 @@ public class EmailsTests {
 
 		@Property
 		void ipv6Shrinking(@ForAll Random random) {
-			Arbitrary<String> emails = Emails.emails();
+			Arbitrary<String> emails = Web.emails();
 			Falsifier<String> falsifier = falsifyIPv6();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
 			assertThat(value).isEqualTo("a@[::]");
@@ -320,7 +320,7 @@ public class EmailsTests {
 
 		@Example
 		void all() {
-			EmailArbitrary emails = Emails.emails();
+			EmailArbitrary emails = Web.emails();
 			int expectedNumberOfEdgeCases = (2 + 2) * (2 + 3 + 4);
 			Set<String> allEdgeCases = collectEdgeCaseValues(emails.edgeCases());
 			assertThat(allEdgeCases).hasSize(expectedNumberOfEdgeCases);
@@ -330,7 +330,7 @@ public class EmailsTests {
 
 		@Example
 		void unquotedLocalPart() {
-			EmailArbitrary emails = Emails.emails().unquotedLocalPart().domainHost();
+			EmailArbitrary emails = Web.emails().unquotedLocalPart().domainHost();
 			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getLocalPartOfEmail)
@@ -341,7 +341,7 @@ public class EmailsTests {
 
 		@Example
 		void quotedLocalPart() {
-			EmailArbitrary emails = Emails.emails().quotedLocalPart().domainHost();
+			EmailArbitrary emails = Web.emails().quotedLocalPart().domainHost();
 			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getLocalPartOfEmail)
@@ -352,7 +352,7 @@ public class EmailsTests {
 
 		@Example
 		void domainHost() {
-			EmailArbitrary emails = Emails.emails().unquotedLocalPart().domainHost();
+			EmailArbitrary emails = Web.emails().unquotedLocalPart().domainHost();
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getEmailHost)
@@ -363,7 +363,7 @@ public class EmailsTests {
 
 		@Example
 		void ipv4Host() {
-			EmailArbitrary emails = Emails.emails().unquotedLocalPart().ipv4Host();
+			EmailArbitrary emails = Web.emails().unquotedLocalPart().ipv4Host();
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getEmailHost)
@@ -376,7 +376,7 @@ public class EmailsTests {
 
 		@Example
 		void ipv6Host() {
-			EmailArbitrary emails = Emails.emails().unquotedLocalPart().ipv6Host();
+			EmailArbitrary emails = Web.emails().unquotedLocalPart().ipv6Host();
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getEmailHost)
@@ -393,7 +393,7 @@ public class EmailsTests {
 
 	@Provide
 	private EmailArbitrary emails() {
-		return Emails.emails();
+		return Web.emails();
 	}
 
 

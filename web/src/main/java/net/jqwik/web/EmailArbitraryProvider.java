@@ -18,7 +18,7 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 		Optional<Email> optionalEmail = targetType.findAnnotation(Email.class);
 		return optionalEmail.map(email -> {
 			checkValidEmailConfiguration(email);
-			EmailArbitrary emailArbitrary = Emails.emails();
+			EmailArbitrary emailArbitrary = Web.emails();
 			if (email.quotedLocalPart()) {
 				emailArbitrary = emailArbitrary.quotedLocalPart();
 			}

@@ -6,9 +6,13 @@ import net.jqwik.web.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-public class Emails {
+/**
+ * This is the home for static methods to produce arbitraries for Web-related
+ * domain types, like email addresses, ip addresses, domains, URLs etc.
+ */
+public class Web {
 
-	private Emails() {
+	private Web() {
 	}
 
 	/**
