@@ -41,8 +41,8 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 	}
 
 	@Override
-	public EdgeCases<T> edgeCases() {
-		return EdgeCasesSupport.concatFrom(allArbitraries());
+	public EdgeCases<T> edgeCases(int maxEdgeCases) {
+		return EdgeCasesSupport.concatFrom(allArbitraries(), maxEdgeCases);
 	}
 
 	private List<Arbitrary<T>> allArbitraries() {

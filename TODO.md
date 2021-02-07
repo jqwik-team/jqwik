@@ -1,10 +1,9 @@
 - 1.4.0
 
+    - Bug (see PBT-Workshop)
+
     - Edge Cases
     
-        - Restrict number of generated edge cases to number of tries
-          - For embedded/individual use of generators only use a max of 100 edge cases
-        
         - Add documentation for Arbitrary.edgeCases(configuration)
 
 - 1.4.x

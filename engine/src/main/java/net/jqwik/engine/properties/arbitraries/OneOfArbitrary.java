@@ -42,8 +42,8 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 	}
 
 	@Override
-	public EdgeCases<T> edgeCases() {
-		return EdgeCasesSupport.concatFrom(all);
+	public EdgeCases<T> edgeCases(int maxEdgeCases) {
+		return EdgeCasesSupport.concatFrom(all, maxEdgeCases);
 	}
 
 	@Override

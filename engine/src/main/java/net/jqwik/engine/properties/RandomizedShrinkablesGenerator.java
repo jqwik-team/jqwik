@@ -87,14 +87,19 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 					return Collections.emptyList();
 				}
 				listOfEdgeCases.add(edgeCases);
-				maxEdgeCasesNextParameter = Math.max(1, maxEdgeCasesNextParameter / edgeCases.size());
-				// When in doubt generate a few more edge cases
-				if (maxEdgeCasesNextParameter % edgeCases.size() > 0) {
-					maxEdgeCasesNextParameter += 1;
-				}
+				maxEdgeCasesNextParameter = calculateNextParamMaxEdgeCases(maxEdgeCasesNextParameter, edgeCases.size());
 			}
 		}
 		return listOfEdgeCases;
+	}
+
+	private static <T> int calculateNextParamMaxEdgeCases(int maxEdgeCases, int baseCasesSize) {
+		int maxDerivedEdgeCases = Math.max(1, maxEdgeCases / baseCasesSize);
+		// When in doubt generate a few more edge cases
+		if (maxEdgeCases % baseCasesSize > 0) {
+			maxDerivedEdgeCases += 1;
+		}
+		return maxDerivedEdgeCases;
 	}
 
 	private static int calculateBaseToEdgeCaseRatio(List<EdgeCases<Object>> edgeCases, int genSize) {

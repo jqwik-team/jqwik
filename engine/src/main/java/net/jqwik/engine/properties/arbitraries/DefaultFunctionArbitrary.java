@@ -30,10 +30,10 @@ public class DefaultFunctionArbitrary<F, R> extends TypedCloneable implements Fu
 	}
 
 	@Override
-	public EdgeCases<F> edgeCases() {
+	public EdgeCases<F> edgeCases(int maxEdgeCases) {
 		ConstantFunctionGenerator<F, R> constantFunctionGenerator = createConstantFunctionGenerator(1000, true);
 		return EdgeCasesSupport.mapShrinkable(
-				resultArbitrary.edgeCases(),
+				resultArbitrary.edgeCases(maxEdgeCases),
 				constantFunctionGenerator::createConstantFunction
 		);
 	}

@@ -322,7 +322,7 @@ public class EmailsTests {
 		void all() {
 			EmailArbitrary emails = Web.emails();
 			int expectedNumberOfEdgeCases = (2 + 2) * (2 + 3 + 4);
-			Set<String> allEdgeCases = collectEdgeCaseValues(emails.edgeCases());
+			Set<String> allEdgeCases = collectEdgeCaseValues(emails.edgeCases(1000));
 			assertThat(allEdgeCases).hasSize(expectedNumberOfEdgeCases);
 
 			// allEdgeCases.forEach(System.out::println);

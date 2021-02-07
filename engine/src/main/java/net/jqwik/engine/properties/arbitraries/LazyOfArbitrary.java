@@ -180,7 +180,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	@Override
-	public EdgeCases<T> edgeCases() {
+	public EdgeCases<T> edgeCases(int maxEdgeCases) {
 		return EdgeCases.none();
 	}
 

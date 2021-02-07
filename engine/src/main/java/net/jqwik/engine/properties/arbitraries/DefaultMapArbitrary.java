@@ -95,15 +95,4 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	public MapArbitrary<K, V> uniqueValues() {
 		return uniqueValues(FeatureExtractor.identity());
 	}
-
-	private EdgeCases<Map<K, V>> singleEntryEdgeCases() {
-		return EdgeCasesSupport.flatMapArbitrary(
-				keysArbitrary.edgeCases(),
-				key -> valuesArbitrary.map(value -> {
-					HashMap<K, V> map = new HashMap<>();
-					map.put(key, value);
-					return map;
-				})
-		);
-	}
 }

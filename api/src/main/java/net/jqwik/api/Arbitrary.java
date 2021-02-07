@@ -88,7 +88,8 @@ public interface Arbitrary<T> {
 	@API(status = INTERNAL, since = "1.4.0")
 	default RandomGenerator<T> generator(int genSize, boolean withEdgeCases) {
 		if (withEdgeCases) {
-			return generatorWithEmbeddedEdgeCases(genSize).withEdgeCases(genSize, edgeCases());
+			int maxEdgeCases = Math.max(genSize, 10);
+			return generatorWithEmbeddedEdgeCases(genSize).withEdgeCases(genSize, edgeCases(maxEdgeCases));
 		} else {
 			return generator(genSize);
 		}
@@ -161,17 +162,18 @@ public interface Arbitrary<T> {
 		return Optional.empty();
 	}
 
-	// TODO: Override everywhere
-	@API(status = EXPERIMENTAL, since = "1.4.0")
-	default EdgeCases<T> edgeCases(int maxEdgeCases) {
-		return edgeCases();
-	}
+	EdgeCases<T> edgeCases(int maxEdgeCases);
 
-	// TODO: Remove everywhere
+	/**
+	 * Return an arbitrary's edge cases.
+	 *
+	 * <p>
+	 * Never override. Override {@linkplain #edgeCases(int)} instead.
+	 * </p>
+	 */
 	@API(status = EXPERIMENTAL, since = "1.3.0")
-	@Deprecated
 	default EdgeCases<T> edgeCases() {
-		return edgeCases(Integer.MAX_VALUE);
+		return edgeCases(1000);
 	}
 
 	/**

@@ -2,13 +2,10 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.logging.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
-import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
@@ -53,12 +50,12 @@ public class EdgeCasesSupport {
 		return EdgeCasesSupport.fromShrinkables(shrinkables);
 	}
 
-	public static <T> EdgeCases<T> concatFrom(final List<Arbitrary<T>> arbitraries) {
+	public static <T> EdgeCases<T> concatFrom(final List<Arbitrary<T>> arbitraries, int maxEdgeCases) {
 		List<Shrinkable<Arbitrary<T>>> shrinkables = new ArrayList<>();
 		for (Arbitrary<T> arbitrary : arbitraries) {
 			shrinkables.add(new ChooseValueShrinkable<>(arbitrary, arbitraries));
 		}
-		return flatMapArbitrary(fromShrinkables(shrinkables), Function.identity());
+		return flatMapArbitrary(fromShrinkables(shrinkables), Function.identity(), maxEdgeCases);
 	}
 
 	public static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases, int maxEdgeCases) {
@@ -143,16 +140,19 @@ public class EdgeCasesSupport {
 						 .collect(Collectors.toList());
 	}
 
-	public static <T, U> EdgeCases<U> flatMapArbitrary(EdgeCases<T> self, Function<T, Arbitrary<U>> mapper) {
+	public static <T, U> EdgeCases<U> flatMapArbitrary(
+			EdgeCases<T> self,
+			Function<T, Arbitrary<U>> mapper,
+			int maxEdgeCases
+	) {
 		List<Supplier<Shrinkable<U>>> flatMappedSuppliers =
 				self.suppliers().stream()
 					.flatMap(tSupplier -> {
 						T t = tSupplier.get().value();
-						return mapper.apply(t).edgeCases().suppliers()
+						return mapper.apply(t).edgeCases(maxEdgeCases).suppliers()
 									 .stream()
 									 .map(uSupplier -> {
 										 Function<T, Shrinkable<U>> shrinkableMapper =
-												 // TODO: Maybe generator(genSize)? Probably needs flag of with or without edge cases
 												 newT -> mapper.apply(newT).generator(1000)
 															   .next(SourceOfRandomness.newRandom(42L));
 										 return (Supplier<Shrinkable<U>>) () -> new FixedValueFlatMappedShrinkable<>(
@@ -162,72 +162,9 @@ public class EdgeCasesSupport {
 										 );
 									 });
 					})
-					.limit(MAX_NUMBER_OF_EDGE_CASES)
+					.limit(maxEdgeCases)
 					.collect(Collectors.toList());
-		if (flatMappedSuppliers.size() >= MAX_NUMBER_OF_EDGE_CASES) {
-			logTooManyEdgeCases(MAX_NUMBER_OF_EDGE_CASES);
-		}
 		return EdgeCases.fromSuppliers(flatMappedSuppliers);
-	}
-
-	private static final int MAX_NUMBER_OF_EDGE_CASES = 1000;
-
-	private static final Logger LOG = Logger.getLogger(EdgeCasesSupport.class.getName());
-
-	private static final Store<Boolean> warningAlreadyLogged;
-
-	// TODO: Get rid of after refactoring edge case generation
-	static {
-		warningAlreadyLogged = initWarningAlreadyLogged();
-	}
-
-	private static Store<Boolean> initWarningAlreadyLogged() {
-		try {
-			return Store.create(
-					Tuple.of(EdgeCasesFacadeImpl.class, "warning"),
-					Lifespan.PROPERTY,
-					() -> false
-			);
-		} catch (JqwikException jqwikException) {
-			// this can happen if arbitraries are used outside a Jqwik context
-			// TODO: Get rid of that store which is a hack anyway
-			return new Store<Boolean>() {
-				@Override
-				public Boolean get() {
-					return true;
-				}
-
-				@Override
-				public Lifespan lifespan() {
-					return Lifespan.PROPERTY;
-				}
-
-				@Override
-				public void update(Function<Boolean, Boolean> updater) { }
-
-				@Override
-				public void reset() { }
-
-				@Override
-				public Store<Boolean> onClose(Consumer<Boolean> onCloseCallback) {
-					return this;
-				}
-			};
-		}
-	}
-
-	private static void logTooManyEdgeCases(int maxNumberOfEdgeCases) {
-		if (warningAlreadyLogged.get()) {
-			// This is a terrible hack to suppress multiple logging
-			// TODO: Remove by properly implementing generation of edge cases
-			return;
-		}
-		String message = String.format(
-				"Combinatorial explosion of edge case generation. Stopped creating more after %s generated cases.",
-				maxNumberOfEdgeCases
-		);
-		LOG.warning(message);
-		warningAlreadyLogged.update(ignore -> true);
 	}
 
 }
