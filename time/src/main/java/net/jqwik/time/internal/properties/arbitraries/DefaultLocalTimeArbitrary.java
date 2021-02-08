@@ -27,7 +27,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	private int secondMin = 0;
 	private int secondMax = 59;
 
-	private ChronoUnit precision = NANOS;
+	private ChronoUnit precision = MILLIS;
 
 	@Override
 	protected Arbitrary<LocalTime> arbitrary() {
@@ -177,6 +177,23 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 					effective = effective.withNano(999_999_999);
 				}
 			}
+		}
+		effective = calculateEffectiveMaxWithPrecision(effective);
+		return effective;
+	}
+
+	private LocalTime calculateEffectiveMaxWithPrecision(LocalTime effective) {
+		switch (precision) {
+			case HOURS:
+				effective = effective.withMinute(0);
+			case MINUTES:
+				effective = effective.withSecond(0);
+			case SECONDS:
+				effective = effective.withNano(effective.getNano() % 1_000_000);
+			case MILLIS:
+				effective = effective.withNano((effective.getNano() / 1_000_000) * 1_000_000 + effective.getNano() % 1_000);
+			case MICROS:
+				effective = effective.withNano(effective.getNano() - effective.getNano() % 1_000);
 		}
 		return effective;
 	}
