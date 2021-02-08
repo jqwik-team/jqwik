@@ -30,6 +30,8 @@ and
 
 #### New and Enhanced Features
 
+- Upgrade to JUnit Platform 1.7.1
+
 - Using `@Property(edgeCases = NONE)` will now also suppress the generation of 
   edge cases in embedded arbitraries.
 

@@ -34,7 +34,7 @@
         - Generate Instant, LocalTime, ZonedTime etc.
     
     - Web Module:
-        - IpAddresses.ipv4Addresses()|ipv6Addresses()
+        - Web.ipv4Addresses()|ipv6Addresses()|domains()
 
     - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
       https://github.com/jlink/jqwik/issues/121
