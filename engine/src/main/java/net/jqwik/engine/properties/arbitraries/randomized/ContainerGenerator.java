@@ -53,34 +53,34 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	@Override
 	public Shrinkable<C> next(Random random) {
 		int listSize = sizeGenerator.apply(random);
-		List<Shrinkable<T>> list = new ArrayList<>();
-		List<T> elements = new ArrayList<>();
-		while (list.size() < listSize) {
+		List<Shrinkable<T>> listOfShrinkables = new ArrayList<>();
+		List<T> existingValues = new ArrayList<>();
+		while (listOfShrinkables.size() < listSize) {
 			try {
-				Shrinkable<T> next = nextUntilAccepted(random, elements, elementGenerator::next);
-				list.add(next);
+				Shrinkable<T> next = nextUntilAccepted(random, existingValues, elementGenerator::next);
+				listOfShrinkables.add(next);
 			} catch (TooManyFilterMissesException tooManyFilterMissesException) {
 				// Ignore if list.size() >= minSize, because uniqueness constraints influence possible max size
-				if (list.size() < minSize) {
+				if (listOfShrinkables.size() < minSize) {
 					throw tooManyFilterMissesException;
 				} else {
-					listSize = list.size();
+					listSize = listOfShrinkables.size();
 					sizeGenerator = sizeGenerator(minSize, listSize, cutoffSize);
 				}
 			}
 
 		}
-		return createShrinkable.apply(list);
+		return createShrinkable.apply(listOfShrinkables);
 	}
 
-	private Shrinkable<T> nextUntilAccepted(Random random, List<T> elements, Function<Random, Shrinkable<T>> fetchShrinkable) {
+	private Shrinkable<T> nextUntilAccepted(Random random, List<T> existingValues, Function<Random, Shrinkable<T>> fetchShrinkable) {
 		Shrinkable<T> accepted = MaxTriesLoop.loop(
 				() -> true,
 				next -> {
 					next = fetchShrinkable.apply(random);
 					T value = next.value();
-					if (checkUniqueness(elements, value)) {
-						elements.add(value);
+					if (checkUniqueness(existingValues, value)) {
+						existingValues.add(value);
 						return Tuple.of(true, next);
 					}
 					return Tuple.of(false, next);

@@ -46,6 +46,9 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	}
 
 	private static int calculateEdgeCasesTotal(final List<EdgeCases<Object>> listOfEdgeCases) {
+		if (listOfEdgeCases.isEmpty()) {
+			return 0;
+		}
 		return listOfEdgeCases.stream().mapToInt(EdgeCases::size).reduce(1, (a, b) -> a * b);
 	}
 

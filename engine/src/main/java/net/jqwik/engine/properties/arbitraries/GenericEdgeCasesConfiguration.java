@@ -44,8 +44,8 @@ public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 			configuredEdgeCases = EdgeCases.none();
 		}
 
-		List<Supplier<Shrinkable<T>>> suppliers = new ArrayList<>(configuredEdgeCases.suppliers());
-		for (Predicate<T> filter : filters) {
+		List<Supplier<Shrinkable<T>>> suppliers = configuredEdgeCases.suppliers();
+		for (Predicate<T> filter : new ArrayList<>(filters)) {
 			suppliers = suppliers.stream().filter(s -> filter.test(s.get().value())).collect(Collectors.toList());
 		}
 		for (T additionalEdgeCase : additionalEdgeCases) {

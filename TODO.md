@@ -1,10 +1,14 @@
 - 1.4.0
 
-    - Bug (see PBT-Workshop)
-
     - Edge Cases
-    
         - Add documentation for Arbitrary.edgeCases(configuration)
+    
+    - EmailArbitrary
+        - Remove unquotedLocalPart
+        - quotedLocalPart -> allowQuotedLocalPart
+        - Remove domainHost
+        - ipv4Host -> allowIpv4Host
+        - ipv6Host -> allowIpv6Address
 
 - 1.4.x
 

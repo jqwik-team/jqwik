@@ -100,7 +100,14 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public String toString() {
-		return String.format("FlatMapped<%s>(%s:%s)|%s", value().getClass().getSimpleName(), value(), distance(), toMap);
+		return String.format(
+				"%s<%s>(%s:%s)|%s",
+				getClass().getSimpleName(),
+				value().getClass().getSimpleName(),
+				value(),
+				distance(),
+				toMap
+		);
 	}
 
 }
