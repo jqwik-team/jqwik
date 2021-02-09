@@ -28,6 +28,15 @@ public class Times {
 	}
 
 	/**
+	 * Create an arbitrary that generates instances of {@linkplain java.time.OffsetTime}.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	public static OffsetTimeArbitrary offsetTimes() {
+		return new DefaultOffsetTimeArbitrary();
+	}
+
+	/**
 	 * Create an arbitrary that generates instances of {@linkplain java.util.TimeZone}.
 	 *
 	 * @return a new arbitrary instance
