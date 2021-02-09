@@ -106,7 +106,7 @@ and
     
 #### Breaking Changes
 
-- `Arbitraries.emails()` has been moved to `net.jqwik.web.api.Emails.emails()` in new 
+- `Arbitraries.emails()` has been moved to `net.jqwik.web.api.Web.emails()` in new 
   [Web module](/docs/snapshot/user-guide.html#web-module).
 
 - `@net.jqwik.api.constraints.Email` annotation has been moved to 
