@@ -9,8 +9,8 @@ class EmailTestingSupport {
 	public static final String ALLOWED_CHARS_LOCALPART_QUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~\"(),:;<>@[\\] ";
 	public static final String ALLOWED_NOT_NUMERIC_CHARS_TLD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-";
 
-	static boolean isIPAddress(String domain) {
-		if (domain.charAt(0) == '[' && domain.charAt(domain.length() - 1) == ']') {
+	static boolean isIPAddress(String host) {
+		if (host.charAt(0) == '[' && host.charAt(host.length() - 1) == ']') {
 			return true;
 		}
 		return false;
@@ -36,8 +36,8 @@ class EmailTestingSupport {
 		return email.substring(index + 1);
 	}
 
-	static String extractIPAddress(String domain) {
-		return domain.substring(1, domain.length() - 1);
+	static String extractIPAddress(String host) {
+		return host.substring(1, host.length() - 1);
 	}
 
 	static boolean isValidDomain(String domain) {

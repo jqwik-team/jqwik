@@ -9,8 +9,8 @@ import net.jqwik.web.api.*;
 public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements EmailArbitrary {
 
 	private boolean allowQuotedLocalPart = false;
-	private boolean allowUnquotedLocalPart = false;
-	private boolean allowDomainHost = false;
+	private boolean allowUnquotedLocalPart = true;
+	private boolean allowDomainHost = true;
 	private boolean allowIPv4Host = false;
 	private boolean allowIPv6Host = false;
 
@@ -205,37 +205,23 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	@Override
-	public EmailArbitrary quotedLocalPart() {
+	public EmailArbitrary allowQuotedLocalPart() {
 		DefaultEmailArbitrary clone = typedClone();
 		clone.allowQuotedLocalPart = true;
 		return clone;
 	}
 
 	@Override
-	public EmailArbitrary unquotedLocalPart() {
-		DefaultEmailArbitrary clone = typedClone();
-		clone.allowUnquotedLocalPart = true;
-		return clone;
-	}
-
-	@Override
-	public EmailArbitrary ipv4Host() {
+	public EmailArbitrary allowIpv4Host() {
 		DefaultEmailArbitrary clone = typedClone();
 		clone.allowIPv4Host = true;
 		return clone;
 	}
 
 	@Override
-	public EmailArbitrary ipv6Host() {
+	public EmailArbitrary allowIpv6Host() {
 		DefaultEmailArbitrary clone = typedClone();
 		clone.allowIPv6Host = true;
-		return clone;
-	}
-
-	@Override
-	public EmailArbitrary domainHost() {
-		DefaultEmailArbitrary clone = typedClone();
-		clone.allowDomainHost = true;
 		return clone;
 	}
 }

@@ -10,65 +10,33 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to configure arbitraries that generate valid email addresses.
  *
  * <p>
- *    By default all variants of email addresses are generated.
+ *    By default only standard emails of the form {@code username@domain.tld} are generated.
+ *    Other options like quoted local parts and ip addresses as host can be switched on.
  * </p>
  */
 @API(status = EXPERIMENTAL, since = "1.4.0")
 public interface EmailArbitrary extends Arbitrary<String> {
 
 	/**
-	 * Allow quoted local part.
-	 *
-	 * <p>
-	 * Can be combined with other methods.
-	 * </p>
+	 * Allow the local part of an email to be quoted  inside {@linkplain "}.
 	 *
 	 * @return new instance of arbitrary
 	 */
-	EmailArbitrary quotedLocalPart();
+	EmailArbitrary allowQuotedLocalPart();
 
-	/**
-	 * Allow unquoted local part.
-	 *
-	 * <p>
-	 * Can be combined with other methods.
-	 * </p>
-	 *
-	 * @return new instance of arbitrary
-	 */
-	EmailArbitrary unquotedLocalPart();
 
 	/**
 	 * Allow IPv4 addresses in the host part.
 	 *
-	 * <p>
-	 * Can be combined with other methods.
-	 * </p>
-	 *
 	 * @return new instance of arbitrary
 	 */
-	EmailArbitrary ipv4Host();
+	EmailArbitrary allowIpv4Host();
 
 	/**
 	 * Allow IPv6 addresses in the host part.
 	 *
-	 * <p>
-	 * Can be combined with other methods.
-	 * </p>
-	 *
 	 * @return new instance of arbitrary
 	 */
-	EmailArbitrary ipv6Host();
-
-	/**
-	 * Allow named web domains in the host part.
-	 *
-	 * <p>
-	 * Can be combined with other methods.
-	 * </p>
-	 *
-	 * @return new instance of arbitrary
-	 */
-	EmailArbitrary domainHost();
+	EmailArbitrary allowIpv6Host();
 
 }

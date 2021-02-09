@@ -46,14 +46,14 @@ public class EmailsTests {
 		}
 
 		@Property
-		void validCharsBeforeAtQuoted(@ForAll("emails") String email) {
+		void validCharsBeforeAtQuoted(@ForAll("withQuoted") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> isIn(c, ALLOWED_CHARS_LOCALPART_QUOTED));
 		}
 
 		@Property
-		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll("emails") String email) {
+		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll("withQuoted") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			localPart = localPart.substring(1, localPart.length() - 1);
@@ -114,7 +114,7 @@ public class EmailsTests {
 		}
 
 		@Property(tries = 1000)
-		void validIPAddressAfterAt(@ForAll("emails") String email) {
+		void validIPAddressAfterAt(@ForAll("withIPAddresses") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
 			String ipAddress = extractIPAddress(domain);
@@ -132,71 +132,53 @@ public class EmailsTests {
 	class CheckEmailArbitraryMethods {
 
 		@Property
-		void onlyIPAddressesAreGenerated(@ForAll("onlyIPAddresses") String email) {
-			String domain = getEmailHost(email);
-			assertThat(isIPAddress(domain)).isTrue();
-		}
-
-		@Provide
-		private EmailArbitrary onlyIPAddresses() {
-			return Web.emails().ipv4Host().ipv6Host();
-		}
-
-		@Property
-		void onlyIPv4AddressesAreGenerated(@ForAll("onlyIPv4Addresses") String email) {
-			String domain = getEmailHost(email);
-			assertThat(isIPAddress(domain)).isTrue();
-			assertThat(domain).contains(".");
-		}
-
-		@Provide
-		private EmailArbitrary onlyIPv4Addresses() {
-			return Web.emails().ipv4Host();
-		}
-
-		@Property
-		void onlyIPv6AddressesAreGenerated(@ForAll("onlyIPv6Addresses") String email) {
-			String domain = getEmailHost(email);
-			assertThat(isIPAddress(domain)).isTrue();
-			assertThat(domain).contains(":");
-		}
-
-		@Provide
-		private EmailArbitrary onlyIPv6Addresses() {
-			return Web.emails().ipv6Host();
-		}
-
-		@Property
-		void onlyDomainsAreGenerated(@ForAll("onlyDomains") String email) {
+		void byDefaultOnlyDomainsAreGenerated(@ForAll("emails") String email) {
 			String domain = getEmailHost(email);
 			assertThat(isIPAddress(domain)).isFalse();
 		}
 
-		@Provide
-		private EmailArbitrary onlyDomains() {
-			return Web.emails().domainHost();
-		}
-
 		@Property
-		void onlyQuotedLocalPartsAreGenerated(@ForAll("onlyQuoted") String email) {
-			String localPart = getLocalPartOfEmail(email);
-			assertThat(isQuoted(localPart)).isTrue();
-		}
-
-		@Provide
-		private EmailArbitrary onlyQuoted() {
-			return Web.emails().quotedLocalPart();
-		}
-
-		@Property
-		void onlyUnquotedLocalPartsAreGenerated(@ForAll("onlyUnquoted") String email) {
+		void byDefaultOnlyUnquotedLocalPartsAreGenerated(@ForAll("emails") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			assertThat(isQuoted(localPart)).isFalse();
 		}
 
+		@Property
+		void ipAddressesAreGenerated(@ForAll("withIPAddresses") String email) {
+			String domain = getEmailHost(email);
+			Assume.that(isIPAddress(domain));
+			assertThat(isValidIPv4Address(domain) || isValidIPv6Address(domain));
+		}
+
+		@Property
+		void ipv4AddressesAreGenerated(@ForAll("withIPv4Addresses") String email) {
+			String domain = getEmailHost(email);
+			Assume.that(isIPAddress(domain));
+			assertThat(domain).contains(".");
+		}
+
 		@Provide
-		private EmailArbitrary onlyUnquoted() {
-			return Web.emails().unquotedLocalPart();
+		private EmailArbitrary withIPv4Addresses() {
+			return Web.emails().allowIpv4Host();
+		}
+
+		@Property
+		void ipv6AddressesAreGenerated(@ForAll("withIPv6Addresses") String email) {
+			String domain = getEmailHost(email);
+			Assume.that(isIPAddress(domain));
+			assertThat(domain).contains(":");
+		}
+
+		@Provide
+		private EmailArbitrary withIPv6Addresses() {
+			return Web.emails().allowIpv6Host();
+		}
+
+		@Property
+		void quotedLocalPartsAreGenerated(@ForAll("withQuoted") String email) {
+			String localPart = getLocalPartOfEmail(email);
+			Assume.that(localPart.startsWith("\""));
+			assertThat(isQuoted(localPart)).isTrue();
 		}
 
 	}
@@ -205,7 +187,7 @@ public class EmailsTests {
 	class CheckAllVariantsAreCovered {
 
 		@Property
-		void quotedAndUnquotedUsernamesAreGenerated(@ForAll("emails") String email) {
+		void quotedAndUnquotedUsernamesAreGenerated(@ForAll("withQuoted") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Statistics.label("Quoted usernames")
 					  .collect(isQuoted(localPart))
@@ -216,7 +198,7 @@ public class EmailsTests {
 		}
 
 		@Property
-		void domainsAndIpHostsAreGenerated(@ForAll("emails") String email) {
+		void domainsAndIpHostsAreGenerated(@ForAll("withIPAddresses") String email) {
 			String domain = getEmailHost(email);
 			Statistics.label("Domains")
 					  .collect(isIPAddress(domain))
@@ -227,7 +209,7 @@ public class EmailsTests {
 		}
 
 		@Property
-		void Ipv4AndIpv6HostsAreGenerated(@ForAll("emails") String email) {
+		void Ipv4AndIpv6HostsAreGenerated(@ForAll("withIPAddresses") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
 			String address = extractIPAddress(domain);
@@ -278,7 +260,7 @@ public class EmailsTests {
 
 		@Property
 		void ipv4Shrinking(@ForAll Random random) {
-			EmailArbitrary emails = Web.emails();
+			EmailArbitrary emails = Web.emails().allowIpv4Host();
 			Falsifier<String> falsifier = falsifyIPv4();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
 			assertThat(value).isEqualTo("a@[0.0.0.0]");
@@ -286,7 +268,7 @@ public class EmailsTests {
 
 		@Property
 		void ipv6Shrinking(@ForAll Random random) {
-			Arbitrary<String> emails = Web.emails();
+			Arbitrary<String> emails = Web.emails().allowIpv6Host();
 			Falsifier<String> falsifier = falsifyIPv6();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
 			assertThat(value).isEqualTo("a@[::]");
@@ -320,7 +302,7 @@ public class EmailsTests {
 
 		@Example
 		void all() {
-			EmailArbitrary emails = Web.emails();
+			EmailArbitrary emails = Web.emails().allowQuotedLocalPart().allowIpv4Host().allowIpv6Host();
 			int expectedNumberOfEdgeCases = (2 + 2) * (2 + 3 + 4);
 			Set<String> allEdgeCases = collectEdgeCaseValues(emails.edgeCases(1000));
 			assertThat(allEdgeCases).hasSize(expectedNumberOfEdgeCases);
@@ -330,7 +312,7 @@ public class EmailsTests {
 
 		@Example
 		void unquotedLocalPart() {
-			EmailArbitrary emails = Web.emails().unquotedLocalPart().domainHost();
+			EmailArbitrary emails = Web.emails();
 			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getLocalPartOfEmail)
@@ -341,7 +323,7 @@ public class EmailsTests {
 
 		@Example
 		void quotedLocalPart() {
-			EmailArbitrary emails = Web.emails().quotedLocalPart().domainHost();
+			Arbitrary<String> emails = Web.emails().allowQuotedLocalPart().filter(email -> email.startsWith("\""));
 			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getLocalPartOfEmail)
@@ -352,7 +334,7 @@ public class EmailsTests {
 
 		@Example
 		void domainHost() {
-			EmailArbitrary emails = Web.emails().unquotedLocalPart().domainHost();
+			EmailArbitrary emails = Web.emails();
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getEmailHost)
@@ -363,26 +345,26 @@ public class EmailsTests {
 
 		@Example
 		void ipv4Host() {
-			EmailArbitrary emails = Web.emails().unquotedLocalPart().ipv4Host();
+			Arbitrary<String> emails = Web.emails().allowIpv4Host();
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
 
-			assertThat(hosts).containsExactlyInAnyOrder(
+			assertThat(hosts).contains(
 					"[0.0.0.0]", "[255.255.255.255]", "[127.0.0.1]"
 			);
 		}
 
 		@Example
 		void ipv6Host() {
-			EmailArbitrary emails = Web.emails().unquotedLocalPart().ipv6Host();
+			EmailArbitrary emails = Web.emails().allowIpv6Host();
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(EmailTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
 
-			assertThat(hosts).containsExactlyInAnyOrder(
+			assertThat(hosts).contains(
 					"[::]",
 					"[0:0:0:0:0:0:0:0]",
 					"[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]", "[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]"
@@ -396,5 +378,14 @@ public class EmailsTests {
 		return Web.emails();
 	}
 
+	@Provide
+	private EmailArbitrary withQuoted() {
+		return Web.emails().allowQuotedLocalPart();
+	}
+
+	@Provide
+	private EmailArbitrary withIPAddresses() {
+		return Web.emails().allowIpv4Host().allowIpv6Host();
+	}
 
 }

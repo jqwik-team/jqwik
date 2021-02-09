@@ -20,19 +20,13 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 			checkValidEmailConfiguration(email);
 			EmailArbitrary emailArbitrary = Web.emails();
 			if (email.quotedLocalPart()) {
-				emailArbitrary = emailArbitrary.quotedLocalPart();
-			}
-			if (email.unquotedLocalPart()) {
-				emailArbitrary = emailArbitrary.unquotedLocalPart();
-			}
-			if (email.domainHost()) {
-				emailArbitrary = emailArbitrary.domainHost();
+				emailArbitrary = emailArbitrary.allowQuotedLocalPart();
 			}
 			if (email.ipv4Host()) {
-				emailArbitrary = emailArbitrary.ipv4Host();
+				emailArbitrary = emailArbitrary.allowIpv4Host();
 			}
 			if (email.ipv6Host()) {
-				emailArbitrary = emailArbitrary.ipv6Host();
+				emailArbitrary = emailArbitrary.allowIpv6Host();
 			}
 			return Collections.<Arbitrary<?>>singleton(emailArbitrary);
 		}).orElse(Collections.emptySet());
