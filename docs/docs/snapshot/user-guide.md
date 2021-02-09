@@ -4057,17 +4057,15 @@ abc@example.com
 admin@[32::FF:aBc:79a:83B:FFFF:345]
 ```
 
-You can use the following restrictions in `@Email` annotation:
-- `unquotedLocalPart` to decide whether unquoted local parts are generated
-- `quotedLocalPart` to decide whether quoted local parts are generated
-- `domainHost` to decide whether domains are generated in the host part
-- `ipv4Host` to decide whether ipv4 addresses are generated in the host part
-- `ipv6Host` to decide whether ipv6 addresses are generated in the host part 
-  
-By default, only addresses with unquoted local part and domain hosts are 
-generated (e.g. `me@myhost.com`), because many - if not most - applications 
+By default, only addresses with unquoted local part and domain hosts are
+generated (e.g. `me@myhost.com`), because many - if not most - applications
 and web forms only accept those.
 
+The `@Email` annotation comes with a few configuration attributes:
+- `quotedLocalPart` also allow quoted local parts to be generated
+- `ipv4Host` also allow ipv4 addresses to be generated in the host part
+- `ipv6Host` also allow ipv4 addresses to be generated in the host part
+  
 You can use it as follows:
 
 ```java
@@ -4077,7 +4075,7 @@ void defaultEmailAddresses(@ForAll @Email String email) {
 }
 
 @Property
-void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = true, ipv4Host = true, domainHost = false) String email) {
+void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = true, ipv4Host = true) String email) {
     assertThat(email).contains("@");
 }
 ```
