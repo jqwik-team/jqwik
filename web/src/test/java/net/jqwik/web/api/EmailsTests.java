@@ -150,7 +150,7 @@ public class EmailsTests {
 			assertThat(isValidIPv4Address(domain) || isValidIPv6Address(domain));
 		}
 
-		@Property
+		@Property(maxDiscardRatio = 10)
 		void ipv4AddressesAreGenerated(@ForAll("withIPv4Addresses") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
@@ -162,7 +162,7 @@ public class EmailsTests {
 			return Web.emails().allowIpv4Host();
 		}
 
-		@Property
+		@Property(maxDiscardRatio = 10)
 		void ipv6AddressesAreGenerated(@ForAll("withIPv6Addresses") String email) {
 			String domain = getEmailHost(email);
 			Assume.that(isIPAddress(domain));
@@ -174,7 +174,7 @@ public class EmailsTests {
 			return Web.emails().allowIpv6Host();
 		}
 
-		@Property
+		@Property(maxDiscardRatio = 10)
 		void quotedLocalPartsAreGenerated(@ForAll("withQuoted") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(localPart.startsWith("\""));
