@@ -1,5 +1,6 @@
 package net.jqwik.time.api;
 
+import java.time.*;
 import java.util.*;
 
 import org.apiguardian.api.*;
@@ -33,6 +34,15 @@ public class Times {
 	 */
 	public static Arbitrary<TimeZone> timeZones() {
 		return Arbitraries.of(TimeZone.getAvailableIDs()).map(TimeZone::getTimeZone);
+	}
+
+	/**
+	 * Create an arbitrary that generates instances of {@linkplain java.time.ZoneId}.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	public static Arbitrary<ZoneId> zoneIds() {
+		return Arbitraries.of(ZoneId.getAvailableZoneIds()).map(ZoneId::of);
 	}
 
 }

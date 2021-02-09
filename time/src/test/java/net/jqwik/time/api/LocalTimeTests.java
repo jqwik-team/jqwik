@@ -92,6 +92,16 @@ class LocalTimeTests {
 			return Times.timeZones();
 		}
 
+		@Property
+		void validZoneIdIsGenerated(@ForAll("zoneIds") ZoneId zoneId) {
+			assertThat(zoneId).isNotNull();
+		}
+
+		@Provide
+		Arbitrary<ZoneId> zoneIds() {
+			return Times.zoneIds();
+		}
+
 	}
 
 	@Property
