@@ -1,6 +1,7 @@
 - 1.4.0
 
     - Edge Cases
+        - EdgeCases.Configuration.withProbability(double injectProbability)
         - Add documentation for Arbitrary.edgeCases(configuration)
     
 - 1.4.x
