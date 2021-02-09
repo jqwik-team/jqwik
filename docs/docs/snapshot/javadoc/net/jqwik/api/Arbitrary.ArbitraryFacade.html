@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -250,6 +250,11 @@ extends java.lang.Object</pre>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stream(net.jqwik.api.Arbitrary)">stream</a></span>&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;elementArbitrary)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#withoutEdgeCases(net.jqwik.api.Arbitrary)">withoutEdgeCases</a></span>&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;self)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
@@ -410,11 +415,20 @@ extends java.lang.Object</pre>
 <a id="configureEdgeCases(net.jqwik.api.Arbitrary,java.util.function.Consumer)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>configureEdgeCases</h4>
 <pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;configureEdgeCases&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;self,
                                                     java.util.function.Consumer&lt;<a href="EdgeCases.Config.html" title="interface in net.jqwik.api">EdgeCases.Config</a>&lt;T&gt;&gt;&nbsp;configurator)</pre>
+</li>
+</ul>
+<a id="withoutEdgeCases(net.jqwik.api.Arbitrary)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>withoutEdgeCases</h4>
+<pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;withoutEdgeCases&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;self)</pre>
 </li>
 </ul>
 </li>

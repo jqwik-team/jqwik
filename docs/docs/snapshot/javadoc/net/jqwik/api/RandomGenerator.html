@@ -185,8 +185,9 @@ public interface <span class="typeNameLabel">RandomGenerator&lt;T&gt;</span></pr
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>default &lt;U&gt;&nbsp;<a href="RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;U&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#flatMap(java.util.function.Function,int)">flatMap</a></span>&#8203;(java.util.function.Function&lt;<a href="RandomGenerator.html" title="type parameter in RandomGenerator">T</a>,&#8203;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;U&gt;&gt;&nbsp;mapper,
-       int&nbsp;genSize)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#flatMap(java.util.function.Function,int,boolean)">flatMap</a></span>&#8203;(java.util.function.Function&lt;<a href="RandomGenerator.html" title="type parameter in RandomGenerator">T</a>,&#8203;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;U&gt;&gt;&nbsp;mapper,
+       int&nbsp;genSize,
+       boolean&nbsp;withEmbeddedEdgeCases)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
@@ -297,7 +298,7 @@ default&nbsp;&lt;U&gt;&nbsp;<a href="RandomGenerator.html" title="interface in n
 default&nbsp;&lt;U&gt;&nbsp;<a href="RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;U&gt;&nbsp;flatMap&#8203;(java.util.function.Function&lt;<a href="RandomGenerator.html" title="type parameter in RandomGenerator">T</a>,&#8203;<a href="RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;U&gt;&gt;&nbsp;mapper)</pre>
 </li>
 </ul>
-<a id="flatMap(java.util.function.Function,int)">
+<a id="flatMap(java.util.function.Function,int,boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -305,7 +306,8 @@ default&nbsp;&lt;U&gt;&nbsp;<a href="RandomGenerator.html" title="interface in n
 <h4>flatMap</h4>
 <pre class="methodSignature">@API(status=INTERNAL)
 default&nbsp;&lt;U&gt;&nbsp;<a href="RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;U&gt;&nbsp;flatMap&#8203;(java.util.function.Function&lt;<a href="RandomGenerator.html" title="type parameter in RandomGenerator">T</a>,&#8203;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;U&gt;&gt;&nbsp;mapper,
-                                       int&nbsp;genSize)</pre>
+                                       int&nbsp;genSize,
+                                       boolean&nbsp;withEmbeddedEdgeCases)</pre>
 </li>
 </ul>
 <a id="filter(java.util.function.Predicate)">

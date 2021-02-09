@@ -180,8 +180,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>abstract &lt;R&gt;&nbsp;<a href="EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;R&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#combineEdgeCases(java.util.List,java.util.function.Function)">combineEdgeCases</a></span>&#8203;(java.util.List&lt;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.lang.Object&gt;&gt;&nbsp;arbitraries,
-                java.util.function.Function&lt;java.util.List&lt;java.lang.Object&gt;,&#8203;R&gt;&nbsp;combineFunction)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#combineEdgeCases(java.util.List,java.util.function.Function,int)">combineEdgeCases</a></span>&#8203;(java.util.List&lt;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.lang.Object&gt;&gt;&nbsp;arbitraries,
+                java.util.function.Function&lt;java.util.List&lt;java.lang.Object&gt;,&#8203;R&gt;&nbsp;combineFunction,
+                int&nbsp;maxEdgeCases)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -261,14 +262,15 @@ extends java.lang.Object</pre>
                                                                                  long&nbsp;maxNumberOfSamples)</pre>
 </li>
 </ul>
-<a id="combineEdgeCases(java.util.List,java.util.function.Function)">
+<a id="combineEdgeCases(java.util.List,java.util.function.Function,int)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>combineEdgeCases</h4>
 <pre class="methodSignature">public abstract&nbsp;&lt;R&gt;&nbsp;<a href="EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;R&gt;&nbsp;combineEdgeCases&#8203;(java.util.List&lt;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.lang.Object&gt;&gt;&nbsp;arbitraries,
-                                                  java.util.function.Function&lt;java.util.List&lt;java.lang.Object&gt;,&#8203;R&gt;&nbsp;combineFunction)</pre>
+                                                  java.util.function.Function&lt;java.util.List&lt;java.lang.Object&gt;,&#8203;R&gt;&nbsp;combineFunction,
+                                                  int&nbsp;maxEdgeCases)</pre>
 </li>
 </ul>
 </li>

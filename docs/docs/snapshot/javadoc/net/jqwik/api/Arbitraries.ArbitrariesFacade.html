@@ -216,12 +216,14 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;T&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#edgeCasesChoose(char%5B%5D)">edgeCasesChoose</a></span>&#8203;(char[]&nbsp;validChars)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#edgeCasesChoose(char%5B%5D,int)">edgeCasesChoose</a></span>&#8203;(char[]&nbsp;validChars,
+               int&nbsp;maxEdgeCases)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;T&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#edgeCasesChoose(java.util.List)">edgeCasesChoose</a></span>&#8203;(java.util.List&lt;T&gt;&nbsp;values)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#edgeCasesChoose(java.util.List,int)">edgeCasesChoose</a></span>&#8203;(java.util.List&lt;T&gt;&nbsp;values,
+               int&nbsp;maxEdgeCases)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
@@ -390,22 +392,24 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="edgeCasesChoose(java.util.List)">
+<a id="edgeCasesChoose(java.util.List,int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>edgeCasesChoose</h4>
-<pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;<a href="EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;T&gt;&nbsp;edgeCasesChoose&#8203;(java.util.List&lt;T&gt;&nbsp;values)</pre>
+<pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;<a href="EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;T&gt;&nbsp;edgeCasesChoose&#8203;(java.util.List&lt;T&gt;&nbsp;values,
+                                                 int&nbsp;maxEdgeCases)</pre>
 </li>
 </ul>
-<a id="edgeCasesChoose(char[])">
+<a id="edgeCasesChoose(char[],int)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>edgeCasesChoose</h4>
-<pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;<a href="EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;T&gt;&nbsp;edgeCasesChoose&#8203;(char[]&nbsp;validChars)</pre>
+<pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;<a href="EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;T&gt;&nbsp;edgeCasesChoose&#8203;(char[]&nbsp;validChars,
+                                                 int&nbsp;maxEdgeCases)</pre>
 </li>
 </ul>
 <a id="exhaustiveChoose(java.util.List,long)">

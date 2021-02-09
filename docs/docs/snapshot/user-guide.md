@@ -197,7 +197,7 @@ Snapshot releases are created on a regular basis and can be fetched from
 
 ### Required Version of JUnit Platform
 
-The minimum required version of the JUnit platform is `1.7.0`.
+The minimum required version of the JUnit platform is `1.7.1`.
 
 ### Gradle
 
@@ -216,8 +216,8 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.7.0'
-ext.junitJupiterVersion = '5.7.0'
+ext.junitPlatformVersion = '1.7.1'
+ext.junitJupiterVersion = '5.7.1'
 
 ext.jqwikVersion = '1.4.0-SNAPSHOT'
 
@@ -249,7 +249,7 @@ dependencies {
     testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testImplementation "org.junit.jupiter:junit-jupiter:5.7.0"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.7.1"
 
     // Add any other test library you need...
     testImplementation "org.assertj:assertj-core:3.12.2"
@@ -348,8 +348,8 @@ You will have to add _at least_ the following jars to your classpath:
 
 - `jqwik-api-1.4.0-SNAPSHOT.jar`
 - `jqwik-engine-1.4.0-SNAPSHOT.jar`
-- `junit-platform-engine-1.7.0.jar`
-- `junit-platform-commons-1.7.0.jar`
+- `junit-platform-engine-1.7.1.jar`
+- `junit-platform-commons-1.7.1.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
@@ -4036,7 +4036,7 @@ This module is part of jqwik's default dependencies.
 
 To generate email addresses you can either
 
-- call up the static method [`Emails.emails()`](/docs/snapshot/javadoc/net/jqwik/web/api/Emails.html#emails()).
+- call up the static method [`Web.emails()`](/docs/snapshot/javadoc/net/jqwik/web/api/Web.html#emails()).
   The return type is [`EmailArbitrary`](/docs/snapshot/javadoc/net/jqwik/web/api/EmailArbitrary.html)
   which provides a few configuration methods.
 
@@ -4119,11 +4119,11 @@ The following annotations can be used to constrain default generation of the enu
 - [`@DayOfMonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DayOfMonthRange.html)
 - [`@DayOfWeekRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DayOfWeekRange.html)
 - [`@LeapYears`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/LeapYears.html)
-- [`@PeriodDayRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/PeriodDayRange.html)
-- [`@PeriodMonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/PeriodMonthRange.html)
-- [`@PeriodYearRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/PeriodYearRange.html)
+- [`@PeriodRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/PeriodRange.html)
 
-`@DateRange`, `@MonthDayRange` and `@YearMonthRange` use the ISO format for date strings. Examples: `2013-05-25`, `--05-25` and `2013-05`.
+`@DateRange`, `@MonthDayRange`, `@YearMonthRange` and `@PeriodRange` 
+use the ISO format for date strings. 
+Examples: `2013-05-25`, `--05-25`, `2013-05` and `P1Y2M15D`.
 
 #### Programmatic Generation of Dates
 
@@ -4215,11 +4215,12 @@ Here's the list of available methods:
 
 ##### PeriodArbitrary
 
-- By default, years between `Integer.MIN_VALUE` and `Integer.MAX_VALUE`, months between `0` and `11` and days between `0` and `30` are generated.
-- You can constrain the minimum and maximum value for years using `yearsBetween(min, max)`.
-- You can constrain the minimum and maximum value for months using `monthsBetween(min, max)`.
-- You can constrain the minimum and maximum value for days using `daysBetween(min, max)`.
-
+- By default, periods between `-1000 years` and `1000 years` are generated.
+- Generated periods are always in a "reduced" form, 
+  i.e. months are always between `-11` and `11` and days between `-30` and `30`.   
+- You can constrain the minimum and maximum value using `between(Period min, Period max)`.
+- If you really want something like `Period.ofDays(3000)` generate an integer
+  and map it on `Period`.
 
 
 

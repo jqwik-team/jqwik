@@ -126,9 +126,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCasesMode.html#activated()">activated()</a></span> - Method in enum net.jqwik.api.<a href="net/jqwik/api/EdgeCasesMode.html" title="enum in net.jqwik.api">EdgeCasesMode</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.Config.html#add(T)">add(T)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.Config.html" title="interface in net.jqwik.api">EdgeCases.Config</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.Config.html#add(T...)">add(T...)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/EdgeCases.Config.html" title="interface in net.jqwik.api">EdgeCases.Config</a></dt>
 <dd>
-<div class="block">Add an unshrinkable additional value as edgeCase.</div>
+<div class="block">Add one or more unshrinkable additional values as edge cases.</div>
 </dd>
 <dt><a href="net/jqwik/api/lifecycle/AddLifecycleHook.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">AddLifecycleHook</span></a> - Annotation Type in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>
@@ -206,6 +206,18 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/FixedSeedMode.html#ALLOW">ALLOW</a></span> - net.jqwik.api.<a href="net/jqwik/api/FixedSeedMode.html" title="enum in net.jqwik.api">FixedSeedMode</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/web/api/EmailArbitrary.html#allowIpv4Host()">allowIpv4Host()</a></span> - Method in interface net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api">EmailArbitrary</a></dt>
+<dd>
+<div class="block">Allow IPv4 addresses in the host part.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/web/api/EmailArbitrary.html#allowIpv6Host()">allowIpv6Host()</a></span> - Method in interface net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api">EmailArbitrary</a></dt>
+<dd>
+<div class="block">Allow IPv6 addresses in the host part.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/web/api/EmailArbitrary.html#allowQuotedLocalPart()">allowQuotedLocalPart()</a></span> - Method in interface net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api">EmailArbitrary</a></dt>
+<dd>
+<div class="block">Allow the local part of an email to be quoted within " characters.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#allValues()">allValues()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
 <div class="block">Create optional stream of all possible values this arbitrary could generate.</div>
@@ -558,6 +570,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated month and day values.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html#between(java.time.Period,java.time.Period)">between(Period, Period)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a></dt>
+<dd>
+<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated period.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/YearMonthArbitrary.html#between(java.time.YearMonth,java.time.YearMonth)">between(YearMonth, YearMonth)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/YearMonthArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">YearMonthArbitrary</a></dt>
 <dd>
 <div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated year and month values.</div>
@@ -834,7 +850,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Combine 8 arbitraries into one.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.CombinatorsFacade.html#combineEdgeCases(java.util.List,java.util.function.Function)">combineEdgeCases(List&lt;Arbitrary&lt;Object&gt;&gt;, Function&lt;List&lt;Object&gt;, R&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.CombinatorsFacade.html" title="class in net.jqwik.api">Combinators.CombinatorsFacade</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.CombinatorsFacade.html#combineEdgeCases(java.util.List,java.util.function.Function,int)">combineEdgeCases(List&lt;Arbitrary&lt;Object&gt;&gt;, Function&lt;List&lt;Object&gt;, R&gt;, int)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.CombinatorsFacade.html" title="class in net.jqwik.api">Combinators.CombinatorsFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.CombinatorsFacade.html#combineExhaustive(java.util.List,java.util.function.Function,long)">combineExhaustive(List&lt;Arbitrary&lt;Object&gt;&gt;, Function&lt;List&lt;Object&gt;, R&gt;, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.CombinatorsFacade.html" title="class in net.jqwik.api">Combinators.CombinatorsFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -1019,10 +1035,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Constrain the range of generated day of week parameters.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html#daysBetween(int,int)">daysBetween(int, int)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a></dt>
-<dd>
-<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated day values.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/Dates.html#daysOfMonth()">daysOfMonth()</a></span> - Static method in class net.jqwik.time.api.<a href="net/jqwik/time/api/Dates.html" title="class in net.jqwik.time.api">Dates</a></dt>
 <dd>
 <div class="block">Create an arbitrary that generates days of month as Integer.</div>
@@ -1088,14 +1100,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html#%3Cinit%3E()">DomainContextFacade()</a></span> - Constructor for class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains">DomainContext.DomainContextFacade</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/web/api/Email.html#domainHost()">domainHost()</a></span> - Method in annotation type net.jqwik.web.api.<a href="net/jqwik/web/api/Email.html" title="annotation in net.jqwik.web.api">Email</a></dt>
-<dd>
-<div class="block">Are hosts with domain name allowed.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/web/api/EmailArbitrary.html#domainHost()">domainHost()</a></span> - Method in interface net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api">EmailArbitrary</a></dt>
-<dd>
-<div class="block">Allow named web domains in the host part.</div>
-</dd>
 <dt><a href="net/jqwik/api/domains/DomainList.html" title="annotation in net.jqwik.api.domains"><span class="typeNameLink">DomainList</span></a> - Annotation Type in <a href="net/jqwik/api/domains/package-summary.html">net.jqwik.api.domains</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#doNotSkip()">doNotSkip()</a></span> - Static method in class net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></dt>
@@ -1131,10 +1135,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </a>
 <h2 class="title">E</h2>
 <dl>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html#edgeCases()">edgeCases()</a></span> - Method in class net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html" title="class in net.jqwik.api.arbitraries">ArbitraryDecorator</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#edgeCases()">edgeCases()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Return an arbitrary's edge cases.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/PropertyAttributes.html#edgeCases()">edgeCases()</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyAttributes.html" title="interface in net.jqwik.api.lifecycle">PropertyAttributes</a></dt>
 <dd>
 <div class="block">The edge cases mode of the property at hand.</div>
@@ -1142,6 +1146,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Property.html#edgeCases()">edgeCases()</a></span> - Method in annotation type net.jqwik.api.<a href="net/jqwik/api/Property.html" title="annotation in net.jqwik.api">Property</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/PropertyDefaults.html#edgeCases()">edgeCases()</a></span> - Method in annotation type net.jqwik.api.<a href="net/jqwik/api/PropertyDefaults.html" title="annotation in net.jqwik.api">PropertyDefaults</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html#edgeCases(int)">edgeCases(int)</a></span> - Method in class net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html" title="class in net.jqwik.api.arbitraries">ArbitraryDecorator</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#edgeCases(int)">edgeCases(int)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)">edgeCases(Consumer&lt;EdgeCases.Config&lt;T&gt;&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
@@ -1153,9 +1161,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">EdgeCases.EdgeCasesFacade</span></a> - Class in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#edgeCasesChoose(char%5B%5D)">edgeCasesChoose(char[])</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#edgeCasesChoose(char%5B%5D,int)">edgeCasesChoose(char[], int)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#edgeCasesChoose(java.util.List)">edgeCasesChoose(List&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#edgeCasesChoose(java.util.List,int)">edgeCasesChoose(List&lt;T&gt;, int)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html#%3Cinit%3E()">EdgeCasesFacade()</a></span> - Constructor for class net.jqwik.api.<a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html" title="class in net.jqwik.api">EdgeCases.EdgeCasesFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -1171,12 +1179,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Fluent interface to configure arbitraries that generate valid email addresses.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/web/api/Emails.html#emails()">emails()</a></span> - Static method in class net.jqwik.web.api.<a href="net/jqwik/web/api/Emails.html" title="class in net.jqwik.web.api">Emails</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/web/api/Web.html#emails()">emails()</a></span> - Static method in class net.jqwik.web.api.<a href="net/jqwik/web/api/Web.html" title="class in net.jqwik.web.api">Web</a></dt>
 <dd>
 <div class="block">Create an arbitrary that generates valid E-Mail addresses.</div>
 </dd>
-<dt><a href="net/jqwik/web/api/Emails.html" title="class in net.jqwik.web.api"><span class="typeNameLink">Emails</span></a> - Class in <a href="net/jqwik/web/api/package-summary.html">net.jqwik.web.api</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Tuple.html#empty()">empty()</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/Tuple.html" title="interface in net.jqwik.api">Tuple</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Functions.FunctionsFacade.html#ensureFunctionalType(java.lang.Class)">ensureFunctionalType(Class&lt;?&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Functions.FunctionsFacade.html" title="class in net.jqwik.api">Functions.FunctionsFacade</a></dt>
@@ -1312,6 +1318,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ShrinkingSupportFacade.html#falsifyThenShrink(net.jqwik.api.Arbitrary,java.util.Random,net.jqwik.api.Falsifier)">falsifyThenShrink(Arbitrary&lt;? extends T&gt;, Random, Falsifier&lt;T&gt;)</a></span> - Method in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ShrinkingSupportFacade.html" title="class in net.jqwik.api.facades">ShrinkingSupportFacade</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ShrinkingSupportFacade.html#falsifyThenShrink(net.jqwik.api.RandomGenerator,java.util.Random,net.jqwik.api.Falsifier)">falsifyThenShrink(RandomGenerator&lt;? extends T&gt;, Random, Falsifier&lt;T&gt;)</a></span> - Method in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ShrinkingSupportFacade.html" title="class in net.jqwik.api.facades">ShrinkingSupportFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#filter(java.util.function.Predicate)">filter(Predicate&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
 <div class="block">Create a new arbitrary of the same type <code>T</code> that creates and shrinks the original arbitrary but only allows
@@ -1384,7 +1392,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Create a new arbitrary of type <code>U</code> that uses the values of the existing arbitrary to create a new arbitrary
  using the <code>mapper</code> function.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.html#flatMap(java.util.function.Function,int)">flatMap(Function&lt;T, Arbitrary&lt;U&gt;&gt;, int)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.html#flatMap(java.util.function.Function,int,boolean)">flatMap(Function&lt;T, Arbitrary&lt;U&gt;&gt;, int, boolean)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.html#flatMap(java.util.function.Function,int,long)">flatMap(Function&lt;T, Arbitrary&lt;U&gt;&gt;, int, long)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a></dt>
 <dd>&nbsp;</dd>
@@ -1392,9 +1400,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#flatMap(net.jqwik.api.Arbitrary,java.util.function.Function)">flatMap(Arbitrary&lt;T&gt;, Function&lt;T, Arbitrary&lt;U&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html#flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,int,long)">flatMap(Shrinkable&lt;T&gt;, Function&lt;T, Arbitrary&lt;U&gt;&gt;, int, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html" title="class in net.jqwik.api">RandomGenerator.RandomGeneratorFacade</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html#flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,int,long)">flatMap(Shrinkable&lt;T&gt;, Function&lt;T, Arbitrary&lt;U&gt;&gt;, int, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html" title="class in net.jqwik.api">Shrinkable.ShrinkableFacade</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html#flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,int,long,boolean)">flatMap(Shrinkable&lt;T&gt;, Function&lt;T, Arbitrary&lt;U&gt;&gt;, int, long, boolean)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html" title="class in net.jqwik.api">RandomGenerator.RandomGeneratorFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html#flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,long)">flatMap(Shrinkable&lt;T&gt;, Function&lt;T, RandomGenerator&lt;U&gt;&gt;, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html" title="class in net.jqwik.api">RandomGenerator.RandomGeneratorFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -1562,7 +1570,18 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#generator(int)">generator(int)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
-<div class="block">Create the random generator for an arbitrary</div>
+<div class="block">Create the random generator for an arbitrary.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#generator(int,boolean)">generator(int, boolean)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
+<dd>
+<div class="block">Create the random generator for an arbitrary with or without edge cases.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html#generatorWithEmbeddedEdgeCases(int)">generatorWithEmbeddedEdgeCases(int)</a></span> - Method in class net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html" title="class in net.jqwik.api.arbitraries">ArbitraryDecorator</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#generatorWithEmbeddedEdgeCases(int)">generatorWithEmbeddedEdgeCases(int)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
+<dd>
+<div class="block">Create the random generator for an arbitrary where the embedded generators,
+ if there are any, also generate edge cases.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.html#get()">get()</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a></dt>
 <dd>&nbsp;</dd>
@@ -1838,17 +1857,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Are hosts with ipv4 addresses allowed.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/web/api/EmailArbitrary.html#ipv4Host()">ipv4Host()</a></span> - Method in interface net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api">EmailArbitrary</a></dt>
-<dd>
-<div class="block">Allow IPv4 addresses in the host part.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/web/api/Email.html#ipv6Host()">ipv6Host()</a></span> - Method in annotation type net.jqwik.web.api.<a href="net/jqwik/web/api/Email.html" title="annotation in net.jqwik.web.api">Email</a></dt>
 <dd>
 <div class="block">Are hosts with ipv6 addresses allowed.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/web/api/EmailArbitrary.html#ipv6Host()">ipv6Host()</a></span> - Method in interface net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api">EmailArbitrary</a></dt>
-<dd>
-<div class="block">Allow IPv6 addresses in the host part.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/providers/TypeUsage.html#isAnnotated(java.lang.Class)">isAnnotated(Class&lt;A&gt;)</a></span> - Method in interface net.jqwik.api.providers.<a href="net/jqwik/api/providers/TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></dt>
 <dd>
@@ -2250,11 +2261,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/MonthRange.html#max()">max()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/MonthRange.html" title="annotation in net.jqwik.time.api.constraints">MonthRange</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/PeriodDayRange.html#max()">max()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodDayRange.html" title="annotation in net.jqwik.time.api.constraints">PeriodDayRange</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/PeriodMonthRange.html#max()">max()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodMonthRange.html" title="annotation in net.jqwik.time.api.constraints">PeriodMonthRange</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/PeriodYearRange.html#max()">max()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodYearRange.html" title="annotation in net.jqwik.time.api.constraints">PeriodYearRange</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/PeriodRange.html#max()">max()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodRange.html" title="annotation in net.jqwik.time.api.constraints">PeriodRange</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/YearMonthRange.html#max()">max()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/YearMonthRange.html" title="annotation in net.jqwik.time.api.constraints">YearMonthRange</a></dt>
 <dd>&nbsp;</dd>
@@ -2314,11 +2321,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/MonthRange.html#min()">min()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/MonthRange.html" title="annotation in net.jqwik.time.api.constraints">MonthRange</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/PeriodDayRange.html#min()">min()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodDayRange.html" title="annotation in net.jqwik.time.api.constraints">PeriodDayRange</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/PeriodMonthRange.html#min()">min()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodMonthRange.html" title="annotation in net.jqwik.time.api.constraints">PeriodMonthRange</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/PeriodYearRange.html#min()">min()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodYearRange.html" title="annotation in net.jqwik.time.api.constraints">PeriodYearRange</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/PeriodRange.html#min()">min()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/PeriodRange.html" title="annotation in net.jqwik.time.api.constraints">PeriodRange</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/YearMonthRange.html#min()">min()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/YearMonthRange.html" title="annotation in net.jqwik.time.api.constraints">YearMonthRange</a></dt>
 <dd>&nbsp;</dd>
@@ -2397,10 +2400,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/Dates.html#months()">months()</a></span> - Static method in class net.jqwik.time.api.<a href="net/jqwik/time/api/Dates.html" title="class in net.jqwik.time.api">Dates</a></dt>
 <dd>
 <div class="block">Create an arbitrary that generates instances of Month.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html#monthsBetween(int,int)">monthsBetween(int, int)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a></dt>
-<dd>
-<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated month values.</div>
 </dd>
 </dl>
 <a id="I:N">
@@ -2845,21 +2844,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Fluent interface to configure the generation of period values.</div>
 </dd>
-<dt><a href="net/jqwik/time/api/constraints/PeriodDayRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">PeriodDayRange</span></a> - Annotation Type in <a href="net/jqwik/time/api/constraints/package-summary.html">net.jqwik.time.api.constraints</a></dt>
+<dt><a href="net/jqwik/time/api/constraints/PeriodRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">PeriodRange</span></a> - Annotation Type in <a href="net/jqwik/time/api/constraints/package-summary.html">net.jqwik.time.api.constraints</a></dt>
 <dd>
-<div class="block">Constrain the range of generated day parameters.</div>
-</dd>
-<dt><a href="net/jqwik/time/api/constraints/PeriodMonthRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">PeriodMonthRange</span></a> - Annotation Type in <a href="net/jqwik/time/api/constraints/package-summary.html">net.jqwik.time.api.constraints</a></dt>
-<dd>
-<div class="block">Constrain the range of generated month parameters.</div>
+<div class="block">Constrain the range of generated periods.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/Dates.html#periods()">periods()</a></span> - Static method in class net.jqwik.time.api.<a href="net/jqwik/time/api/Dates.html" title="class in net.jqwik.time.api">Dates</a></dt>
 <dd>
 <div class="block">Create an arbitrary that generates instances of Period.</div>
-</dd>
-<dt><a href="net/jqwik/time/api/constraints/PeriodYearRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">PeriodYearRange</span></a> - Annotation Type in <a href="net/jqwik/time/api/constraints/package-summary.html">net.jqwik.time.api.constraints</a></dt>
-<dd>
-<div class="block">Constrain the range of generated year parameters.</div>
 </dd>
 <dt><a href="net/jqwik/api/lifecycle/PerProperty.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">PerProperty</span></a> - Annotation Type in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>
@@ -2997,10 +2988,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="net/jqwik/web/api/Email.html#quotedLocalPart()">quotedLocalPart()</a></span> - Method in annotation type net.jqwik.web.api.<a href="net/jqwik/web/api/Email.html" title="annotation in net.jqwik.web.api">Email</a></dt>
 <dd>
 <div class="block">Are quoted local parts allowed.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/web/api/EmailArbitrary.html#quotedLocalPart()">quotedLocalPart()</a></span> - Method in interface net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api">EmailArbitrary</a></dt>
-<dd>
-<div class="block">Allow quoted local part.</div>
 </dd>
 </dl>
 <a id="I:R">
@@ -3850,14 +3837,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  relating to an element's "feature" being extracted by applying the
  <code>by</code> function on a map entry's value.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/web/api/Email.html#unquotedLocalPart()">unquotedLocalPart()</a></span> - Method in annotation type net.jqwik.web.api.<a href="net/jqwik/web/api/Email.html" title="annotation in net.jqwik.web.api">Email</a></dt>
-<dd>
-<div class="block">Are unquoted local parts allowed.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/web/api/EmailArbitrary.html#unquotedLocalPart()">unquotedLocalPart()</a></span> - Method in interface net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api">EmailArbitrary</a></dt>
-<dd>
-<div class="block">Allow unquoted local part.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html#unshrinkable(java.util.function.Supplier,net.jqwik.api.ShrinkingDistance)">unshrinkable(Supplier&lt;T&gt;, ShrinkingDistance)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html" title="class in net.jqwik.api">Shrinkable.ShrinkableFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.html#unshrinkable(T)">unshrinkable(T)</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a></dt>
@@ -4105,6 +4084,11 @@ the order they are declared.</div>
 <dl>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/FixedSeedMode.html#WARN">WARN</a></span> - net.jqwik.api.<a href="net/jqwik/api/FixedSeedMode.html" title="enum in net.jqwik.api">FixedSeedMode</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/jqwik/web/api/Web.html" title="class in net.jqwik.web.api"><span class="typeNameLink">Web</span></a> - Class in <a href="net/jqwik/web/api/package-summary.html">net.jqwik.web.api</a></dt>
+<dd>
+<div class="block">This is the home for static methods to produce arbitraries for Web-related
+ domain types, like email addresses, ip addresses, domains, URLs etc.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/FunctionArbitrary.html#when(java.util.function.Predicate,java.util.function.Function)">when(Predicate&lt;List&lt;Object&gt;&gt;, Function&lt;List&lt;Object&gt;, R&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/FunctionArbitrary.html" title="interface in net.jqwik.api.arbitraries">FunctionArbitrary</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/PropertyAttributes.html#whenFixedSeed()">whenFixedSeed()</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyAttributes.html" title="interface in net.jqwik.api.lifecycle">PropertyAttributes</a></dt>
@@ -4187,6 +4171,13 @@ the order they are declared.</div>
 <dd>
 <div class="block">Allows jqwik to inject null parameters into generated values.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#withoutEdgeCases()">withoutEdgeCases()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
+<dd>
+<div class="block">Create a new arbitrary of type <code>T</code> that will not explicitly generate
+ any edge cases, neither directly or in embedded arbitraries.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#withoutEdgeCases(net.jqwik.api.Arbitrary)">withoutEdgeCases(Arbitrary&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a id="I:Y">
 <!--   -->
@@ -4248,10 +4239,6 @@ the order they are declared.</div>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/Dates.html#years()">years()</a></span> - Static method in class net.jqwik.time.api.<a href="net/jqwik/time/api/Dates.html" title="class in net.jqwik.time.api">Dates</a></dt>
 <dd>
 <div class="block">Create an arbitrary that generates instances of Year.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html#yearsBetween(int,int)">yearsBetween(int, int)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a></dt>
-<dd>
-<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated year values.</div>
 </dd>
 </dl>
 <a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:Q">Q</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a href="#I:Y">Y</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes</a>&nbsp;<a href="allpackages-index.html">All&nbsp;Packages</a></div>

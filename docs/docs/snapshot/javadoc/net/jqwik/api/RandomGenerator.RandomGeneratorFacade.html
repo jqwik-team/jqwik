@@ -192,10 +192,11 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>abstract &lt;T,&#8203;U&gt;<br><a href="Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;U&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,int,long)">flatMap</a></span>&#8203;(<a href="Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&nbsp;wrappedShrinkable,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,int,long,boolean)">flatMap</a></span>&#8203;(<a href="Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&nbsp;wrappedShrinkable,
        java.util.function.Function&lt;T,&#8203;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;U&gt;&gt;&nbsp;mapper,
        int&nbsp;genSize,
-       long&nbsp;nextLong)</code></th>
+       long&nbsp;nextLong,
+       boolean&nbsp;withEmbeddedEdgeCases)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
@@ -283,7 +284,7 @@ extends java.lang.Object</pre>
                                                   long&nbsp;nextLong)</pre>
 </li>
 </ul>
-<a id="flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,int,long)">
+<a id="flatMap(net.jqwik.api.Shrinkable,java.util.function.Function,int,long,boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -292,7 +293,8 @@ extends java.lang.Object</pre>
 <pre class="methodSignature">public abstract&nbsp;&lt;T,&#8203;U&gt;&nbsp;<a href="Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;U&gt;&nbsp;flatMap&#8203;(<a href="Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&nbsp;wrappedShrinkable,
                                                   java.util.function.Function&lt;T,&#8203;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;U&gt;&gt;&nbsp;mapper,
                                                   int&nbsp;genSize,
-                                                  long&nbsp;nextLong)</pre>
+                                                  long&nbsp;nextLong,
+                                                  boolean&nbsp;withEmbeddedEdgeCases)</pre>
 </li>
 </ul>
 <a id="filter(net.jqwik.api.RandomGenerator,java.util.function.Predicate)">

@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6};
+var data = {"i0":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -127,7 +127,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dl>
 <hr>
 <pre>@API(status=EXPERIMENTAL,
-     since="1.4.1")
+     since="1.4.0")
 public interface <span class="typeNameLabel">PeriodArbitrary</span>
 extends <a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.time.Period&gt;</pre>
 <div class="block">Fluent interface to configure the generation of period values.</div>
@@ -170,26 +170,10 @@ extends <a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api"
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#daysBetween(int,int)">daysBetween</a></span>&#8203;(int&nbsp;min,
-           int&nbsp;max)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#between(java.time.Period,java.time.Period)">between</a></span>&#8203;(java.time.Period&nbsp;min,
+       java.time.Period&nbsp;max)</code></th>
 <td class="colLast">
-<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated day values.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#monthsBetween(int,int)">monthsBetween</a></span>&#8203;(int&nbsp;min,
-             int&nbsp;max)</code></th>
-<td class="colLast">
-<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated month values.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#yearsBetween(int,int)">yearsBetween</a></span>&#8203;(int&nbsp;min,
-            int&nbsp;max)</code></th>
-<td class="colLast">
-<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated year values.</div>
+<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated period.</div>
 </td>
 </tr>
 </table>
@@ -198,7 +182,7 @@ extends <a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api"
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;net.jqwik.api.<a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></h3>
-<code><a href="../../../api/Arbitrary.html#allValues()">allValues</a>, <a href="../../../api/Arbitrary.html#array(java.lang.Class)">array</a>, <a href="../../../api/Arbitrary.html#asGeneric()">asGeneric</a>, <a href="../../../api/Arbitrary.html#collect(java.util.function.Predicate)">collect</a>, <a href="../../../api/Arbitrary.html#dontShrink()">dontShrink</a>, <a href="../../../api/Arbitrary.html#edgeCases()">edgeCases</a>, <a href="../../../api/Arbitrary.html#edgeCases(java.util.function.Consumer)">edgeCases</a>, <a href="../../../api/Arbitrary.html#exhaustive()">exhaustive</a>, <a href="../../../api/Arbitrary.html#exhaustive(long)">exhaustive</a>, <a href="../../../api/Arbitrary.html#filter(java.util.function.Predicate)">filter</a>, <a href="../../../api/Arbitrary.html#fixGenSize(int)">fixGenSize</a>, <a href="../../../api/Arbitrary.html#flatMap(java.util.function.Function)">flatMap</a>, <a href="../../../api/Arbitrary.html#forEachValue(java.util.function.Consumer)">forEachValue</a>, <a href="../../../api/Arbitrary.html#generator(int)">generator</a>, <a href="../../../api/Arbitrary.html#ignoreException(java.lang.Class)">ignoreException</a>, <a href="../../../api/Arbitrary.html#injectDuplicates(double)">injectDuplicates</a>, <a href="../../../api/Arbitrary.html#injectNull(double)">injectNull</a>, <a href="../../../api/Arbitrary.html#isUnique()">isUnique</a>, <a href="../../../api/Arbitrary.html#iterator()">iterator</a>, <a href="../../../api/Arbitrary.html#list()">list</a>, <a href="../../../api/Arbitrary.html#map(java.util.function.Function)">map</a>, <a href="../../../api/Arbitrary.html#optional()">optional</a>, <a href="../../../api/Arbitrary.html#sample()">sample</a>, <a href="../../../api/Arbitrary.html#sampleStream()">sampleStream</a>, <a href="../../../api/Arbitrary.html#set()">set</a>, <a href="../../../api/Arbitrary.html#stream()">stream</a>, <a href="../../../api/Arbitrary.html#tuple1()">tuple1</a>, <a href="../../../api/Arbitrary.html#tuple2()">tuple2</a>, <a href="../../../api/Arbitrary.html#tuple3()">tuple3</a>, <a href="../../../api/Arbitrary.html#tuple4()">tuple4</a>, <a href="../../../api/Arbitrary.html#tuple5()">tuple5</a>, <a href="../../../api/Arbitrary.html#unique()">unique</a></code></li>
+<code><a href="../../../api/Arbitrary.html#allValues()">allValues</a>, <a href="../../../api/Arbitrary.html#array(java.lang.Class)">array</a>, <a href="../../../api/Arbitrary.html#asGeneric()">asGeneric</a>, <a href="../../../api/Arbitrary.html#collect(java.util.function.Predicate)">collect</a>, <a href="../../../api/Arbitrary.html#dontShrink()">dontShrink</a>, <a href="../../../api/Arbitrary.html#edgeCases()">edgeCases</a>, <a href="../../../api/Arbitrary.html#edgeCases(int)">edgeCases</a>, <a href="../../../api/Arbitrary.html#edgeCases(java.util.function.Consumer)">edgeCases</a>, <a href="../../../api/Arbitrary.html#exhaustive()">exhaustive</a>, <a href="../../../api/Arbitrary.html#exhaustive(long)">exhaustive</a>, <a href="../../../api/Arbitrary.html#filter(java.util.function.Predicate)">filter</a>, <a href="../../../api/Arbitrary.html#fixGenSize(int)">fixGenSize</a>, <a href="../../../api/Arbitrary.html#flatMap(java.util.function.Function)">flatMap</a>, <a href="../../../api/Arbitrary.html#forEachValue(java.util.function.Consumer)">forEachValue</a>, <a href="../../../api/Arbitrary.html#generator(int)">generator</a>, <a href="../../../api/Arbitrary.html#generator(int,boolean)">generator</a>, <a href="../../../api/Arbitrary.html#generatorWithEmbeddedEdgeCases(int)">generatorWithEmbeddedEdgeCases</a>, <a href="../../../api/Arbitrary.html#ignoreException(java.lang.Class)">ignoreException</a>, <a href="../../../api/Arbitrary.html#injectDuplicates(double)">injectDuplicates</a>, <a href="../../../api/Arbitrary.html#injectNull(double)">injectNull</a>, <a href="../../../api/Arbitrary.html#isUnique()">isUnique</a>, <a href="../../../api/Arbitrary.html#iterator()">iterator</a>, <a href="../../../api/Arbitrary.html#list()">list</a>, <a href="../../../api/Arbitrary.html#map(java.util.function.Function)">map</a>, <a href="../../../api/Arbitrary.html#optional()">optional</a>, <a href="../../../api/Arbitrary.html#sample()">sample</a>, <a href="../../../api/Arbitrary.html#sampleStream()">sampleStream</a>, <a href="../../../api/Arbitrary.html#set()">set</a>, <a href="../../../api/Arbitrary.html#stream()">stream</a>, <a href="../../../api/Arbitrary.html#tuple1()">tuple1</a>, <a href="../../../api/Arbitrary.html#tuple2()">tuple2</a>, <a href="../../../api/Arbitrary.html#tuple3()">tuple3</a>, <a href="../../../api/Arbitrary.html#tuple4()">tuple4</a>, <a href="../../../api/Arbitrary.html#tuple5()">tuple5</a>, <a href="../../../api/Arbitrary.html#unique()">unique</a>, <a href="../../../api/Arbitrary.html#withoutEdgeCases()">withoutEdgeCases</a></code></li>
 </ul>
 </li>
 </ul>
@@ -216,37 +200,15 @@ extends <a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api"
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="yearsBetween(int,int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>yearsBetween</h4>
-<pre class="methodSignature"><a href="PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a>&nbsp;yearsBetween&#8203;(int&nbsp;min,
-                             int&nbsp;max)</pre>
-<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated year values.</div>
-</li>
-</ul>
-<a id="monthsBetween(int,int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>monthsBetween</h4>
-<pre class="methodSignature"><a href="PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a>&nbsp;monthsBetween&#8203;(int&nbsp;min,
-                              int&nbsp;max)</pre>
-<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated month values.</div>
-</li>
-</ul>
-<a id="daysBetween(int,int)">
+<a id="between(java.time.Period,java.time.Period)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>daysBetween</h4>
-<pre class="methodSignature"><a href="PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a>&nbsp;daysBetween&#8203;(int&nbsp;min,
-                            int&nbsp;max)</pre>
-<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated day values.</div>
+<h4>between</h4>
+<pre class="methodSignature"><a href="PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">PeriodArbitrary</a>&nbsp;between&#8203;(java.time.Period&nbsp;min,
+                        java.time.Period&nbsp;max)</pre>
+<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated period.</div>
 </li>
 </ul>
 </li>

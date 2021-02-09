@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -206,12 +206,19 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;T</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#falsifyThenShrink(net.jqwik.api.RandomGenerator,java.util.Random,net.jqwik.api.Falsifier)">falsifyThenShrink</a></span>&#8203;(<a href="../RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;? extends T&gt;&nbsp;arbitrary,
+                 java.util.Random&nbsp;random,
+                 <a href="../Falsifier.html" title="interface in net.jqwik.api">Falsifier</a>&lt;T&gt;&nbsp;falsifier)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>abstract &lt;T&gt;&nbsp;T</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#shrink(net.jqwik.api.Shrinkable,net.jqwik.api.Falsifier,java.lang.Throwable)">shrink</a></span>&#8203;(<a href="../Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&nbsp;falsifiedShrinkable,
       <a href="../Falsifier.html" title="interface in net.jqwik.api">Falsifier</a>&lt;T&gt;&nbsp;falsifier,
       java.lang.Throwable&nbsp;originalError)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../lifecycle/ShrunkFalsifiedSample.html" title="interface in net.jqwik.api.lifecycle">ShrunkFalsifiedSample</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#shrinkToSample(net.jqwik.api.Shrinkable,net.jqwik.api.Falsifier,java.lang.Throwable)">shrinkToSample</a></span>&#8203;(<a href="../Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&nbsp;falsifiedShrinkable,
               <a href="../Falsifier.html" title="interface in net.jqwik.api">Falsifier</a>&lt;T&gt;&nbsp;falsifier,
@@ -287,6 +294,17 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>falsifyThenShrink</h4>
 <pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;T&nbsp;falsifyThenShrink&#8203;(<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&nbsp;arbitrary,
+                                        java.util.Random&nbsp;random,
+                                        <a href="../Falsifier.html" title="interface in net.jqwik.api">Falsifier</a>&lt;T&gt;&nbsp;falsifier)</pre>
+</li>
+</ul>
+<a id="falsifyThenShrink(net.jqwik.api.RandomGenerator,java.util.Random,net.jqwik.api.Falsifier)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>falsifyThenShrink</h4>
+<pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;T&nbsp;falsifyThenShrink&#8203;(<a href="../RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;? extends T&gt;&nbsp;arbitrary,
                                         java.util.Random&nbsp;random,
                                         <a href="../Falsifier.html" title="interface in net.jqwik.api">Falsifier</a>&lt;T&gt;&nbsp;falsifier)</pre>
 </li>
