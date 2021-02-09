@@ -9,8 +9,6 @@ import net.jqwik.web.api.*;
 public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements EmailArbitrary {
 
 	private boolean allowQuotedLocalPart = false;
-	private boolean allowUnquotedLocalPart = true;
-	private boolean allowDomainHost = true;
 	private boolean allowIPv4Host = false;
 	private boolean allowIPv6Host = false;
 
@@ -23,13 +21,9 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> localPart() {
-		if (!allowUnquotedLocalPart && !allowQuotedLocalPart) {
-			allowUnquotedLocalPart = true;
-			allowQuotedLocalPart = true;
-		}
 		Arbitrary<String> unquoted = localPartUnquoted();
 		Arbitrary<String> quoted = localPartQuoted();
-		int frequencyUnquoted = allowUnquotedLocalPart ? 4 : 0;
+		int frequencyUnquoted = 4;
 		int frequencyQuoted = allowQuotedLocalPart ? 1 : 0;
 		return Arbitraries.frequencyOf(
 				Tuple.of(frequencyUnquoted, unquoted),
@@ -66,12 +60,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> host() {
-		if (!allowDomainHost && !allowIPv4Host && !allowIPv6Host) {
-			allowDomainHost = true;
-			allowIPv4Host = true;
-			allowIPv6Host = true;
-		}
-		int frequencyDomain = allowDomainHost ? 4 : 0;
+		int frequencyDomain = 4;
 		int frequencyIPv4Addresses = allowIPv4Host ? 1 : 0;
 		int frequencyIPv6Addresses = allowIPv6Host ? 1 : 0;
 		return Arbitraries.frequencyOf(

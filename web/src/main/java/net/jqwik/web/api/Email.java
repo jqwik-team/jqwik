@@ -25,11 +25,6 @@ import static org.apiguardian.api.API.Status.*;
 public @interface Email {
 
 	/**
-	 * Are hosts with domain name allowed.
-	 */
-	boolean domainHost() default true;
-
-	/**
 	 * Are hosts with ipv6 addresses allowed.
 	 */
 	boolean ipv6Host() default false;
@@ -44,8 +39,4 @@ public @interface Email {
 	 */
 	boolean quotedLocalPart() default false;
 
-	/**
-	 * Are unquoted local parts allowed.
-	 */
-	boolean unquotedLocalPart() default true;
 }

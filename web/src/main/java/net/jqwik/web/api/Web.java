@@ -10,6 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  * This is the home for static methods to produce arbitraries for Web-related
  * domain types, like email addresses, ip addresses, domains, URLs etc.
  */
+@API(status = EXPERIMENTAL, since = "1.4.0")
 public class Web {
 
 	private Web() {

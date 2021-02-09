@@ -17,7 +17,6 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		Optional<Email> optionalEmail = targetType.findAnnotation(Email.class);
 		return optionalEmail.map(email -> {
-			checkValidEmailConfiguration(email);
 			EmailArbitrary emailArbitrary = Web.emails();
 			if (email.quotedLocalPart()) {
 				emailArbitrary = emailArbitrary.allowQuotedLocalPart();
@@ -30,17 +29,6 @@ public class EmailArbitraryProvider implements ArbitraryProvider {
 			}
 			return Collections.<Arbitrary<?>>singleton(emailArbitrary);
 		}).orElse(Collections.emptySet());
-	}
-
-	public void checkValidEmailConfiguration(Email email) {
-		if (!email.quotedLocalPart() && !email.unquotedLocalPart()) {
-			String message = "Email addresses require a quoted or unquoted local part.";
-			throw new JqwikException(message);
-		}
-		if (!email.domainHost() && !email.ipv4Host() && !email.ipv6Host()) {
-			String message = "Email addresses require some kind of host.";
-			throw new JqwikException(message);
-		}
 	}
 
 	@Override
