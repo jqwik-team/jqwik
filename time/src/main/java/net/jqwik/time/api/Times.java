@@ -1,7 +1,10 @@
 package net.jqwik.time.api;
 
+import java.util.*;
+
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.internal.properties.arbitraries.*;
 
@@ -21,6 +24,15 @@ public class Times {
 	 */
 	public static LocalTimeArbitrary times() {
 		return new DefaultLocalTimeArbitrary();
+	}
+
+	/**
+	 * Create an arbitrary that generates instances of {@linkplain java.util.TimeZone}.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	public static Arbitrary<TimeZone> timeZones() {
+		return Arbitraries.of(TimeZone.getAvailableIDs()).map(TimeZone::getTimeZone);
 	}
 
 }
