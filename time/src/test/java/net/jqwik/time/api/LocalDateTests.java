@@ -500,7 +500,7 @@ class LocalDateTests {
 		private void checkDayOfWeekCoverage(StatisticsCoverage coverage) {
 			DayOfWeek[] dayOfWeeks = DayOfWeek.class.getEnumConstants();
 			for (DayOfWeek dayOfWeek : dayOfWeeks) {
-				coverage.check(dayOfWeek).percentage(p -> p >= 10);
+				coverage.check(dayOfWeek).percentage(p -> p >= 9);
 			}
 		}
 
