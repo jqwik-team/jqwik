@@ -18,7 +18,7 @@ import static org.apiguardian.api.API.Status.*;
 public interface EmailArbitrary extends Arbitrary<String> {
 
 	/**
-	 * Allow the local part of an email to be quoted  inside {@linkplain "}.
+	 * Allow the local part of an email to be quoted within {@literal "} characters.
 	 *
 	 * @return new instance of arbitrary
 	 */
