@@ -132,7 +132,8 @@ and
 
 #### Bug Fixes
 
-There are currently no known bugs.
+- Fixed bug that could lead to strange edge case generation behaviour 
+  when `Arbitrary.edgeCases(edgeCasesConfig)` was used.
 
 ## 1.3.x
 
