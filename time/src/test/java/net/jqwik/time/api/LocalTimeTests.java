@@ -67,19 +67,29 @@ class LocalTimeTests {
 			assertThat(time).isNotNull();
 		}
 
+		@Provide
+		Arbitrary<LocalTime> worstCase() {
+			return Times.times().between(LocalTime.of(22, 59, 59, 999_999_998), LocalTime.of(23, 0, 0, 1));
+		}
+
 		@Property
 		void worstCaseTimeGeneration2(@ForAll("worstCase2") LocalTime time) {
 			assertThat(time).isNotNull();
 		}
 
 		@Provide
-		Arbitrary<LocalTime> worstCase() {
-			return Times.times().between(LocalTime.of(22, 59, 59, 999_999_998), LocalTime.of(23, 0, 0, 1));
+		Arbitrary<LocalTime> worstCase2() {
+			return Times.times().minuteBetween(0, 1).secondBetween(0, 1);
+		}
+
+		@Property
+		void validTimeZoneIsGenerated(@ForAll("timeZones") TimeZone timeZone) {
+			assertThat(timeZone).isNotNull();
 		}
 
 		@Provide
-		Arbitrary<LocalTime> worstCase2() {
-			return Times.times().minuteBetween(0, 1).secondBetween(0, 1);
+		Arbitrary<TimeZone> timeZones() {
+			return Times.timeZones();
 		}
 
 	}
