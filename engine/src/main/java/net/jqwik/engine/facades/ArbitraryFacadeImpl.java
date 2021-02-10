@@ -220,6 +220,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			public RandomGenerator<T> generator(int genSize, boolean withEdgeCases) {
 				return super.generator(genSize);
 			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return EdgeCases.none();
+			}
 		};
 	}
 }

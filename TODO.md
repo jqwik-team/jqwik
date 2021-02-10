@@ -31,7 +31,9 @@
         - Generate Instant, LocalTime, ZonedTime etc.
     
     - Web Module:
-        - Web.ipv4Addresses()|ipv6Addresses()|domains()
+        - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
+
+    - StringArbitrary.notBlank() + `@NotBlank`
 
     - EdgeCases.Configuration.withProbability(double injectProbability)
 

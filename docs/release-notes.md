@@ -35,6 +35,9 @@ and
 - Using `@Property(edgeCases = NONE)` will now also suppress the generation of 
   edge cases in embedded arbitraries.
 
+- You now have the capability to configure an 
+  [arbitrary's edge case generation](/docs/snapshot/user-guide.html#configuring-edge-cases-themselves).
+
 - There is a new annotation attribute `@Property.whenSeedFixed` and a new
   [configuration parameter](/docs/snapshot/user-guide.html#jqwik-configuration)
   `jqwik.seeds.whenfixed`

@@ -1,6 +1,5 @@
 package net.jqwik.api;
 
-import java.math.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -37,10 +36,9 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		Config<T> none();
 
 		/**
-		 * Only include edge cases for which {@linkplain #filter(Predicate)}  returns true
+		 * Only include default edge cases for which {@linkplain #filter(Predicate)}  returns true
 		 *
 		 * @param filter A predicate
-		 *
 		 * @return same configuration instance
 		 */
 		Config<T> filter(Predicate<T> filter);
@@ -56,20 +54,18 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		 * </p>
 		 *
 		 * @param edgeCases The edge cases to add to default edge cases.
-		 *
 		 * @return same configuration instance
 		 */
-		Config<T> add(T ... edgeCases);
+		Config<T> add(T... edgeCases);
 
 		/**
-		 * Include the values given if they are in the generated edge cases anyway
+		 * Include only the values given; and only if they are in the set of default edge cases
 		 *
 		 * @param includedValues The values to be included
-		 *
 		 * @return same configuration instance
 		 */
 		@SuppressWarnings("unchecked")
-		Config<T> includeOnly(T ... includedValues);
+		Config<T> includeOnly(T... includedValues);
 	}
 
 	List<Supplier<Shrinkable<T>>> suppliers();
