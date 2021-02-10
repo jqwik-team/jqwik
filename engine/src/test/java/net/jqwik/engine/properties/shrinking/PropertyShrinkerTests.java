@@ -151,6 +151,7 @@ class PropertyShrinkerTests {
 		}
 
 		@Example
+		@SuppressLogging
 		void withBoundedShrinkingBreakOffAfter1Second() {
 			List<Shrinkable<Object>> shrinkables = asList(new ShrinkableTypesForTest.SlowShrinkable(20).asGeneric());
 			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.BOUNDED, 1);

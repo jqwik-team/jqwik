@@ -1,10 +1,13 @@
 - 1.4.0
 
     - Edge Cases
-        - EdgeCases.Configuration.withProbability(double injectProbability)
         - Add documentation for Arbitrary.edgeCases(configuration)
     
 - 1.4.x
+
+    - Create possibility/annotation to suppress reporting inside of a test/property but not lose
+      reporting of property's results. May require a new lifecycle hook.
+        - Apply annotation wherever reporting is test collateral
 
     - @StatisticsReportFormat
       https://github.com/jlink/jqwik/issues/146
@@ -29,6 +32,8 @@
     
     - Web Module:
         - Web.ipv4Addresses()|ipv6Addresses()|domains()
+
+    - EdgeCases.Configuration.withProbability(double injectProbability)
 
     - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
       https://github.com/jlink/jqwik/issues/121

@@ -9,9 +9,11 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.providers.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressLogging
 @Group
 class RegisteredArbitraryProvidersTests {
 

@@ -21,8 +21,9 @@ import static net.jqwik.testing.TestingFalsifier.*;
 @Label("FlatMappedShrinkable")
 class FlatMappedShrinkableTests {
 
-	@Example
+	@Property(tries = 5, edgeCases = EdgeCasesMode.NONE)
 	void creation(@ForAll long seed) {
+		Assume.that(seed != 0L); // In very rare cases
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Function<Integer, Arbitrary<String>> flatMapper = anInt -> Arbitraries.strings().alpha().ofLength(anInt);
 		Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);

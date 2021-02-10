@@ -24,6 +24,7 @@ import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*
 
 import static net.jqwik.engine.JqwikUniqueIdBuilder.*;
 
+@SuppressLogging
 class DiscoveryTests {
 
 	private final JqwikTestEngine testEngine = new JqwikTestEngine();

@@ -27,13 +27,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		List<EdgeCases<Object>> listOfEdgeCases = listOfEdgeCases(parameters, arbitraryResolver, edgeCasesMode, genSize);
 		int edgeCasesTotal = calculateEdgeCasesTotal(listOfEdgeCases);
 
-		if (edgeCasesTotal >= genSize && genSize > 1) {
-			String message = String.format(
-					"Edge case generation exceeds number of tries. Stopped after %s generated cases.",
-					edgeCasesTotal
-			);
-			LOG.log(Level.INFO, message);
-		}
+		logEdgecasesOutnumberTriesIfApplicable(genSize, edgeCasesTotal);
 
 		return new RandomizedShrinkablesGenerator(
 			randomShrinkablesGenerator(parameters, arbitraryResolver, genSize, edgeCasesMode.activated()),
@@ -43,6 +37,17 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 			calculateBaseToEdgeCaseRatio(listOfEdgeCases, genSize),
 			random
 		);
+	}
+
+	private static void logEdgecasesOutnumberTriesIfApplicable(int genSize, int edgeCasesTotal) {
+		int logEdgeCasesExceedTriesLimit = max(genSize, 100);
+		if (edgeCasesTotal >= logEdgeCasesExceedTriesLimit && genSize > 1) {
+			String message = String.format(
+					"Edge case generation exceeds number of tries. Stopped after %s generated cases.",
+					edgeCasesTotal
+			);
+			LOG.log(Level.INFO, message);
+		}
 	}
 
 	private static int calculateEdgeCasesTotal(final List<EdgeCases<Object>> listOfEdgeCases) {

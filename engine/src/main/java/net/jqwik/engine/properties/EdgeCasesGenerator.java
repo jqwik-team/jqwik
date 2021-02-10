@@ -10,16 +10,15 @@ import static java.lang.Math.*;
 
 public class EdgeCasesGenerator implements Iterator<List<Shrinkable<Object>>> {
 
-	// TODO: This may not be the best place for this shared functionality
 	// Caveat: Always make sure that the number is greater than 1.
 	// Otherwise only edge cases will be generated
+	// Currently the value is always between 5 and 20
 	public static int calculateBaseToEdgeCaseRatio(int genSize, int countEdgeCases) {
 		return min(
-			max(genSize / countEdgeCases, 3),
+			max(genSize / countEdgeCases, 5),
 			20
 		);
 	}
-
 
 	private final List<EdgeCases<Object>> edgeCases;
 	private final Iterator<List<Shrinkable<Object>>> iterator;

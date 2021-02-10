@@ -1,7 +1,9 @@
 package net.jqwik.api.edgeCases;
 
 import net.jqwik.api.*;
+import net.jqwik.testing.*;
 
+@SuppressLogging
 class EdgeCasesExceedLimitTests {
 
 	@Property(edgeCases = EdgeCasesMode.MIXIN)
