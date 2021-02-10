@@ -653,7 +653,7 @@ class LocalTimeTests {
 			@Example
 			void all() {
 				LocalTimeArbitrary times = Times.times().constrainPrecision(HOURS);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(0, 0, 0, 0),
@@ -667,7 +667,7 @@ class LocalTimeTests {
 						Times.times()
 							 .constrainPrecision(HOURS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(12, 0, 0, 0),
@@ -681,7 +681,7 @@ class LocalTimeTests {
 						Times.times()
 							 .constrainPrecision(HOURS)
 							 .hourBetween(11, 12);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 0, 0, 0),
@@ -697,7 +697,7 @@ class LocalTimeTests {
 			@Example
 			void all() {
 				LocalTimeArbitrary times = Times.times().constrainPrecision(MINUTES);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(0, 0, 0, 0),
@@ -711,7 +711,7 @@ class LocalTimeTests {
 						Times.times()
 							 .constrainPrecision(MINUTES)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 24, 0, 0),
@@ -726,7 +726,7 @@ class LocalTimeTests {
 							 .constrainPrecision(MINUTES)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 23, 0, 0),
@@ -742,7 +742,7 @@ class LocalTimeTests {
 			@Example
 			void all() {
 				LocalTimeArbitrary times = Times.times().constrainPrecision(SECONDS);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(0, 0, 0, 0),
@@ -756,7 +756,7 @@ class LocalTimeTests {
 						Times.times()
 							 .constrainPrecision(SECONDS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 23, 22, 0),
@@ -772,7 +772,7 @@ class LocalTimeTests {
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 23, 5, 0),
@@ -788,7 +788,7 @@ class LocalTimeTests {
 			@Example
 			void all() {
 				LocalTimeArbitrary times = Times.times();
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(0, 0, 0, 0),
@@ -801,7 +801,7 @@ class LocalTimeTests {
 				LocalTimeArbitrary times =
 						Times.times()
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 23, 21, 302_000_000),
@@ -816,7 +816,7 @@ class LocalTimeTests {
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 23, 5, 0),
@@ -832,7 +832,7 @@ class LocalTimeTests {
 			@Example
 			void all() {
 				LocalTimeArbitrary times = Times.times().constrainPrecision(MICROS);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(0, 0, 0, 0),
@@ -846,7 +846,7 @@ class LocalTimeTests {
 						Times.times()
 							 .constrainPrecision(MICROS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 23, 21, 301_429_000),
@@ -862,7 +862,7 @@ class LocalTimeTests {
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 23, 5, 0),
@@ -878,7 +878,7 @@ class LocalTimeTests {
 			@Example
 			void all() {
 				LocalTimeArbitrary times = Times.times().constrainPrecision(NANOS);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(0, 0, 0, 0),
@@ -892,7 +892,7 @@ class LocalTimeTests {
 						Times.times()
 							 .constrainPrecision(NANOS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 23, 21, 301_428_111),
@@ -908,7 +908,7 @@ class LocalTimeTests {
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10);
-				Set<LocalTime> edgeCases = collectEdgeCases(times.edgeCases());
+				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
 						LocalTime.of(11, 23, 5, 0),

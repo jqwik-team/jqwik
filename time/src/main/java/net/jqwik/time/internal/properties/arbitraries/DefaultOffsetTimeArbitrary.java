@@ -28,7 +28,7 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 	private int secondMin = -1;
 	private int secondMax = -1;
 
-	private ChronoUnit precision = null;
+	private ChronoUnit ofPrecision = null;
 
 	@Override
 	protected Arbitrary<OffsetTime> arbitrary() {
@@ -55,8 +55,8 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 			localTimes = localTimes.secondBetween(secondMin, secondMax);
 		}
 
-		if (precision != null) {
-			localTimes = localTimes.constrainPrecision(precision);
+		if (ofPrecision != null) {
+			localTimes = localTimes.constrainPrecision(ofPrecision);
 		}
 
 		return localTimes.map(v -> OffsetTime.of(v, ZoneOffset.MIN));
@@ -140,15 +140,16 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 	}
 
 	@Override
-	public OffsetTimeArbitrary constrainPrecision(ChronoUnit precision) {
-		if (!(precision.equals(HOURS) || precision.equals(MINUTES) || precision.equals(SECONDS) || precision.equals(MILLIS) || precision
-																																	   .equals(MICROS) || precision
-																																								  .equals(NANOS))) {
+	public OffsetTimeArbitrary constrainPrecision(ChronoUnit ofPrecision) {
+		if (!(ofPrecision.equals(HOURS) || ofPrecision.equals(MINUTES) || ofPrecision.equals(SECONDS) || ofPrecision
+																												 .equals(MILLIS) || ofPrecision
+																																			.equals(MICROS) || ofPrecision
+																																									   .equals(NANOS))) {
 			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
 		}
 
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.precision = precision;
+		clone.ofPrecision = ofPrecision;
 		return clone;
 	}
 
