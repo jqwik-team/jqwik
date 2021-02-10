@@ -902,7 +902,7 @@ class OffsetTimeTests {
 		}
 
 		@Property
-		void milliseconds(@ForAll("times") OffsetTime time) {
+		void milliseconds(@ForAll("precisionMilliseconds") OffsetTime time) {
 
 			Statistics.label("Milliseconds x--")
 					  .collect(time.getNano() / 100_000_000)
@@ -1064,7 +1064,7 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("times") OffsetTime startTime,
+						@ForAll("precisionNanoseconds") OffsetTime startTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
@@ -1076,7 +1076,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(HOURS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1087,7 +1087,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().atTheEarliest(time).constrainPrecision(HOURS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1103,7 +1103,7 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("times") OffsetTime startTime,
+						@ForAll("precisionNanoseconds") OffsetTime startTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
@@ -1115,7 +1115,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(MINUTES).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1126,7 +1126,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().atTheEarliest(time).constrainPrecision(MINUTES).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1142,7 +1142,7 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("times") OffsetTime startTime,
+						@ForAll("precisionNanoseconds") OffsetTime startTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
@@ -1154,7 +1154,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(SECONDS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1169,7 +1169,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().atTheEarliest(finalTime).constrainPrecision(SECONDS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1185,7 +1185,7 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionMicroseconds") OffsetTime startTime,
+						@ForAll("precisionNanoseconds") OffsetTime startTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
@@ -1197,7 +1197,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(MILLIS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1212,7 +1212,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().atTheEarliest(finalTime).constrainPrecision(MILLIS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1240,7 +1240,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(MICROS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1255,7 +1255,7 @@ class OffsetTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().atTheEarliest(finalTime).constrainPrecision(MICROS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
