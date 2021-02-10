@@ -563,6 +563,7 @@ class LocalTimeTests {
 		void precisionMillis() {
 			Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
 					Times.times()
+						 .constrainPrecision(MILLIS)
 						 .between(
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 22, 33, 395_214_325)
@@ -587,7 +588,6 @@ class LocalTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 22, 36, 395_214_325)
 						 )
-						 .constrainPrecision(SECONDS)
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -741,7 +741,7 @@ class LocalTimeTests {
 
 			@Example
 			void all() {
-				LocalTimeArbitrary times = Times.times().constrainPrecision(SECONDS);
+				LocalTimeArbitrary times = Times.times();
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -754,7 +754,6 @@ class LocalTimeTests {
 			void between() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(SECONDS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -768,7 +767,6 @@ class LocalTimeTests {
 			void betweenSecond() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(SECONDS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10);
@@ -787,7 +785,7 @@ class LocalTimeTests {
 
 			@Example
 			void all() {
-				LocalTimeArbitrary times = Times.times();
+				LocalTimeArbitrary times = Times.times().constrainPrecision(MILLIS);
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -800,6 +798,7 @@ class LocalTimeTests {
 			void between() {
 				LocalTimeArbitrary times =
 						Times.times()
+							 .constrainPrecision(MILLIS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -813,6 +812,7 @@ class LocalTimeTests {
 			void betweenSecond() {
 				LocalTimeArbitrary times =
 						Times.times()
+							 .constrainPrecision(MILLIS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10);
@@ -945,7 +945,7 @@ class LocalTimeTests {
 		}
 
 		@Property
-		void milliseconds(@ForAll("times") LocalTime time) {
+		void milliseconds(@ForAll("precisionMilliseconds") LocalTime time) {
 
 			Statistics.label("Milliseconds x--")
 					  .collect(time.getNano() / 100_000_000)
@@ -1107,7 +1107,7 @@ class LocalTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("times") LocalTime startTime,
+						@ForAll("precisionNanoseconds") LocalTime startTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
@@ -1119,7 +1119,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().between(startTime, endTime).constrainPrecision(HOURS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1130,7 +1130,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().atTheEarliest(time).constrainPrecision(HOURS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1146,7 +1146,7 @@ class LocalTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("times") LocalTime startTime,
+						@ForAll("precisionNanoseconds") LocalTime startTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
@@ -1158,7 +1158,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().between(startTime, endTime).constrainPrecision(MINUTES).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1169,7 +1169,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().atTheEarliest(time).constrainPrecision(MINUTES).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1185,7 +1185,7 @@ class LocalTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("times") LocalTime startTime,
+						@ForAll("precisionNanoseconds") LocalTime startTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
@@ -1197,7 +1197,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().between(startTime, endTime).constrainPrecision(SECONDS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1212,7 +1212,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().atTheEarliest(finalTime).constrainPrecision(SECONDS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1228,7 +1228,7 @@ class LocalTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionMicroseconds") LocalTime startTime,
+						@ForAll("precisionNanoseconds") LocalTime startTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
@@ -1240,7 +1240,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().between(startTime, endTime).constrainPrecision(MILLIS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1255,7 +1255,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().atTheEarliest(finalTime).constrainPrecision(MILLIS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1283,7 +1283,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().between(startTime, endTime).constrainPrecision(MICROS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
@@ -1298,7 +1298,7 @@ class LocalTimeTests {
 
 					assertThatThrownBy(
 							() -> Times.times().atTheEarliest(finalTime).constrainPrecision(MICROS).generator(1000)
-					).isInstanceOf(TooManyFilterMissesException.class);
+					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 

@@ -33,16 +33,10 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	protected Arbitrary<LocalTime> arbitrary() {
 
 		LocalTime effectiveMin;
-		try {
-			effectiveMin = calculateEffectiveMin();
-		} catch (NoValuesCanBeGeneratedException e) {
-			//TODO: Other Exception??
-			throw new TooManyFilterMissesException(e.getMessage());
-		}
+		effectiveMin = calculateEffectiveMin();
 		LocalTime effectiveMax = calculateEffectiveMax();
 		if (effectiveMax.isBefore(effectiveMin)) {
-			//TODO: Other Exception??
-			throw new TooManyFilterMissesException("The maximum time is too soon after the minimum time.");
+			throw new IllegalArgumentException("The maximum time is too soon after the minimum time.");
 		}
 		calculateEffectiveValues(effectiveMin, effectiveMax);
 
@@ -144,7 +138,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 			}
 		}
 		if (startEffective.isAfter(effective)) {
-			throw new NoValuesCanBeGeneratedException("Hour is 23 and must be increased by 1.");
+			throw new IllegalArgumentException("Hour is 23 and must be increased by 1.");
 		}
 		return effective;
 	}
@@ -208,12 +202,6 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 				secondMin = effectiveMin.getSecond();
 				secondMax = effectiveMax.getSecond();
 			}
-		}
-	}
-
-	private class NoValuesCanBeGeneratedException extends RuntimeException {
-		NoValuesCanBeGeneratedException(String msg) {
-			super(msg);
 		}
 	}
 
