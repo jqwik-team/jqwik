@@ -56,7 +56,7 @@ publishing {
 
 signing {
 	if (!isSnapshotRelease) {
-		sign publishing.publications.jqwikEngine
+		sign publishing.publications.jqwikTime
 	}
 }
 

@@ -1,8 +1,3 @@
-- 1.4.0
-
-    - Edge Cases
-        - Add documentation for Arbitrary.edgeCases(configuration)
-    
 - 1.4.x
 
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
