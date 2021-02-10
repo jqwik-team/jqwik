@@ -27,7 +27,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	private int secondMin = 0;
 	private int secondMax = 59;
 
-	private ChronoUnit precision = MILLIS;
+	private ChronoUnit ofPrecision = SECONDS;
 
 	@Override
 	protected Arbitrary<LocalTime> arbitrary() {
@@ -66,7 +66,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	private LocalTime calculateLocalTime(long longAdd, LocalTime effectiveMin) {
-		switch (precision) {
+		switch (ofPrecision) {
 			case HOURS:
 				return effectiveMin.plusHours(longAdd);
 			case MINUTES:
@@ -83,7 +83,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	private long calculateLongEnd(LocalTime effectiveMin, LocalTime effectiveMax) {
-		switch (precision) {
+		switch (ofPrecision) {
 			case HOURS:
 				return HOURS.between(effectiveMin, effectiveMax);
 			case MINUTES:
@@ -150,7 +150,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	private int calculateCompareValue() {
-		switch (precision) {
+		switch (ofPrecision) {
 			case HOURS:
 				return 5;
 			case MINUTES:
@@ -183,7 +183,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	private LocalTime calculateEffectiveMaxWithPrecision(LocalTime effective) {
-		switch (precision) {
+		switch (ofPrecision) {
 			case HOURS:
 				effective = effective.withMinute(0);
 			case MINUTES:
@@ -294,15 +294,16 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	@Override
-	public LocalTimeArbitrary constrainPrecision(ChronoUnit precision) {
-		if (!(precision.equals(HOURS) || precision.equals(MINUTES) || precision.equals(SECONDS) || precision.equals(MILLIS) || precision
-																																	   .equals(MICROS) || precision
-																																								  .equals(NANOS))) {
+	public LocalTimeArbitrary constrainPrecision(ChronoUnit ofPrecision) {
+		if (!(ofPrecision.equals(HOURS) || ofPrecision.equals(MINUTES) || ofPrecision.equals(SECONDS) || ofPrecision
+																												 .equals(MILLIS) || ofPrecision
+																																			.equals(MICROS) || ofPrecision
+																																									   .equals(NANOS))) {
 			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
 		}
 
 		DefaultLocalTimeArbitrary clone = typedClone();
-		clone.precision = precision;
+		clone.ofPrecision = ofPrecision;
 		return clone;
 	}
 
