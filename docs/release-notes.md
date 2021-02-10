@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.4.0-SNAPSHOT](#140-snapshot)
+- [1.4.0](#140)
 - [1.3.x](#13x)
 - [1.2.x](#12x)
 - [1.1.x](#11x)
@@ -19,12 +19,12 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.4.0-SNAPSHOT
+## 1.4.0
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.4.0/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.4.0/javadoc/index.html">javadoc</a>
 </p>
 
 
@@ -36,10 +36,10 @@ and
   edge cases in embedded arbitraries.
 
 - You now have the capability to configure an 
-  [arbitrary's edge case generation](/docs/snapshot/user-guide.html#configuring-edge-cases-themselves).
+  [arbitrary's edge case generation](/docs/1.4.0/user-guide.html#configuring-edge-cases-themselves).
 
 - There is a new annotation attribute `@Property.whenSeedFixed` and a new
-  [configuration parameter](/docs/snapshot/user-guide.html#jqwik-configuration)
+  [configuration parameter](/docs/1.4.0/user-guide.html#jqwik-configuration)
   `jqwik.seeds.whenfixed`
   to warn or even fail when a property has been given a fixed random seed. 
   See [this issued](https://github.com/jlink/jqwik/issues/138) for more details.
@@ -49,27 +49,27 @@ and
 
     - `Arbitrary.unique()` and the annotation `@Unique` are now deprecated and will
       be removed in version 1.5.
-    - [Uniqueness constraints](/docs/snapshot/user-guide.html#uniqueness-constraints) 
+    - [Uniqueness constraints](/docs/1.4.0/user-guide.html#uniqueness-constraints) 
       are now handled by the elements' container.
-    - The new [annotation to require uniqueness](/docs/snapshot/user-guide.html#unique-elements) 
+    - The new [annotation to require uniqueness](/docs/1.4.0/user-guide.html#unique-elements) 
       is called `@UniqueElements` and applied to the container's type.
 
 - Arbitraries modified through `Arbitrary.unique()`, which is deprecated anyway,
   no longer generate edge cases. This is actually a bug fix since the
   generated edge were not considered for uniqueness.
 
-- There's a new [jqwik module `jqwik-time`](/docs/snapshot/user-guide.html#time-module)
+- There's a new [jqwik module `jqwik-time`](/docs/1.4.0/user-guide.html#time-module)
   which simplifies the generation of dates (and times in a future release).
   Many thanks to [zinki97](https://github.com/zinki97) for this contribution.
 
-- There's a new [jqwik module `jqwik-web`](/docs/snapshot/user-guide.html#web-module)
+- There's a new [jqwik module `jqwik-web`](/docs/1.4.0/user-guide.html#web-module)
   which is currently home of email addresses generation.
 
 - Configuration parameters are now loaded via JUnit's
   [Configuration Parameters](https://junit.org/junit5/docs/current/user-guide/#running-tests-config-params) mechanism.
   Parameters specified in `jqwik.properties` continue to work, but are considered deprecated.
   Log messages will be emitted for any used properties with their new name.
-  Some [parameter names](/docs/snapshot/user-guide.html#jqwik-configuration) have also changed.
+  Some [parameter names](/docs/1.4.0/user-guide.html#jqwik-configuration) have also changed.
   Many thanks to [osi](https://github.com/osi) for this contribution.
 
 - Using internal Kotlin methods as properties will now produce the correct name
@@ -110,11 +110,11 @@ and
 #### Breaking Changes
 
 - `Arbitraries.emails()` has been moved to `net.jqwik.web.api.Web.emails()` in new 
-  [Web module](/docs/snapshot/user-guide.html#web-module).
+  [Web module](/docs/1.4.0/user-guide.html#web-module).
 
 - `@net.jqwik.api.constraints.Email` annotation has been moved to 
   `@net.jqwik.web.api.Email` in new 
-  [Web module](/docs/snapshot/user-guide.html#web-module).
+  [Web module](/docs/1.4.0/user-guide.html#web-module).
 
 - Parameters annotated with `@Email` will by default only generate
   "standard" email addresses.
