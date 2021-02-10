@@ -155,6 +155,7 @@ title: jqwik User Guide - 1.4.0-SNAPSHOT
 - [Generation from a Type's Interface](#generation-from-a-types-interface)
 - [Generation of Edge Cases](#generation-of-edge-cases)
   - [Configuring Edge Case Injection](#configuring-edge-case-injection)
+  - [Configuring Edge Cases Themselves](#configuring-edge-cases-themselves)
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
 - [Rerunning Falsified Properties](#rerunning-falsified-properties)
@@ -3817,6 +3818,45 @@ void combinedEdgeCasesOfTwoParameters(
 }
 ```
 
+If you want to suppress edge case generation for a single arbitrary that's also possible:
+Just use `Arbitrary.withoutEdgeCases()`. 
+Running the following property will regularly create empty lists - because - this is one
+of the default list edge cases, but it will not create integer values of `0`, `1`, `-1` etc.
+with higher probability.
+
+```java
+@Property
+void noNumberEdgeCases(@ForAll List<@From("withoutEdgeCases") Integer> intList) {
+  System.out.println(intList);
+}
+
+@Provide
+Arbitrary<Integer> withoutEdgeCases() {
+  return Arbitraries.integers().withoutEdgeCases();}
+```
+
+### Configuring Edge Cases Themselves
+
+Besides switching edge cases completely off, you can also filter some edge cases out,
+include only certain ones or add new ones. 
+This is done through [`Arbitrary.edgeCases(config)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#edgeCases(java.util.function.Consumer)). 
+Here's an example that shows how to add a few "special" strings to a generator:
+
+```java
+@Property
+void stringsWithSpecialEdgeCases(@ForAll("withSpecials") String aString) {
+  System.out.println(aString);
+}
+
+@Provide
+Arbitrary<String> withSpecials() {
+  return Arbitraries.strings()
+          .alpha().ofMinLength(1).ofMaxLength(10)
+          .edgeCases(stringConfig -> {
+            stringConfig.add("hello", "hallo", "hi");
+          });
+}
+```
 
 
 ## Exhaustive Generation
