@@ -5,9 +5,12 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.testing.*;
+import net.jqwik.time.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
@@ -201,6 +204,138 @@ class ZoneOffsetTests {
 	}
 
 	@Group
+	class Shrinking {
+
+		@Property
+		void defaultShrinking(@ForAll Random random) {
+			ZoneOffsetArbitrary offsets = Times.zoneOffsets();
+			ZoneOffset value = falsifyThenShrink(offsets, random);
+			assertThat(value).isEqualTo(ZoneOffset.of("Z"));
+		}
+
+		@Property
+		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
+			ZoneOffset shrinksTo = ZoneOffset.ofHoursMinutesSeconds(2, 14, 33);
+			ZoneOffsetArbitrary offsets = Times.zoneOffsets();
+			TestingFalsifier<ZoneOffset> falsifier = offset -> offset.getTotalSeconds() < shrinksTo.getTotalSeconds();
+			ZoneOffset value = falsifyThenShrink(offsets, random, falsifier);
+			assertThat(value).isEqualTo(shrinksTo);
+		}
+
+		@Property
+		void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
+			ZoneOffset shrinksTo = ZoneOffset.ofHoursMinutesSeconds(-2, -14, -33);
+			ZoneOffsetArbitrary offsets = Times.zoneOffsets();
+			TestingFalsifier<ZoneOffset> falsifier = offset -> offset.getTotalSeconds() > shrinksTo.getTotalSeconds();
+			ZoneOffset value = falsifyThenShrink(offsets, random, falsifier);
+			assertThat(value).isEqualTo(shrinksTo);
+		}
+
+	}
+
+	@Group
+	class ExhaustiveGeneration {
+
+		@Example
+		void between() {
+			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
+					Times.zoneOffsets()
+						 .between(
+								 ZoneOffset.ofHoursMinutesSeconds(11, 59, 58),
+								 ZoneOffset.ofHoursMinutesSeconds(12, 0, 2)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(5); // Cannot know the number of filtered elements in advance
+			assertThat(generator).containsExactly(
+					ZoneOffset.ofHoursMinutesSeconds(11, 59, 58),
+					ZoneOffset.ofHoursMinutesSeconds(11, 59, 59),
+					ZoneOffset.ofHoursMinutesSeconds(12, 0, 0),
+					ZoneOffset.ofHoursMinutesSeconds(12, 0, 1),
+					ZoneOffset.ofHoursMinutesSeconds(12, 0, 2)
+			);
+		}
+
+	}
+
+	@Group
+	class EdgeCasesTests {
+
+		@Example
+		void all() {
+			ZoneOffsetArbitrary offsets = Times.zoneOffsets();
+			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+			assertThat(edgeCases).hasSize(3);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					ZoneOffset.MIN,
+					ZoneOffset.of("Z"),
+					ZoneOffset.MAX
+			);
+		}
+
+		@Example
+		void betweenPositive() {
+			ZoneOffsetArbitrary offsets =
+					Times.zoneOffsets()
+						 .between(ZoneOffset.ofHoursMinutesSeconds(11, 23, 21), ZoneOffset.ofHoursMinutesSeconds(16, 15, 19));
+			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					ZoneOffset.ofHoursMinutesSeconds(11, 23, 21),
+					ZoneOffset.ofHoursMinutesSeconds(16, 15, 19)
+			);
+		}
+
+		@Example
+		void betweenNegative() {
+			ZoneOffsetArbitrary offsets =
+					Times.zoneOffsets()
+						 .between(ZoneOffset.ofHoursMinutesSeconds(-16, -15, -19), ZoneOffset.ofHoursMinutesSeconds(-11, -23, -21));
+			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					ZoneOffset.ofHoursMinutesSeconds(-11, -23, -21),
+					ZoneOffset.ofHoursMinutesSeconds(-16, -15, -19)
+			);
+		}
+
+		@Example
+		@Disabled("TODO")
+		void betweenMethodsPositive() {
+			ZoneOffsetArbitrary offsets =
+					Times.zoneOffsets()
+						 .hourBetween(11, 12)
+						 .minuteBetween(23, 24)
+						 .secondBetween(21, 22);
+			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					ZoneOffset.ofHoursMinutesSeconds(11, 23, 21),
+					ZoneOffset.ofHoursMinutesSeconds(12, 24, 22)
+			);
+		}
+
+		@Example
+		@Disabled("TODO")
+		void betweenMethodsNegative() {
+			ZoneOffsetArbitrary offsets =
+					Times.zoneOffsets()
+						 .hourBetween(-12, -11)
+						 .minuteBetween(23, 24)
+						 .secondBetween(21, 22);
+			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					ZoneOffset.ofHoursMinutesSeconds(-11, -23, -21),
+					ZoneOffset.ofHoursMinutesSeconds(-12, -24, -22)
+			);
+		}
+
+	}
+
+	@Group
 	class CheckEqualDistribution {
 
 		@Property
@@ -215,9 +350,42 @@ class ZoneOffsetTests {
 					  });
 		}
 
+		@Property
+		void hours(@ForAll("offsets") ZoneOffset offset) {
+			Statistics.label("Hours")
+					  .collect(offset.getTotalSeconds() / 3600)
+					  .coverage(this::checkHourCoverage);
+		}
+
+		@Property
+		void minutes(@ForAll("offsets") ZoneOffset offset) {
+			Statistics.label("Minutes")
+					  .collect(Math.abs((offset.getTotalSeconds() % 3600) / 60))
+					  .coverage(this::check60Coverage);
+		}
+
+		@Property
+		void seconds(@ForAll("offsets") ZoneOffset offset) {
+			Statistics.label("Seconds")
+					  .collect(Math.abs(offset.getTotalSeconds() % 60))
+					  .coverage(this::check60Coverage);
+		}
+
 		@Provide
 		Arbitrary<ZoneOffset> offsetsNear0() {
 			return Times.zoneOffsets().hourBetween(-2, 2);
+		}
+
+		private void checkHourCoverage(StatisticsCoverage coverage) {
+			for (int value = -18; value < 18; value++) {
+				coverage.check(value).percentage(p -> p >= 1);
+			}
+		}
+
+		private void check60Coverage(StatisticsCoverage coverage) {
+			for (int value = 0; value < 60; value++) {
+				coverage.check(value).percentage(p -> p >= 0.3);
+			}
 		}
 
 	}
