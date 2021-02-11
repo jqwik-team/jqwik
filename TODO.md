@@ -26,6 +26,7 @@
           DomainContext.prepare(PropertyExecutionContext context)
 
     - Time Module:
+        - Times and DateTimes. See https://github.com/jlink/jqwik/issues/154
         - [LocalDate|Calendar|DateArbitrary].shrinkTowards(date)
         - Generate Instant, LocalTime, ZonedTime etc.
     
