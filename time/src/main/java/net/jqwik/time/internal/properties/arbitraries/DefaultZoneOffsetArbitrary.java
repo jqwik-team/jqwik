@@ -44,16 +44,86 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 			return Arbitraries.just(ZoneOffset.MAX);
 		}
 
+		ZoneOffset effectiveMin = calculateEffectiveMin();
+		ZoneOffset effectiveMax = calculateEffectiveMax();
+
 		Arbitrary<Integer> seconds = Arbitraries.integers()
 												.withDistribution(RandomDistribution.uniform())
-												.between(offsetMin.getTotalSeconds(), offsetMax.getTotalSeconds())
-												.edgeCases(edgeCases -> edgeCases.includeOnly(offsetMin.getTotalSeconds(), 0, offsetMax
-																																	  .getTotalSeconds()));
+												.between(effectiveMin.getTotalSeconds(), effectiveMax.getTotalSeconds())
+												.edgeCases(edgeCases -> edgeCases
+																				.includeOnly(effectiveMin.getTotalSeconds(), 0, effectiveMax
+																																		.getTotalSeconds()));
 
 		Arbitrary<ZoneOffset> zoneOffsets = seconds.map(ZoneOffset::ofTotalSeconds)
 												   .filter(this::filterOffsets);
 
 		return zoneOffsets;
+
+	}
+
+	private ZoneOffset calculateEffectiveMin() {
+
+		int hours = calculateHourValue(offsetMin);
+		int minutes = calculateMinuteValue(offsetMin);
+		int seconds = calculateSecondValue(offsetMin);
+
+		if (hours < hourMin) {
+			hours = hourMin;
+			if (hours > 0) {
+				if (minutes < minuteMin) {
+					minutes = minuteMin;
+					if (seconds < secondMin) {
+						seconds = secondMin;
+					}
+				}
+			} else if (hours < 0) {
+				minutes = minuteMax;
+				seconds = secondMax;
+			} else {
+				//TODO: Value 0
+			}
+		}
+
+		if (hours < 0) {
+			minutes = -minutes;
+			seconds = -seconds;
+		}
+
+		System.out.println("Min: " + ZoneOffset.ofHoursMinutesSeconds(hours, minutes, seconds));
+
+		return ZoneOffset.ofHoursMinutesSeconds(hours, minutes, seconds);
+
+	}
+
+	private ZoneOffset calculateEffectiveMax() {
+
+		int hours = calculateHourValue(offsetMax);
+		int minutes = calculateMinuteValue(offsetMax);
+		int seconds = calculateSecondValue(offsetMax);
+
+		if (hours > hourMax) {
+			hours = hourMax;
+			if (hours > 0) {
+				minutes = minuteMax;
+				seconds = secondMax;
+			} else if (hours < 0) {
+				if (minutes < minuteMin) {
+					minutes = minuteMin;
+					if (seconds < secondMin) {
+						seconds = secondMin;
+					}
+				}
+			}
+		}
+
+		if (hours < 0) {
+			minutes = -minutes;
+			seconds = -seconds;
+		}
+
+		System.out.println("Max: " + ZoneOffset.ofHoursMinutesSeconds(hours, minutes, seconds));
+
+		return ZoneOffset.ofHoursMinutesSeconds(hours, minutes, seconds);
 
 	}
 
