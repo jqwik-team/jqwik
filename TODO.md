@@ -1,5 +1,8 @@
-- 1.4.x
-
+- 1.4.1
+  
+    - Scrutinize performance with nested BuilderCombinators.
+      See p3 testing library. May be related to uniqueElements or to arbitrary configurator.
+    
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
       reporting of property's results. May require a new lifecycle hook.
         - Apply annotation wherever reporting is test collateral
@@ -32,7 +35,9 @@
 
     - EdgeCases.Configuration.withProbability(double injectProbability)
 
-    - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
+- 1.4.x
+
+      - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
       https://github.com/jlink/jqwik/issues/121
         - useBeanProperties()
             - are considered nullable
