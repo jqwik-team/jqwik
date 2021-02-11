@@ -32,13 +32,12 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	@Override
 	protected Arbitrary<LocalTime> arbitrary() {
 
-		LocalTime effectiveMin;
-		effectiveMin = calculateEffectiveMin();
+		LocalTime effectiveMin = calculateEffectiveMin();
 		LocalTime effectiveMax = calculateEffectiveMax();
 		if (effectiveMax.isBefore(effectiveMin)) {
 			throw new IllegalArgumentException("The maximum time is too soon after the minimum time.");
 		}
-		calculateEffectiveValues(effectiveMin, effectiveMax);
+		calculateEffectiveValues(effectiveMin, effectiveMax); //TODO: Maybe bug if invalid values set
 
 		long longEnd = calculateLongEnd(effectiveMin, effectiveMax);
 
