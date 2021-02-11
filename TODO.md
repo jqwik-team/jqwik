@@ -2,6 +2,7 @@
   
     - Scrutinize performance with nested BuilderCombinators.
       See p3 testing library. May be related to uniqueElements or to arbitrary configurator.
+      arbitrary.`unique()` fixes the performance problem. But why?
     
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
       reporting of property's results. May require a new lifecycle hook.
