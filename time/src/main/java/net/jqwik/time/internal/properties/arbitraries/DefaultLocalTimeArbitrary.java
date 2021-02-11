@@ -159,7 +159,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		}
 	}
 
-	private LocalTime calculateEffectiveMax() {
+	private LocalTime calculateEffectiveMax() { //TODO: Maybe bug?
 		LocalTime effective = timeMax;
 		if (hourMax < effective.getHour()) {
 			effective = effective.withHour(hourMax);

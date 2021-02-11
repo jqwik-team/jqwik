@@ -302,7 +302,6 @@ class ZoneOffsetTests {
 		}
 
 		@Example
-		@Disabled("TODO")
 		void betweenMethodsPositive() {
 			ZoneOffsetArbitrary offsets =
 					Times.zoneOffsets()
@@ -318,7 +317,6 @@ class ZoneOffsetTests {
 		}
 
 		@Example
-		@Disabled("TODO")
 		void betweenMethodsNegative() {
 			ZoneOffsetArbitrary offsets =
 					Times.zoneOffsets()
@@ -330,6 +328,21 @@ class ZoneOffsetTests {
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 					ZoneOffset.ofHoursMinutesSeconds(-11, -23, -21),
 					ZoneOffset.ofHoursMinutesSeconds(-12, -24, -22)
+			);
+		}
+
+		@Example
+		void betweenMethodsHourZero() {
+			ZoneOffsetArbitrary offsets =
+					Times.zoneOffsets()
+						 .hourBetween(0, 0)
+						 .minuteBetween(23, 24)
+						 .secondBetween(21, 22);
+			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					ZoneOffset.ofHoursMinutesSeconds(0, -24, -22),
+					ZoneOffset.ofHoursMinutesSeconds(0, 24, 22)
 			);
 		}
 
