@@ -960,7 +960,7 @@ class OffsetTimeTests {
 
 		private void check24Coverage(StatisticsCoverage coverage) {
 			for (int value = 0; value < 24; value++) {
-				coverage.check(value).percentage(p -> p >= 2);
+				coverage.check(value).percentage(p -> p >= 1.5);
 			}
 		}
 
