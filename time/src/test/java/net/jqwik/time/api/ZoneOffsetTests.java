@@ -797,15 +797,30 @@ class ZoneOffsetTests {
 	class CheckEqualDistribution {
 
 		@Property
+		void negativeAndPositiveValuesAreGenerated(@ForAll("offsets") ZoneOffset offset) {
+			int totalSeconds = offset.getTotalSeconds();
+			Assume.that(totalSeconds != 0);
+			Statistics.label("Negative value")
+					  .collect(totalSeconds < 0)
+					  .coverage(this::check5050BooleanCoverage);
+		}
+
+		@Property
+		void valueZeroIsGenerated(@ForAll("offsets") ZoneOffset offset) {
+			Statistics.label("00:00:00 is possible")
+					  .collect(offset.getTotalSeconds() == 0)
+					  .coverage(coverage -> {
+						  coverage.check(true).count(c -> c >= 1);
+					  });
+		}
+
+		@Property
 		void minusAndPlusIsPossibleWhenHourIsZero(@ForAll("offsetsNear0") ZoneOffset offset) {
 			int totalSeconds = offset.getTotalSeconds();
 			Assume.that(totalSeconds > -3600 && totalSeconds < 3600 && totalSeconds != 0);
 			Statistics.label("Negative value with Hour is zero")
 					  .collect(totalSeconds < 0)
-					  .coverage(coverage -> {
-						  coverage.check(true).percentage(p -> p >= 35);
-						  coverage.check(false).percentage(p -> p >= 35);
-					  });
+					  .coverage(this::check5050BooleanCoverage);
 		}
 
 		@Property
@@ -834,6 +849,11 @@ class ZoneOffsetTests {
 			return Times.zoneOffsets().hourBetween(-2, 2);
 		}
 
+		private void check5050BooleanCoverage(StatisticsCoverage coverage) {
+			coverage.check(true).percentage(p -> p >= 35);
+			coverage.check(false).percentage(p -> p >= 35);
+		}
+
 		private void checkHourCoverage(StatisticsCoverage coverage) {
 			for (int value = -18; value < 18; value++) {
 				coverage.check(value).percentage(p -> p >= 1);
@@ -844,6 +864,94 @@ class ZoneOffsetTests {
 			for (int value = 0; value < 60; value++) {
 				coverage.check(value).percentage(p -> p >= 0.3);
 			}
+		}
+
+	}
+
+	@Group
+	class InvalidConfigurations {
+
+		@Property
+		void minOffsetAfterMaxOffset(@ForAll("offsets") ZoneOffset minOffset, @ForAll("offsets") ZoneOffset maxOffset) {
+
+			Assume.that(minOffset.getTotalSeconds() > maxOffset.getTotalSeconds());
+
+			assertThatThrownBy(
+					() -> Times.zoneOffsets().atTheLatest(maxOffset).atTheEarliest(minOffset)
+			).isInstanceOf(IllegalArgumentException.class);
+
+		}
+
+		@Property
+		void maxOffsetBeforeMinOffset(@ForAll("offsets") ZoneOffset minOffset, @ForAll("offsets") ZoneOffset maxOffset) {
+
+			Assume.that(maxOffset.getTotalSeconds() < minOffset.getTotalSeconds());
+
+			assertThatThrownBy(
+					() -> Times.zoneOffsets().atTheEarliest(minOffset).atTheLatest(maxOffset)
+			).isInstanceOf(IllegalArgumentException.class);
+
+		}
+
+		@Property
+		void hour(@ForAll int minHour, @ForAll int maxHour) {
+
+			Assume.that(minHour < maxHour);
+			Assume.that(minHour < -18 || minHour > 18 || maxHour > 18);
+
+			assertThatThrownBy(
+					() -> Times.zoneOffsets().hourBetween(minHour, maxHour)
+			).isInstanceOf(IllegalArgumentException.class);
+
+		}
+
+		@Property
+		void minute(@ForAll int minMinute, @ForAll int maxMinute) {
+
+			Assume.that(minMinute < maxMinute);
+			Assume.that(minMinute < 0 || minMinute > 59 || maxMinute > 59);
+
+			assertThatThrownBy(
+					() -> Times.zoneOffsets().minuteBetween(minMinute, maxMinute)
+			).isInstanceOf(IllegalArgumentException.class);
+
+		}
+
+		@Property
+		void second(@ForAll int minSecond, @ForAll int maxSecond) {
+
+			Assume.that(minSecond < maxSecond);
+			Assume.that(minSecond < 0 || minSecond > 59 || maxSecond > 59);
+
+			assertThatThrownBy(
+					() -> Times.zoneOffsets().secondBetween(minSecond, maxSecond)
+			).isInstanceOf(IllegalArgumentException.class);
+
+		}
+
+		@Example
+		void noValuesCanBeGenerated() {
+			assertThatThrownBy(
+					() -> Times.zoneOffsets()
+							   .between(ZoneOffset.ofHoursMinutesSeconds(0, 11, 23), ZoneOffset.ofHoursMinutesSeconds(0, 13, 33))
+							   .hourBetween(0, 1)
+							   .minuteBetween(7, 8)
+							   .secondBetween(2, 3)
+							   .generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void noValuesCanBeGenerated2() {
+			assertThatThrownBy(
+					() -> Times.zoneOffsets()
+							   .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, 27, 22))
+							   .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 28, 22))
+							   .hourBetween(0, 2)
+							   .minuteBetween(23, 25)
+							   .secondBetween(21, 23)
+							   .generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 	}
