@@ -167,8 +167,6 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 			seconds = -seconds;
 		}
 
-		System.out.println("Min: " + ZoneOffset.ofHoursMinutesSeconds(hours, minutes, seconds));
-
 		return ZoneOffset.ofHoursMinutesSeconds(hours, minutes, seconds);
 
 	}
@@ -274,8 +272,6 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 			minutes = -minutes;
 			seconds = -seconds;
 		}
-
-		System.out.println("Max: " + ZoneOffset.ofHoursMinutesSeconds(hours, minutes, seconds));
 
 		return ZoneOffset.ofHoursMinutesSeconds(hours, minutes, seconds);
 
