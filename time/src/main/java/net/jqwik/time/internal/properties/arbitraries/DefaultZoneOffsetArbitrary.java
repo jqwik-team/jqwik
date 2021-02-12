@@ -374,4 +374,5 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 		clone.secondMax = max;
 		return clone;
 	}
+
 }
