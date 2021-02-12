@@ -36,8 +36,6 @@ class ZoneOffsetTests {
 	class CheckOffsetMethods {
 
 		@Group
-		@Disabled("not working currently")
-				//TODO
 		class OffsetMethods {
 
 			@Property
@@ -334,7 +332,7 @@ class ZoneOffsetTests {
 		}
 
 		@Group
-		class betweenMethodsHourZero {
+		class betweenMethodsHourCanBeZero {
 
 			@Example
 			void between() {
@@ -351,8 +349,6 @@ class ZoneOffsetTests {
 			}
 
 			@Example
-			@Disabled("TODO Second EdgeCase Value")
-				//TODO
 			void betweenMethods() {
 				ZoneOffsetArbitrary offsets =
 						Times.zoneOffsets()
@@ -575,6 +571,219 @@ class ZoneOffsetTests {
 					assertThat(edgeCases).containsExactlyInAnyOrder(
 							ZoneOffset.ofHoursMinutesSeconds(0, 23, 21),
 							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
+					);
+				}
+
+			}
+
+			@Group
+			class MaxOffsetSet {
+
+				@Example
+				void test1() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 0, 0))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, -23, -21)
+					);
+				}
+
+				@Example
+				void test2_1() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 31, 3))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, 25, 23)
+					);
+				}
+
+				@Example
+				void test2_2_1() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 24, 26))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, 24, 23)
+					);
+				}
+
+				@Example
+				void test2_2_2() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 24, 22))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, 24, 22)
+					);
+				}
+
+				@Example
+				void test2_2_3_1() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 23, 2))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, -23, -21)
+					);
+				}
+
+				@Example
+				void test2_2_3_2() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 24, 2))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, 23, 23)
+					);
+				}
+
+				@Example
+				void test2_3() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 4, 59))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, -23, -21)
+					);
+				}
+
+				@Example
+				void test3_1() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -31, -3))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(-1, -23, -21)
+					);
+				}
+
+				@Example
+				void test3_2_1() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -25, -3))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, -25, -21)
+					);
+				}
+
+				@Example
+				void test3_2_2() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -24, -22))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(-0, -24, -22)
+					);
+				}
+
+				@Example
+				void test3_2_3_1() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -25, -31))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(-1, -23, -21)
+					);
+				}
+
+				@Example
+				void test3_2_3_2() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -24, -31))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, -25, -21)
+					);
+				}
+
+				@Example
+				void test3_3() {
+					ZoneOffsetArbitrary offsets =
+							Times.zoneOffsets()
+								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -15, -44))
+								 .hourBetween(-2, 0)
+								 .minuteBetween(23, 25)
+								 .secondBetween(21, 23);
+					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
+					assertThat(edgeCases).hasSize(2);
+					assertThat(edgeCases).containsExactlyInAnyOrder(
+							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
+							ZoneOffset.ofHoursMinutesSeconds(0, -23, -21)
 					);
 				}
 
