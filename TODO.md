@@ -13,6 +13,9 @@
         - label=<statistics label> to specify for which statistics to use
         - Make it repeatable
     
+    - StringArbitrary.excludeChars() or s.t. like that
+      https://github.com/jlink/jqwik/issues/167
+      
     - Domains
         - Deprecate AbstractDomainContextBase
             - Introduce DomainContextBase
