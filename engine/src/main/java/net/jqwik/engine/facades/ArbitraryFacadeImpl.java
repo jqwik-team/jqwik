@@ -218,11 +218,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize, boolean withEdgeCases) {
-				return super.generator(genSize);
+				return self.generator(genSize);
 			}
 
 			@Override
-			public EdgeCases<T> edgeCases() {
+			public EdgeCases<T> edgeCases(int maxEdgeCases) {
 				return EdgeCases.none();
 			}
 		};

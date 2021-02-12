@@ -165,11 +165,13 @@ public interface Arbitrary<T> {
 	EdgeCases<T> edgeCases(int maxEdgeCases);
 
 	/**
-	 * Return an arbitrary's edge cases.
+	 * Return an arbitrary's edge cases up to a limit of 1000.
 	 *
 	 * <p>
 	 * Never override. Override {@linkplain #edgeCases(int)} instead.
 	 * </p>
+	 *
+	 * @return an instance of type {@linkplain EdgeCases}
 	 */
 	@API(status = EXPERIMENTAL, since = "1.3.0")
 	default EdgeCases<T> edgeCases() {

@@ -37,10 +37,14 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	public EdgeCases<String> edgeCases(int maxEdgeCases) {
 		EdgeCases<String> emptyStringEdgeCases =
 				hasEmptyStringEdgeCase() ? emptyStringEdgeCase() : EdgeCases.none();
+
+		int effectiveMaxEdgeCases = maxEdgeCases - emptyStringEdgeCases.size();
 		EdgeCases<String> singleCharEdgeCases =
-				hasSingleCharEdgeCases() ? fixedSizedEdgeCases(1) : EdgeCases.none();
+				hasSingleCharEdgeCases() ? fixedSizedEdgeCases(1, effectiveMaxEdgeCases) : EdgeCases.none();
+
+		effectiveMaxEdgeCases = effectiveMaxEdgeCases - singleCharEdgeCases.size();
 		EdgeCases<String> fixedSizeEdgeCases =
-				hasMultiCharEdgeCases() ? fixedSizedEdgeCases(minLength) : EdgeCases.none();
+				hasMultiCharEdgeCases() ? fixedSizedEdgeCases(minLength, effectiveMaxEdgeCases) : EdgeCases.none();
 
 		return EdgeCasesSupport.concat(asList(singleCharEdgeCases, emptyStringEdgeCases, fixedSizeEdgeCases), maxEdgeCases);
 	}
@@ -61,9 +65,9 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 		return EdgeCases.fromSupplier(() -> new ShrinkableString(Collections.emptyList(), minLength, maxLength));
 	}
 
-	private EdgeCases<String> fixedSizedEdgeCases(int fixedSize) {
+	private EdgeCases<String> fixedSizedEdgeCases(int fixedSize, int maxEdgeCases) {
 		return EdgeCasesSupport.mapShrinkable(
-				characterArbitrary.edgeCases(),
+				characterArbitrary.edgeCases(maxEdgeCases),
 				shrinkableChar -> {
 					List<Shrinkable<Character>> chars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
 					return new ShrinkableString(chars, minLength, maxLength);
