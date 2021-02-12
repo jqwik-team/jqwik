@@ -47,6 +47,10 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 		ZoneOffset effectiveMin = calculateEffectiveMin();
 		ZoneOffset effectiveMax = calculateEffectiveMax();
 
+		if (effectiveMin == null || effectiveMax == null || effectiveMin.getTotalSeconds() > effectiveMax.getTotalSeconds()) {
+			throw new IllegalArgumentException("No values are possible with these configurations.");
+		}
+
 		Arbitrary<Integer> seconds = Arbitraries.integers()
 												.withDistribution(RandomDistribution.uniform())
 												.between(effectiveMin.getTotalSeconds(), effectiveMax.getTotalSeconds())
@@ -77,10 +81,85 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 					}
 				}
 			} else if (hours < 0) {
-				minutes = minuteMax;
+				minutes = minuteMax;//TODO?
 				seconds = secondMax;
 			} else {
-				//TODO: Value 0
+				//hour is 0, set the other values for the next if(hours == 0)
+				minutes = 59;
+				seconds = 59;
+			}
+		}
+
+		if (hours == 0) {
+			System.out.println(offsetMin.getTotalSeconds() + " " + hours + " " + minutes + " " + seconds);
+			if (offsetMin.getTotalSeconds() == 0) {
+				//1)
+				minutes = minuteMin;
+				seconds = secondMin;
+			} else if (offsetMin.getTotalSeconds() < 0) {
+				//2
+				if (minutes > minuteMax) {
+					//2.1)
+					minutes = -minuteMax;
+					seconds = -secondMax;
+				} else if (minutes >= minuteMin) {
+					//2.2
+					minutes = -minutes;
+					if (seconds > secondMax) {
+						//2.2.1)
+						seconds = -secondMax;
+					} else if (seconds >= secondMin) {
+						//2.2.2)
+						seconds = -seconds;
+					} else {
+						//2.2.3
+						if (-minutes > minuteMin) {
+							//2.2.3.1)
+							minutes++;
+							seconds = -secondMax;
+						} else {
+							//2.2.3.2)
+							minutes = minuteMin;
+							seconds = secondMin;
+						}
+					}
+				} else {
+					//2.3)
+					minutes = minuteMin;
+					seconds = secondMin;
+				}
+			} else {
+				//3
+				if (minutes > minuteMax) {
+					//3.1)
+					hours = 1;
+					minutes = minuteMin;
+					seconds = secondMin;
+				} else if (minutes >= minuteMin) {
+					//3.2
+					if (seconds < secondMin) {
+						//3.2.1)
+						seconds = secondMin;
+					} else if (seconds <= secondMax) {
+						//3.2.2)
+						//do nothing
+					} else {
+						//3.2.3
+						seconds = secondMin;
+						if (minutes == minuteMax) {
+							//3.2.3.1)
+							hours = 1;
+							minutes = minuteMin;
+						} else {
+							//3.2.3.2)
+							minutes++;
+						}
+					}
+				} else {
+					//3.3)
+					minutes = minuteMin;
+					seconds = secondMin;
+				}
 			}
 		}
 
