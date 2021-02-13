@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.4.1-SNAPSHOT](#141-snapshot)
 - [1.4.0](#140)
 - [1.3.x](#13x)
 - [1.2.x](#12x)
@@ -18,6 +19,13 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.4.1-SNAPSHOT
+
+#### Bug Fixes
+
+- `Arbitrary.withoutEdgeCases()` did not really get rid of all edge case generation.
+  Now it does.
 
 ## 1.4.0
 
