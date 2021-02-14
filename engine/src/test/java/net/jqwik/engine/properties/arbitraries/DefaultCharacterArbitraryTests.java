@@ -27,11 +27,6 @@ class DefaultCharacterArbitraryTests {
 	}
 
 	@Example
-	void defaultIsNotUnique() {
-		assertThat(this.arbitrary.isUnique()).isFalse();
-	}
-
-	@Example
 	void edgeCasesAreGenerated() {
 		assertAtLeastOneGenerated(this.arbitrary.generator(1000, true), c -> c == Character.MIN_VALUE);
 	}

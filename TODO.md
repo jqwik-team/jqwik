@@ -1,9 +1,5 @@
-- 1.4.1
-  
-    - Scrutinize performance with nested BuilderCombinators.
-      See p3 testing library. May be related to uniqueElements or to arbitrary configurator.
-      arbitrary.`unique()` fixes the performance problem. But why?
-    
+- 1.5.1
+   
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
       reporting of property's results. May require a new lifecycle hook.
         - Apply annotation wherever reporting is test collateral
@@ -40,7 +36,7 @@
 
     - EdgeCases.Configuration.withProbability(double injectProbability)
 
-- 1.4.x
+- 1.5.x
 
       - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
       https://github.com/jlink/jqwik/issues/121

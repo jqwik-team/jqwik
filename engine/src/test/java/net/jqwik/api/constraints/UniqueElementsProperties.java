@@ -95,7 +95,7 @@ class UniqueElementsProperties {
 
 		@Property
 		boolean arrays(@ForAll @UniqueElements String[] aStringArray) {
-			return hasNoDuplicates(asList((String[]) aStringArray), Function.identity());
+			return hasNoDuplicates(asList((Object[]) aStringArray), Function.identity());
 		}
 
 		@Property
@@ -105,7 +105,7 @@ class UniqueElementsProperties {
 
 		@Property
 		boolean arraysNotFromListArbitraryUsePlainFilter(@ForAll("arrayOfStrings") @UniqueElements String[] aStringArray) {
-			return hasNoDuplicates(asList((String[]) aStringArray), Function.identity());
+			return hasNoDuplicates(asList((Object[]) aStringArray), Function.identity());
 		}
 
 		@Provide

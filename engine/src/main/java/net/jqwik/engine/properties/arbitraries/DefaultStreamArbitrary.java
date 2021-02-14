@@ -12,8 +12,8 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream<T>> implements StreamArbitrary<T> {
 
-	public DefaultStreamArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
-		super(elementArbitrary, elementsUnique);
+	public DefaultStreamArbitrary(Arbitrary<T> elementArbitrary) {
+		super(elementArbitrary);
 	}
 
 	@Override

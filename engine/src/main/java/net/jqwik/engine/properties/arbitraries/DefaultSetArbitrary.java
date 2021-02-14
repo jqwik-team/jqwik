@@ -14,7 +14,8 @@ import net.jqwik.engine.properties.shrinking.*;
 public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> implements SetArbitrary<T> {
 
 	public DefaultSetArbitrary(Arbitrary<T> elementArbitrary) {
-		super(elementArbitrary, true);
+		super(elementArbitrary);
+		uniquenessExtractors.add(FeatureExtractor.identity());
 	}
 
 	@Override

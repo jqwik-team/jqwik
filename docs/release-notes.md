@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.4.1-SNAPSHOT](#141-snapshot)
+- [1.5.0-SNAPSHOT](#150-snapshot)
 - [1.4.0](#140)
 - [1.3.x](#13x)
 - [1.2.x](#12x)
@@ -20,14 +20,35 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.4.1-SNAPSHOT
+## 1.5.0-SNAPSHOT
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/1.5.0/user-guide.html">User guide</a>
+and
+<a href="/docs/1.5.0/javadoc/index.html">javadoc</a>
+</p>
+
+
+#### Breaking Changes
+
+- Removed `Arbitrary.unique()` which had been deprecated in 1.4.0
+
+- Removed annotation `@Unique` which had been deprecated in 1.4.0
 
 #### Bug Fixes
+
+- Fixed [degraded generation performance](https://github.com/jlink/jqwik/issues/166) 
+  introduced in version [1.4.0](#140). 
 
 - `Arbitrary.withoutEdgeCases()` did not really get rid of all edge case generation.
   Now it does.
 
 ## 1.4.0
+
+Unless you don't have the time for migrating from `Arbitrary.unique()` to
+[the new uniqueness approach](/docs/1.4.0/user-guide.html#uniqueness-constraints)
+but still need some of the newly added features, you should directly upgrade to
+version [1.5.0](#150).
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.4.0/user-guide.html">User guide</a>

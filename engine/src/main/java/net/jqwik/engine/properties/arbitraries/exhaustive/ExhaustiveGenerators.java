@@ -45,14 +45,7 @@ public class ExhaustiveGenerators {
 				maxCount ->
 				{
 					ListExhaustiveGenerator<T> exhaustiveGenerator = new ListExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize);
-
-					// TODO: Remove as soon as Arbitrary.unique() has gone away. Probably in 1.5.0.
-					Set<FeatureExtractor<T>> extractors = new HashSet<>(uniquenessExtractors);
-					if (elementArbitrary.isUnique()) {
-						extractors.add(FeatureExtractor.identity());
-					}
-
-					return exhaustiveGenerator.filter(l -> checkUniquenessOfValues(extractors, l));
+					return exhaustiveGenerator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l));
 				}
 		);
 	}

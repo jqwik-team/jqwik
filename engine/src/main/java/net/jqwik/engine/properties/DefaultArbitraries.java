@@ -34,9 +34,6 @@ public class DefaultArbitraries {
 		configurators.add(new SizeConfigurator());
 		configurators.add(new WithNullConfigurator());
 		configurators.add(new UniqueElementsConfigurator());
-
-		// TODO: Remove in 1.5.0
-		configurators.add(new UniqueConfigurator());
 		return configurators;
 	}
 }

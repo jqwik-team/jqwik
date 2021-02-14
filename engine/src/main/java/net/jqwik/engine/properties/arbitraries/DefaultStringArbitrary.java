@@ -54,7 +54,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	}
 
 	private boolean hasMultiCharEdgeCases() {
-		return minLength <= maxLength && minLength > 1 && !characterArbitrary.isUnique();
+		return minLength <= maxLength && minLength > 1;
 	}
 
 	private boolean hasSingleCharEdgeCases() {

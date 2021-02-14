@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.util.ArrayList;
 import java.util.*;
 import java.util.function.*;
 
@@ -11,7 +12,6 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 import static java.util.Arrays.*;
 
 import static net.jqwik.engine.properties.UniquenessChecker.*;
-import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 
 abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements StreamableArbitrary<T, U> {
 
@@ -21,14 +21,8 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	protected int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	protected Set<FeatureExtractor<T>> uniquenessExtractors = new HashSet<>();
 
-	private final boolean elementsUnique;
-
-	protected MultivalueArbitraryBase(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
+	protected MultivalueArbitraryBase(Arbitrary<T> elementArbitrary) {
 		this.elementArbitrary = elementArbitrary;
-		this.elementsUnique = elementsUnique;
-		if (elementsUnique) {
-			this.maxSize = maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE);
-		}
 	}
 
 	@Override
@@ -101,9 +95,6 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	}
 
 	private boolean generateFixedSizeEdgeCases() {
-		if (elementsUnique) {
-			return false;
-		}
 		return minSize == maxSize && minSize > 1;
 	}
 

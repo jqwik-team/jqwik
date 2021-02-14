@@ -11,8 +11,8 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iterator<T>> implements IteratorArbitrary<T> {
 
-	public DefaultIteratorArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
-		super(elementArbitrary, elementsUnique);
+	public DefaultIteratorArbitrary(Arbitrary<T> elementArbitrary) {
+		super(elementArbitrary);
 	}
 
 	@Override

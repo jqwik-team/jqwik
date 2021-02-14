@@ -26,8 +26,6 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
 		public abstract <T> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<T> self, Predicate<T> filterPredicate);
 
-		public abstract <T> ExhaustiveGenerator<T> unique(ExhaustiveGenerator<T> self);
-
 		public abstract <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<T> self);
 
 		public abstract <T> ExhaustiveGenerator<T> ignoreException(ExhaustiveGenerator<T> self, Class<? extends Throwable> exceptionType);
@@ -44,10 +42,6 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
 	default ExhaustiveGenerator<T> filter(Predicate<T> filterPredicate) {
 		return ExhaustiveGeneratorFacade.implementation.filter(this, filterPredicate);
-	}
-
-	default ExhaustiveGenerator<T> unique() {
-		return ExhaustiveGeneratorFacade.implementation.unique(this);
 	}
 
 	default ExhaustiveGenerator<T> injectNull() {

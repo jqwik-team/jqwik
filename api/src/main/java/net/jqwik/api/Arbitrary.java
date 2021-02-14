@@ -122,19 +122,6 @@ public interface Arbitrary<T> {
 	}
 
 	/**
-	 * All arbitraries whose base generator is supposed to produce no duplicates
-	 * should return true.
-	 *
-	 * @return true if base generator is supposed to produce no duplicates
-	 * @deprecated Do not use. Will be removed in 1.5.0
-	 */
-	@Deprecated
-	@API(status = DEPRECATED, since = "1.4.0")
-	default boolean isUnique() {
-		return false;
-	}
-
-	/**
 	 * Create the exhaustive generator for an arbitrary using the maximum allowed
 	 * number of generated samples. Just trying to find out if such a generator
 	 * exists might take a long time. This method should never be overridden.
@@ -248,60 +235,6 @@ public interface Arbitrary<T> {
 	 */
 	default Arbitrary<T> injectNull(double nullProbability) {
 		return ArbitraryFacade.implementation.injectNull(Arbitrary.this, nullProbability);
-	}
-
-	/**
-	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but will
-	 * never generate the same value twice.
-	 *
-	 * <p>
-	 * Uniqueness is only held up for a single use of this arbitrary.
-	 * If the same arbitrary instance is used in several places,
-	 * e.g. for creating several lists, the different lists may share values
-	 * between them.
-	 * </p>
-	 *
-	 * @return a new arbitrary instance
-	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
-	 * @see ListArbitrary#uniqueElements(Function)
-	 * @see ListArbitrary#uniqueElements()
-	 * @see SetArbitrary#uniqueElements(Function)
-	 * @see StreamArbitrary#uniqueElements(Function)
-	 * @see StreamArbitrary#uniqueElements()
-	 * @see IteratorArbitrary#uniqueElements(Function)
-	 * @see IteratorArbitrary#uniqueElements()
-	 * @see ArrayArbitrary#uniqueElements(Function)
-	 * @see ArrayArbitrary#uniqueElements()
-	 * @see MapArbitrary#uniqueKeys(Function)
-	 * @see MapArbitrary#uniqueValues(Function)
-	 * @see MapArbitrary#uniqueValues()
-	 * @deprecated Replace with {@code uniqueElements()} call on containing container arbitrary. Will be removed in 1.5.0.
-	 */
-	@Deprecated
-	@API(status = DEPRECATED, since = "1.4.0")
-	default Arbitrary<T> unique() {
-		return new Arbitrary<T>() {
-			@Override
-			public RandomGenerator<T> generator(int genSize) {
-				return Arbitrary.this.generator(genSize).unique();
-			}
-
-			@Override
-			public boolean isUnique() {
-				return true;
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(ExhaustiveGenerator::unique);
-			}
-
-			@Override
-			public EdgeCases<T> edgeCases(int maxEdgeCases) {
-				return EdgeCases.none();
-			}
-
-		};
 	}
 
 	/**

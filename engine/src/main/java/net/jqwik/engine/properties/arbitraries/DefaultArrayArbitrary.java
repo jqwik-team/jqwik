@@ -16,8 +16,8 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 
 	private final Class<A> arrayClass;
 
-	public DefaultArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass, boolean elementsUnique) {
-		super(elementArbitrary, elementsUnique);
+	public DefaultArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
+		super(elementArbitrary);
 		this.arrayClass = arrayClass;
 	}
 
@@ -76,9 +76,7 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 
 	@Override
 	public Arbitrary<A> configure(ArbitraryConfigurator configurator, TypeUsage targetType) {
-		targetType.getComponentType().ifPresent(elementType -> {
-			elementArbitrary = configurator.configure(elementArbitrary, elementType);
-		});
+		targetType.getComponentType().ifPresent(elementType -> elementArbitrary = configurator.configure(elementArbitrary, elementType));
 		return configurator.configure(this, targetType);
 	}
 

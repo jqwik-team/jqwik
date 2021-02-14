@@ -20,7 +20,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> ListArbitrary<T> list(Arbitrary<T> elementArbitrary) {
-		return new DefaultListArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
+		return new DefaultListArbitrary<>(elementArbitrary);
 	}
 
 	@Override
@@ -32,17 +32,17 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> StreamArbitrary<T> stream(Arbitrary<T> elementArbitrary) {
-		return new DefaultStreamArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
+		return new DefaultStreamArbitrary<>(elementArbitrary);
 	}
 
 	@Override
 	public <T> IteratorArbitrary<T> iterator(Arbitrary<T> elementArbitrary) {
-		return new DefaultIteratorArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
+		return new DefaultIteratorArbitrary<>(elementArbitrary);
 	}
 
 	@Override
 	public <T, A> ArrayArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
-		return new DefaultArrayArbitrary<>(elementArbitrary, arrayClass, elementArbitrary.isUnique());
+		return new DefaultArrayArbitrary<>(elementArbitrary, arrayClass);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return super.exhaustive(maxNumberOfSamples)
-						   .map(generator -> generator.filter(filterPredicate));
+							.map(generator -> generator.filter(filterPredicate));
 			}
 
 			@Override
@@ -82,11 +82,6 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			@Override
 			public RandomGenerator<U> generatorWithEmbeddedEdgeCases(int genSize) {
 				return self.generator(genSize, true).map(mapper);
-			}
-
-			@Override
-			public boolean isUnique() {
-				return self.isUnique();
 			}
 
 			@Override
@@ -145,15 +140,10 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 		if (frequencyNull >= 100) {
 			return Arbitraries.just(null);
 		}
-		Arbitrary<T> withNull = Arbitraries.frequencyOf(
+		return Arbitraries.frequencyOf(
 				Tuple.of(frequencyNull, Arbitraries.just(null)),
 				Tuple.of(frequencyNotNull, self)
 		);
-		if (self.isUnique()) {
-			return withNull.unique();
-		} else {
-			return withNull;
-		}
 	}
 
 	@Override
@@ -172,7 +162,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return super.exhaustive(maxNumberOfSamples)
-						   .map(generator -> generator.ignoreException(exceptionType));
+							.map(generator -> generator.ignoreException(exceptionType));
 			}
 
 			@Override

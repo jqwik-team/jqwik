@@ -12,8 +12,8 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>> implements ListArbitrary<T> {
 
-	public DefaultListArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
-		super(elementArbitrary, elementsUnique);
+	public DefaultListArbitrary(Arbitrary<T> elementArbitrary) {
+		super(elementArbitrary);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 
 	@Override
 	public EdgeCases<List<T>> edgeCases(int maxEdgeCases) {
-		return edgeCases((elements, minSize1) -> new ShrinkableList<T>(elements, minSize1, maxSize, uniquenessExtractors), maxEdgeCases);
+		return edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors), maxEdgeCases);
 	}
 
 	@Override

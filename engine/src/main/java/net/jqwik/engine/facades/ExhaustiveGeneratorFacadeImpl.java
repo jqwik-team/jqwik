@@ -20,11 +20,6 @@ public class ExhaustiveGeneratorFacadeImpl extends ExhaustiveGenerator.Exhaustiv
 	}
 
 	@Override
-	public <T> ExhaustiveGenerator<T> unique(ExhaustiveGenerator<T> self) {
-		return new UniqueExhaustiveGenerator<>(self);
-	}
-
-	@Override
 	public <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<T> self) {
 		return new WithNullExhaustiveGenerator<>(self);
 	}

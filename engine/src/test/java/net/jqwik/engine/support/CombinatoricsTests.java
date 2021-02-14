@@ -399,7 +399,7 @@ class CombinatoricsTests {
 		@Provide
 		Arbitrary<List<List<Integer>>> iterables() {
 			return Arbitraries
-				.integers().between(-1000, 1000).unique()
+				.integers().between(-1000, 1000)
 				.list().ofMaxSize(15)
 				.list();
 		}

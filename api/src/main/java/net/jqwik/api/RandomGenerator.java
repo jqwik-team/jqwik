@@ -33,8 +33,6 @@ public interface RandomGenerator<T> {
 
 		public abstract <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases);
 
-		public abstract <T> RandomGenerator<T> unique(RandomGenerator<T> self);
-
 		public abstract <T> RandomGenerator<List<T>> collect(RandomGenerator<T> self, Predicate<List<T>> until);
 
 		public abstract <T> RandomGenerator<T> injectDuplicates(RandomGenerator<T> self, double duplicateProbability);
@@ -86,11 +84,6 @@ public interface RandomGenerator<T> {
 	@API(status = INTERNAL)
 	default RandomGenerator<T> withEdgeCases(int genSize, EdgeCases<T> edgeCases) {
 		return RandomGeneratorFacade.implementation.withEdgeCases(this, genSize, edgeCases);
-	}
-
-	@API(status = INTERNAL)
-	default RandomGenerator<T> unique() {
-		return RandomGeneratorFacade.implementation.unique(this);
 	}
 
 	@API(status = INTERNAL)

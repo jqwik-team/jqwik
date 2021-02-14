@@ -428,18 +428,17 @@ class ArbitrariesTests {
 		}
 
 		@Property(tries = 100)
-		void recursiveListWithUniqueIDs(@ForAll("listWithUniqueIds") List<Integer> list) {
+		void recursiveListWithIDs(@ForAll("listWithIds") List<Integer> list) {
 			assertThat(list).hasSizeGreaterThanOrEqualTo(0);
-			// No duplicate IDs
-			assertThat(list.size()).isEqualTo(new HashSet<>(list).size());
+			assertThat(list).allMatch(i -> i >= 1 && i <= 20);
 		}
 
 		@Provide
-		Arbitrary<List<Integer>> listWithUniqueIds() {
-			Arbitrary<Integer> uniqueId = Arbitraries.integers().between(1, 20).unique();
+		Arbitrary<List<Integer>> listWithIds() {
+			Arbitrary<Integer> uniqueId = Arbitraries.integers().between(1, 20);
 			return Arbitraries.lazyOf(
 					() -> Arbitraries.just(new ArrayList<>()),
-					() -> Combinators.combine(listWithUniqueIds(), uniqueId)
+					() -> Combinators.combine(listWithIds(), uniqueId)
 									 .as((l, id) -> {
 										 ArrayList<Integer> list = new ArrayList<>(l);
 										 list.add(id);
