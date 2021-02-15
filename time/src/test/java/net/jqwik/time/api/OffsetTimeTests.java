@@ -22,6 +22,16 @@ class OffsetTimeTests {
 	}
 
 	@Provide
+	Arbitrary<ZoneOffset> offsets() {
+		return Times.zoneOffsets();
+	}
+
+	@Provide
+	Arbitrary<LocalTime> localTimes() {
+		return Times.times();
+	}
+
+	@Provide
 	Arbitrary<OffsetTime> precisionHours() {
 		return Times.offsetTimes().constrainPrecision(HOURS);
 	}
@@ -68,6 +78,7 @@ class OffsetTimeTests {
 	}
 
 	@Group
+	@Disabled("Working on it")
 	class CheckTimeMethods {
 
 		@Group
@@ -118,6 +129,38 @@ class OffsetTimeTests {
 
 				assertAllGenerated(times.generator(1000), random, time -> {
 					assertThat(time).isEqualTo(sameTime);
+					return true;
+				});
+
+			}
+
+		}
+
+		@Group
+		class TimeMethod {
+
+			@Property
+			void timeBetween(@ForAll("localTimes") LocalTime startTime, @ForAll("localTimes") LocalTime endTime, @ForAll Random random) {
+
+				Assume.that(!startTime.isAfter(endTime));
+
+				Arbitrary<OffsetTime> times = Times.offsetTimes().timeBetween(startTime, endTime);
+
+				assertAllGenerated(times.generator(1000), random, time -> {
+					assertThat(time).isAfterOrEqualTo(OffsetTime.of(startTime, time.getOffset()));
+					assertThat(time).isBeforeOrEqualTo(OffsetTime.of(endTime, time.getOffset()));
+					return true;
+				});
+
+			}
+
+			@Property
+			void timeBetweenSame(@ForAll("localTimes") LocalTime localTime, @ForAll Random random) {
+
+				Arbitrary<OffsetTime> times = Times.offsetTimes().timeBetween(localTime, localTime);
+
+				assertAllGenerated(times.generator(1000), random, time -> {
+					assertThat(time).isEqualTo(OffsetTime.of(localTime, time.getOffset()));
 					return true;
 				});
 
@@ -232,6 +275,38 @@ class OffsetTimeTests {
 			@Provide
 			Arbitrary<Integer> seconds() {
 				return Arbitraries.integers().between(0, 59);
+			}
+
+		}
+
+		@Group
+		class OffsetMethod {
+
+			@Property
+			void between(@ForAll("offsets") ZoneOffset startOffset, @ForAll("offsets") ZoneOffset endOffset, @ForAll Random random) {
+
+				Assume.that(startOffset.getTotalSeconds() <= endOffset.getTotalSeconds());
+
+				Arbitrary<OffsetTime> times = Times.offsetTimes().offsetBetween(startOffset, endOffset);
+
+				assertAllGenerated(times.generator(1000), random, time -> {
+					assertThat(time.getOffset().getTotalSeconds()).isGreaterThanOrEqualTo(startOffset.getTotalSeconds());
+					assertThat(time.getOffset().getTotalSeconds()).isLessThanOrEqualTo(endOffset.getTotalSeconds());
+					return true;
+				});
+
+			}
+
+			@Property
+			void betweenSame(@ForAll("offsets") ZoneOffset offset, @ForAll Random random) {
+
+				Arbitrary<OffsetTime> times = Times.offsetTimes().offsetBetween(offset, offset);
+
+				assertAllGenerated(times.generator(1000), random, time -> {
+					assertThat(time.getOffset()).isEqualTo(offset);
+					return true;
+				});
+
 			}
 
 		}
@@ -440,7 +515,7 @@ class OffsetTimeTests {
 			class Nanos {
 
 				@Property
-				void precisionNanoseconds(@ForAll("precisionNanoseconds") OffsetTime time) {
+				void precision(@ForAll("precisionNanoseconds") OffsetTime time) {
 					assertThat(time).isNotNull();
 				}
 
@@ -952,6 +1027,57 @@ class OffsetTimeTests {
 
 		}
 
+		@Property
+		void negativeAndPositiveOffsetValuesAreGenerated(@ForAll("times") OffsetTime time) {
+			ZoneOffset offset = time.getOffset();
+			int totalSeconds = offset.getTotalSeconds();
+			Assume.that(totalSeconds != 0);
+			Statistics.label("Negative value")
+					  .collect(totalSeconds < 0)
+					  .coverage(this::check5050BooleanCoverage);
+		}
+
+		@Property
+		void offsetValueZeroIsGenerated(@ForAll("times") OffsetTime time) {
+			ZoneOffset offset = time.getOffset();
+			Statistics.label("00:00:00 is possible")
+					  .collect(offset.getTotalSeconds() == 0)
+					  .coverage(coverage -> {
+						  coverage.check(true).count(c -> c >= 1);
+					  });
+		}
+
+		@Property
+		void minusAndPlusOffsetIsPossibleWhenHourIsZero(@ForAll("offsetsNear0") OffsetTime time) {
+			ZoneOffset offset = time.getOffset();
+			int totalSeconds = offset.getTotalSeconds();
+			Assume.that(totalSeconds > -3600 && totalSeconds < 3600 && totalSeconds != 0);
+			Statistics.label("Negative value with Hour is zero")
+					  .collect(totalSeconds < 0)
+					  .coverage(this::check5050BooleanCoverage);
+		}
+
+		@Property
+		void offsetHours(@ForAll("times") OffsetTime time) {
+			ZoneOffset offset = time.getOffset();
+			Statistics.label("Hours")
+					  .collect(offset.getTotalSeconds() / 3600)
+					  .coverage(this::checkOffsetHourCoverage);
+		}
+
+		@Property
+		void offsetMinutes(@ForAll("times") OffsetTime time) {
+			ZoneOffset offset = time.getOffset();
+			Statistics.label("Minutes")
+					  .collect(Math.abs((offset.getTotalSeconds() % 3600) / 60))
+					  .coverage(this::checkOffsetMinuteCoverage);
+		}
+
+		@Provide
+		Arbitrary<OffsetTime> offsetsNear0() {
+			return Times.offsetTimes().offsetBetween(ZoneOffset.ofHoursMinutesSeconds(-1, 0, 0), ZoneOffset.ofHoursMinutesSeconds(1, 0, 0));
+		}
+
 		private void check10Coverage(StatisticsCoverage coverage) {
 			for (int value = 0; value < 10; value++) {
 				coverage.check(value).percentage(p -> p >= 5);
@@ -970,9 +1096,27 @@ class OffsetTimeTests {
 			}
 		}
 
+		private void check5050BooleanCoverage(StatisticsCoverage coverage) {
+			coverage.check(true).percentage(p -> p >= 35);
+			coverage.check(false).percentage(p -> p >= 35);
+		}
+
+		private void checkOffsetHourCoverage(StatisticsCoverage coverage) {
+			for (int value = -12; value <= 14; value++) {
+				coverage.check(value).percentage(p -> p >= 1.5);
+			}
+		}
+
+		private void checkOffsetMinuteCoverage(StatisticsCoverage coverage) {
+			for (int value = 0; value < 60; value += 15) {
+				coverage.check(value).percentage(p -> p >= 12);
+			}
+		}
+
 	}
 
 	@Group
+	@Disabled("Working on it")
 	class InvalidConfigurations {
 
 		@Group

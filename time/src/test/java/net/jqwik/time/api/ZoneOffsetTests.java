@@ -327,7 +327,7 @@ class ZoneOffsetTests {
 
 		private void checkHourCoverage(StatisticsCoverage coverage) {
 			coverage.check(-12).percentage(p -> p >= 0.8);
-			for (int value = -11; value < 13; value++) {
+			for (int value = -11; value <= 13; value++) {
 				coverage.check(value).percentage(p -> p >= 3);
 			}
 			coverage.check(14).percentage(p -> p >= 0.8);

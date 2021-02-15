@@ -16,8 +16,11 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> implements OffsetTimeArbitrary {
 
-	private OffsetTime timeMin = null;
-	private OffsetTime timeMax = null;
+	private OffsetTime offsetTimeMin = OffsetTime.MIN;
+	private OffsetTime offsetTimeMax = OffsetTime.MAX;
+
+	private LocalTime timeMin = null;
+	private LocalTime timeMax = null;
 
 	private int hourMin = -1;
 	private int hourMax = -1;
@@ -28,19 +31,19 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 	private int secondMin = -1;
 	private int secondMax = -1;
 
+	private ZoneOffset offsetMin = null;
+	private ZoneOffset offsetMax = null;
+
 	private ChronoUnit ofPrecision = null;
 
 	@Override
 	protected Arbitrary<OffsetTime> arbitrary() {
 
 		LocalTimeArbitrary localTimes = Times.times();
+		ZoneOffsetArbitrary zoneOffsets = Times.zoneOffsets();
 
-		if (timeMin != null) {
-			localTimes = localTimes.atTheEarliest(timeMin.toLocalTime());
-		}
-
-		if (timeMax != null) {
-			localTimes = localTimes.atTheLatest(timeMax.toLocalTime());
+		if (timeMin != null && timeMax != null) {
+			localTimes = localTimes.between(timeMin, timeMax);
 		}
 
 		if (hourMin != -1 && hourMax != -1) {
@@ -59,28 +62,50 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 			localTimes = localTimes.constrainPrecision(ofPrecision);
 		}
 
-		return localTimes.map(v -> OffsetTime.of(v, ZoneOffset.MIN));
+		if (offsetMin != null && offsetMax != null) {
+			zoneOffsets = zoneOffsets.between(offsetMin, offsetMax);
+		}
+
+		Arbitrary<OffsetTime> offsetTimes = Combinators.combine(localTimes, zoneOffsets).as(OffsetTime::of);
+
+		offsetTimes = offsetTimes.filter(v -> !(v.isBefore(offsetTimeMin) || v.isAfter(offsetTimeMax)));
+
+		return offsetTimes;
 
 	}
 
 	@Override
 	public OffsetTimeArbitrary atTheEarliest(OffsetTime min) {
-		if ((timeMax != null) && min.isAfter(timeMax)) {
+		if ((offsetTimeMax != null) && min.isAfter(offsetTimeMax)) {
 			throw new IllegalArgumentException("Minimum time must not be after maximum time");
 		}
 
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.timeMin = min;
+		clone.offsetTimeMin = min;
 		return clone;
 	}
 
 	@Override
 	public OffsetTimeArbitrary atTheLatest(OffsetTime max) {
-		if ((timeMin != null) && max.isBefore(timeMin)) {
+		if ((offsetTimeMin != null) && max.isBefore(offsetTimeMin)) {
 			throw new IllegalArgumentException("Maximum time must not be before minimum time");
 		}
 
 		DefaultOffsetTimeArbitrary clone = typedClone();
+		clone.offsetTimeMax = max;
+		return clone;
+	}
+
+	@Override
+	public OffsetTimeArbitrary timeBetween(LocalTime min, LocalTime max) {
+		if (min.isAfter(max)) {
+			LocalTime remember = min;
+			min = max;
+			max = remember;
+		}
+
+		DefaultOffsetTimeArbitrary clone = typedClone();
+		clone.timeMin = min;
 		clone.timeMax = max;
 		return clone;
 	}
@@ -136,6 +161,30 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 		DefaultOffsetTimeArbitrary clone = typedClone();
 		clone.secondMin = min;
 		clone.secondMax = max;
+		return clone;
+	}
+
+	@Override
+	public OffsetTimeArbitrary offsetBetween(ZoneOffset min, ZoneOffset max) {
+		if (min.getTotalSeconds() > max.getTotalSeconds()) {
+			ZoneOffset remember = min;
+			min = max;
+			max = remember;
+		}
+
+		if (min.getTotalSeconds() < DefaultZoneOffsetArbitrary.DEFAULT_MIN
+											.getTotalSeconds() || min.getTotalSeconds() > DefaultZoneOffsetArbitrary.DEFAULT_MAX
+																								  .getTotalSeconds()) {
+			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
+		}
+
+		if (max.getTotalSeconds() > DefaultZoneOffsetArbitrary.DEFAULT_MAX.getTotalSeconds()) {
+			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
+		}
+
+		DefaultOffsetTimeArbitrary clone = typedClone();
+		clone.offsetMin = min;
+		clone.offsetMax = max;
 		return clone;
 	}
 

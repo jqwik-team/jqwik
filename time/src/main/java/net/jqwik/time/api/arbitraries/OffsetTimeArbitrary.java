@@ -36,6 +36,11 @@ public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 	OffsetTimeArbitrary atTheLatest(OffsetTime max);
 
 	/**
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated time values.
+	 */
+	OffsetTimeArbitrary timeBetween(LocalTime min, LocalTime max); //TODO: TEST
+
+	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated hour values.
 	 * The hours can be between {@code 0} and {@code 23}.
 	 */
@@ -52,6 +57,12 @@ public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 	 * The minutes can be between {@code 0} and {@code 59}.
 	 */
 	OffsetTimeArbitrary secondBetween(int min, int max);
+
+	/**
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated offset values.
+	 * The offsets can be between {@code -12:00:00} and {@code +14:00:00}.
+	 */
+	OffsetTimeArbitrary offsetBetween(ZoneOffset min, ZoneOffset max);
 
 	/**
 	 * Constrain the precision of generated values.
