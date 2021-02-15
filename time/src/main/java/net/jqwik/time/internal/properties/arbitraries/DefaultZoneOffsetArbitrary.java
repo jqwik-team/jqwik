@@ -14,8 +14,8 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> implements ZoneOffsetArbitrary {
 
-	private final ZoneOffset DEFAULT_MIN = ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0);
-	private final ZoneOffset DEFAULT_MAX = ZoneOffset.ofHoursMinutesSeconds(14, 0, 0);
+	public static final ZoneOffset DEFAULT_MIN = ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0);
+	public static final ZoneOffset DEFAULT_MAX = ZoneOffset.ofHoursMinutesSeconds(14, 0, 0);
 
 	private ZoneOffset offsetMin = DEFAULT_MIN;
 	private ZoneOffset offsetMax = DEFAULT_MAX;
