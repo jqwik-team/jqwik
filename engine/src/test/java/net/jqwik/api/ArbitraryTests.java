@@ -122,14 +122,13 @@ class ArbitraryTests {
 		void combinedGeneratorWithEmbeddedEdgeCases(@ForAll("tuple") Tuple2<Integer, Integer> aTuple) {
 			Statistics.label("tuple contains 1000")
 					  .collect(aTuple.get1() == 1000 || aTuple.get2() == 1000)
-					  .coverage(checker -> checker.check(true).percentage(p -> p > 2.5));
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 2));
 		}
 
 		@Provide
 		Arbitrary<Tuple2<Integer, Integer>> tuple() {
-			IntegerArbitrary int1 = Arbitraries.integers().lessOrEqual(1000);
-			IntegerArbitrary int2 = Arbitraries.integers().lessOrEqual(1000);
-			return Combinators.combine(int1, int2).as(Tuple::of);
+			IntegerArbitrary int1 = Arbitraries.integers().lessOrEqual(1000).withDistribution(RandomDistribution.uniform());
+			return Combinators.combine(int1, int1).as(Tuple::of);
 		}
 
 		@Property
