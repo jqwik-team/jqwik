@@ -2,7 +2,7 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
-import java.util.stream.*;
+import java.util.function.*;
 
 import org.assertj.core.api.*;
 
@@ -11,11 +11,9 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
-import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.GenerationMode.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
@@ -268,7 +266,6 @@ class ArbitraryTests {
 	@Group
 	class StreamOfAllValues {
 
-
 		@Example
 		void generateAllValues() {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
@@ -459,6 +456,30 @@ class ArbitraryTests {
 			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
 
 			assertThat(noMoreDuplicates).hasSize(1);
+		}
+
+		@Disabled("Inject duplicates no longer works as expected")
+		@Property
+		@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+		void duplicatesAreNotPreservedAcrossTries(@ForAll("duplicateInts") int anInt) {
+			Statistics.collect(anInt);
+
+			Statistics.coverage(checker -> {
+				for (int i = -1000; i <= 1000; i++) {
+					int finalI = i;
+					checker.check(i).percentage(
+							(Consumer<Double>) p -> assertThat(p).describedAs("Value: %s", finalI).isLessThan(1)
+					);
+				}
+			});
+		}
+
+		@Provide
+		private Arbitrary<Integer> duplicateInts() {
+			Arbitrary<Integer> ints = Arbitraries.integers()
+												 .between(-1000, 1000).withDistribution(RandomDistribution.uniform())
+												 .withoutEdgeCases();
+			return ints.injectDuplicates(0.5);
 		}
 	}
 
