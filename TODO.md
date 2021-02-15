@@ -1,3 +1,8 @@
+- 1.5.0
+  
+    - Does Arbitrary.injectDuplicates() still work as expected?
+    
+
 - 1.5.1
    
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
