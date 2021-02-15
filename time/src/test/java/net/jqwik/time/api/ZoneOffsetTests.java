@@ -21,9 +21,34 @@ class ZoneOffsetTests {
 		return Times.zoneOffsets();
 	}
 
-	@Property
-	void validZoneOffsetIsGenerated(@ForAll("offsets") ZoneOffset offset) {
-		assertThat(offset).isNotNull();
+	@Group
+	class SimpleArbitraries {
+
+		@Property
+		void validZoneOffsetIsGenerated(@ForAll("offsets") ZoneOffset offset) {
+			assertThat(offset).isNotNull();
+		}
+
+		@Property
+		void onlyValidHoursAreGenerated(@ForAll("offsets") ZoneOffset offset) {
+			ZoneOffset offsetStart = ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0);
+			ZoneOffset offsetEnd = ZoneOffset.ofHoursMinutesSeconds(14, 0, 0);
+			assertThat(offset.getTotalSeconds()).isGreaterThanOrEqualTo(offsetStart.getTotalSeconds());
+			assertThat(offset.getTotalSeconds()).isLessThanOrEqualTo(offsetEnd.getTotalSeconds());
+		}
+
+		@Property
+		void onlyValidMinutesAreGenerated(@ForAll("offsets") ZoneOffset offset) {
+			int minutes = Math.abs((offset.getTotalSeconds() % 3600) / 60);
+			assertThat(minutes % 15).isEqualTo(0);
+		}
+
+		@Property
+		void onlyValidSecondsAreGenerated(@ForAll("offsets") ZoneOffset offset) {
+			int seconds = Math.abs(offset.getTotalSeconds() % 60);
+			assertThat(seconds).isEqualTo(0);
+		}
+
 	}
 
 	@Property
@@ -90,117 +115,6 @@ class ZoneOffsetTests {
 
 		}
 
-		@Group
-		class HourMethods {
-
-			@Property
-			void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll Random random) {
-
-				Assume.that(startHour <= endHour);
-
-				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().hourBetween(startHour, endHour);
-
-				assertAllGenerated(offsets.generator(1000), random, offset -> {
-					assertThat(offset.getTotalSeconds() / 3600).isGreaterThanOrEqualTo(startHour);
-					assertThat(offset.getTotalSeconds() / 3600).isLessThanOrEqualTo(endHour);
-					return true;
-				});
-
-			}
-
-			@Property
-			void hourBetweenSame(@ForAll("hours") int hour, @ForAll Random random) {
-
-				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().hourBetween(hour, hour);
-
-				assertAllGenerated(offsets.generator(1000), random, offset -> {
-					assertThat(offset.getTotalSeconds() / 3600).isEqualTo(hour);
-					return true;
-				});
-
-			}
-
-			@Provide
-			Arbitrary<Integer> hours() {
-				return Arbitraries.integers().between(-18, 18);
-			}
-
-		}
-
-		@Group
-		class MinuteMethods {
-
-			@Property
-			void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll Random random) {
-
-				Assume.that(startMinute <= endMinute);
-
-				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().minuteBetween(startMinute, endMinute);
-
-				assertAllGenerated(offsets.generator(1000), random, offset -> {
-					assertThat(Math.abs((offset.getTotalSeconds() % 3600) / 60)).isGreaterThanOrEqualTo(startMinute);
-					assertThat(Math.abs((offset.getTotalSeconds() % 3600) / 60)).isLessThanOrEqualTo(endMinute);
-					return true;
-				});
-
-			}
-
-			@Property
-			void minuteBetweenSame(@ForAll("minutes") int minute, @ForAll Random random) {
-
-				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().minuteBetween(minute, minute);
-
-				assertAllGenerated(offsets.generator(1000), random, offset -> {
-					assertThat(Math.abs((offset.getTotalSeconds() % 3600) / 60)).isEqualTo(minute);
-					return true;
-				});
-
-			}
-
-			@Provide
-			Arbitrary<Integer> minutes() {
-				return Arbitraries.integers().between(0, 59);
-			}
-
-		}
-
-		@Group
-		class SecondMethods {
-
-			@Property
-			void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll Random random) {
-
-				Assume.that(startSecond <= endSecond);
-
-				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().secondBetween(startSecond, endSecond);
-
-				assertAllGenerated(offsets.generator(1000), random, offset -> {
-					assertThat(Math.abs(offset.getTotalSeconds() % 60)).isGreaterThanOrEqualTo(startSecond);
-					assertThat(Math.abs(offset.getTotalSeconds() % 60)).isLessThanOrEqualTo(endSecond);
-					return true;
-				});
-
-			}
-
-			@Property
-			void secondBetweenSame(@ForAll("seconds") int second, @ForAll Random random) {
-
-				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().secondBetween(second, second);
-
-				assertAllGenerated(offsets.generator(1000), random, offset -> {
-					assertThat(Math.abs(offset.getTotalSeconds() % 60)).isEqualTo(second);
-					return true;
-				});
-
-			}
-
-			@Provide
-			Arbitrary<Integer> seconds() {
-				return Arbitraries.integers().between(0, 59);
-			}
-
-		}
-
 	}
 
 	@Group
@@ -215,20 +129,20 @@ class ZoneOffsetTests {
 
 		@Property
 		void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
-			ZoneOffset shrinksTo = ZoneOffset.ofHoursMinutesSeconds(2, 14, 33);
 			ZoneOffsetArbitrary offsets = Times.zoneOffsets();
-			TestingFalsifier<ZoneOffset> falsifier = offset -> offset.getTotalSeconds() < shrinksTo.getTotalSeconds();
+			TestingFalsifier<ZoneOffset> falsifier = offset -> offset.getTotalSeconds() < ZoneOffset.ofHoursMinutesSeconds(2, 14, 33)
+																									.getTotalSeconds();
 			ZoneOffset value = falsifyThenShrink(offsets, random, falsifier);
-			assertThat(value).isEqualTo(shrinksTo);
+			assertThat(value).isEqualTo(ZoneOffset.ofHoursMinutesSeconds(2, 15, 0));
 		}
 
 		@Property
 		void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
-			ZoneOffset shrinksTo = ZoneOffset.ofHoursMinutesSeconds(-2, -14, -33);
 			ZoneOffsetArbitrary offsets = Times.zoneOffsets();
-			TestingFalsifier<ZoneOffset> falsifier = offset -> offset.getTotalSeconds() > shrinksTo.getTotalSeconds();
+			TestingFalsifier<ZoneOffset> falsifier = offset -> offset.getTotalSeconds() > ZoneOffset.ofHoursMinutesSeconds(-2, -14, -33)
+																									.getTotalSeconds();
 			ZoneOffset value = falsifyThenShrink(offsets, random, falsifier);
-			assertThat(value).isEqualTo(shrinksTo);
+			assertThat(value).isEqualTo(ZoneOffset.ofHoursMinutesSeconds(-2, -15, 0));
 		}
 
 	}
@@ -241,8 +155,8 @@ class ZoneOffsetTests {
 			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
 					Times.zoneOffsets()
 						 .between(
-								 ZoneOffset.ofHoursMinutesSeconds(11, 59, 58),
-								 ZoneOffset.ofHoursMinutesSeconds(12, 0, 2)
+								 ZoneOffset.ofHoursMinutesSeconds(11, 11, 23),
+								 ZoneOffset.ofHoursMinutesSeconds(12, 19, 2)
 						 )
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -250,11 +164,11 @@ class ZoneOffsetTests {
 			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(5); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
-					ZoneOffset.ofHoursMinutesSeconds(11, 59, 58),
-					ZoneOffset.ofHoursMinutesSeconds(11, 59, 59),
+					ZoneOffset.ofHoursMinutesSeconds(11, 15, 0),
+					ZoneOffset.ofHoursMinutesSeconds(11, 30, 0),
+					ZoneOffset.ofHoursMinutesSeconds(11, 45, 0),
 					ZoneOffset.ofHoursMinutesSeconds(12, 0, 0),
-					ZoneOffset.ofHoursMinutesSeconds(12, 0, 1),
-					ZoneOffset.ofHoursMinutesSeconds(12, 0, 2)
+					ZoneOffset.ofHoursMinutesSeconds(12, 15, 0)
 			);
 		}
 
@@ -269,9 +183,9 @@ class ZoneOffsetTests {
 			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-					ZoneOffset.MIN,
+					ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0),
 					ZoneOffset.of("Z"),
-					ZoneOffset.MAX
+					ZoneOffset.ofHoursMinutesSeconds(14, 0, 0)
 			);
 		}
 
@@ -279,12 +193,12 @@ class ZoneOffsetTests {
 		void betweenPositive() {
 			ZoneOffsetArbitrary offsets =
 					Times.zoneOffsets()
-						 .between(ZoneOffset.ofHoursMinutesSeconds(11, 23, 21), ZoneOffset.ofHoursMinutesSeconds(16, 15, 19));
+						 .between(ZoneOffset.ofHoursMinutesSeconds(11, 23, 21), ZoneOffset.ofHoursMinutesSeconds(13, 29, 59));
 			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-					ZoneOffset.ofHoursMinutesSeconds(11, 23, 21),
-					ZoneOffset.ofHoursMinutesSeconds(16, 15, 19)
+					ZoneOffset.ofHoursMinutesSeconds(11, 30, 0),
+					ZoneOffset.ofHoursMinutesSeconds(13, 15, 0)
 			);
 		}
 
@@ -292,503 +206,13 @@ class ZoneOffsetTests {
 		void betweenNegative() {
 			ZoneOffsetArbitrary offsets =
 					Times.zoneOffsets()
-						 .between(ZoneOffset.ofHoursMinutesSeconds(-16, -15, -19), ZoneOffset.ofHoursMinutesSeconds(-11, -23, -21));
+						 .between(ZoneOffset.ofHoursMinutesSeconds(-11, -15, -19), ZoneOffset.ofHoursMinutesSeconds(-10, -23, -21));
 			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-					ZoneOffset.ofHoursMinutesSeconds(-11, -23, -21),
-					ZoneOffset.ofHoursMinutesSeconds(-16, -15, -19)
+					ZoneOffset.ofHoursMinutesSeconds(-11, -15, 0),
+					ZoneOffset.ofHoursMinutesSeconds(-10, -30, 0)
 			);
-		}
-
-		@Example
-		void betweenMethodsPositive() {
-			ZoneOffsetArbitrary offsets =
-					Times.zoneOffsets()
-						 .hourBetween(11, 12)
-						 .minuteBetween(23, 24)
-						 .secondBetween(21, 22);
-			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-			assertThat(edgeCases).hasSize(2);
-			assertThat(edgeCases).containsExactlyInAnyOrder(
-					ZoneOffset.ofHoursMinutesSeconds(11, 23, 21),
-					ZoneOffset.ofHoursMinutesSeconds(12, 24, 22)
-			);
-		}
-
-		@Example
-		void betweenMethodsNegative() {
-			ZoneOffsetArbitrary offsets =
-					Times.zoneOffsets()
-						 .hourBetween(-12, -11)
-						 .minuteBetween(23, 24)
-						 .secondBetween(21, 22);
-			Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-			assertThat(edgeCases).hasSize(2);
-			assertThat(edgeCases).containsExactlyInAnyOrder(
-					ZoneOffset.ofHoursMinutesSeconds(-11, -23, -21),
-					ZoneOffset.ofHoursMinutesSeconds(-12, -24, -22)
-			);
-		}
-
-		@Group
-		class betweenMethodsHourCanBeZero {
-
-			@Example
-			void between() {
-				ZoneOffsetArbitrary offsets =
-						Times.zoneOffsets()
-							 .between(ZoneOffset.ofHoursMinutesSeconds(0, -13, -22), ZoneOffset.ofHoursMinutesSeconds(0, 22, 31));
-				Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-				assertThat(edgeCases).hasSize(3);
-				assertThat(edgeCases).containsExactlyInAnyOrder(
-						ZoneOffset.ofHoursMinutesSeconds(0, -13, -22),
-						ZoneOffset.ofHoursMinutesSeconds(0, 22, 31),
-						ZoneOffset.of("Z")
-				);
-			}
-
-			@Example
-			void betweenMethods() {
-				ZoneOffsetArbitrary offsets =
-						Times.zoneOffsets()
-							 .hourBetween(0, 0)
-							 .minuteBetween(23, 24)
-							 .secondBetween(21, 22);
-				Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-				assertThat(edgeCases).hasSize(2);
-				assertThat(edgeCases).containsExactlyInAnyOrder(
-						ZoneOffset.ofHoursMinutesSeconds(0, -24, -22),
-						ZoneOffset.ofHoursMinutesSeconds(0, 24, 22)
-				);
-			}
-
-			@Group
-			class MinOffsetSet {
-
-				@Example
-				void test1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, 0, 0))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, 23, 21),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test2_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, -26, -21))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 24)
-								 .secondBetween(21, 22);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, -24, -22),
-							ZoneOffset.ofHoursMinutesSeconds(2, 24, 22)
-					);
-				}
-
-				@Example
-				void test2_2_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, -24, -31))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, -24, -23),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test2_2_2() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, -24, -22))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, -24, -22),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test2_2_3_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, -24, -10))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, -23, -23),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test2_2_3_2() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, -23, -10))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, 23, 21),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test2_3() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, -4, -3))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, 23, 21),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test3_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, 27, 22))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(1, 23, 21),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test3_2_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, 24, 10))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, 24, 21),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test3_2_2() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, 24, 22))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, 24, 22),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test3_2_3_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, 25, 24))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(1, 23, 21),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test3_2_3_2() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, 24, 24))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, 25, 21),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-				@Example
-				void test3_3() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, 4, 50))
-								 .hourBetween(0, 2)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(0, 23, 21),
-							ZoneOffset.ofHoursMinutesSeconds(2, 25, 23)
-					);
-				}
-
-			}
-
-			@Group
-			class MaxOffsetSet {
-
-				@Example
-				void test1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 0, 0))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, -23, -21)
-					);
-				}
-
-				@Example
-				void test2_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 31, 3))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, 25, 23)
-					);
-				}
-
-				@Example
-				void test2_2_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 24, 26))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, 24, 23)
-					);
-				}
-
-				@Example
-				void test2_2_2() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 24, 22))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, 24, 22)
-					);
-				}
-
-				@Example
-				void test2_2_3_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 23, 2))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, -23, -21)
-					);
-				}
-
-				@Example
-				void test2_2_3_2() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 24, 2))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, 23, 23)
-					);
-				}
-
-				@Example
-				void test2_3() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 4, 59))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, -23, -21)
-					);
-				}
-
-				@Example
-				void test3_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -31, -3))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(-1, -23, -21)
-					);
-				}
-
-				@Example
-				void test3_2_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -25, -3))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, -25, -21)
-					);
-				}
-
-				@Example
-				void test3_2_2() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -24, -22))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(-0, -24, -22)
-					);
-				}
-
-				@Example
-				void test3_2_3_1() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -25, -31))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(-1, -23, -21)
-					);
-				}
-
-				@Example
-				void test3_2_3_2() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -24, -31))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, -25, -21)
-					);
-				}
-
-				@Example
-				void test3_3() {
-					ZoneOffsetArbitrary offsets =
-							Times.zoneOffsets()
-								 .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, -15, -44))
-								 .hourBetween(-2, 0)
-								 .minuteBetween(23, 25)
-								 .secondBetween(21, 23);
-					Set<ZoneOffset> edgeCases = collectEdgeCaseValues(offsets.edgeCases());
-					assertThat(edgeCases).hasSize(2);
-					assertThat(edgeCases).containsExactlyInAnyOrder(
-							ZoneOffset.ofHoursMinutesSeconds(-2, -25, -23),
-							ZoneOffset.ofHoursMinutesSeconds(0, -23, -21)
-					);
-				}
-
-			}
-
 		}
 
 	}
@@ -834,19 +258,12 @@ class ZoneOffsetTests {
 		void minutes(@ForAll("offsets") ZoneOffset offset) {
 			Statistics.label("Minutes")
 					  .collect(Math.abs((offset.getTotalSeconds() % 3600) / 60))
-					  .coverage(this::check60Coverage);
-		}
-
-		@Property
-		void seconds(@ForAll("offsets") ZoneOffset offset) {
-			Statistics.label("Seconds")
-					  .collect(Math.abs(offset.getTotalSeconds() % 60))
-					  .coverage(this::check60Coverage);
+					  .coverage(this::checkMinuteCoverage);
 		}
 
 		@Provide
 		Arbitrary<ZoneOffset> offsetsNear0() {
-			return Times.zoneOffsets().hourBetween(-2, 2);
+			return Times.zoneOffsets().between(ZoneOffset.ofHoursMinutesSeconds(-1, 0, 0), ZoneOffset.ofHoursMinutesSeconds(1, 0, 0));
 		}
 
 		private void check5050BooleanCoverage(StatisticsCoverage coverage) {
@@ -855,14 +272,16 @@ class ZoneOffsetTests {
 		}
 
 		private void checkHourCoverage(StatisticsCoverage coverage) {
-			for (int value = -18; value < 18; value++) {
-				coverage.check(value).percentage(p -> p >= 1);
+			coverage.check(-12).percentage(p -> p >= 0.8);
+			for (int value = -11; value < 13; value++) {
+				coverage.check(value).percentage(p -> p >= 3);
 			}
+			coverage.check(14).percentage(p -> p >= 0.8);
 		}
 
-		private void check60Coverage(StatisticsCoverage coverage) {
-			for (int value = 0; value < 60; value++) {
-				coverage.check(value).percentage(p -> p >= 0.3);
+		private void checkMinuteCoverage(StatisticsCoverage coverage) {
+			for (int value = 0; value < 60; value += 15) {
+				coverage.check(value).percentage(p -> p >= 20);
 			}
 		}
 
@@ -893,64 +312,31 @@ class ZoneOffsetTests {
 
 		}
 
-		@Property
-		void hour(@ForAll int minHour, @ForAll int maxHour) {
-
-			Assume.that(minHour < maxHour);
-			Assume.that(minHour < -18 || minHour > 18 || maxHour > 18);
-
-			assertThatThrownBy(
-					() -> Times.zoneOffsets().hourBetween(minHour, maxHour)
-			).isInstanceOf(IllegalArgumentException.class);
-
-		}
-
-		@Property
-		void minute(@ForAll int minMinute, @ForAll int maxMinute) {
-
-			Assume.that(minMinute < maxMinute);
-			Assume.that(minMinute < 0 || minMinute > 59 || maxMinute > 59);
-
-			assertThatThrownBy(
-					() -> Times.zoneOffsets().minuteBetween(minMinute, maxMinute)
-			).isInstanceOf(IllegalArgumentException.class);
-
-		}
-
-		@Property
-		void second(@ForAll int minSecond, @ForAll int maxSecond) {
-
-			Assume.that(minSecond < maxSecond);
-			Assume.that(minSecond < 0 || minSecond > 59 || maxSecond > 59);
-
-			assertThatThrownBy(
-					() -> Times.zoneOffsets().secondBetween(minSecond, maxSecond)
-			).isInstanceOf(IllegalArgumentException.class);
-
-		}
-
 		@Example
-		void noValuesCanBeGenerated() {
+		void minOffsetLessThanMinimumOffset() {
 			assertThatThrownBy(
-					() -> Times.zoneOffsets()
-							   .between(ZoneOffset.ofHoursMinutesSeconds(0, 11, 23), ZoneOffset.ofHoursMinutesSeconds(0, 13, 33))
-							   .hourBetween(0, 1)
-							   .minuteBetween(7, 8)
-							   .secondBetween(2, 3)
-							   .generator(1000)
+					() -> Times.zoneOffsets().atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(-12, 0, -1))
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
-		void noValuesCanBeGenerated2() {
+		void minOffsetGreaterThanMaximumOffset() {
 			assertThatThrownBy(
-					() -> Times.zoneOffsets()
-							   .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(0, 27, 22))
-							   .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(0, 28, 22))
-							   .hourBetween(0, 2)
-							   .minuteBetween(23, 25)
-							   .secondBetween(21, 23)
-							   .generator(1000)
+					() -> Times.zoneOffsets().atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(14, 0, 1))
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void maxOffsetLessThanMinimumOffset() {
+			assertThatThrownBy(
+					() -> Times.zoneOffsets().atTheLatest(ZoneOffset.ofHoursMinutesSeconds(-12, 0, -1))
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void maxOffsetGreaterThanMaximumOffset() {
+			assertThatThrownBy(
+					() -> Times.zoneOffsets().atTheLatest(ZoneOffset.ofHoursMinutesSeconds(14, 0, 1))
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
