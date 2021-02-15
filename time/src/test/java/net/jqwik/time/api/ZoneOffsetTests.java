@@ -162,13 +162,67 @@ class ZoneOffsetTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(5); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(5);
 			assertThat(generator).containsExactly(
 					ZoneOffset.ofHoursMinutesSeconds(11, 15, 0),
 					ZoneOffset.ofHoursMinutesSeconds(11, 30, 0),
 					ZoneOffset.ofHoursMinutesSeconds(11, 45, 0),
 					ZoneOffset.ofHoursMinutesSeconds(12, 0, 0),
 					ZoneOffset.ofHoursMinutesSeconds(12, 15, 0)
+			);
+		}
+
+		@Example
+		void edgeCase1() {
+			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
+					Times.zoneOffsets()
+						 .between(
+								 ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0),
+								 ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(1);
+			assertThat(generator).containsExactly(
+					ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0)
+			);
+		}
+
+		@Example
+		void edgeCase2() {
+			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
+					Times.zoneOffsets()
+						 .between(
+								 ZoneOffset.ofHoursMinutesSeconds(14, 0, 0),
+								 ZoneOffset.ofHoursMinutesSeconds(14, 0, 0)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(1);
+			assertThat(generator).containsExactly(
+					ZoneOffset.ofHoursMinutesSeconds(14, 0, 0)
+			);
+		}
+
+		@Example
+		void edgeCase3() {
+			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
+					Times.zoneOffsets()
+						 .between(
+								 ZoneOffset.ofHoursMinutesSeconds(0, 0, 0),
+								 ZoneOffset.ofHoursMinutesSeconds(0, 0, 0)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(1);
+			assertThat(generator).containsExactly(
+					ZoneOffset.ofHoursMinutesSeconds(0, 0, 0)
 			);
 		}
 
