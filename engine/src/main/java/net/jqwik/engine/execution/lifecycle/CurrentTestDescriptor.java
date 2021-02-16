@@ -5,8 +5,6 @@ import java.util.function.*;
 
 import org.junit.platform.engine.*;
 
-import net.jqwik.api.*;
-
 public class CurrentTestDescriptor {
 
 	// Current test descriptors are stored in a stack because one test might invoke others
@@ -22,19 +20,31 @@ public class CurrentTestDescriptor {
 	}
 
 	public static <T> T runWithDescriptor(TestDescriptor currentDescriptor, Supplier<T> executable) {
-		descriptors.get().add(0, currentDescriptor);
+		push(currentDescriptor);
 		try {
 			return executable.get();
 		} finally {
 			TestDescriptor peek = descriptors.get().get(0);
 			if (peek == currentDescriptor) {
-				descriptors.get().remove(0);
+				pop();
 			}
 		}
 	}
 
+	private static TestDescriptor pop() {
+		return descriptors.get().remove(0);
+	}
+
+	private static void push(TestDescriptor currentDescriptor) {
+		descriptors.get().add(0, currentDescriptor);
+	}
+
+	public static boolean isEmpty() {
+		return descriptors.get().isEmpty();
+	}
+
 	public static TestDescriptor get() {
-		if (descriptors.get().isEmpty()) {
+		if (isEmpty()) {
 			String message = String.format("The current action must be run on a jqwik thread, i.e. container, property or hook.%n" +
 											   "Maybe you spawned off a thread?");
 			throw new OutsideJqwikException(message);

@@ -27,7 +27,7 @@ public interface Store<T> {
 
 	@API(status = INTERNAL)
 	abstract class StoreFacade {
-		private static Store.StoreFacade implementation;
+		private static final Store.StoreFacade implementation;
 
 		static {
 			implementation = FacadeLoader.load(Store.StoreFacade.class);
@@ -36,6 +36,8 @@ public interface Store<T> {
 		public abstract <T> Store<T> create(Object identifier, Lifespan visibility, Supplier<T> initializer);
 
 		public abstract <T> Store<T> get(Object identifier);
+
+		public abstract <T> Store<T> free(Supplier<T> initializer);
 	}
 
 	/**
@@ -90,4 +92,15 @@ public interface Store<T> {
 		return StoreFacade.implementation.get(identifier);
 	}
 
+	/**
+	 * Create a "free" store, i.e. one that lives independently from a test run, property or try.
+	 *
+	 * @param <T>         The type of object to store
+	 * @param initializer Supplies the value to be used for initializing the store depending on its lifespan
+	 * @return New store instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.0")
+	static <T> Store<T> free(Supplier<T> initializer) {
+		return StoreFacade.implementation.free(initializer);
+	}
 }

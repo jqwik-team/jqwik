@@ -39,6 +39,18 @@ class UseArbitrariesOutsideJqwikTests {
 	}
 
 	@Test
+	void lazyOf() {
+		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
+
+		Arbitrary<Integer> sum = Arbitraries.lazyOf(
+				() -> Arbitraries.just(0),
+				() -> ints
+		);
+
+		assertThat(sum.sample()).isBetween(-1000, 1000);
+	}
+
+	@Test
 	void injectDuplicates() {
 		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 		Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.5);

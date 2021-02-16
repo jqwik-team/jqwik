@@ -25,4 +25,37 @@ public class StoreFacadeImpl extends Store.StoreFacade {
 		Optional<? extends Store<T>> store = StoreRepository.getCurrent().get(retriever, identifier);
 		return store.orElseThrow(() -> new CannotFindStoreException(identifier, retriever.getUniqueId().toString()));
 	}
+
+	@Override
+	public <T> Store<T> free(Supplier<T> initializer) {
+		return new Store<T>() {
+			T t = initializer.get();
+
+			@Override
+			public T get() {
+				return t;
+			}
+
+			@Override
+			public Lifespan lifespan() {
+				return Lifespan.RUN;
+			}
+
+			@Override
+			public void update(Function<T, T> updater) {
+				t = updater.apply(t);
+			}
+
+			@Override
+			public void reset() {
+				t = initializer.get();
+			}
+
+			@Override
+			public Store<T> onClose(Consumer<T> onCloseCallback) {
+				return this;
+			}
+
+		};
+	}
 }

@@ -8,18 +8,27 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
 public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	// Cached arbitraries only have to survive one property
-	private static final Store<Map<Integer, LazyOfArbitrary<?>>> cachedArbitraries =
-		Store.create(Tuple.of(LazyOfShrinkable.class, "arbitraries"), Lifespan.PROPERTY, HashMap::new);
+	private static final Store<Map<Integer, LazyOfArbitrary<?>>> cachedArbitraries = createArbitrariesStore();
+
+	private static Store<Map<Integer, LazyOfArbitrary<?>>> createArbitrariesStore() {
+		try {
+			return Store.create(Tuple.of(LazyOfShrinkable.class, "arbitraries"), Lifespan.PROPERTY, HashMap::new);
+		} catch (OutsideJqwikException outsideJqwikException) {
+			return Store.free(HashMap::new);
+		}
+	}
 
 	public static <T> Arbitrary<T> of(int hashIdentifier, List<Supplier<Arbitrary<T>>> suppliers) {
 		// It's important for good shrinking to work that the same arbitrary usage is handled by the same arbitrary instance
 		// TODO: Make this a generic mechanism for arbitraries that require to hold state, e.g. unique()
+		// TODO: This does not work when used outside a jqwik thread, e.g. with Arbitrary.sample()
 		LazyOfArbitrary<?> arbitrary = cachedArbitraries.get().computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
 		//noinspection unchecked
 		return (Arbitrary<T>) arbitrary;
@@ -30,8 +39,15 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	private final Deque<Set<LazyOfShrinkable<T>>> generatedParts = new ArrayDeque<>();
 
 	// Remember generators during the same try. That way generators with state (e.g. unique()) work as expected
-	private final Store<Map<Integer, RandomGenerator<T>>> generators =
-		Store.getOrCreate(Tuple.of(this, "generators"), Lifespan.TRY, HashMap::new);
+	private final Store<Map<Integer, RandomGenerator<T>>> generators = createGeneratorsStore();
+
+	private Store<Map<Integer, RandomGenerator<T>>> createGeneratorsStore() {
+		try {
+			return Store.getOrCreate(Tuple.of(this, "generators"), Lifespan.TRY, HashMap::new);
+		} catch (OutsideJqwikException outsideJqwikException) {
+			return Store.free(HashMap::new);
+		}
+	}
 
 	public LazyOfArbitrary(List<Supplier<Arbitrary<T>>> suppliers) {
 		this.suppliers = suppliers;
@@ -49,18 +65,18 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	private LazyOfShrinkable<T> createShrinkable(
-		Tuple2<Shrinkable<T>, Set<LazyOfShrinkable<T>>> shrinkableAndParts,
-		int genSize,
-		long seed,
-		Set<Integer> usedIndices
+			Tuple2<Shrinkable<T>, Set<LazyOfShrinkable<T>>> shrinkableAndParts,
+			int genSize,
+			long seed,
+			Set<Integer> usedIndices
 	) {
 		Shrinkable<T> shrinkable = shrinkableAndParts.get1();
 		Set<LazyOfShrinkable<T>> parts = shrinkableAndParts.get2();
 		LazyOfShrinkable<T> lazyOfShrinkable = new LazyOfShrinkable<>(
-			shrinkable,
-			depth(parts),
-			parts,
-			(LazyOfShrinkable<T> lazyOf) -> shrink(lazyOf, genSize, seed, usedIndices)
+				shrinkable,
+				depth(parts),
+				parts,
+				(LazyOfShrinkable<T> lazyOf) -> shrink(lazyOf, genSize, seed, usedIndices)
 		);
 		addGenerated(lazyOfShrinkable);
 		return lazyOfShrinkable;
@@ -92,8 +108,8 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		try {
 			pushGeneratedLevel();
 			return Tuple.of(
-				getGenerator(index, genSize).next(SourceOfRandomness.newRandom(seed)),
-				peekGenerated()
+					getGenerator(index, genSize).next(SourceOfRandomness.newRandom(seed)),
+					peekGenerated()
 			);
 		} finally {
 			// To clean up even if there's an exception during value generation
@@ -110,38 +126,38 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	private Stream<Shrinkable<T>> shrink(
-		LazyOfShrinkable<T> lazyOf,
-		int genSize,
-		long seed,
-		Set<Integer> usedIndexes
+			LazyOfShrinkable<T> lazyOf,
+			int genSize,
+			long seed,
+			Set<Integer> usedIndexes
 	) {
 		return JqwikStreamSupport.concat(
-			shrinkToParts(lazyOf),
-			shrinkCurrent(lazyOf, genSize, seed, usedIndexes),
-			shrinkToAlternatives(lazyOf.current, genSize, seed, usedIndexes)
-			// I don't have an example to show that this adds shrinking quality:
-			//shrinkToAlternativesAndGrow(lazyOf.current, genSize, seed, usedIndexes)
+				shrinkToParts(lazyOf),
+				shrinkCurrent(lazyOf, genSize, seed, usedIndexes),
+				shrinkToAlternatives(lazyOf.current, genSize, seed, usedIndexes)
+				// I don't have an example to show that this adds shrinking quality:
+				//shrinkToAlternativesAndGrow(lazyOf.current, genSize, seed, usedIndexes)
 		);
 	}
 
 	private Stream<Shrinkable<T>> shrinkCurrent(
-		LazyOfShrinkable<T> lazyOf,
-		int genSize,
-		long seed,
-		Set<Integer> usedIndexes
+			LazyOfShrinkable<T> lazyOf,
+			int genSize,
+			long seed,
+			Set<Integer> usedIndexes
 	) {
 		return lazyOf.current.shrink().map(shrinkable -> new LazyOfShrinkable<>(
-			shrinkable,
-			lazyOf.depth,
-			Collections.emptySet(),
-			(LazyOfShrinkable<T> lazy) -> shrink(lazy, genSize, seed, usedIndexes)
+				shrinkable,
+				lazyOf.depth,
+				Collections.emptySet(),
+				(LazyOfShrinkable<T> lazy) -> shrink(lazy, genSize, seed, usedIndexes)
 		));
 	}
 
 	private Stream<Shrinkable<T>> shrinkToParts(LazyOfShrinkable<T> lazyOf) {
 		return JqwikStreamSupport.concat(
-			lazyOf.parts.stream().flatMap(this::shrinkToParts),
-			lazyOf.parts.stream().map(s -> s)
+				lazyOf.parts.stream().flatMap(this::shrinkToParts),
+				lazyOf.parts.stream().map(s -> s)
 		);
 	}
 
@@ -149,12 +165,12 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		ShrinkingDistance distance = current.distance();
 		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
 		return IntStream
-				   .range(0, suppliers.size())
-				   .filter(index -> !usedIndexes.contains(index))
-				   .peek(newUsedIndexes::add)
-				   .mapToObj(index -> generateCurrent(genSize, index, seed))
-				   .filter(shrinkableAndParts -> shrinkableAndParts.get1().distance().compareTo(distance) < 0)
-				   .map(shrinkableAndParts -> createShrinkable(shrinkableAndParts, genSize, seed, newUsedIndexes));
+					   .range(0, suppliers.size())
+					   .filter(index -> !usedIndexes.contains(index))
+					   .peek(newUsedIndexes::add)
+					   .mapToObj(index -> generateCurrent(genSize, index, seed))
+					   .filter(shrinkableAndParts -> shrinkableAndParts.get1().distance().compareTo(distance) < 0)
+					   .map(shrinkableAndParts -> createShrinkable(shrinkableAndParts, genSize, seed, newUsedIndexes));
 	}
 
 	// Currently disabled since I'm not sure if it provides additional value
@@ -163,20 +179,20 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		ShrinkingDistance distance = current.distance();
 		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
 		return IntStream
-				   .range(0, suppliers.size())
-				   .filter(index -> !usedIndexes.contains(index))
-				   .peek(newUsedIndexes::add)
-				   .mapToObj(index -> generateCurrent(genSize, index, seed))
-				   .map(Tuple1::get1)
-				   .filter(tShrinkable -> tShrinkable.distance().compareTo(distance) < 0)
-				   .flatMap(Shrinkable::grow)
-				   .filter(shrinkable -> shrinkable.distance().compareTo(distance) < 0)
-				   .map(grownShrinkable -> createShrinkable(
-					   Tuple.of(grownShrinkable, Collections.emptySet()),
-					   genSize,
-					   seed,
-					   newUsedIndexes
-				   ));
+					   .range(0, suppliers.size())
+					   .filter(index -> !usedIndexes.contains(index))
+					   .peek(newUsedIndexes::add)
+					   .mapToObj(index -> generateCurrent(genSize, index, seed))
+					   .map(Tuple1::get1)
+					   .filter(tShrinkable -> tShrinkable.distance().compareTo(distance) < 0)
+					   .flatMap(Shrinkable::grow)
+					   .filter(shrinkable -> shrinkable.distance().compareTo(distance) < 0)
+					   .map(grownShrinkable -> createShrinkable(
+							   Tuple.of(grownShrinkable, Collections.emptySet()),
+							   genSize,
+							   seed,
+							   newUsedIndexes
+					   ));
 	}
 
 	@Override

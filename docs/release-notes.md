@@ -41,6 +41,9 @@ title: jqwik Release Notes
 - `Arbitrary.withoutEdgeCases()` did not really get rid of all edge case generation.
   Now it does.
 
+- Some arbitrary types, e.g. `Arbitraries.lazyOf()` could not be used in sampling.
+  Now all should work.
+  
 
 ## 1.4.0
 

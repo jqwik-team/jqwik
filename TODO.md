@@ -1,7 +1,5 @@
 - 1.5.0
 
-    - Check usages of Store if they should be usable outside jqwik thread
-
 - 1.5.1
    
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
