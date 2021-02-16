@@ -457,7 +457,6 @@ class ArbitraryTests {
 			assertThat(noMoreDuplicates).hasSize(1);
 		}
 
-		@Disabled("Inject duplicates no longer works as expected")
 		@Property
 		@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 		void duplicatesAreNotPreservedAcrossTries(@ForAll("duplicateInts") int anInt) {

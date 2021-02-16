@@ -1,5 +1,7 @@
 package net.jqwik;
 
+import java.util.*;
+
 import org.junit.jupiter.api.*;
 
 import net.jqwik.api.*;
@@ -34,6 +36,18 @@ class UseArbitrariesOutsideJqwikTests {
 	@Test
 	void forStrings() {
 		assertThat(Arbitraries.strings().sample()).isInstanceOf(String.class);
+	}
+
+	@Test
+	void injectDuplicates() {
+		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
+		Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.5);
+
+		List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
+		Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+
+		// Might very rarely fail
+		assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(65);
 	}
 
 	private static class Person {

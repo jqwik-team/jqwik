@@ -11,7 +11,7 @@ public class CurrentTestDescriptor {
 
 	// Current test descriptors are stored in a stack because one test might invoke others
 	// e.g. in JqwikIntegrationTests
-	private static ThreadLocal<List<TestDescriptor>> descriptors = ThreadLocal.withInitial(ArrayList::new);
+	private static final ThreadLocal<List<TestDescriptor>> descriptors = ThreadLocal.withInitial(ArrayList::new);
 
 	public static void runWithDescriptor(TestDescriptor currentDescriptor, Runnable executable) {
 		Supplier<Void> supplier = () -> {
@@ -37,7 +37,7 @@ public class CurrentTestDescriptor {
 		if (descriptors.get().isEmpty()) {
 			String message = String.format("The current action must be run on a jqwik thread, i.e. container, property or hook.%n" +
 											   "Maybe you spawned off a thread?");
-			throw new JqwikException(message);
+			throw new OutsideJqwikException(message);
 		}
 		return descriptors.get().get(0);
 	}

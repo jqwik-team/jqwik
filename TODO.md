@@ -1,7 +1,9 @@
 - 1.5.0
 
-    - Does Arbitrary.injectDuplicates() still work as expected?
-    
+    - Check usages of Store if they should be usable outside jqwik thread
+
+    - Look at more performance problems of Arbitrary.sample():
+      Could generator be cached for multiple calls of sample?
 
 - 1.5.1
    
