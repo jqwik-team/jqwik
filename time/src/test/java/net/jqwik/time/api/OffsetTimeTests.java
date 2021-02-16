@@ -78,7 +78,6 @@ class OffsetTimeTests {
 	}
 
 	@Group
-	@Disabled("Working on it")
 	class CheckTimeMethods {
 
 		@Group
@@ -1116,7 +1115,6 @@ class OffsetTimeTests {
 	}
 
 	@Group
-	@Disabled("Working on it")
 	class InvalidConfigurations {
 
 		@Group
