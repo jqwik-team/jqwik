@@ -125,9 +125,20 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> Stream<T> sampleStream(Arbitrary<T> arbitrary) {
-		return arbitrary.generator(JqwikProperties.DEFAULT_TRIES, true)
-						.stream(SourceOfRandomness.current())
-						.map(Shrinkable::value);
+		RandomGenerator<T> generator = getGeneratorForSampling(arbitrary);
+		return generator
+					   .stream(SourceOfRandomness.current())
+					   .map(Shrinkable::value);
+	}
+
+	private static final Map<Arbitrary<Object>, RandomGenerator<Object>> generators = new HashMap<>();
+
+	@SuppressWarnings("unchecked")
+	private static <T> RandomGenerator<T> getGeneratorForSampling(Arbitrary<T> arbitrary) {
+		return (RandomGenerator<T>) generators.computeIfAbsent(
+				(Arbitrary<Object>) arbitrary,
+				a -> a.generator(JqwikProperties.DEFAULT_TRIES, true)
+		);
 	}
 
 	@Override

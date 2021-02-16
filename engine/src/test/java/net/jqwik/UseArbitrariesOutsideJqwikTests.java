@@ -50,6 +50,19 @@ class UseArbitrariesOutsideJqwikTests {
 		assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(65);
 	}
 
+	@Test
+	void samplingOfSameArbitraryShouldUseSameGenerator() {
+		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
+		Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(1.0);
+
+		int i1 = intsWithDuplicates.sample();
+		int i2 = intsWithDuplicates.sample();
+		int i3 = intsWithDuplicates.sample();
+		int i4 = intsWithDuplicates.sample();
+
+		assertThat(Arrays.asList(i1, i2, i3, i4)).allMatch(i -> i == i1);
+	}
+
 	private static class Person {
 		private final String firstName;
 		private final String lastName;

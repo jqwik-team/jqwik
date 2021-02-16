@@ -2,9 +2,6 @@
 
     - Check usages of Store if they should be usable outside jqwik thread
 
-    - Look at more performance problems of Arbitrary.sample():
-      Could generator be cached for multiple calls of sample?
-
 - 1.5.1
    
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
