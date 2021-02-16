@@ -1,5 +1,5 @@
 - 1.5.0
-  
+
     - Does Arbitrary.injectDuplicates() still work as expected?
     
 

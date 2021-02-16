@@ -303,11 +303,9 @@ public class EmailsTests {
 		@Example
 		void all() {
 			EmailArbitrary emails = Web.emails().allowQuotedLocalPart().allowIpv4Host().allowIpv6Host();
-			int expectedNumberOfEdgeCases = (2 + 2) * (2 + 3 + 4);
+			int expectedNumberOfEdgeCases = (3 + 2) * (2 + 3 + 4);
 			Set<String> allEdgeCases = collectEdgeCaseValues(emails.edgeCases(1000));
 			assertThat(allEdgeCases).hasSize(expectedNumberOfEdgeCases);
-
-			// allEdgeCases.forEach(System.out::println);
 		}
 
 		@Example
@@ -318,7 +316,7 @@ public class EmailsTests {
 											 .map(EmailTestingSupport::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
 
-			assertThat(localParts).containsExactlyInAnyOrder("a", "0");
+			assertThat(localParts).containsExactlyInAnyOrder("a", "A", "0");
 		}
 
 		@Example

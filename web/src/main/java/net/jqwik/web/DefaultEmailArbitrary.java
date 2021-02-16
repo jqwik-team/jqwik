@@ -34,20 +34,22 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	private Arbitrary<String> localPartUnquoted() {
 		Arbitrary<String> unquoted =
 				Arbitraries.strings()
-						   .withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+						   .withChars("abcdefghijklmnopqrstuvwxyz")
+						   .withChars("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 						   .withChars("0123456789!#$%&'*+-/=?^_`{|}~.")
 						   //.alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.")
 						   .ofMinLength(1).ofMaxLength(64);
 		unquoted = unquoted.filter(v -> !v.contains(".."));
 		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
 		unquoted = unquoted.filter(v -> v.charAt(v.length() - 1) != '.');
-		return unquoted.edgeCases(stringConfig -> stringConfig.includeOnly("A", "a", "0", "!"));
+		return unquoted.edgeCases(stringConfig -> stringConfig.includeOnly("A", "a", "0"));
 	}
 
 	private Arbitrary<String> localPartQuoted() {
 		Arbitrary<String> quoted =
 				Arbitraries.strings()
-						   .withChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+						   .withChars("abcdefghijklmnopqrstuvwxyz")
+						   .withChars("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 						   .withChars("0123456789 !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
 						   // .alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
 						   .ofMinLength(1).ofMaxLength(62);
@@ -97,10 +99,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		if (hasSingleColonAtStartOrEnd(ip)) {
 			return false;
 		}
-		if (notOnlyFirstColonClusterHasDoubleColon(ip)) {
-			return false;
-		}
-		return true;
+		return !notOnlyFirstColonClusterHasDoubleColon(ip);
 	}
 
 	private static boolean notOnlyFirstColonClusterHasDoubleColon(String ip) {

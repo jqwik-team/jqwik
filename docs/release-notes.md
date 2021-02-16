@@ -20,14 +20,12 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
 ## 1.5.0-SNAPSHOT
 
-<p style="padding-left:1em;font-size:larger">
-<a href="/docs/1.5.0/user-guide.html">User guide</a>
-and
-<a href="/docs/1.5.0/javadoc/index.html">javadoc</a>
-</p>
+#### New and Enhanced Features
 
+- Generated email addresses get a few more edge cases
 
 #### Breaking Changes
 
@@ -42,6 +40,7 @@ and
 
 - `Arbitrary.withoutEdgeCases()` did not really get rid of all edge case generation.
   Now it does.
+
 
 ## 1.4.0
 
