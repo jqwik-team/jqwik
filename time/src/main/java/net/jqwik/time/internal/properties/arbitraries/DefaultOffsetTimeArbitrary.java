@@ -16,11 +16,8 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> implements OffsetTimeArbitrary {
 
-	private OffsetTime offsetTimeMin = OffsetTime.MIN;
-	private OffsetTime offsetTimeMax = OffsetTime.MAX;
-
-	private LocalTime timeMin = null;
-	private LocalTime timeMax = null;
+	private LocalTime timeMin = LocalTime.MIN;
+	private LocalTime timeMax = LocalTime.MAX;
 
 	private int hourMin = -1;
 	private int hourMax = -1;
@@ -68,44 +65,28 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 
 		Arbitrary<OffsetTime> offsetTimes = Combinators.combine(localTimes, zoneOffsets).as(OffsetTime::of);
 
-		offsetTimes = offsetTimes.filter(v -> !(v.isBefore(offsetTimeMin) || v.isAfter(offsetTimeMax)));
-
 		return offsetTimes;
 
 	}
 
 	@Override
-	public OffsetTimeArbitrary atTheEarliest(OffsetTime min) {
-		if ((offsetTimeMax != null) && min.isAfter(offsetTimeMax)) {
+	public OffsetTimeArbitrary atTheEarliest(LocalTime min) {
+		if (min.isAfter(timeMax)) {
 			throw new IllegalArgumentException("Minimum time must not be after maximum time");
 		}
 
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.offsetTimeMin = min;
+		clone.timeMin = min;
 		return clone;
 	}
 
 	@Override
-	public OffsetTimeArbitrary atTheLatest(OffsetTime max) {
-		if ((offsetTimeMin != null) && max.isBefore(offsetTimeMin)) {
+	public OffsetTimeArbitrary atTheLatest(LocalTime max) {
+		if (max.isBefore(timeMin)) {
 			throw new IllegalArgumentException("Maximum time must not be before minimum time");
 		}
 
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.offsetTimeMax = max;
-		return clone;
-	}
-
-	@Override
-	public OffsetTimeArbitrary timeBetween(LocalTime min, LocalTime max) {
-		if (min.isAfter(max)) {
-			LocalTime remember = min;
-			min = max;
-			max = remember;
-		}
-
-		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.timeMin = min;
 		clone.timeMax = max;
 		return clone;
 	}

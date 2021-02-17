@@ -14,7 +14,6 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
-@Disabled("Working in it")
 class OffsetTimeTests {
 
 	@Provide
@@ -85,82 +84,50 @@ class OffsetTimeTests {
 		class TimeMethods {
 
 			@Property
-			void atTheEarliest(@ForAll("times") OffsetTime startTime, @ForAll Random random) {
+			void atTheEarliest(@ForAll("localTimes") LocalTime startTime, @ForAll Random random) {
 
 				Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime);
 
 				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time).isAfterOrEqualTo(startTime);
+					assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime);
 					return true;
 				});
 
 			}
 
 			@Property
-			void atTheLatest(@ForAll("times") OffsetTime endTime, @ForAll Random random) {
+			void atTheLatest(@ForAll("localTimes") LocalTime endTime, @ForAll Random random) {
 
 				Arbitrary<OffsetTime> times = Times.offsetTimes().atTheLatest(endTime);
 
 				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time).isBeforeOrEqualTo(endTime);
+					assertThat(time.toLocalTime()).isBeforeOrEqualTo(endTime);
 					return true;
 				});
 
 			}
 
 			@Property
-			void between(@ForAll("times") OffsetTime startTime, @ForAll("times") OffsetTime endTime, @ForAll Random random) {
+			void between(@ForAll("localTimes") LocalTime startTime, @ForAll("localTimes") LocalTime endTime, @ForAll Random random) {
 
 				Assume.that(!startTime.isAfter(endTime));
 
 				Arbitrary<OffsetTime> times = Times.offsetTimes().between(startTime, endTime);
 
 				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time).isAfterOrEqualTo(startTime);
-					assertThat(time).isBeforeOrEqualTo(endTime);
+					assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime);
+					assertThat(time.toLocalTime()).isBeforeOrEqualTo(endTime);
 					return true;
 				});
 			}
 
 			@Property
-			void betweenSame(@ForAll("times") OffsetTime sameTime, @ForAll Random random) {
+			void betweenSame(@ForAll("localTimes") LocalTime sameTime, @ForAll Random random) {
 
 				Arbitrary<OffsetTime> times = Times.offsetTimes().between(sameTime, sameTime);
 
 				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time).isEqualTo(sameTime);
-					return true;
-				});
-
-			}
-
-		}
-
-		@Group
-		class TimeMethod {
-
-			@Property
-			void timeBetween(@ForAll("localTimes") LocalTime startTime, @ForAll("localTimes") LocalTime endTime, @ForAll Random random) {
-
-				Assume.that(!startTime.isAfter(endTime));
-
-				Arbitrary<OffsetTime> times = Times.offsetTimes().timeBetween(startTime, endTime);
-
-				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time).isAfterOrEqualTo(OffsetTime.of(startTime, time.getOffset()));
-					assertThat(time).isBeforeOrEqualTo(OffsetTime.of(endTime, time.getOffset()));
-					return true;
-				});
-
-			}
-
-			@Property
-			void timeBetweenSame(@ForAll("localTimes") LocalTime localTime, @ForAll Random random) {
-
-				Arbitrary<OffsetTime> times = Times.offsetTimes().timeBetween(localTime, localTime);
-
-				assertAllGenerated(times.generator(1000), random, time -> {
-					assertThat(time).isEqualTo(OffsetTime.of(localTime, time.getOffset()));
+					assertThat(time.toLocalTime()).isEqualTo(sameTime);
 					return true;
 				});
 
@@ -329,13 +296,13 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime).constrainPrecision(HOURS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(HOURS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getMinute()).isEqualTo(0);
 						assertThat(time.getSecond()).isEqualTo(0);
 						assertThat(time.getNano()).isEqualTo(0);
-						assertThat(time).isAfterOrEqualTo(startTime);
+						assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime.toLocalTime());
 						return true;
 					});
 
@@ -346,13 +313,13 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime).constrainPrecision(HOURS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(HOURS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getMinute()).isEqualTo(0);
 						assertThat(time.getSecond()).isEqualTo(0);
 						assertThat(time.getNano()).isEqualTo(0);
-						assertThat(time).isAfterOrEqualTo(startTime);
+						assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime.toLocalTime());
 						return true;
 					});
 
@@ -374,12 +341,12 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime).constrainPrecision(MINUTES);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MINUTES);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getSecond()).isEqualTo(0);
 						assertThat(time.getNano()).isEqualTo(0);
-						assertThat(time).isAfterOrEqualTo(startTime);
+						assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime.toLocalTime());
 						return true;
 					});
 
@@ -390,12 +357,12 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime).constrainPrecision(MINUTES);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MINUTES);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getSecond()).isEqualTo(0);
 						assertThat(time.getNano()).isEqualTo(0);
-						assertThat(time).isAfterOrEqualTo(startTime);
+						assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime.toLocalTime());
 						return true;
 					});
 
@@ -416,11 +383,11 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime).constrainPrecision(SECONDS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(SECONDS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano()).isEqualTo(0);
-						assertThat(time).isAfterOrEqualTo(startTime);
+						assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime.toLocalTime());
 						return true;
 					});
 
@@ -431,11 +398,11 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime).constrainPrecision(SECONDS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(SECONDS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano()).isEqualTo(0);
-						assertThat(time).isAfterOrEqualTo(startTime);
+						assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime.toLocalTime());
 						return true;
 					});
 
@@ -457,11 +424,11 @@ class OffsetTimeTests {
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
 																																   .getNano() < 999_000_001);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime).constrainPrecision(MILLIS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MILLIS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano() % 1_000_000).isEqualTo(0);
-						assertThat(time).isAfterOrEqualTo(startTime);
+						assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime.toLocalTime());
 						return true;
 					});
 
@@ -473,11 +440,11 @@ class OffsetTimeTests {
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
 																																   .getNano() < 999_000_001);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime).constrainPrecision(MILLIS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MILLIS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano() % 1_000_000).isEqualTo(0);
-						assertThat(time).isAfterOrEqualTo(startTime);
+						assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime.toLocalTime());
 						return true;
 					});
 
@@ -499,11 +466,11 @@ class OffsetTimeTests {
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
 																																   .getNano() < 999_999_001);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime).constrainPrecision(MICROS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MICROS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano() % 1_000).isEqualTo(0);
-						assertThat(time).isAfterOrEqualTo(startTime);
+						assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime.toLocalTime());
 						return true;
 					});
 
@@ -1122,7 +1089,7 @@ class OffsetTimeTests {
 		class InvalidValues {
 
 			@Property
-			void minTimeAfterMaxTime(@ForAll("times") OffsetTime minTime, @ForAll("times") OffsetTime maxTime) {
+			void minTimeAfterMaxTime(@ForAll("localTimes") LocalTime minTime, @ForAll("localTimes") LocalTime maxTime) {
 
 				Assume.that(minTime.isAfter(maxTime));
 
@@ -1133,7 +1100,7 @@ class OffsetTimeTests {
 			}
 
 			@Property
-			void maxTimeBeforeMinTime(@ForAll("times") OffsetTime minTime, @ForAll("times") OffsetTime maxTime) {
+			void maxTimeBeforeMinTime(@ForAll("localTimes") LocalTime minTime, @ForAll("localTimes") LocalTime maxTime) {
 
 				Assume.that(maxTime.isBefore(minTime));
 
@@ -1207,11 +1174,12 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionNanoseconds") OffsetTime startTime,
+						@ForAll("precisionNanoseconds") OffsetTime offsetTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
-					OffsetTime endTime = startTime.plusNanos(nanos);
+					LocalTime startTime = offsetTime.toLocalTime();
+					LocalTime endTime = startTime.plusNanos(nanos);
 
 					Assume.that(endTime.isAfter(startTime));
 					Assume.that(startTime.getMinute() != 0 && startTime.getSecond() != 0 && startTime.getNano() != 0);
@@ -1224,7 +1192,7 @@ class OffsetTimeTests {
 				}
 
 				@Property
-				void precisionMinTimeTooLate(@ForAll("precisionMinTimeTooLateProvide") OffsetTime time) {
+				void precisionMinTimeTooLate(@ForAll("precisionMinTimeTooLateProvide") LocalTime time) {
 
 					Assume.that(time.getMinute() != 0 || time.getSecond() != 0 || time.getNano() != 0);
 
@@ -1235,8 +1203,8 @@ class OffsetTimeTests {
 				}
 
 				@Provide
-				Arbitrary<OffsetTime> precisionMinTimeTooLateProvide() {
-					return Times.offsetTimes().hourBetween(23, 23);
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23);
 				}
 
 			}
@@ -1246,11 +1214,12 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionNanoseconds") OffsetTime startTime,
+						@ForAll("precisionNanoseconds") OffsetTime offsetTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
-					OffsetTime endTime = startTime.plusNanos(nanos);
+					LocalTime startTime = offsetTime.toLocalTime();
+					LocalTime endTime = startTime.plusNanos(nanos);
 
 					Assume.that(endTime.isAfter(startTime));
 					Assume.that(startTime.getSecond() != 0 && startTime.getNano() != 0);
@@ -1263,7 +1232,7 @@ class OffsetTimeTests {
 				}
 
 				@Property
-				void precisionMinTimeTooLate(@ForAll("precisionMinTimeTooLateProvide") OffsetTime time) {
+				void precisionMinTimeTooLate(@ForAll("precisionMinTimeTooLateProvide") LocalTime time) {
 
 					Assume.that(time.getSecond() != 0 || time.getNano() != 0);
 
@@ -1274,8 +1243,8 @@ class OffsetTimeTests {
 				}
 
 				@Provide
-				Arbitrary<OffsetTime> precisionMinTimeTooLateProvide() {
-					return Times.offsetTimes().hourBetween(23, 23).minuteBetween(59, 59);
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59);
 				}
 
 			}
@@ -1285,11 +1254,12 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionNanoseconds") OffsetTime startTime,
+						@ForAll("precisionNanoseconds") OffsetTime offsetTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
-					OffsetTime endTime = startTime.plusNanos(nanos);
+					LocalTime startTime = offsetTime.toLocalTime();
+					LocalTime endTime = startTime.plusNanos(nanos);
 
 					Assume.that(endTime.isAfter(startTime));
 					Assume.that(startTime.getNano() != 0);
@@ -1303,12 +1273,12 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMinTimeTooLate(
-						@ForAll("precisionMinTimeTooLateProvide") OffsetTime time,
+						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
 						@ForAll @IntRange(min = 1, max = 999_999_999) int nanos
 				) {
 
 					time = time.withNano(nanos);
-					final OffsetTime finalTime = time;
+					final LocalTime finalTime = time;
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().atTheEarliest(finalTime).constrainPrecision(SECONDS).generator(1000)
@@ -1317,8 +1287,8 @@ class OffsetTimeTests {
 				}
 
 				@Provide
-				Arbitrary<OffsetTime> precisionMinTimeTooLateProvide() {
-					return Times.offsetTimes().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
 				}
 
 			}
@@ -1328,11 +1298,12 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionNanoseconds") OffsetTime startTime,
+						@ForAll("precisionNanoseconds") OffsetTime offsetTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
-					OffsetTime endTime = startTime.plusNanos(nanos);
+					LocalTime startTime = offsetTime.toLocalTime();
+					LocalTime endTime = startTime.plusNanos(nanos);
 
 					Assume.that(endTime.isAfter(startTime));
 					Assume.that(startTime.getNano() % 1_000_000 != 0);
@@ -1346,12 +1317,12 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMinTimeTooLate(
-						@ForAll("precisionMinTimeTooLateProvide") OffsetTime time,
+						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
 						@ForAll @IntRange(min = 999_000_001, max = 999_999_999) int nanos
 				) {
 
 					time = time.withNano(nanos);
-					final OffsetTime finalTime = time;
+					final LocalTime finalTime = time;
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().atTheEarliest(finalTime).constrainPrecision(MILLIS).generator(1000)
@@ -1360,8 +1331,8 @@ class OffsetTimeTests {
 				}
 
 				@Provide
-				Arbitrary<OffsetTime> precisionMinTimeTooLateProvide() {
-					return Times.offsetTimes().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
 				}
 
 			}
@@ -1371,11 +1342,12 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionNanoseconds") OffsetTime startTime,
+						@ForAll("precisionNanoseconds") OffsetTime offsetTime,
 						@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
-					OffsetTime endTime = startTime.plusNanos(nanos);
+					LocalTime startTime = offsetTime.toLocalTime();
+					LocalTime endTime = startTime.plusNanos(nanos);
 
 					Assume.that(endTime.isAfter(startTime));
 					Assume.that(startTime.getNano() % 1_000 != 0);
@@ -1389,12 +1361,12 @@ class OffsetTimeTests {
 
 				@Property
 				void precisionMinTimeTooLate(
-						@ForAll("precisionMinTimeTooLateProvide") OffsetTime time,
+						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
 						@ForAll @IntRange(min = 999_999_001, max = 999_999_999) int nanos
 				) {
 
 					time = time.withNano(nanos);
-					final OffsetTime finalTime = time;
+					final LocalTime finalTime = time;
 
 					assertThatThrownBy(
 							() -> Times.offsetTimes().atTheEarliest(finalTime).constrainPrecision(MICROS).generator(1000)
@@ -1403,8 +1375,8 @@ class OffsetTimeTests {
 				}
 
 				@Provide
-				Arbitrary<OffsetTime> precisionMinTimeTooLateProvide() {
-					return Times.offsetTimes().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
 				}
 
 			}

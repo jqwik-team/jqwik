@@ -18,7 +18,7 @@ public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated offset time values.
 	 */
-	default OffsetTimeArbitrary between(OffsetTime min, OffsetTime max) {
+	default OffsetTimeArbitrary between(LocalTime min, LocalTime max) {
 		if (min.isAfter(max)) {
 			return atTheEarliest(max).atTheLatest(min);
 		}
@@ -28,17 +28,12 @@ public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 	/**
 	 * Set the allowed lower {@code min} (included) bounder of generated offset time values.
 	 */
-	OffsetTimeArbitrary atTheEarliest(OffsetTime min);
+	OffsetTimeArbitrary atTheEarliest(LocalTime min);
 
 	/**
 	 * Set the allowed upper {@code max} (included) bounder of generated offset time values.
 	 */
-	OffsetTimeArbitrary atTheLatest(OffsetTime max);
-
-	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated time values.
-	 */
-	OffsetTimeArbitrary timeBetween(LocalTime min, LocalTime max); //TODO: TEST
+	OffsetTimeArbitrary atTheLatest(LocalTime max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated hour values.
