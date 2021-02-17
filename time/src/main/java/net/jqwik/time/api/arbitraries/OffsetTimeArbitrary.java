@@ -16,7 +16,7 @@ import static org.apiguardian.api.API.Status.*;
 public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 
 	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated offset time values.
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated time values.
 	 */
 	default OffsetTimeArbitrary between(LocalTime min, LocalTime max) {
 		if (min.isAfter(max)) {
@@ -26,12 +26,12 @@ public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 	}
 
 	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated offset time values.
+	 * Set the allowed lower {@code min} (included) bounder of generated time values.
 	 */
 	OffsetTimeArbitrary atTheEarliest(LocalTime min);
 
 	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated offset time values.
+	 * Set the allowed upper {@code max} (included) bounder of generated time values.
 	 */
 	OffsetTimeArbitrary atTheLatest(LocalTime max);
 

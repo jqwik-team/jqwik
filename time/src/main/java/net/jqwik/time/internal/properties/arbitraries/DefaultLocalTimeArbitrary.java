@@ -37,7 +37,6 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		if (effectiveMax.isBefore(effectiveMin)) {
 			throw new IllegalArgumentException("The maximum time is too soon after the minimum time.");
 		}
-		calculateEffectiveValues(effectiveMin, effectiveMax); //TODO: Maybe bug if invalid values set
 
 		long longEnd = calculateLongEnd(effectiveMin, effectiveMax);
 
@@ -159,7 +158,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		}
 	}
 
-	private LocalTime calculateEffectiveMax() { //TODO: Maybe bug?
+	private LocalTime calculateEffectiveMax() {
 		LocalTime effective = timeMax;
 		if (hourMax < effective.getHour()) {
 			effective = effective.withHour(hourMax);
@@ -189,19 +188,6 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 				effective = effective.withNano(effective.getNano() - effective.getNano() % 1_000);
 		}
 		return effective;
-	}
-
-	private void calculateEffectiveValues(LocalTime effectiveMin, LocalTime effectiveMax) {
-		hourMin = effectiveMin.getHour();
-		hourMax = effectiveMax.getHour();
-		if (hourMin == hourMax) {
-			minuteMin = effectiveMin.getMinute();
-			minuteMax = effectiveMax.getMinute();
-			if (minuteMin == minuteMax) {
-				secondMin = effectiveMin.getSecond();
-				secondMax = effectiveMax.getSecond();
-			}
-		}
 	}
 
 	@Override

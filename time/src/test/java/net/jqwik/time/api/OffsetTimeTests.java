@@ -7,10 +7,12 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.time.api.arbitraries.*;
 
 import static java.time.temporal.ChronoUnit.*;
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
@@ -491,23 +493,15 @@ class OffsetTimeTests {
 		}
 
 	}
-	/*  //TODO
+
 	@Group
 	class Shrinking {
 
-		/*@Property
+		@Property
 		void defaultShrinking(@ForAll Random random) {
 			OffsetTimeArbitrary times = Times.offsetTimes();
 			OffsetTime value = falsifyThenShrink(times, random);
-			assertThat(value).isEqualTo(null); //TODO
-		}
-
-		@Property
-		void shrinksToSmallestFailingValue(@ForAll Random random) {
-			OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(SECONDS);
-			TestingFalsifier<OffsetTime> falsifier = time -> time.isBefore(LocalTime.of(9, 13, 42, 143_921_111));
-			OffsetTime value = falsifyThenShrink(times, random, falsifier);
-			assertThat(value).isEqualTo(LocalTime.of(9, 13, 43, 0)); //TODO
+			assertThat(value).isEqualTo(OffsetTime.of(LocalTime.of(0, 0, 0), ZoneOffset.of("Z")));
 		}
 
 	}
@@ -524,16 +518,17 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_325)
 						 )
 						 .constrainPrecision(NANOS)
+						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -19, -33), ZoneOffset.ofHoursMinutesSeconds(0, -10, -53))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(4);
 			assertThat(generator).containsExactly(
-					LocalTime.of(11, 22, 33, 392_211_322),
-					LocalTime.of(11, 22, 33, 392_211_323),
-					LocalTime.of(11, 22, 33, 392_211_324),
-					LocalTime.of(11, 22, 33, 392_211_325)
+					OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_322), ZoneOffset.ofHoursMinutes(0, -15)),
+					OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_323), ZoneOffset.ofHoursMinutes(0, -15)),
+					OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_324), ZoneOffset.ofHoursMinutes(0, -15)),
+					OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_325), ZoneOffset.ofHoursMinutes(0, -15))
 			);
 		}
 
@@ -546,15 +541,16 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 22, 33, 392_214_325)
 						 )
 						 .constrainPrecision(MICROS)
+						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(3);
 			assertThat(generator).containsExactly(
-					LocalTime.of(11, 22, 33, 392_212_000),
-					LocalTime.of(11, 22, 33, 392_213_000),
-					LocalTime.of(11, 22, 33, 392_214_000)
+					OffsetTime.of(LocalTime.of(11, 22, 33, 392_212_000), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(11, 22, 33, 392_213_000), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(11, 22, 33, 392_214_000), ZoneOffset.ofHoursMinutes(0, 30))
 			);
 		}
 
@@ -566,15 +562,17 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 22, 33, 395_214_325)
 						 )
+						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
+						 .constrainPrecision(MILLIS)
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(3);
 			assertThat(generator).containsExactly(
-					LocalTime.of(11, 22, 33, 393_000_000),
-					LocalTime.of(11, 22, 33, 394_000_000),
-					LocalTime.of(11, 22, 33, 395_000_000)
+					OffsetTime.of(LocalTime.of(11, 22, 33, 393_000_000), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(11, 22, 33, 394_000_000), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(11, 22, 33, 395_000_000), ZoneOffset.ofHoursMinutes(0, 30))
 			);
 		}
 
@@ -587,15 +585,16 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 22, 36, 395_214_325)
 						 )
 						 .constrainPrecision(SECONDS)
+						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(3);
 			assertThat(generator).containsExactly(
-					LocalTime.of(11, 22, 34, 0),
-					LocalTime.of(11, 22, 35, 0),
-					LocalTime.of(11, 22, 36, 0)
+					OffsetTime.of(LocalTime.of(11, 22, 34, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(11, 22, 35, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(11, 22, 36, 0), ZoneOffset.ofHoursMinutes(0, 30))
 			);
 		}
 
@@ -608,15 +607,16 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 25, 36, 395_214_325)
 						 )
 						 .constrainPrecision(MINUTES)
+						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(3);
 			assertThat(generator).containsExactly(
-					LocalTime.of(11, 23, 0, 0),
-					LocalTime.of(11, 24, 0, 0),
-					LocalTime.of(11, 25, 0, 0)
+					OffsetTime.of(LocalTime.of(11, 23, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(11, 24, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(11, 25, 0, 0), ZoneOffset.ofHoursMinutes(0, 30))
 			);
 		}
 
@@ -624,20 +624,65 @@ class OffsetTimeTests {
 		void precisionHours() {
 			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
 					Times.offsetTimes()
+						 .constrainPrecision(HOURS)
 						 .between(
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(14, 25, 36, 395_214_325)
 						 )
-						 .constrainPrecision(HOURS)
+						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(3);
 			assertThat(generator).containsExactly(
-					LocalTime.of(12, 0, 0, 0),
-					LocalTime.of(13, 0, 0, 0),
-					LocalTime.of(14, 0, 0, 0)
+					OffsetTime.of(LocalTime.of(12, 0, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(13, 0, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+					OffsetTime.of(LocalTime.of(14, 0, 0, 0), ZoneOffset.ofHoursMinutes(0, 30))
+			);
+		}
+
+		@Example
+		void offsetBetween() {
+			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+					Times.offsetTimes()
+						 .between(
+								 LocalTime.of(11, 22, 33),
+								 LocalTime.of(11, 22, 33)
+						 )
+						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -19, -33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly(
+					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, -15)),
+					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 0)),
+					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 15)),
+					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 30))
+			);
+		}
+
+		@Example
+		void betweenMethods() {
+			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+					Times.offsetTimes()
+						 .between(
+								 LocalTime.of(11, 22, 33),
+								 LocalTime.of(11, 22, 34)
+						 )
+						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -1, -33), ZoneOffset.ofHoursMinutesSeconds(0, 29, 11))
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactlyInAnyOrder(
+					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 0)),
+					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 15)),
+					OffsetTime.of(LocalTime.of(11, 22, 34), ZoneOffset.ofHoursMinutes(0, 0)),
+					OffsetTime.of(LocalTime.of(11, 22, 34), ZoneOffset.ofHoursMinutes(0, 15))
 			);
 		}
 
@@ -647,16 +692,68 @@ class OffsetTimeTests {
 	class EdgeCasesTests {
 
 		@Group
+		class DefaultEdgeCases {
+
+			@Example
+			void all() {
+				OffsetTimeArbitrary times = Times.offsetTimes();
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.ofHours(-12)),
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.ofHours(14)),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 0), ZoneOffset.ofHours(-12)),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 0), ZoneOffset.ofHours(14))
+				);
+			}
+
+			@Example
+			void between() {
+				OffsetTimeArbitrary times = Times.offsetTimes().between(LocalTime.of(11, 12, 13), LocalTime.of(12, 13, 14));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						OffsetTime.of(LocalTime.of(11, 12, 13, 0), ZoneOffset.ofHours(-12)),
+						OffsetTime.of(LocalTime.of(11, 12, 13, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(11, 12, 13, 0), ZoneOffset.ofHours(14)),
+						OffsetTime.of(LocalTime.of(12, 13, 14, 0), ZoneOffset.ofHours(-12)),
+						OffsetTime.of(LocalTime.of(12, 13, 14, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(12, 13, 14, 0), ZoneOffset.ofHours(14))
+				);
+			}
+
+			@Example
+			void betweenOffsets() {
+				OffsetTimeArbitrary times = Times.offsetTimes().offsetBetween(ZoneOffset.ofHoursMinutesSeconds(-9, -3, -11), ZoneOffset
+																																	 .ofHoursMinutesSeconds(4, 11, 12));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.ofHoursMinutes(-9, 0)),
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.ofHours(4)),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 0), ZoneOffset.ofHoursMinutes(-9, 0)),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 0), ZoneOffset.ofHours(4))
+				);
+			}
+
+		}
+
+		@Group
 		class PrecisionHours {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(HOURS);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(HOURS)
+												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(0, 0, 0, 0),
-						LocalTime.of(23, 0, 0, 0)
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(23, 0, 0, 0), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -665,12 +762,13 @@ class OffsetTimeTests {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
 							 .constrainPrecision(HOURS)
-							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(12, 0, 0, 0),
-						LocalTime.of(21, 0, 0, 0)
+						OffsetTime.of(LocalTime.of(12, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(21, 0, 0, 0), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -679,12 +777,13 @@ class OffsetTimeTests {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
 							 .constrainPrecision(HOURS)
-							 .hourBetween(11, 12);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .hourBetween(11, 12)
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 0, 0, 0),
-						LocalTime.of(12, 0, 0, 0)
+						OffsetTime.of(LocalTime.of(11, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(12, 0, 0, 0), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -695,12 +794,13 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(MINUTES);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(MINUTES)
+												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(0, 0, 0, 0),
-						LocalTime.of(23, 59, 0, 0)
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(23, 59, 0, 0), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -709,12 +809,13 @@ class OffsetTimeTests {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
 							 .constrainPrecision(MINUTES)
-							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 24, 0, 0),
-						LocalTime.of(21, 15, 0, 0)
+						OffsetTime.of(LocalTime.of(11, 24, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(21, 15, 0, 0), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -724,12 +825,13 @@ class OffsetTimeTests {
 						Times.offsetTimes()
 							 .constrainPrecision(MINUTES)
 							 .hourBetween(11, 12)
-							 .minuteBetween(23, 31);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .minuteBetween(23, 31)
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 23, 0, 0),
-						LocalTime.of(12, 31, 0, 0)
+						OffsetTime.of(LocalTime.of(11, 23, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(12, 31, 0, 0), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -740,12 +842,13 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(SECONDS);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(SECONDS)
+												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(0, 0, 0, 0),
-						LocalTime.of(23, 59, 59, 0)
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 0), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -754,12 +857,13 @@ class OffsetTimeTests {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
 							 .constrainPrecision(SECONDS)
-							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 23, 22, 0),
-						LocalTime.of(21, 15, 19, 0)
+						OffsetTime.of(LocalTime.of(11, 23, 22, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(21, 15, 19, 0), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -770,12 +874,13 @@ class OffsetTimeTests {
 							 .constrainPrecision(SECONDS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
-							 .secondBetween(5, 10);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .secondBetween(5, 10)
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 23, 5, 0),
-						LocalTime.of(12, 31, 10, 0)
+						OffsetTime.of(LocalTime.of(11, 23, 5, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(12, 31, 10, 0), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -786,12 +891,13 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes();
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(MILLIS)
+												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(0, 0, 0, 0),
-						LocalTime.of(23, 59, 59, 999_000_000)
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 999_000_000), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -799,12 +905,14 @@ class OffsetTimeTests {
 			void between() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .constrainPrecision(MILLIS)
+							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 23, 21, 302_000_000),
-						LocalTime.of(21, 15, 19, 199_000_000)
+						OffsetTime.of(LocalTime.of(11, 23, 21, 302_000_000), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(21, 15, 19, 199_000_000), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -812,14 +920,16 @@ class OffsetTimeTests {
 			void betweenSecond() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
+							 .constrainPrecision(MILLIS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
-							 .secondBetween(5, 10);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .secondBetween(5, 10)
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 23, 5, 0),
-						LocalTime.of(12, 31, 10, 999_000_000)
+						OffsetTime.of(LocalTime.of(11, 23, 5, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(12, 31, 10, 999_000_000), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -830,12 +940,13 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(MICROS);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(MICROS)
+												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(0, 0, 0, 0),
-						LocalTime.of(23, 59, 59, 999_999_000)
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 999_999_000), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -844,12 +955,13 @@ class OffsetTimeTests {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
 							 .constrainPrecision(MICROS)
-							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 23, 21, 301_429_000),
-						LocalTime.of(21, 15, 19, 199_321_000)
+						OffsetTime.of(LocalTime.of(11, 23, 21, 301_429_000), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(21, 15, 19, 199_321_000), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -860,12 +972,13 @@ class OffsetTimeTests {
 							 .constrainPrecision(MICROS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
-							 .secondBetween(5, 10);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .secondBetween(5, 10)
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 23, 5, 0),
-						LocalTime.of(12, 31, 10, 999_999_000)
+						OffsetTime.of(LocalTime.of(11, 23, 5, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(12, 31, 10, 999_999_000), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -876,12 +989,13 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(NANOS);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(NANOS)
+												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(0, 0, 0, 0),
-						LocalTime.of(23, 59, 59, 999_999_999)
+						OffsetTime.of(LocalTime.of(0, 0, 0, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(23, 59, 59, 999_999_999), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -890,12 +1004,13 @@ class OffsetTimeTests {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
 							 .constrainPrecision(NANOS)
-							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 23, 21, 301_428_111),
-						LocalTime.of(21, 15, 19, 199_321_789)
+						OffsetTime.of(LocalTime.of(11, 23, 21, 301_428_111), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(21, 15, 19, 199_321_789), ZoneOffset.of("Z"))
 				);
 			}
 
@@ -906,18 +1021,19 @@ class OffsetTimeTests {
 							 .constrainPrecision(NANOS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
-							 .secondBetween(5, 10);
-				Set<OffsetTime> edgeCases = collectEdgeCases(times.edgeCases());
+							 .secondBetween(5, 10)
+							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
+				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalTime.of(11, 23, 5, 0),
-						LocalTime.of(12, 31, 10, 999_999_999)
+						OffsetTime.of(LocalTime.of(11, 23, 5, 0), ZoneOffset.of("Z")),
+						OffsetTime.of(LocalTime.of(12, 31, 10, 999_999_999), ZoneOffset.of("Z"))
 				);
 			}
 
 		}
 
-	}*/
+	}
 
 	@Group
 	class CheckEqualDistribution {
