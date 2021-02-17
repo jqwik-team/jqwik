@@ -118,17 +118,17 @@ class ZoneOffsetTests {
 			void betweenNotGeneratedValues(
 					@ForAll("times") LocalTime start,
 					@ForAll("times") LocalTime end,
-					@ForAll boolean startB,
-					@ForAll boolean endB,
+					@ForAll boolean startValueIsPositive,
+					@ForAll boolean endValueIsPositive,
 					@ForAll Random random
 			) {
 
-				Assume.that(startB || !start.isAfter(LocalTime.of(12, 0, 0)));
-				Assume.that(endB || !end.isAfter(LocalTime.of(12, 0, 0)));
-				int mul = startB ? 1 : -1;
+				Assume.that(startValueIsPositive || !start.isAfter(LocalTime.of(12, 0, 0)));
+				Assume.that(endValueIsPositive || !end.isAfter(LocalTime.of(12, 0, 0)));
+				int mul = startValueIsPositive ? 1 : -1;
 				ZoneOffset startOffset = ZoneOffset
 												 .ofHoursMinutesSeconds(mul * start.getHour(), mul * start.getMinute(), mul * start.getSecond());
-				mul = endB ? 1 : -1;
+				mul = endValueIsPositive ? 1 : -1;
 				ZoneOffset endOffset = ZoneOffset.ofHoursMinutesSeconds(mul * end.getHour(), mul * end.getMinute(), mul * end.getSecond());
 
 				Assume.that(startOffset.getTotalSeconds() <= endOffset.getTotalSeconds());
