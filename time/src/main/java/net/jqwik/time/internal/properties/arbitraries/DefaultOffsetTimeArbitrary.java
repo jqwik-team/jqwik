@@ -28,8 +28,8 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 	private int secondMin = -1;
 	private int secondMax = -1;
 
-	private ZoneOffset offsetMin = null;
-	private ZoneOffset offsetMax = null;
+	private ZoneOffset offsetMin = DefaultZoneOffsetArbitrary.DEFAULT_MIN;
+	private ZoneOffset offsetMax = DefaultZoneOffsetArbitrary.DEFAULT_MAX;
 
 	private ChronoUnit ofPrecision = null;
 
@@ -39,9 +39,7 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 		LocalTimeArbitrary localTimes = Times.times();
 		ZoneOffsetArbitrary zoneOffsets = Times.zoneOffsets();
 
-		if (timeMin != null && timeMax != null) {
-			localTimes = localTimes.between(timeMin, timeMax);
-		}
+		localTimes = localTimes.between(timeMin, timeMax);
 
 		if (hourMin != -1 && hourMax != -1) {
 			localTimes = localTimes.hourBetween(hourMin, hourMax);
@@ -59,13 +57,9 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 			localTimes = localTimes.constrainPrecision(ofPrecision);
 		}
 
-		if (offsetMin != null && offsetMax != null) {
-			zoneOffsets = zoneOffsets.between(offsetMin, offsetMax);
-		}
+		zoneOffsets = zoneOffsets.between(offsetMin, offsetMax);
 
-		Arbitrary<OffsetTime> offsetTimes = Combinators.combine(localTimes, zoneOffsets).as(OffsetTime::of);
-
-		return offsetTimes;
+		return Combinators.combine(localTimes, zoneOffsets).as(OffsetTime::of);
 
 	}
 
