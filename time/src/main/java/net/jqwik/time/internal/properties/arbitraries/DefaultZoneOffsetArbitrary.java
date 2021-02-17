@@ -1,7 +1,6 @@
 package net.jqwik.time.internal.properties.arbitraries;
 
 import java.time.*;
-import java.util.*;
 
 import org.apiguardian.api.*;
 
@@ -23,60 +22,106 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 	@Override
 	protected Arbitrary<ZoneOffset> arbitrary() {
 
-		ZoneOffset[] zoneOffsets = generateAllValues();
+		ZoneOffset effectiveMin = calculateEffectiveMin();
+		ZoneOffset effectiveMax = calculateEffectiveMax();
 
-		int indexZero = Integer.MIN_VALUE, indexMin = zoneOffsets.length - 1, indexMax = zoneOffsets.length - 1;
-		boolean indexZeroSet = false, indexMinSet = false, indexMaxSet = false;
-
-		for (int i = 0; i < zoneOffsets.length; i++) {
-			if (!indexZeroSet && zoneOffsets[i].getTotalSeconds() == 0) {
-				indexZeroSet = true;
-				indexZero = i;
-			}
-			if (!indexMinSet && zoneOffsets[i].getTotalSeconds() >= offsetMin.getTotalSeconds()) {
-				indexMin = i;
-				indexMinSet = true;
-			}
-			if (!indexMaxSet && zoneOffsets[i].getTotalSeconds() > offsetMax.getTotalSeconds()) {
-				indexMax = i - 1;
-				indexMaxSet = true;
-			}
+		if (effectiveMin.getTotalSeconds() > effectiveMax.getTotalSeconds()) {
+			throw new IllegalArgumentException("With this configuration is no value possible.");
 		}
 
-		int min = indexMin - indexZero;
-		int max = indexMax - indexZero;
+		int min = calculateIndex(effectiveMin);
+		int max = calculateIndex(effectiveMax);
 
 		Arbitrary<Integer> indexes = Arbitraries.integers()
 												.withDistribution(RandomDistribution.uniform())
 												.between(min, max)
 												.edgeCases(edgeCases -> edgeCases.includeOnly(min, 0, max));
 
-		final int toAdd = indexZero;
-
-		return indexes.map(i -> zoneOffsets[i + toAdd]);
+		return indexes.map(this::calculateOffset);
 
 	}
 
-	private ZoneOffset[] generateAllValues() {
-		ArrayList<ZoneOffset> offsets = new ArrayList<ZoneOffset>();
-		offsets.add(ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0));
-		for (int h = -11; h <= 0; h++) {
-			for (int m = -45; m <= 0; m += 15) {
-				offsets.add(ZoneOffset.ofHoursMinutesSeconds(h, m, 0));
-			}
-		}
-		boolean first = true;
-		for (int h = 0; h <= 13; h++) {
-			for (int m = 0; m <= 45; m += 15) {
-				if (first) {
-					first = false;
-					continue;
+	private ZoneOffset calculateEffectiveMin() {
+		boolean isNegative = offsetMin.getTotalSeconds() < 0;
+		int hour = calculateHourValue(offsetMin);
+		int minute = calculateMinuteValue(offsetMin);
+		int second = calculateSecondValue(offsetMin);
+		if (second != 0) {
+			if (!isNegative) {
+				minute++;
+				if (minute > 59) {
+					minute -= 60;
+					hour++;
 				}
-				offsets.add(ZoneOffset.ofHoursMinutesSeconds(h, m, 0));
 			}
 		}
-		offsets.add(ZoneOffset.ofHoursMinutesSeconds(14, 0, 0));
-		return offsets.toArray(new ZoneOffset[]{});
+		while (minute % 15 != 0) {
+			minute += isNegative ? -1 : 1;
+			if (!isNegative && minute == 60) {
+				minute = 0;
+				hour++;
+			}
+		}
+		if (isNegative) {
+			minute = -minute;
+		}
+		return ZoneOffset.ofHoursMinutes(hour, minute);
+	}
+
+	private ZoneOffset calculateEffectiveMax() {
+		boolean isNegative = offsetMax.getTotalSeconds() < 0;
+		int hour = calculateHourValue(offsetMax);
+		int minute = calculateMinuteValue(offsetMax);
+		int second = calculateSecondValue(offsetMax);
+		if (second != 0) {
+			if (isNegative) {
+				minute++;
+				if (minute > 59) {
+					minute -= 60;
+					hour--;
+				}
+			}
+		}
+		while (minute % 15 != 0) {
+			minute -= isNegative ? -1 : 1;
+			if (isNegative && minute == 60) {
+				minute = 0;
+				hour--;
+			}
+		}
+		if (isNegative) {
+			minute = -minute;
+		}
+		return ZoneOffset.ofHoursMinutes(hour, minute);
+	}
+
+	private int calculateIndex(ZoneOffset effective) {
+		boolean isNegative = effective.getTotalSeconds() < 0;
+		int hour = calculateHourValue(effective);
+		int minuteVal = calculateMinuteValue(effective) / 15;
+		if (isNegative) {
+			minuteVal = -minuteVal;
+		}
+		return hour * 4 + minuteVal;
+	}
+
+	private ZoneOffset calculateOffset(int index) {
+		int hour = index / 4;
+		index -= hour * 4;
+		int minute = index * 15;
+		return ZoneOffset.ofHoursMinutes(hour, minute);
+	}
+
+	private int calculateHourValue(ZoneOffset offset) {
+		return offset.getTotalSeconds() / 3600;
+	}
+
+	private int calculateMinuteValue(ZoneOffset offset) {
+		return Math.abs((offset.getTotalSeconds() % 3600) / 60);
+	}
+
+	private int calculateSecondValue(ZoneOffset offset) {
+		return Math.abs(offset.getTotalSeconds() % 60);
 	}
 
 	@Override

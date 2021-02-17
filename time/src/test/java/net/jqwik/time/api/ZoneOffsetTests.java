@@ -113,6 +113,41 @@ class ZoneOffsetTests {
 
 			}
 
+			@Property(shrinking = ShrinkingMode.OFF)
+			@ExpectFailure(failureType = IllegalArgumentException.class)
+			void betweenNotGeneratedValues(
+					@ForAll("times") LocalTime start,
+					@ForAll("times") LocalTime end,
+					@ForAll boolean startB,
+					@ForAll boolean endB,
+					@ForAll Random random
+			) {
+
+				Assume.that(startB || !start.isAfter(LocalTime.of(12, 0, 0)));
+				Assume.that(endB || !end.isAfter(LocalTime.of(12, 0, 0)));
+				int mul = startB ? 1 : -1;
+				ZoneOffset startOffset = ZoneOffset
+												 .ofHoursMinutesSeconds(mul * start.getHour(), mul * start.getMinute(), mul * start.getSecond());
+				mul = endB ? 1 : -1;
+				ZoneOffset endOffset = ZoneOffset.ofHoursMinutesSeconds(mul * end.getHour(), mul * end.getMinute(), mul * end.getSecond());
+
+				Assume.that(startOffset.getTotalSeconds() <= endOffset.getTotalSeconds());
+
+				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().between(startOffset, endOffset);
+
+				assertAllGenerated(offsets.generator(1000), random, offset -> {
+					assertThat(offset.getTotalSeconds()).isGreaterThanOrEqualTo(startOffset.getTotalSeconds());
+					assertThat(offset.getTotalSeconds()).isLessThanOrEqualTo(endOffset.getTotalSeconds());
+					return true;
+				});
+
+			}
+
+			@Provide
+			Arbitrary<LocalTime> times() {
+				return Times.times().atTheLatest(LocalTime.of(14, 0, 0));
+			}
+
 		}
 
 	}
@@ -169,6 +204,26 @@ class ZoneOffsetTests {
 					ZoneOffset.ofHoursMinutesSeconds(11, 45, 0),
 					ZoneOffset.ofHoursMinutesSeconds(12, 0, 0),
 					ZoneOffset.ofHoursMinutesSeconds(12, 15, 0)
+			);
+		}
+
+		@Example
+		void between2() {
+			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
+					Times.zoneOffsets()
+						 .between(
+								 ZoneOffset.ofHoursMinutesSeconds(-9, -14, -59),
+								 ZoneOffset.ofHoursMinutesSeconds(-8, -15, -11)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly(
+					ZoneOffset.ofHoursMinutesSeconds(-9, 0, 0),
+					ZoneOffset.ofHoursMinutesSeconds(-8, -45, 0),
+					ZoneOffset.ofHoursMinutesSeconds(-8, -30, 0)
 			);
 		}
 
@@ -391,6 +446,26 @@ class ZoneOffsetTests {
 		void maxOffsetGreaterThanMaximumOffset() {
 			assertThatThrownBy(
 					() -> Times.zoneOffsets().atTheLatest(ZoneOffset.ofHoursMinutesSeconds(14, 0, 1))
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void noValuesCanBeGenerated() {
+			assertThatThrownBy(
+					() -> Times.zoneOffsets()
+							   .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(-11, -9, -4))
+							   .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(-11, -9, -3))
+							   .generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void noValuesCanBeGenerated2() {
+			assertThatThrownBy(
+					() -> Times.zoneOffsets()
+							   .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(11, 9, 3))
+							   .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(11, 9, 4))
+							   .generator(1000)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 

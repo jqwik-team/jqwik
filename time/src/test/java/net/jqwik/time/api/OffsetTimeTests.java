@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
+@Disabled("Working in it")
 class OffsetTimeTests {
 
 	@Provide
