@@ -451,6 +451,7 @@ class LocalDateTests {
 	}
 
 	@Group
+	@PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
 	class CheckEqualDistribution {
 
 		@Property
