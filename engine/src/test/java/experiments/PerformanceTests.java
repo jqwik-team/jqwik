@@ -25,7 +25,7 @@ class PerformanceTests {
 
 	}
 
-	@Property(tries = 1000)
+	@Property(tries = 10000)
 	void testingForAll(@ForAll("combinedStrings") String aString) {
 
 	}
