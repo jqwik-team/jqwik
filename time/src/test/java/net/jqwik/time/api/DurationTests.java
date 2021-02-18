@@ -226,7 +226,6 @@ class DurationTests {
 	class SimpleAnnotations {
 
 		@Property
-		@Disabled("Not available.")
 		void validDurationIsGenerated(@ForAll Duration duration) {
 			assertThat(duration).isNotNull();
 		}
@@ -296,7 +295,111 @@ class DurationTests {
 	@Group
 	class ExhaustiveGeneration {
 
-		//TODO
+		@Example
+		void between() {
+			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+					Times.durations()
+						 .between(
+								 Duration.ofSeconds(183729, 999_999_998),
+								 Duration.ofSeconds(183730, 1)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
+			assertThat(generator).containsExactly(
+					Duration.ofSeconds(183729, 999_999_998),
+					Duration.ofSeconds(183729, 999_999_999),
+					Duration.ofSeconds(183730, 0),
+					Duration.ofSeconds(183730, 1)
+			);
+		}
+
+		@Example
+		void between2() {
+			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+					Times.durations()
+						 .between(
+								 Duration.ofSeconds(-183730, 999_999_998),
+								 Duration.ofSeconds(-183729, 1)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
+			assertThat(generator).containsExactly(
+					Duration.ofSeconds(-183730, 999_999_998),
+					Duration.ofSeconds(-183730, 999_999_999),
+					Duration.ofSeconds(-183729, 0),
+					Duration.ofSeconds(-183729, 1)
+			);
+		}
+
+		@Example
+		void between3() {
+			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+					Times.durations()
+						 .between(
+								 Duration.ofSeconds(-1, -1),
+								 Duration.ofSeconds(0, -999_999_998)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
+			assertThat(generator).containsExactly(
+					Duration.ofSeconds(-1, -1),
+					Duration.ofSeconds(-1, 0),
+					Duration.ofSeconds(0, -999_999_999),
+					Duration.ofSeconds(0, -999_999_998)
+			);
+		}
+
+		@Example
+		void between4() {
+			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+					Times.durations()
+						 .between(
+								 Duration.ofSeconds(0, -2),
+								 Duration.ofSeconds(0, 1)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
+			assertThat(generator).containsExactly(
+					Duration.ofSeconds(0, -2),
+					Duration.ofSeconds(0, -1),
+					Duration.ZERO,
+					Duration.ofSeconds(0, 1)
+			);
+		}
+
+		@Example
+		void between5() {
+			System.out.println(Duration.ofSeconds(Long.MIN_VALUE, 0));
+			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+					Times.durations()
+						 .between(
+								 Duration.ofSeconds(0, 999_999_998),
+								 Duration.ofSeconds(1, 1)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
+			assertThat(generator).containsExactly(
+					Duration.ofSeconds(0, 999_999_998),
+					Duration.ofSeconds(0, 999_999_999),
+					Duration.ofSeconds(1, 0),
+					Duration.ofSeconds(1, 1)
+			);
+		}
 
 	}
 

@@ -22,7 +22,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
 
-		//TODO: Negative 0 values?
+		//TODO: Negative 0 values? / Negative Min values?
 
 		long secondMin = min.getSeconds();
 		long secondMax = max.getSeconds();
