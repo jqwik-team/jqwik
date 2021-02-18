@@ -12,7 +12,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Fluent interface to configure the generation of offset time values.
  */
-@API(status = EXPERIMENTAL, since = "1.4.1")
+@API(status = EXPERIMENTAL, since = "1.5.1")
 public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 
 	/**
