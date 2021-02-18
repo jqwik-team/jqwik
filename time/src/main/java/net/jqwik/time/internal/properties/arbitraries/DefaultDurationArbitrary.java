@@ -13,25 +13,49 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> implements DurationArbitrary {
 
-	Duration min = Duration.ofSeconds(Long.MIN_VALUE, 0);
-	Duration max = Duration.ofSeconds(Long.MAX_VALUE, 999_999_999);
+	public static final Duration DEFAULT_MIN = Duration.ofSeconds(Long.MIN_VALUE, 0);
+	public static final Duration DEFAULT_MAX = Duration.ofSeconds(Long.MAX_VALUE, 999_999_999);
+
+	Duration min = DEFAULT_MIN;
+	Duration max = DEFAULT_MAX;
 
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
 
+		//TODO: Negative 0 values?
+
 		long secondMin = min.getSeconds();
 		long secondMax = max.getSeconds();
+		Arbitrary<Integer> nanos;
 
-		int nanoMin = calculateMinNano();
-		int nanoMax = calculateMaxNano();
+		Arbitrary<Long> seconds = Arbitraries.longs().between(secondMin, secondMax).withDistribution(RandomDistribution.uniform());
 
-		Arbitrary<Long> seconds = Arbitraries.longs().between(secondMin, secondMax);
-		Arbitrary<Integer> nanos = Arbitraries.integers().between(nanoMin, nanoMax);
+		if (min.getSeconds() + 1 != max.getSeconds() || min.getNano() <= max.getNano()) {
+
+			int nanoMin = calculateMinNano();
+			int nanoMax = calculateMaxNano();
+
+			nanos = Arbitraries.integers().between(nanoMin, nanoMax).withDistribution(RandomDistribution.uniform());
+
+		} else {
+
+			int nanoAMin = 0;
+			int nanoAMax = max.getNano();
+
+			int nanoBMin = min.getNano();
+			int nanoBMax = 999_999_999;
+
+			Arbitrary<Integer> nanosA = Arbitraries.integers().between(nanoAMin, nanoAMax).withDistribution(RandomDistribution.uniform());
+			Arbitrary<Integer> nanosB = Arbitraries.integers().between(nanoBMin, nanoBMax).withDistribution(RandomDistribution.uniform());
+
+			nanos = Arbitraries.oneOf(nanosA, nanosB);
+
+		}
 
 		Arbitrary<Duration> durations = Combinators.combine(seconds, nanos).as(Duration::ofSeconds);
 
 		durations = durations.filter(v -> v.compareTo(min) >= 0 && v.compareTo(max) <= 0)
-							 .edgeCases(edgeCases -> edgeCases.includeOnly(min, Duration.ofSeconds(0, 0), max));
+							 .edgeCases(edgeCases -> edgeCases.includeOnly(min, Duration.ZERO, max));
 
 		return durations;
 
