@@ -1186,7 +1186,7 @@ class OffsetTimeTests {
 
 		private void checkOffsetHourCoverage(StatisticsCoverage coverage) {
 			for (int value = -12; value <= 14; value++) {
-				coverage.check(value).percentage(p -> p >= 1.5);
+				coverage.check(value).percentage(p -> p >= 1);
 			}
 		}
 

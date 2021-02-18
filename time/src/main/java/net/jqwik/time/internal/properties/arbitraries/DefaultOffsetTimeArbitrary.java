@@ -10,170 +10,70 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.*;
 import net.jqwik.time.api.arbitraries.*;
 
-import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
 public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> implements OffsetTimeArbitrary {
 
-	private LocalTime timeMin = LocalTime.MIN;
-	private LocalTime timeMax = LocalTime.MAX;
+	private LocalTimeArbitrary localTimes;
+	private ZoneOffsetArbitrary zoneOffsets;
 
-	private int hourMin = -1;
-	private int hourMax = -1;
-
-	private int minuteMin = -1;
-	private int minuteMax = -1;
-
-	private int secondMin = -1;
-	private int secondMax = -1;
-
-	private ZoneOffset offsetMin = DefaultZoneOffsetArbitrary.DEFAULT_MIN;
-	private ZoneOffset offsetMax = DefaultZoneOffsetArbitrary.DEFAULT_MAX;
-
-	private ChronoUnit ofPrecision = null;
+	public DefaultOffsetTimeArbitrary() {
+		localTimes = Times.times();
+		zoneOffsets = Times.zoneOffsets();
+	}
 
 	@Override
 	protected Arbitrary<OffsetTime> arbitrary() {
-
-		LocalTimeArbitrary localTimes = Times.times();
-		ZoneOffsetArbitrary zoneOffsets = Times.zoneOffsets();
-
-		localTimes = localTimes.between(timeMin, timeMax);
-
-		if (hourMin != -1 && hourMax != -1) {
-			localTimes = localTimes.hourBetween(hourMin, hourMax);
-		}
-
-		if (minuteMin != -1 && minuteMax != -1) {
-			localTimes = localTimes.minuteBetween(minuteMin, minuteMax);
-		}
-
-		if (secondMin != -1 && secondMax != -1) {
-			localTimes = localTimes.secondBetween(secondMin, secondMax);
-		}
-
-		if (ofPrecision != null) {
-			localTimes = localTimes.constrainPrecision(ofPrecision);
-		}
-
-		zoneOffsets = zoneOffsets.between(offsetMin, offsetMax);
-
 		return Combinators.combine(localTimes, zoneOffsets).as(OffsetTime::of);
-
 	}
 
 	@Override
 	public OffsetTimeArbitrary atTheEarliest(LocalTime min) {
-		if (min.isAfter(timeMax)) {
-			throw new IllegalArgumentException("Minimum time must not be after maximum time");
-		}
-
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.timeMin = min;
+		clone.localTimes = clone.localTimes.atTheEarliest(min);
 		return clone;
 	}
 
 	@Override
 	public OffsetTimeArbitrary atTheLatest(LocalTime max) {
-		if (max.isBefore(timeMin)) {
-			throw new IllegalArgumentException("Maximum time must not be before minimum time");
-		}
-
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.timeMax = max;
+		clone.localTimes = clone.localTimes.atTheLatest(max);
 		return clone;
 	}
 
 	@Override
 	public OffsetTimeArbitrary hourBetween(int min, int max) {
-		if (min > max) {
-			int remember = min;
-			min = max;
-			max = remember;
-		}
-
-		if (min < 0 || max > 23) {
-			throw new IllegalArgumentException("Hour value must be between 0 and 23.");
-		}
-
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.hourMin = min;
-		clone.hourMax = max;
+		clone.localTimes = clone.localTimes.hourBetween(min, max);
 		return clone;
 	}
 
 	@Override
 	public OffsetTimeArbitrary minuteBetween(int min, int max) {
-		if (min > max) {
-			int remember = min;
-			min = max;
-			max = remember;
-		}
-
-		if (min < 0 || max > 59) {
-			throw new IllegalArgumentException("Minute value must be between 0 and 59.");
-		}
-
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.minuteMin = min;
-		clone.minuteMax = max;
+		clone.localTimes = clone.localTimes.minuteBetween(min, max);
 		return clone;
 	}
 
 	@Override
 	public OffsetTimeArbitrary secondBetween(int min, int max) {
-		if (min > max) {
-			int remember = min;
-			min = max;
-			max = remember;
-		}
-
-		if (min < 0 || max > 59) {
-			throw new IllegalArgumentException("Second value must be between 0 and 59.");
-		}
-
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.secondMin = min;
-		clone.secondMax = max;
+		clone.localTimes = clone.localTimes.secondBetween(min, max);
 		return clone;
 	}
 
 	@Override
 	public OffsetTimeArbitrary offsetBetween(ZoneOffset min, ZoneOffset max) {
-		if (min.getTotalSeconds() > max.getTotalSeconds()) {
-			ZoneOffset remember = min;
-			min = max;
-			max = remember;
-		}
-
-		if (min.getTotalSeconds() < DefaultZoneOffsetArbitrary.DEFAULT_MIN
-											.getTotalSeconds() || min.getTotalSeconds() > DefaultZoneOffsetArbitrary.DEFAULT_MAX
-																								  .getTotalSeconds()) {
-			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
-		}
-
-		if (max.getTotalSeconds() > DefaultZoneOffsetArbitrary.DEFAULT_MAX.getTotalSeconds()) {
-			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
-		}
-
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.offsetMin = min;
-		clone.offsetMax = max;
+		clone.zoneOffsets = clone.zoneOffsets.between(min, max);
 		return clone;
 	}
 
 	@Override
 	public OffsetTimeArbitrary constrainPrecision(ChronoUnit ofPrecision) {
-		if (!(ofPrecision.equals(HOURS) || ofPrecision.equals(MINUTES) || ofPrecision.equals(SECONDS) || ofPrecision
-																												 .equals(MILLIS) || ofPrecision
-																																			.equals(MICROS) || ofPrecision
-																																									   .equals(NANOS))) {
-			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
-		}
-
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.ofPrecision = ofPrecision;
+		clone.localTimes = clone.localTimes.constrainPrecision(ofPrecision);
 		return clone;
 	}
 
