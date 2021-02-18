@@ -22,20 +22,24 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
 
-		//TODO: Negative 0 values? / Negative Min values?
-
 		long secondMin = min.getSeconds();
 		long secondMax = max.getSeconds();
 		Arbitrary<Integer> nanos;
 
-		Arbitrary<Long> seconds = Arbitraries.longs().between(secondMin, secondMax).withDistribution(RandomDistribution.uniform());
+		Arbitrary<Long> seconds = Arbitraries.longs()
+											 .between(secondMin, secondMax)
+											 .withDistribution(RandomDistribution.uniform())
+											 .edgeCases(edgeCases -> edgeCases.includeOnly(secondMin, 0L, secondMax)); //necessary
 
 		if (min.getSeconds() + 1 != max.getSeconds() || min.getNano() <= max.getNano()) {
 
 			int nanoMin = calculateMinNano();
 			int nanoMax = calculateMaxNano();
 
-			nanos = Arbitraries.integers().between(nanoMin, nanoMax).withDistribution(RandomDistribution.uniform());
+			nanos = Arbitraries.integers()
+							   .between(nanoMin, nanoMax)
+							   .withDistribution(RandomDistribution.uniform())
+							   .edgeCases(edgeCases -> edgeCases.add(min.getNano(), max.getNano())); //necessary
 
 		} else {
 
@@ -45,8 +49,12 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 			int nanoBMin = min.getNano();
 			int nanoBMax = 999_999_999;
 
-			Arbitrary<Integer> nanosA = Arbitraries.integers().between(nanoAMin, nanoAMax).withDistribution(RandomDistribution.uniform());
-			Arbitrary<Integer> nanosB = Arbitraries.integers().between(nanoBMin, nanoBMax).withDistribution(RandomDistribution.uniform());
+			Arbitrary<Integer> nanosA = Arbitraries.integers()
+												   .between(nanoAMin, nanoAMax)
+												   .withDistribution(RandomDistribution.uniform());
+			Arbitrary<Integer> nanosB = Arbitraries.integers()
+												   .between(nanoBMin, nanoBMax)
+												   .withDistribution(RandomDistribution.uniform());
 
 			nanos = Arbitraries.oneOf(nanosA, nanosB);
 

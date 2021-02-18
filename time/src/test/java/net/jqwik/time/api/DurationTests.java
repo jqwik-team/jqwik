@@ -381,7 +381,6 @@ class DurationTests {
 
 		@Example
 		void between5() {
-			System.out.println(Duration.ofSeconds(Long.MIN_VALUE, 0));
 			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
 					Times.durations()
 						 .between(
@@ -406,7 +405,91 @@ class DurationTests {
 	@Group
 	class EdgeCasesGeneration {
 
-		//TODO
+		@Example
+		void all() {
+			DurationArbitrary durations = Times.durations();
+			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
+			assertThat(edgeCases).hasSize(3);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					DefaultDurationArbitrary.DEFAULT_MIN,
+					Duration.ZERO,
+					DefaultDurationArbitrary.DEFAULT_MAX
+			);
+		}
+
+		@Example
+		void between() {
+			DurationArbitrary durations = Times.durations()
+											   .between(Duration.ofSeconds(9402042, 483_212), Duration.ofSeconds(39402042, 202));
+			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					Duration.ofSeconds(9402042, 483_212),
+					Duration.ofSeconds(39402042, 202)
+			);
+		}
+
+		@Example
+		void between2() {
+			DurationArbitrary durations = Times.durations()
+											   .between(Duration.ofSeconds(-39402042, 202), Duration.ofSeconds(-9402042, 483_212));
+			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					Duration.ofSeconds(-9402042, 483_212),
+					Duration.ofSeconds(-39402042, 202)
+			);
+		}
+
+		@Example
+		void between3() {
+			DurationArbitrary durations = Times.durations()
+											   .between(Duration.ofSeconds(-1, -999_888_777), Duration.ofSeconds(1, 999_888_777));
+			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
+			assertThat(edgeCases).hasSize(3);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					Duration.ofSeconds(-1, -999_888_777),
+					Duration.ZERO,
+					Duration.ofSeconds(1, 999_888_777)
+			);
+		}
+
+		@Example
+		void between4() {
+			DurationArbitrary durations = Times.durations().between(Duration.ofSeconds(-1, -1), Duration.ofSeconds(1, 1));
+			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
+			assertThat(edgeCases).hasSize(3);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					Duration.ofSeconds(-1, -1),
+					Duration.ZERO,
+					Duration.ofSeconds(1, 1)
+			);
+		}
+
+		@Example
+		void between5() {
+			DurationArbitrary durations = Times.durations().between(Duration.ofSeconds(0, -100), Duration.ofSeconds(0, 100));
+			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
+			assertThat(edgeCases).hasSize(3);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					Duration.ofSeconds(0, -100),
+					Duration.ZERO,
+					Duration.ofSeconds(0, 100)
+			);
+		}
+
+		@Example
+		void between6() {
+			DurationArbitrary durations = Times.durations()
+											   .between(Duration.ofSeconds(0, -999_888_777), Duration.ofSeconds(0, 999_888_777));
+			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
+			assertThat(edgeCases).hasSize(3);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+					Duration.ofSeconds(0, -999_888_777),
+					Duration.ZERO,
+					Duration.ofSeconds(0, 999_888_777)
+			);
+		}
 
 	}
 
