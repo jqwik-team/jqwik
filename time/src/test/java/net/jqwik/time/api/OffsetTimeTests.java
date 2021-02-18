@@ -73,10 +73,14 @@ class OffsetTimeTests {
 
 	}
 
-	@Property
-	@Disabled("Not available at the moment")
-	void validOffsetTimeIsGeneratedWithAnnotation(@ForAll OffsetTime time) {
-		assertThat(time).isNotNull();
+	@Group
+	class SimpleAnnotations {
+
+		@Property
+		void validOffsetTimeIsGenerated(@ForAll OffsetTime time) {
+			assertThat(time).isNotNull();
+		}
+
 	}
 
 	@Group

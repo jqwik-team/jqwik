@@ -11,7 +11,7 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-@API(status = EXPERIMENTAL, since = "1.4.1")
+@API(status = EXPERIMENTAL, since = "1.5.1")
 public class Times {
 
 	private Times() {
