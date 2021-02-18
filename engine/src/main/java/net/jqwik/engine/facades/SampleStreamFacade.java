@@ -1,6 +1,7 @@
 package net.jqwik.engine.facades;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import org.junit.platform.engine.*;
@@ -28,13 +29,10 @@ class SampleStreamFacade {
 
 	@SuppressWarnings("unchecked")
 	private static <T> RandomGenerator<T> getGeneratorForSampling(Arbitrary<T> arbitrary) {
-		if (CurrentTestDescriptor.isEmpty()) {
-			return CurrentTestDescriptor.runWithDescriptor(SAMPLE_STREAM_DESCRIPTOR, () -> getGenerator((Arbitrary<Object>) arbitrary));
-		} else {
-			return getGenerator((Arbitrary<Object>) arbitrary);
-		}
+		return runInDescriptor(() -> getGenerator((Arbitrary<Object>) arbitrary));
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <T> RandomGenerator<T> getGenerator(Arbitrary<Object> arbitrary) {
 		return (RandomGenerator<T>) generators.computeIfAbsent(
 				arbitrary,
@@ -42,11 +40,22 @@ class SampleStreamFacade {
 		);
 	}
 
+	private static <T> Supplier<T> wrapInDescriptor(Supplier<T> code) {
+		return () -> CurrentTestDescriptor.runWithDescriptor(SAMPLE_STREAM_DESCRIPTOR, code);
+	}
+
+	private static <T> T runInDescriptor(Supplier<T> code) {
+		if (CurrentTestDescriptor.isEmpty()) {
+			return CurrentTestDescriptor.runWithDescriptor(SAMPLE_STREAM_DESCRIPTOR, code);
+		} else {
+			return code.get();
+		}
+	}
+
 	<T> Stream<T> sampleStream(Arbitrary<T> arbitrary) {
 		RandomGenerator<T> generator = getGeneratorForSampling(arbitrary);
-		return generator
-					   .stream(SourceOfRandomness.current())
-					   .map(Shrinkable::value);
+		return Stream.generate(wrapInDescriptor(() -> generator.next(SourceOfRandomness.current())))
+					 .map(shrinkable -> runInDescriptor(() -> shrinkable.value()));
 	}
 
 }
