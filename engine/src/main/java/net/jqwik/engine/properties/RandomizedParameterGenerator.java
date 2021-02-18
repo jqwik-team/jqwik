@@ -13,8 +13,6 @@ class RandomizedParameterGenerator {
 	private final int genSize;
 	private final boolean withEdgeCases;
 
-	private final Map<Arbitrary<Object>, RandomGenerator<Object>> generators = new HashMap<>();
-
 	RandomizedParameterGenerator(MethodParameter parameter, Set<Arbitrary<Object>> arbitraries, int genSize, boolean withEdgeCases) {
 		this.typeUsage = TypeUsageImpl.forParameter(parameter);
 		this.arbitraries = new ArrayList<>(arbitraries);
@@ -39,8 +37,7 @@ class RandomizedParameterGenerator {
 	}
 
 	private RandomGenerator<Object> getGenerator(Arbitrary<Object> arbitrary) {
-		// return arbitrary.generator(genSize, withEdgeCases);
 		// Creating a generator with its edge cases can be time-consuming. Caching it is really worthwhile.
-		return generators.computeIfAbsent(arbitrary, a -> a.generator(genSize, withEdgeCases));
+		return Memoize.memoizedGenerator(arbitrary, genSize, withEdgeCases);
 	}
 }

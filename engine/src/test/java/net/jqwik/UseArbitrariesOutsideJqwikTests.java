@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 
