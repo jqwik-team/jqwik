@@ -104,10 +104,24 @@ class LocalTimeTests {
 
 	}
 
-	@Property
-	@Disabled("Not available at the moment")
-	void validLocalTimeIsGeneratedWithAnnotation(@ForAll LocalTime time) {
-		assertThat(time).isNotNull();
+	@Group
+	class SimpleAnnotations {
+
+		@Property
+		void validLocalTimeIsGenerated(@ForAll LocalTime time) {
+			assertThat(time).isNotNull();
+		}
+
+		@Property
+		void validZoneIdIsGenerated(@ForAll ZoneId zoneId) {
+			assertThat(zoneId).isNotNull();
+		}
+
+		@Property
+		void validTimeZoneIsGenerated(@ForAll TimeZone timeZone) {
+			assertThat(timeZone).isNotNull();
+		}
+
 	}
 
 	@Group

@@ -51,10 +51,14 @@ class ZoneOffsetTests {
 
 	}
 
-	@Property
-	@Disabled("Not available at the moment")
-	void validZoneOffsetIsGeneratedWithAnnotation(@ForAll ZoneOffset offset) {
-		assertThat(offset).isNotNull();
+	@Group
+	class SimpleAnnotations {
+
+		@Property
+		void validZoneOffsetIsGenerated(@ForAll ZoneOffset offset) {
+			assertThat(offset).isNotNull();
+		}
+
 	}
 
 	@Group
