@@ -13,7 +13,7 @@ import static org.apiguardian.api.API.Status.*;
  * All generated values are between -12:00:00 and +14:00:00.
  * All generated minute values are 0, 15, 30 or 45 with second 0.
  */
-@API(status = EXPERIMENTAL, since = "1.4.1")
+@API(status = EXPERIMENTAL, since = "1.5.1")
 public interface ZoneOffsetArbitrary extends Arbitrary<ZoneOffset> {
 
 	/**
