@@ -58,4 +58,13 @@ public class Times {
 		return Arbitraries.of(ZoneId.getAvailableZoneIds()).map(ZoneId::of);
 	}
 
+	/**
+	 * Create an arbitrary that generates instances of {@linkplain java.time.Duration}.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	public static DurationArbitrary durations() {
+		return new DefaultDurationArbitrary();
+	}
+
 }
