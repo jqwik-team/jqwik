@@ -7,8 +7,11 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.logging.*;
 
+import org.junit.platform.engine.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
@@ -85,7 +88,9 @@ public class PropertyShrinker {
 
 	private FalsifiedSample withTimeout(Supplier<FalsifiedSample> shrinkUntilDone) {
 		try {
-			CompletableFuture<FalsifiedSample> falsifiedSampleFuture = CompletableFuture.supplyAsync(shrinkUntilDone);
+			TestDescriptor current = CurrentTestDescriptor.get();
+			Supplier<FalsifiedSample> shrinkWithTestDescriptor = () -> CurrentTestDescriptor.runWithDescriptor(current, shrinkUntilDone);
+			CompletableFuture<FalsifiedSample> falsifiedSampleFuture = CompletableFuture.supplyAsync(shrinkWithTestDescriptor);
 			return falsifiedSampleFuture.get(boundedShrinkingSeconds, TimeUnit.SECONDS);
 		} catch (InterruptedException | ExecutionException e) {
 			return JqwikExceptionSupport.throwAsUncheckedException(e);
