@@ -46,6 +46,12 @@ depending on the requested parameter type.
 - [`@NotEmpty`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/NotEmpty.html):
   Set minimum length to `1`.
 
+#### String not Blank
+
+- [`@NotBlank`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/NotBlank.html):
+  Strings must not be empty or only contain whitespace.
+
+
 #### Character Sets
 
 When generating chars any unicode character might be generated.

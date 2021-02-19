@@ -25,6 +25,8 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Added constraint annotation `@NotBlank` for String parameters
+
 - Generated email addresses get a few more edge cases
 
 #### Breaking Changes
@@ -44,7 +46,7 @@ title: jqwik Release Notes
 - Some arbitrary types, e.g. `Arbitraries.lazyOf()` could not be used in sampling.
   Now all should work.
   
-- Bounded shrinking could result in an `OutsideJqwikException`.
+- Bounded shrinking could previously result in an `OutsideJqwikException`.
   
 
 ## 1.4.0

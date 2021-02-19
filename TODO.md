@@ -1,7 +1,11 @@
 - 1.5.0
 
-    - `@NotBlank` for Strings
-
+    - Remove deprecated Arbitrary.just()
+      
+    - Generate documentation
+    
+    - Release
+    
 
 - 1.5.1
    
