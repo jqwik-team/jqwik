@@ -6,7 +6,9 @@ import org.junit.jupiter.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.engine.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -31,6 +33,19 @@ class UseArbitrariesOutsideJqwikTests {
 		strings.sampleStream().limit(100).forEach(value -> {
 			assertThat(value).isNotNull();
 			assertThat(value).isInstanceOf(String.class);
+		});
+	}
+
+	@Test
+	void defaultForWithGloballyRegisteredProvider() {
+		RegisteredArbitraryProviders.register(new PersonProvider());
+
+		Arbitrary<Person> people = Arbitraries.defaultFor(Person.class);
+
+		people.sampleStream().limit(100).forEach(value -> {
+			assertThat(value).isNotNull();
+			assertThat(value.firstName).isNotNull();
+			assertThat(value.lastName).isNotNull();
 		});
 	}
 
@@ -90,4 +105,15 @@ class UseArbitrariesOutsideJqwikTests {
 		}
 	}
 
+	private static class PersonProvider implements ArbitraryProvider {
+		@Override
+		public boolean canProvideFor(TypeUsage targetType) {
+			return targetType.isOfType(Person.class);
+		}
+
+		@Override
+		public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+			return Collections.singleton(Arbitraries.just(new Person("first", "last")));
+		}
+	}
 }
