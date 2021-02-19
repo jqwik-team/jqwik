@@ -44,6 +44,8 @@ title: jqwik Release Notes
 - Some arbitrary types, e.g. `Arbitraries.lazyOf()` could not be used in sampling.
   Now all should work.
   
+- Bounded shrinking could result in an `OutsideJqwikException`.
+  
 
 ## 1.4.0
 

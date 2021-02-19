@@ -165,6 +165,17 @@ class PropertyShrinkerTests {
 		}
 
 		@Example
+		@SuppressLogging
+		void currentTestDescriptorIsAvailableInBoundedShrinking() {
+			List<Shrinkable<Object>> shrinkables = asList(new ShrinkableTypesForTest.ShrinkableUsingCurrentTestDescriptor(20).asGeneric());
+			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.BOUNDED, 10);
+
+			ShrunkFalsifiedSample sample = shrinker.shrink(alwaysFalsify());
+
+			assertThat((int) sample.parameters().get(0)).isEqualTo(0);
+		}
+
+		@Example
 		void withUnboundedShrinkingDoNotBreakOff() {
 			List<Shrinkable<Object>> shrinkables = asList(new ShrinkableTypesForTest.SlowShrinkable(10).asGeneric());
 			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
@@ -264,8 +275,7 @@ class PropertyShrinkerTests {
 			TestingFalsifier<List<Object>> falsifier = params -> {
 				params.add(42);
 				if (((int) params.get(0)) == 0) return true;
-				if (((int) params.get(1)) <= 1) return true;
-				return false;
+				return ((int) params.get(1)) <= 1;
 			};
 			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 			assertThat(sample.parameters()).isEqualTo(asList(1, 2, 42));

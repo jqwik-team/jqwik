@@ -3,7 +3,10 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 import java.util.stream.*;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.api.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
 @Group
@@ -82,6 +85,24 @@ public class ShrinkableTypesForTest {
 
 		protected OneStepShrinkable createShrinkable(int integer) {
 			return new SlowShrinkable(integer);
+		}
+
+	}
+
+	public static class ShrinkableUsingCurrentTestDescriptor extends OneStepShrinkable {
+
+		public ShrinkableUsingCurrentTestDescriptor(int integer) {
+			super(integer);
+		}
+
+		@Override
+		public Stream<Shrinkable<Integer>> shrink() {
+			Assertions.assertThat(CurrentTestDescriptor.get()).isNotNull();
+			return super.shrink();
+		}
+
+		protected OneStepShrinkable createShrinkable(int integer) {
+			return new ShrinkableUsingCurrentTestDescriptor(integer);
 		}
 
 	}
