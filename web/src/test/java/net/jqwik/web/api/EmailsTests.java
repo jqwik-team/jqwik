@@ -53,7 +53,7 @@ public class EmailsTests {
 		}
 
 		@Property
-		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll("withQuoted") String email) {
+		void validUseOfQuotedBackslashAndQuotationMarks(@ForAll("onlyQuoted") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			localPart = localPart.substring(1, localPart.length() - 1);
