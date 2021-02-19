@@ -436,20 +436,6 @@ public class Arbitraries {
 	 * @param value The value to "generate"
 	 * @param <T>   The type of the value
 	 * @return a new arbitrary instance
-	 * @see #just(Object)
-	 * @deprecated Use {@linkplain Arbitraries#just(Object)} instead. To be removed in version 1.5.0.
-	 **/
-	@API(status = DEPRECATED, since = "1.3.2")
-	public static <T> Arbitrary<T> constant(T value) {
-		return just(value);
-	}
-
-	/**
-	 * Create an arbitrary that will always generate the same value.
-	 *
-	 * @param value The value to "generate"
-	 * @param <T>   The type of the value
-	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.2")
 	public static <T> Arbitrary<T> just(T value) {

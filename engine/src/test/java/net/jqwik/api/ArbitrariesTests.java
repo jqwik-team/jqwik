@@ -140,18 +140,6 @@ class ArbitrariesTests {
 		assertAllGenerated(generator, random, (Random value) -> value.nextInt(100) < 100);
 	}
 
-	/**
-	 * Remove this test as soon as Arbitraries.constant(value) is removed
-	 */
-	@Example
-	@SuppressWarnings("deprecation")
-	void constant(@ForAll Random random) {
-		Arbitrary<String> constant = Arbitraries.constant("hello");
-		assertAllGenerated(constant.generator(1000), random, value -> {
-			assertThat(value).isEqualTo("hello");
-		});
-	}
-
 	@Example
 	void just(@ForAll Random random) {
 		Arbitrary<String> constant = Arbitraries.just("hello");

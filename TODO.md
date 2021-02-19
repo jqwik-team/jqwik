@@ -1,7 +1,5 @@
 - 1.5.0
 
-    - Remove deprecated Arbitrary.just()
-      
     - Generate documentation
     
     - Release

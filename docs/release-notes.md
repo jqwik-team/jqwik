@@ -35,6 +35,8 @@ title: jqwik Release Notes
 
 - Removed annotation `@Unique` which had been deprecated in 1.4.0
 
+- Removed `Arbitraries.constant(..)` which had been deprecated in 1.3.2
+
 #### Bug Fixes
 
 - Fixed [degraded generation performance](https://github.com/jlink/jqwik/issues/166) 
