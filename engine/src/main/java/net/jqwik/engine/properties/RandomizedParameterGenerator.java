@@ -37,7 +37,6 @@ class RandomizedParameterGenerator {
 	}
 
 	private RandomGenerator<Object> getGenerator(Arbitrary<Object> arbitrary) {
-		// Creating a generator with its edge cases can be time-consuming. Caching it is really worthwhile.
-		return Memoize.memoizedGenerator(arbitrary, genSize, withEdgeCases);
+		return arbitrary.generator(genSize, withEdgeCases);
 	}
 }

@@ -1,16 +1,12 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.support.*;
-
-import static net.jqwik.engine.properties.Memoize.*;
 
 public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
@@ -26,7 +22,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	) {
 		this(toMap, t -> {
 			Arbitrary<U> arbitrary = toArbitraryMapper.apply(t);
-			return memoizedGenerator(arbitrary, genSize, withEmbeddedEdgeCases);
+			return arbitrary.generator(genSize, withEmbeddedEdgeCases);
 		}, randomSeed);
 	}
 

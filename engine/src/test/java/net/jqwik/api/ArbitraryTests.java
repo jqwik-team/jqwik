@@ -69,7 +69,7 @@ class ArbitraryTests {
 
 		Statistics.label("list is empty")
 				  .collect(listWithoutEdgeCases.isEmpty())
-				  .coverage(checker -> checker.check(true).percentage(p -> p < 5));
+				  .coverage(checker -> checker.check(true).percentage(p -> p < 6));
 
 		Statistics.label("list contains Integer.MAX_VALUE")
 				  .collect(listWithoutEdgeCases.stream().anyMatch(e -> e == Integer.MAX_VALUE))

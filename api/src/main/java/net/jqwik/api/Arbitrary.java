@@ -54,6 +54,8 @@ public interface Arbitrary<T> {
 		public abstract <T> Arbitrary<T> configureEdgeCases(Arbitrary<T> self, Consumer<EdgeCases.Config<T>> configurator);
 
 		public abstract <T> Arbitrary<T> withoutEdgeCases(Arbitrary<T> self);
+
+		public abstract <T> RandomGenerator<T> memoizedGenerator(Arbitrary<T> self, int genSize, boolean withEdgeCases);
 	}
 
 	/**
@@ -87,12 +89,7 @@ public interface Arbitrary<T> {
 	 */
 	@API(status = INTERNAL, since = "1.4.0")
 	default RandomGenerator<T> generator(int genSize, boolean withEdgeCases) {
-		if (withEdgeCases) {
-			int maxEdgeCases = Math.max(genSize, 10);
-			return generatorWithEmbeddedEdgeCases(genSize).withEdgeCases(genSize, edgeCases(maxEdgeCases));
-		} else {
-			return generator(genSize);
-		}
+		return ArbitraryFacade.implementation.memoizedGenerator(this, genSize, withEdgeCases);
 	}
 
 	/**

@@ -1,5 +1,8 @@
 - 1.5.0
 
+    - `@NotBlank` for Strings
+
+
 - 1.5.1
    
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
@@ -33,8 +36,6 @@
     
     - Web Module:
         - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
-
-    - StringArbitrary.notBlank() + `@NotBlank`
 
     - EdgeCases.Configuration.withProbability(double injectProbability)
 
