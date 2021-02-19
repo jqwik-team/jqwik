@@ -46,7 +46,7 @@ public class EmailsTests {
 		}
 
 		@Property
-		void validCharsBeforeAtQuoted(@ForAll("withQuoted") String email) {
+		void validCharsBeforeAtQuoted(@ForAll("onlyQuoted") String email) {
 			String localPart = getLocalPartOfEmail(email);
 			Assume.that(isQuoted(localPart));
 			assertThat(localPart.chars()).allMatch(c -> isIn(c, ALLOWED_CHARS_LOCALPART_QUOTED));
@@ -379,6 +379,11 @@ public class EmailsTests {
 	@Provide
 	private EmailArbitrary withQuoted() {
 		return Web.emails().allowQuotedLocalPart();
+	}
+
+	@Provide
+	private Arbitrary<String> onlyQuoted() {
+		return withQuoted().filter(email -> email.startsWith("\""));
 	}
 
 	@Provide
