@@ -1,10 +1,3 @@
-- 1.5.0
-
-    - Generate documentation
-    
-    - Release
-    
-
 - 1.5.1
    
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
