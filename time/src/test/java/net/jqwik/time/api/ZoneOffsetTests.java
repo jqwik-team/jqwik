@@ -52,7 +52,7 @@ class ZoneOffsetTests {
 	}
 
 	@Group
-	class SimpleAnnotations {
+	class DefaultGeneration {
 
 		@Property
 		void validZoneOffsetIsGenerated(@ForAll ZoneOffset offset) {

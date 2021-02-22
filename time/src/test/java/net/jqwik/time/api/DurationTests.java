@@ -35,7 +35,7 @@ class DurationTests {
 		class WorstCases {
 
 			@Property
-			void worstCaseGeneration(
+			void positiveOneSecondDifferenceNanosHigh(
 					@ForAll("worstCase") Duration duration,
 					@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanosStart,
 					@ForAll @IntRange(min = 0, max = 200) int nanosEnd,
@@ -55,7 +55,7 @@ class DurationTests {
 			}
 
 			@Property
-			void worstCaseGeneration2(
+			void positiveTwoSecondDifferenceNanosHigh(
 					@ForAll("worstCase") Duration duration,
 					@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanosStart,
 					@ForAll @IntRange(min = 0, max = 200) int nanosEnd,
@@ -75,7 +75,7 @@ class DurationTests {
 			}
 
 			@Property
-			void worstCaseGeneration3(
+			void negativeOneSecondDifferenceNanosHigh(
 					@ForAll("worstCaseNegative") Duration duration,
 					@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanosEnd,
 					@ForAll @IntRange(min = 0, max = 200) int nanosStart,
@@ -95,7 +95,7 @@ class DurationTests {
 			}
 
 			@Property
-			void worstCaseGeneration4(
+			void negativeTwoSecondDifferenceNanosHigh(
 					@ForAll("worstCaseNegative") Duration duration,
 					@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanosEnd,
 					@ForAll @IntRange(min = 0, max = 200) int nanosStart,
@@ -115,7 +115,7 @@ class DurationTests {
 			}
 
 			@Property
-			void worstCaseGeneration5(
+			void positiveOneSecondDifferenceNanosLow(
 					@ForAll("worstCase") Duration start,
 					@ForAll @IntRange(min = 0, max = 200) int nanosAdd,
 					@ForAll Random random
@@ -135,7 +135,7 @@ class DurationTests {
 			}
 
 			@Property
-			void worstCaseGeneration6(
+			void positiveTwoSecondDifferenceNanosLow(
 					@ForAll("worstCase") Duration start,
 					@ForAll @IntRange(min = 0, max = 200) int nanosAdd,
 					@ForAll Random random
@@ -155,7 +155,7 @@ class DurationTests {
 			}
 
 			@Property
-			void worstCaseGeneration7(
+			void negativeOneSecondDifferenceNanosLow(
 					@ForAll("worstCaseNegative") Duration start,
 					@ForAll @IntRange(min = 0, max = 200) int nanosSubtract,
 					@ForAll Random random
@@ -175,7 +175,7 @@ class DurationTests {
 			}
 
 			@Property
-			void worstCaseGeneration8(
+			void negativeTwoSecondsDifferenceNanosLow(
 					@ForAll("worstCaseNegative") Duration start,
 					@ForAll @IntRange(min = 0, max = 200) int nanosSubtract,
 					@ForAll Random random
@@ -195,7 +195,7 @@ class DurationTests {
 			}
 
 			@Property
-			void worstCaseGeneration9(@ForAll Random random) {
+			void aroundZero(@ForAll Random random) {
 
 				Duration start = Duration.ofSeconds(0, -101);
 				Duration end = Duration.ofSeconds(0, 100);
@@ -224,7 +224,7 @@ class DurationTests {
 	}
 
 	@Group
-	class SimpleAnnotations {
+	class DefaultGeneration {
 
 		@Property
 		void validDurationIsGenerated(@ForAll Duration duration) {
@@ -296,7 +296,7 @@ class DurationTests {
 	class ExhaustiveGeneration {
 
 		@Example
-		void between() {
+		void betweenPositive() {
 			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
 					Times.durations()
 						 .between(
@@ -317,7 +317,7 @@ class DurationTests {
 		}
 
 		@Example
-		void between2() {
+		void betweenNegative() {
 			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
 					Times.durations()
 						 .between(
@@ -338,7 +338,7 @@ class DurationTests {
 		}
 
 		@Example
-		void between3() {
+		void betweenNegativeOneSecond() {
 			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
 					Times.durations()
 						 .between(
@@ -359,7 +359,7 @@ class DurationTests {
 		}
 
 		@Example
-		void between4() {
+		void betweenAroundZero() {
 			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
 					Times.durations()
 						 .between(
@@ -380,7 +380,7 @@ class DurationTests {
 		}
 
 		@Example
-		void between5() {
+		void betweenPositiveOneSecond() {
 			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
 					Times.durations()
 						 .between(
