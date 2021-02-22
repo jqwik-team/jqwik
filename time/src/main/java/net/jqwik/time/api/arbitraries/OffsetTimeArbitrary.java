@@ -61,7 +61,8 @@ public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 
 	/**
 	 * Constrain the precision of generated values.
+	 * Default value: Seconds.
 	 */
-	OffsetTimeArbitrary constrainPrecision(ChronoUnit ofPrecision);
+	OffsetTimeArbitrary ofPrecision(ChronoUnit ofPrecision);
 
 }

@@ -36,6 +36,11 @@ public class Times {
 		return new DefaultOffsetTimeArbitrary();
 	}
 
+	/**
+	 * Create an arbitrary that generates instances of {@linkplain java.time.ZoneOffset}.
+	 *
+	 * @return a new arbitrary instance
+	 */
 	public static ZoneOffsetArbitrary zoneOffsets() {
 		return new DefaultZoneOffsetArbitrary();
 	}

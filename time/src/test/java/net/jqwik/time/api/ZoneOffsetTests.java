@@ -68,30 +68,6 @@ class ZoneOffsetTests {
 		class OffsetMethods {
 
 			@Property
-			void atTheEarliest(@ForAll("offsets") ZoneOffset startOffset, @ForAll Random random) {
-
-				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().atTheEarliest(startOffset);
-
-				assertAllGenerated(offsets.generator(1000), random, offset -> {
-					assertThat(offset.getTotalSeconds()).isGreaterThanOrEqualTo(startOffset.getTotalSeconds());
-					return true;
-				});
-
-			}
-
-			@Property
-			void atTheLatest(@ForAll("offsets") ZoneOffset endOffset, @ForAll Random random) {
-
-				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().atTheLatest(endOffset);
-
-				assertAllGenerated(offsets.generator(1000), random, offset -> {
-					assertThat(offset.getTotalSeconds()).isLessThanOrEqualTo(endOffset.getTotalSeconds());
-					return true;
-				});
-
-			}
-
-			@Property
 			void between(@ForAll("offsets") ZoneOffset startOffset, @ForAll("offsets") ZoneOffset endOffset, @ForAll Random random) {
 
 				Assume.that(startOffset.getTotalSeconds() <= endOffset.getTotalSeconds());
@@ -403,72 +379,41 @@ class ZoneOffsetTests {
 	@Group
 	class InvalidConfigurations {
 
-		@Property
-		void minOffsetAfterMaxOffset(@ForAll("offsets") ZoneOffset minOffset, @ForAll("offsets") ZoneOffset maxOffset) {
-
-			Assume.that(minOffset.getTotalSeconds() > maxOffset.getTotalSeconds());
-
-			assertThatThrownBy(
-					() -> Times.zoneOffsets().atTheLatest(maxOffset).atTheEarliest(minOffset)
-			).isInstanceOf(IllegalArgumentException.class);
-
-		}
-
-		@Property
-		void maxOffsetBeforeMinOffset(@ForAll("offsets") ZoneOffset minOffset, @ForAll("offsets") ZoneOffset maxOffset) {
-
-			Assume.that(maxOffset.getTotalSeconds() < minOffset.getTotalSeconds());
-
-			assertThatThrownBy(
-					() -> Times.zoneOffsets().atTheEarliest(minOffset).atTheLatest(maxOffset)
-			).isInstanceOf(IllegalArgumentException.class);
-
-		}
-
 		@Example
 		void minOffsetLessThanMinimumOffset() {
 			assertThatThrownBy(
-					() -> Times.zoneOffsets().atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(-12, 0, -1))
+					() -> Times.zoneOffsets().between(ZoneOffset.ofHoursMinutesSeconds(-12, 0, -1), ZoneOffset.ofHours(1))
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void minOffsetGreaterThanMaximumOffset() {
 			assertThatThrownBy(
-					() -> Times.zoneOffsets().atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(14, 0, 1))
-			).isInstanceOf(IllegalArgumentException.class);
-		}
-
-		@Example
-		void maxOffsetLessThanMinimumOffset() {
-			assertThatThrownBy(
-					() -> Times.zoneOffsets().atTheLatest(ZoneOffset.ofHoursMinutesSeconds(-12, 0, -1))
+					() -> Times.zoneOffsets().between(ZoneOffset.ofHoursMinutesSeconds(14, 0, 1), ZoneOffset.ofHours(15))
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void maxOffsetGreaterThanMaximumOffset() {
 			assertThatThrownBy(
-					() -> Times.zoneOffsets().atTheLatest(ZoneOffset.ofHoursMinutesSeconds(14, 0, 1))
+					() -> Times.zoneOffsets().between(ZoneOffset.ofHours(1), ZoneOffset.ofHoursMinutesSeconds(14, 0, 1))
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
-		void noValuesCanBeGenerated() {
+		void noValuesCanBeGeneratedNegative() {
 			assertThatThrownBy(
 					() -> Times.zoneOffsets()
-							   .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(-11, -9, -4))
-							   .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(-11, -9, -3))
+							   .between(ZoneOffset.ofHoursMinutesSeconds(-11, -9, -4), ZoneOffset.ofHoursMinutesSeconds(-11, -9, -3))
 							   .generator(1000)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
-		void noValuesCanBeGenerated2() {
+		void noValuesCanBeGeneratedPositive() {
 			assertThatThrownBy(
 					() -> Times.zoneOffsets()
-							   .atTheEarliest(ZoneOffset.ofHoursMinutesSeconds(11, 9, 3))
-							   .atTheLatest(ZoneOffset.ofHoursMinutesSeconds(11, 9, 4))
+							   .between(ZoneOffset.ofHoursMinutesSeconds(11, 9, 3), ZoneOffset.ofHoursMinutesSeconds(11, 9, 4))
 							   .generator(1000)
 			).isInstanceOf(IllegalArgumentException.class);
 		}

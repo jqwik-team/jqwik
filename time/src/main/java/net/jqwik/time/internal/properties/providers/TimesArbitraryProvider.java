@@ -15,10 +15,6 @@ public class TimesArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		if (targetType.isAssignableFrom(LocalTime.class)) {
-			return Collections.singleton(Times.times());
-		} else {
-			return null;
-		}
+		return Collections.singleton(Times.times());
 	}
 }

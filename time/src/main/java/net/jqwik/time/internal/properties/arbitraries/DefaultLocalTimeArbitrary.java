@@ -267,7 +267,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	@Override
-	public LocalTimeArbitrary constrainPrecision(ChronoUnit ofPrecision) {
+	public LocalTimeArbitrary ofPrecision(ChronoUnit ofPrecision) {
 		if (!(ofPrecision.equals(HOURS) || ofPrecision.equals(MINUTES) || ofPrecision.equals(SECONDS) || ofPrecision
 																												 .equals(MILLIS) || ofPrecision
 																																			.equals(MICROS) || ofPrecision

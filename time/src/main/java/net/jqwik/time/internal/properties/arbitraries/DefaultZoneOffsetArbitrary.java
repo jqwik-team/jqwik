@@ -125,31 +125,21 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 	}
 
 	@Override
-	public ZoneOffsetArbitrary atTheEarliest(ZoneOffset min) {
-		if (min.getTotalSeconds() < DEFAULT_MIN.getTotalSeconds() || min.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()) {
-			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
+	public ZoneOffsetArbitrary between(ZoneOffset min, ZoneOffset max) {
+		if (min.getTotalSeconds() > max.getTotalSeconds()) {
+			ZoneOffset remember = min;
+			min = max;
+			max = remember;
 		}
 
-		if ((offsetMax != null) && min.getTotalSeconds() > offsetMax.getTotalSeconds()) {
-			throw new IllegalArgumentException("Minimum offset must not be after maximum offset");
+		if (min.getTotalSeconds() < DEFAULT_MIN.getTotalSeconds() || min.getTotalSeconds() > DEFAULT_MAX
+																									 .getTotalSeconds() || max.getTotalSeconds() > DEFAULT_MAX
+																																						   .getTotalSeconds()) {
+			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
 		}
 
 		DefaultZoneOffsetArbitrary clone = typedClone();
 		clone.offsetMin = min;
-		return clone;
-	}
-
-	@Override
-	public ZoneOffsetArbitrary atTheLatest(ZoneOffset max) {
-		if (max.getTotalSeconds() < DEFAULT_MIN.getTotalSeconds() || max.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()) {
-			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
-		}
-
-		if ((offsetMin != null) && max.getTotalSeconds() < offsetMin.getTotalSeconds()) {
-			throw new IllegalArgumentException("Maximum time must not be before minimum time");
-		}
-
-		DefaultZoneOffsetArbitrary clone = typedClone();
 		clone.offsetMax = max;
 		return clone;
 	}

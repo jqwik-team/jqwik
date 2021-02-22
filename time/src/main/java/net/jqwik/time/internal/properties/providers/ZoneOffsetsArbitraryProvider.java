@@ -15,10 +15,6 @@ public class ZoneOffsetsArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		if (targetType.isAssignableFrom(ZoneOffset.class)) {
-			return Collections.singleton(Times.zoneOffsets());
-		} else {
-			return null;
-		}
+		return Collections.singleton(Times.zoneOffsets());
 	}
 }

@@ -14,10 +14,6 @@ public class TimeZoneArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		if (targetType.isAssignableFrom(TimeZone.class)) {
-			return Collections.singleton(Times.timeZones());
-		} else {
-			return null;
-		}
+		return Collections.singleton(Times.timeZones());
 	}
 }

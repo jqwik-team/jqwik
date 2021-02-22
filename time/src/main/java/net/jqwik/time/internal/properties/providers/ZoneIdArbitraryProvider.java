@@ -15,10 +15,6 @@ public class ZoneIdArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		if (targetType.isAssignableFrom(ZoneId.class)) {
-			return Collections.singleton(Times.zoneIds());
-		} else {
-			return null;
-		}
+		return Collections.singleton(Times.zoneIds());
 	}
 }

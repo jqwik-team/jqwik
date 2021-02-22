@@ -26,32 +26,32 @@ class LocalTimeTests {
 
 	@Provide
 	Arbitrary<LocalTime> precisionHours() {
-		return Times.times().constrainPrecision(HOURS);
+		return Times.times().ofPrecision(HOURS);
 	}
 
 	@Provide
 	Arbitrary<LocalTime> precisionMinutes() {
-		return Times.times().constrainPrecision(MINUTES);
+		return Times.times().ofPrecision(MINUTES);
 	}
 
 	@Provide
 	Arbitrary<LocalTime> precisionSeconds() {
-		return Times.times().constrainPrecision(SECONDS);
+		return Times.times().ofPrecision(SECONDS);
 	}
 
 	@Provide
 	Arbitrary<LocalTime> precisionMilliseconds() {
-		return Times.times().constrainPrecision(MILLIS);
+		return Times.times().ofPrecision(MILLIS);
 	}
 
 	@Provide
 	Arbitrary<LocalTime> precisionMicroseconds() {
-		return Times.times().constrainPrecision(MICROS);
+		return Times.times().ofPrecision(MICROS);
 	}
 
 	@Provide
 	Arbitrary<LocalTime> precisionNanoseconds() {
-		return Times.times().constrainPrecision(NANOS);
+		return Times.times().ofPrecision(NANOS);
 	}
 
 	@Group
@@ -311,7 +311,7 @@ class LocalTimeTests {
 
 					Assume.that(startTime.getHour() != 23);
 
-					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(HOURS);
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).ofPrecision(HOURS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getMinute()).isEqualTo(0);
@@ -328,7 +328,7 @@ class LocalTimeTests {
 
 					Assume.that(startTime.getHour() != 23);
 
-					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(HOURS);
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).ofPrecision(HOURS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getMinute()).isEqualTo(0);
@@ -356,7 +356,7 @@ class LocalTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59);
 
-					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(MINUTES);
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).ofPrecision(MINUTES);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getSecond()).isEqualTo(0);
@@ -372,7 +372,7 @@ class LocalTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59);
 
-					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(MINUTES);
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).ofPrecision(MINUTES);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getSecond()).isEqualTo(0);
@@ -398,7 +398,7 @@ class LocalTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59);
 
-					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(SECONDS);
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).ofPrecision(SECONDS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano()).isEqualTo(0);
@@ -413,7 +413,7 @@ class LocalTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59);
 
-					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(SECONDS);
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).ofPrecision(SECONDS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano()).isEqualTo(0);
@@ -439,7 +439,7 @@ class LocalTimeTests {
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
 																																   .getNano() < 999_000_001);
 
-					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(MILLIS);
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).ofPrecision(MILLIS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano() % 1_000_000).isEqualTo(0);
@@ -455,7 +455,7 @@ class LocalTimeTests {
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
 																																   .getNano() < 999_000_001);
 
-					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(MILLIS);
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).ofPrecision(MILLIS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano() % 1_000_000).isEqualTo(0);
@@ -481,7 +481,7 @@ class LocalTimeTests {
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
 																																   .getNano() < 999_999_001);
 
-					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).constrainPrecision(MICROS);
+					Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).ofPrecision(MICROS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano() % 1_000).isEqualTo(0);
@@ -519,7 +519,7 @@ class LocalTimeTests {
 
 		@Property
 		void shrinksToSmallestFailingValue(@ForAll Random random) {
-			LocalTimeArbitrary times = Times.times().constrainPrecision(SECONDS);
+			LocalTimeArbitrary times = Times.times().ofPrecision(SECONDS);
 			TestingFalsifier<LocalTime> falsifier = time -> time.isBefore(LocalTime.of(9, 13, 42, 143_921_111));
 			LocalTime value = falsifyThenShrink(times, random, falsifier);
 			assertThat(value).isEqualTo(LocalTime.of(9, 13, 43, 0));
@@ -538,7 +538,7 @@ class LocalTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 22, 33, 392_211_325)
 						 )
-						 .constrainPrecision(NANOS)
+						 .ofPrecision(NANOS)
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -560,7 +560,7 @@ class LocalTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 22, 33, 392_214_325)
 						 )
-						 .constrainPrecision(MICROS)
+						 .ofPrecision(MICROS)
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -577,7 +577,7 @@ class LocalTimeTests {
 		void precisionMillis() {
 			Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
 					Times.times()
-						 .constrainPrecision(MILLIS)
+						 .ofPrecision(MILLIS)
 						 .between(
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 22, 33, 395_214_325)
@@ -622,7 +622,7 @@ class LocalTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 25, 36, 395_214_325)
 						 )
-						 .constrainPrecision(MINUTES)
+						 .ofPrecision(MINUTES)
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -643,7 +643,7 @@ class LocalTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(14, 25, 36, 395_214_325)
 						 )
-						 .constrainPrecision(HOURS)
+						 .ofPrecision(HOURS)
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -666,7 +666,7 @@ class LocalTimeTests {
 
 			@Example
 			void all() {
-				LocalTimeArbitrary times = Times.times().constrainPrecision(HOURS);
+				LocalTimeArbitrary times = Times.times().ofPrecision(HOURS);
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -679,7 +679,7 @@ class LocalTimeTests {
 			void between() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(HOURS)
+							 .ofPrecision(HOURS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -693,7 +693,7 @@ class LocalTimeTests {
 			void betweenHour() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(HOURS)
+							 .ofPrecision(HOURS)
 							 .hourBetween(11, 12);
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -710,7 +710,7 @@ class LocalTimeTests {
 
 			@Example
 			void all() {
-				LocalTimeArbitrary times = Times.times().constrainPrecision(MINUTES);
+				LocalTimeArbitrary times = Times.times().ofPrecision(MINUTES);
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -723,7 +723,7 @@ class LocalTimeTests {
 			void between() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(MINUTES)
+							 .ofPrecision(MINUTES)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -737,7 +737,7 @@ class LocalTimeTests {
 			void betweenMinute() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(MINUTES)
+							 .ofPrecision(MINUTES)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31);
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
@@ -799,7 +799,7 @@ class LocalTimeTests {
 
 			@Example
 			void all() {
-				LocalTimeArbitrary times = Times.times().constrainPrecision(MILLIS);
+				LocalTimeArbitrary times = Times.times().ofPrecision(MILLIS);
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -812,7 +812,7 @@ class LocalTimeTests {
 			void between() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(MILLIS)
+							 .ofPrecision(MILLIS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -826,7 +826,7 @@ class LocalTimeTests {
 			void betweenSecond() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(MILLIS)
+							 .ofPrecision(MILLIS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10);
@@ -845,7 +845,7 @@ class LocalTimeTests {
 
 			@Example
 			void all() {
-				LocalTimeArbitrary times = Times.times().constrainPrecision(MICROS);
+				LocalTimeArbitrary times = Times.times().ofPrecision(MICROS);
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -858,7 +858,7 @@ class LocalTimeTests {
 			void between() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(MICROS)
+							 .ofPrecision(MICROS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -872,7 +872,7 @@ class LocalTimeTests {
 			void betweenSecond() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(MICROS)
+							 .ofPrecision(MICROS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10);
@@ -891,7 +891,7 @@ class LocalTimeTests {
 
 			@Example
 			void all() {
-				LocalTimeArbitrary times = Times.times().constrainPrecision(NANOS);
+				LocalTimeArbitrary times = Times.times().ofPrecision(NANOS);
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -904,7 +904,7 @@ class LocalTimeTests {
 			void between() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(NANOS)
+							 .ofPrecision(NANOS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789));
 				Set<LocalTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -918,7 +918,7 @@ class LocalTimeTests {
 			void betweenSecond() {
 				LocalTimeArbitrary times =
 						Times.times()
-							 .constrainPrecision(NANOS)
+							 .ofPrecision(NANOS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10);
@@ -1109,7 +1109,7 @@ class LocalTimeTests {
 					Assume.that(!chronoUnit.equals(HOURS));
 
 					assertThatThrownBy(
-							() -> Times.times().constrainPrecision(chronoUnit)
+							() -> Times.times().ofPrecision(chronoUnit)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1132,7 +1132,7 @@ class LocalTimeTests {
 					Assume.that(startTime.getHour() == endTime.getHour());
 
 					assertThatThrownBy(
-							() -> Times.times().between(startTime, endTime).constrainPrecision(HOURS).generator(1000)
+							() -> Times.times().between(startTime, endTime).ofPrecision(HOURS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1143,7 +1143,7 @@ class LocalTimeTests {
 					Assume.that(time.getMinute() != 0 || time.getSecond() != 0 || time.getNano() != 0);
 
 					assertThatThrownBy(
-							() -> Times.times().atTheEarliest(time).constrainPrecision(HOURS).generator(1000)
+							() -> Times.times().atTheEarliest(time).ofPrecision(HOURS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1171,7 +1171,7 @@ class LocalTimeTests {
 					Assume.that(startTime.getMinute() == endTime.getMinute());
 
 					assertThatThrownBy(
-							() -> Times.times().between(startTime, endTime).constrainPrecision(MINUTES).generator(1000)
+							() -> Times.times().between(startTime, endTime).ofPrecision(MINUTES).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1182,7 +1182,7 @@ class LocalTimeTests {
 					Assume.that(time.getSecond() != 0 || time.getNano() != 0);
 
 					assertThatThrownBy(
-							() -> Times.times().atTheEarliest(time).constrainPrecision(MINUTES).generator(1000)
+							() -> Times.times().atTheEarliest(time).ofPrecision(MINUTES).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1210,7 +1210,7 @@ class LocalTimeTests {
 					Assume.that(startTime.getSecond() == endTime.getSecond());
 
 					assertThatThrownBy(
-							() -> Times.times().between(startTime, endTime).constrainPrecision(SECONDS).generator(1000)
+							() -> Times.times().between(startTime, endTime).ofPrecision(SECONDS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1225,7 +1225,7 @@ class LocalTimeTests {
 					final LocalTime finalTime = time;
 
 					assertThatThrownBy(
-							() -> Times.times().atTheEarliest(finalTime).constrainPrecision(SECONDS).generator(1000)
+							() -> Times.times().atTheEarliest(finalTime).ofPrecision(SECONDS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1253,7 +1253,7 @@ class LocalTimeTests {
 					Assume.that(startTime.getNano() % 1_000_000 + nanos < 1_000_000);
 
 					assertThatThrownBy(
-							() -> Times.times().between(startTime, endTime).constrainPrecision(MILLIS).generator(1000)
+							() -> Times.times().between(startTime, endTime).ofPrecision(MILLIS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1268,7 +1268,7 @@ class LocalTimeTests {
 					final LocalTime finalTime = time;
 
 					assertThatThrownBy(
-							() -> Times.times().atTheEarliest(finalTime).constrainPrecision(MILLIS).generator(1000)
+							() -> Times.times().atTheEarliest(finalTime).ofPrecision(MILLIS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1296,7 +1296,7 @@ class LocalTimeTests {
 					Assume.that(startTime.getNano() % 1_000 + nanos < 1_000);
 
 					assertThatThrownBy(
-							() -> Times.times().between(startTime, endTime).constrainPrecision(MICROS).generator(1000)
+							() -> Times.times().between(startTime, endTime).ofPrecision(MICROS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1311,7 +1311,7 @@ class LocalTimeTests {
 					final LocalTime finalTime = time;
 
 					assertThatThrownBy(
-							() -> Times.times().atTheEarliest(finalTime).constrainPrecision(MICROS).generator(1000)
+							() -> Times.times().atTheEarliest(finalTime).ofPrecision(MICROS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}

@@ -15,10 +15,6 @@ public class DurationArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		if (targetType.isAssignableFrom(Duration.class)) {
-			return Collections.singleton(Times.durations());
-		} else {
-			return null;
-		}
+		return Collections.singleton(Times.durations());
 	}
 }
