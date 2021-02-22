@@ -15,10 +15,6 @@ public class OffsetTimesArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		if (targetType.isAssignableFrom(OffsetTime.class)) {
-			return Collections.singleton(Times.offsetTimes());
-		} else {
-			return null;
-		}
+		return Collections.singleton(Times.offsetTimes());
 	}
 }

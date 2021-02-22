@@ -71,9 +71,9 @@ public class DefaultOffsetTimeArbitrary extends ArbitraryDecorator<OffsetTime> i
 	}
 
 	@Override
-	public OffsetTimeArbitrary constrainPrecision(ChronoUnit ofPrecision) {
+	public OffsetTimeArbitrary ofPrecision(ChronoUnit ofPrecision) {
 		DefaultOffsetTimeArbitrary clone = typedClone();
-		clone.localTimes = clone.localTimes.constrainPrecision(ofPrecision);
+		clone.localTimes = clone.localTimes.ofPrecision(ofPrecision);
 		return clone;
 	}
 

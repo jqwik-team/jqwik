@@ -15,10 +15,6 @@ public class DatesArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		if (targetType.isAssignableFrom(LocalDate.class)) {
-			return Collections.singleton(Dates.dates());
-		} else {
-			return null;
-		}
+		return Collections.singleton(Dates.dates());
 	}
 }

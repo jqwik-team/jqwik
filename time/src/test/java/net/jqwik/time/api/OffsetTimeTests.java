@@ -35,32 +35,32 @@ class OffsetTimeTests {
 
 	@Provide
 	Arbitrary<OffsetTime> precisionHours() {
-		return Times.offsetTimes().constrainPrecision(HOURS);
+		return Times.offsetTimes().ofPrecision(HOURS);
 	}
 
 	@Provide
 	Arbitrary<OffsetTime> precisionMinutes() {
-		return Times.offsetTimes().constrainPrecision(MINUTES);
+		return Times.offsetTimes().ofPrecision(MINUTES);
 	}
 
 	@Provide
 	Arbitrary<OffsetTime> precisionSeconds() {
-		return Times.offsetTimes().constrainPrecision(SECONDS);
+		return Times.offsetTimes().ofPrecision(SECONDS);
 	}
 
 	@Provide
 	Arbitrary<OffsetTime> precisionMilliseconds() {
-		return Times.offsetTimes().constrainPrecision(MILLIS);
+		return Times.offsetTimes().ofPrecision(MILLIS);
 	}
 
 	@Provide
 	Arbitrary<OffsetTime> precisionMicroseconds() {
-		return Times.offsetTimes().constrainPrecision(MICROS);
+		return Times.offsetTimes().ofPrecision(MICROS);
 	}
 
 	@Provide
 	Arbitrary<OffsetTime> precisionNanoseconds() {
-		return Times.offsetTimes().constrainPrecision(NANOS);
+		return Times.offsetTimes().ofPrecision(NANOS);
 	}
 
 	@Group
@@ -302,7 +302,7 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(HOURS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(HOURS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getMinute()).isEqualTo(0);
@@ -319,7 +319,7 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(HOURS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(HOURS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getMinute()).isEqualTo(0);
@@ -347,7 +347,7 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MINUTES);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(MINUTES);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getSecond()).isEqualTo(0);
@@ -363,7 +363,7 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MINUTES);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(MINUTES);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getSecond()).isEqualTo(0);
@@ -389,7 +389,7 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(SECONDS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(SECONDS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano()).isEqualTo(0);
@@ -404,7 +404,7 @@ class OffsetTimeTests {
 
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(SECONDS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(SECONDS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano()).isEqualTo(0);
@@ -430,7 +430,7 @@ class OffsetTimeTests {
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
 																																   .getNano() < 999_000_001);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MILLIS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(MILLIS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano() % 1_000_000).isEqualTo(0);
@@ -446,7 +446,7 @@ class OffsetTimeTests {
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
 																																   .getNano() < 999_000_001);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MILLIS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(MILLIS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano() % 1_000_000).isEqualTo(0);
@@ -472,7 +472,7 @@ class OffsetTimeTests {
 					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
 																																   .getNano() < 999_999_001);
 
-					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).constrainPrecision(MICROS);
+					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(MICROS);
 
 					assertAllGenerated(times.generator(1000), random, time -> {
 						assertThat(time.getNano() % 1_000).isEqualTo(0);
@@ -521,7 +521,7 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 22, 33, 392_211_325)
 						 )
-						 .constrainPrecision(NANOS)
+						 .ofPrecision(NANOS)
 						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -19, -33), ZoneOffset.ofHoursMinutesSeconds(0, -10, -53))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -544,7 +544,7 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 22, 33, 392_214_325)
 						 )
-						 .constrainPrecision(MICROS)
+						 .ofPrecision(MICROS)
 						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -567,7 +567,7 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 22, 33, 395_214_325)
 						 )
 						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
-						 .constrainPrecision(MILLIS)
+						 .ofPrecision(MILLIS)
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -588,7 +588,7 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 22, 36, 395_214_325)
 						 )
-						 .constrainPrecision(SECONDS)
+						 .ofPrecision(SECONDS)
 						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -610,7 +610,7 @@ class OffsetTimeTests {
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(11, 25, 36, 395_214_325)
 						 )
-						 .constrainPrecision(MINUTES)
+						 .ofPrecision(MINUTES)
 						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -628,7 +628,7 @@ class OffsetTimeTests {
 		void precisionHours() {
 			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
 					Times.offsetTimes()
-						 .constrainPrecision(HOURS)
+						 .ofPrecision(HOURS)
 						 .between(
 								 LocalTime.of(11, 22, 33, 392_211_322),
 								 LocalTime.of(14, 25, 36, 395_214_325)
@@ -751,7 +751,7 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(HOURS)
+				OffsetTimeArbitrary times = Times.offsetTimes().ofPrecision(HOURS)
 												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -765,7 +765,7 @@ class OffsetTimeTests {
 			void between() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(HOURS)
+							 .ofPrecision(HOURS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
 							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
@@ -780,7 +780,7 @@ class OffsetTimeTests {
 			void betweenHour() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(HOURS)
+							 .ofPrecision(HOURS)
 							 .hourBetween(11, 12)
 							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
@@ -798,7 +798,7 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(MINUTES)
+				OffsetTimeArbitrary times = Times.offsetTimes().ofPrecision(MINUTES)
 												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -812,7 +812,7 @@ class OffsetTimeTests {
 			void between() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(MINUTES)
+							 .ofPrecision(MINUTES)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
 							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
@@ -827,7 +827,7 @@ class OffsetTimeTests {
 			void betweenMinute() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(MINUTES)
+							 .ofPrecision(MINUTES)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
@@ -846,7 +846,7 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(SECONDS)
+				OffsetTimeArbitrary times = Times.offsetTimes().ofPrecision(SECONDS)
 												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -860,7 +860,7 @@ class OffsetTimeTests {
 			void between() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(SECONDS)
+							 .ofPrecision(SECONDS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
 							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
@@ -875,7 +875,7 @@ class OffsetTimeTests {
 			void betweenSecond() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(SECONDS)
+							 .ofPrecision(SECONDS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10)
@@ -895,7 +895,7 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(MILLIS)
+				OffsetTimeArbitrary times = Times.offsetTimes().ofPrecision(MILLIS)
 												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -909,7 +909,7 @@ class OffsetTimeTests {
 			void between() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(MILLIS)
+							 .ofPrecision(MILLIS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
 							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
@@ -924,7 +924,7 @@ class OffsetTimeTests {
 			void betweenSecond() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(MILLIS)
+							 .ofPrecision(MILLIS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10)
@@ -944,7 +944,7 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(MICROS)
+				OffsetTimeArbitrary times = Times.offsetTimes().ofPrecision(MICROS)
 												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -958,7 +958,7 @@ class OffsetTimeTests {
 			void between() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(MICROS)
+							 .ofPrecision(MICROS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
 							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
@@ -973,7 +973,7 @@ class OffsetTimeTests {
 			void betweenSecond() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(MICROS)
+							 .ofPrecision(MICROS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10)
@@ -993,7 +993,7 @@ class OffsetTimeTests {
 
 			@Example
 			void all() {
-				OffsetTimeArbitrary times = Times.offsetTimes().constrainPrecision(NANOS)
+				OffsetTimeArbitrary times = Times.offsetTimes().ofPrecision(NANOS)
 												 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
@@ -1007,7 +1007,7 @@ class OffsetTimeTests {
 			void between() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(NANOS)
+							 .ofPrecision(NANOS)
 							 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
 							 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 				Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
@@ -1022,7 +1022,7 @@ class OffsetTimeTests {
 			void betweenSecond() {
 				OffsetTimeArbitrary times =
 						Times.offsetTimes()
-							 .constrainPrecision(NANOS)
+							 .ofPrecision(NANOS)
 							 .hourBetween(11, 12)
 							 .minuteBetween(23, 31)
 							 .secondBetween(5, 10)
@@ -1282,7 +1282,7 @@ class OffsetTimeTests {
 					Assume.that(!chronoUnit.equals(HOURS));
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().constrainPrecision(chronoUnit)
+							() -> Times.offsetTimes().ofPrecision(chronoUnit)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1306,7 +1306,7 @@ class OffsetTimeTests {
 					Assume.that(startTime.getHour() == endTime.getHour());
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(HOURS).generator(1000)
+							() -> Times.offsetTimes().between(startTime, endTime).ofPrecision(HOURS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1317,7 +1317,7 @@ class OffsetTimeTests {
 					Assume.that(time.getMinute() != 0 || time.getSecond() != 0 || time.getNano() != 0);
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().atTheEarliest(time).constrainPrecision(HOURS).generator(1000)
+							() -> Times.offsetTimes().atTheEarliest(time).ofPrecision(HOURS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1346,7 +1346,7 @@ class OffsetTimeTests {
 					Assume.that(startTime.getMinute() == endTime.getMinute());
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(MINUTES).generator(1000)
+							() -> Times.offsetTimes().between(startTime, endTime).ofPrecision(MINUTES).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1357,7 +1357,7 @@ class OffsetTimeTests {
 					Assume.that(time.getSecond() != 0 || time.getNano() != 0);
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().atTheEarliest(time).constrainPrecision(MINUTES).generator(1000)
+							() -> Times.offsetTimes().atTheEarliest(time).ofPrecision(MINUTES).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1386,7 +1386,7 @@ class OffsetTimeTests {
 					Assume.that(startTime.getSecond() == endTime.getSecond());
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(SECONDS).generator(1000)
+							() -> Times.offsetTimes().between(startTime, endTime).ofPrecision(SECONDS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1401,7 +1401,7 @@ class OffsetTimeTests {
 					final LocalTime finalTime = time;
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().atTheEarliest(finalTime).constrainPrecision(SECONDS).generator(1000)
+							() -> Times.offsetTimes().atTheEarliest(finalTime).ofPrecision(SECONDS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1430,7 +1430,7 @@ class OffsetTimeTests {
 					Assume.that(startTime.getNano() % 1_000_000 + nanos < 1_000_000);
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(MILLIS).generator(1000)
+							() -> Times.offsetTimes().between(startTime, endTime).ofPrecision(MILLIS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1445,7 +1445,7 @@ class OffsetTimeTests {
 					final LocalTime finalTime = time;
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().atTheEarliest(finalTime).constrainPrecision(MILLIS).generator(1000)
+							() -> Times.offsetTimes().atTheEarliest(finalTime).ofPrecision(MILLIS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1474,7 +1474,7 @@ class OffsetTimeTests {
 					Assume.that(startTime.getNano() % 1_000 + nanos < 1_000);
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().between(startTime, endTime).constrainPrecision(MICROS).generator(1000)
+							() -> Times.offsetTimes().between(startTime, endTime).ofPrecision(MICROS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1489,7 +1489,7 @@ class OffsetTimeTests {
 					final LocalTime finalTime = time;
 
 					assertThatThrownBy(
-							() -> Times.offsetTimes().atTheEarliest(finalTime).constrainPrecision(MICROS).generator(1000)
+							() -> Times.offsetTimes().atTheEarliest(finalTime).ofPrecision(MICROS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}

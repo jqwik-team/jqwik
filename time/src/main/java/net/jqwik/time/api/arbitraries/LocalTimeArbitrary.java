@@ -55,7 +55,8 @@ public interface LocalTimeArbitrary extends Arbitrary<LocalTime> {
 
 	/**
 	 * Constrain the precision of generated values.
+	 * Default value: Seconds.
 	 */
-	LocalTimeArbitrary constrainPrecision(ChronoUnit ofPrecision);
+	LocalTimeArbitrary ofPrecision(ChronoUnit ofPrecision);
 
 }
