@@ -74,7 +74,7 @@ class OffsetTimeTests {
 	}
 
 	@Group
-	class SimpleAnnotations {
+	class DefaultGeneration {
 
 		@Property
 		void validOffsetTimeIsGenerated(@ForAll OffsetTime time) {

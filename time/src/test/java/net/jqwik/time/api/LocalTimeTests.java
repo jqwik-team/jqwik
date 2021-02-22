@@ -63,22 +63,22 @@ class LocalTimeTests {
 		}
 
 		@Property
-		void worstCaseTimeGeneration(@ForAll("worstCase") LocalTime time) {
+		void worstCaseTimeGeneration4NanosPossible(@ForAll("worstCase4NanosPossible") LocalTime time) {
 			assertThat(time).isNotNull();
 		}
 
 		@Provide
-		Arbitrary<LocalTime> worstCase() {
+		Arbitrary<LocalTime> worstCase4NanosPossible() {
 			return Times.times().between(LocalTime.of(22, 59, 59, 999_999_998), LocalTime.of(23, 0, 0, 1));
 		}
 
 		@Property
-		void worstCaseTimeGeneration2(@ForAll("worstCase2") LocalTime time) {
+		void worstCaseTimeGeneration2Minutes2SecondsPossible(@ForAll("worstCase2Minutes2SecondsPossible") LocalTime time) {
 			assertThat(time).isNotNull();
 		}
 
 		@Provide
-		Arbitrary<LocalTime> worstCase2() {
+		Arbitrary<LocalTime> worstCase2Minutes2SecondsPossible() {
 			return Times.times().minuteBetween(0, 1).secondBetween(0, 1);
 		}
 
@@ -105,7 +105,7 @@ class LocalTimeTests {
 	}
 
 	@Group
-	class SimpleAnnotations {
+	class DefaultGeneration {
 
 		@Property
 		void validLocalTimeIsGenerated(@ForAll LocalTime time) {
