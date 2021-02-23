@@ -1099,7 +1099,7 @@ class LocalTimeTests {
 			class Generally {
 
 				@Property
-				void minMaxHour(@ForAll ChronoUnit chronoUnit) {
+				void ofPrecision(@ForAll ChronoUnit chronoUnit) {
 
 					Assume.that(!chronoUnit.equals(NANOS));
 					Assume.that(!chronoUnit.equals(MICROS));
