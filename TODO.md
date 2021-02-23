@@ -11,7 +11,13 @@
     
     - StringArbitrary.excludeChars() or s.t. like that
       https://github.com/jlink/jqwik/issues/167
+
+    - Builders.with(..).use()|maybeUse().in()|inSetter() 
+      to replace Combinators.withBuilder() but target cannot change across
+      build steps (-> much better performance and shrinking)
       
+        - Add capability to easily generate java beans
+
     - Domains
         - Deprecate AbstractDomainContextBase
             - Introduce DomainContextBase
@@ -35,13 +41,6 @@
     - EdgeCases.Configuration.withProbability(double injectProbability)
 
 - 1.5.x
-
-      - Arbitraries.forType(Class<T> targetType) or Beans.forType/from(...)
-      https://github.com/jlink/jqwik/issues/121
-        - useBeanProperties()
-            - are considered nullable
-            - with optional spec: Map<String, Arbitrary> to map
-              a property to a certain arbitrary
 
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
