@@ -32,6 +32,8 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		BigInteger min = calculateValue(effectiveMin);
 		BigInteger max = calculateValue(effectiveMax);
 
+		//TODO: min > max
+
 		Arbitrary<BigInteger> bigIntegers = Arbitraries.bigIntegers()
 													   .between(min, max)
 													   .withDistribution(RandomDistribution.uniform())
