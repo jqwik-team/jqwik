@@ -1,6 +1,7 @@
 package net.jqwik.time.api.arbitraries;
 
 import java.time.*;
+import java.time.temporal.*;
 
 import org.apiguardian.api.*;
 
@@ -18,5 +19,11 @@ public interface DurationArbitrary extends Arbitrary<Duration> {
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated duration.
 	 */
 	DurationArbitrary between(Duration min, Duration max);
+
+	/**
+	 * Constrain the precision of generated values.
+	 * Default value: Seconds.
+	 */
+	DurationArbitrary ofPrecision(ChronoUnit ofPrecision);
 
 }

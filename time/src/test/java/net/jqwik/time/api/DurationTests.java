@@ -10,6 +10,7 @@ import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.internal.properties.arbitraries.*;
 
+import static java.time.temporal.ChronoUnit.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
@@ -21,6 +22,36 @@ class DurationTests {
 	@Provide
 	Arbitrary<Duration> durations() {
 		return Times.durations();
+	}
+
+	@Provide
+	Arbitrary<Duration> precisionHours() {
+		return Times.durations().ofPrecision(HOURS);
+	}
+
+	@Provide
+	Arbitrary<Duration> precisionMinutes() {
+		return Times.durations().ofPrecision(MINUTES);
+	}
+
+	@Provide
+	Arbitrary<Duration> precisionSeconds() {
+		return Times.durations().ofPrecision(SECONDS);
+	}
+
+	@Provide
+	Arbitrary<Duration> precisionMilliseconds() {
+		return Times.durations().ofPrecision(MILLIS);
+	}
+
+	@Provide
+	Arbitrary<Duration> precisionMicroseconds() {
+		return Times.durations().ofPrecision(MICROS);
+	}
+
+	@Provide
+	Arbitrary<Duration> precisionNanoseconds() {
+		return Times.durations().ofPrecision(NANOS);
 	}
 
 	@Group
@@ -216,7 +247,7 @@ class DurationTests {
 
 			@Provide
 			Arbitrary<Duration> worstCaseNegative() {
-				return Times.durations().between(DefaultDurationArbitrary.DEFAULT_MIN, Duration.ofSeconds(-2, 0));
+				return Times.durations().ofPrecision(NANOS).between(DefaultDurationArbitrary.DEFAULT_MIN, Duration.ofSeconds(-2, 0));
 			}
 
 		}
@@ -234,30 +265,42 @@ class DurationTests {
 	}
 
 	@Group
-	class DurationMethods {
+	class CheckDurationMethods {
 
-		@Property
-		void between(@ForAll("durations") Duration start, @ForAll("durations") Duration end, @ForAll Random random) {
+		@Group
+		class DurationMethods {
 
-			Assume.that(start.compareTo(end) <= 0);
+			@Property
+			void between(@ForAll("durations") Duration start, @ForAll("durations") Duration end, @ForAll Random random) {
 
-			Arbitrary<Duration> durations = Times.durations().between(start, end);
+				Assume.that(start.compareTo(end) <= 0);
 
-			assertAllGenerated(durations.generator(1000), random, duration -> {
-				assertThat(duration.compareTo(start)).isGreaterThanOrEqualTo(0);
-				assertThat(duration.compareTo(end)).isLessThanOrEqualTo(0);
-			});
+				Arbitrary<Duration> durations = Times.durations().between(start, end);
+
+				assertAllGenerated(durations.generator(1000), random, duration -> {
+					assertThat(duration.compareTo(start)).isGreaterThanOrEqualTo(0);
+					assertThat(duration.compareTo(end)).isLessThanOrEqualTo(0);
+				});
+
+			}
+
+			@Property
+			void betweenSame(@ForAll("durations") Duration durationSame, @ForAll Random random) {
+
+				Arbitrary<Duration> durations = Times.durations().between(durationSame, durationSame);
+
+				assertAllGenerated(durations.generator(1000), random, duration -> {
+					assertThat(duration).isEqualTo(durationSame);
+				});
+
+			}
 
 		}
 
-		@Property
-		void betweenSame(@ForAll("durations") Duration durationSame, @ForAll Random random) {
+		@Group
+		class PrecisionMethods {
 
-			Arbitrary<Duration> durations = Times.durations().between(durationSame, durationSame);
-
-			assertAllGenerated(durations.generator(1000), random, duration -> {
-				assertThat(duration).isEqualTo(durationSame);
-			});
+			//TODO
 
 		}
 
@@ -278,8 +321,7 @@ class DurationTests {
 			DurationArbitrary durations = Times.durations();
 			TestingFalsifier<Duration> falsifier = duration -> duration.compareTo(Duration.ofSeconds(999_392_192, 709_938_291)) < 0;
 			Duration value = falsifyThenShrink(durations, random, falsifier);
-			assertThat(value).isLessThanOrEqualTo(Duration.ofSeconds(999_392_193));
-			assertThat(value).isGreaterThanOrEqualTo(Duration.ofSeconds(999_392_192, 709_938_291));
+			assertThat(value).isEqualTo(Duration.ofSeconds(999_392_193));
 		}
 
 		@Property(tries = 10)
@@ -295,109 +337,562 @@ class DurationTests {
 	@Group
 	class ExhaustiveGeneration {
 
-		@Example
-		void betweenPositive() {
-			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-					Times.durations()
-						 .between(
-								 Duration.ofSeconds(183729, 999_999_998),
-								 Duration.ofSeconds(183730, 1)
-						 )
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+		@Group
+		class PrecisionHours {
 
-			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
-			assertThat(generator).containsExactly(
-					Duration.ofSeconds(183729, 999_999_998),
-					Duration.ofSeconds(183729, 999_999_999),
-					Duration.ofSeconds(183730, 0),
-					Duration.ofSeconds(183730, 1)
-			);
+			@Example
+			void betweenPositive() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(HOURS)
+							 .between(
+									 Duration.ofSeconds(7 * 60 * 60 + 4 * 60 + 55, 997_997_921),
+									 Duration.ofSeconds(11 * 60 * 60 + 8 * 60 + 31, 1_213_999)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(8 * 60 * 60, 0),
+						Duration.ofSeconds(9 * 60 * 60, 0),
+						Duration.ofSeconds(10 * 60 * 60, 0),
+						Duration.ofSeconds(11 * 60 * 60, 0)
+				);
+			}
+
+			@Example
+			void betweenNegative() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(HOURS)
+							 .between(
+									 Duration.ofSeconds(-11 * 60 * 60 - 8 * 60 - 11, 997_123_998),
+									 Duration.ofSeconds(-7 * 60 * 60 - 4 * 60 - 55, 1_999_999)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-11 * 60 * 60, 0),
+						Duration.ofSeconds(-10 * 60 * 60, 0),
+						Duration.ofSeconds(-9 * 60 * 60, 0),
+						Duration.ofSeconds(-8 * 60 * 60, 0)
+				);
+			}
+
+			@Example
+			void betweenAroundZero() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(HOURS)
+							 .between(
+									 Duration.ofSeconds(-2 * 60 * 60 - 2 * 60 - 33, -2_321_392),
+									 Duration.ofSeconds(60 * 60 + 60 + 28, 1_392_392)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-2 * 60 * 60, 0),
+						Duration.ofSeconds(-60 * 60, 0),
+						Duration.ZERO,
+						Duration.ofSeconds(60 * 60, 0)
+				);
+			}
+
 		}
 
-		@Example
-		void betweenNegative() {
-			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-					Times.durations()
-						 .between(
-								 Duration.ofSeconds(-183730, 999_999_998),
-								 Duration.ofSeconds(-183729, 1)
-						 )
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+		@Group
+		class PrecisionMinutes {
 
-			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
-			assertThat(generator).containsExactly(
-					Duration.ofSeconds(-183730, 999_999_998),
-					Duration.ofSeconds(-183730, 999_999_999),
-					Duration.ofSeconds(-183729, 0),
-					Duration.ofSeconds(-183729, 1)
-			);
+			@Example
+			void betweenPositive() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MINUTES)
+							 .between(
+									 Duration.ofSeconds(4 * 60 + 55, 997_997_921),
+									 Duration.ofSeconds(8 * 60 + 31, 1_213_999)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(5 * 60, 0),
+						Duration.ofSeconds(6 * 60, 0),
+						Duration.ofSeconds(7 * 60, 0),
+						Duration.ofSeconds(8 * 60, 0)
+				);
+			}
+
+			@Example
+			void betweenNegative() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MINUTES)
+							 .between(
+									 Duration.ofSeconds(-8 * 60 - 11, 997_123_998),
+									 Duration.ofSeconds(-4 * 60 - 55, 1_999_999)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-8 * 60, 0),
+						Duration.ofSeconds(-7 * 60, 0),
+						Duration.ofSeconds(-6 * 60, 0),
+						Duration.ofSeconds(-5 * 60, 0)
+				);
+			}
+
+			@Example
+			void betweenAroundZero() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MINUTES)
+							 .between(
+									 Duration.ofSeconds(-2 * 60 - 33, -2_321_392),
+									 Duration.ofSeconds(60 + 28, 1_392_392)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-2 * 60, 0),
+						Duration.ofSeconds(-60, 0),
+						Duration.ZERO,
+						Duration.ofSeconds(60, 0)
+				);
+			}
+
 		}
 
-		@Example
-		void betweenNegativeOneSecond() {
-			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-					Times.durations()
-						 .between(
-								 Duration.ofSeconds(-1, -1),
-								 Duration.ofSeconds(0, -999_999_998)
-						 )
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+		@Group
+		class PrecisionSeconds {
 
-			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
-			assertThat(generator).containsExactly(
-					Duration.ofSeconds(-1, -1),
-					Duration.ofSeconds(-1, 0),
-					Duration.ofSeconds(0, -999_999_999),
-					Duration.ofSeconds(0, -999_999_998)
-			);
+			@Example
+			void betweenPositive() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(SECONDS)
+							 .between(
+									 Duration.ofSeconds(183726, 997_997_921),
+									 Duration.ofSeconds(183730, 1_213_999)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(183727, 0),
+						Duration.ofSeconds(183728, 0),
+						Duration.ofSeconds(183729, 0),
+						Duration.ofSeconds(183730, 0)
+				);
+			}
+
+			@Example
+			void betweenNegative() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(SECONDS)
+							 .between(
+									 Duration.ofSeconds(-183730, 997_123_998),
+									 Duration.ofSeconds(-183726, 1_999_999)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-183729, 0),
+						Duration.ofSeconds(-183728, 0),
+						Duration.ofSeconds(-183727, 0),
+						Duration.ofSeconds(-183726, 0)
+				);
+			}
+
+			@Example
+			void betweenAroundZero() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(SECONDS)
+							 .between(
+									 Duration.ofSeconds(-2, -2_321_392),
+									 Duration.ofSeconds(1, 1_392_392)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-2, 0),
+						Duration.ofSeconds(-1, 0),
+						Duration.ZERO,
+						Duration.ofSeconds(1, 0)
+				);
+			}
+
 		}
 
-		@Example
-		void betweenAroundZero() {
-			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-					Times.durations()
-						 .between(
-								 Duration.ofSeconds(0, -2),
-								 Duration.ofSeconds(0, 1)
-						 )
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+		@Group
+		class PrecisionMillis {
 
-			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
-			assertThat(generator).containsExactly(
-					Duration.ofSeconds(0, -2),
-					Duration.ofSeconds(0, -1),
-					Duration.ZERO,
-					Duration.ofSeconds(0, 1)
-			);
+			@Example
+			void betweenPositive() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MILLIS)
+							 .between(
+									 Duration.ofSeconds(183729, 997_997_921),
+									 Duration.ofSeconds(183730, 1_213_999)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(183729, 998_000_000),
+						Duration.ofSeconds(183729, 999_000_000),
+						Duration.ofSeconds(183730, 0),
+						Duration.ofSeconds(183730, 1_000_000)
+				);
+			}
+
+			@Example
+			void betweenNegative() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MILLIS)
+							 .between(
+									 Duration.ofSeconds(-183730, 997_123_998),
+									 Duration.ofSeconds(-183729, 1_999_999)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-183730, 998_000_000),
+						Duration.ofSeconds(-183730, 999_000_000),
+						Duration.ofSeconds(-183729, 0),
+						Duration.ofSeconds(-183729, 1_000_000)
+				);
+			}
+
+			@Example
+			void betweenNegativeOneSecond() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MILLIS)
+							 .between(
+									 Duration.ofSeconds(-1, -1_999_999),
+									 Duration.ofSeconds(0, -997_382_492)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-1, -1_000_000),
+						Duration.ofSeconds(-1, 0),
+						Duration.ofSeconds(0, -999_000_000),
+						Duration.ofSeconds(0, -998_000_000)
+				);
+			}
+
+			@Example
+			void betweenAroundZero() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MILLIS)
+							 .between(
+									 Duration.ofSeconds(0, -2_321_392),
+									 Duration.ofSeconds(0, 1_392_392)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(0, -2_000_000),
+						Duration.ofSeconds(0, -1_000_000),
+						Duration.ZERO,
+						Duration.ofSeconds(0, 1_000_000)
+				);
+			}
+
+			@Example
+			void betweenPositiveOneSecond() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MILLIS)
+							 .between(
+									 Duration.ofSeconds(0, 997_128_492),
+									 Duration.ofSeconds(1, 1_039_392)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(0, 998_000_000),
+						Duration.ofSeconds(0, 999_000_000),
+						Duration.ofSeconds(1, 0),
+						Duration.ofSeconds(1, 1_000_000)
+				);
+			}
+
 		}
 
-		@Example
-		void betweenPositiveOneSecond() {
-			Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-					Times.durations()
-						 .between(
-								 Duration.ofSeconds(0, 999_999_998),
-								 Duration.ofSeconds(1, 1)
-						 )
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+		@Group
+		class PrecisionMicros {
 
-			ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(8); // Cannot know the number of filtered elements in advance
-			assertThat(generator).containsExactly(
-					Duration.ofSeconds(0, 999_999_998),
-					Duration.ofSeconds(0, 999_999_999),
-					Duration.ofSeconds(1, 0),
-					Duration.ofSeconds(1, 1)
-			);
+			@Example
+			void betweenPositive() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MICROS)
+							 .between(
+									 Duration.ofSeconds(183729, 999_997_921),
+									 Duration.ofSeconds(183730, 1_213)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(183729, 999_998_000),
+						Duration.ofSeconds(183729, 999_999_000),
+						Duration.ofSeconds(183730, 0),
+						Duration.ofSeconds(183730, 1_000)
+				);
+			}
+
+			@Example
+			void betweenNegative() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MICROS)
+							 .between(
+									 Duration.ofSeconds(-183730, 999_997_998),
+									 Duration.ofSeconds(-183729, 1_999)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-183730, 999_998_000),
+						Duration.ofSeconds(-183730, 999_999_000),
+						Duration.ofSeconds(-183729, 0),
+						Duration.ofSeconds(-183729, 1_000)
+				);
+			}
+
+			@Example
+			void betweenNegativeOneSecond() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MICROS)
+							 .between(
+									 Duration.ofSeconds(-1, -1_302),
+									 Duration.ofSeconds(0, -999_997_323)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-1, -1_000),
+						Duration.ofSeconds(-1, 0),
+						Duration.ofSeconds(0, -999_999_000),
+						Duration.ofSeconds(0, -999_998_000)
+				);
+			}
+
+			@Example
+			void betweenAroundZero() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MICROS)
+							 .between(
+									 Duration.ofSeconds(0, -2_321),
+									 Duration.ofSeconds(0, 1_392)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(0, -2_000),
+						Duration.ofSeconds(0, -1_000),
+						Duration.ZERO,
+						Duration.ofSeconds(0, 1_000)
+				);
+			}
+
+			@Example
+			void betweenPositiveOneSecond() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(MICROS)
+							 .between(
+									 Duration.ofSeconds(0, 999_997_213),
+									 Duration.ofSeconds(1, 1_023)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(0, 999_998_000),
+						Duration.ofSeconds(0, 999_999_000),
+						Duration.ofSeconds(1, 0),
+						Duration.ofSeconds(1, 1_000)
+				);
+			}
+
+		}
+
+		@Group
+		class PrecisionNanos {
+
+			@Example
+			void betweenPositive() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(NANOS)
+							 .between(
+									 Duration.ofSeconds(183729, 999_999_998),
+									 Duration.ofSeconds(183730, 1)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(183729, 999_999_998),
+						Duration.ofSeconds(183729, 999_999_999),
+						Duration.ofSeconds(183730, 0),
+						Duration.ofSeconds(183730, 1)
+				);
+			}
+
+			@Example
+			void betweenNegative() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(NANOS)
+							 .between(
+									 Duration.ofSeconds(-183730, 999_999_998),
+									 Duration.ofSeconds(-183729, 1)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-183730, 999_999_998),
+						Duration.ofSeconds(-183730, 999_999_999),
+						Duration.ofSeconds(-183729, 0),
+						Duration.ofSeconds(-183729, 1)
+				);
+			}
+
+			@Example
+			void betweenNegativeOneSecond() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(NANOS)
+							 .between(
+									 Duration.ofSeconds(-1, -1),
+									 Duration.ofSeconds(0, -999_999_998)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(-1, -1),
+						Duration.ofSeconds(-1, 0),
+						Duration.ofSeconds(0, -999_999_999),
+						Duration.ofSeconds(0, -999_999_998)
+				);
+			}
+
+			@Example
+			void betweenAroundZero() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(NANOS)
+							 .between(
+									 Duration.ofSeconds(0, -2),
+									 Duration.ofSeconds(0, 1)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(0, -2),
+						Duration.ofSeconds(0, -1),
+						Duration.ZERO,
+						Duration.ofSeconds(0, 1)
+				);
+			}
+
+			@Example
+			void betweenPositiveOneSecond() {
+				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+						Times.durations()
+							 .ofPrecision(NANOS)
+							 .between(
+									 Duration.ofSeconds(0, 999_999_998),
+									 Duration.ofSeconds(1, 1)
+							 )
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						Duration.ofSeconds(0, 999_999_998),
+						Duration.ofSeconds(0, 999_999_999),
+						Duration.ofSeconds(1, 0),
+						Duration.ofSeconds(1, 1)
+				);
+			}
+
 		}
 
 	}
@@ -407,7 +902,7 @@ class DurationTests {
 
 		@Example
 		void all() {
-			DurationArbitrary durations = Times.durations();
+			DurationArbitrary durations = Times.durations().ofPrecision(NANOS);
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -418,8 +913,9 @@ class DurationTests {
 		}
 
 		@Example
-		void between() {
+		void betweenPositive() {
 			DurationArbitrary durations = Times.durations()
+											   .ofPrecision(NANOS)
 											   .between(Duration.ofSeconds(9402042, 483_212), Duration.ofSeconds(39402042, 202));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -430,8 +926,9 @@ class DurationTests {
 		}
 
 		@Example
-		void between2() {
+		void betweenNegative() {
 			DurationArbitrary durations = Times.durations()
+											   .ofPrecision(NANOS)
 											   .between(Duration.ofSeconds(-39402042, 202), Duration.ofSeconds(-9402042, 483_212));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -442,8 +939,9 @@ class DurationTests {
 		}
 
 		@Example
-		void between3() {
+		void betweenMinusOneAndOneNanosHigh() {
 			DurationArbitrary durations = Times.durations()
+											   .ofPrecision(NANOS)
 											   .between(Duration.ofSeconds(-1, -999_888_777), Duration.ofSeconds(1, 999_888_777));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(3);
@@ -455,8 +953,10 @@ class DurationTests {
 		}
 
 		@Example
-		void between4() {
-			DurationArbitrary durations = Times.durations().between(Duration.ofSeconds(-1, -1), Duration.ofSeconds(1, 1));
+		void betweenMinusOneAndOneNanosLow() {
+			DurationArbitrary durations = Times.durations()
+											   .ofPrecision(NANOS)
+											   .between(Duration.ofSeconds(-1, -1), Duration.ofSeconds(1, 1));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -467,8 +967,10 @@ class DurationTests {
 		}
 
 		@Example
-		void between5() {
-			DurationArbitrary durations = Times.durations().between(Duration.ofSeconds(0, -100), Duration.ofSeconds(0, 100));
+		void betweenAroundZeroNanosLow() {
+			DurationArbitrary durations = Times.durations()
+											   .ofPrecision(NANOS)
+											   .between(Duration.ofSeconds(0, -100), Duration.ofSeconds(0, 100));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -479,8 +981,9 @@ class DurationTests {
 		}
 
 		@Example
-		void between6() {
+		void betweenAroundZeroNanosHigh() {
 			DurationArbitrary durations = Times.durations()
+											   .ofPrecision(NANOS)
 											   .between(Duration.ofSeconds(0, -999_888_777), Duration.ofSeconds(0, 999_888_777));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(3);
@@ -512,7 +1015,7 @@ class DurationTests {
 		}
 
 		@Property
-		void milliseconds(@ForAll("durations") Duration duration) {
+		void milliseconds(@ForAll("precisionMilliseconds") Duration duration) {
 
 			Statistics.label("Milliseconds x--")
 					  .collect(duration.getNano() / 100_000_000)
@@ -529,7 +1032,7 @@ class DurationTests {
 		}
 
 		@Property
-		void microseconds(@ForAll("durations") Duration duration) {
+		void microseconds(@ForAll("precisionMicroseconds") Duration duration) {
 
 			Statistics.label("Microseconds x--")
 					  .collect((duration.getNano() % 1_000_000) / 100_000)
@@ -546,7 +1049,7 @@ class DurationTests {
 		}
 
 		@Property
-		void nanoseconds(@ForAll("durations") Duration duration) {
+		void nanoseconds(@ForAll("precisionNanoseconds") Duration duration) {
 
 			Statistics.label("Nanoseconds x--")
 					  .collect((duration.getNano() % 1_000) / 100)
@@ -581,13 +1084,20 @@ class DurationTests {
 
 		@Provide
 		Arbitrary<Duration> durationsNear0() {
-			return Times.durations().between(Duration.ofSeconds(-10, 0), Duration.ofSeconds(10, 999_999_999));
+			return Times.durations().ofPrecision(NANOS).between(Duration.ofSeconds(-10, 0), Duration.ofSeconds(10, 999_999_999));
 		}
 
 		@Provide
 		Arbitrary<Duration> durationsNear0_2() {
-			return Times.durations().between(Duration.ofSeconds(0, -999_999_999), Duration.ofSeconds(0, 999_999_999));
+			return Times.durations().ofPrecision(NANOS).between(Duration.ofSeconds(0, -999_999_999), Duration.ofSeconds(0, 999_999_999));
 		}
+
+	}
+
+	@Group
+	class InvalidConfigurations {
+
+		//TODO
 
 	}
 
