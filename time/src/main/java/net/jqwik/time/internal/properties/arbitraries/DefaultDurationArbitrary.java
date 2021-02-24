@@ -29,10 +29,12 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		Duration effectiveMin = calculateEffectiveMin();
 		Duration effectiveMax = calculateEffectiveMax();
 
+		if (effectiveMin.compareTo(effectiveMax) > 0) {
+			throw new IllegalArgumentException("The maximum duration is too soon after the minimum duration.");
+		}
+
 		BigInteger min = calculateValue(effectiveMin);
 		BigInteger max = calculateValue(effectiveMax);
-
-		//TODO: min > max
 
 		Arbitrary<BigInteger> bigIntegers = Arbitraries.bigIntegers()
 													   .between(min, max)
