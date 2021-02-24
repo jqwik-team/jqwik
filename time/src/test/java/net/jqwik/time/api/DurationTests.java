@@ -299,7 +299,6 @@ class DurationTests {
 		}
 
 		@Group
-		@Disabled("Not working at the Moment")
 		class PrecisionMethods {
 
 			@Group
@@ -321,6 +320,7 @@ class DurationTests {
 
 					Assume.that(startDuration.compareTo(endDuration) <= 0);
 					Assume.that(startDuration.getSeconds() < Long.MAX_VALUE - 7 - 30 * 60);
+					Assume.that(getHour(startDuration) != getHour(endDuration));
 
 					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(HOURS);
 
@@ -344,6 +344,7 @@ class DurationTests {
 
 					Assume.that(startDuration.compareTo(endDuration) <= 0);
 					Assume.that(startDuration.getSeconds() < Long.MAX_VALUE - 7 - 30 * 60);
+					Assume.that(getHour(startDuration) != getHour(endDuration));
 
 					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(HOURS);
 
@@ -356,6 +357,241 @@ class DurationTests {
 						return true;
 					});
 
+				}
+
+			}
+
+			@Group
+			class Minutes {
+
+				@Property
+				void precision(@ForAll("precisionMinutes") Duration duration) {
+					assertThat(getSecond(duration)).isEqualTo(0);
+					assertThat(duration.getNano()).isEqualTo(0);
+				}
+
+				@Property
+				void precisionBetween(
+						@ForAll("durations") Duration startDuration,
+						@ForAll("durations") Duration endDuration,
+						@ForAll Random random
+				) {
+
+					Assume.that(startDuration.compareTo(endDuration) <= 0);
+					Assume.that(startDuration.getSeconds() < Long.MAX_VALUE - 7);
+					Assume.that(getHour(startDuration) != getHour(endDuration) || getMinute(startDuration) != getMinute(endDuration));
+
+					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(MINUTES);
+
+					assertAllGenerated(durations.generator(1000), random, duration -> {
+						assertThat(getSecond(duration)).isEqualTo(0);
+						assertThat(duration.getNano()).isEqualTo(0);
+						assertThat(duration.compareTo(startDuration)).isGreaterThanOrEqualTo(0);
+						assertThat(duration.compareTo(endDuration)).isLessThanOrEqualTo(0);
+						return true;
+					});
+
+				}
+
+				@Property
+				void precisionBetweenWithPrecisionSeconds(
+						@ForAll("precisionSeconds") Duration startDuration,
+						@ForAll("precisionSeconds") Duration endDuration,
+						@ForAll Random random
+				) {
+
+					Assume.that(startDuration.compareTo(endDuration) <= 0);
+					Assume.that(startDuration.getSeconds() < Long.MAX_VALUE - 7);
+					Assume.that(getHour(startDuration) != getHour(endDuration) || getMinute(startDuration) != getMinute(endDuration));
+
+					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(MINUTES);
+
+					assertAllGenerated(durations.generator(1000), random, duration -> {
+						assertThat(getSecond(duration)).isEqualTo(0);
+						assertThat(duration.getNano()).isEqualTo(0);
+						assertThat(duration.compareTo(startDuration)).isGreaterThanOrEqualTo(0);
+						assertThat(duration.compareTo(endDuration)).isLessThanOrEqualTo(0);
+						return true;
+					});
+
+				}
+
+			}
+
+			@Group
+			class Seconds {
+
+				@Property
+				void precision(@ForAll("precisionSeconds") Duration duration) {
+					assertThat(duration.getNano()).isEqualTo(0);
+				}
+
+				@Property
+				void precisionBetween(
+						@ForAll("durations") Duration startDuration,
+						@ForAll("durations") Duration endDuration,
+						@ForAll Random random
+				) {
+
+					Assume.that(startDuration.compareTo(endDuration) <= 0);
+					Assume.that(getHour(startDuration) != getHour(endDuration) || getMinute(startDuration) != getMinute(endDuration) || getSecond(startDuration) != getSecond(endDuration));
+
+					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(SECONDS);
+
+					assertAllGenerated(durations.generator(1000), random, duration -> {
+						assertThat(duration.getNano()).isEqualTo(0);
+						assertThat(duration.compareTo(startDuration)).isGreaterThanOrEqualTo(0);
+						assertThat(duration.compareTo(endDuration)).isLessThanOrEqualTo(0);
+						return true;
+					});
+
+				}
+
+				@Property
+				void precisionBetweenWithPrecisionMillis(
+						@ForAll("precisionMilliseconds") Duration startDuration,
+						@ForAll("precisionMilliseconds") Duration endDuration,
+						@ForAll Random random
+				) {
+
+					Assume.that(startDuration.compareTo(endDuration) <= 0);
+					Assume.that(getHour(startDuration) != getHour(endDuration) || getMinute(startDuration) != getMinute(endDuration) || getSecond(startDuration) != getSecond(endDuration));
+
+					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(SECONDS);
+
+					assertAllGenerated(durations.generator(1000), random, duration -> {
+						assertThat(duration.getNano()).isEqualTo(0);
+						assertThat(duration.compareTo(startDuration)).isGreaterThanOrEqualTo(0);
+						assertThat(duration.compareTo(endDuration)).isLessThanOrEqualTo(0);
+						return true;
+					});
+
+				}
+
+			}
+
+			@Group
+			class Millis {
+
+				@Property
+				void precision(@ForAll("precisionMilliseconds") Duration duration) {
+					assertThat(duration.getNano() % 1_000_000).isEqualTo(0);
+				}
+
+				@Property
+				void precisionBetween(
+						@ForAll("durations") Duration startDuration,
+						@ForAll("durations") Duration endDuration,
+						@ForAll Random random
+				) {
+
+					Assume.that(startDuration.compareTo(endDuration) <= 0);
+					Assume.that(getHour(startDuration) != getHour(endDuration)
+										|| getMinute(startDuration) != getMinute(endDuration)
+										|| getSecond(startDuration) != getSecond(endDuration)
+										|| startDuration.getNano() / 1_000_000 != endDuration.getNano() / 1_000_000);
+
+					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(MILLIS);
+
+					assertAllGenerated(durations.generator(1000), random, duration -> {
+						assertThat(duration.getNano() % 1_000_000).isEqualTo(0);
+						assertThat(duration.compareTo(startDuration)).isGreaterThanOrEqualTo(0);
+						assertThat(duration.compareTo(endDuration)).isLessThanOrEqualTo(0);
+						return true;
+					});
+
+				}
+
+				@Property
+				void precisionBetweenWithPrecisionMicros(
+						@ForAll("precisionMicroseconds") Duration startDuration,
+						@ForAll("precisionMicroseconds") Duration endDuration,
+						@ForAll Random random
+				) {
+
+					Assume.that(startDuration.compareTo(endDuration) <= 0);
+					Assume.that(getHour(startDuration) != getHour(endDuration)
+										|| getMinute(startDuration) != getMinute(endDuration)
+										|| getSecond(startDuration) != getSecond(endDuration)
+										|| startDuration.getNano() / 1_000_000 != endDuration.getNano() / 1_000_000);
+
+					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(MILLIS);
+
+					assertAllGenerated(durations.generator(1000), random, duration -> {
+						assertThat(duration.getNano() % 1_000_000).isEqualTo(0);
+						assertThat(duration.compareTo(startDuration)).isGreaterThanOrEqualTo(0);
+						assertThat(duration.compareTo(endDuration)).isLessThanOrEqualTo(0);
+						return true;
+					});
+
+				}
+
+			}
+
+			@Group
+			class Micros {
+
+				@Property
+				void precision(@ForAll("precisionMicroseconds") Duration duration) {
+					assertThat(duration.getNano() % 1_000).isEqualTo(0);
+				}
+
+				@Property
+				void precisionBetween(
+						@ForAll("durations") Duration startDuration,
+						@ForAll("durations") Duration endDuration,
+						@ForAll Random random
+				) {
+
+					Assume.that(startDuration.compareTo(endDuration) <= 0);
+					Assume.that(getHour(startDuration) != getHour(endDuration)
+										|| getMinute(startDuration) != getMinute(endDuration)
+										|| getSecond(startDuration) != getSecond(endDuration)
+										|| startDuration.getNano() / 1_000 != endDuration.getNano() / 1_000);
+
+					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(MICROS);
+
+					assertAllGenerated(durations.generator(1000), random, duration -> {
+						assertThat(duration.getNano() % 1_000).isEqualTo(0);
+						assertThat(duration.compareTo(startDuration)).isGreaterThanOrEqualTo(0);
+						assertThat(duration.compareTo(endDuration)).isLessThanOrEqualTo(0);
+						return true;
+					});
+
+				}
+
+				@Property
+				void precisionBetweenWithPrecisionNanos(
+						@ForAll("precisionNanoseconds") Duration startDuration,
+						@ForAll("precisionNanoseconds") Duration endDuration,
+						@ForAll Random random
+				) {
+
+					Assume.that(startDuration.compareTo(endDuration) <= 0);
+					Assume.that(getHour(startDuration) != getHour(endDuration)
+										|| getMinute(startDuration) != getMinute(endDuration)
+										|| getSecond(startDuration) != getSecond(endDuration)
+										|| startDuration.getNano() / 1_000 != endDuration.getNano() / 1_000);
+
+					Arbitrary<Duration> durations = Times.durations().between(startDuration, endDuration).ofPrecision(MICROS);
+
+					assertAllGenerated(durations.generator(1000), random, duration -> {
+						assertThat(duration.getNano() % 1_000).isEqualTo(0);
+						assertThat(duration.compareTo(startDuration)).isGreaterThanOrEqualTo(0);
+						assertThat(duration.compareTo(endDuration)).isLessThanOrEqualTo(0);
+						return true;
+					});
+
+				}
+
+			}
+
+			@Group
+			class Nanos {
+
+				@Property
+				void precision(@ForAll("precisionNanoseconds") Duration duration) {
+					assertThat(duration).isNotNull();
 				}
 
 			}
@@ -1374,8 +1610,6 @@ class DurationTests {
 
 	@Group
 	class InvalidConfigurations {
-
-		//TODO: Max < Min after precisionMethod
 
 		@Property
 		void ofPrecision(@ForAll ChronoUnit chronoUnit) {
