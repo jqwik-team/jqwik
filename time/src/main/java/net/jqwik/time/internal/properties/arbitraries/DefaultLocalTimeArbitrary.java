@@ -268,10 +268,12 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 
 	@Override
 	public LocalTimeArbitrary ofPrecision(ChronoUnit ofPrecision) {
-		if (!(ofPrecision.equals(HOURS) || ofPrecision.equals(MINUTES) || ofPrecision.equals(SECONDS) || ofPrecision
-																												 .equals(MILLIS) || ofPrecision
-																																			.equals(MICROS) || ofPrecision
-																																									   .equals(NANOS))) {
+		if (!(ofPrecision.equals(HOURS)
+					  || ofPrecision.equals(MINUTES)
+					  || ofPrecision.equals(SECONDS)
+					  || ofPrecision.equals(MILLIS)
+					  || ofPrecision.equals(MICROS)
+					  || ofPrecision.equals(NANOS))) {
 			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
 		}
 

@@ -427,8 +427,10 @@ class OffsetTimeTests {
 				@Property
 				void precisionMinTime(@ForAll("precisionMicroseconds") OffsetTime startTime, @ForAll Random random) {
 
-					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
-																																   .getNano() < 999_000_001);
+					Assume.that(startTime.getHour() != 23
+										|| startTime.getMinute() != 59
+										|| startTime.getSecond() != 59
+										|| startTime.getNano() < 999_000_001);
 
 					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(MILLIS);
 
@@ -443,8 +445,10 @@ class OffsetTimeTests {
 				@Property
 				void precisionMinTime2(@ForAll("times") OffsetTime startTime, @ForAll Random random) {
 
-					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
-																																   .getNano() < 999_000_001);
+					Assume.that(startTime.getHour() != 23
+										|| startTime.getMinute() != 59
+										|| startTime.getSecond() != 59
+										|| startTime.getNano() < 999_000_001);
 
 					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(MILLIS);
 
@@ -469,8 +473,10 @@ class OffsetTimeTests {
 				@Property
 				void precisionMinTime(@ForAll("times") OffsetTime startTime, @ForAll Random random) {
 
-					Assume.that(startTime.getHour() != 23 || startTime.getMinute() != 59 || startTime.getSecond() != 59 || startTime
-																																   .getNano() < 999_999_001);
+					Assume.that(startTime.getHour() != 23
+										|| startTime.getMinute() != 59
+										|| startTime.getSecond() != 59
+										|| startTime.getNano() < 999_999_001);
 
 					Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime.toLocalTime()).ofPrecision(MICROS);
 
