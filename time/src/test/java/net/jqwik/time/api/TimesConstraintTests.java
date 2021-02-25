@@ -20,8 +20,12 @@ public class TimesConstraintTests {
 		class Constraints {
 
 			@Property
-			void timeRangeBetween(@ForAll @TimeRange(min = "01:32:21.113943", max = "03:49:32") LocalTime time) {
+			void timeRangeMin(@ForAll @TimeRange(min = "01:32:21.113943") LocalTime time) {
 				assertThat(time).isAfterOrEqualTo(LocalTime.of(1, 32, 21, 113943));
+			}
+
+			@Property
+			void timeRangeMax(@ForAll @TimeRange(max = "03:49:32") LocalTime time) {
 				assertThat(time).isBeforeOrEqualTo(LocalTime.of(3, 49, 32));
 			}
 
@@ -299,8 +303,12 @@ public class TimesConstraintTests {
 		class Constraints {
 
 			@Property
-			void timeRangeBetween(@ForAll @TimeRange(min = "01:32:21.113943", max = "03:49:32") OffsetTime time) {
+			void timeRangeMin(@ForAll @TimeRange(min = "01:32:21.113943") OffsetTime time) {
 				assertThat(time.toLocalTime()).isAfterOrEqualTo(LocalTime.of(1, 32, 21, 113943));
+			}
+
+			@Property
+			void timeRangeMax(@ForAll @TimeRange(max = "03:49:32") OffsetTime time) {
 				assertThat(time.toLocalTime()).isBeforeOrEqualTo(LocalTime.of(3, 49, 32));
 			}
 
@@ -317,6 +325,14 @@ public class TimesConstraintTests {
 			@Property
 			void secondRangeBetween(@ForAll @SecondRange(min = 11, max = 13) OffsetTime time) {
 				assertThat(time.getSecond()).isBetween(11, 13);
+			}
+
+			@Property
+			void offsetBetween(@ForAll @OffsetRange(min = "-09:00:00", max = "+08:00:00") OffsetTime time) {
+				assertThat(time.getOffset().getTotalSeconds())
+						.isGreaterThanOrEqualTo(ZoneOffset.ofHoursMinutesSeconds(-9, 0, 0).getTotalSeconds());
+				assertThat(time.getOffset().getTotalSeconds())
+						.isLessThanOrEqualTo(ZoneOffset.ofHoursMinutesSeconds(8, 0, 0).getTotalSeconds());
 			}
 
 			@Group
@@ -363,7 +379,7 @@ public class TimesConstraintTests {
 		class InvalidConfigurations {
 
 			@Group
-			class TimeRangeAnnotation {
+			class TimeRangeConstraint {
 
 				@Example
 				@ExpectFailure(failureType = DateTimeParseException.class)
@@ -410,6 +426,71 @@ public class TimesConstraintTests {
 				@Example
 				@ExpectFailure(failureType = DateTimeParseException.class)
 				void maxThrowsExceptionPicoseconds(@ForAll @TimeRange(max = "09:21:30.9992123437") OffsetTime time) {
+					//do nothing
+				}
+
+			}
+
+			@Group
+			class OffsetRangeConstraint {
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void minZoneOffsetTooEarly(@ForAll @OffsetRange(min = "-12:00:01") OffsetTime time) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void maxZoneOffsetTooEarly(@ForAll @OffsetRange(max = "-12:00:01") OffsetTime time) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void minZoneOffsetTooLate(@ForAll @OffsetRange(min = "+14:00:01") OffsetTime time) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void maxZoneOffsetTooLate(@ForAll @OffsetRange(max = "+14:00:01") OffsetTime time) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void minZoneOffsetUnsigned(@ForAll @OffsetRange(min = "07:00:00") OffsetTime time) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void maxZoneOffsetUnsigned(@ForAll @OffsetRange(max = "07:00:00") OffsetTime time) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void minZoneOffsetIllegalString(@ForAll @OffsetRange(min = "foo") OffsetTime time) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void maxZoneOffsetIllegalString(@ForAll @OffsetRange(max = "foo") OffsetTime time) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void minZoneOffsetIllegalIllegalFormat(@ForAll @OffsetRange(min = "+2:3:2") OffsetTime time) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void maxZoneOffsetIllegalIllegalFormat(@ForAll @OffsetRange(max = "+2:3:2") OffsetTime time) {
 					//do nothing
 				}
 
@@ -562,6 +643,272 @@ public class TimesConstraintTests {
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
 				void years(@ForAll @Precision(ofPrecision = YEARS) OffsetTime time) {
+					//do nothing
+				}
+
+			}
+
+		}
+
+	}
+
+	@Group
+	class ZoneOffsetConstraints {
+
+		@Property
+		void zoneOffsetMin(@ForAll @OffsetRange(min = "-09:00:00") ZoneOffset offset) {
+			assertThat(offset.getTotalSeconds()).isGreaterThanOrEqualTo(ZoneOffset.ofHoursMinutesSeconds(-9, 0, 0).getTotalSeconds());
+		}
+
+		@Property
+		void zoneOffsetMax(@ForAll @OffsetRange(max = "+08:00:00") ZoneOffset offset) {
+			assertThat(offset.getTotalSeconds()).isLessThanOrEqualTo(ZoneOffset.ofHoursMinutesSeconds(8, 0, 0).getTotalSeconds());
+		}
+
+		@Group
+		class InvalidConfiguration {
+
+			@Example
+			@ExpectFailure(failureType = IllegalArgumentException.class)
+			void minZoneOffsetTooEarly(@ForAll @OffsetRange(min = "-12:00:01") ZoneOffset offset) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = IllegalArgumentException.class)
+			void maxZoneOffsetTooEarly(@ForAll @OffsetRange(max = "-12:00:01") ZoneOffset offset) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = IllegalArgumentException.class)
+			void minZoneOffsetTooLate(@ForAll @OffsetRange(min = "+14:00:01") ZoneOffset offset) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = IllegalArgumentException.class)
+			void maxZoneOffsetTooLate(@ForAll @OffsetRange(max = "+14:00:01") ZoneOffset offset) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeException.class)
+			void minZoneOffsetUnsigned(@ForAll @OffsetRange(min = "07:00:00") ZoneOffset offset) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeException.class)
+			void maxZoneOffsetUnsigned(@ForAll @OffsetRange(max = "07:00:00") ZoneOffset offset) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeException.class)
+			void minZoneOffsetIllegalString(@ForAll @OffsetRange(min = "foo") ZoneOffset offset) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeException.class)
+			void maxZoneOffsetIllegalString(@ForAll @OffsetRange(max = "foo") ZoneOffset offset) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeException.class)
+			void minZoneOffsetIllegalIllegalFormat(@ForAll @OffsetRange(min = "+2:3:2") ZoneOffset offset) {
+				//do nothing
+			}
+
+			@Example
+			@ExpectFailure(failureType = DateTimeException.class)
+			void maxZoneOffsetIllegalIllegalFormat(@ForAll @OffsetRange(max = "+2:3:2") ZoneOffset offset) {
+				//do nothing
+			}
+
+		}
+
+	}
+
+	@Group
+	class DurationConstraints {
+
+		@Property
+		void zoneOffsetMin(@ForAll @DurationRange(min = "PT-3000H-39M-22.123111444S") Duration duration) {
+			Duration start = Duration.ofSeconds(-3000 * 60 * 60 - 39 * 60 - 22, -123111444);
+			assertThat(duration.compareTo(start)).isGreaterThanOrEqualTo(0);
+		}
+
+		@Property
+		void zoneOffsetMax(@ForAll @DurationRange(max = "PT1999H22M11S") Duration duration) {
+			Duration end = Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 11);
+			assertThat(duration.compareTo(end)).isLessThanOrEqualTo(0);
+		}
+
+		@Group
+		class Precisions {
+
+			@Property
+			void hours(@ForAll @Precision(ofPrecision = HOURS) Duration duration) {
+				assertThat(getMinute(duration)).isZero();
+				assertThat(getSecond(duration)).isZero();
+				assertThat(duration.getNano()).isZero();
+			}
+
+			@Property
+			void minutes(@ForAll @Precision(ofPrecision = MINUTES) Duration duration) {
+				assertThat(getSecond(duration)).isZero();
+				assertThat(duration.getNano()).isZero();
+			}
+
+			@Property
+			void seconds(@ForAll @Precision(ofPrecision = SECONDS) Duration duration) {
+				assertThat(duration.getNano()).isZero();
+			}
+
+			@Property
+			void millis(@ForAll @Precision(ofPrecision = MILLIS) Duration duration) {
+				assertThat(duration.getNano() % 1_000_000).isZero();
+			}
+
+			@Property
+			void micros(@ForAll @Precision(ofPrecision = MICROS) Duration duration) {
+				assertThat(duration.getNano() % 1_000).isZero();
+			}
+
+			@Property
+			void nanos(@ForAll @Precision(ofPrecision = NANOS) Duration duration) {
+				assertThat(duration).isNotNull();
+			}
+
+			int getSecond(Duration d) {
+				return (int) (d.getSeconds() % 60);
+			}
+
+			int getMinute(Duration d) {
+				return (int) ((d.getSeconds() % 3600) / 60);
+			}
+
+		}
+
+		@Group
+		class InvalidConfiguration {
+
+			@Group
+			class DurationRangeConstraint {
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void minTooEarly(@ForAll @DurationRange(min = "PT-2562047788015215H-30M-8.000000001S") Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void maxTooEarly(@ForAll @DurationRange(max = "PT-2562047788015215H-30M-8.000000001S") Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void minTooLate(@ForAll @DurationRange(min = "PT2562047788015215H30M8S") Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void maxTooLate(@ForAll @DurationRange(max = "PT2562047788015215H30M8S") Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void minIllegalString(@ForAll @DurationRange(min = "foo") Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void maxIllegalString(@ForAll @DurationRange(max = "foo") Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void minWrongFormat(@ForAll @DurationRange(min = "2562047788015215H30M8S") Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeException.class)
+				void maxWrongFormat(@ForAll @DurationRange(max = "2562047788015215H30M8S") Duration duration) {
+					//do nothing
+				}
+
+			}
+
+			@Group
+			class Precisions {
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void centuries(@ForAll @Precision(ofPrecision = CENTURIES) Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void days(@ForAll @Precision(ofPrecision = DAYS) Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void decades(@ForAll @Precision(ofPrecision = DECADES) Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void eras(@ForAll @Precision(ofPrecision = ERAS) Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void forever(@ForAll @Precision(ofPrecision = FOREVER) Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void halfDays(@ForAll @Precision(ofPrecision = HALF_DAYS) Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void millennia(@ForAll @Precision(ofPrecision = MILLENNIA) Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void months(@ForAll @Precision(ofPrecision = MONTHS) Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void weeks(@ForAll @Precision(ofPrecision = WEEKS) Duration duration) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = IllegalArgumentException.class)
+				void years(@ForAll @Precision(ofPrecision = YEARS) Duration duration) {
 					//do nothing
 				}
 
