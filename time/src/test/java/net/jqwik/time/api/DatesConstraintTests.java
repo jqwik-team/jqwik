@@ -13,7 +13,7 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
-public class ConstraintTests {
+public class DatesConstraintTests {
 
 	@Group
 	class LocalDateConstraints {
@@ -63,25 +63,25 @@ public class ConstraintTests {
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException1(@ForAll @DateRange(min = "2013-05") LocalDate date) {
+			void dateRangeThrowsExceptionYearMonth(@ForAll @DateRange(min = "2013-05") LocalDate date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException2(@ForAll @DateRange(min = "foo") LocalDate date) {
+			void dateRangeThrowsExceptionIllegalString(@ForAll @DateRange(min = "foo") LocalDate date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException3(@ForAll @DateRange(max = "--05-25") LocalDate date) {
+			void dateRangeThrowsExceptionMonthDay(@ForAll @DateRange(max = "--05-25") LocalDate date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException4(@ForAll @DateRange(max = "13") LocalDate date) {
+			void dateRangeThrowsExceptionDay(@ForAll @DateRange(max = "13") LocalDate date) {
 				//do nothing
 			}
 
@@ -145,25 +145,25 @@ public class ConstraintTests {
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException1(@ForAll("dates") @DateRange(min = "2013-05") Calendar date) {
+			void dateRangeThrowsExceptionYearMonth(@ForAll("dates") @DateRange(min = "2013-05") Calendar date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException2(@ForAll("dates") @DateRange(min = "foo") Calendar date) {
+			void dateRangeThrowsExceptionIllegalString(@ForAll("dates") @DateRange(min = "foo") Calendar date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException3(@ForAll("dates") @DateRange(max = "--05-25") Calendar date) {
+			void dateRangeThrowsExceptionMonthDay(@ForAll("dates") @DateRange(max = "--05-25") Calendar date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException4(@ForAll("dates") @DateRange(max = "13") Calendar date) {
+			void dateRangeThrowsExceptionDay(@ForAll("dates") @DateRange(max = "13") Calendar date) {
 				//do nothing
 			}
 
@@ -234,25 +234,25 @@ public class ConstraintTests {
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException1(@ForAll("dates") @DateRange(min = "2013-05") Date date) {
+			void dateRangeThrowsExceptionYearMonth(@ForAll("dates") @DateRange(min = "2013-05") Date date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException2(@ForAll("dates") @DateRange(min = "foo") Date date) {
+			void dateRangeThrowsExceptionIllegalString(@ForAll("dates") @DateRange(min = "foo") Date date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException3(@ForAll("dates") @DateRange(max = "--05-25") Date date) {
+			void dateRangeThrowsExceptionMonthDay(@ForAll("dates") @DateRange(max = "--05-25") Date date) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void dateRangeThrowsException4(@ForAll("dates") @DateRange(max = "13") Date date) {
+			void dateRangeThrowsExceptionDay(@ForAll("dates") @DateRange(max = "13") Date date) {
 				//do nothing
 			}
 
@@ -286,25 +286,25 @@ public class ConstraintTests {
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void yearMonthRangeThrowsException1(@ForAll @YearMonthRange(min = "2013-05-25") YearMonth yearMonth) {
+			void yearMonthRangeThrowsExceptionDate(@ForAll @YearMonthRange(min = "2013-05-25") YearMonth yearMonth) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void yearMonthRangeThrowsException2(@ForAll @YearMonthRange(min = "foo") YearMonth yearMonth) {
+			void yearMonthRangeThrowsExceptionIllegalString(@ForAll @YearMonthRange(min = "foo") YearMonth yearMonth) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void yearMonthRangeThrowsException3(@ForAll @YearMonthRange(max = "--05-25") YearMonth yearMonth) {
+			void yearMonthRangeThrowsExceptionMonthDay(@ForAll @YearMonthRange(max = "--05-25") YearMonth yearMonth) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void yearMonthRangeThrowsException4(@ForAll @YearMonthRange(max = "13") YearMonth yearMonth) {
+			void yearMonthRangeThrowsExceptionDay(@ForAll @YearMonthRange(max = "13") YearMonth yearMonth) {
 				//do nothing
 			}
 
@@ -332,31 +332,31 @@ public class ConstraintTests {
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void monthDayRangeThrowsException1(@ForAll @MonthDayRange(min = "2013-05-25") MonthDay monthDay) {
+			void monthDayRangeThrowsExceptionDate(@ForAll @MonthDayRange(min = "2013-05-25") MonthDay monthDay) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void monthDayRangeThrowsException2(@ForAll @MonthDayRange(min = "foo") MonthDay monthDay) {
+			void monthDayRangeThrowsExceptionIllegalString(@ForAll @MonthDayRange(min = "foo") MonthDay monthDay) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void monthDayRangeThrowsException3(@ForAll @MonthDayRange(max = "2013-05") MonthDay monthDay) {
+			void monthDayRangeThrowsExceptionYearMonth(@ForAll @MonthDayRange(max = "2013-05") MonthDay monthDay) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void monthDayRangeThrowsException4(@ForAll @MonthDayRange(max = "13") MonthDay monthDay) {
+			void monthDayRangeThrowsExceptionDay(@ForAll @MonthDayRange(max = "13") MonthDay monthDay) {
 				//do nothing
 			}
 
 			@Example
 			@ExpectFailure(failureType = DateTimeParseException.class)
-			void monthDayRangeThrowsException5(@ForAll @MonthDayRange(max = "05-25") MonthDay monthDay) {
+			void monthDayRangeThrowsExceptionWrongFormat(@ForAll @MonthDayRange(max = "05-25") MonthDay monthDay) {
 				//do nothing
 			}
 

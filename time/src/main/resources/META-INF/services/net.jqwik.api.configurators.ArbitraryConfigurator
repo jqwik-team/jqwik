@@ -7,3 +7,4 @@ net.jqwik.time.internal.properties.configurators.YearMonthRangeConfigurator
 net.jqwik.time.internal.properties.configurators.MonthDayRangeConfigurator
 net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator
 net.jqwik.time.internal.properties.configurators.PeriodRangeConfigurator
+net.jqwik.time.internal.properties.configurators.TimeRangeConfigurator
