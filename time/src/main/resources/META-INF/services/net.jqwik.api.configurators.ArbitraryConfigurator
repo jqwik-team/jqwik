@@ -8,3 +8,7 @@ net.jqwik.time.internal.properties.configurators.MonthDayRangeConfigurator
 net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator
 net.jqwik.time.internal.properties.configurators.PeriodRangeConfigurator
 net.jqwik.time.internal.properties.configurators.TimeRangeConfigurator
+net.jqwik.time.internal.properties.configurators.HourRangeConfigurator
+net.jqwik.time.internal.properties.configurators.MinuteRangeConfigurator
+net.jqwik.time.internal.properties.configurators.SecondRangeConfigurator
+net.jqwik.time.internal.properties.configurators.PrecisionConfigurator
