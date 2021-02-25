@@ -7,12 +7,12 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Constrain the range of generated time parameters.
+ * Constrain the range of generated hour parameters.
  * <p>
  * Applies to LocalTime and OffsetTime parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
- * @see HourRange
+ * @see TimeRange
  * @see MinuteRange
  * @see SecondRange
  * @see Precision
@@ -21,8 +21,8 @@ import static org.apiguardian.api.API.Status.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = EXPERIMENTAL, since = "1.5.1")
-public @interface TimeRange {
-	String min() default "00:00:00";
+public @interface HourRange {
+	int min() default 0;
 
-	String max() default "23:59:59.999999999";
+	int max() default 23;
 }
