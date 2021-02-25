@@ -11,10 +11,11 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Constrain the range of generated hour parameters.
  * <p>
- * Applies to LocalTime and OffsetTime parameters which are also annotated with {@code @ForAll}.
+ * Applies to LocalTime, OffsetTime and Duration parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  * @see TimeRange
+ * @see OffsetRange
  * @see HourRange
  * @see MinuteRange
  * @see SecondRange

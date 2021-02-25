@@ -12,3 +12,5 @@ net.jqwik.time.internal.properties.configurators.HourRangeConfigurator
 net.jqwik.time.internal.properties.configurators.MinuteRangeConfigurator
 net.jqwik.time.internal.properties.configurators.SecondRangeConfigurator
 net.jqwik.time.internal.properties.configurators.PrecisionConfigurator
+net.jqwik.time.internal.properties.configurators.OffsetRangeConfigurator
+net.jqwik.time.internal.properties.configurators.DurationRangeConfigurator

@@ -13,6 +13,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see net.jqwik.api.ForAll
  * @see TimeRange
+ * @see OffsetRange
  * @see HourRange
  * @see SecondRange
  * @see Precision

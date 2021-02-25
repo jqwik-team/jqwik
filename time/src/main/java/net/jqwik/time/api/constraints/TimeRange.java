@@ -12,6 +12,7 @@ import static org.apiguardian.api.API.Status.*;
  * Applies to LocalTime and OffsetTime parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
+ * @see OffsetRange
  * @see HourRange
  * @see MinuteRange
  * @see SecondRange

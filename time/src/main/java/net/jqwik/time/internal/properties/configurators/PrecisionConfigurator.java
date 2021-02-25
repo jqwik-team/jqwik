@@ -12,7 +12,9 @@ public class PrecisionConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalTime.class) || targetType.isAssignableFrom(OffsetTime.class);
+		return targetType.isAssignableFrom(LocalTime.class)
+					   || targetType.isAssignableFrom(OffsetTime.class)
+					   || targetType.isAssignableFrom(Duration.class);
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, Precision range) {
@@ -22,6 +24,9 @@ public class PrecisionConfigurator extends ArbitraryConfiguratorBase {
 		} else if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.ofPrecision(range.ofPrecision());
+		} else if (arbitrary instanceof DurationArbitrary) {
+			DurationArbitrary durationArbitrary = (DurationArbitrary) arbitrary;
+			return durationArbitrary.ofPrecision(range.ofPrecision());
 		} else {
 			return arbitrary;
 		}
