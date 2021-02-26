@@ -25,7 +25,7 @@ public class StoreRepository {
 		return current;
 	}
 
-	private Set<ScopedStore<?>> stores = new HashSet<>();
+	private final Set<ScopedStore<?>> stores = new HashSet<>();
 
 	public <T> ScopedStore<T> create(
 		TestDescriptor scope,
@@ -109,7 +109,7 @@ public class StoreRepository {
 			.stream()
 			.filter(store -> store.lifespan() == Lifespan.PROPERTY)
 			.filter(store -> store.isVisibleFor(scope))
-			.forEach(ScopedStore::reset);
+			.forEach(Store::reset);
 	}
 
 	public void finishTry(TestDescriptor scope) {
@@ -117,6 +117,6 @@ public class StoreRepository {
 			.stream()
 			.filter(store -> store.lifespan() == Lifespan.TRY)
 			.filter(store -> store.isVisibleFor(scope))
-			.forEach(ScopedStore::reset);
+			.forEach(Store::reset);
 	}
 }

@@ -12,7 +12,8 @@ class Memoize {
 	private static final Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> generatorStore = createStore();
 
 	private static Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> createStore() {
-		return Store.create(Memoize.class, Lifespan.PROPERTY, HashMap::new);
+		Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> store = Store.create(Memoize.class, Lifespan.PROPERTY, HashMap::new);
+		return store.onClose(Map::clear);
 	}
 
 	@SuppressWarnings("unchecked")

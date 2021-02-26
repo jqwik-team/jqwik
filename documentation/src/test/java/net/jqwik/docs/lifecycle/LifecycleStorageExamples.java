@@ -34,7 +34,7 @@ class LifecycleStorageExamples {
 
 class TemporaryFileHook implements ResolveParameterHook {
 
-	public static final Tuple.Tuple2 STORE_IDENTIFIER = Tuple.of(TemporaryFileHook.class, "temporary files");
+	public static final Tuple.Tuple2<Class<TemporaryFileHook>, String> STORE_IDENTIFIER = Tuple.of(TemporaryFileHook.class, "temporary files");
 
 	@Override
 	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
