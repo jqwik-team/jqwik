@@ -9,11 +9,8 @@ import net.jqwik.api.lifecycle.*;
 
 class Memoize {
 
-	private static final Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> generatorStore = createStore();
-
-	private static Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> createStore() {
-		Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> store = Store.create(Memoize.class, Lifespan.PROPERTY, HashMap::new);
-		return store.onClose(Map::clear);
+	private static Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> generatorStore() {
+		return Store.getOrCreate(Memoize.class, Lifespan.PROPERTY, HashMap::new);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -26,7 +23,7 @@ class Memoize {
 		Tuple3<Arbitrary<?>, Integer, Boolean> key = Tuple.of(arbitrary, genSize, withEdgeCases);
 
 		RandomGenerator<?> generator = computeIfAbsent(
-				generatorStore.get(),
+				generatorStore().get(),
 				key,
 				ignore -> generatorSupplier.get()
 		);

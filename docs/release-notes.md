@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.5.1-SNAPSHOT](#151-snapshot)
 - [1.5.0](#150)
 - [1.4.0](#140)
 - [1.3.x](#13x)
@@ -20,6 +21,16 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
+## 1.5.1-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+Fixed memory leakage introduced in 1.5.0.
 
 ## 1.5.0
 
