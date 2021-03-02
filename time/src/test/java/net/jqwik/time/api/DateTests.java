@@ -502,9 +502,9 @@ class DateTests {
 
 		@Example
 		void atTheEarliestYearTooHigh() {
-			LocalDate localDate = LocalDate.of(292_278_994, JANUARY, 1);
-			Instant instant = localDate.atStartOfDay().toInstant(ZoneOffset.ofHours(1));
-			Date date = Date.from(instant);
+			Calendar calendar = new Calendar.Builder().setDate(292_278_994, DefaultCalendarArbitrary.monthToCalendarMonth(JANUARY), 1)
+													  .build();
+			Date date = calendar.getTime();
 			assertThatThrownBy(
 					() -> Dates.datesAsDate().atTheEarliest(date)
 			).isInstanceOf(IllegalArgumentException.class);
@@ -534,9 +534,9 @@ class DateTests {
 
 		@Example
 		void atTheLatestYearTooHigh() {
-			LocalDate localDate = LocalDate.of(292_278_994, JANUARY, 1);
-			Instant instant = localDate.atStartOfDay().toInstant(ZoneOffset.ofHours(1));
-			Date date = Date.from(instant);
+			Calendar calendar = new Calendar.Builder().setDate(292_278_994, DefaultCalendarArbitrary.monthToCalendarMonth(JANUARY), 1)
+													  .build();
+			Date date = calendar.getTime();
 			assertThatThrownBy(
 					() -> Dates.datesAsDate().atTheLatest(date)
 			).isInstanceOf(IllegalArgumentException.class);

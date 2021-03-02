@@ -103,7 +103,6 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<Date> implements Da
 			throw new IllegalArgumentException("Maximum year in a calendar date must be <= 292278993");
 		}
 		if ((dateMin != null) && max.before(dateMin)) {
-			System.out.println(dateMin + ", " + max);
 			throw new IllegalArgumentException("Maximum date must not be before minimum date");
 		}
 
