@@ -134,3 +134,94 @@ Here's the list of available methods:
 - You can constrain the minimum and maximum value using `between(Period min, Period max)`.
 - If you really want something like `Period.ofDays(3000)` generate an integer
   and map it on `Period`.
+
+#### Default Generation of Times
+
+Default generation currently is supported for `LocalTime`, `OffsetTime`, `ZoneOffset`,
+`TimeZone`, `ZoneId` and `Duration`. Here's an small example:
+
+```java
+@Property
+void generateLocalTimesWithAnnotation(@ForAll @TimeRange(min = "01:32:21", max = "03:49:32") LocalTime localTime) {
+    assertThat(time).isAfterOrEqualTo(LocalTime.of(1, 32, 21));
+    assertThat(time).isBeforeOrEqualTo(LocalTime.of(3, 49, 32));
+}
+```
+
+The following annotations can be used to constrain default generation of the enumerated types:
+
+- [`@TimeRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/TimeRange.html)
+- [`@OffsetRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/OffsetRange.html)
+- [`@HourRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/HourRange.html)
+- [`@MinuteRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/MinuteRange.html)
+- [`@SecondRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/SecondRange.html)
+- [`@Precision`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/Precision.html)
+- [`@DurationRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DurationRange.html)
+
+`@TimeRange`, `@OffsetRange` and `@DurationRange` 
+use the standard format of their classes. 
+Examples:
+
+- `@TimeRange`: "01:32:31.394920222", "23:43:21" or "03:02" (See [`LocalTime.parse`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalTime.html#parse-java.lang.CharSequence-))
+- `@OffsetRange`: "-09:00", "+3", "+11:22:33" or "Z" (See [`ZoneOffset.of`](https://docs.oracle.com/javase/8/docs/api/java/time/ZoneOffset.html#of-java.lang.String-))
+- `@DurationRange`: "PT-3000H-39M-22.123111444S", "PT1999H22M11S" or "P2DT3H4M" (See [`Duration.parse`](https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-))
+
+#### Programmatic Generation of Times
+
+Programmatic generation of times always starts with a static
+method call on class [`Times`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html).
+For example:
+
+```java
+@Property
+void generateLocalTimes(@ForAll("times") LocalTime localTime) {
+  assertThat(localTime).isAfter(LocalTime.of(13, 53, 21));
+}
+
+@Provide
+Arbitrary<LocalTime> times() {
+  return Times.times().atTheEarliest(LocalTime.of(13, 53, 22));
+}
+```
+
+Here's the list of available methods:
+
+- [`LocalTimeArbitrary times()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html#times())
+- [`OffsetTimeArbitrary offsetTimes()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html#offsetTimes())
+- [`ZoneOffsetArbitrary zoneOffsets()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html#zoneOffsets())
+- [`Arbitrary<TimeZone> timeZones()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html#timeZones())
+- [`Arbitrary<ZoneId> zoneIds()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html#zoneIds())
+- [`DurationArbitrary durations()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html#durations())
+
+##### LocalTimeArbitrary
+
+- The target type is `LocalTime`.
+- By default, precision is seconds.
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
+- You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
+- You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+##### OffsetTimeArbitrary
+
+- The target type is `OffsetTime`.
+- By default, precision is seconds.
+- You can constrain the minimum and maximum time value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
+- You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
+- You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
+- You can constrain the minimum and maximum value for offset using `offsetBetween(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+##### ZoneOffsetArbitrary
+
+- The target type is `ZoneOffset`.
+- You can constrain its minimum and maximum value using `between(min, max)`.
+
+##### DurationArbitrary
+
+- The target type is `Duration`.
+- By default, precision is seconds.
+- You can constrain its minimum and maximum value using `between(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
