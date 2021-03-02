@@ -286,6 +286,24 @@ class DurationTests {
 			}
 
 			@Property
+			void betweenEndDurationAfterStartDuration(
+					@ForAll("durations") Duration start,
+					@ForAll("durations") Duration end,
+					@ForAll Random random
+			) {
+
+				Assume.that(start.compareTo(end) > 0);
+
+				Arbitrary<Duration> durations = Times.durations().between(start, end);
+
+				assertAllGenerated(durations.generator(1000), random, duration -> {
+					assertThat(duration.compareTo(end)).isGreaterThanOrEqualTo(0);
+					assertThat(duration.compareTo(start)).isLessThanOrEqualTo(0);
+				});
+
+			}
+
+			@Property
 			void betweenSame(@ForAll("durations") Duration durationSame, @ForAll Random random) {
 
 				Arbitrary<Duration> durations = Times.durations().between(durationSame, durationSame);
@@ -1720,6 +1738,97 @@ class DurationTests {
 					() -> Times.durations().between(startDuration, endDuration).ofPrecision(MICROS).generator(1000)
 			).isInstanceOf(IllegalArgumentException.class);
 
+		}
+
+		@Property
+		void precisionHoursMinDurationTooLate(
+				@ForAll("lateDurations") Duration startDuration,
+				@ForAll("lateDurations") Duration endDuration
+		) {
+			Assume.that(startDuration.compareTo(endDuration) <= 0);
+			assertThatThrownBy(
+					() -> Times.durations().between(startDuration, endDuration).ofPrecision(HOURS).generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void precisionMinutesMinDurationTooLate(
+				@ForAll("lateDurations") Duration startDuration,
+				@ForAll("lateDurations") Duration endDuration
+		) {
+			Assume.that(startDuration.compareTo(endDuration) <= 0);
+			assertThatThrownBy(
+					() -> Times.durations().between(startDuration, endDuration).ofPrecision(MINUTES).generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void precisionSecondsMinDurationTooLate(
+				@ForAll("lateDurations") Duration startDuration,
+				@ForAll("lateDurations") Duration endDuration
+		) {
+			Assume.that(startDuration.compareTo(endDuration) <= 0);
+			assertThatThrownBy(
+					() -> Times.durations().between(startDuration, endDuration).ofPrecision(SECONDS).generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void precisionMillisMinDurationTooLate(
+				@ForAll("lateDurations") Duration startDuration,
+				@ForAll("lateDurations") Duration endDuration
+		) {
+			Assume.that(startDuration.compareTo(endDuration) <= 0);
+			assertThatThrownBy(
+					() -> Times.durations().between(startDuration, endDuration).ofPrecision(MILLIS).generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void precisionMicrosMinDurationTooLate(
+				@ForAll("lateDurations") Duration startDuration,
+				@ForAll("lateDurations") Duration endDuration
+		) {
+			Assume.that(startDuration.compareTo(endDuration) <= 0);
+			assertThatThrownBy(
+					() -> Times.durations().between(startDuration, endDuration).ofPrecision(MICROS).generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void precisionHoursMaxDurationTooEarly(
+				@ForAll("earlyDurations") Duration startDuration,
+				@ForAll("earlyDurations") Duration endDuration
+		) {
+			Assume.that(startDuration.compareTo(endDuration) <= 0);
+			assertThatThrownBy(
+					() -> Times.durations().between(startDuration, endDuration).ofPrecision(HOURS).generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void precisionMinutesMaxDurationTooEarly(
+				@ForAll("earlyDurations") Duration startDuration,
+				@ForAll("earlyDurations") Duration endDuration
+		) {
+			Assume.that(startDuration.compareTo(endDuration) <= 0);
+			assertThatThrownBy(
+					() -> Times.durations().between(startDuration, endDuration).ofPrecision(MINUTES).generator(1000)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Provide
+		Arbitrary<Duration> lateDurations() {
+			return Times.durations()
+						.ofPrecision(NANOS)
+						.between(Duration.ofSeconds(Long.MAX_VALUE, 999_999_001), DefaultDurationArbitrary.DEFAULT_MAX);
+		}
+
+		@Provide
+		Arbitrary<Duration> earlyDurations() {
+			return Times.durations()
+						.ofPrecision(NANOS)
+						.between(DefaultDurationArbitrary.DEFAULT_MIN, Duration.ofSeconds(Long.MIN_VALUE, 999));
 		}
 
 	}

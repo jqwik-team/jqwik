@@ -68,6 +68,18 @@ class PeriodTests {
 
 		}
 
+		@Property
+		void betweenStartPeriodAfterEndPeriod(@ForAll int start, @ForAll int end, @ForAll Random random) {
+			Assume.that(start > end);
+
+			Arbitrary<Period> periods = Dates.periods().between(Period.ofYears(start), Period.ofYears(end));
+
+			assertAllGenerated(periods.generator(1000), random, period -> {
+				assertThat(period.getYears()).isBetween(end, start);
+			});
+
+		}
+
 		@Example
 		void test() {
 			onlyOnePeriodPossible(0, 0, 1, new Random(42L));
@@ -232,7 +244,7 @@ class PeriodTests {
 
 		private void checkDayCoverage(StatisticsCoverage coverage) {
 			for (int dayOfMonth = -30; dayOfMonth <= 30; dayOfMonth++) {
-				coverage.check(dayOfMonth).percentage(p -> p >= 0.3);
+				coverage.check(dayOfMonth).percentage(p -> p >= 0.15);
 			}
 		}
 

@@ -142,6 +142,24 @@ class LocalDateTests {
 			}
 
 			@Property
+			void betweenEndDateBeforeStartDate(
+					@ForAll("dates") LocalDate startDate,
+					@ForAll("dates") LocalDate endDate,
+					@ForAll Random random
+			) {
+
+				Assume.that(startDate.isAfter(endDate));
+
+				Arbitrary<LocalDate> dates = Dates.dates().between(startDate, endDate);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(date).isAfterOrEqualTo(endDate);
+					assertThat(date).isBeforeOrEqualTo(startDate);
+					return true;
+				});
+			}
+
+			@Property
 			void betweenSame(@ForAll("dates") LocalDate sameDate, @ForAll Random random) {
 
 				Arbitrary<LocalDate> dates = Dates.dates().between(sameDate, sameDate);
@@ -258,6 +276,25 @@ class LocalDateTests {
 				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(date.getDayOfMonth()).isGreaterThanOrEqualTo(startDayOfMonth);
 					assertThat(date.getDayOfMonth()).isLessThanOrEqualTo(endDayOfMonth);
+					return true;
+				});
+
+			}
+
+			@Property
+			void dayOfMonthBetweenStartAfterEnd(
+					@ForAll("dayOfMonths") int startDayOfMonth,
+					@ForAll("dayOfMonths") int endDayOfMonth,
+					@ForAll Random random
+			) {
+
+				Assume.that(startDayOfMonth > endDayOfMonth);
+
+				Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthBetween(startDayOfMonth, endDayOfMonth);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(date.getDayOfMonth()).isGreaterThanOrEqualTo(endDayOfMonth);
+					assertThat(date.getDayOfMonth()).isLessThanOrEqualTo(startDayOfMonth);
 					return true;
 				});
 
@@ -558,23 +595,60 @@ class LocalDateTests {
 			).isInstanceOf(DateTimeException.class);
 		}
 
-		@Example
-		void daysMustBeBetween1And31() {
+		@Property
+		void atTheEarliestMinDateAfterMaxDate(@ForAll("dates") LocalDate min, @ForAll("dates") LocalDate max) {
+			Assume.that(min.isAfter(max));
 			assertThatThrownBy(
-					() -> Dates.dates().monthBetween(0, 31)
-			).isInstanceOf(DateTimeException.class);
+					() -> Dates.dates().atTheLatest(max).atTheEarliest(min)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
 
+		@Property
+		void atTheLatestMinDateAfterMaxDate(@ForAll("dates") LocalDate min, @ForAll("dates") LocalDate max) {
+			Assume.that(min.isAfter(max));
 			assertThatThrownBy(
-					() -> Dates.dates().monthBetween(31, 0)
-			).isInstanceOf(DateTimeException.class);
+					() -> Dates.dates().atTheEarliest(min).atTheLatest(max)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
 
-			assertThatThrownBy(
-					() -> Dates.dates().monthBetween(1, 32)
-			).isInstanceOf(DateTimeException.class);
+		@Property
+		void atTheEarliestYearMustNotBelow1(
+				@ForAll @IntRange(min = -999_999_999, max = 0) int year,
+				@ForAll Month month,
+				@ForAll @DayOfMonthRange int day
+		) {
+			try {
+				LocalDate date = LocalDate.of(year, month, day);
+				assertThatThrownBy(
+						() -> Dates.dates().atTheEarliest(date)
+				).isInstanceOf(IllegalArgumentException.class);
+			} catch (DateTimeException e) {
+				//do nothing
+			}
+		}
 
+		@Property
+		void atTheLatestYearMustNotBelow1(
+				@ForAll @IntRange(min = -999_999_999, max = 0) int year,
+				@ForAll Month month,
+				@ForAll @DayOfMonthRange int day
+		) {
+			try {
+				LocalDate date = LocalDate.of(year, month, day);
+				assertThatThrownBy(
+						() -> Dates.dates().atTheLatest(date)
+				).isInstanceOf(IllegalArgumentException.class);
+			} catch (DateTimeException e) {
+				//do nothing
+			}
+		}
+
+		@Property
+		void minMonthAfterMaxMonth(@ForAll Month min, @ForAll Month max) {
+			Assume.that(min.compareTo(max) > 0);
 			assertThatThrownBy(
-					() -> Dates.dates().monthBetween(32, 1)
-			).isInstanceOf(DateTimeException.class);
+					() -> Dates.dates().monthBetween(min, max)
+			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 	}

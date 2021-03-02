@@ -19,11 +19,9 @@ public class OffsetRangeConfigurator extends ArbitraryConfiguratorBase {
 		if (arbitrary instanceof ZoneOffsetArbitrary) {
 			ZoneOffsetArbitrary zoneOffsetArbitrary = (ZoneOffsetArbitrary) arbitrary;
 			return zoneOffsetArbitrary.between(ZoneOffset.of(range.min()), ZoneOffset.of(range.max()));
-		} else if (arbitrary instanceof OffsetTimeArbitrary) {
+		} else {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.offsetBetween(ZoneOffset.of(range.min()), ZoneOffset.of(range.max()));
-		} else {
-			return arbitrary;
 		}
 	}
 

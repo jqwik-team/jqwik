@@ -11,6 +11,7 @@ import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
 import net.jqwik.time.internal.properties.arbitraries.*;
 
+import static java.time.Month.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
@@ -53,10 +54,10 @@ class DateTests {
 	}
 
 	@Group
-	class CheckCalendarMethods {
+	class CheckDateMethods {
 
 		@Group
-		class CalendarMethods {
+		class DateMethods {
 
 			@Property
 			void atTheEarliest(@ForAll("dates") Date startDate, @ForAll Random random) {
@@ -92,6 +93,20 @@ class DateTests {
 				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(date).isAfterOrEqualTo(startDate);
 					assertThat(date).isBeforeOrEqualTo(endDate);
+					return true;
+				});
+			}
+
+			@Property
+			void betweenEndDateBeforeStartDate(@ForAll("dates") Date startDate, @ForAll("dates") Date endDate, @ForAll Random random) {
+
+				Assume.that(startDate.after(endDate));
+
+				Arbitrary<Date> dates = Dates.datesAsDate().between(startDate, endDate);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(date).isAfterOrEqualTo(endDate);
+					assertThat(date).isBeforeOrEqualTo(startDate);
 					return true;
 				});
 			}
@@ -326,7 +341,7 @@ class DateTests {
 					Dates.datesAsDate()
 						 .yearBetween(1997, 1997)
 						 .dayOfMonthBetween(17, 17)
-						 .onlyMonths(Month.MARCH, Month.OCTOBER, Month.DECEMBER)
+						 .onlyMonths(MARCH, OCTOBER, DECEMBER)
 						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -471,6 +486,70 @@ class DateTests {
 	@Group
 	class InvalidConfigurations {
 
+		@Property
+		void atTheEarliestYearNotBelow1(
+				@ForAll @IntRange(min = -5000, max = 0) int year,
+				@ForAll Month month,
+				@ForAll @DayOfMonthRange int day
+		) {
+			//Not existing Dates throws no exception but are changed to another existing date
+			Calendar calendar = new Calendar.Builder().setDate(year, DefaultCalendarArbitrary.monthToCalendarMonth(month), day).build();
+			Date date = calendar.getTime();
+			assertThatThrownBy(
+					() -> Dates.datesAsDate().atTheEarliest(date)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void atTheEarliestYearTooHigh() {
+			LocalDate localDate = LocalDate.of(292_278_994, JANUARY, 1);
+			Instant instant = localDate.atStartOfDay().toInstant(ZoneOffset.ofHours(1));
+			Date date = Date.from(instant);
+			assertThatThrownBy(
+					() -> Dates.datesAsDate().atTheEarliest(date)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void atTheEarliestMinDateAfterMaxDate(@ForAll("dates") Date min, @ForAll("dates") Date max) {
+			Assume.that(min.after(max));
+			assertThatThrownBy(
+					() -> Dates.datesAsDate().atTheLatest(max).atTheEarliest(min)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void atTheLatestYearNotBelow1(
+				@ForAll @IntRange(min = -5000, max = 0) int year,
+				@ForAll Month month,
+				@ForAll @DayOfMonthRange int day
+		) {
+			//Not existing Dates throws no exception but are changed to another existing date
+			Calendar calendar = new Calendar.Builder().setDate(year, DefaultCalendarArbitrary.monthToCalendarMonth(month), day).build();
+			Date date = calendar.getTime();
+			assertThatThrownBy(
+					() -> Dates.datesAsDate().atTheLatest(date)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void atTheLatestYearTooHigh() {
+			LocalDate localDate = LocalDate.of(292_278_994, JANUARY, 1);
+			Instant instant = localDate.atStartOfDay().toInstant(ZoneOffset.ofHours(1));
+			Date date = Date.from(instant);
+			assertThatThrownBy(
+					() -> Dates.datesAsDate().atTheLatest(date)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void atTheLatestMinDateAfterMaxDate(@ForAll("dates") Date min, @ForAll("dates") Date max) {
+			Assume.that(min.after(max));
+			assertThatThrownBy(
+					() -> Dates.datesAsDate().atTheEarliest(min).atTheLatest(max)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
 		@Example
 		void minYearMustNotBeBelow1() {
 			assertThatThrownBy(
@@ -534,23 +613,12 @@ class DateTests {
 			).isInstanceOf(DateTimeException.class);
 		}
 
-		@Example
-		void daysMustBeBetween1And31() {
+		@Property
+		void monthBetweenMinMonthAfterMaxMonth(@ForAll Month min, @ForAll Month max) {
+			Assume.that(min.compareTo(max) > 0);
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().monthBetween(0, 31)
-			).isInstanceOf(DateTimeException.class);
-
-			assertThatThrownBy(
-					() -> Dates.datesAsDate().monthBetween(31, 0)
-			).isInstanceOf(DateTimeException.class);
-
-			assertThatThrownBy(
-					() -> Dates.datesAsDate().monthBetween(1, 32)
-			).isInstanceOf(DateTimeException.class);
-
-			assertThatThrownBy(
-					() -> Dates.datesAsDate().monthBetween(32, 1)
-			).isInstanceOf(DateTimeException.class);
+					() -> Dates.datesAsDate().monthBetween(min, max)
+			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 	}

@@ -24,11 +24,9 @@ public class PrecisionConfigurator extends ArbitraryConfiguratorBase {
 		} else if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.ofPrecision(range.ofPrecision());
-		} else if (arbitrary instanceof DurationArbitrary) {
+		} else {
 			DurationArbitrary durationArbitrary = (DurationArbitrary) arbitrary;
 			return durationArbitrary.ofPrecision(range.ofPrecision());
-		} else {
-			return arbitrary;
 		}
 	}
 }

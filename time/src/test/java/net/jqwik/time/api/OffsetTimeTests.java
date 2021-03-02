@@ -128,6 +128,24 @@ class OffsetTimeTests {
 			}
 
 			@Property
+			void betweenEndTimeBeforeStartTime(
+					@ForAll("localTimes") LocalTime startTime,
+					@ForAll("localTimes") LocalTime endTime,
+					@ForAll Random random
+			) {
+
+				Assume.that(startTime.isAfter(endTime));
+
+				Arbitrary<OffsetTime> times = Times.offsetTimes().between(startTime, endTime);
+
+				assertAllGenerated(times.generator(1000), random, time -> {
+					assertThat(time.toLocalTime()).isAfterOrEqualTo(endTime);
+					assertThat(time.toLocalTime()).isBeforeOrEqualTo(startTime);
+					return true;
+				});
+			}
+
+			@Property
 			void betweenSame(@ForAll("localTimes") LocalTime sameTime, @ForAll Random random) {
 
 				Arbitrary<OffsetTime> times = Times.offsetTimes().between(sameTime, sameTime);
@@ -1185,7 +1203,7 @@ class OffsetTimeTests {
 
 		private void check60Coverage(StatisticsCoverage coverage) {
 			for (int value = 0; value < 60; value++) {
-				coverage.check(value).percentage(p -> p >= 0.3);
+				coverage.check(value).percentage(p -> p >= 0.15);
 			}
 		}
 
