@@ -1,5 +1,7 @@
 - 1.5.1
 
+    - Type variable T is only expanded to Object and Collections of Object. Bug?
+
     - Warn if explicitly added edgeCases are not within an arbitrary's allowed range.
       This can currently only work for numbers. 
 
@@ -15,7 +17,7 @@
     - StringArbitrary.excludeChars() or s.t. like that
       https://github.com/jlink/jqwik/issues/167
 
-    - Builders.with(..).use()|maybeUse().in()|inSetter() 
+    - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter() 
       to replace Combinators.withBuilder() but target cannot change across
       build steps (-> much better performance and shrinking)
       
