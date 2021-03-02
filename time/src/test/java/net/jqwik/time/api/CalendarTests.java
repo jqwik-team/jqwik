@@ -91,6 +91,24 @@ class CalendarTests {
 			}
 
 			@Property
+			void betweenEndDateAfterStartDate(
+					@ForAll("dates") Calendar startDate,
+					@ForAll("dates") Calendar endDate,
+					@ForAll Random random
+			) {
+
+				Assume.that(startDate.after(endDate));
+
+				Arbitrary<Calendar> dates = Dates.datesAsCalendar().between(startDate, endDate);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(date).isGreaterThanOrEqualTo(endDate);
+					assertThat(date).isLessThanOrEqualTo(startDate);
+					return true;
+				});
+			}
+
+			@Property
 			void betweenSame(@ForAll("dates") Calendar sameDate, @ForAll Random random) {
 
 				Arbitrary<Calendar> dates = Dates.datesAsCalendar().between(sameDate, sameDate);
@@ -464,6 +482,62 @@ class CalendarTests {
 	@Group
 	class InvalidConfigurations {
 
+		@Property
+		void atTheEarliestYearMustNotBeBelow1(
+				@ForAll @IntRange(min = -100_000, max = 0) int year,
+				@ForAll Month month,
+				@ForAll @DayOfMonthRange int day
+		) {
+			Calendar calendar = new Calendar.Builder().setDate(year, DefaultCalendarArbitrary.monthToCalendarMonth(month), day).build();
+			assertThatThrownBy(
+					() -> Dates.datesAsCalendar().atTheEarliest(calendar)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void atTheEarliestYearTooHigh() {
+			Calendar calendar = new Calendar.Builder().setDate(292_278_994, 1, 1).build();
+			assertThatThrownBy(
+					() -> Dates.datesAsCalendar().atTheEarliest(calendar)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void atTheEarliestMinAfterMax(@ForAll("dates") Calendar min, @ForAll("dates") Calendar max) {
+			Assume.that(min.after(max));
+			assertThatThrownBy(
+					() -> Dates.datesAsCalendar().atTheLatest(max).atTheEarliest(min)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void atTheLatestYearMustNotBeBelow1(
+				@ForAll @IntRange(min = -100_000, max = 0) int year,
+				@ForAll Month month,
+				@ForAll @DayOfMonthRange int day
+		) {
+			Calendar calendar = new Calendar.Builder().setDate(year, DefaultCalendarArbitrary.monthToCalendarMonth(month), day).build();
+			assertThatThrownBy(
+					() -> Dates.datesAsCalendar().atTheLatest(calendar)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void atTheLatestYearTooHigh() {
+			Calendar calendar = new Calendar.Builder().setDate(292_278_994, 1, 1).build();
+			assertThatThrownBy(
+					() -> Dates.datesAsCalendar().atTheLatest(calendar)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void atTheLatestMinAfterMax(@ForAll("dates") Calendar min, @ForAll("dates") Calendar max) {
+			Assume.that(min.after(max));
+			assertThatThrownBy(
+					() -> Dates.datesAsCalendar().atTheEarliest(min).atTheLatest(max)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
 		@Example
 		void minYearMustNotBeBelow1() {
 			assertThatThrownBy(
@@ -527,23 +601,12 @@ class CalendarTests {
 			).isInstanceOf(DateTimeException.class);
 		}
 
-		@Example
-		void daysMustBeBetween1And31() {
+		@Property
+		void minMonthAfterMax(@ForAll Month min, @ForAll Month max) {
+			Assume.that(min.compareTo(max) > 0);
 			assertThatThrownBy(
-					() -> Dates.datesAsCalendar().monthBetween(0, 31)
-			).isInstanceOf(DateTimeException.class);
-
-			assertThatThrownBy(
-					() -> Dates.datesAsCalendar().monthBetween(31, 0)
-			).isInstanceOf(DateTimeException.class);
-
-			assertThatThrownBy(
-					() -> Dates.datesAsCalendar().monthBetween(1, 32)
-			).isInstanceOf(DateTimeException.class);
-
-			assertThatThrownBy(
-					() -> Dates.datesAsCalendar().monthBetween(32, 1)
-			).isInstanceOf(DateTimeException.class);
+					() -> Dates.datesAsCalendar().monthBetween(min, max)
+			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 	}

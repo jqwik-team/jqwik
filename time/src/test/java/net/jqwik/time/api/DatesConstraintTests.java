@@ -281,6 +281,11 @@ public class DatesConstraintTests {
 			assertThat(yearMonth.getMonth()).isLessThanOrEqualTo(Month.JULY);
 		}
 
+		@Property
+		void noLeapYearsAreGenerated(@ForAll @LeapYears(withLeapYears = false) YearMonth yearMonth) {
+			assertThat(new GregorianCalendar().isLeapYear(yearMonth.getYear())).isFalse();
+		}
+
 		@Group
 		class InvalidConfigurations {
 

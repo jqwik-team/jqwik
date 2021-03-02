@@ -169,6 +169,24 @@ class LocalTimeTests {
 			}
 
 			@Property
+			void betweenEndTimeBeforeStartTime(
+					@ForAll("times") LocalTime startTime,
+					@ForAll("times") LocalTime endTime,
+					@ForAll Random random
+			) {
+
+				Assume.that(startTime.isAfter(endTime));
+
+				Arbitrary<LocalTime> times = Times.times().between(startTime, endTime);
+
+				assertAllGenerated(times.generator(1000), random, time -> {
+					assertThat(time).isAfterOrEqualTo(endTime);
+					assertThat(time).isBeforeOrEqualTo(startTime);
+					return true;
+				});
+			}
+
+			@Property
 			void betweenSame(@ForAll("times") LocalTime sameTime, @ForAll Random random) {
 
 				Arbitrary<LocalTime> times = Times.times().between(sameTime, sameTime);

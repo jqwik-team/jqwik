@@ -15,6 +15,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultDateArbitrary extends ArbitraryDecorator<Date> implements DateArbitrary {
 
+
 	private Date dateMin = null;
 	private Date dateMax = null;
 
@@ -77,8 +78,8 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<Date> implements Da
 	@Override
 	public DateArbitrary atTheEarliest(Date min) {
 		Calendar calendar = dateToCalendar(min);
-		if (calendar.get(Calendar.YEAR) <= 0) {
-			throw new IllegalArgumentException("Minimum year in a date must be > 0");
+		if (calendar.get(Calendar.ERA) != GregorianCalendar.AD) {
+			throw new IllegalArgumentException("Maximum year in a date must be > 0");
 		}
 		if (calendar.get(Calendar.YEAR) > 292_278_993) {
 			throw new IllegalArgumentException("Minimum year in a calendar date must be <= 292278993");
@@ -95,7 +96,7 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<Date> implements Da
 	@Override
 	public DateArbitrary atTheLatest(Date max) {
 		Calendar calendar = dateToCalendar(max);
-		if (calendar.get(Calendar.YEAR) <= 0) {
+		if (calendar.get(Calendar.ERA) != GregorianCalendar.AD) {
 			throw new IllegalArgumentException("Maximum year in a date must be > 0");
 		}
 		if (calendar.get(Calendar.YEAR) > 292_278_993) {

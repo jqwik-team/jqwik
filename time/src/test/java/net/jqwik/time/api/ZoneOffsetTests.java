@@ -94,7 +94,6 @@ class ZoneOffsetTests {
 			}
 
 			@Property(shrinking = ShrinkingMode.OFF)
-			@ExpectFailure(failureType = IllegalArgumentException.class)
 			void betweenNotGeneratedValues(
 					@ForAll("times") LocalTime start,
 					@ForAll("times") LocalTime end,
@@ -103,23 +102,28 @@ class ZoneOffsetTests {
 					@ForAll Random random
 			) {
 
-				Assume.that(startValueIsPositive || !start.isAfter(LocalTime.of(12, 0, 0)));
-				Assume.that(endValueIsPositive || !end.isAfter(LocalTime.of(12, 0, 0)));
-				int mul = startValueIsPositive ? 1 : -1;
-				ZoneOffset startOffset = ZoneOffset
-												 .ofHoursMinutesSeconds(mul * start.getHour(), mul * start.getMinute(), mul * start.getSecond());
-				mul = endValueIsPositive ? 1 : -1;
-				ZoneOffset endOffset = ZoneOffset.ofHoursMinutesSeconds(mul * end.getHour(), mul * end.getMinute(), mul * end.getSecond());
+				try {
+					Assume.that(startValueIsPositive || !start.isAfter(LocalTime.of(12, 0, 0)));
+					Assume.that(endValueIsPositive || !end.isAfter(LocalTime.of(12, 0, 0)));
+					int mul = startValueIsPositive ? 1 : -1;
+					ZoneOffset startOffset = ZoneOffset
+													 .ofHoursMinutesSeconds(mul * start.getHour(), mul * start.getMinute(), mul * start.getSecond());
+					mul = endValueIsPositive ? 1 : -1;
+					ZoneOffset endOffset = ZoneOffset
+												   .ofHoursMinutesSeconds(mul * end.getHour(), mul * end.getMinute(), mul * end.getSecond());
 
-				Assume.that(startOffset.getTotalSeconds() <= endOffset.getTotalSeconds());
+					Assume.that(startOffset.getTotalSeconds() <= endOffset.getTotalSeconds());
 
-				Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().between(startOffset, endOffset);
+					Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().between(startOffset, endOffset);
 
-				assertAllGenerated(offsets.generator(1000), random, offset -> {
-					assertThat(offset.getTotalSeconds()).isGreaterThanOrEqualTo(startOffset.getTotalSeconds());
-					assertThat(offset.getTotalSeconds()).isLessThanOrEqualTo(endOffset.getTotalSeconds());
-					return true;
-				});
+					assertAllGenerated(offsets.generator(1000), random, offset -> {
+						assertThat(offset.getTotalSeconds()).isGreaterThanOrEqualTo(startOffset.getTotalSeconds());
+						assertThat(offset.getTotalSeconds()).isLessThanOrEqualTo(endOffset.getTotalSeconds());
+						return true;
+					});
+				} catch (IllegalArgumentException e) {
+					//do nothing
+				}
 
 			}
 
@@ -166,7 +170,7 @@ class ZoneOffsetTests {
 	class ExhaustiveGeneration {
 
 		@Example
-		void between() {
+		void betweenPositive() {
 			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
 					Times.zoneOffsets()
 						 .between(
@@ -188,7 +192,45 @@ class ZoneOffsetTests {
 		}
 
 		@Example
-		void between2() {
+		void betweenPositiveIncreaseMinutesWithSeconds() {
+			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
+					Times.zoneOffsets()
+						 .between(
+								 ZoneOffset.ofHoursMinutesSeconds(11, 59, 59),
+								 ZoneOffset.ofHoursMinutesSeconds(12, 19, 2)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(2);
+			assertThat(generator).containsExactly(
+					ZoneOffset.ofHoursMinutesSeconds(12, 0, 0),
+					ZoneOffset.ofHoursMinutesSeconds(12, 15, 0)
+			);
+		}
+
+		@Example
+		void betweenPositiveIncreaseMinutes() {
+			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
+					Times.zoneOffsets()
+						 .between(
+								 ZoneOffset.ofHoursMinutesSeconds(11, 58, 59),
+								 ZoneOffset.ofHoursMinutesSeconds(12, 19, 2)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(2);
+			assertThat(generator).containsExactly(
+					ZoneOffset.ofHoursMinutesSeconds(12, 0, 0),
+					ZoneOffset.ofHoursMinutesSeconds(12, 15, 0)
+			);
+		}
+
+		@Example
+		void betweenNegative() {
 			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
 					Times.zoneOffsets()
 						 .between(
@@ -208,7 +250,45 @@ class ZoneOffsetTests {
 		}
 
 		@Example
-		void edgeCase1() {
+		void betweenNegativeDecreaseMinutesWithSeconds() {
+			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
+					Times.zoneOffsets()
+						 .between(
+								 ZoneOffset.ofHoursMinutesSeconds(-9, -23, -59),
+								 ZoneOffset.ofHoursMinutesSeconds(-8, -59, -59)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(2);
+			assertThat(generator).containsExactly(
+					ZoneOffset.ofHoursMinutesSeconds(-9, -15, 0),
+					ZoneOffset.ofHoursMinutesSeconds(-9, 0, 0)
+			);
+		}
+
+		@Example
+		void betweenNegativeDecreaseMinutes() {
+			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
+					Times.zoneOffsets()
+						 .between(
+								 ZoneOffset.ofHoursMinutesSeconds(-9, -23, -59),
+								 ZoneOffset.ofHoursMinutesSeconds(-8, -58, -59)
+						 )
+						 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<ZoneOffset> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(2);
+			assertThat(generator).containsExactly(
+					ZoneOffset.ofHoursMinutesSeconds(-9, -15, 0),
+					ZoneOffset.ofHoursMinutesSeconds(-9, 0, 0)
+			);
+		}
+
+		@Example
+		void sameOffsetNegative() {
 			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
 					Times.zoneOffsets()
 						 .between(
@@ -226,7 +306,7 @@ class ZoneOffsetTests {
 		}
 
 		@Example
-		void edgeCase2() {
+		void sameOffsetPositive() {
 			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
 					Times.zoneOffsets()
 						 .between(
@@ -244,7 +324,7 @@ class ZoneOffsetTests {
 		}
 
 		@Example
-		void edgeCase3() {
+		void sameOffsetZero() {
 			Optional<ExhaustiveGenerator<ZoneOffset>> optionalGenerator =
 					Times.zoneOffsets()
 						 .between(

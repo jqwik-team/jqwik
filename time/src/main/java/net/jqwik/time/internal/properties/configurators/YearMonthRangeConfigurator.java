@@ -16,12 +16,8 @@ public class YearMonthRangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, YearMonthRange range) {
-		if (arbitrary instanceof YearMonthArbitrary) {
-			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
-			return yearMonthArbitrary.between(isoDateToYearMonth(range.min()), isoDateToYearMonth(range.max()));
-		} else {
-			return arbitrary;
-		}
+		YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
+		return yearMonthArbitrary.between(isoDateToYearMonth(range.min()), isoDateToYearMonth(range.max()));
 	}
 
 	private YearMonth isoDateToYearMonth(String iso) {

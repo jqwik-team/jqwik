@@ -33,11 +33,9 @@ public class MonthRangeConfigurator extends ArbitraryConfiguratorBase {
 		} else if (arbitrary instanceof YearMonthArbitrary) {
 			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
 			return yearMonthArbitrary.monthBetween(range.min(), range.max());
-		} else if (arbitrary instanceof MonthDayArbitrary) {
+		} else {
 			MonthDayArbitrary monthDayArbitrary = (MonthDayArbitrary) arbitrary;
 			return monthDayArbitrary.monthBetween(range.min(), range.max());
-		} else {
-			return arbitrary;
 		}
 	}
 }

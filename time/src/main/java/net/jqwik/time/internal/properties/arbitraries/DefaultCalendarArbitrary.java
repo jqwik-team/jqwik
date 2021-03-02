@@ -76,7 +76,7 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 
 	@Override
 	public CalendarArbitrary atTheEarliest(Calendar min) {
-		if (min.get(Calendar.YEAR) <= 0) {
+		if (min.get(Calendar.ERA) != GregorianCalendar.AD) {
 			throw new IllegalArgumentException("Minimum year in a date must be > 0");
 		}
 		if (min.get(Calendar.YEAR) > 292_278_993) {
@@ -93,7 +93,7 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 
 	@Override
 	public CalendarArbitrary atTheLatest(Calendar max) {
-		if (max.get(Calendar.YEAR) <= 0) {
+		if (max.get(Calendar.ERA) != GregorianCalendar.AD) {
 			throw new IllegalArgumentException("Maximum year in a date must be > 0");
 		}
 		if (max.get(Calendar.YEAR) > 292_278_993) {

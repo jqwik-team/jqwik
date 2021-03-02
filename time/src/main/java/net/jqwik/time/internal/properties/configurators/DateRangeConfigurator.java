@@ -26,11 +26,9 @@ public class DateRangeConfigurator extends ArbitraryConfiguratorBase {
 		} else if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.between(isoDateToCalendar(range.min()), isoDateToCalendar(range.max()));
-		} else if (arbitrary instanceof DateArbitrary) {
+		} else {
 			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
 			return dateArbitrary.between(isoDateToDate(range.min()), isoDateToDate(range.max()));
-		} else {
-			return arbitrary;
 		}
 	}
 
