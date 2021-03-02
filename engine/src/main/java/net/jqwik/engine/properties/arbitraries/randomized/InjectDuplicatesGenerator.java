@@ -8,7 +8,9 @@ import net.jqwik.engine.*;
 
 public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
 
-	private final Store<List<Long>> previousSeeds = Store.create(this, Lifespan.TRY, ArrayList::new);
+	private Store<List<Long>> previousSeedsStore() {
+		return Store.getOrCreate(this, Lifespan.TRY, ArrayList::new);
+	}
 
 	private final RandomGenerator<T> base;
 	private final double duplicateProbability;
@@ -25,9 +27,10 @@ public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
 	}
 
 	long chooseSeed(Random random) {
+		Store<List<Long>> previousSeeds = previousSeedsStore();
 		if (!previousSeeds.get().isEmpty()) {
 			if (random.nextDouble() <= duplicateProbability) {
-				return randomPreviousSeed(random);
+				return randomPreviousSeed(previousSeeds, random);
 			}
 		}
 		long seed = random.nextLong();
@@ -35,7 +38,7 @@ public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
 		return seed;
 	}
 
-	private long randomPreviousSeed(Random random) {
+	private long randomPreviousSeed(Store<List<Long>> previousSeeds, Random random) {
 		int index = random.nextInt(previousSeeds.get().size());
 		return previousSeeds.get().get(index);
 	}

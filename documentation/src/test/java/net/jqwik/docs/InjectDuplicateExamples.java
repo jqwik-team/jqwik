@@ -20,7 +20,7 @@ class InjectDuplicateExamples {
 	/**
 	 * This property will miss an important case and therefore not reveal the bug
 	 */
-	@Property
+	@Property(edgeCases = EdgeCasesMode.NONE, afterFailure = AfterFailureMode.RANDOM_SEED)
 	boolean comparing_strings_is_symmetric(@ForAll String first, @ForAll String second) {
 		int comparison = comparator.compare(first, second);
 		String comparisonRange = comparison < 0 ? "<0" : comparison > 0 ? ">0" : "=0";

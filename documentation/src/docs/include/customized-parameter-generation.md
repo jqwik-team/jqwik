@@ -529,7 +529,7 @@ The property (most probably) succeeds and will give you confidence in your code.
 Or does it? Natural scepticism makes you check some statistics:
 
 ```java
-@Property
+@Property(edgeCases = EdgeCasesMode.NONE)
 boolean comparing_strings_is_symmetric(@ForAll String first, @ForAll String second) {
     int comparison = comparator.compare(first, second);
     String comparisonRange = comparison < 0 ? "<0" : comparison > 0 ? ">0" : "=0";
