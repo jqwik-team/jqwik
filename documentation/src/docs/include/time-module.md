@@ -6,11 +6,13 @@ This module is part of jqwik's default dependencies.
 The module provides: 
 - [default generation](#default-generation-of-dates) for date-related Java types
 - [Programmatic API](#programmatic-generation-of-dates) to configure date-related types
+- [default generation](#default-generation-of-times) for time-related Java types
+- [Programmatic API](#programmatic-generation-of-times) to configure time-related types
 
 #### Default Generation of Dates
 
 Default generation currently is supported for `LocalDate`, `Year`, `YearMonth`,
-`DayOfWeek`, `MonthDay` and `Period`. Here's an small example:
+`DayOfWeek`, `MonthDay` and `Period`. Here's a small example:
 
 ```java
 @Property
@@ -138,7 +140,7 @@ Here's the list of available methods:
 #### Default Generation of Times
 
 Default generation currently is supported for `LocalTime`, `OffsetTime`, `ZoneOffset`,
-`TimeZone`, `ZoneId` and `Duration`. Here's an small example:
+`TimeZone`, `ZoneId` and `Duration`. Here's a small example:
 
 ```java
 @Property
