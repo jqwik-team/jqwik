@@ -15,8 +15,7 @@ public class MonthDayRangeConfigurator extends ArbitraryConfiguratorBase {
 		return targetType.isAssignableFrom(MonthDay.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, MonthDayRange range) {
-		MonthDayArbitrary monthDayArbitrary = (MonthDayArbitrary) arbitrary;
+	public Arbitrary<?> configure(MonthDayArbitrary monthDayArbitrary, MonthDayRange range) {
 		return monthDayArbitrary.between(isoDateToMonthDay(range.min()), isoDateToMonthDay(range.max()));
 	}
 

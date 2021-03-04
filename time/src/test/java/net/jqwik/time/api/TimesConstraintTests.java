@@ -2,6 +2,7 @@ package net.jqwik.time.api;
 
 import java.time.*;
 import java.time.format.*;
+import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.testing.*;
@@ -9,6 +10,8 @@ import net.jqwik.time.api.constraints.*;
 
 import static java.time.temporal.ChronoUnit.*;
 import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.api.Arbitraries.*;
 
 @Group
 public class TimesConstraintTests {
@@ -917,6 +920,181 @@ public class TimesConstraintTests {
 					//do nothing
 				}
 
+			}
+
+		}
+
+	}
+
+	@Group
+	class InvalidUseOfConstraints {
+
+		@Group
+		class InvalidTypes {
+
+			@Property
+			void timeRange(@ForAll @TimeRange(min = "01:32:21.113943") Byte b) {
+				assertThat(b).isNotNull();
+			}
+
+			@Property
+			void offsetRange(@ForAll @OffsetRange(min = "-09:00:00", max = "+08:00:00") Long l) {
+				assertThat(l).isNotNull();
+			}
+
+			@Property
+			void hourRange(@ForAll @HourRange(min = 11, max = 13) Integer i) {
+				assertThat(i).isNotNull();
+			}
+
+			@Property
+			void minuteRange(@ForAll @MinuteRange(min = 11, max = 13) Random random) {
+				assertThat(random).isNotNull();
+			}
+
+			@Property
+			void secondRange(@ForAll @SecondRange(min = 11, max = 13) Boolean b) {
+				assertThat(b).isNotNull();
+			}
+
+			@Property
+			void precision(@ForAll @Precision(ofPrecision = HOURS) char c) {
+				assertThat(c).isNotNull();
+			}
+
+			@Property
+			void durationRange(@ForAll @DurationRange(max = "PT1999H22M11S") String string) {
+				assertThat(string).isNotNull();
+			}
+
+		}
+
+		@Group
+		class ValidTypesWithInvalidUse {
+
+			@Group
+			class TimeRangeConstraint {
+
+				@Property
+				void localTime(@ForAll("times") @TimeRange(min = "01:32:21.113943") LocalTime time) {
+					assertThat(time).isNotNull();
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @TimeRange(min = "01:32:21.113943") OffsetTime time) {
+					assertThat(time).isNotNull();
+				}
+
+			}
+
+			@Group
+			class OffsetRangeConstraint {
+
+				@Property
+				void zoneOffsets(@ForAll("offsets") @OffsetRange(min = "-09:00:00", max = "+08:00:00") ZoneOffset offset) {
+					assertThat(offset).isNotNull();
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @OffsetRange(min = "-09:00:00", max = "+08:00:00") OffsetTime time) {
+					assertThat(time).isNotNull();
+				}
+
+			}
+
+			@Group
+			class HourRangeConstraint {
+
+				@Property
+				void localTime(@ForAll("times") @HourRange(min = 11, max = 13) LocalTime time) {
+					assertThat(time).isNotNull();
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @HourRange(min = 11, max = 13) OffsetTime time) {
+					assertThat(time).isNotNull();
+				}
+
+			}
+
+			@Group
+			class MinuteRangeConstraint {
+
+				@Property
+				void localTime(@ForAll("times") @MinuteRange(min = 11, max = 13) LocalTime time) {
+					assertThat(time).isNotNull();
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @MinuteRange(min = 11, max = 13) OffsetTime time) {
+					assertThat(time).isNotNull();
+				}
+
+			}
+
+			@Group
+			class SecondRangeConstraint {
+
+				@Property
+				void localTime(@ForAll("times") @SecondRange(min = 11, max = 13) LocalTime time) {
+					assertThat(time).isNotNull();
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @SecondRange(min = 11, max = 13) OffsetTime time) {
+					assertThat(time).isNotNull();
+				}
+
+			}
+
+			@Group
+			class PrecisionConstraint {
+
+				@Property
+				void localTime(@ForAll("times") @Precision(ofPrecision = MINUTES) LocalTime time) {
+					assertThat(time).isNotNull();
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MINUTES) OffsetTime time) {
+					assertThat(time).isNotNull();
+				}
+
+				@Property
+				void duration(@ForAll("durations") @Precision(ofPrecision = MINUTES) Duration duration) {
+					assertThat(duration).isNotNull();
+				}
+
+			}
+
+			@Group
+			class DurationRangeConstraint {
+
+				@Property
+				void duration(@ForAll("durations") @DurationRange(max = "PT1999H22M11S") Duration duration) {
+					assertThat(duration).isNotNull();
+				}
+
+			}
+
+			@Provide
+			Arbitrary<LocalTime> times() {
+				return just(LocalTime.MIN);
+			}
+
+			@Provide
+			Arbitrary<OffsetTime> offsetTimes() {
+				return just(OffsetTime.MIN);
+			}
+
+			@Provide
+			Arbitrary<ZoneOffset> offsets() {
+				return just(ZoneOffset.MIN);
+			}
+
+			@Provide
+			Arbitrary<Duration> durations() {
+				return just(Duration.ZERO);
 			}
 
 		}

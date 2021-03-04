@@ -19,9 +19,11 @@ public class TimeRangeConfigurator extends ArbitraryConfiguratorBase {
 		if (arbitrary instanceof LocalTimeArbitrary) {
 			LocalTimeArbitrary localTimeArbitrary = (LocalTimeArbitrary) arbitrary;
 			return localTimeArbitrary.between(stringToLocalTime(range.min()), stringToLocalTime(range.max()));
-		} else {
+		} else if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.between(stringToLocalTime(range.min()), stringToLocalTime(range.max()));
+		} else {
+			return arbitrary;
 		}
 	}
 
