@@ -19,9 +19,11 @@ public class HourRangeConfigurator extends ArbitraryConfiguratorBase {
 		if (arbitrary instanceof LocalTimeArbitrary) {
 			LocalTimeArbitrary localTimeArbitrary = (LocalTimeArbitrary) arbitrary;
 			return localTimeArbitrary.hourBetween(range.min(), range.max());
-		} else {
+		} else if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.hourBetween(range.min(), range.max());
+		} else {
+			return arbitrary;
 		}
 	}
 }

@@ -12,6 +12,8 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.Arbitraries.*;
+
 @Group
 public class DatesConstraintTests {
 
@@ -421,6 +423,286 @@ public class DatesConstraintTests {
 		@Example
 		@ExpectFailure(failureType = DateTimeParseException.class)
 		void nonIsoPeriodThrowsException4(@ForAll @PeriodRange(max = "13") Period period) {
+		}
+
+	}
+
+	@Group
+	class InvalidUseOfConstraints {
+
+		@Group
+		class InvalidTypes {
+
+			@Property
+			void dateRange(@ForAll @DateRange(min = "2013-05-25", max = "2020-08-23") String string) {
+				assertThat(string).isNotNull();
+			}
+
+			@Property
+			void yearRange(@ForAll @YearRange(min = 500, max = 700) Float f) {
+				assertThat(f).isNotNull();
+			}
+
+			@Property
+			void monthRange(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) Boolean b) {
+				assertThat(b).isNotNull();
+			}
+
+			@Property
+			void dayOfMonthRange(@ForAll @DayOfMonthRange Random random) {
+				assertThat(random).isNotNull();
+			}
+
+			@Property
+			void yearMonthRange(@ForAll @YearMonthRange(min = "2013-05", max = "2020-08") Short s) {
+				assertThat(s).isNotNull();
+			}
+
+			@Property
+			void monthDayRange(@ForAll @MonthDayRange(min = "--05-25", max = "--08-23") Long l) {
+				assertThat(l).isNotNull();
+			}
+
+			@Property
+			void leapYears(@ForAll @LeapYears Integer i) {
+				assertThat(i).isNotNull();
+			}
+
+			@Property
+			void dayOfWeekRange(@ForAll @DayOfWeekRange char c) {
+				assertThat(c).isNotNull();
+			}
+
+			@Property
+			void periodRange(@ForAll @PeriodRange(min = "P1Y2M", max = "P1Y5M3D") Byte b) {
+				assertThat(b).isNotNull();
+			}
+
+		}
+
+		@Group
+		class ValidTypesWithInvalidUse {
+
+			@Group
+			class DateRangeConstraint {
+
+				@Property
+				void localDate(@ForAll("localDates") @DateRange(min = "2013-05-25", max = "2020-08-23") LocalDate date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void calendar(@ForAll("calendars") @DateRange(min = "2013-05-25", max = "2020-08-23") Calendar date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void date(@ForAll("dates") @DateRange(min = "2013-05-25", max = "2020-08-23") Date date) {
+					assertThat(date).isNotNull();
+				}
+
+			}
+
+			@Group
+			class YearRangeConstraint {
+
+				@Property
+				void localDate(@ForAll("localDates") @YearRange(min = 500, max = 700) LocalDate date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void calendar(@ForAll("calendars") @YearRange(min = 500, max = 700) Calendar date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void date(@ForAll("dates") @YearRange(min = 500, max = 700) Date date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void yearMonth(@ForAll("yearMonths") @YearRange(min = 500, max = 700) YearMonth yearMonth) {
+					assertThat(yearMonth).isNotNull();
+				}
+
+				@Property
+				void year(@ForAll("years") @YearRange(min = 500, max = 700) Year year) {
+					assertThat(year).isNotNull();
+				}
+
+			}
+
+			@Group
+			class MonthRangeConstraint {
+
+				@Property
+				void localDate(@ForAll("localDates") @MonthRange(min = Month.MARCH, max = Month.JULY) LocalDate date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void calendar(@ForAll("calendars") @MonthRange(min = Month.MARCH, max = Month.JULY) Calendar date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void date(@ForAll("dates") @MonthRange(min = Month.MARCH, max = Month.JULY) Date date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void yearMonth(@ForAll("yearMonths") @MonthRange(min = Month.MARCH, max = Month.JULY) YearMonth yearMonth) {
+					assertThat(yearMonth).isNotNull();
+				}
+
+				@Property
+				void monthDay(@ForAll("monthDays") @MonthRange(min = Month.MARCH, max = Month.JULY) MonthDay monthDay) {
+					assertThat(monthDay).isNotNull();
+				}
+
+			}
+
+			@Group
+			class DayOfMonthRangeConstraint {
+
+				@Property
+				void localDate(@ForAll("localDates") @DayOfMonthRange(min = 15, max = 20) LocalDate date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void calendar(@ForAll("calendars") @DayOfMonthRange(min = 15, max = 20) Calendar date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void date(@ForAll("dates") @DayOfMonthRange(min = 15, max = 20) Date date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void integer(@ForAll("integers") @DayOfMonthRange(min = 15, max = 20) Integer i) {
+					assertThat(i).isNotNull();
+				}
+
+			}
+
+			@Group
+			class YearMonthRangeConstraint {
+
+				@Property
+				void yearMonth(@ForAll("yearMonths") @YearMonthRange(min = "2013-05", max = "2020-08") YearMonth yearMonth) {
+					assertThat(yearMonth).isNotNull();
+				}
+
+			}
+
+			@Group
+			class MonthDayRangeConstraint {
+
+				@Property
+				void monthDay(@ForAll("monthDays") @MonthDayRange(min = "--05-25", max = "--08-23") MonthDay monthDay) {
+					assertThat(monthDay).isNotNull();
+				}
+
+			}
+
+			@Group
+			class LeapYearsConstraint {
+
+				@Property
+				void localDate(@ForAll("localDates") @LeapYears(withLeapYears = false) LocalDate date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void calendar(@ForAll("calendars") @LeapYears(withLeapYears = false) Calendar date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void date(@ForAll("dates") @LeapYears(withLeapYears = false) Date date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void yearMonth(@ForAll("yearMonths") @LeapYears(withLeapYears = false) YearMonth yearMonth) {
+					assertThat(yearMonth).isNotNull();
+				}
+
+			}
+
+			@Group
+			class DayOfWeekRangeConstraint {
+
+				@Property
+				void localDate(@ForAll("localDates") @DayOfWeekRange(max = DayOfWeek.MONDAY) LocalDate date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void calendar(@ForAll("calendars") @DayOfWeekRange(max = DayOfWeek.MONDAY) Calendar date) {
+					assertThat(date).isNotNull();
+				}
+
+				@Property
+				void date(@ForAll("dates") @DayOfWeekRange(max = DayOfWeek.MONDAY) Date date) {
+					assertThat(date).isNotNull();
+				}
+
+			}
+
+			@Group
+			class PeriodRangeConstraint {
+
+				@Property
+				void period(@ForAll("periods") @PeriodRange(min = "P1Y2M", max = "P1Y5M3D") Period period) {
+					assertThat(period).isNotNull();
+				}
+
+			}
+
+			@Provide
+			Arbitrary<LocalDate> localDates() {
+				return just(LocalDate.MIN);
+			}
+
+			@Provide
+			Arbitrary<Calendar> calendars() {
+				return just(new Calendar.Builder().setDate(2000, Calendar.JANUARY, 1).build());
+			}
+
+			@Provide
+			Arbitrary<Date> dates() {
+				return just(new Calendar.Builder().setDate(2000, Calendar.JANUARY, 1).build().getTime());
+			}
+
+			@Provide
+			Arbitrary<YearMonth> yearMonths() {
+				return just(YearMonth.of(2000, Month.JANUARY));
+			}
+
+			@Provide
+			Arbitrary<Year> years() {
+				return just(Year.of(2000));
+			}
+
+			@Provide
+			Arbitrary<MonthDay> monthDays() {
+				return just(MonthDay.of(Month.JANUARY, 1));
+			}
+
+			@Provide
+			Arbitrary<Integer> integers() {
+				return just(1);
+			}
+
+			@Provide
+			Arbitrary<Period> periods() {
+				return just(Period.ZERO);
+			}
+
 		}
 
 	}

@@ -19,9 +19,11 @@ public class SecondRangeConfigurator extends ArbitraryConfiguratorBase {
 		if (arbitrary instanceof LocalTimeArbitrary) {
 			LocalTimeArbitrary localTimeArbitrary = (LocalTimeArbitrary) arbitrary;
 			return localTimeArbitrary.secondBetween(range.min(), range.max());
-		} else {
+		} else if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.secondBetween(range.min(), range.max());
+		} else {
+			return arbitrary;
 		}
 	}
 }

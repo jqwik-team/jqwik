@@ -19,9 +19,11 @@ public class MinuteRangeConfigurator extends ArbitraryConfiguratorBase {
 		if (arbitrary instanceof LocalTimeArbitrary) {
 			LocalTimeArbitrary localTimeArbitrary = (LocalTimeArbitrary) arbitrary;
 			return localTimeArbitrary.minuteBetween(range.min(), range.max());
-		} else {
+		} else if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.minuteBetween(range.min(), range.max());
+		} else {
+			return arbitrary;
 		}
 	}
 }

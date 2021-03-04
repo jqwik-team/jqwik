@@ -29,9 +29,11 @@ public class LeapYearsConfigurator extends ArbitraryConfiguratorBase {
 		} else if (arbitrary instanceof DateArbitrary) {
 			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
 			return dateArbitrary.leapYears(leapYears.withLeapYears());
-		} else {
+		} else if (arbitrary instanceof YearMonthArbitrary) {
 			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
 			return yearMonthArbitrary.leapYears(leapYears.withLeapYears());
+		} else {
+			return arbitrary;
 		}
 	}
 

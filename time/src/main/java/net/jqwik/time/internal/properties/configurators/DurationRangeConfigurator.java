@@ -15,8 +15,7 @@ public class DurationRangeConfigurator extends ArbitraryConfiguratorBase {
 		return targetType.isAssignableFrom(Duration.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DurationRange range) {
-		DurationArbitrary durationArbitrary = (DurationArbitrary) arbitrary;
+	public Arbitrary<?> configure(DurationArbitrary durationArbitrary, DurationRange range) {
 		return durationArbitrary.between(Duration.parse(range.min()), Duration.parse(range.max()));
 	}
 
