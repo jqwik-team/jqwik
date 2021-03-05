@@ -2,11 +2,16 @@ package net.jqwik.testing;
 
 import java.util.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.lifecycle.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = EXPERIMENTAL, since = "1.5.1")
 public class ReportMemoryHook implements AroundPropertyHook {
 
-	public static final double BYTES_PER_MBYTE = 1048576.0;
+	private static final double BYTES_PER_MBYTE = 1048576.0;
 
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {

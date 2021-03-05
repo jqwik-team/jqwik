@@ -15,11 +15,9 @@ import net.jqwik.engine.support.*;
 public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	// Cached arbitraries only have to survive one property
-	private static final Store<Map<Integer, LazyOfArbitrary<?>>> cachedArbitraries = createArbitrariesStore();
-
-	private static Store<Map<Integer, LazyOfArbitrary<?>>> createArbitrariesStore() {
+	private static Store<Map<Integer, LazyOfArbitrary<?>>> arbitrariesStore() {
 		try {
-			return Store.create(Tuple.of(LazyOfShrinkable.class, "arbitraries"), Lifespan.PROPERTY, HashMap::new);
+			return Store.getOrCreate(Tuple.of(LazyOfShrinkable.class, "arbitraries"), Lifespan.PROPERTY, HashMap::new);
 		} catch (OutsideJqwikException outsideJqwikException) {
 			return Store.free(HashMap::new);
 		}
@@ -27,10 +25,8 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	public static <T> Arbitrary<T> of(int hashIdentifier, List<Supplier<Arbitrary<T>>> suppliers) {
 		// It's important for good shrinking to work that the same arbitrary usage is handled by the same arbitrary instance
-		// TODO: Make this a generic mechanism for arbitraries that require to hold state, e.g. unique()
-		// TODO: This does not work when used outside a jqwik thread, e.g. with Arbitrary.sample()
-		LazyOfArbitrary<?> arbitrary = cachedArbitraries.get().computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
-		//noinspection unchecked
+		LazyOfArbitrary<?> arbitrary = arbitrariesStore().get().computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
+ 		//noinspection unchecked
 		return (Arbitrary<T>) arbitrary;
 	}
 

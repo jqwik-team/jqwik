@@ -1,8 +1,6 @@
 - 1.5.1
 
-    - Scrutinize usages of Store.create(..) and Store.createOrGet(..) for memory leaks
-    
-    - Shrinking of Strings is very slow. Can it be improved.
+    - Shrinking of Strings is very slow. Can it be improved?
 
     - Type variable T is only expanded to Object and Collections of Object. Bug?
 
