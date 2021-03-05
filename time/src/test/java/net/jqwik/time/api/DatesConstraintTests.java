@@ -334,6 +334,11 @@ public class DatesConstraintTests {
 			assertThat(monthDay.getMonth()).isLessThanOrEqualTo(Month.JULY);
 		}
 
+		@Property
+		void dayOfMonthRangeBetween15And20(@ForAll @DayOfMonthRange(min = 15, max = 20) MonthDay monthDay) {
+			assertThat(monthDay.getDayOfMonth()).isBetween(15, 20);
+		}
+
 		@Group
 		class InvalidConfigurations {
 
@@ -430,277 +435,611 @@ public class DatesConstraintTests {
 	@Group
 	class InvalidUseOfConstraints {
 
+		@Property
+		void dateRange(@ForAll @DateRange(min = "2013-05-25", max = "2020-08-23") String string) {
+			assertThat(string).isNotNull();
+		}
+
+		@Property
+		void yearRange(@ForAll @YearRange(min = 500, max = 700) Float f) {
+			assertThat(f).isNotNull();
+		}
+
+		@Property
+		void monthRange(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) Boolean b) {
+			assertThat(b).isNotNull();
+		}
+
+		@Property
+		void dayOfMonthRange(@ForAll @DayOfMonthRange Random random) {
+			assertThat(random).isNotNull();
+		}
+
+		@Property
+		void yearMonthRange(@ForAll @YearMonthRange(min = "2013-05", max = "2020-08") Short s) {
+			assertThat(s).isNotNull();
+		}
+
+		@Property
+		void monthDayRange(@ForAll @MonthDayRange(min = "--05-25", max = "--08-23") Long l) {
+			assertThat(l).isNotNull();
+		}
+
+		@Property
+		void leapYears(@ForAll @LeapYears Integer i) {
+			assertThat(i).isNotNull();
+		}
+
+		@Property
+		void dayOfWeekRange(@ForAll @DayOfWeekRange char c) {
+			assertThat(c).isNotNull();
+		}
+
+		@Property
+		void periodRange(@ForAll @PeriodRange(min = "P1Y2M", max = "P1Y5M3D") Byte b) {
+			assertThat(b).isNotNull();
+		}
+
+	}
+
+	@Group
+	@Disabled
+	class ValidTypesWithOwnArbitraries {
+
 		@Group
-		class InvalidTypes {
+		class DateRangeConstraint {
 
 			@Property
-			void dateRange(@ForAll @DateRange(min = "2013-05-25", max = "2020-08-23") String string) {
-				assertThat(string).isNotNull();
+			void localDate(@ForAll("localDates") @DateRange(min = "2021-03-02", max = "2021-03-06") LocalDate date) {
+				assertThat(date).isBetween(LocalDate.of(2021, Month.MARCH, 2), LocalDate.of(2021, Month.MARCH, 6));
 			}
 
 			@Property
-			void yearRange(@ForAll @YearRange(min = 500, max = 700) Float f) {
-				assertThat(f).isNotNull();
+			void calendar(@ForAll("calendars") @DateRange(min = "2021-03-02", max = "2021-03-06") Calendar date) {
+				Calendar start = new Calendar.Builder().setDate(2021, Calendar.MARCH, 2).build();
+				Calendar end = new Calendar.Builder().setDate(2021, Calendar.MARCH, 6).build();
+				assertThat(date).isBetween(start, end);
 			}
 
 			@Property
-			void monthRange(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) Boolean b) {
-				assertThat(b).isNotNull();
+			void date(@ForAll("dates") @DateRange(min = "2021-03-02", max = "2021-03-06") Date date) {
+				Date start = new Calendar.Builder().setDate(2021, Calendar.MARCH, 2).build().getTime();
+				Date end = new Calendar.Builder().setDate(2021, Calendar.MARCH, 6).build().getTime();
+				assertThat(date).isAfterOrEqualTo(start);
+				assertThat(date).isBeforeOrEqualTo(end);
 			}
 
-			@Property
-			void dayOfMonthRange(@ForAll @DayOfMonthRange Random random) {
-				assertThat(random).isNotNull();
+			@Provide
+			Arbitrary<LocalDate> localDates() {
+				return of(
+						LocalDate.of(2021, Month.MARCH, 1),
+						LocalDate.of(2021, Month.MARCH, 2),
+						LocalDate.of(2021, Month.MARCH, 3),
+						LocalDate.of(2021, Month.MARCH, 4),
+						LocalDate.of(2021, Month.MARCH, 5),
+						LocalDate.of(2021, Month.MARCH, 6),
+						LocalDate.of(2021, Month.MARCH, 7)
+				);
 			}
 
-			@Property
-			void yearMonthRange(@ForAll @YearMonthRange(min = "2013-05", max = "2020-08") Short s) {
-				assertThat(s).isNotNull();
+			@Provide
+			Arbitrary<Calendar> calendars() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 2).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 3).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 4).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 5).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 6).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 7).build()
+				);
 			}
 
-			@Property
-			void monthDayRange(@ForAll @MonthDayRange(min = "--05-25", max = "--08-23") Long l) {
-				assertThat(l).isNotNull();
-			}
-
-			@Property
-			void leapYears(@ForAll @LeapYears Integer i) {
-				assertThat(i).isNotNull();
-			}
-
-			@Property
-			void dayOfWeekRange(@ForAll @DayOfWeekRange char c) {
-				assertThat(c).isNotNull();
-			}
-
-			@Property
-			void periodRange(@ForAll @PeriodRange(min = "P1Y2M", max = "P1Y5M3D") Byte b) {
-				assertThat(b).isNotNull();
+			@Provide
+			Arbitrary<Date> dates() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 2).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 3).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 4).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 5).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 6).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 7).build().getTime()
+				);
 			}
 
 		}
 
 		@Group
-		class ValidTypesWithInvalidUse {
+		class YearRangeConstraint {
 
-			@Group
-			class DateRangeConstraint {
-
-				@Property
-				void localDate(@ForAll("localDates") @DateRange(min = "2013-05-25", max = "2020-08-23") LocalDate date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void calendar(@ForAll("calendars") @DateRange(min = "2013-05-25", max = "2020-08-23") Calendar date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void date(@ForAll("dates") @DateRange(min = "2013-05-25", max = "2020-08-23") Date date) {
-					assertThat(date).isNotNull();
-				}
-
+			@Property
+			void localDate(@ForAll("localDates") @YearRange(min = 2022, max = 2025) LocalDate date) {
+				assertThat(date.getYear()).isBetween(2022, 2025);
 			}
 
-			@Group
-			class YearRangeConstraint {
-
-				@Property
-				void localDate(@ForAll("localDates") @YearRange(min = 500, max = 700) LocalDate date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void calendar(@ForAll("calendars") @YearRange(min = 500, max = 700) Calendar date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void date(@ForAll("dates") @YearRange(min = 500, max = 700) Date date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void yearMonth(@ForAll("yearMonths") @YearRange(min = 500, max = 700) YearMonth yearMonth) {
-					assertThat(yearMonth).isNotNull();
-				}
-
-				@Property
-				void year(@ForAll("years") @YearRange(min = 500, max = 700) Year year) {
-					assertThat(year).isNotNull();
-				}
-
+			@Property
+			void calendar(@ForAll("calendars") @YearRange(min = 2022, max = 2025) Calendar date) {
+				assertThat(date.get(Calendar.YEAR)).isBetween(2022, 2025);
 			}
 
-			@Group
-			class MonthRangeConstraint {
-
-				@Property
-				void localDate(@ForAll("localDates") @MonthRange(min = Month.MARCH, max = Month.JULY) LocalDate date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void calendar(@ForAll("calendars") @MonthRange(min = Month.MARCH, max = Month.JULY) Calendar date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void date(@ForAll("dates") @MonthRange(min = Month.MARCH, max = Month.JULY) Date date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void yearMonth(@ForAll("yearMonths") @MonthRange(min = Month.MARCH, max = Month.JULY) YearMonth yearMonth) {
-					assertThat(yearMonth).isNotNull();
-				}
-
-				@Property
-				void monthDay(@ForAll("monthDays") @MonthRange(min = Month.MARCH, max = Month.JULY) MonthDay monthDay) {
-					assertThat(monthDay).isNotNull();
-				}
-
+			@Property
+			void date(@ForAll("dates") @YearRange(min = 2022, max = 2025) Date date) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				assertThat(calendar.get(Calendar.YEAR)).isBetween(2022, 2025);
 			}
 
-			@Group
-			class DayOfMonthRangeConstraint {
-
-				@Property
-				void localDate(@ForAll("localDates") @DayOfMonthRange(min = 15, max = 20) LocalDate date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void calendar(@ForAll("calendars") @DayOfMonthRange(min = 15, max = 20) Calendar date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void date(@ForAll("dates") @DayOfMonthRange(min = 15, max = 20) Date date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void integer(@ForAll("integers") @DayOfMonthRange(min = 15, max = 20) Integer i) {
-					assertThat(i).isNotNull();
-				}
-
+			@Property
+			void yearMonth(@ForAll("yearMonths") @YearRange(min = 2022, max = 2025) YearMonth yearMonth) {
+				assertThat(yearMonth.getYear()).isBetween(2022, 2025);
 			}
 
-			@Group
-			class YearMonthRangeConstraint {
-
-				@Property
-				void yearMonth(@ForAll("yearMonths") @YearMonthRange(min = "2013-05", max = "2020-08") YearMonth yearMonth) {
-					assertThat(yearMonth).isNotNull();
-				}
-
-			}
-
-			@Group
-			class MonthDayRangeConstraint {
-
-				@Property
-				void monthDay(@ForAll("monthDays") @MonthDayRange(min = "--05-25", max = "--08-23") MonthDay monthDay) {
-					assertThat(monthDay).isNotNull();
-				}
-
-			}
-
-			@Group
-			class LeapYearsConstraint {
-
-				@Property
-				void localDate(@ForAll("localDates") @LeapYears(withLeapYears = false) LocalDate date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void calendar(@ForAll("calendars") @LeapYears(withLeapYears = false) Calendar date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void date(@ForAll("dates") @LeapYears(withLeapYears = false) Date date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void yearMonth(@ForAll("yearMonths") @LeapYears(withLeapYears = false) YearMonth yearMonth) {
-					assertThat(yearMonth).isNotNull();
-				}
-
-			}
-
-			@Group
-			class DayOfWeekRangeConstraint {
-
-				@Property
-				void localDate(@ForAll("localDates") @DayOfWeekRange(max = DayOfWeek.MONDAY) LocalDate date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void calendar(@ForAll("calendars") @DayOfWeekRange(max = DayOfWeek.MONDAY) Calendar date) {
-					assertThat(date).isNotNull();
-				}
-
-				@Property
-				void date(@ForAll("dates") @DayOfWeekRange(max = DayOfWeek.MONDAY) Date date) {
-					assertThat(date).isNotNull();
-				}
-
-			}
-
-			@Group
-			class PeriodRangeConstraint {
-
-				@Property
-				void period(@ForAll("periods") @PeriodRange(min = "P1Y2M", max = "P1Y5M3D") Period period) {
-					assertThat(period).isNotNull();
-				}
-
+			@Property
+			void year(@ForAll("years") @YearRange(min = 2022, max = 2025) Year year) {
+				assertThat(year.getValue()).isBetween(2022, 2025);
 			}
 
 			@Provide
 			Arbitrary<LocalDate> localDates() {
-				return just(LocalDate.MIN);
+				return of(
+						LocalDate.of(2021, Month.MARCH, 1),
+						LocalDate.of(2022, Month.MARCH, 1),
+						LocalDate.of(2023, Month.MARCH, 1),
+						LocalDate.of(2024, Month.MARCH, 1),
+						LocalDate.of(2025, Month.MARCH, 1),
+						LocalDate.of(2026, Month.MARCH, 1),
+						LocalDate.of(2027, Month.MARCH, 1)
+				);
 			}
 
 			@Provide
 			Arbitrary<Calendar> calendars() {
-				return just(new Calendar.Builder().setDate(2000, Calendar.JANUARY, 1).build());
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2022, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2023, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2024, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2025, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2026, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2027, Calendar.MARCH, 1).build()
+				);
 			}
 
 			@Provide
 			Arbitrary<Date> dates() {
-				return just(new Calendar.Builder().setDate(2000, Calendar.JANUARY, 1).build().getTime());
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2022, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2023, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2024, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2025, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2026, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2027, Calendar.MARCH, 1).build().getTime()
+				);
 			}
 
 			@Provide
 			Arbitrary<YearMonth> yearMonths() {
-				return just(YearMonth.of(2000, Month.JANUARY));
+				return of(
+						YearMonth.of(2021, Month.JANUARY),
+						YearMonth.of(2022, Month.JANUARY),
+						YearMonth.of(2023, Month.JANUARY),
+						YearMonth.of(2024, Month.JANUARY),
+						YearMonth.of(2025, Month.JANUARY),
+						YearMonth.of(2026, Month.JANUARY),
+						YearMonth.of(2027, Month.JANUARY)
+				);
 			}
 
 			@Provide
 			Arbitrary<Year> years() {
-				return just(Year.of(2000));
+				return of(
+						Year.of(2021),
+						Year.of(2022),
+						Year.of(2023),
+						Year.of(2024),
+						Year.of(2025),
+						Year.of(2026),
+						Year.of(2027)
+				);
+			}
+
+		}
+
+		@Group
+		class MonthRangeConstraint {
+
+			@Property
+			void localDate(@ForAll("localDates") @MonthRange(min = Month.MARCH, max = Month.MAY) LocalDate date) {
+				assertThat(date.getMonth()).isBetween(Month.MARCH, Month.MAY);
+			}
+
+			@Property
+			void calendar(@ForAll("calendars") @MonthRange(min = Month.MARCH, max = Month.MAY) Calendar date) {
+				assertThat(date.get(Calendar.MONTH)).isBetween(Calendar.MARCH, Calendar.MAY);
+			}
+
+			@Property
+			void date(@ForAll("dates") @MonthRange(min = Month.MARCH, max = Month.MAY) Date date) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				assertThat(calendar.get(Calendar.MONTH)).isBetween(Calendar.MARCH, Calendar.MAY);
+			}
+
+			@Property
+			void yearMonth(@ForAll("yearMonths") @MonthRange(min = Month.MARCH, max = Month.MAY) YearMonth yearMonth) {
+				assertThat(yearMonth.getMonth()).isBetween(Month.MARCH, Month.MAY);
+			}
+
+			@Property
+			void monthDay(@ForAll("monthDays") @MonthRange(min = Month.MARCH, max = Month.MAY) MonthDay monthDay) {
+				assertThat(monthDay.getMonth()).isBetween(Month.MARCH, Month.MAY);
+			}
+
+			@Provide
+			Arbitrary<LocalDate> localDates() {
+				return of(
+						LocalDate.of(2021, Month.FEBRUARY, 1),
+						LocalDate.of(2021, Month.MARCH, 1),
+						LocalDate.of(2021, Month.APRIL, 1),
+						LocalDate.of(2021, Month.MAY, 1),
+						LocalDate.of(2021, Month.JUNE, 1),
+						LocalDate.of(2021, Month.JULY, 1),
+						LocalDate.of(2021, Month.AUGUST, 1)
+				);
+			}
+
+			@Provide
+			Arbitrary<Calendar> calendars() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.FEBRUARY, 1).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2021, Calendar.APRIL, 1).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MAY, 1).build(),
+						new Calendar.Builder().setDate(2021, Calendar.JUNE, 1).build(),
+						new Calendar.Builder().setDate(2021, Calendar.JULY, 1).build(),
+						new Calendar.Builder().setDate(2021, Calendar.AUGUST, 1).build()
+				);
+			}
+
+			@Provide
+			Arbitrary<Date> dates() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.FEBRUARY, 1).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.APRIL, 1).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MAY, 1).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.JUNE, 1).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.JULY, 1).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.AUGUST, 1).build().getTime()
+				);
+			}
+
+			@Provide
+			Arbitrary<YearMonth> yearMonths() {
+				return of(
+						YearMonth.of(2021, Month.JANUARY),
+						YearMonth.of(2021, Month.FEBRUARY),
+						YearMonth.of(2021, Month.MARCH),
+						YearMonth.of(2021, Month.APRIL),
+						YearMonth.of(2021, Month.MAY),
+						YearMonth.of(2021, Month.JUNE),
+						YearMonth.of(2021, Month.JULY)
+				);
 			}
 
 			@Provide
 			Arbitrary<MonthDay> monthDays() {
-				return just(MonthDay.of(Month.JANUARY, 1));
+				return of(
+						MonthDay.of(Month.JANUARY, 1),
+						MonthDay.of(Month.FEBRUARY, 1),
+						MonthDay.of(Month.MARCH, 1),
+						MonthDay.of(Month.APRIL, 1),
+						MonthDay.of(Month.MAY, 1),
+						MonthDay.of(Month.JUNE, 1),
+						MonthDay.of(Month.JULY, 1)
+				);
+			}
+
+		}
+
+		@Group
+		class DayOfMonthRangeConstraint {
+
+			@Property
+			void localDate(@ForAll("localDates") @DayOfMonthRange(min = 15, max = 19) LocalDate date) {
+				assertThat(date.getDayOfMonth()).isBetween(15, 19);
+			}
+
+			@Property
+			void calendar(@ForAll("calendars") @DayOfMonthRange(min = 15, max = 19) Calendar date) {
+				assertThat(date.get(Calendar.DAY_OF_MONTH)).isBetween(15, 19);
+			}
+
+			@Property
+			void date(@ForAll("dates") @DayOfMonthRange(min = 15, max = 19) Date date) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				assertThat(calendar.get(Calendar.DAY_OF_MONTH)).isBetween(15, 19);
+			}
+
+			@Property
+			void monthDay(@ForAll("monthDays") @DayOfMonthRange(min = 15, max = 19) MonthDay monthDay) {
+				assertThat(monthDay.getDayOfMonth()).isBetween(15, 19);
+			}
+
+			@Property
+			void integer(@ForAll("integers") @DayOfMonthRange(min = 15, max = 19) Integer i) {
+				assertThat(i).isBetween(15, 19);
+			}
+
+			@Provide
+			Arbitrary<LocalDate> localDates() {
+				return of(
+						LocalDate.of(2021, Month.MARCH, 14),
+						LocalDate.of(2021, Month.MARCH, 15),
+						LocalDate.of(2021, Month.MARCH, 16),
+						LocalDate.of(2021, Month.MARCH, 17),
+						LocalDate.of(2021, Month.MARCH, 18),
+						LocalDate.of(2021, Month.MARCH, 19),
+						LocalDate.of(2021, Month.MARCH, 20)
+				);
+			}
+
+			@Provide
+			Arbitrary<Calendar> calendars() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 14).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 15).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 16).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 17).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 18).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 19).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 20).build()
+				);
+			}
+
+			@Provide
+			Arbitrary<Date> dates() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 14).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 15).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 16).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 17).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 18).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 19).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 20).build().getTime()
+				);
+			}
+
+			@Provide
+			Arbitrary<MonthDay> monthDays() {
+				return of(
+						MonthDay.of(Month.MARCH, 14),
+						MonthDay.of(Month.MARCH, 15),
+						MonthDay.of(Month.MARCH, 16),
+						MonthDay.of(Month.MARCH, 17),
+						MonthDay.of(Month.MARCH, 18),
+						MonthDay.of(Month.MARCH, 19),
+						MonthDay.of(Month.MARCH, 20)
+				);
 			}
 
 			@Provide
 			Arbitrary<Integer> integers() {
-				return just(1);
+				return of(14, 15, 16, 17, 18, 19, 20);
+			}
+
+		}
+
+		@Group
+		class YearMonthRangeConstraint {
+
+			@Property
+			void yearMonth(@ForAll("yearMonths") @YearMonthRange(min = "2020-02", max = "2021-06") YearMonth yearMonth) {
+				assertThat(yearMonth).isBetween(YearMonth.of(2020, Month.FEBRUARY), YearMonth.of(2021, Month.JUNE));
+			}
+
+			@Provide
+			Arbitrary<YearMonth> yearMonths() {
+				return of(
+						YearMonth.of(2020, Month.JANUARY),
+						YearMonth.of(2020, Month.FEBRUARY),
+						YearMonth.of(2020, Month.MARCH),
+						YearMonth.of(2021, Month.APRIL),
+						YearMonth.of(2021, Month.MAY),
+						YearMonth.of(2021, Month.JUNE),
+						YearMonth.of(2021, Month.JULY)
+				);
+			}
+
+		}
+
+		@Group
+		class MonthDayRangeConstraint {
+
+			@Property
+			void monthDay(@ForAll("monthDays") @MonthDayRange(min = "--02-15", max = "--03-19") MonthDay monthDay) {
+				assertThat(monthDay).isBetween(MonthDay.of(Month.FEBRUARY, 15), MonthDay.of(Month.MARCH, 19));
+			}
+
+			@Provide
+			Arbitrary<MonthDay> monthDays() {
+				return of(
+						MonthDay.of(Month.FEBRUARY, 14),
+						MonthDay.of(Month.FEBRUARY, 15),
+						MonthDay.of(Month.FEBRUARY, 16),
+						MonthDay.of(Month.MARCH, 17),
+						MonthDay.of(Month.MARCH, 18),
+						MonthDay.of(Month.MARCH, 19),
+						MonthDay.of(Month.MARCH, 20)
+				);
+			}
+
+		}
+
+		@Group
+		class LeapYearsConstraint {
+
+			@Property
+			void localDate(@ForAll("localDates") @LeapYears(withLeapYears = false) LocalDate date) {
+				assertThat(new GregorianCalendar().isLeapYear(date.getYear())).isFalse();
+			}
+
+			@Property
+			void calendar(@ForAll("calendars") @LeapYears(withLeapYears = false) Calendar date) {
+				assertThat(new GregorianCalendar().isLeapYear(date.get(Calendar.YEAR))).isFalse();
+			}
+
+			@Property
+			void date(@ForAll("dates") @LeapYears(withLeapYears = false) Date date) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				assertThat(new GregorianCalendar().isLeapYear(calendar.get(Calendar.YEAR))).isFalse();
+			}
+
+			@Property
+			void yearMonth(@ForAll("yearMonths") @LeapYears(withLeapYears = false) YearMonth yearMonth) {
+				assertThat(new GregorianCalendar().isLeapYear(yearMonth.getYear())).isFalse();
+			}
+
+			@Provide
+			Arbitrary<LocalDate> localDates() {
+				return of(
+						LocalDate.of(2021, Month.FEBRUARY, 1),
+						LocalDate.of(2022, Month.MARCH, 1),
+						LocalDate.of(2023, Month.APRIL, 1),
+						LocalDate.of(2024, Month.MAY, 1),
+						LocalDate.of(2025, Month.JUNE, 1),
+						LocalDate.of(2026, Month.JULY, 1),
+						LocalDate.of(2027, Month.AUGUST, 1)
+				);
+			}
+
+			@Provide
+			Arbitrary<Calendar> calendars() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.FEBRUARY, 1).build(),
+						new Calendar.Builder().setDate(2022, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2023, Calendar.APRIL, 1).build(),
+						new Calendar.Builder().setDate(2024, Calendar.MAY, 1).build(),
+						new Calendar.Builder().setDate(2025, Calendar.JUNE, 1).build(),
+						new Calendar.Builder().setDate(2026, Calendar.JULY, 1).build(),
+						new Calendar.Builder().setDate(2027, Calendar.AUGUST, 1).build()
+				);
+			}
+
+			@Provide
+			Arbitrary<Date> dates() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.FEBRUARY, 1).build().getTime(),
+						new Calendar.Builder().setDate(2022, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2023, Calendar.APRIL, 1).build().getTime(),
+						new Calendar.Builder().setDate(2024, Calendar.MAY, 1).build().getTime(),
+						new Calendar.Builder().setDate(2025, Calendar.JUNE, 1).build().getTime(),
+						new Calendar.Builder().setDate(2026, Calendar.JULY, 1).build().getTime(),
+						new Calendar.Builder().setDate(2027, Calendar.AUGUST, 1).build().getTime()
+				);
+			}
+
+			@Provide
+			Arbitrary<YearMonth> yearMonths() {
+				return of(
+						YearMonth.of(2021, Month.JANUARY),
+						YearMonth.of(2022, Month.FEBRUARY),
+						YearMonth.of(2023, Month.MARCH),
+						YearMonth.of(2024, Month.APRIL),
+						YearMonth.of(2025, Month.MAY),
+						YearMonth.of(2026, Month.JUNE),
+						YearMonth.of(2027, Month.JULY)
+				);
+			}
+
+		}
+
+		@Group
+		class DayOfWeekRangeConstraint {
+
+			@Property
+			void localDate(@ForAll("localDates") @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) LocalDate date) {
+				assertThat(date.getDayOfWeek()).isBetween(DayOfWeek.TUESDAY, DayOfWeek.FRIDAY);
+			}
+
+			@Property
+			void calendar(@ForAll("calendars") @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) Calendar date) {
+				assertThat(date.get(Calendar.DAY_OF_WEEK)).isBetween(Calendar.TUESDAY, Calendar.FRIDAY);
+			}
+
+			@Property
+			void date(@ForAll("dates") @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) Date date) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				assertThat(calendar.get(Calendar.DAY_OF_WEEK)).isBetween(Calendar.TUESDAY, Calendar.FRIDAY);
+			}
+
+			@Provide
+			Arbitrary<LocalDate> localDates() {
+				return of(
+						LocalDate.of(2021, Month.MARCH, 1),
+						LocalDate.of(2021, Month.MARCH, 2),
+						LocalDate.of(2021, Month.MARCH, 3),
+						LocalDate.of(2021, Month.MARCH, 4),
+						LocalDate.of(2021, Month.MARCH, 5),
+						LocalDate.of(2021, Month.MARCH, 6),
+						LocalDate.of(2021, Month.MARCH, 7)
+				);
+			}
+
+			@Provide
+			Arbitrary<Calendar> calendars() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 2).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 3).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 4).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 5).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 6).build(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 7).build()
+				);
+			}
+
+			@Provide
+			Arbitrary<Date> dates() {
+				return of(
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 2).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 3).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 4).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 5).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 6).build().getTime(),
+						new Calendar.Builder().setDate(2021, Calendar.MARCH, 7).build().getTime()
+				);
+			}
+
+		}
+
+		@Group
+		class PeriodRangeConstraint {
+
+			@Property
+			void period(@ForAll("periods") @PeriodRange(min = "P2Y2M4D", max = "P2Y2M7D") Period period) {
+				assertThat(period.getYears()).isEqualTo(2);
+				assertThat(period.getMonths()).isEqualTo(2);
+				assertThat(period.getDays()).isBetween(4, 7);
 			}
 
 			@Provide
 			Arbitrary<Period> periods() {
-				return just(Period.ZERO);
+				return of(
+						Period.of(2, 2, 3),
+						Period.of(2, 2, 4),
+						Period.of(2, 2, 5),
+						Period.of(2, 2, 6),
+						Period.of(2, 2, 7),
+						Period.of(2, 2, 8),
+						Period.of(2, 2, 9)
+				);
 			}
 
 		}

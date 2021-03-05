@@ -17,6 +17,7 @@ public class DayOfMonthRangeConfigurator extends ArbitraryConfiguratorBase {
 		return targetType.isAssignableFrom(LocalDate.class)
 					   || targetType.isAssignableFrom(Calendar.class)
 					   || targetType.isAssignableFrom(Date.class)
+					   || targetType.isAssignableFrom(MonthDay.class)
 					   || targetType.isAssignableFrom(Integer.class);
 	}
 
@@ -30,6 +31,9 @@ public class DayOfMonthRangeConfigurator extends ArbitraryConfiguratorBase {
 		} else if (arbitrary instanceof DateArbitrary) {
 			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
 			return dateArbitrary.dayOfMonthBetween(range.min(), range.max());
+		} else if (arbitrary instanceof MonthDayArbitrary) {
+			MonthDayArbitrary monthDayArbitrary = (MonthDayArbitrary) arbitrary;
+			return monthDayArbitrary.dayOfMonthBetween(range.min(), range.max());
 		} else if (arbitrary instanceof IntegerArbitrary) {
 			IntegerArbitrary dayOfMonthsArbitrary = (IntegerArbitrary) arbitrary;
 			return dayOfMonthsArbitrary.between(range.min(), range.max());
