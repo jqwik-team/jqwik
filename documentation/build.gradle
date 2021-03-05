@@ -123,6 +123,7 @@ dependencies {
 	testImplementation(project(":base"))
 	testImplementation(project(":time"))
 	testImplementation(project(":web"))
+	testImplementation(project(":testing"))
 	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 }
