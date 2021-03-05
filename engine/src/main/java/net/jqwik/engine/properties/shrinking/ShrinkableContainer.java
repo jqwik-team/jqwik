@@ -38,7 +38,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	public Stream<Shrinkable<C>> shrink() {
 		return JqwikStreamSupport.concat(
 				shrinkSizeOfList(),
-				shrinkElementsOneAfterTheOther(),
+				shrinkElementsOneAfterTheOther(0),
 				shrinkPairsOfElements()
 		);
 	}
@@ -97,6 +97,13 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		return true;
 	}
 
+	protected Stream<Shrinkable<C>> shrinkSizeAggressively() {
+		return new AggressiveSizeOfListShrinker<Shrinkable<E>>(minSize)
+					   .shrink(elements)
+					   .map(this::createShrinkable)
+					   .sorted(Comparator.comparing(Shrinkable::distance));
+	}
+
 	protected Stream<Shrinkable<C>> shrinkSizeOfList() {
 		return new SizeOfListShrinker<Shrinkable<E>>(minSize)
 					   .shrink(elements)
@@ -104,9 +111,12 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 					   .sorted(Comparator.comparing(Shrinkable::distance));
 	}
 
-	protected Stream<Shrinkable<C>> shrinkElementsOneAfterTheOther() {
+	protected Stream<Shrinkable<C>> shrinkElementsOneAfterTheOther(int maxToShrink) {
 		List<Stream<Shrinkable<C>>> shrinkPerElementStreams = new ArrayList<>();
 		for (int i = 0; i < elements.size(); i++) {
+			if (maxToShrink > 0 && i >= maxToShrink) {
+				break;
+			}
 			int index = i;
 			Shrinkable<E> element = elements.get(i);
 			Stream<Shrinkable<C>> shrinkElement = element.shrink().flatMap(shrunkElement -> {

@@ -23,7 +23,11 @@ public class SizeOfListShrinker<T> {
 	}
 
 	private Stream<List<T>> emptyList() {
-		return Stream.of(new ArrayList<>());
+		if (minSize == 0) {
+			return Stream.of(new ArrayList<>());
+		} else {
+			return Stream.empty();
+		}
 	}
 
 	public Stream<List<T>> cuts(List<T> toShrink) {

@@ -25,11 +25,18 @@ public class ShrinkableString extends ShrinkableContainer<String, Character> {
 
 	@Override
 	public Stream<Shrinkable<String>> shrink() {
+		if (elements.size() > 100) {
+			return JqwikStreamSupport.concat(
+					shrinkSizeAggressively(),
+					shrinkSizeOfList(),
+					shrinkElementsOneAfterTheOther(100)
+			);
+		}
 		return JqwikStreamSupport.concat(
-			shrinkSizeOfList(),
-			shrinkElementsOneAfterTheOther(),
-			shrinkPairsOfElements(),
-			sortElements()
+				shrinkSizeOfList(),
+				shrinkElementsOneAfterTheOther(0),
+				shrinkPairsOfElements(),
+				sortElements()
 		);
 	}
 

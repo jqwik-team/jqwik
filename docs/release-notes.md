@@ -46,6 +46,8 @@ and
 
 - Generated email addresses get a few more edge cases
 
+- Shrinking of long Strings (length > 100) is faster now
+
 #### Breaking Changes
 
 - Removed `Arbitrary.unique()` which had been deprecated in 1.4.0
