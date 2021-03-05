@@ -745,11 +745,6 @@ public class TimesConstraintTests {
 		}
 
 		@Property
-		void test(@ForAll @OffsetRange(min = "Z") ZoneOffset offset) {
-			System.out.println(offset);
-		}
-
-		@Property
 		void zoneOffsetMax(@ForAll @DurationRange(max = "PT1999H22M11S") Duration duration) {
 			Duration end = Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 11);
 			assertThat(duration.compareTo(end)).isLessThanOrEqualTo(0);

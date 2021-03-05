@@ -1,8 +1,11 @@
+net.jqwik.time.internal.properties.configurators.DateRangeForLocalDateConfigurator
+net.jqwik.time.internal.properties.configurators.DateRangeForCalendarConfigurator
+net.jqwik.time.internal.properties.configurators.DateRangeForDateConfigurator
+
 net.jqwik.time.internal.properties.configurators.YearRangeConfigurator
 net.jqwik.time.internal.properties.configurators.MonthRangeConfigurator
 net.jqwik.time.internal.properties.configurators.DayOfMonthRangeConfigurator
 net.jqwik.time.internal.properties.configurators.DayOfWeekRangeConfigurator
-net.jqwik.time.internal.properties.configurators.DateRangeConfigurator
 net.jqwik.time.internal.properties.configurators.YearMonthRangeConfigurator
 net.jqwik.time.internal.properties.configurators.MonthDayRangeConfigurator
 net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator
