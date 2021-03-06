@@ -52,4 +52,6 @@ net.jqwik.time.internal.properties.configurators.SecondRangeForOffsetTimeConfigu
 
 net.jqwik.time.internal.properties.configurators.DurationRangeConfigurator
 
-net.jqwik.time.internal.properties.configurators.PrecisionConfigurator
+net.jqwik.time.internal.properties.configurators.PrecisionForLocalTimeConfigurator
+net.jqwik.time.internal.properties.configurators.PrecisionForOffsetTimeConfigurator
+net.jqwik.time.internal.properties.configurators.PrecisionForDurationConfigurator

@@ -786,14 +786,6 @@ public class TimesConstraintTests {
 				assertThat(duration).isNotNull();
 			}
 
-			int getSecond(Duration d) {
-				return (int) (d.getSeconds() % 60);
-			}
-
-			int getMinute(Duration d) {
-				return (int) ((d.getSeconds() % 3600) / 60);
-			}
-
 		}
 
 		@Group
@@ -1009,12 +1001,12 @@ public class TimesConstraintTests {
 		class OffsetRangeConstraint {
 
 			@Property
-			void zoneOffsets(@ForAll("offsets") @OffsetRange(min = "-01:00:00", max = "+01:00:00") ZoneOffset offset) {
+			void zoneOffsets(@ForAll("offsets") @OffsetRange(min = "+01:00:00", max = "-01:00:00") ZoneOffset offset) {
 				assertThat(offset).isBetween(ZoneOffset.ofHoursMinutesSeconds(1, 0, 0), ZoneOffset.ofHoursMinutesSeconds(-1, 0, 0));
 			}
 
 			@Property
-			void offsetTime(@ForAll("offsetTimes") @OffsetRange(min = "-01:00:00", max = "+01:00:00") OffsetTime time) {
+			void offsetTime(@ForAll("offsetTimes") @OffsetRange(min = "+01:00:00", max = "-01:00:00") OffsetTime time) {
 				assertThat(time.getOffset())
 						.isBetween(ZoneOffset.ofHoursMinutesSeconds(1, 0, 0), ZoneOffset.ofHoursMinutesSeconds(-1, 0, 0));
 			}
@@ -1171,22 +1163,369 @@ public class TimesConstraintTests {
 		}
 
 		@Group
-		@Disabled
 		class PrecisionConstraint {
 
-			@Property
-			void localTime(@ForAll("times") @Precision(ofPrecision = MINUTES) LocalTime time) {
-				assertThat(time).isNotNull();
+			@Group
+			class Hours {
+
+				@Property
+				void localTime(@ForAll("times") @Precision(ofPrecision = HOURS) LocalTime time) {
+					assertThat(time.getMinute()).isEqualTo(0);
+					assertThat(time.getSecond()).isEqualTo(0);
+					assertThat(time.getNano()).isEqualTo(0);
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = HOURS) OffsetTime time) {
+					assertThat(time.getMinute()).isEqualTo(0);
+					assertThat(time.getSecond()).isEqualTo(0);
+					assertThat(time.getNano()).isEqualTo(0);
+				}
+
+				@Property
+				void duration(@ForAll("durations") @Precision(ofPrecision = HOURS) Duration duration) {
+					assertThat(getMinute(duration)).isEqualTo(0);
+					assertThat(getSecond(duration)).isEqualTo(0);
+					assertThat(duration.getNano()).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalTime> times() {
+					return of(
+							LocalTime.of(9, 0, 3),
+							LocalTime.of(10, 3, 0),
+							LocalTime.of(11, 0, 0),
+							LocalTime.of(12, 0, 0, 312),
+							LocalTime.of(13, 0, 0, 392_291_392),
+							LocalTime.of(14, 0, 0),
+							LocalTime.of(15, 1, 1, 111_111_111)
+					);
+				}
+
+				@Provide
+				Arbitrary<OffsetTime> offsetTimes() {
+					return of(
+							OffsetTime.of(LocalTime.of(9, 0, 3), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(10, 3, 0), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(11, 0, 0), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(12, 0, 0, 312), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(13, 0, 0, 392_291_392), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(14, 0, 0), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(15, 1, 1, 111_111_111), ZoneOffset.UTC)
+					);
+				}
+
+				@Provide
+				Arbitrary<Duration> durations() {
+					return of(
+							Duration.ofSeconds(1999 * 60 * 60 + 0 * 60 + 0),
+							Duration.ofSeconds(33 * 60 * 60 + 22 * 60 + 0),
+							Duration.ofSeconds(1312 * 60 * 60 + 0 * 60 + 33),
+							Duration.ofSeconds(31212 * 60 * 60 + 55 * 60 + 55, 222),
+							Duration.ofSeconds(3432 * 60 * 60 + 0 * 60 + 0),
+							Duration.ofSeconds(42332 * 60 * 60 + 3 * 60 + 0),
+							Duration.ofSeconds(1211 * 60 * 60 + 11 * 60 + 11, 111_111_111)
+					);
+				}
+
 			}
 
-			@Property
-			void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MINUTES) OffsetTime time) {
-				assertThat(time).isNotNull();
+			@Group
+			class Minutes {
+
+				@Property
+				void localTime(@ForAll("times") @Precision(ofPrecision = MINUTES) LocalTime time) {
+					assertThat(time.getSecond()).isEqualTo(0);
+					assertThat(time.getNano()).isEqualTo(0);
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MINUTES) OffsetTime time) {
+					assertThat(time.getSecond()).isEqualTo(0);
+					assertThat(time.getNano()).isEqualTo(0);
+				}
+
+				@Property
+				void duration(@ForAll("durations") @Precision(ofPrecision = MINUTES) Duration duration) {
+					assertThat(getSecond(duration)).isEqualTo(0);
+					assertThat(duration.getNano()).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalTime> times() {
+					return of(
+							LocalTime.of(9, 12, 3),
+							LocalTime.of(10, 3, 0),
+							LocalTime.of(11, 13, 0, 333_211),
+							LocalTime.of(12, 14, 0, 312),
+							LocalTime.of(13, 13, 0, 392_291_392),
+							LocalTime.of(14, 44, 0),
+							LocalTime.of(15, 1, 1, 111_111_111)
+					);
+				}
+
+				@Provide
+				Arbitrary<OffsetTime> offsetTimes() {
+					return of(
+							OffsetTime.of(LocalTime.of(9, 12, 3), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(10, 3, 0), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(11, 13, 0, 333_211), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(12, 14, 0, 312), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(13, 13, 0, 392_291_392), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(14, 44, 0), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(15, 1, 1, 111_111_111), ZoneOffset.UTC)
+					);
+				}
+
+				@Provide
+				Arbitrary<Duration> durations() {
+					return of(
+							Duration.ofSeconds(1999 * 60 * 60 + 11 * 60 + 0),
+							Duration.ofSeconds(33 * 60 * 60 + 22 * 60 + 0, 111_203),
+							Duration.ofSeconds(1312 * 60 * 60 + 31 * 60 + 33),
+							Duration.ofSeconds(31212 * 60 * 60 + 55 * 60 + 55, 222),
+							Duration.ofSeconds(3432 * 60 * 60 + 12 * 60 + 0),
+							Duration.ofSeconds(42332 * 60 * 60 + 3 * 60 + 0),
+							Duration.ofSeconds(1211 * 60 * 60 + 11 * 60 + 11, 111_111_111)
+					);
+				}
+
 			}
 
-			@Property
-			void duration(@ForAll("durations") @Precision(ofPrecision = MINUTES) Duration duration) {
-				assertThat(duration).isNotNull();
+			@Group
+			class Seconds {
+
+				@Property
+				void localTime(@ForAll("times") @Precision(ofPrecision = SECONDS) LocalTime time) {
+					assertThat(time.getNano()).isEqualTo(0);
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = SECONDS) OffsetTime time) {
+					assertThat(time.getNano()).isEqualTo(0);
+				}
+
+				@Property
+				void duration(@ForAll("durations") @Precision(ofPrecision = SECONDS) Duration duration) {
+					assertThat(duration.getNano()).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalTime> times() {
+					return of(
+							LocalTime.of(9, 12, 3),
+							LocalTime.of(10, 3, 31),
+							LocalTime.of(11, 13, 32, 333_211),
+							LocalTime.of(12, 14, 11, 312),
+							LocalTime.of(13, 13, 33, 392_291_392),
+							LocalTime.of(14, 44, 14),
+							LocalTime.of(15, 1, 1, 111_111_111)
+					);
+				}
+
+				@Provide
+				Arbitrary<OffsetTime> offsetTimes() {
+					return of(
+							OffsetTime.of(LocalTime.of(9, 12, 3), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(10, 3, 31), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(11, 13, 32, 333_211), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(12, 14, 11, 312), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(13, 13, 33, 392_291_392), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(14, 44, 14), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(15, 1, 1, 111_111_111), ZoneOffset.UTC)
+					);
+				}
+
+				@Provide
+				Arbitrary<Duration> durations() {
+					return of(
+							Duration.ofSeconds(1999 * 60 * 60 + 11 * 60 + 33, 2_301_302),
+							Duration.ofSeconds(33 * 60 * 60 + 22 * 60 + 11, 111_203),
+							Duration.ofSeconds(1312 * 60 * 60 + 31 * 60 + 44),
+							Duration.ofSeconds(31212 * 60 * 60 + 55 * 60 + 55, 222),
+							Duration.ofSeconds(3432 * 60 * 60 + 12 * 60 + 31),
+							Duration.ofSeconds(42332 * 60 * 60 + 3 * 60 + 21),
+							Duration.ofSeconds(1211 * 60 * 60 + 11 * 60 + 11, 111_111_111)
+					);
+				}
+
+			}
+
+			@Group
+			class Millis {
+
+				@Property
+				void localTime(@ForAll("times") @Precision(ofPrecision = MILLIS) LocalTime time) {
+					assertThat(time.getNano() % 1_000_000).isEqualTo(0);
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MILLIS) OffsetTime time) {
+					assertThat(time.getNano() % 1_000_000).isEqualTo(0);
+				}
+
+				@Property
+				void duration(@ForAll("durations") @Precision(ofPrecision = MILLIS) Duration duration) {
+					assertThat(duration.getNano() % 1_000_000).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalTime> times() {
+					return of(
+							LocalTime.of(9, 12, 3, 322_000_000),
+							LocalTime.of(10, 3, 31, 321_000_000),
+							LocalTime.of(11, 13, 32, 333_211),
+							LocalTime.of(12, 14, 11, 312),
+							LocalTime.of(13, 13, 33, 392_291_392),
+							LocalTime.of(14, 44, 14, 312_000_000),
+							LocalTime.of(15, 1, 1, 111_111_111)
+					);
+				}
+
+				@Provide
+				Arbitrary<OffsetTime> offsetTimes() {
+					return of(
+							OffsetTime.of(LocalTime.of(9, 12, 3, 322_000_000), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(10, 3, 31, 321_000_000), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(11, 13, 32, 333_211), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(12, 14, 11, 312), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(13, 13, 33, 392_291_392), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(14, 44, 14, 312_000_000), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(15, 1, 1, 111_111_111), ZoneOffset.UTC)
+					);
+				}
+
+				@Provide
+				Arbitrary<Duration> durations() {
+					return of(
+							Duration.ofSeconds(1999 * 60 * 60 + 11 * 60 + 33, 2_301_302),
+							Duration.ofSeconds(33 * 60 * 60 + 22 * 60 + 11, 111_203),
+							Duration.ofSeconds(1312 * 60 * 60 + 31 * 60 + 44, 391_000_000),
+							Duration.ofSeconds(31212 * 60 * 60 + 55 * 60 + 55, 222),
+							Duration.ofSeconds(3432 * 60 * 60 + 12 * 60 + 31, 9_000_000),
+							Duration.ofSeconds(42332 * 60 * 60 + 3 * 60 + 21, 103_000_000),
+							Duration.ofSeconds(1211 * 60 * 60 + 11 * 60 + 11, 111_111_111)
+					);
+				}
+
+			}
+
+			@Group
+			class Micros {
+
+				@Property
+				void localTime(@ForAll("times") @Precision(ofPrecision = MICROS) LocalTime time) {
+					assertThat(time.getNano() % 1_000).isEqualTo(0);
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MICROS) OffsetTime time) {
+					assertThat(time.getNano() % 1_000).isEqualTo(0);
+				}
+
+				@Property
+				void duration(@ForAll("durations") @Precision(ofPrecision = MICROS) Duration duration) {
+					assertThat(duration.getNano() % 1_000).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalTime> times() {
+					return of(
+							LocalTime.of(9, 12, 3, 322_212_000),
+							LocalTime.of(10, 3, 31, 321_312_000),
+							LocalTime.of(11, 13, 32, 333_211),
+							LocalTime.of(12, 14, 11, 312),
+							LocalTime.of(13, 13, 33, 392_291_392),
+							LocalTime.of(14, 44, 14, 312_344_000),
+							LocalTime.of(15, 1, 1, 111_111_111)
+					);
+				}
+
+				@Provide
+				Arbitrary<OffsetTime> offsetTimes() {
+					return of(
+							OffsetTime.of(LocalTime.of(9, 12, 3, 322_212_000), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(10, 3, 31, 321_312_000), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(11, 13, 32, 333_211), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(12, 14, 11, 312), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(13, 13, 33, 392_291_392), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(14, 44, 14, 312_344_000), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(15, 1, 1, 111_111_111), ZoneOffset.UTC)
+					);
+				}
+
+				@Provide
+				Arbitrary<Duration> durations() {
+					return of(
+							Duration.ofSeconds(1999 * 60 * 60 + 11 * 60 + 33, 2_301_302),
+							Duration.ofSeconds(33 * 60 * 60 + 22 * 60 + 11, 111_203),
+							Duration.ofSeconds(1312 * 60 * 60 + 31 * 60 + 44, 391_312_000),
+							Duration.ofSeconds(31212 * 60 * 60 + 55 * 60 + 55, 222),
+							Duration.ofSeconds(3432 * 60 * 60 + 12 * 60 + 31, 9_324_000),
+							Duration.ofSeconds(42332 * 60 * 60 + 3 * 60 + 21, 103_232_000),
+							Duration.ofSeconds(1211 * 60 * 60 + 11 * 60 + 11, 111_111_111)
+					);
+				}
+
+			}
+
+			@Group
+			class Nanos {
+
+				@Property
+				void localTime(@ForAll("times") @Precision(ofPrecision = NANOS) LocalTime time) {
+					assertThat(time).isNotNull();
+				}
+
+				@Property
+				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = NANOS) OffsetTime time) {
+					assertThat(time).isNotNull();
+				}
+
+				@Property
+				void duration(@ForAll("durations") @Precision(ofPrecision = NANOS) Duration duration) {
+					assertThat(duration).isNotNull();
+				}
+
+				@Provide
+				Arbitrary<LocalTime> times() {
+					return of(
+							LocalTime.of(9, 12, 3, 322_212_333),
+							LocalTime.of(10, 3, 31, 321_312_111),
+							LocalTime.of(11, 13, 32, 333_211),
+							LocalTime.of(12, 14, 11, 312),
+							LocalTime.of(13, 13, 33, 392_291_392),
+							LocalTime.of(14, 44, 14, 312_344_000),
+							LocalTime.of(15, 1, 1, 111_111_111)
+					);
+				}
+
+				@Provide
+				Arbitrary<OffsetTime> offsetTimes() {
+					return of(
+							OffsetTime.of(LocalTime.of(9, 12, 3, 322_212_333), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(10, 3, 31, 321_312_111), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(11, 13, 32, 333_211), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(12, 14, 11, 312), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(13, 13, 33, 392_291_392), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(14, 44, 14, 312_344_000), ZoneOffset.UTC),
+							OffsetTime.of(LocalTime.of(15, 1, 1, 111_111_111), ZoneOffset.UTC)
+					);
+				}
+
+				@Provide
+				Arbitrary<Duration> durations() {
+					return of(
+							Duration.ofSeconds(1999 * 60 * 60 + 11 * 60 + 33, 2_301_302),
+							Duration.ofSeconds(33 * 60 * 60 + 22 * 60 + 11, 111_203),
+							Duration.ofSeconds(1312 * 60 * 60 + 31 * 60 + 44, 391_312_312),
+							Duration.ofSeconds(31212 * 60 * 60 + 55 * 60 + 55, 222),
+							Duration.ofSeconds(3432 * 60 * 60 + 12 * 60 + 31, 9_324_422),
+							Duration.ofSeconds(42332 * 60 * 60 + 3 * 60 + 21, 103_232_321),
+							Duration.ofSeconds(1211 * 60 * 60 + 11 * 60 + 11, 111_111_111)
+					);
+				}
+
 			}
 
 		}
@@ -1215,6 +1554,14 @@ public class TimesConstraintTests {
 
 		}
 
+	}
+
+	int getSecond(Duration d) {
+		return (int) (d.getSeconds() % 60);
+	}
+
+	int getMinute(Duration d) {
+		return (int) ((d.getSeconds() % 3600) / 60);
 	}
 
 }
