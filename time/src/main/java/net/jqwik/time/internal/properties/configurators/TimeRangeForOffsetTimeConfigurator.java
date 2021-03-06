@@ -8,27 +8,30 @@ import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
 
-public class TimeRangeConfigurator extends ArbitraryConfiguratorBase {
+public class TimeRangeForOffsetTimeConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalTime.class) || targetType.isAssignableFrom(OffsetTime.class);
+		return targetType.isAssignableFrom(OffsetTime.class);
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, TimeRange range) {
-		if (arbitrary instanceof LocalTimeArbitrary) {
-			LocalTimeArbitrary localTimeArbitrary = (LocalTimeArbitrary) arbitrary;
-			return localTimeArbitrary.between(stringToLocalTime(range.min()), stringToLocalTime(range.max()));
-		} else if (arbitrary instanceof OffsetTimeArbitrary) {
+		LocalTime min = stringToLocalTime(range.min());
+		LocalTime max = stringToLocalTime(range.max());
+		if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
-			return offsetTimeArbitrary.between(stringToLocalTime(range.min()), stringToLocalTime(range.max()));
+			return offsetTimeArbitrary.between(min, max);
 		} else {
-			return arbitrary;
+			return arbitrary.filter(v -> filter((OffsetTime) v, min, max));
 		}
 	}
 
 	private LocalTime stringToLocalTime(String time) {
 		return LocalTime.parse(time);
+	}
+
+	private boolean filter(OffsetTime time, LocalTime min, LocalTime max) {
+		return !time.toLocalTime().isBefore(min) && !time.toLocalTime().isAfter(max);
 	}
 
 }

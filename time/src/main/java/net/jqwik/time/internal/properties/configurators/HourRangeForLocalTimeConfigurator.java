@@ -8,22 +8,26 @@ import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
 
-public class HourRangeConfigurator extends ArbitraryConfiguratorBase {
+public class HourRangeForLocalTimeConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalTime.class) || targetType.isAssignableFrom(OffsetTime.class);
+		return targetType.isAssignableFrom(LocalTime.class);
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, HourRange range) {
+		int min = range.min();
+		int max = range.max();
 		if (arbitrary instanceof LocalTimeArbitrary) {
 			LocalTimeArbitrary localTimeArbitrary = (LocalTimeArbitrary) arbitrary;
-			return localTimeArbitrary.hourBetween(range.min(), range.max());
-		} else if (arbitrary instanceof OffsetTimeArbitrary) {
-			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
-			return offsetTimeArbitrary.hourBetween(range.min(), range.max());
+			return localTimeArbitrary.hourBetween(min, max);
 		} else {
-			return arbitrary;
+			return arbitrary.filter(v -> filter((LocalTime) v, min, max));
 		}
 	}
+
+	private boolean filter(LocalTime time, int min, int max) {
+		return time.getHour() >= min && time.getHour() <= max;
+	}
+
 }

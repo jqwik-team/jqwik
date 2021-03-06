@@ -1098,32 +1098,6 @@ public class DatesConstraintTests {
 
 		}
 
-		@Group
-		@Disabled
-		class PeriodRangeConstraint {
-
-			@Property
-			void period(@ForAll("periods") @PeriodRange(min = "P2Y2M4D", max = "P2Y2M7D") Period period) {
-				assertThat(period.getYears()).isEqualTo(2);
-				assertThat(period.getMonths()).isEqualTo(2);
-				assertThat(period.getDays()).isBetween(4, 7);
-			}
-
-			@Provide
-			Arbitrary<Period> periods() {
-				return of(
-						Period.of(2, 2, 3),
-						Period.of(2, 2, 4),
-						Period.of(2, 2, 5),
-						Period.of(2, 2, 6),
-						Period.of(2, 2, 7),
-						Period.of(2, 2, 8),
-						Period.of(2, 2, 9)
-				);
-			}
-
-		}
-
 	}
 
 }
