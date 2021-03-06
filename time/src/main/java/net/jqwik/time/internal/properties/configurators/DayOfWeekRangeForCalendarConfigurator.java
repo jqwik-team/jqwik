@@ -8,28 +8,22 @@ import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
-public class DayOfWeekRangeConfigurator extends ArbitraryConfiguratorBase {
+public class DayOfWeekRangeForCalendarConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalDate.class)
-					   || targetType.isAssignableFrom(Calendar.class)
-					   || targetType.isAssignableFrom(Date.class);
+		return targetType.isAssignableFrom(Calendar.class);
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DayOfWeekRange range) {
-		if (arbitrary instanceof LocalDateArbitrary) {
-			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
-			return localDateArbitrary.onlyDaysOfWeek(createDayOfWeekArray(range));
-		} else if (arbitrary instanceof CalendarArbitrary) {
+		DayOfWeek[] dayOfWeeks = createDayOfWeekArray(range);
+		if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
-			return calendarArbitrary.onlyDaysOfWeek(createDayOfWeekArray(range));
-		} else if (arbitrary instanceof DateArbitrary) {
-			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
-			return dateArbitrary.onlyDaysOfWeek(createDayOfWeekArray(range));
+			return calendarArbitrary.onlyDaysOfWeek(dayOfWeeks);
 		} else {
-			return arbitrary;
+			return arbitrary.filter(v -> filter((Calendar) v, dayOfWeeks));
 		}
 	}
 
@@ -39,6 +33,16 @@ public class DayOfWeekRangeConfigurator extends ArbitraryConfiguratorBase {
 			dayOfWeeks.add(DayOfWeek.of(i));
 		}
 		return dayOfWeeks.toArray(new DayOfWeek[]{});
+	}
+
+	private boolean filter(Calendar date, DayOfWeek[] dayOfWeeks) {
+		DayOfWeek value = DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(date.get(Calendar.DAY_OF_WEEK));
+		for (DayOfWeek dayOfWeek : dayOfWeeks) {
+			if (value == dayOfWeek) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

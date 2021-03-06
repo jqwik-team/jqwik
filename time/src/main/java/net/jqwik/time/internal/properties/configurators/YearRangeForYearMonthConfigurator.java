@@ -8,30 +8,26 @@ import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
 
-public class YearMonthRangeConfigurator extends ArbitraryConfiguratorBase {
+public class YearRangeForYearMonthConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
 		return targetType.isAssignableFrom(YearMonth.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, YearMonthRange range) {
-		YearMonth min = isoDateToYearMonth(range.min());
-		YearMonth max = isoDateToYearMonth(range.max());
+	public Arbitrary<?> configure(Arbitrary<?> arbitrary, YearRange range) {
+		int min = range.min();
+		int max = range.max();
 		if (arbitrary instanceof YearMonthArbitrary) {
 			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
-			return yearMonthArbitrary.between(min, max);
+			return yearMonthArbitrary.yearBetween(min, max);
 		} else {
 			return arbitrary.filter(v -> filter((YearMonth) v, min, max));
 		}
 	}
 
-	private YearMonth isoDateToYearMonth(String iso) {
-		return YearMonth.parse(iso);
-	}
-
-	private boolean filter(YearMonth yearMonth, YearMonth min, YearMonth max) {
-		return !yearMonth.isBefore(min) && !yearMonth.isAfter(max);
+	private boolean filter(YearMonth yearMonth, int min, int max) {
+		return yearMonth.getYear() >= min && yearMonth.getYear() <= max;
 	}
 
 }

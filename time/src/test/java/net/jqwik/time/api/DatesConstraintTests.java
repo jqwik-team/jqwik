@@ -483,7 +483,6 @@ public class DatesConstraintTests {
 	}
 
 	@Group
-	@Disabled
 	class ValidTypesWithOwnArbitraries {
 
 		@Group
@@ -564,10 +563,24 @@ public class DatesConstraintTests {
 			}
 
 			@Property
+			void calendarNegative(@ForAll("calendarsNegative") @YearRange(min = -2025, max = -2023) Calendar date) {
+				assertThat(date.get(Calendar.YEAR)).isBetween(2023, 2025);
+				assertThat(date.get(Calendar.ERA)).isEqualTo(GregorianCalendar.BC);
+			}
+
+			@Property
 			void date(@ForAll("dates") @YearRange(min = 2022, max = 2025) Date date) {
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(date);
 				assertThat(calendar.get(Calendar.YEAR)).isBetween(2022, 2025);
+			}
+
+			@Property
+			void dateNegative(@ForAll("datesNegative") @YearRange(min = -2025, max = -2023) Date date) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				assertThat(calendar.get(Calendar.YEAR)).isBetween(2023, 2025);
+				assertThat(calendar.get(Calendar.ERA)).isEqualTo(GregorianCalendar.BC);
 			}
 
 			@Property
@@ -607,6 +620,19 @@ public class DatesConstraintTests {
 			}
 
 			@Provide
+			Arbitrary<Calendar> calendarsNegative() {
+				return of(
+						new Calendar.Builder().setDate(-2021, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(-2022, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(-2023, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(-2024, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(-2025, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(-2026, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(-2027, Calendar.MARCH, 1).build()
+				);
+			}
+
+			@Provide
 			Arbitrary<Date> dates() {
 				return of(
 						new Calendar.Builder().setDate(2021, Calendar.MARCH, 1).build().getTime(),
@@ -616,6 +642,19 @@ public class DatesConstraintTests {
 						new Calendar.Builder().setDate(2025, Calendar.MARCH, 1).build().getTime(),
 						new Calendar.Builder().setDate(2026, Calendar.MARCH, 1).build().getTime(),
 						new Calendar.Builder().setDate(2027, Calendar.MARCH, 1).build().getTime()
+				);
+			}
+
+			@Provide
+			Arbitrary<Date> datesNegative() {
+				return of(
+						new Calendar.Builder().setDate(-2021, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2022, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2023, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2024, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2025, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2026, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2027, Calendar.MARCH, 1).build().getTime()
 				);
 			}
 
@@ -893,10 +932,24 @@ public class DatesConstraintTests {
 			}
 
 			@Property
+			void calendarNegative(@ForAll("calendarsNegative") @LeapYears(withLeapYears = false) Calendar date) {
+				int year = (date.get(Calendar.ERA) == GregorianCalendar.BC) ? -date.get(Calendar.YEAR) : date.get(Calendar.YEAR);
+				assertThat(new GregorianCalendar().isLeapYear(year)).isFalse();
+			}
+
+			@Property
 			void date(@ForAll("dates") @LeapYears(withLeapYears = false) Date date) {
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(date);
 				assertThat(new GregorianCalendar().isLeapYear(calendar.get(Calendar.YEAR))).isFalse();
+			}
+
+			@Property
+			void dateNegative(@ForAll("datesNegative") @LeapYears(withLeapYears = false) Date date) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date);
+				int year = (calendar.get(Calendar.ERA) == GregorianCalendar.BC) ? -calendar.get(Calendar.YEAR) : calendar.get(Calendar.YEAR);
+				assertThat(new GregorianCalendar().isLeapYear(year)).isFalse();
 			}
 
 			@Property
@@ -931,6 +984,19 @@ public class DatesConstraintTests {
 			}
 
 			@Provide
+			Arbitrary<Calendar> calendarsNegative() {
+				return of(
+						new Calendar.Builder().setDate(-2021, Calendar.FEBRUARY, 1).build(),
+						new Calendar.Builder().setDate(-2022, Calendar.MARCH, 1).build(),
+						new Calendar.Builder().setDate(-2023, Calendar.APRIL, 1).build(),
+						new Calendar.Builder().setDate(-2024, Calendar.MAY, 1).build(),
+						new Calendar.Builder().setDate(-2025, Calendar.JUNE, 1).build(),
+						new Calendar.Builder().setDate(-2026, Calendar.JULY, 1).build(),
+						new Calendar.Builder().setDate(-2027, Calendar.AUGUST, 1).build()
+				);
+			}
+
+			@Provide
 			Arbitrary<Date> dates() {
 				return of(
 						new Calendar.Builder().setDate(2021, Calendar.FEBRUARY, 1).build().getTime(),
@@ -940,6 +1006,19 @@ public class DatesConstraintTests {
 						new Calendar.Builder().setDate(2025, Calendar.JUNE, 1).build().getTime(),
 						new Calendar.Builder().setDate(2026, Calendar.JULY, 1).build().getTime(),
 						new Calendar.Builder().setDate(2027, Calendar.AUGUST, 1).build().getTime()
+				);
+			}
+
+			@Provide
+			Arbitrary<Date> datesNegative() {
+				return of(
+						new Calendar.Builder().setDate(-2021, Calendar.FEBRUARY, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2022, Calendar.MARCH, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2023, Calendar.APRIL, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2024, Calendar.MAY, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2025, Calendar.JUNE, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2026, Calendar.JULY, 1).build().getTime(),
+						new Calendar.Builder().setDate(-2027, Calendar.AUGUST, 1).build().getTime()
 				);
 			}
 
@@ -1020,6 +1099,7 @@ public class DatesConstraintTests {
 		}
 
 		@Group
+		@Disabled
 		class PeriodRangeConstraint {
 
 			@Property
