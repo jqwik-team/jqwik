@@ -35,10 +35,21 @@ net.jqwik.time.internal.properties.configurators.DayOfWeekRangeForDateConfigurat
 
 net.jqwik.time.internal.properties.configurators.PeriodRangeConfigurator
 
-net.jqwik.time.internal.properties.configurators.TimeRangeConfigurator
-net.jqwik.time.internal.properties.configurators.HourRangeConfigurator
-net.jqwik.time.internal.properties.configurators.MinuteRangeConfigurator
-net.jqwik.time.internal.properties.configurators.SecondRangeConfigurator
-net.jqwik.time.internal.properties.configurators.PrecisionConfigurator
-net.jqwik.time.internal.properties.configurators.OffsetRangeConfigurator
+net.jqwik.time.internal.properties.configurators.TimeRangeForLocalTimeConfigurator
+net.jqwik.time.internal.properties.configurators.TimeRangeForOffsetTimeConfigurator
+
+net.jqwik.time.internal.properties.configurators.OffsetRangeForZoneOffsetConfigurator
+net.jqwik.time.internal.properties.configurators.OffsetRangeForOffsetTimeConfigurator
+
+net.jqwik.time.internal.properties.configurators.HourRangeForLocalTimeConfigurator
+net.jqwik.time.internal.properties.configurators.HourRangeForOffsetTimeConfigurator
+
+net.jqwik.time.internal.properties.configurators.MinuteRangeForLocalTimeConfigurator
+net.jqwik.time.internal.properties.configurators.MinuteRangeForOffsetTimeConfigurator
+
+net.jqwik.time.internal.properties.configurators.SecondRangeForLocalTimeConfigurator
+net.jqwik.time.internal.properties.configurators.SecondRangeForOffsetTimeConfigurator
+
 net.jqwik.time.internal.properties.configurators.DurationRangeConfigurator
+
+net.jqwik.time.internal.properties.configurators.PrecisionConfigurator

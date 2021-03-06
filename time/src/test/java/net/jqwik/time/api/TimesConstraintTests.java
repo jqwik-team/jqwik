@@ -924,172 +924,293 @@ public class TimesConstraintTests {
 	@Group
 	class InvalidUseOfConstraints {
 
+		@Property
+		void timeRange(@ForAll @TimeRange(min = "01:32:21.113943") Byte b) {
+			assertThat(b).isNotNull();
+		}
+
+		@Property
+		void offsetRange(@ForAll @OffsetRange(min = "-09:00:00", max = "+08:00:00") Long l) {
+			assertThat(l).isNotNull();
+		}
+
+		@Property
+		void hourRange(@ForAll @HourRange(min = 11, max = 13) Integer i) {
+			assertThat(i).isNotNull();
+		}
+
+		@Property
+		void minuteRange(@ForAll @MinuteRange(min = 11, max = 13) Random random) {
+			assertThat(random).isNotNull();
+		}
+
+		@Property
+		void secondRange(@ForAll @SecondRange(min = 11, max = 13) Boolean b) {
+			assertThat(b).isNotNull();
+		}
+
+		@Property
+		void precision(@ForAll @Precision(ofPrecision = HOURS) char c) {
+			assertThat(c).isNotNull();
+		}
+
+		@Property
+		void durationRange(@ForAll @DurationRange(max = "PT1999H22M11S") String string) {
+			assertThat(string).isNotNull();
+		}
+
+	}
+
+	@Group
+	class ValidTypesWithOwnArbitraries {
+
 		@Group
-		class InvalidTypes {
+		class TimeRangeConstraint {
 
 			@Property
-			void timeRange(@ForAll @TimeRange(min = "01:32:21.113943") Byte b) {
-				assertThat(b).isNotNull();
+			void localTime(@ForAll("times") @TimeRange(min = "01:32:21.113943", max = "01:32:24.113943") LocalTime time) {
+				assertThat(time).isBetween(LocalTime.of(1, 32, 21, 113943000), LocalTime.of(1, 32, 24, 113943000));
 			}
 
 			@Property
-			void offsetRange(@ForAll @OffsetRange(min = "-09:00:00", max = "+08:00:00") Long l) {
-				assertThat(l).isNotNull();
+			void offsetTime(@ForAll("offsetTimes") @TimeRange(min = "01:32:21.113943", max = "01:32:24.113943") OffsetTime time) {
+				assertThat(time.toLocalTime()).isBetween(LocalTime.of(1, 32, 21, 113943000), LocalTime.of(1, 32, 24, 113943000));
 			}
 
-			@Property
-			void hourRange(@ForAll @HourRange(min = 11, max = 13) Integer i) {
-				assertThat(i).isNotNull();
+			@Provide
+			Arbitrary<LocalTime> times() {
+				return of(
+						LocalTime.of(1, 32, 20),
+						LocalTime.of(1, 32, 21),
+						LocalTime.of(1, 32, 22),
+						LocalTime.of(1, 32, 23),
+						LocalTime.of(1, 32, 24),
+						LocalTime.of(1, 32, 25),
+						LocalTime.of(1, 32, 26)
+				);
 			}
 
-			@Property
-			void minuteRange(@ForAll @MinuteRange(min = 11, max = 13) Random random) {
-				assertThat(random).isNotNull();
-			}
-
-			@Property
-			void secondRange(@ForAll @SecondRange(min = 11, max = 13) Boolean b) {
-				assertThat(b).isNotNull();
-			}
-
-			@Property
-			void precision(@ForAll @Precision(ofPrecision = HOURS) char c) {
-				assertThat(c).isNotNull();
-			}
-
-			@Property
-			void durationRange(@ForAll @DurationRange(max = "PT1999H22M11S") String string) {
-				assertThat(string).isNotNull();
+			@Provide
+			Arbitrary<OffsetTime> offsetTimes() {
+				return of(
+						OffsetTime.of(LocalTime.of(1, 32, 20), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(1, 32, 21), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(1, 32, 22), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(1, 32, 23), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(1, 32, 24), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(1, 32, 25), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(1, 32, 26), ZoneOffset.UTC)
+				);
 			}
 
 		}
 
 		@Group
-		class ValidTypesWithInvalidUse {
+		class OffsetRangeConstraint {
 
-			@Group
-			class TimeRangeConstraint {
-
-				@Property
-				void localTime(@ForAll("times") @TimeRange(min = "01:32:21.113943") LocalTime time) {
-					assertThat(time).isNotNull();
-				}
-
-				@Property
-				void offsetTime(@ForAll("offsetTimes") @TimeRange(min = "01:32:21.113943") OffsetTime time) {
-					assertThat(time).isNotNull();
-				}
-
+			@Property
+			void zoneOffsets(@ForAll("offsets") @OffsetRange(min = "-01:00:00", max = "+01:00:00") ZoneOffset offset) {
+				assertThat(offset).isBetween(ZoneOffset.ofHoursMinutesSeconds(1, 0, 0), ZoneOffset.ofHoursMinutesSeconds(-1, 0, 0));
 			}
 
-			@Group
-			class OffsetRangeConstraint {
-
-				@Property
-				void zoneOffsets(@ForAll("offsets") @OffsetRange(min = "-09:00:00", max = "+08:00:00") ZoneOffset offset) {
-					assertThat(offset).isNotNull();
-				}
-
-				@Property
-				void offsetTime(@ForAll("offsetTimes") @OffsetRange(min = "-09:00:00", max = "+08:00:00") OffsetTime time) {
-					assertThat(time).isNotNull();
-				}
-
-			}
-
-			@Group
-			class HourRangeConstraint {
-
-				@Property
-				void localTime(@ForAll("times") @HourRange(min = 11, max = 13) LocalTime time) {
-					assertThat(time).isNotNull();
-				}
-
-				@Property
-				void offsetTime(@ForAll("offsetTimes") @HourRange(min = 11, max = 13) OffsetTime time) {
-					assertThat(time).isNotNull();
-				}
-
-			}
-
-			@Group
-			class MinuteRangeConstraint {
-
-				@Property
-				void localTime(@ForAll("times") @MinuteRange(min = 11, max = 13) LocalTime time) {
-					assertThat(time).isNotNull();
-				}
-
-				@Property
-				void offsetTime(@ForAll("offsetTimes") @MinuteRange(min = 11, max = 13) OffsetTime time) {
-					assertThat(time).isNotNull();
-				}
-
-			}
-
-			@Group
-			class SecondRangeConstraint {
-
-				@Property
-				void localTime(@ForAll("times") @SecondRange(min = 11, max = 13) LocalTime time) {
-					assertThat(time).isNotNull();
-				}
-
-				@Property
-				void offsetTime(@ForAll("offsetTimes") @SecondRange(min = 11, max = 13) OffsetTime time) {
-					assertThat(time).isNotNull();
-				}
-
-			}
-
-			@Group
-			class PrecisionConstraint {
-
-				@Property
-				void localTime(@ForAll("times") @Precision(ofPrecision = MINUTES) LocalTime time) {
-					assertThat(time).isNotNull();
-				}
-
-				@Property
-				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MINUTES) OffsetTime time) {
-					assertThat(time).isNotNull();
-				}
-
-				@Property
-				void duration(@ForAll("durations") @Precision(ofPrecision = MINUTES) Duration duration) {
-					assertThat(duration).isNotNull();
-				}
-
-			}
-
-			@Group
-			class DurationRangeConstraint {
-
-				@Property
-				void duration(@ForAll("durations") @DurationRange(max = "PT1999H22M11S") Duration duration) {
-					assertThat(duration).isNotNull();
-				}
-
-			}
-
-			@Provide
-			Arbitrary<LocalTime> times() {
-				return just(LocalTime.MIN);
-			}
-
-			@Provide
-			Arbitrary<OffsetTime> offsetTimes() {
-				return just(OffsetTime.MIN);
+			@Property
+			void offsetTime(@ForAll("offsetTimes") @OffsetRange(min = "-01:00:00", max = "+01:00:00") OffsetTime time) {
+				assertThat(time.getOffset())
+						.isBetween(ZoneOffset.ofHoursMinutesSeconds(1, 0, 0), ZoneOffset.ofHoursMinutesSeconds(-1, 0, 0));
 			}
 
 			@Provide
 			Arbitrary<ZoneOffset> offsets() {
-				return just(ZoneOffset.MIN);
+				return of(
+						ZoneOffset.ofHours(-3),
+						ZoneOffset.ofHours(-2),
+						ZoneOffset.ofHours(-1),
+						ZoneOffset.ofHours(0),
+						ZoneOffset.ofHours(1),
+						ZoneOffset.ofHours(2),
+						ZoneOffset.ofHours(3)
+				);
+			}
+
+			@Provide
+			Arbitrary<OffsetTime> offsetTimes() {
+				return of(
+						OffsetTime.of(LocalTime.of(1, 32, 20), ZoneOffset.ofHours(-3)),
+						OffsetTime.of(LocalTime.of(1, 32, 21), ZoneOffset.ofHours(-2)),
+						OffsetTime.of(LocalTime.of(1, 32, 22), ZoneOffset.ofHours(-1)),
+						OffsetTime.of(LocalTime.of(1, 32, 23), ZoneOffset.ofHours(0)),
+						OffsetTime.of(LocalTime.of(1, 32, 24), ZoneOffset.ofHours(1)),
+						OffsetTime.of(LocalTime.of(1, 32, 25), ZoneOffset.ofHours(2)),
+						OffsetTime.of(LocalTime.of(1, 32, 26), ZoneOffset.ofHours(3))
+				);
+			}
+
+		}
+
+		@Group
+		class HourRangeConstraint {
+
+			@Property
+			void localTime(@ForAll("times") @HourRange(min = 11, max = 13) LocalTime time) {
+				assertThat(time.getHour()).isBetween(11, 13);
+			}
+
+			@Property
+			void offsetTime(@ForAll("offsetTimes") @HourRange(min = 11, max = 13) OffsetTime time) {
+				assertThat(time.toLocalTime().getHour()).isBetween(11, 13);
+			}
+
+			@Provide
+			Arbitrary<LocalTime> times() {
+				return of(
+						LocalTime.of(9, 32, 20),
+						LocalTime.of(10, 32, 21),
+						LocalTime.of(11, 32, 22),
+						LocalTime.of(12, 32, 23),
+						LocalTime.of(13, 32, 24),
+						LocalTime.of(14, 32, 25),
+						LocalTime.of(15, 32, 26)
+				);
+			}
+
+			@Provide
+			Arbitrary<OffsetTime> offsetTimes() {
+				return of(
+						OffsetTime.of(LocalTime.of(9, 32, 20), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(10, 32, 21), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(11, 32, 22), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(12, 32, 23), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(13, 32, 24), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(14, 32, 25), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(15, 32, 26), ZoneOffset.UTC)
+				);
+			}
+
+		}
+
+		@Group
+		class MinuteRangeConstraint {
+
+			@Property
+			void localTime(@ForAll("times") @MinuteRange(min = 31, max = 33) LocalTime time) {
+				assertThat(time.getMinute()).isBetween(31, 33);
+			}
+
+			@Property
+			void offsetTime(@ForAll("offsetTimes") @MinuteRange(min = 31, max = 33) OffsetTime time) {
+				assertThat(time.toLocalTime().getMinute()).isBetween(31, 33);
+			}
+
+			@Provide
+			Arbitrary<LocalTime> times() {
+				return of(
+						LocalTime.of(9, 29, 20),
+						LocalTime.of(10, 30, 21),
+						LocalTime.of(11, 31, 22),
+						LocalTime.of(12, 32, 23),
+						LocalTime.of(13, 33, 24),
+						LocalTime.of(14, 34, 25),
+						LocalTime.of(15, 35, 26)
+				);
+			}
+
+			@Provide
+			Arbitrary<OffsetTime> offsetTimes() {
+				return of(
+						OffsetTime.of(LocalTime.of(9, 29, 20), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(10, 30, 21), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(11, 31, 22), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(12, 32, 23), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(13, 33, 24), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(14, 34, 25), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(15, 35, 26), ZoneOffset.UTC)
+				);
+			}
+
+		}
+
+		@Group
+		class SecondRangeConstraint {
+
+			@Property
+			void localTime(@ForAll("times") @SecondRange(min = 22, max = 25) LocalTime time) {
+				assertThat(time.getSecond()).isBetween(22, 25);
+			}
+
+			@Property
+			void offsetTime(@ForAll("offsetTimes") @SecondRange(min = 22, max = 25) OffsetTime time) {
+				assertThat(time.toLocalTime().getSecond()).isBetween(22, 25);
+			}
+
+			@Provide
+			Arbitrary<LocalTime> times() {
+				return of(
+						LocalTime.of(9, 32, 20),
+						LocalTime.of(10, 32, 21),
+						LocalTime.of(11, 32, 22),
+						LocalTime.of(12, 32, 23),
+						LocalTime.of(13, 32, 24),
+						LocalTime.of(14, 32, 25),
+						LocalTime.of(15, 32, 26)
+				);
+			}
+
+			@Provide
+			Arbitrary<OffsetTime> offsetTimes() {
+				return of(
+						OffsetTime.of(LocalTime.of(9, 32, 20), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(10, 32, 21), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(11, 32, 22), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(12, 32, 23), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(13, 32, 24), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(14, 32, 25), ZoneOffset.UTC),
+						OffsetTime.of(LocalTime.of(15, 32, 26), ZoneOffset.UTC)
+				);
+			}
+
+		}
+
+		@Group
+		@Disabled
+		class PrecisionConstraint {
+
+			@Property
+			void localTime(@ForAll("times") @Precision(ofPrecision = MINUTES) LocalTime time) {
+				assertThat(time).isNotNull();
+			}
+
+			@Property
+			void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MINUTES) OffsetTime time) {
+				assertThat(time).isNotNull();
+			}
+
+			@Property
+			void duration(@ForAll("durations") @Precision(ofPrecision = MINUTES) Duration duration) {
+				assertThat(duration).isNotNull();
+			}
+
+		}
+
+		@Group
+		class DurationRangeConstraint {
+
+			@Property
+			void duration(@ForAll("durations") @DurationRange(min = "PT1999H22M8S", max = "PT1999H22M11S") Duration duration) {
+				assertThat(duration)
+						.isBetween(Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 8), Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 11));
 			}
 
 			@Provide
 			Arbitrary<Duration> durations() {
-				return just(Duration.ZERO);
+				return of(
+						Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 6),
+						Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 7),
+						Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 8),
+						Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 9),
+						Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 10),
+						Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 11),
+						Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 12)
+				);
 			}
 
 		}

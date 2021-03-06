@@ -15,23 +15,14 @@ public class PeriodRangeConfigurator extends ArbitraryConfiguratorBase {
 		return targetType.isAssignableFrom(Period.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, PeriodRange range) {
+	public Arbitrary<?> configure(PeriodArbitrary periodArbitrary, PeriodRange range) {
 		Period min = parseIsoPeriod(range.min());
 		Period max = parseIsoPeriod(range.max());
-		if (arbitrary instanceof PeriodArbitrary) {
-			PeriodArbitrary periodArbitrary = (PeriodArbitrary) arbitrary;
-			return periodArbitrary.between(min, max);
-		} else {
-			return arbitrary.filter(v -> filter((Period) v, min, max));
-		}
+		return periodArbitrary.between(min, max);
 	}
 
 	private Period parseIsoPeriod(String iso) {
 		return Period.parse(iso);
-	}
-
-	private boolean filter(Period period, Period min, Period max) {
-		return true;
 	}
 
 }

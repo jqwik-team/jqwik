@@ -26,12 +26,12 @@ public class DateRangeForLocalDateConfigurator extends ArbitraryConfiguratorBase
 		}
 	}
 
-	private boolean filter(LocalDate date, LocalDate min, LocalDate max) {
-		return !date.isBefore(min) && !date.isAfter(max);
-	}
-
 	public static LocalDate isoDateToLocalDate(String iso) {
 		return LocalDate.parse(iso);
+	}
+
+	private boolean filter(LocalDate date, LocalDate min, LocalDate max) {
+		return !date.isBefore(min) && !date.isAfter(max);
 	}
 
 }
