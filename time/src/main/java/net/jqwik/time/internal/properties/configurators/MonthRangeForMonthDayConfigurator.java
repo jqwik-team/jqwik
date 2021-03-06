@@ -8,30 +8,26 @@ import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
 
-public class MonthDayRangeConfigurator extends ArbitraryConfiguratorBase {
+public class MonthRangeForMonthDayConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
 	protected boolean acceptTargetType(TypeUsage targetType) {
 		return targetType.isAssignableFrom(MonthDay.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, MonthDayRange range) {
-		MonthDay min = isoDateToMonthDay(range.min());
-		MonthDay max = isoDateToMonthDay(range.max());
+	public Arbitrary<?> configure(Arbitrary<?> arbitrary, MonthRange range) {
+		Month min = range.min();
+		Month max = range.max();
 		if (arbitrary instanceof MonthDayArbitrary) {
 			MonthDayArbitrary monthDayArbitrary = (MonthDayArbitrary) arbitrary;
-			return monthDayArbitrary.between(min, max);
+			return monthDayArbitrary.monthBetween(min, max);
 		} else {
 			return arbitrary.filter(v -> filter((MonthDay) v, min, max));
 		}
 	}
 
-	private MonthDay isoDateToMonthDay(String iso) {
-		return MonthDay.parse(iso);
-	}
-
-	private boolean filter(MonthDay monthDay, MonthDay min, MonthDay max) {
-		return !monthDay.isBefore(min) && !monthDay.isAfter(max);
+	private boolean filter(MonthDay monthDay, Month min, Month max) {
+		return monthDay.getMonth().compareTo(min) >= 0 && monthDay.getMonth().compareTo(max) <= 0;
 	}
 
 }
