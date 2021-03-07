@@ -1,7 +1,5 @@
 - 1.5.1
 
-    - Type variable T is only expanded to Object and Collections of Object. Bug?
-
     - Warn if explicitly added edgeCases are not within an arbitrary's allowed range.
       This can currently only work for numbers. 
 
@@ -22,6 +20,8 @@
       build steps (-> much better performance and shrinking)
       
         - Add capability to easily generate java beans
+
+    - Document that provider methods can have arguments (TypeUsage and SubtypeResolver)
 
     - Domains
         - Deprecate AbstractDomainContextBase
