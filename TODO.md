@@ -1,8 +1,5 @@
 - 1.5.1
 
-    - Warn if explicitly added edgeCases are not within an arbitrary's allowed range.
-      This can currently only work for numbers. 
-
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
       reporting of property's results. May require a new lifecycle hook.
         - Apply annotation wherever reporting is test collateral

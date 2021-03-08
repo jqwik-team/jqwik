@@ -673,7 +673,7 @@ public class Arbitraries {
 	}
 
 	/**
-	 * Create an arbitrary to create instances of {@linkplain Map.Entry}.
+	 * Create an arbitrary to create instances of {@linkplain java.util.Map.Entry}.
 	 * The generated entries are mutable.
 	 *
 	 * @param keysArbitrary   The arbitrary to generate the keys

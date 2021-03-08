@@ -26,8 +26,15 @@ public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 	@SafeVarargs
 	@Override
 	public final EdgeCases.Config<T> add(T... edgeCases) {
-		additionalEdgeCases.addAll(Arrays.asList(edgeCases));
+		for (T edgeCase : edgeCases) {
+			checkEdgeCaseIsValid(edgeCase);
+			additionalEdgeCases.add(edgeCase);
+		}
 		return this;
+	}
+
+	// Override in subclasses if there is anything to check
+	protected void checkEdgeCaseIsValid(T edgeCase) {
 	}
 
 	@SafeVarargs

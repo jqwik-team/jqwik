@@ -68,6 +68,7 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	}
 
 
+	@SuppressWarnings("unchecked")
 	private <T> Arbitrary<T> configureWithMethod(Arbitrary<T> arbitrary, Annotation annotation, Method configurationMethod) {
 		Object configurationResult = invokeMethod(configurationMethod, this, arbitrary, annotation);
 		if (configurationResult == null) {
@@ -76,7 +77,6 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 		if (!(configurationResult instanceof Arbitrary)) {
 			throw new ArbitraryConfigurationException(configurationMethod);
 		}
-		//noinspection unchecked
 		return (Arbitrary<T>) configurationResult;
 	}
 

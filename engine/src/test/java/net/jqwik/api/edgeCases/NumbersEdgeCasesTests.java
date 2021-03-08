@@ -133,6 +133,19 @@ class NumbersEdgeCasesTests {
 			}
 
 			@Example
+			void addingEdgeCaseOutsideAllowedRangeFails() {
+				Arbitrary<BigDecimal> arbitrary =
+						Arbitraries
+								.bigDecimals()
+								.between(BigDecimal.valueOf(-100), BigDecimal.valueOf(100))
+								.edgeCases(edgeCasesConfig -> {
+									edgeCasesConfig.add(BigDecimal.valueOf(100.1));
+								});
+
+				assertThatThrownBy(() -> arbitrary.generator(100, true)).isInstanceOf(IllegalArgumentException.class);
+			}
+
+			@Example
 			void addedDoubleEdgeCasesAreShrinkable() {
 				Arbitrary<Double> arbitrary =
 						Arbitraries
@@ -303,6 +316,19 @@ class NumbersEdgeCasesTests {
 			}
 
 			@Example
+			void addingEdgeCaseOutsideAllowedRangeFails() {
+				Arbitrary<Integer> arbitrary =
+						Arbitraries
+								.integers()
+								.between(-100, 100)
+								.edgeCases(edgeCasesConfig -> {
+									edgeCasesConfig.add(-101);
+								});
+
+				assertThatThrownBy(() -> arbitrary.generator(100, true)).isInstanceOf(IllegalArgumentException.class);
+			}
+
+			@Example
 			void combineFilterAndAdd() {
 				Arbitrary<Integer> arbitrary =
 						Arbitraries
@@ -423,8 +449,5 @@ class NumbersEdgeCasesTests {
 
 		}
 	}
-
-
-
 
 }

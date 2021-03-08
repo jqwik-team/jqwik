@@ -21,6 +21,14 @@ class DecimalEdgeCasesConfiguration extends GenericEdgeCasesConfiguration<BigDec
 	}
 
 	@Override
+	protected void checkEdgeCaseIsValid(BigDecimal edgeCase) {
+		if (!range.includes(edgeCase)) {
+			String message = String.format("Edge case <%s> is outside the arbitrary's allowed range %s", edgeCase, range);
+			throw new IllegalArgumentException(message);
+		}
+	}
+
+	@Override
 	protected Shrinkable<BigDecimal> createShrinkable(BigDecimal additionalEdgeCase) {
 		Range<BigInteger> bigIntegerRange = unscaledBigIntegerRange(range, scale);
 		BigInteger bigIntegerValue = unscaledBigInteger(additionalEdgeCase, scale);

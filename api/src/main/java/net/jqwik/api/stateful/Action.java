@@ -18,8 +18,8 @@ public interface Action<S> {
 	/**
 	 * If this method returns false, the action will not be performed.
 	 *
-	 * @param state
-	 * @return
+	 * @param state the current state
+	 * @return true if the precondition holds
 	 */
 	default boolean precondition(S state) {
 		return true;
@@ -29,8 +29,8 @@ public interface Action<S> {
 	 * Perform an action on state {@code S} and return the same state (if it has state)
 	 * or a new one representing the new state.
 	 *
-	 * @param state
-	 * @return
+	 * @param state the current state
+	 * @return the new state, which may or may not be the same object
 	 */
 	S run(S state);
 }

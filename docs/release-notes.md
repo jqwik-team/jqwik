@@ -28,6 +28,9 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- Trying to add a _numerical_ edge case that is outside the arbitrary's
+  allowed range will now throw an `IllegalArgumentException`.
+
 #### Bug Fixes
 
 Fixed memory leakage introduced in 1.5.0.
