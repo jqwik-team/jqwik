@@ -15,7 +15,7 @@ public class PeriodRangeConfigurator extends ArbitraryConfiguratorBase {
 		return targetType.isAssignableFrom(Period.class);
 	}
 
-	public Arbitrary<?> configure(PeriodArbitrary periodArbitrary, PeriodRange range) {
+	public Arbitrary<Period> configure(PeriodArbitrary periodArbitrary, PeriodRange range) {
 		Period min = parseIsoPeriod(range.min());
 		Period max = parseIsoPeriod(range.max());
 		return periodArbitrary.between(min, max);
