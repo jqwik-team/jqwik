@@ -16,13 +16,13 @@ public class PrecisionForLocalTimeConfigurator extends ArbitraryConfiguratorBase
 		return targetType.isAssignableFrom(LocalTime.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, Precision range) {
+	public Arbitrary<?> configure(Arbitrary<LocalTime> arbitrary, Precision range) {
 		ChronoUnit ofPrecision = range.ofPrecision();
 		if (arbitrary instanceof LocalTimeArbitrary) {
 			LocalTimeArbitrary localTimeArbitrary = (LocalTimeArbitrary) arbitrary;
 			return localTimeArbitrary.ofPrecision(ofPrecision);
 		} else {
-			return arbitrary.filter(v -> filter((LocalTime) v, ofPrecision));
+			return arbitrary.filter(v -> filter(v, ofPrecision));
 		}
 	}
 

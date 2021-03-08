@@ -16,13 +16,13 @@ public class DayOfWeekRangeForLocalDateConfigurator extends ArbitraryConfigurato
 		return targetType.isAssignableFrom(LocalDate.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DayOfWeekRange range) {
+	public Arbitrary<?> configure(Arbitrary<LocalDate> arbitrary, DayOfWeekRange range) {
 		DayOfWeek[] dayOfWeeks = createDayOfWeekArray(range);
 		if (arbitrary instanceof LocalDateArbitrary) {
 			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
 			return localDateArbitrary.onlyDaysOfWeek(dayOfWeeks);
 		} else {
-			return arbitrary.filter(v -> filter((LocalDate) v, dayOfWeeks));
+			return arbitrary.filter(v -> filter(v, dayOfWeeks));
 		}
 	}
 

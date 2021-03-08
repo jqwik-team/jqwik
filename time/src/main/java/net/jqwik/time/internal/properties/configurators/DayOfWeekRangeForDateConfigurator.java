@@ -17,13 +17,13 @@ public class DayOfWeekRangeForDateConfigurator extends ArbitraryConfiguratorBase
 		return targetType.isAssignableFrom(Date.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DayOfWeekRange range) {
+	public Arbitrary<?> configure(Arbitrary<Date> arbitrary, DayOfWeekRange range) {
 		DayOfWeek[] dayOfWeeks = createDayOfWeekArray(range);
 		if (arbitrary instanceof DateArbitrary) {
 			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
 			return dateArbitrary.onlyDaysOfWeek(dayOfWeeks);
 		} else {
-			return arbitrary.filter(v -> filter((Date) v, dayOfWeeks));
+			return arbitrary.filter(v -> filter(v, dayOfWeeks));
 		}
 	}
 

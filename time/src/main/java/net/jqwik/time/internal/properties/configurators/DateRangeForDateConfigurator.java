@@ -15,14 +15,14 @@ public class DateRangeForDateConfigurator extends ArbitraryConfiguratorBase {
 		return targetType.isAssignableFrom(Date.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DateRange range) {
+	public Arbitrary<?> configure(Arbitrary<Date> arbitrary, DateRange range) {
 		Date min = isoDateToDate(range.min(), false);
 		Date max = isoDateToDate(range.max(), true);
 		if (arbitrary instanceof DateArbitrary) {
 			DateArbitrary dateArbitrary = (DateArbitrary) arbitrary;
 			return dateArbitrary.between(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((Date) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

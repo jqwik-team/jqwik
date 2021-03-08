@@ -16,13 +16,13 @@ public class LeapYearsForYearMonthConfigurator extends ArbitraryConfiguratorBase
 		return targetType.isAssignableFrom(YearMonth.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, LeapYears leapYears) {
+	public Arbitrary<?> configure(Arbitrary<YearMonth> arbitrary, LeapYears leapYears) {
 		boolean withLeapYears = leapYears.withLeapYears();
 		if (arbitrary instanceof YearMonthArbitrary) {
 			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
 			return yearMonthArbitrary.leapYears(leapYears.withLeapYears());
 		} else {
-			return arbitrary.filter(v -> filter((YearMonth) v, withLeapYears));
+			return arbitrary.filter(v -> filter(v, withLeapYears));
 		}
 	}
 

@@ -15,14 +15,14 @@ public class DateRangeForLocalDateConfigurator extends ArbitraryConfiguratorBase
 		return targetType.isAssignableFrom(LocalDate.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DateRange range) {
+	public Arbitrary<?> configure(Arbitrary<LocalDate> arbitrary, DateRange range) {
 		LocalDate min = isoDateToLocalDate(range.min());
 		LocalDate max = isoDateToLocalDate(range.max());
 		if (arbitrary instanceof LocalDateArbitrary) {
 			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
 			return localDateArbitrary.between(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((LocalDate) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

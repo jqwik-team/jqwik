@@ -15,14 +15,14 @@ public class YearMonthRangeConfigurator extends ArbitraryConfiguratorBase {
 		return targetType.isAssignableFrom(YearMonth.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, YearMonthRange range) {
+	public Arbitrary<?> configure(Arbitrary<YearMonth> arbitrary, YearMonthRange range) {
 		YearMonth min = isoDateToYearMonth(range.min());
 		YearMonth max = isoDateToYearMonth(range.max());
 		if (arbitrary instanceof YearMonthArbitrary) {
 			YearMonthArbitrary yearMonthArbitrary = (YearMonthArbitrary) arbitrary;
 			return yearMonthArbitrary.between(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((YearMonth) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

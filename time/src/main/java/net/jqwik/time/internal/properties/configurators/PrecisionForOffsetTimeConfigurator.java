@@ -16,13 +16,13 @@ public class PrecisionForOffsetTimeConfigurator extends ArbitraryConfiguratorBas
 		return targetType.isAssignableFrom(OffsetTime.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, Precision range) {
+	public Arbitrary<?> configure(Arbitrary<OffsetTime> arbitrary, Precision range) {
 		ChronoUnit ofPrecision = range.ofPrecision();
 		if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.ofPrecision(ofPrecision);
 		} else {
-			return arbitrary.filter(v -> filter((OffsetTime) v, ofPrecision));
+			return arbitrary.filter(v -> filter(v, ofPrecision));
 		}
 	}
 

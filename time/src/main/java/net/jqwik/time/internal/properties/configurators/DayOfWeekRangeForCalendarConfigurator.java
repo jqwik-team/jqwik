@@ -17,13 +17,13 @@ public class DayOfWeekRangeForCalendarConfigurator extends ArbitraryConfigurator
 		return targetType.isAssignableFrom(Calendar.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DayOfWeekRange range) {
+	public Arbitrary<?> configure(Arbitrary<Calendar> arbitrary, DayOfWeekRange range) {
 		DayOfWeek[] dayOfWeeks = createDayOfWeekArray(range);
 		if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.onlyDaysOfWeek(dayOfWeeks);
 		} else {
-			return arbitrary.filter(v -> filter((Calendar) v, dayOfWeeks));
+			return arbitrary.filter(v -> filter(v, dayOfWeeks));
 		}
 	}
 

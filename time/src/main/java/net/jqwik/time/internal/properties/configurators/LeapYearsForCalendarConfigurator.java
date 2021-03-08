@@ -15,13 +15,13 @@ public class LeapYearsForCalendarConfigurator extends ArbitraryConfiguratorBase 
 		return targetType.isAssignableFrom(Calendar.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, LeapYears leapYears) {
+	public Arbitrary<?> configure(Arbitrary<Calendar> arbitrary, LeapYears leapYears) {
 		boolean withLeapYears = leapYears.withLeapYears();
 		if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.leapYears(withLeapYears);
 		} else {
-			return arbitrary.filter(v -> filter((Calendar) v, withLeapYears));
+			return arbitrary.filter(v -> filter(v, withLeapYears));
 		}
 	}
 

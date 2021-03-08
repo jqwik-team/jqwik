@@ -17,14 +17,14 @@ public class MonthRangeForCalendarConfigurator extends ArbitraryConfiguratorBase
 		return targetType.isAssignableFrom(Calendar.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, MonthRange range) {
+	public Arbitrary<?> configure(Arbitrary<Calendar> arbitrary, MonthRange range) {
 		Month min = range.min();
 		Month max = range.max();
 		if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.monthBetween(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((Calendar) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

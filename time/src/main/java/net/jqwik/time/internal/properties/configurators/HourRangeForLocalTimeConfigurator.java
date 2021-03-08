@@ -15,14 +15,14 @@ public class HourRangeForLocalTimeConfigurator extends ArbitraryConfiguratorBase
 		return targetType.isAssignableFrom(LocalTime.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, HourRange range) {
+	public Arbitrary<?> configure(Arbitrary<LocalTime> arbitrary, HourRange range) {
 		int min = range.min();
 		int max = range.max();
 		if (arbitrary instanceof LocalTimeArbitrary) {
 			LocalTimeArbitrary localTimeArbitrary = (LocalTimeArbitrary) arbitrary;
 			return localTimeArbitrary.hourBetween(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((LocalTime) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

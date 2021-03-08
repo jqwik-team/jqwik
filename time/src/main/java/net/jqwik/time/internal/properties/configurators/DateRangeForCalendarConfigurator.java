@@ -17,14 +17,14 @@ public class DateRangeForCalendarConfigurator extends ArbitraryConfiguratorBase 
 		return targetType.isAssignableFrom(Calendar.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DateRange range) {
+	public Arbitrary<?> configure(Arbitrary<Calendar> arbitrary, DateRange range) {
 		Calendar min = isoDateToCalendar(range.min(), false);
 		Calendar max = isoDateToCalendar(range.max(), true);
 		if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.between(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((Calendar) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 
