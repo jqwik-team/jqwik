@@ -1,57 +1,58 @@
-net.jqwik.time.internal.properties.configurators.DateRangeForLocalDateConfigurator
-net.jqwik.time.internal.properties.configurators.DateRangeForCalendarConfigurator
-net.jqwik.time.internal.properties.configurators.DateRangeForDateConfigurator
+net.jqwik.time.internal.properties.configurators.DateRangeConfigurator$ForLocalDate
+net.jqwik.time.internal.properties.configurators.DateRangeConfigurator$ForCalendar
+net.jqwik.time.internal.properties.configurators.DateRangeConfigurator$ForDate
 
-net.jqwik.time.internal.properties.configurators.YearRangeForLocalDateConfigurator
-net.jqwik.time.internal.properties.configurators.YearRangeForCalendarConfigurator
-net.jqwik.time.internal.properties.configurators.YearRangeForDateConfigurator
-net.jqwik.time.internal.properties.configurators.YearRangeForYearMonthConfigurator
-net.jqwik.time.internal.properties.configurators.YearRangeForYearConfigurator
+net.jqwik.time.internal.properties.configurators.DayOfMonthRangeConfigurator$ForLocalDate
+net.jqwik.time.internal.properties.configurators.DayOfMonthRangeConfigurator$ForCalendar
+net.jqwik.time.internal.properties.configurators.DayOfMonthRangeConfigurator$ForDate
+net.jqwik.time.internal.properties.configurators.DayOfMonthRangeConfigurator$ForMonthDay
+net.jqwik.time.internal.properties.configurators.DayOfMonthRangeConfigurator$ForInteger
 
-net.jqwik.time.internal.properties.configurators.MonthRangeForLocalDateConfigurator
-net.jqwik.time.internal.properties.configurators.MonthRangeForCalendarConfigurator
-net.jqwik.time.internal.properties.configurators.MonthRangeForDateConfigurator
-net.jqwik.time.internal.properties.configurators.MonthRangeForYearMonthConfigurator
-net.jqwik.time.internal.properties.configurators.MonthRangeForMonthDayConfigurator
+net.jqwik.time.internal.properties.configurators.DayOfWeekRangeConfigurator$ForLocalDate
+net.jqwik.time.internal.properties.configurators.DayOfWeekRangeConfigurator$ForCalendar
+net.jqwik.time.internal.properties.configurators.DayOfWeekRangeConfigurator$ForDate
 
-net.jqwik.time.internal.properties.configurators.DayOfMonthRangeForLocalDateConfigurator
-net.jqwik.time.internal.properties.configurators.DayOfMonthRangeForCalendarConfigurator
-net.jqwik.time.internal.properties.configurators.DayOfMonthRangeForDateConfigurator
-net.jqwik.time.internal.properties.configurators.DayOfMonthRangeForMonthDayConfigurator
-net.jqwik.time.internal.properties.configurators.DayOfMonthRangeForIntegerConfigurator
-
-net.jqwik.time.internal.properties.configurators.YearMonthRangeConfigurator
+net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator$ForLocalDate
+net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator$ForCalendar
+net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator$ForDate
+net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator$ForYearMonth
 
 net.jqwik.time.internal.properties.configurators.MonthDayRangeConfigurator
 
-net.jqwik.time.internal.properties.configurators.LeapYearsForLocalDateConfigurator
-net.jqwik.time.internal.properties.configurators.LeapYearsForCalendarConfigurator
-net.jqwik.time.internal.properties.configurators.LeapYearsForDateConfigurator
-net.jqwik.time.internal.properties.configurators.LeapYearsForYearMonthConfigurator
-
-net.jqwik.time.internal.properties.configurators.DayOfWeekRangeForLocalDateConfigurator
-net.jqwik.time.internal.properties.configurators.DayOfWeekRangeForCalendarConfigurator
-net.jqwik.time.internal.properties.configurators.DayOfWeekRangeForDateConfigurator
+net.jqwik.time.internal.properties.configurators.MonthRangeConfigurator$ForLocalDate
+net.jqwik.time.internal.properties.configurators.MonthRangeConfigurator$ForCalendar
+net.jqwik.time.internal.properties.configurators.MonthRangeConfigurator$ForDate
+net.jqwik.time.internal.properties.configurators.MonthRangeConfigurator$ForYearMonth
+net.jqwik.time.internal.properties.configurators.MonthRangeConfigurator$ForMonthDay
 
 net.jqwik.time.internal.properties.configurators.PeriodRangeConfigurator
 
-net.jqwik.time.internal.properties.configurators.TimeRangeForLocalTimeConfigurator
-net.jqwik.time.internal.properties.configurators.TimeRangeForOffsetTimeConfigurator
+net.jqwik.time.internal.properties.configurators.YearMonthRangeConfigurator
 
-net.jqwik.time.internal.properties.configurators.OffsetRangeForZoneOffsetConfigurator
-net.jqwik.time.internal.properties.configurators.OffsetRangeForOffsetTimeConfigurator
+net.jqwik.time.internal.properties.configurators.YearRangeConfigurator$ForLocalDate
+net.jqwik.time.internal.properties.configurators.YearRangeConfigurator$ForCalendar
+net.jqwik.time.internal.properties.configurators.YearRangeConfigurator$ForDate
+net.jqwik.time.internal.properties.configurators.YearRangeConfigurator$ForYearMonth
+net.jqwik.time.internal.properties.configurators.YearRangeConfigurator$ForYear
 
-net.jqwik.time.internal.properties.configurators.HourRangeForLocalTimeConfigurator
-net.jqwik.time.internal.properties.configurators.HourRangeForOffsetTimeConfigurator
-
-net.jqwik.time.internal.properties.configurators.MinuteRangeForLocalTimeConfigurator
-net.jqwik.time.internal.properties.configurators.MinuteRangeForOffsetTimeConfigurator
-
-net.jqwik.time.internal.properties.configurators.SecondRangeForLocalTimeConfigurator
-net.jqwik.time.internal.properties.configurators.SecondRangeForOffsetTimeConfigurator
 
 net.jqwik.time.internal.properties.configurators.DurationRangeConfigurator
 
-net.jqwik.time.internal.properties.configurators.PrecisionForLocalTimeConfigurator
-net.jqwik.time.internal.properties.configurators.PrecisionForOffsetTimeConfigurator
-net.jqwik.time.internal.properties.configurators.PrecisionForDurationConfigurator
+net.jqwik.time.internal.properties.configurators.MinuteRangeConfigurator$ForLocalTime
+net.jqwik.time.internal.properties.configurators.MinuteRangeConfigurator$ForOffsetTime
+
+net.jqwik.time.internal.properties.configurators.HourRangeConfigurator$ForLocalTime
+net.jqwik.time.internal.properties.configurators.HourRangeConfigurator$ForOffsetTime
+
+net.jqwik.time.internal.properties.configurators.OffsetRangeConfigurator$ForZoneOffset
+net.jqwik.time.internal.properties.configurators.OffsetRangeConfigurator$ForOffsetTime
+
+net.jqwik.time.internal.properties.configurators.PrecisionConfigurator$ForLocalTime
+net.jqwik.time.internal.properties.configurators.PrecisionConfigurator$ForOffsetTime
+net.jqwik.time.internal.properties.configurators.PrecisionConfigurator$ForDuration
+
+net.jqwik.time.internal.properties.configurators.SecondRangeConfigurator$ForLocalTime
+net.jqwik.time.internal.properties.configurators.SecondRangeConfigurator$ForOffsetTime
+
+net.jqwik.time.internal.properties.configurators.TimeRangeConfigurator$ForLocalTime
+net.jqwik.time.internal.properties.configurators.TimeRangeConfigurator$ForOffsetTime
