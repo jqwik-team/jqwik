@@ -15,14 +15,14 @@ public class YearRangeForCalendarConfigurator extends ArbitraryConfiguratorBase 
 		return targetType.isAssignableFrom(Calendar.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, YearRange range) {
+	public Arbitrary<?> configure(Arbitrary<Calendar> arbitrary, YearRange range) {
 		int min = range.min();
 		int max = range.max();
 		if (arbitrary instanceof CalendarArbitrary) {
 			CalendarArbitrary calendarArbitrary = (CalendarArbitrary) arbitrary;
 			return calendarArbitrary.yearBetween(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((Calendar) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

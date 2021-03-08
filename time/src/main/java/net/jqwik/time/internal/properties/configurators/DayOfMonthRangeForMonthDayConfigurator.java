@@ -15,14 +15,14 @@ public class DayOfMonthRangeForMonthDayConfigurator extends ArbitraryConfigurato
 		return targetType.isAssignableFrom(MonthDay.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, DayOfMonthRange range) {
+	public Arbitrary<?> configure(Arbitrary<MonthDay> arbitrary, DayOfMonthRange range) {
 		int min = range.min();
 		int max = range.max();
 		if (arbitrary instanceof MonthDayArbitrary) {
 			MonthDayArbitrary monthDayArbitrary = (MonthDayArbitrary) arbitrary;
 			return monthDayArbitrary.dayOfMonthBetween(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((MonthDay) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

@@ -15,14 +15,14 @@ public class HourRangeForOffsetTimeConfigurator extends ArbitraryConfiguratorBas
 		return targetType.isAssignableFrom(OffsetTime.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, HourRange range) {
+	public Arbitrary<?> configure(Arbitrary<OffsetTime> arbitrary, HourRange range) {
 		int min = range.min();
 		int max = range.max();
 		if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.hourBetween(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((OffsetTime) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

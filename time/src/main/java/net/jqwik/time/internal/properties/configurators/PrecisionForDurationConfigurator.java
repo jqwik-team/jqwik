@@ -16,13 +16,13 @@ public class PrecisionForDurationConfigurator extends ArbitraryConfiguratorBase 
 		return targetType.isAssignableFrom(Duration.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, Precision range) {
+	public Arbitrary<?> configure(Arbitrary<Duration> arbitrary, Precision range) {
 		ChronoUnit ofPrecision = range.ofPrecision();
 		if (arbitrary instanceof DurationArbitrary) {
 			DurationArbitrary durationArbitrary = (DurationArbitrary) arbitrary;
 			return durationArbitrary.ofPrecision(ofPrecision);
 		} else {
-			return arbitrary.filter(v -> filter((Duration) v, ofPrecision));
+			return arbitrary.filter(v -> filter(v, ofPrecision));
 		}
 	}
 

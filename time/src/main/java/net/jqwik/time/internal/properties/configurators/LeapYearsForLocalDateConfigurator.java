@@ -16,13 +16,13 @@ public class LeapYearsForLocalDateConfigurator extends ArbitraryConfiguratorBase
 		return targetType.isAssignableFrom(LocalDate.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, LeapYears leapYears) {
+	public Arbitrary<?> configure(Arbitrary<LocalDate> arbitrary, LeapYears leapYears) {
 		boolean withLeapYears = leapYears.withLeapYears();
 		if (arbitrary instanceof LocalDateArbitrary) {
 			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
 			return localDateArbitrary.leapYears(withLeapYears);
 		} else {
-			return arbitrary.filter(v -> filter((LocalDate) v, withLeapYears));
+			return arbitrary.filter(v -> filter(v, withLeapYears));
 		}
 	}
 

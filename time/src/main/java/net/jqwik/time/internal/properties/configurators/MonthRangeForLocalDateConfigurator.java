@@ -15,14 +15,14 @@ public class MonthRangeForLocalDateConfigurator extends ArbitraryConfiguratorBas
 		return targetType.isAssignableFrom(LocalDate.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, MonthRange range) {
+	public Arbitrary<?> configure(Arbitrary<LocalDate> arbitrary, MonthRange range) {
 		Month min = range.min();
 		Month max = range.max();
 		if (arbitrary instanceof LocalDateArbitrary) {
 			LocalDateArbitrary localDateArbitrary = (LocalDateArbitrary) arbitrary;
 			return localDateArbitrary.monthBetween(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((LocalDate) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

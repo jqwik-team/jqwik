@@ -15,14 +15,14 @@ public class OffsetRangeForZoneOffsetConfigurator extends ArbitraryConfiguratorB
 		return targetType.isAssignableFrom(ZoneOffset.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, OffsetRange range) {
+	public Arbitrary<?> configure(Arbitrary<ZoneOffset> arbitrary, OffsetRange range) {
 		ZoneOffset min = ZoneOffset.of(range.min());
 		ZoneOffset max = ZoneOffset.of(range.max());
 		if (arbitrary instanceof ZoneOffsetArbitrary) {
 			ZoneOffsetArbitrary zoneOffsetArbitrary = (ZoneOffsetArbitrary) arbitrary;
 			return zoneOffsetArbitrary.between(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((ZoneOffset) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 

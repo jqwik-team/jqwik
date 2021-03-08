@@ -15,14 +15,14 @@ public class SecondRangeForOffsetTimeConfigurator extends ArbitraryConfiguratorB
 		return targetType.isAssignableFrom(OffsetTime.class);
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, SecondRange range) {
+	public Arbitrary<?> configure(Arbitrary<OffsetTime> arbitrary, SecondRange range) {
 		int min = range.min();
 		int max = range.max();
 		if (arbitrary instanceof OffsetTimeArbitrary) {
 			OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 			return offsetTimeArbitrary.secondBetween(min, max);
 		} else {
-			return arbitrary.filter(v -> filter((OffsetTime) v, min, max));
+			return arbitrary.filter(v -> filter(v, min, max));
 		}
 	}
 
