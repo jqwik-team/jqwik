@@ -380,25 +380,21 @@ class ArbitrariesTests {
 
 	@Group
 	class LazyOf {
-		@Example
-		void recursiveTree(@ForAll Random random) {
-			assertAllGenerated(
-					trees().generator(1000, true),
-					random,
-					tree -> {
-						assertThat(tree.name).hasSize(3);
-						assertThat(tree.left).satisfiesAnyOf(
-								branch -> assertThat(branch).isNull(),
-								branch -> assertThat(branch).isInstanceOf(Tree.class)
-						);
-						assertThat(tree.right).satisfiesAnyOf(
-								branch -> assertThat(branch).isNull(),
-								branch -> assertThat(branch).isInstanceOf(Tree.class)
-						);
-					}
+
+		@Property(tries = 100)
+		void recursiveTree(@ForAll("trees") Tree tree) {
+			assertThat(tree.name).hasSize(3);
+			assertThat(tree.left).satisfiesAnyOf(
+					branch -> assertThat(branch).isNull(),
+					branch -> assertThat(branch).isInstanceOf(Tree.class)
+			);
+			assertThat(tree.right).satisfiesAnyOf(
+					branch -> assertThat(branch).isNull(),
+					branch -> assertThat(branch).isInstanceOf(Tree.class)
 			);
 		}
 
+		@Provide
 		private Arbitrary<Tree> trees() {
 			return Combinators.combine(aName(), aBranch(), aBranch()).as(Tree::new);
 		}
