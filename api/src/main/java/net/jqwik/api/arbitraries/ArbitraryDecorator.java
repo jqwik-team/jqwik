@@ -57,9 +57,9 @@ public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> 
 	 * @param <A> The special interface type of this arbitrary
 	 * @return A cloned instance of this arbitrary
 	 */
+	@SuppressWarnings("unchecked")
 	protected <A extends Arbitrary<?>> A typedClone() {
 		try {
-			//noinspection unchecked
 			return (A) this.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new JqwikException(e.getMessage());

@@ -80,8 +80,8 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 		return (Arbitrary<T>) configurationResult;
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T> List<Method> findConfigurationMethods(Arbitrary<T> arbitrary, Annotation annotation) {
-		@SuppressWarnings("unchecked")
 		Class<? extends Arbitrary<T>> arbitraryClass = (Class<? extends Arbitrary<T>>) arbitrary.getClass();
 		return findMethods(getClass(),
 				method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation), HierarchyTraversalMode.BOTTOM_UP);

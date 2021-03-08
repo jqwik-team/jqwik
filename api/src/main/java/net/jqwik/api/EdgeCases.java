@@ -26,7 +26,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
 		static <T> Consumer<Config<T>> noConfig() {
 			return config -> {};
-		};
+		}
 
 		/**
 		 * Don't use any of the default edge cases
@@ -56,6 +56,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		 * @param edgeCases The edge cases to add to default edge cases.
 		 * @return same configuration instance
 		 */
+		@SuppressWarnings("unchecked")
 		Config<T> add(T... edgeCases);
 
 		/**
