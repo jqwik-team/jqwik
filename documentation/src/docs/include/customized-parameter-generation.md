@@ -52,6 +52,49 @@ Parameter provision usually starts with a
 by one or more [filtering](#filtering), [mapping](#mapping) or
 [combining](#combining-arbitraries) actions.
 
+### Provider Methods with Parameters
+
+The examples of [provider methods](#parameter-provider-methods) you've seen so far
+had no parameters. In more complicated scenarios, however, you may want to tune
+an arbitrary depending on the concrete parameter to be generated.
+
+Imagine you want to randomly choose one of your favourite primes; that's easy:
+
+```java
+@Property
+void favouritePrimes(@ForAll("favouritePrimes") int aFavourite) {
+}
+
+@Provide
+Arbitrary<Integer> favouritePrimes() {
+	return Arbitraries.of(3, 5, 7, 13, 17, 23, 41, 101);
+}
+```
+
+From time to time, though, you need it as a `BigInteger` instead of an `int`. 
+You can kill both types with a single method:
+
+```java
+@Property
+void favouritePrimesAsInts(@ForAll("favouritePrimes") int aFavourite) { ... }
+
+@Property
+void favouritePrimesAsBigInts(@ForAll("favouritePrimes") BigInteger aFavourite) { ... }
+
+@Provide
+Arbitrary<?> favouritePrimes(TypeUsage targetType) {
+	Arbitrary<Integer> ints = Arbitraries.of(3, 5, 7, 13, 17, 23, 41);
+	if (targetType.getRawType().equals(BigInteger.class)) {
+		return ints.map(BigInteger::valueOf);
+	}
+	return ints;
+}
+```
+
+Mind the parameters and return type of `favouritePrimes()`. 
+The second parameter `ArbitraryProvider.SubtypeProvider subtypeProvider` is optional;
+it would be needed in case of variable subtypes that require their own dynamic resolution.
+
 
 ### Providing Arbitraries for Embedded Types
 
