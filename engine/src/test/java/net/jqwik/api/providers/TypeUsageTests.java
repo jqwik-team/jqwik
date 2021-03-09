@@ -558,6 +558,8 @@ class TypeUsageTests {
 			assertThat(bigInt.canBeAssignedTo(smallInt)).isTrue();
 			assertThat(smallInt.canBeAssignedTo(bigInt)).isTrue();
 			assertThat(bigInt.canBeAssignedTo(TypeUsage.of(Number.class))).isTrue();
+
+			assertThat(smallInt.canBeAssignedTo(TypeUsage.of(Object.class))).isTrue();
 		}
 
 		@Example
@@ -609,6 +611,7 @@ class TypeUsageTests {
 			TypeUsage listOfBoundWildcard = TypeUsage.forType(boundWildcardType);
 
 			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
+			TypeUsage listOfNativeInt = TypeUsage.of(List.class, TypeUsage.of(int.class));
 			TypeUsage rawList = TypeUsage.of(List.class);
 
 			assertThat(listOfBoundWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
@@ -621,6 +624,9 @@ class TypeUsageTests {
 
 			assertThat(listOfWildcard.canBeAssignedTo(listOfString)).isFalse();
 			assertThat(listOfWildcard.canBeAssignedTo(rawList)).isTrue();
+
+			assertThat(listOfNativeInt.canBeAssignedTo(listOfWildcard)).isTrue();
+			assertThat(listOfNativeInt.canBeAssignedTo(listOfBoundWildcard)).isFalse();
 
 			assertThat(rawList.canBeAssignedTo(listOfWildcard)).isTrue();
 		}

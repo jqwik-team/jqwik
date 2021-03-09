@@ -366,6 +366,8 @@ public class TypeUsageImpl implements TypeUsage {
 		if (targetType.isTypeVariableOrWildcard()) {
 			return canBeAssignedToUpperBounds(this, targetType) && canBeAssignedToLowerBounds(this, targetType);
 		}
+		if (primitiveTypeToObject(this.getRawType(), targetType.getRawType()))
+			return true;
 		if (boxedTypeMatches(targetType.getRawType(), this.rawType))
 			return true;
 		if (boxedTypeMatches(this.rawType, targetType.getRawType()))
@@ -380,6 +382,10 @@ public class TypeUsageImpl implements TypeUsage {
 			}
 		}
 		return false;
+	}
+
+	private boolean primitiveTypeToObject(Class<?> primitiveType, Class<?> objectType) {
+		return primitiveType.isPrimitive() && objectType.equals(Object.class);
 	}
 
 	private static boolean canBeAssignedToUpperBounds(TypeUsage sourceType, TypeUsage targetType) {
