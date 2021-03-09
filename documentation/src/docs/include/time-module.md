@@ -4,12 +4,18 @@ default generation and annotations for date and time types.
 This module is part of jqwik's default dependencies.
 
 The module provides: 
-- [default generation](#default-generation-of-dates) for date-related Java types
-- [Programmatic API](#programmatic-generation-of-dates) to configure date-related types
-- [default generation](#default-generation-of-times) for time-related Java types
-- [Programmatic API](#programmatic-generation-of-times) to configure time-related types
 
-#### Default Generation of Dates
+- [Generation of Dates](#generation-of-dates)
+    - [default generation](#default-generation-of-dates) for date-related Java types
+    - [Programmatic API](#programmatic-generation-of-dates) to configure date-related types
+    
+- [Generation of Times](#generation-of-times)
+    - [default generation](#default-generation-of-times) for time-related Java types
+    - [Programmatic API](#programmatic-generation-of-times) to configure time-related types
+
+#### Generation of Dates
+
+##### Default Generation of Dates
 
 Default generation currently is supported for `LocalDate`, `Year`, `YearMonth`,
 `DayOfWeek`, `MonthDay` and `Period`. Here's a small example:
@@ -40,7 +46,7 @@ The following annotations can be used to constrain default generation of the enu
 use the ISO format for date strings. 
 Examples: `2013-05-25`, `--05-25`, `2013-05` and `P1Y2M15D`.
 
-#### Programmatic Generation of Dates
+##### Programmatic Generation of Dates
 
 Programmatic generation of dates and date-related types always starts with a static
 method call on class [`Dates`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html).
@@ -71,7 +77,7 @@ Here's the list of available methods:
 - [`MonthDayArbitrary monthDays()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#monthDays())
 - [`PeriodArbitrary periods()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#periods())
 
-##### LocalDateArbitrary
+###### LocalDateArbitrary
 
 - The target type is `LocalDate`.
 - By default, only years between 1900 and 2500 are generated.
@@ -83,7 +89,7 @@ Here's the list of available methods:
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
 - You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
-##### CalendarArbitrary
+###### CalendarArbitrary
 
 - The target type is `Calendar`. The time-related parts of `Calendar` instances are set to 0.
 - By default, only years between 1900 and 2500 are generated.
@@ -95,7 +101,7 @@ Here's the list of available methods:
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
 - You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
-##### DateArbitrary
+###### DateArbitrary
 
 - The target type is `Date`. The time-related parts of `Date` instances are set to 0.
 - By default, only years between 1900 and 2500 are generated.
@@ -107,12 +113,12 @@ Here's the list of available methods:
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
 - You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
-##### YearArbitrary
+###### YearArbitrary
 
 - By default, only years between 1900 and 2500 are generated.
 - You can constrain its minimum and maximum value using `between(min, max)`.
 
-#### YearMonthArbitrary
+###### YearMonthArbitrary
 
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - By default, only years between 1900 and 2500 are generated.
@@ -121,14 +127,14 @@ Here's the list of available methods:
 - You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
-##### MonthDayArbitrary
+###### MonthDayArbitrary
 
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
 - You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
 
-##### PeriodArbitrary
+###### PeriodArbitrary
 
 - By default, periods between `-1000 years` and `1000 years` are generated.
 - Generated periods are always in a "reduced" form, 
@@ -137,7 +143,9 @@ Here's the list of available methods:
 - If you really want something like `Period.ofDays(3000)` generate an integer
   and map it on `Period`.
 
-#### Default Generation of Times
+#### Generation of Times
+
+##### Default Generation of Times
 
 Default generation currently is supported for `LocalTime`, `OffsetTime`, `ZoneOffset`,
 `TimeZone`, `ZoneId` and `Duration`. Here's a small example:
@@ -168,7 +176,7 @@ Examples:
 - `@OffsetRange`: "-09:00", "+3", "+11:22:33" or "Z" (See [`ZoneOffset.of`](https://docs.oracle.com/javase/8/docs/api/java/time/ZoneOffset.html#of-java.lang.String-))
 - `@DurationRange`: "PT-3000H-39M-22.123111444S", "PT1999H22M11S" or "P2DT3H4M" (See [`Duration.parse`](https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-))
 
-#### Programmatic Generation of Times
+##### Programmatic Generation of Times
 
 Programmatic generation of times always starts with a static
 method call on class [`Times`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html).
@@ -195,7 +203,7 @@ Here's the list of available methods:
 - [`Arbitrary<ZoneId> zoneIds()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html#zoneIds())
 - [`DurationArbitrary durations()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Times.html#durations())
 
-##### LocalTimeArbitrary
+###### LocalTimeArbitrary
 
 - The target type is `LocalTime`.
 - By default, precision is seconds.
@@ -205,7 +213,7 @@ Here's the list of available methods:
 - You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
 
-##### OffsetTimeArbitrary
+###### OffsetTimeArbitrary
 
 - The target type is `OffsetTime`.
 - By default, precision is seconds.
@@ -216,12 +224,12 @@ Here's the list of available methods:
 - You can constrain the minimum and maximum value for offset using `offsetBetween(min, max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
 
-##### ZoneOffsetArbitrary
+###### ZoneOffsetArbitrary
 
 - The target type is `ZoneOffset`.
 - You can constrain its minimum and maximum value using `between(min, max)`.
 
-##### DurationArbitrary
+###### DurationArbitrary
 
 - The target type is `Duration`.
 - By default, precision is seconds.

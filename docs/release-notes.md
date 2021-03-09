@@ -24,7 +24,15 @@ title: jqwik Release Notes
 
 ## 1.5.1-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
 #### New and Enhanced Features
+
+- The time module does now allow [generation of times](/docs/snapshot/user-guide.html#generation-of-times)
 
 #### Breaking Changes
 
