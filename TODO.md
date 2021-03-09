@@ -1,9 +1,5 @@
 - 1.5.1
 
-    - Create possibility/annotation to suppress reporting inside of a test/property but not lose
-      reporting of property's results. May require a new lifecycle hook.
-        - Apply annotation wherever reporting is test collateral
-
     - @StatisticsReportFormat
       https://github.com/jlink/jqwik/issues/146
         - label=<statistics label> to specify for which statistics to use
@@ -12,13 +8,21 @@
     - StringArbitrary.excludeChars() or s.t. like that
       https://github.com/jlink/jqwik/issues/167
 
-    - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter() 
+    - Document that provider methods can have arguments (TypeUsage and SubtypeResolver)
+
+    - Time Module:
+        - Times. See https://github.com/jlink/jqwik/issues/154
+    
+    - Web Module:
+        - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
+
+    - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
       to replace Combinators.withBuilder() but target cannot change across
       build steps (-> much better performance and shrinking)
-      
-        - Add capability to easily generate java beans
+        - Add capability to easily generate java beans (if that really makes sense)
 
-    - Document that provider methods can have arguments (TypeUsage and SubtypeResolver)
+
+- 1.5.x
 
     - Domains
         - Deprecate AbstractDomainContextBase
@@ -27,23 +31,23 @@
             - Allow @ForAll parameters in @Provide methods
             - Allow Arbitrary<T> parameters in @Provide methods
             - @Configure method for configurators?
-            
+
         - Hand in property execution context to domains when being created.
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
 
-    - Time Module:
-        - Times and DateTimes. See https://github.com/jlink/jqwik/issues/154
-        - [LocalDate|Calendar|DateArbitrary].shrinkTowards(date)
-        - Generate Instant, LocalTime, ZonedTime etc.
-    
-    - Web Module:
-        - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
-
     - EdgeCases.Configuration.withProbability(double injectProbability)
 
-- 1.5.x
+    - Time Module:
+      - DateTimes. See https://github.com/jlink/jqwik/issues/???
+      - Generate Instant, LocalTime, ZonedTime etc.
+      - [LocalDate|Calendar|DateArbitrary].shrinkTowards(date)
 
+    - Create possibility/annotation to suppress reporting inside of a test/property but not lose
+      reporting of property's results. May require a new lifecycle hook.
+        - Apply annotation wherever reporting is test collateral
+        - Make it configurable, e.g. `jqwik.reporting.statistics.onfailureonly`
+      
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
             - forType(Class<T> targetType, int depth)
