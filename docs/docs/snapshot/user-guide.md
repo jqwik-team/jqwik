@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.4.0-SNAPSHOT
+title: jqwik User Guide - 1.5.1-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.4.0-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.5.1-SNAPSHOT</span>
 </h1>
 
 <h3>Table of Contents
@@ -70,6 +70,7 @@ title: jqwik User Guide - 1.4.0-SNAPSHOT
   - [Constraining Default Generation](#constraining-default-generation)
     - [Allow Null Values](#allow-null-values)
     - [String Length](#string-length)
+    - [String not Blank](#string-not-blank)
     - [Character Sets](#character-sets)
     - [List, Set, Stream, Iterator, Map and Array Size](#list-set-stream-iterator-map-and-array-size)
     - [Unique Elements](#unique-elements)
@@ -164,9 +165,8 @@ title: jqwik User Guide - 1.4.0-SNAPSHOT
   - [Web Module](#web-module)
     - [Email Address Generation](#email-address-generation)
   - [Time Module](#time-module)
-    - [Default Generation of Dates](#default-generation-of-dates)
-    - [Programmatic Generation of Dates](#programmatic-generation-of-dates)
-    - [YearMonthArbitrary](#yearmontharbitrary)
+    - [Generation of Dates](#generation-of-dates)
+    - [Generation of Times](#generation-of-times)
   - [Testing Module](#testing-module)
 - [Advanced Topics](#advanced-topics)
   - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
@@ -220,7 +220,7 @@ repositories {
 ext.junitPlatformVersion = '1.7.1'
 ext.junitJupiterVersion = '5.7.1'
 
-ext.jqwikVersion = '1.4.0-SNAPSHOT'
+ext.jqwikVersion = '1.5.1-SNAPSHOT'
 
 compileTestJava {
     // To enable argument names in reporting and debugging
@@ -319,7 +319,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
+        <version>1.5.1-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -347,15 +347,15 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-api-1.4.0-SNAPSHOT.jar`
-- `jqwik-engine-1.4.0-SNAPSHOT.jar`
+- `jqwik-api-1.5.1-SNAPSHOT.jar`
+- `jqwik-engine-1.5.1-SNAPSHOT.jar`
 - `junit-platform-engine-1.7.1.jar`
 - `junit-platform-commons-1.7.1.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
-- `jqwik-web-1.4.0-SNAPSHOT.jar`
-- `jqwik-time-1.4.0-SNAPSHOT.jar`
+- `jqwik-web-1.5.1-SNAPSHOT.jar`
+- `jqwik-time-1.5.1-SNAPSHOT.jar`
 
 
 
@@ -370,7 +370,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html).
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with
-[`@ForAll`](/docs/1.4.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.5.1-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -1093,6 +1093,12 @@ depending on the requested parameter type.
 
 - [`@NotEmpty`](/docs/snapshot/javadoc/net/jqwik/api/constraints/NotEmpty.html):
   Set minimum length to `1`.
+
+#### String not Blank
+
+- [`@NotBlank`](/docs/snapshot/javadoc/net/jqwik/api/constraints/NotBlank.html):
+  Strings must not be empty or only contain whitespace.
+
 
 #### Character Sets
 
@@ -1823,7 +1829,7 @@ The property (most probably) succeeds and will give you confidence in your code.
 Or does it? Natural scepticism makes you check some statistics:
 
 ```java
-@Property
+@Property(edgeCases = EdgeCasesMode.NONE)
 boolean comparing_strings_is_symmetric(@ForAll String first, @ForAll String second) {
     int comparison = comparator.compare(first, second);
     String comparisonRange = comparison < 0 ? "<0" : comparison > 0 ? ">0" : "=0";
@@ -4129,13 +4135,21 @@ default generation and annotations for date and time types.
 This module is part of jqwik's default dependencies.
 
 The module provides: 
-- [default generation](#default-generation-of-dates) for date-related Java types
-- [Programmatic API](#programmatic-generation-of-dates) to configure date-related types
 
-#### Default Generation of Dates
+- [Generation of Dates](#generation-of-dates)
+    - [default generation](#default-generation-of-dates) for date-related Java types
+    - [Programmatic API](#programmatic-generation-of-dates) to configure date-related types
+    
+- [Generation of Times](#generation-of-times)
+    - [default generation](#default-generation-of-times) for time-related Java types
+    - [Programmatic API](#programmatic-generation-of-times) to configure time-related types
+
+#### Generation of Dates
+
+##### Default Generation of Dates
 
 Default generation currently is supported for `LocalDate`, `Year`, `YearMonth`,
-`DayOfWeek`, `MonthDay` and `Period`. Here's an small example:
+`DayOfWeek`, `MonthDay` and `Period`. Here's a small example:
 
 ```java
 @Property
@@ -4163,7 +4177,7 @@ The following annotations can be used to constrain default generation of the enu
 use the ISO format for date strings. 
 Examples: `2013-05-25`, `--05-25`, `2013-05` and `P1Y2M15D`.
 
-#### Programmatic Generation of Dates
+##### Programmatic Generation of Dates
 
 Programmatic generation of dates and date-related types always starts with a static
 method call on class [`Dates`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html).
@@ -4194,7 +4208,7 @@ Here's the list of available methods:
 - [`MonthDayArbitrary monthDays()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#monthDays())
 - [`PeriodArbitrary periods()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#periods())
 
-##### LocalDateArbitrary
+###### LocalDateArbitrary
 
 - The target type is `LocalDate`.
 - By default, only years between 1900 and 2500 are generated.
@@ -4206,7 +4220,7 @@ Here's the list of available methods:
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
 - You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
-##### CalendarArbitrary
+###### CalendarArbitrary
 
 - The target type is `Calendar`. The time-related parts of `Calendar` instances are set to 0.
 - By default, only years between 1900 and 2500 are generated.
@@ -4218,7 +4232,7 @@ Here's the list of available methods:
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
 - You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
-##### DateArbitrary
+###### DateArbitrary
 
 - The target type is `Date`. The time-related parts of `Date` instances are set to 0.
 - By default, only years between 1900 and 2500 are generated.
@@ -4230,12 +4244,12 @@ Here's the list of available methods:
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
 - You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
-##### YearArbitrary
+###### YearArbitrary
 
 - By default, only years between 1900 and 2500 are generated.
 - You can constrain its minimum and maximum value using `between(min, max)`.
 
-#### YearMonthArbitrary
+###### YearMonthArbitrary
 
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - By default, only years between 1900 and 2500 are generated.
@@ -4244,14 +4258,14 @@ Here's the list of available methods:
 - You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
-##### MonthDayArbitrary
+###### MonthDayArbitrary
 
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
 - You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
 
-##### PeriodArbitrary
+###### PeriodArbitrary
 
 - By default, periods between `-1000 years` and `1000 years` are generated.
 - Generated periods are always in a "reduced" form, 
@@ -4259,6 +4273,99 @@ Here's the list of available methods:
 - You can constrain the minimum and maximum value using `between(Period min, Period max)`.
 - If you really want something like `Period.ofDays(3000)` generate an integer
   and map it on `Period`.
+
+#### Generation of Times
+
+##### Default Generation of Times
+
+Default generation currently is supported for `LocalTime`, `OffsetTime`, `ZoneOffset`,
+`TimeZone`, `ZoneId` and `Duration`. Here's a small example:
+
+```java
+@Property
+void generateLocalTimesWithAnnotation(@ForAll @TimeRange(min = "01:32:21", max = "03:49:32") LocalTime localTime) {
+    assertThat(time).isAfterOrEqualTo(LocalTime.of(1, 32, 21));
+    assertThat(time).isBeforeOrEqualTo(LocalTime.of(3, 49, 32));
+}
+```
+
+The following annotations can be used to constrain default generation of the enumerated types:
+
+- [`@TimeRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/TimeRange.html)
+- [`@OffsetRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/OffsetRange.html)
+- [`@HourRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/HourRange.html)
+- [`@MinuteRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/MinuteRange.html)
+- [`@SecondRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/SecondRange.html)
+- [`@Precision`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/Precision.html)
+- [`@DurationRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DurationRange.html)
+
+`@TimeRange`, `@OffsetRange` and `@DurationRange` 
+use the standard format of their classes. 
+Examples:
+
+- `@TimeRange`: "01:32:31.394920222", "23:43:21" or "03:02" (See [`LocalTime.parse`](https://docs.oracle.com/javase/8/docs/api/java/time/LocalTime.html#parse-java.lang.CharSequence-))
+- `@OffsetRange`: "-09:00", "+3", "+11:22:33" or "Z" (See [`ZoneOffset.of`](https://docs.oracle.com/javase/8/docs/api/java/time/ZoneOffset.html#of-java.lang.String-))
+- `@DurationRange`: "PT-3000H-39M-22.123111444S", "PT1999H22M11S" or "P2DT3H4M" (See [`Duration.parse`](https://docs.oracle.com/javase/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-))
+
+##### Programmatic Generation of Times
+
+Programmatic generation of times always starts with a static
+method call on class [`Times`](/docs/snapshot/javadoc/net/jqwik/time/api/Times.html).
+For example:
+
+```java
+@Property
+void generateLocalTimes(@ForAll("times") LocalTime localTime) {
+  assertThat(localTime).isAfter(LocalTime.of(13, 53, 21));
+}
+
+@Provide
+Arbitrary<LocalTime> times() {
+  return Times.times().atTheEarliest(LocalTime.of(13, 53, 22));
+}
+```
+
+Here's the list of available methods:
+
+- [`LocalTimeArbitrary times()`](/docs/snapshot/javadoc/net/jqwik/time/api/Times.html#times())
+- [`OffsetTimeArbitrary offsetTimes()`](/docs/snapshot/javadoc/net/jqwik/time/api/Times.html#offsetTimes())
+- [`ZoneOffsetArbitrary zoneOffsets()`](/docs/snapshot/javadoc/net/jqwik/time/api/Times.html#zoneOffsets())
+- [`Arbitrary<TimeZone> timeZones()`](/docs/snapshot/javadoc/net/jqwik/time/api/Times.html#timeZones())
+- [`Arbitrary<ZoneId> zoneIds()`](/docs/snapshot/javadoc/net/jqwik/time/api/Times.html#zoneIds())
+- [`DurationArbitrary durations()`](/docs/snapshot/javadoc/net/jqwik/time/api/Times.html#durations())
+
+###### LocalTimeArbitrary
+
+- The target type is `LocalTime`.
+- By default, precision is seconds.
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
+- You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
+- You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+###### OffsetTimeArbitrary
+
+- The target type is `OffsetTime`.
+- By default, precision is seconds.
+- You can constrain the minimum and maximum time value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
+- You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
+- You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
+- You can constrain the minimum and maximum value for offset using `offsetBetween(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+###### ZoneOffsetArbitrary
+
+- The target type is `ZoneOffset`.
+- You can constrain its minimum and maximum value using `between(min, max)`.
+
+###### DurationArbitrary
+
+- The target type is `Duration`.
+- By default, precision is seconds.
+- You can constrain its minimum and maximum value using `between(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
 
 
 
@@ -4784,4 +4891,4 @@ If a certain element, e.g. a method, is not annotated itself, then it carries th
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#140-snapshot).
+Read this version's [release notes](/release-notes.html#151-snapshot).
