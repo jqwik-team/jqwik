@@ -200,6 +200,7 @@ class PeriodTests {
 
 	@Group
 	@StatisticsReport(OFF)
+	@PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
 	class CheckDistribution {
 
 		@Property
