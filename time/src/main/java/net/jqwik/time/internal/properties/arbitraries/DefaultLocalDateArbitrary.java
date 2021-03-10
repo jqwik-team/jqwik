@@ -16,8 +16,8 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> implements LocalDateArbitrary {
 
-	private static final LocalDate DEFAULT_MIN_DATE = LocalDate.of(1900, 1, 1);
-	private static final LocalDate DEFAULT_MAX_DATE = LocalDate.of(2500, 12, 31);
+	public static final LocalDate DEFAULT_MIN_DATE = LocalDate.of(1900, 1, 1);
+	public static final LocalDate DEFAULT_MAX_DATE = LocalDate.of(2500, 12, 31);
 
 	private LocalDate dateMin = null;
 	private LocalDate dateMax = null;
