@@ -24,7 +24,7 @@ public class TimesConstraintTests {
 
 			@Property
 			void timeRangeMin(@ForAll @TimeRange(min = "01:32:21.113943") LocalTime time) {
-				assertThat(time).isAfterOrEqualTo(LocalTime.of(1, 32, 21, 113943));
+				assertThat(time).isAfterOrEqualTo(LocalTime.of(1, 32, 21, 113943000));
 			}
 
 			@Property
@@ -307,7 +307,7 @@ public class TimesConstraintTests {
 
 			@Property
 			void timeRangeMin(@ForAll @TimeRange(min = "01:32:21.113943") OffsetTime time) {
-				assertThat(time.toLocalTime()).isAfterOrEqualTo(LocalTime.of(1, 32, 21, 113943));
+				assertThat(time.toLocalTime()).isAfterOrEqualTo(LocalTime.of(1, 32, 21, 113943000));
 			}
 
 			@Property
