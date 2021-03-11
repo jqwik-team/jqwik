@@ -8,6 +8,7 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
+import net.jqwik.time.api.constraints.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -164,7 +165,26 @@ class LocalDateTimeTests {
 	@Group
 	class ExhaustiveGeneration {
 
-		//TODO
+		@Example
+		void between() {
+			Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 35, 392_211_325)
+							 )
+							 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 11, 22, 32),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 33),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 34),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 35)
+			);
+		}
 
 	}
 
@@ -264,12 +284,6 @@ class LocalDateTimeTests {
 			}
 		}
 
-		private void check10Coverage(StatisticsCoverage coverage) {
-			for (int value = 0; value < 10; value++) {
-				coverage.check(value).percentage(p -> p >= 5);
-			}
-		}
-
 		private void check24Coverage(StatisticsCoverage coverage) {
 			for (int value = 0; value < 24; value++) {
 				coverage.check(value).percentage(p -> p >= 1.5);
@@ -287,7 +301,49 @@ class LocalDateTimeTests {
 	@Group
 	class InvalidConfigurations {
 
-		//TODO
+		@Property
+		void atTheEarliestYearMustNotBelow1(
+				@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
+				@ForAll @LeapYears(withLeapYears = false) LocalDate date,
+				@ForAll LocalTime time
+		) {
+			date = date.withYear(year);
+			LocalDateTime dateTime = LocalDateTime.of(date, time);
+			System.out.println(dateTime);
+			assertThatThrownBy(
+					() -> DateTimes.dateTimes().atTheEarliest(dateTime)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void atTheEarliestMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max) {
+			Assume.that(min.isAfter(max));
+			assertThatThrownBy(
+					() -> DateTimes.dateTimes().atTheLatest(max).atTheEarliest(min)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void atTheLatestYearMustNotBelow1(
+				@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
+				@ForAll @LeapYears(withLeapYears = false) LocalDate date,
+				@ForAll LocalTime time
+		) {
+			date = date.withYear(year);
+			LocalDateTime dateTime = LocalDateTime.of(date, time);
+			System.out.println(dateTime);
+			assertThatThrownBy(
+					() -> DateTimes.dateTimes().atTheLatest(dateTime)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void atTheLatestMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max) {
+			Assume.that(min.isAfter(max));
+			assertThatThrownBy(
+					() -> DateTimes.dateTimes().atTheEarliest(min).atTheLatest(max)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
 
 	}
 

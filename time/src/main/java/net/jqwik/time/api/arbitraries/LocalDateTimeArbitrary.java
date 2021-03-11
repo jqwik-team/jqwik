@@ -11,7 +11,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Fluent interface to configure the generation of local date time values.
  */
-@API(status = EXPERIMENTAL, since = "1.5.2")
+@API(status = EXPERIMENTAL, since = "1.5.1")
 public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 
 	/**

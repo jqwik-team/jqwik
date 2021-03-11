@@ -7,7 +7,7 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-@API(status = EXPERIMENTAL, since = "1.5.2")
+@API(status = EXPERIMENTAL, since = "1.5.1")
 public class DateTimes {
 
 	private DateTimes() {
@@ -23,7 +23,7 @@ public class DateTimes {
 		return new DefaultLocalDateTimeArbitrary();
 	}
 
-	/**
+	/*
 	 * Create an arbitrary that generates instances of {@linkplain java.util.Date}.
 	 *
 	 * @return a new arbitrary instance
@@ -32,7 +32,7 @@ public class DateTimes {
 		return null; TODO
 	}*/
 
-	/**
+	/*
 	 * Create an arbitrary that generates instances of {@linkplain java.util.Calendar}.
 	 *
 	 * @return a new arbitrary instance
@@ -41,7 +41,7 @@ public class DateTimes {
 		return null; TODO
 	}*/
 
-	/**
+	/*
 	 * Create an arbitrary that generates instances of {@linkplain java.time.OffsetDateTime}.
 	 *
 	 * @return a new arbitrary instance
@@ -50,7 +50,7 @@ public class DateTimes {
 		return null; TODO
 	}*/
 
-	/**
+	/*
 	 * Create an arbitrary that generates instances of {@linkplain java.time.ZonedDateTime}.
 	 *
 	 * @return a new arbitrary instance
@@ -59,7 +59,7 @@ public class DateTimes {
 		return null; TODO
 	}*/
 
-	/**
+	/*
 	 * Create an arbitrary that generates instances of {@linkplain java.time.Instant}.
 	 *
 	 * @return a new arbitrary instance

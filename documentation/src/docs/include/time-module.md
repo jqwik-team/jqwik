@@ -12,6 +12,8 @@ The module provides:
 - [Generation of Times](#generation-of-times)
     - [default generation](#default-generation-of-times) for time-related Java types
     - [Programmatic API](#programmatic-generation-of-times) to configure time-related types
+- [Generation of DateTimes](#generation-of-datetimes)
+    - [Programmatic API](#programmatic-generation-of-datetimes) to configure date time-related types
 
 #### Generation of Dates
 
@@ -235,3 +237,33 @@ Here's the list of available methods:
 - By default, precision is seconds.
 - You can constrain its minimum and maximum value using `between(min, max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+#### Generation of DateTimes
+
+##### Programmatic Generation of DateTimes
+
+Programmatic generation of date times always starts with a static
+method call on class [`DateTimes`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/DateTimes.html).
+For example:
+
+```java
+@Property
+void generateLocalDateTimes(@ForAll("dateTimes") LocalDateTime localDateTime) {
+  assertThat(localDateTime).isAfter(LocalDateTime.of(2013, 5, 25, 19, 48, 32));
+}
+
+@Provide
+Arbitrary<LocalDateTime> dateTimes() {
+  return DateTimes.dateTimes().atTheEarliest(LocalDateTime.of(2013, 5, 25, 19, 48, 33));
+}
+```
+
+Here's the list of available methods:
+
+- [`LocalDateTimeArbitrary dateTimes()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#dateTimes())
+
+###### LocalDateTimeArbitrary
+
+- The target type is `LocalDateTime`.
+- By default, only years between 1900 and 2500 are generated.
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
