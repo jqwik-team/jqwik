@@ -34,6 +34,9 @@ and
 
 - The time module does now allow [generation of times](/docs/snapshot/user-guide.html#generation-of-times)
 
+- Added `StringArbitrary.excludeChars(char ... toExclude)`. 
+  See https://github.com/jlink/jqwik/issues/167.
+
 #### Breaking Changes
 
 - Trying to add a _numerical_ edge case that is outside the arbitrary's

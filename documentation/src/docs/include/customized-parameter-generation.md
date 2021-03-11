@@ -92,7 +92,7 @@ Arbitrary<?> favouritePrimes(TypeUsage targetType) {
 ```
 
 Mind the parameters and return type of `favouritePrimes()`. 
-The second parameter `ArbitraryProvider.SubtypeProvider subtypeProvider` is optional;
+The second parameter `ArbitraryProvider.SubtypeProvider subtypeProvider` is optional and can be left out;
 it would be needed in case of variable subtypes that require their own dynamic resolution.
 
 
