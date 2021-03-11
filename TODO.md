@@ -5,11 +5,6 @@
         - label=<statistics label> to specify for which statistics to use
         - Make it repeatable
     
-    - StringArbitrary.excludeChars() or s.t. like that
-      https://github.com/jlink/jqwik/issues/167
-
-    - Document that provider methods can have arguments (TypeUsage and SubtypeResolver)
-
     - Time Module:
         - Times. See https://github.com/jlink/jqwik/issues/154
     

@@ -85,4 +85,13 @@ public interface StringArbitrary extends Arbitrary<String> {
 	 * but only in plane 0 (aka Basic Multilingual Plane)
 	 */
 	StringArbitrary all();
+
+	/**
+	 * Exclude all {@code charsToExclude} from generated strings
+	 *
+	 * @param charsToExclude chars to exclude
+	 * @return new instance of arbitrary
+	 */
+	@API(status = MAINTAINED, since = "1.5.1")
+	StringArbitrary excludeChars(char ... charsToExclude);
 }

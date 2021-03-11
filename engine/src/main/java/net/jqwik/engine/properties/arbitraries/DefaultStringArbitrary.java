@@ -16,6 +16,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 
 	private int minLength = 0;
 	private int maxLength = RandomGenerators.DEFAULT_COLLECTION_SIZE;
+	private Set<Character> excludedChars = new HashSet<>();
 
 	@Override
 	public RandomGenerator<String> generator(int genSize) {
@@ -26,7 +27,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	@Override
 	public Optional<ExhaustiveGenerator<String>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.strings(
-				characterArbitrary,
+				effectiveCharacterArbitrary(),
 				minLength,
 				maxLength,
 				maxNumberOfSamples
@@ -67,10 +68,10 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 
 	private EdgeCases<String> fixedSizedEdgeCases(int fixedSize, int maxEdgeCases) {
 		return EdgeCasesSupport.mapShrinkable(
-				characterArbitrary.edgeCases(maxEdgeCases),
+				effectiveCharacterArbitrary().edgeCases(maxEdgeCases),
 				shrinkableChar -> {
-					List<Shrinkable<Character>> chars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
-					return new ShrinkableString(chars, minLength, maxLength);
+					List<Shrinkable<Character>> shrinkableChars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
+					return new ShrinkableString(shrinkableChars, minLength, maxLength);
 				}
 		);
 	}
@@ -145,8 +146,27 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 		return this.withCharRange(Character.MIN_VALUE, Character.MAX_VALUE);
 	}
 
+	@Override
+	public StringArbitrary excludeChars(char... charsToExclude) {
+		DefaultStringArbitrary clone = typedClone();
+		Set<Character> excludedChars = new HashSet<>(this.excludedChars);
+		for (char c : charsToExclude) {
+			excludedChars.add(c);
+		}
+		clone.excludedChars = excludedChars;
+		return clone;
+	}
+
 	private RandomGenerator<Character> randomCharacterGenerator(boolean withEmbeddedEdgeCases) {
-		return characterArbitrary.generator(1, withEmbeddedEdgeCases);
+		return effectiveCharacterArbitrary().generator(1, withEmbeddedEdgeCases);
+	}
+
+	private Arbitrary<Character> effectiveCharacterArbitrary() {
+		Arbitrary<Character> characterArbitrary = this.characterArbitrary;
+		if (!excludedChars.isEmpty()) {
+			characterArbitrary = characterArbitrary.filter(c -> !excludedChars.contains(c));
+		}
+		return characterArbitrary;
 	}
 
 }
