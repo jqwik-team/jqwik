@@ -1,23 +1,18 @@
 - 1.5.1
 
+    - Clean up long methods in DefaultLocalTimeArbitrary
+
     - @StatisticsReportFormat
       https://github.com/jlink/jqwik/issues/146
         - label=<statistics label> to specify for which statistics to use
         - Make it repeatable
     
-    - Time Module:
-        - Times. See https://github.com/jlink/jqwik/issues/154
-    
-    - Web Module:
-        - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
+- 1.5.x
 
     - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
       to replace Combinators.withBuilder() but target cannot change across
       build steps (-> much better performance and shrinking)
-        - Add capability to easily generate java beans (if that really makes sense)
-
-
-- 1.5.x
+          - Add capability to easily generate java beans (if that really makes sense)
 
     - Domains
         - Deprecate AbstractDomainContextBase
@@ -31,10 +26,13 @@
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
 
+    - Web Module:
+        - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
+
     - EdgeCases.Configuration.withProbability(double injectProbability)
 
     - Time Module:
-      - DateTimes. See https://github.com/jlink/jqwik/issues/???
+      - DateTimes. See https://github.com/jlink/jqwik/issues/175
       - Generate Instant, LocalTime, ZonedTime etc.
       - [LocalDate|Calendar|DateArbitrary].shrinkTowards(date)
 
