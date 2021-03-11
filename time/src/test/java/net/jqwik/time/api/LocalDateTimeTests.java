@@ -57,7 +57,6 @@ class LocalDateTimeTests {
 	@Group
 	class SimpleAnnotations {
 
-		@Disabled("Not available at the moment.")
 		@Property
 		void validLocalDateTimeIsGenerated(@ForAll LocalDateTime dateTime) {
 			assertThat(dateTime).isNotNull();

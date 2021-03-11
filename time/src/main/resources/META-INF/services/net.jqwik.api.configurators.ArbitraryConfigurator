@@ -1,3 +1,4 @@
+#Date
 net.jqwik.time.internal.properties.configurators.DateRangeConfigurator$ForLocalDate
 net.jqwik.time.internal.properties.configurators.DateRangeConfigurator$ForCalendar
 net.jqwik.time.internal.properties.configurators.DateRangeConfigurator$ForDate
@@ -35,7 +36,7 @@ net.jqwik.time.internal.properties.configurators.YearRangeConfigurator$ForDate
 net.jqwik.time.internal.properties.configurators.YearRangeConfigurator$ForYearMonth
 net.jqwik.time.internal.properties.configurators.YearRangeConfigurator$ForYear
 
-
+#Time
 net.jqwik.time.internal.properties.configurators.DurationRangeConfigurator
 
 net.jqwik.time.internal.properties.configurators.MinuteRangeConfigurator$ForLocalTime
@@ -56,3 +57,6 @@ net.jqwik.time.internal.properties.configurators.SecondRangeConfigurator$ForOffs
 
 net.jqwik.time.internal.properties.configurators.TimeRangeConfigurator$ForLocalTime
 net.jqwik.time.internal.properties.configurators.TimeRangeConfigurator$ForOffsetTime
+
+#DateTime
+net.jqwik.time.internal.properties.configurators.DateTimeRangeConfigurator
