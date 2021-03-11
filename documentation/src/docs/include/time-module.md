@@ -12,7 +12,9 @@ The module provides:
 - [Generation of Times](#generation-of-times)
     - [default generation](#default-generation-of-times) for time-related Java types
     - [Programmatic API](#programmatic-generation-of-times) to configure time-related types
+    
 - [Generation of DateTimes](#generation-of-datetimes)
+    - [default generation](#default-generation-of-datetimes) for date time-related Java types
     - [Programmatic API](#programmatic-generation-of-datetimes) to configure date time-related types
 
 #### Generation of Dates
@@ -239,6 +241,28 @@ Here's the list of available methods:
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
 
 #### Generation of DateTimes
+
+##### Default Generation of DateTimes
+
+Default generation currently is supported for `LocalDateTime`. 
+Here's a small example:
+
+```java
+@Property
+void generateLocalDateTimesWithAnnotation(@ForAll @DateTimeRange(min = "2019-01-01T01:32:21", max = "2020-12-31T03:11:11") LocalDateTime localDateTime) {
+  assertThat(localDateTime).isBetween(
+    LocalDateTime.of(2019, 1, 1, 1, 32, 21),
+    LocalDateTime.of(2020, 12, 31, 3, 11, 11)
+  );
+}
+```
+
+The following annotations can be used to constrain default generation of the enumerated types:
+
+- [`@DateTimeRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DateTimeRange.html)
+
+`@DateTimeRange` uses the standard format of its class. 
+Examples: `2013-05-25T01:34:22.231`.
 
 ##### Programmatic Generation of DateTimes
 
