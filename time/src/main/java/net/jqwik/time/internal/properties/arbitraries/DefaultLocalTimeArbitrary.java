@@ -110,17 +110,10 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		return effective;
 	}
 
-<<<<<<< HEAD
 	@SuppressWarnings("OverlyComplexMethod")
-	private LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, ChronoUnit precision) {
+	public static LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, ChronoUnit precision) {
 		LocalTime startEffective = effective;
 		if (precision.compareTo(NANOS) >= 1) {
-=======
-	public static LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, ChronoUnit ofPrecision) {
-		LocalTime startEffective = effective;
-		int compareVal = calculateCompareValue(ofPrecision);
-		if (compareVal >= 1) {
->>>>>>> Added ofPrecision and some (not all) test cases
 			if (effective.getNano() % 1_000 != 0) {
 				effective = effective.plusNanos(1_000 - (effective.getNano() % 1_000));
 			}
@@ -151,26 +144,6 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		return effective;
 	}
 
-<<<<<<< HEAD
-=======
-	public static int calculateCompareValue(ChronoUnit ofPrecision) {
-		switch (ofPrecision) {
-			case HOURS:
-				return 5;
-			case MINUTES:
-				return 4;
-			case SECONDS:
-				return 3;
-			case MILLIS:
-				return 2;
-			case MICROS:
-				return 1;
-			default:
-				return 0;
-		}
-	}
-
->>>>>>> Added ofPrecision and some (not all) test cases
 	private LocalTime calculateEffectiveMax() {
 		LocalTime effective = timeMax;
 		if (hourMax < effective.getHour()) {
