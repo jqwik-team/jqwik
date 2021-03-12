@@ -21,7 +21,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	private Duration min = DEFAULT_MIN;
 	private Duration max = DEFAULT_MAX;
-	private ChronoUnit ofPrecision = SECONDS;
+	private ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.DEFAULT_PRECISION;
 
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
@@ -49,7 +49,12 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	static private Duration calculateEffectiveMin(Duration min, ChronoUnit precision) {
 		try {
 			Duration effective = min;
+<<<<<<< HEAD
 			if (precision.compareTo(NANOS) >= 1) {
+=======
+			int compareVal = DefaultLocalTimeArbitrary.calculateCompareValue(ofPrecision);
+			if (compareVal >= 1) {
+>>>>>>> Added ofPrecision and some (not all) test cases
 				if (effective.getNano() % 1_000 != 0) {
 					effective = effective.plusNanos(1_000 - (effective.getNano() % 1_000));
 				}
@@ -92,7 +97,12 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	static private Duration calculateEffectiveMax(Duration max, ChronoUnit precision) {
 		try {
 			Duration effective = max;
+<<<<<<< HEAD
 			if (precision.compareTo(NANOS) >= 1) {
+=======
+			int compareVal = DefaultLocalTimeArbitrary.calculateCompareValue(ofPrecision);
+			if (compareVal >= 1) {
+>>>>>>> Added ofPrecision and some (not all) test cases
 				if (effective.getNano() % 1_000 != 0) {
 					effective = effective.plusNanos(-(effective.getNano() % 1_000));
 				}
@@ -131,7 +141,13 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		}
 	}
 
+<<<<<<< HEAD
 	private BigInteger calculateValue(Duration effective, ChronoUnit precision) {
+=======
+	private BigInteger calculateValue(Duration effective) {
+
+		int compareValue = DefaultLocalTimeArbitrary.calculateCompareValue(ofPrecision);
+>>>>>>> Added ofPrecision and some (not all) test cases
 
 		BigInteger helperMultiply = new BigInteger(1_000_000_000 + "");
 		BigInteger helperDivide1000 = new BigInteger(1_000 + "");

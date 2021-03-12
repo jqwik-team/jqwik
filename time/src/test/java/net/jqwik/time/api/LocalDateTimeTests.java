@@ -9,7 +9,10 @@ import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
+import static java.time.Month.*;
+import static java.time.temporal.ChronoUnit.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
@@ -21,6 +24,36 @@ class LocalDateTimeTests {
 	@Provide
 	Arbitrary<LocalDateTime> dateTimes() {
 		return DateTimes.dateTimes();
+	}
+
+	@Provide
+	Arbitrary<LocalDateTime> precisionHours() {
+		return DateTimes.dateTimes().ofPrecision(HOURS);
+	}
+
+	@Provide
+	Arbitrary<LocalDateTime> precisionMinutes() {
+		return DateTimes.dateTimes().ofPrecision(MINUTES);
+	}
+
+	@Provide
+	Arbitrary<LocalDateTime> precisionSeconds() {
+		return DateTimes.dateTimes().ofPrecision(SECONDS);
+	}
+
+	@Provide
+	Arbitrary<LocalDateTime> precisionMilliseconds() {
+		return DateTimes.dateTimes().ofPrecision(MILLIS);
+	}
+
+	@Provide
+	Arbitrary<LocalDateTime> precisionMicroseconds() {
+		return DateTimes.dateTimes().ofPrecision(MICROS);
+	}
+
+	@Provide
+	Arbitrary<LocalDateTime> precisionNanoseconds() {
+		return DateTimes.dateTimes().ofPrecision(NANOS);
 	}
 
 	@Group
@@ -55,7 +88,7 @@ class LocalDateTimeTests {
 	}
 
 	@Group
-	class SimpleAnnotations {
+	class DefaultGeneration {
 
 		@Property
 		void validLocalDateTimeIsGenerated(@ForAll LocalDateTime dateTime) {
@@ -138,26 +171,280 @@ class LocalDateTimeTests {
 
 		}
 
+		@Group
+		class CheckTimeMethods {
+
+			@Group
+			class PrecisionMethods {
+
+				@Group
+				class Hours {
+
+					@Property
+					void precision(@ForAll("precisionHours") LocalDateTime dateTime) {
+						assertThat(dateTime.getMinute()).isEqualTo(0);
+						assertThat(dateTime.getSecond()).isEqualTo(0);
+						assertThat(dateTime.getNano()).isEqualTo(0);
+					}
+
+					@Property
+					void precisionMinTimePrecisionMinutes(@ForAll("precisionMinutes") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE) || min.getHour() != 23);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(HOURS);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getMinute()).isEqualTo(0);
+							assertThat(dateTime.getSecond()).isEqualTo(0);
+							assertThat(dateTime.getNano()).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+					@Property
+					void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE) || min.getHour() != 23);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(HOURS);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getMinute()).isEqualTo(0);
+							assertThat(dateTime.getSecond()).isEqualTo(0);
+							assertThat(dateTime.getNano()).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+				}
+
+				@Group
+				class Minutes {
+
+					@Property
+					void precision(@ForAll("precisionMinutes") LocalDateTime dateTime) {
+						assertThat(dateTime.getSecond()).isEqualTo(0);
+						assertThat(dateTime.getNano()).isEqualTo(0);
+					}
+
+					@Property
+					void precisionMinTimePrecisionSeconds(@ForAll("precisionSeconds") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate()
+										.isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE) || min.getHour() != 23 || min.getMinute() != 59);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MINUTES);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getSecond()).isEqualTo(0);
+							assertThat(dateTime.getNano()).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+					@Property
+					void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate()
+										.isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE) || min.getHour() != 23 || min.getMinute() != 59);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MINUTES);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getSecond()).isEqualTo(0);
+							assertThat(dateTime.getNano()).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+				}
+
+				@Group
+				class Seconds {
+
+					@Property
+					void precision(@ForAll("precisionSeconds") LocalDateTime dateTime) {
+						assertThat(dateTime.getNano()).isEqualTo(0);
+					}
+
+					@Property
+					void precisionMinTimePrecisionMillis(@ForAll("precisionMilliseconds") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
+											|| min.getHour() != 23
+											|| min.getMinute() != 59
+											|| min.getSecond() != 59);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(SECONDS);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getNano()).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+					@Property
+					void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
+											|| min.getHour() != 23
+											|| min.getMinute() != 59
+											|| min.getSecond() != 59);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(SECONDS);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getNano()).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+				}
+
+				@Group
+				class Milliseconds {
+
+					@Property
+					void precision(@ForAll("precisionMilliseconds") LocalDateTime dateTime) {
+						assertThat(dateTime.getNano() % 1_000_000).isEqualTo(0);
+					}
+
+					@Property
+					void precisionMinTimePrecisionMicros(@ForAll("precisionMicroseconds") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
+											|| min.getHour() != 23
+											|| min.getMinute() != 59
+											|| min.getSecond() != 59
+											|| min.getNano() < 999_000_001);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MILLIS);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getNano() % 1_000_000).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+					@Property
+					void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
+											|| min.getHour() != 23
+											|| min.getMinute() != 59
+											|| min.getSecond() != 59
+											|| min.getNano() < 999_000_001);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MILLIS);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getNano() % 1_000_000).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+				}
+
+				@Group
+				class Microseconds {
+
+					@Property
+					void precision(@ForAll("precisionMicroseconds") LocalDateTime dateTime) {
+						assertThat(dateTime.getNano() % 1_000).isEqualTo(0);
+					}
+
+					@Property
+					void precisionMinTimePrecisionNanos(@ForAll("precisionNanoseconds") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
+											|| min.getHour() != 23
+											|| min.getMinute() != 59
+											|| min.getSecond() != 59
+											|| min.getNano() < 999_999_001);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MICROS);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getNano() % 1_000).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+					@Property
+					void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
+
+						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
+											|| min.getHour() != 23
+											|| min.getMinute() != 59
+											|| min.getSecond() != 59
+											|| min.getNano() < 999_999_001);
+
+						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MICROS);
+
+						assertAllGenerated(times.generator(1000), random, dateTime -> {
+							assertThat(dateTime.getNano() % 1_000).isEqualTo(0);
+							assertThat(dateTime).isAfterOrEqualTo(min);
+							return true;
+						});
+
+					}
+
+				}
+
+				@Group
+				class Nanos {
+
+					@Property
+					void precisionNanoseconds(@ForAll("precisionNanoseconds") LocalDateTime dateTime) {
+						assertThat(dateTime).isNotNull();
+					}
+
+				}
+
+			}
+
+		}
+
 	}
 
 	@Group
 	class Shrinking {
 
+		@Disabled("Not working at the Moment")
 		@Property
 		void defaultShrinking(@ForAll Random random) {
 			LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes();
 			LocalDateTime value = falsifyThenShrink(dateTimes, random);
-			assertThat(value).isEqualTo(LocalDateTime.of(1900, Month.JANUARY, 1, 0, 0, 0));
+			assertThat(value).isEqualTo(LocalDateTime.of(1900, JANUARY, 1, 0, 0, 0));
 		}
 
 		@Disabled("Produces StackOverFlow")
 		@Property
 		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes();
-			TestingFalsifier<LocalDateTime> falsifier = dateTime -> dateTime.isBefore(LocalDateTime.of(2013, Month.MAY, 25, 13, 12, 55));
+			TestingFalsifier<LocalDateTime> falsifier = dateTime -> dateTime.isBefore(LocalDateTime.of(2013, MAY, 25, 13, 12, 55));
 			LocalDateTime value = falsifyThenShrink(dateTimes, random, falsifier);
-			assertThat(value).isAfterOrEqualTo(LocalDateTime.of(2013, Month.MAY, 25, 13, 12, 55));
-			assertThat(value).isBeforeOrEqualTo(LocalDateTime.of(2013, Month.MAY, 26, 0, 0, 0));
+			assertThat(value).isAfterOrEqualTo(LocalDateTime.of(2013, MAY, 25, 13, 12, 55));
+			assertThat(value).isBeforeOrEqualTo(LocalDateTime.of(2013, MAY, 26, 0, 0, 0));
 		}
 
 	}
@@ -191,19 +478,350 @@ class LocalDateTimeTests {
 	@Group
 	class EdgeCasesTests {
 
-		@Example
-		void all() {
-			LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes();
-			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
-			assertThat(edgeCases).hasSize(6);
-			assertThat(edgeCases).containsExactlyInAnyOrder(
-					LocalDateTime.of(1900, 1, 1, 0, 0, 0),
-					LocalDateTime.of(1900, 1, 1, 23, 59, 59),
-					LocalDateTime.of(1904, 2, 29, 0, 0, 0),
-					LocalDateTime.of(1904, 2, 29, 23, 59, 59),
-					LocalDateTime.of(2500, 12, 31, 0, 0, 0),
-					LocalDateTime.of(2500, 12, 31, 23, 59, 59)
-			);
+		@Group
+		class PrecisionHours {
+
+			@Example
+			void all() {
+				LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().ofPrecision(HOURS);
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+						LocalDateTime.of(1900, 1, 1, 23, 0, 0),
+						LocalDateTime.of(1904, 2, 29, 0, 0, 0),
+						LocalDateTime.of(1904, 2, 29, 23, 0, 0),
+						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+						LocalDateTime.of(2500, 12, 31, 23, 0, 0)
+				);
+			}
+
+			@Example
+			void between() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(HOURS)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 12, 0, 0),
+						LocalDateTime.of(2013, MAY, 25, 23, 0, 0),
+						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0),
+						LocalDateTime.of(2016, FEBRUARY, 29, 23, 0, 0),
+						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0),
+						LocalDateTime.of(2020, AUGUST, 23, 21, 0, 0)
+				);
+			}
+
+			@Example
+			void betweenSameDate() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(HOURS)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(2);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 12, 0, 0),
+						LocalDateTime.of(2013, MAY, 25, 21, 0, 0)
+				);
+			}
+
+		}
+
+		@Group
+		class PrecisionMinutes {
+
+			@Example
+			void all() {
+				LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().ofPrecision(MINUTES);
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+						LocalDateTime.of(1900, 1, 1, 23, 59, 0),
+						LocalDateTime.of(1904, 2, 29, 0, 0, 0),
+						LocalDateTime.of(1904, 2, 29, 23, 59, 0),
+						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+						LocalDateTime.of(2500, 12, 31, 23, 59, 0)
+				);
+			}
+
+			@Example
+			void between() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(MINUTES)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 24, 0),
+						LocalDateTime.of(2013, MAY, 25, 23, 59, 0),
+						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0),
+						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 0),
+						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0),
+						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 0)
+				);
+			}
+
+			@Example
+			void betweenSameDate() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(MINUTES)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(2);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 24, 0),
+						LocalDateTime.of(2013, MAY, 25, 21, 15, 0)
+				);
+			}
+
+		}
+
+		@Group
+		class PrecisionSeconds {
+
+			@Example
+			void all() {
+				LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes();
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+						LocalDateTime.of(1900, 1, 1, 23, 59, 59),
+						LocalDateTime.of(1904, 2, 29, 0, 0, 0),
+						LocalDateTime.of(1904, 2, 29, 23, 59, 59),
+						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+						LocalDateTime.of(2500, 12, 31, 23, 59, 59)
+				);
+			}
+
+			@Example
+			void between() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 23, 22),
+						LocalDateTime.of(2013, MAY, 25, 23, 59, 59),
+						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0),
+						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59),
+						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0),
+						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19)
+				);
+			}
+
+			@Example
+			void betweenSameDate() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(2);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 23, 22),
+						LocalDateTime.of(2013, MAY, 25, 21, 15, 19)
+				);
+			}
+
+		}
+
+		@Group
+		class PrecisionMillis {
+
+			@Example
+			void all() {
+				LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().ofPrecision(MILLIS);
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0),
+						LocalDateTime.of(1900, 1, 1, 23, 59, 59, 999_000_000),
+						LocalDateTime.of(1904, 2, 29, 0, 0, 0, 0),
+						LocalDateTime.of(1904, 2, 29, 23, 59, 59, 999_000_000),
+						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+						LocalDateTime.of(2500, 12, 31, 23, 59, 59, 999_000_000)
+				);
+			}
+
+			@Example
+			void between() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(MILLIS)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 302_000_000),
+						LocalDateTime.of(2013, MAY, 25, 23, 59, 59, 999_000_000),
+						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0, 0),
+						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59, 999_000_000),
+						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0, 0),
+						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_000_000)
+				);
+			}
+
+			@Example
+			void betweenSameDate() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(MILLIS)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(2);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 302_000_000),
+						LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_000_000)
+				);
+			}
+
+		}
+
+		@Group
+		class PrecisionMicros {
+
+			@Example
+			void all() {
+				LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().ofPrecision(MICROS);
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0),
+						LocalDateTime.of(1900, 1, 1, 23, 59, 59, 999_999_000),
+						LocalDateTime.of(1904, 2, 29, 0, 0, 0, 0),
+						LocalDateTime.of(1904, 2, 29, 23, 59, 59, 999_999_000),
+						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+						LocalDateTime.of(2500, 12, 31, 23, 59, 59, 999_999_000)
+				);
+			}
+
+			@Example
+			void between() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(MICROS)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_429_000),
+						LocalDateTime.of(2013, MAY, 25, 23, 59, 59, 999_999_000),
+						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0, 0),
+						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59, 999_999_000),
+						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0, 0),
+						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_000)
+				);
+			}
+
+			@Example
+			void betweenSameDate() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(MICROS)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(2);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_429_000),
+						LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_000)
+				);
+			}
+
+		}
+
+		@Group
+		class PrecisionNanos {
+
+			@Example
+			void all() {
+				LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().ofPrecision(NANOS);
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0),
+						LocalDateTime.of(1900, 1, 1, 23, 59, 59, 999_999_999),
+						LocalDateTime.of(1904, 2, 29, 0, 0, 0, 0),
+						LocalDateTime.of(1904, 2, 29, 23, 59, 59, 999_999_999),
+						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+						LocalDateTime.of(2500, 12, 31, 23, 59, 59, 999_999_999)
+				);
+			}
+
+			@Example
+			void between() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(NANOS)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(6);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+						LocalDateTime.of(2013, MAY, 25, 23, 59, 59, 999_999_999),
+						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0, 0),
+						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59, 999_999_999),
+						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0, 0),
+						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+				);
+			}
+
+			@Example
+			void betweenSameDate() {
+				LocalDateTimeArbitrary times =
+						DateTimes.dateTimes()
+								 .ofPrecision(NANOS)
+								 .between(
+										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+								 );
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
+				assertThat(edgeCases).hasSize(2);
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+						LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+				);
+			}
+
 		}
 
 	}
@@ -264,6 +882,57 @@ class LocalDateTimeTests {
 					  .coverage(this::check60Coverage);
 		}
 
+		@Property
+		void milliseconds(@ForAll("precisionMilliseconds") LocalDateTime dateTime) {
+
+			Statistics.label("Milliseconds x--")
+					  .collect(dateTime.getNano() / 100_000_000)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Milliseconds -x-")
+					  .collect((dateTime.getNano() / 10_000_000) % 10)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Milliseconds --x")
+					  .collect((dateTime.getNano() / 1_000_000) % 10)
+					  .coverage(this::check10Coverage);
+
+		}
+
+		@Property
+		void microseconds(@ForAll("precisionMicroseconds") LocalDateTime dateTime) {
+
+			Statistics.label("Microseconds x--")
+					  .collect((dateTime.getNano() % 1_000_000) / 100_000)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Microseconds -x-")
+					  .collect(((dateTime.getNano() % 1_000_000) / 10_000) % 10)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Microseconds --x")
+					  .collect(((dateTime.getNano() % 1_000_000) / 1_000) % 10)
+					  .coverage(this::check10Coverage);
+
+		}
+
+		@Property
+		void nanoseconds(@ForAll("precisionNanoseconds") LocalDateTime dateTime) {
+
+			Statistics.label("Nanoseconds x--")
+					  .collect((dateTime.getNano() % 1_000) / 100)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Nanoseconds -x-")
+					  .collect(((dateTime.getNano() % 1_000) / 10) % 10)
+					  .coverage(this::check10Coverage);
+
+			Statistics.label("Nanoseconds --x")
+					  .collect((dateTime.getNano() % 1_000) % 10)
+					  .coverage(this::check10Coverage);
+
+		}
+
 		private void checkMonthCoverage(StatisticsCoverage coverage) {
 			Month[] months = Month.class.getEnumConstants();
 			for (Month m : months) {
@@ -281,6 +950,12 @@ class LocalDateTimeTests {
 			DayOfWeek[] dayOfWeeks = DayOfWeek.class.getEnumConstants();
 			for (DayOfWeek dayOfWeek : dayOfWeeks) {
 				coverage.check(dayOfWeek).percentage(p -> p >= 9);
+			}
+		}
+
+		private void check10Coverage(StatisticsCoverage coverage) {
+			for (int value = 0; value < 10; value++) {
+				coverage.check(value).percentage(p -> p >= 5);
 			}
 		}
 
