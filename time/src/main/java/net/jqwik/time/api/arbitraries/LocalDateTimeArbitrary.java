@@ -1,6 +1,7 @@
 package net.jqwik.time.api.arbitraries;
 
 import java.time.*;
+import java.time.temporal.*;
 
 import org.apiguardian.api.*;
 
@@ -35,5 +36,11 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	 * Set the allowed upper {@code max} (included) bounder of generated local date time values.
 	 */
 	LocalDateTimeArbitrary atTheLatest(LocalDateTime max);
+
+	/**
+	 * Constrain the precision of generated values.
+	 * Default value: Seconds.
+	 */
+	LocalDateTimeArbitrary ofPrecision(ChronoUnit ofPrecision);
 
 }
