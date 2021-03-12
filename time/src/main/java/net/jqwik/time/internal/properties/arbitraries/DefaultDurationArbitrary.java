@@ -26,42 +26,42 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
 
-		Duration effectiveMin = calculateEffectiveMin();
-		Duration effectiveMax = calculateEffectiveMax();
+		Duration effectiveMin = calculateEffectiveMin(min, ofPrecision);
+		Duration effectiveMax = calculateEffectiveMax(max, ofPrecision);
 
 		if (effectiveMin.compareTo(effectiveMax) > 0) {
-			throw new IllegalArgumentException("The maximum duration is too soon after the minimum duration.");
+			throw new IllegalArgumentException("The maximum duration must not be smaller than minimum duration.");
 		}
 
-		BigInteger min = calculateValue(effectiveMin);
-		BigInteger max = calculateValue(effectiveMax);
+		BigInteger min = calculateValue(effectiveMin, ofPrecision);
+		BigInteger max = calculateValue(effectiveMax, ofPrecision);
 
 		Arbitrary<BigInteger> bigIntegers = Arbitraries.bigIntegers()
 													   .between(min, max)
 													   .withDistribution(RandomDistribution.uniform())
 													   .edgeCases(edgeCases -> edgeCases.includeOnly(min, BigInteger.ZERO, max));
 
-		return bigIntegers.map(this::calculateDuration);
+		return bigIntegers.map(big -> calculateDuration(big, ofPrecision));
 
 	}
 
-	private Duration calculateEffectiveMin() {
+	@SuppressWarnings("OverlyComplexMethod")
+	static private Duration calculateEffectiveMin(Duration min, ChronoUnit precision) {
 		try {
 			Duration effective = min;
-			int compareVal = calculateCompareValue();
-			if (compareVal >= 1) {
+			if (precision.compareTo(NANOS) >= 1) {
 				if (effective.getNano() % 1_000 != 0) {
 					effective = effective.plusNanos(1_000 - (effective.getNano() % 1_000));
 				}
-				if (compareVal >= 2) {
+				if (precision.compareTo(MICROS) >= 1) {
 					if (effective.getNano() % 1_000_000 != 0) {
 						effective = effective.plusNanos(1_000_000 - (effective.getNano() % 1_000_000));
 					}
-					if (compareVal >= 3) {
+					if (precision.compareTo(MILLIS) >= 1) {
 						if (effective.getNano() != 0) {
 							effective = effective.plusNanos(1_000_000_000 - effective.getNano());
 						}
-						if (compareVal >= 4) {
+						if (precision.compareTo(SECONDS) >= 1) {
 							int seconds = (int) (effective.getSeconds() % 60);
 							if (seconds < 0) {
 								seconds += 60;
@@ -69,7 +69,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 							if (seconds != 0) {
 								effective = effective.plusSeconds(60 - seconds);
 							}
-							if (compareVal >= 5) {
+							if (precision.compareTo(MINUTES) >= 1) {
 								int minutes = (int) ((effective.getSeconds() % 3600) / 60);
 								if (minutes < 0) {
 									minutes += 60;
@@ -88,23 +88,23 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		}
 	}
 
-	private Duration calculateEffectiveMax() {
+	@SuppressWarnings("OverlyComplexMethod")
+	static private Duration calculateEffectiveMax(Duration max, ChronoUnit precision) {
 		try {
 			Duration effective = max;
-			int compareVal = calculateCompareValue();
-			if (compareVal >= 1) {
+			if (precision.compareTo(NANOS) >= 1) {
 				if (effective.getNano() % 1_000 != 0) {
 					effective = effective.plusNanos(-(effective.getNano() % 1_000));
 				}
-				if (compareVal >= 2) {
+				if (precision.compareTo(MICROS) >= 1) {
 					if (effective.getNano() % 1_000_000 != 0) {
 						effective = effective.plusNanos(-(effective.getNano() % 1_000_000));
 					}
-					if (compareVal >= 3) {
+					if (precision.compareTo(MILLIS) >= 1) {
 						if (effective.getNano() != 0) {
 							effective = effective.plusNanos(-effective.getNano());
 						}
-						if (compareVal >= 4) {
+						if (precision.compareTo(SECONDS) >= 1) {
 							int seconds = (int) (effective.getSeconds() % 60);
 							if (seconds < 0) {
 								seconds += 60;
@@ -112,7 +112,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 							if (seconds != 0) {
 								effective = effective.plusSeconds(-seconds);
 							}
-							if (compareVal >= 5) {
+							if (precision.compareTo(MINUTES) >= 1) {
 								int minutes = (int) ((effective.getSeconds() % 3600) / 60);
 								if (minutes < 0) {
 									minutes += 60;
@@ -131,26 +131,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		}
 	}
 
-	private int calculateCompareValue() {
-		switch (ofPrecision) {
-			case HOURS:
-				return 5;
-			case MINUTES:
-				return 4;
-			case SECONDS:
-				return 3;
-			case MILLIS:
-				return 2;
-			case MICROS:
-				return 1;
-			default:
-				return 0;
-		}
-	}
-
-	private BigInteger calculateValue(Duration effective) {
-
-		int compareValue = calculateCompareValue();
+	private BigInteger calculateValue(Duration effective, ChronoUnit precision) {
 
 		BigInteger helperMultiply = new BigInteger(1_000_000_000 + "");
 		BigInteger helperDivide1000 = new BigInteger(1_000 + "");
@@ -160,15 +141,15 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		bigInteger = bigInteger.multiply(helperMultiply);
 		bigInteger = bigInteger.add(new BigInteger(effective.getNano() + ""));
 
-		if (compareValue >= 1) {
+		if (precision.compareTo(NANOS) >= 1) {
 			bigInteger = bigInteger.divide(helperDivide1000);
-			if (compareValue >= 2) {
+			if (precision.compareTo(MICROS) >= 1) {
 				bigInteger = bigInteger.divide(helperDivide1000);
-				if (compareValue >= 3) {
+				if (precision.compareTo(MILLIS) >= 1) {
 					bigInteger = bigInteger.divide(helperDivide1000);
-					if (compareValue >= 4) {
+					if (precision.compareTo(SECONDS) >= 1) {
 						bigInteger = bigInteger.divide(helperDivide60);
-						if (compareValue >= 5) {
+						if (precision.compareTo(MINUTES) >= 1) {
 							bigInteger = bigInteger.divide(helperDivide60);
 						}
 					}
@@ -180,13 +161,13 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	}
 
-	private Duration calculateDuration(BigInteger bigInteger) {
+	static private Duration calculateDuration(BigInteger bigInteger, ChronoUnit precision) {
 
 		BigInteger helperDivide = new BigInteger(1_000_000_000 + "");
 		BigInteger helperMultiply1000 = new BigInteger(1_000 + "");
 		BigInteger helperMultiply60 = new BigInteger("60");
 
-		switch (ofPrecision) {
+		switch (precision) {
 			case HOURS:
 				bigInteger = bigInteger.multiply(helperMultiply60);
 			case MINUTES:
@@ -222,10 +203,12 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	@Override
 	public DurationArbitrary ofPrecision(ChronoUnit ofPrecision) {
-		if (!(ofPrecision.equals(HOURS) || ofPrecision.equals(MINUTES) || ofPrecision.equals(SECONDS) || ofPrecision
-																												 .equals(MILLIS) || ofPrecision
-																																			.equals(MICROS) || ofPrecision
-																																									   .equals(NANOS))) {
+		if (!(ofPrecision.equals(HOURS)
+					  || ofPrecision.equals(MINUTES)
+					  || ofPrecision.equals(SECONDS)
+					  || ofPrecision.equals(MILLIS)
+					  || ofPrecision.equals(MICROS)
+					  || ofPrecision.equals(NANOS))) {
 			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
 		}
 

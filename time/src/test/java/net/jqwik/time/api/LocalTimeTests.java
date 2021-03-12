@@ -535,7 +535,7 @@ class LocalTimeTests {
 			assertThat(value).isEqualTo(LocalTime.of(0, 0, 0, 0));
 		}
 
-		@Property
+		@Property(tries=100)
 		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			LocalTimeArbitrary times = Times.times().ofPrecision(SECONDS);
 			TestingFalsifier<LocalTime> falsifier = time -> time.isBefore(LocalTime.of(9, 13, 42, 143_921_111));

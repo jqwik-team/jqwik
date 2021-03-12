@@ -42,23 +42,24 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 
 		Arbitrary<Long> longs = Arbitraries.longs()
 										   .withDistribution(RandomDistribution.uniform())
-										   .between(0L, longEnd);
+										   .between(0L, longEnd)
+										   .edgeCases(config -> config.includeOnly(0L, longEnd));
 
-		Arbitrary<LocalTime> localTimes = longs.map(v -> calculateLocalTime(v, effectiveMin));
+		Arbitrary<LocalTime> localTimes = longs.map(v -> calculateLocalTime(v, effectiveMin, ofPrecision));
 
-		localTimes = localTimes
-							 .filter(v -> v.getMinute() >= minuteMin && v.getMinute() <= minuteMax && v.getSecond() >= secondMin && v.getSecond() <= secondMax);
-
-		localTimes = localTimes.edgeCases(edgeCases -> {
-			edgeCases.includeOnly(effectiveMin, effectiveMax);
-		});
+		localTimes = localTimes.filter(
+				v -> v.getMinute() >= minuteMin
+							 && v.getMinute() <= minuteMax
+							 && v.getSecond() >= secondMin
+							 && v.getSecond() <= secondMax
+		);
 
 		return localTimes;
 
 	}
 
-	private LocalTime calculateLocalTime(long longAdd, LocalTime effectiveMin) {
-		switch (ofPrecision) {
+	static private LocalTime calculateLocalTime(long longAdd, LocalTime effectiveMin, ChronoUnit precision) {
+		switch (precision) {
 			case HOURS:
 				return effectiveMin.plusHours(longAdd);
 			case MINUTES:
@@ -103,30 +104,30 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 				}
 			}
 		}
-		effective = calculateEffectiveMinWithPrecision(effective);
+		effective = calculateEffectiveMinWithPrecision(effective, ofPrecision);
 		return effective;
 	}
 
-	private LocalTime calculateEffectiveMinWithPrecision(LocalTime effective) {
+	@SuppressWarnings("OverlyComplexMethod")
+	private LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, ChronoUnit precision) {
 		LocalTime startEffective = effective;
-		int compareVal = calculateCompareValue();
-		if (compareVal >= 1) {
+		if (precision.compareTo(NANOS) >= 1) {
 			if (effective.getNano() % 1_000 != 0) {
 				effective = effective.plusNanos(1_000 - (effective.getNano() % 1_000));
 			}
-			if (compareVal >= 2) {
+			if (precision.compareTo(MICROS) >= 1) {
 				if (effective.getNano() % 1_000_000 != 0) {
 					effective = effective.plusNanos(1_000_000 - (effective.getNano() % 1_000_000));
 				}
-				if (compareVal >= 3) {
+				if (precision.compareTo(MILLIS) >= 1) {
 					if (effective.getNano() != 0) {
 						effective = effective.plusNanos(1_000_000_000 - effective.getNano());
 					}
-					if (compareVal >= 4) {
+					if (precision.compareTo(SECONDS) >= 1) {
 						if (effective.getSecond() != 0) {
 							effective = effective.plusSeconds(60 - effective.getSecond());
 						}
-						if (compareVal >= 5) {
+						if (precision.compareTo(MINUTES) >= 1) {
 							if (effective.getMinute() != 0) {
 								effective = effective.plusMinutes(60 - effective.getMinute());
 							}
@@ -139,23 +140,6 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 			throw new IllegalArgumentException("Hour is 23 and must be increased by 1.");
 		}
 		return effective;
-	}
-
-	private int calculateCompareValue() {
-		switch (ofPrecision) {
-			case HOURS:
-				return 5;
-			case MINUTES:
-				return 4;
-			case SECONDS:
-				return 3;
-			case MILLIS:
-				return 2;
-			case MICROS:
-				return 1;
-			default:
-				return 0;
-		}
 	}
 
 	private LocalTime calculateEffectiveMax() {

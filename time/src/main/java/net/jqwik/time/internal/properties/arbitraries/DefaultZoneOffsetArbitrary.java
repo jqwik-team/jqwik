@@ -37,7 +37,7 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 												.between(min, max)
 												.edgeCases(edgeCases -> edgeCases.includeOnly(min, 0, max));
 
-		return indexes.map(this::calculateOffset);
+		return indexes.map(DefaultZoneOffsetArbitrary::calculateOffset);
 
 	}
 
@@ -105,7 +105,7 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 		return hour * 4 + minuteVal;
 	}
 
-	private ZoneOffset calculateOffset(int index) {
+	static private ZoneOffset calculateOffset(int index) {
 		int hour = index / 4;
 		index -= hour * 4;
 		int minute = index * 15;

@@ -31,11 +31,11 @@ public class DefaultPeriodArbitrary extends ArbitraryDecorator<Period> implement
 											  edgeCases.includeOnly(minInDays, 0L, maxInDays);
 										  });
 
-		return days.map(this::calculatePeriod);
+		return days.map(DefaultPeriodArbitrary::calculatePeriod);
 
 	}
 
-	private Period calculatePeriod(long periodInDays) {
+	static private Period calculatePeriod(long periodInDays) {
 		int years = Math.toIntExact(periodInDays / DAYS_PER_YEAR);
 		periodInDays %= DAYS_PER_YEAR;
 		int months = Math.toIntExact(periodInDays / DAYS_PER_MONTH);
@@ -44,7 +44,7 @@ public class DefaultPeriodArbitrary extends ArbitraryDecorator<Period> implement
 		return Period.of(years, months, days);
 	}
 
-	private long inDays(Period period) {
+	static private long inDays(Period period) {
 		return period.getYears() * DAYS_PER_YEAR + period.getMonths() * DAYS_PER_MONTH + period.getDays();
 	}
 

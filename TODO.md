@@ -1,7 +1,5 @@
 - 1.5.1
 
-    - Clean up long methods in DefaultLocalTimeArbitrary
-
     - @StatisticsReportFormat
       https://github.com/jlink/jqwik/issues/146
         - label=<statistics label> to specify for which statistics to use
