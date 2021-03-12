@@ -19,6 +19,8 @@ public class Dates {
 
 	/**
 	 * Create an arbitrary that generates instances of {@linkplain java.time.LocalDate}.
+	 * All generated dates use the Gregorian Calendar, even if they are before October 15, 1582.
+	 * By default, local dates with years between 1900 and 2500 are generated.
 	 *
 	 * @return a new arbitrary instance
 	 */
