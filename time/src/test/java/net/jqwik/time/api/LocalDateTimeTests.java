@@ -429,7 +429,6 @@ class LocalDateTimeTests {
 	@Group
 	class Shrinking {
 
-		@Disabled("Not working at the Moment")
 		@Property
 		void defaultShrinking(@ForAll Random random) {
 			LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes();

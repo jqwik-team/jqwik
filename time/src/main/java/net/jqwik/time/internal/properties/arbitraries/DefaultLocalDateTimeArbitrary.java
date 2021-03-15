@@ -34,20 +34,27 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		}
 
 		LocalDateArbitrary dates = Dates.dates();
-		LocalTimeArbitrary times = generateTimeArbitrary(effectiveMin, effectiveMax);
+		LocalTimeArbitrary[] times = generateTimeArbitrary(effectiveMin, effectiveMax, ofPrecision);
 
 		dates = dates.atTheEarliest(effectiveMin.toLocalDate());
 		dates = dates.atTheLatest(effectiveMax.toLocalDate());
 
-		times = times.ofPrecision(ofPrecision);
+		LocalDate effectiveMinDate = effectiveMin.toLocalDate();
+		LocalDate effectiveMaxDate = effectiveMax.toLocalDate();
 
-		Arbitrary<LocalDateTime> dateTimes = Combinators.combine(dates, times).as(LocalDateTime::of);
+		return dates.flatMap(date -> timesByDate(times, date, effectiveMinDate, effectiveMaxDate)
+											 .map(time -> LocalDateTime.of(date, time)));
 
-		dateTimes = dateTimes.filter(v -> !v.isBefore(effectiveMin) && !v.isAfter(effectiveMax))
-							 .edgeCases(edgeCases -> edgeCases.add(effectiveMin, effectiveMax));
+	}
 
-		return dateTimes;
-
+	private LocalTimeArbitrary timesByDate(LocalTimeArbitrary[] times, LocalDate date, LocalDate effectiveMin, LocalDate effectiveMax) {
+		if (date.isEqual(effectiveMin)) {
+			return times[0];
+		} else if (date.isEqual(effectiveMax)) {
+			return times[2];
+		} else {
+			return times[1];
+		}
 	}
 
 	private LocalDateTime calculateEffectiveMin() {
@@ -83,10 +90,14 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		return LocalDateTime.of(date, time);
 	}
 
-	private LocalTimeArbitrary generateTimeArbitrary(LocalDateTime effectiveMin, LocalDateTime effectiveMax) {
-		LocalTimeArbitrary times = Times.times();
+	private LocalTimeArbitrary[] generateTimeArbitrary(LocalDateTime effectiveMin, LocalDateTime effectiveMax, ChronoUnit ofPrecision) {
+		LocalTimeArbitrary[] times = new LocalTimeArbitrary[3];
 		if (effectiveMin.toLocalDate().isEqual(effectiveMax.toLocalDate())) {
-			times = times.between(effectiveMin.toLocalTime(), effectiveMax.toLocalTime());
+			times[0] = Times.times().between(effectiveMin.toLocalTime(), effectiveMax.toLocalTime()).ofPrecision(ofPrecision);
+		} else {
+			times[0] = Times.times().atTheEarliest(effectiveMin.toLocalTime()).ofPrecision(ofPrecision);
+			times[1] = Times.times().ofPrecision(ofPrecision);
+			times[2] = Times.times().atTheLatest(effectiveMax.toLocalTime()).ofPrecision(ofPrecision);
 		}
 		return times;
 	}
