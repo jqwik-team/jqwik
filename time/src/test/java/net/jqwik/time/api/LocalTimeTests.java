@@ -549,7 +549,7 @@ class LocalTimeTests {
 	class ExhaustiveGeneration {
 
 		@Example
-		void between() {
+		void precisionNanos() {
 			Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
 					Times.times()
 						 .between(

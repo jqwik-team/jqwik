@@ -69,8 +69,10 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 			time = DefaultLocalTimeArbitrary.calculateEffectiveMinWithPrecision(time, ofPrecision);
 		} catch (IllegalArgumentException e) {
 			time = LocalTime.MIN;
-			LocalDate effectiveDate = date.plusDays(1);
-			if (effectiveDate.isBefore(date)) {
+			LocalDate effectiveDate;
+			try {
+				effectiveDate = date.plusDays(1);
+			} catch (DateTimeException dateTimeException) {
 				throw new IllegalArgumentException("Date is LocalDate.MAX and must be increased by 1 day.");
 			}
 			date = effectiveDate;
