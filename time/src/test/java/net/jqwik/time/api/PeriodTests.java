@@ -245,7 +245,7 @@ class PeriodTests {
 
 		private void checkDayCoverage(StatisticsCoverage coverage) {
 			for (int dayOfMonth = -30; dayOfMonth <= 30; dayOfMonth++) {
-				coverage.check(dayOfMonth).percentage(p -> p >= 0.15);
+				coverage.check(dayOfMonth).percentage(p -> p >= 0.10);
 			}
 		}
 

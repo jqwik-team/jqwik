@@ -1,6 +1,7 @@
 package net.jqwik.time.api;
 
 import java.time.*;
+import java.time.temporal.*;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -65,7 +66,7 @@ class LocalDateTimeTests {
 		}
 
 		@Property
-		void onlyFewValuesPossibleAtEndOfDay(
+		void onlyFewValuesPossibleAtEndOfDayPrecisionSeconds(
 				@ForAll LocalDate date,
 				@ForAll @IntRange(min = 50, max = 59) int secondEnd,
 				@ForAll @IntRange(min = 0, max = 10) int secondStart,
@@ -75,6 +76,27 @@ class LocalDateTimeTests {
 			Assume.that(!date.isEqual(LocalDate.MAX));
 			LocalDateTime min = LocalDateTime.of(date, LocalTime.of(23, 59, secondEnd));
 			LocalDateTime max = LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0, secondStart));
+
+			LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().between(min, max);
+
+			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+				assertThat(dateTime).isNotNull();
+				return true;
+			});
+
+		}
+
+		@Property
+		void onlyFewValuesPossibleAtEndOfDayPrecisionNanos(
+				@ForAll LocalDate date,
+				@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanoEnd,
+				@ForAll @IntRange(min = 0, max = 200) int nanoStart,
+				@ForAll Random random
+		) {
+
+			Assume.that(!date.isEqual(LocalDate.MAX));
+			LocalDateTime min = LocalDateTime.of(date, LocalTime.of(23, 59, 59, nanoEnd));
+			LocalDateTime max = LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0, 0, nanoStart));
 
 			LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().between(min, max);
 
@@ -452,13 +474,80 @@ class LocalDateTimeTests {
 	class ExhaustiveGeneration {
 
 		@Example
-		void between() {
+		void precisionNanos() {
+			Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_325)
+							 )
+							 .ofPrecision(NANOS)
+							 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_323),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_324),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_325)
+			);
+		}
+
+		@Example
+		void precisionMicros() {
+			Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_215_325)
+							 )
+							 .ofPrecision(MICROS)
+							 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_212_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_213_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_214_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_215_000)
+			);
+		}
+
+		@Example
+		void precisionMillis() {
+			Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 396_211_325)
+							 )
+							 .ofPrecision(MILLIS)
+							 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 393_000_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 394_000_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 395_000_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 396_000_000)
+			);
+		}
+
+		@Example
+		void precisionSeconds() {
 			Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
 					DateTimes.dateTimes()
 							 .between(
 									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
 									 LocalDateTime.of(2013, 5, 25, 11, 22, 35, 392_211_325)
 							 )
+							 .ofPrecision(SECONDS)
 							 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -469,6 +558,50 @@ class LocalDateTimeTests {
 					LocalDateTime.of(2013, 5, 25, 11, 22, 33),
 					LocalDateTime.of(2013, 5, 25, 11, 22, 34),
 					LocalDateTime.of(2013, 5, 25, 11, 22, 35)
+			);
+		}
+
+		@Example
+		void precisionMinutes() {
+			Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+									 LocalDateTime.of(2013, 5, 25, 11, 26, 35, 392_211_325)
+							 )
+							 .ofPrecision(MINUTES)
+							 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 11, 23, 0),
+					LocalDateTime.of(2013, 5, 25, 11, 24, 0),
+					LocalDateTime.of(2013, 5, 25, 11, 25, 0),
+					LocalDateTime.of(2013, 5, 25, 11, 26, 0)
+			);
+		}
+
+		@Example
+		void precisionHours() {
+			Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+									 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+									 LocalDateTime.of(2013, 5, 25, 15, 26, 35, 392_211_325)
+							 )
+							 .ofPrecision(HOURS)
+							 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 12, 0, 0),
+					LocalDateTime.of(2013, 5, 25, 13, 0, 0),
+					LocalDateTime.of(2013, 5, 25, 14, 0, 0),
+					LocalDateTime.of(2013, 5, 25, 15, 0, 0)
 			);
 		}
 
@@ -826,7 +959,6 @@ class LocalDateTimeTests {
 	}
 
 	@Group
-	@PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
 	class CheckEqualDistribution {
 
 		@Property
@@ -975,48 +1107,295 @@ class LocalDateTimeTests {
 	@Group
 	class InvalidConfigurations {
 
-		@Property
-		void atTheEarliestYearMustNotBelow1(
-				@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
-				@ForAll @LeapYears(withLeapYears = false) LocalDate date,
-				@ForAll LocalTime time
-		) {
-			date = date.withYear(year);
-			LocalDateTime dateTime = LocalDateTime.of(date, time);
-			System.out.println(dateTime);
-			assertThatThrownBy(
-					() -> DateTimes.dateTimes().atTheEarliest(dateTime)
-			).isInstanceOf(IllegalArgumentException.class);
+		@Group
+		class InvalidValues {
+
+			@Property
+			void atTheEarliestYearMustNotBelow1(
+					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
+					@ForAll @LeapYears(withLeapYears = false) LocalDate date,
+					@ForAll LocalTime time
+			) {
+				date = date.withYear(year);
+				LocalDateTime dateTime = LocalDateTime.of(date, time);
+				System.out.println(dateTime);
+				assertThatThrownBy(
+						() -> DateTimes.dateTimes().atTheEarliest(dateTime)
+				).isInstanceOf(IllegalArgumentException.class);
+			}
+
+			@Property
+			void atTheEarliestMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max) {
+				Assume.that(min.isAfter(max));
+				assertThatThrownBy(
+						() -> DateTimes.dateTimes().atTheLatest(max).atTheEarliest(min)
+				).isInstanceOf(IllegalArgumentException.class);
+			}
+
+			@Property
+			void atTheLatestYearMustNotBelow1(
+					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
+					@ForAll @LeapYears(withLeapYears = false) LocalDate date,
+					@ForAll LocalTime time
+			) {
+				date = date.withYear(year);
+				LocalDateTime dateTime = LocalDateTime.of(date, time);
+				System.out.println(dateTime);
+				assertThatThrownBy(
+						() -> DateTimes.dateTimes().atTheLatest(dateTime)
+				).isInstanceOf(IllegalArgumentException.class);
+			}
+
+			@Property
+			void atTheLatestMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max) {
+				Assume.that(min.isAfter(max));
+				assertThatThrownBy(
+						() -> DateTimes.dateTimes().atTheEarliest(min).atTheLatest(max)
+				).isInstanceOf(IllegalArgumentException.class);
+			}
+
 		}
 
-		@Property
-		void atTheEarliestMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max) {
-			Assume.that(min.isAfter(max));
-			assertThatThrownBy(
-					() -> DateTimes.dateTimes().atTheLatest(max).atTheEarliest(min)
-			).isInstanceOf(IllegalArgumentException.class);
-		}
+		@Group
+		class DateTimeGenerationPrecision {
 
-		@Property
-		void atTheLatestYearMustNotBelow1(
-				@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
-				@ForAll @LeapYears(withLeapYears = false) LocalDate date,
-				@ForAll LocalTime time
-		) {
-			date = date.withYear(year);
-			LocalDateTime dateTime = LocalDateTime.of(date, time);
-			System.out.println(dateTime);
-			assertThatThrownBy(
-					() -> DateTimes.dateTimes().atTheLatest(dateTime)
-			).isInstanceOf(IllegalArgumentException.class);
-		}
+			@Group
+			class Generally {
 
-		@Property
-		void atTheLatestMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max) {
-			Assume.that(min.isAfter(max));
-			assertThatThrownBy(
-					() -> DateTimes.dateTimes().atTheEarliest(min).atTheLatest(max)
-			).isInstanceOf(IllegalArgumentException.class);
+				@Property
+				void ofPrecision(@ForAll ChronoUnit chronoUnit) {
+
+					Assume.that(!chronoUnit.equals(NANOS));
+					Assume.that(!chronoUnit.equals(MICROS));
+					Assume.that(!chronoUnit.equals(MILLIS));
+					Assume.that(!chronoUnit.equals(SECONDS));
+					Assume.that(!chronoUnit.equals(MINUTES));
+					Assume.that(!chronoUnit.equals(HOURS));
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().ofPrecision(chronoUnit)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+			}
+
+			@Group
+			class Hours {
+
+				@Property
+				void precisionMaxSoonAfterMin(
+						@ForAll("precisionNanoseconds") LocalDateTime min,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalDateTime max = min.plusNanos(nanos);
+
+					Assume.that(min.getMinute() != 0 && min.getSecond() != 0 && min.getNano() != 0);
+					Assume.that(min.getHour() == max.getHour());
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(HOURS).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Property
+				void precisionMinTooLate(@ForAll("precisionMinTimeTooLateProvide") LocalTime time) {
+
+					Assume.that(time.getMinute() != 0 || time.getSecond() != 0 || time.getNano() != 0);
+
+					LocalDateTime min = LocalDateTime.of(LocalDate.MAX, time);
+					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(HOURS).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23);
+				}
+
+			}
+
+			@Group
+			class Minutes {
+
+				@Property
+				void precisionMaxTimeSoonAfterMinTime(
+						@ForAll("precisionNanoseconds") LocalDateTime min,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalDateTime max = min.plusNanos(nanos);
+
+					Assume.that(min.getSecond() != 0 && min.getNano() != 0);
+					Assume.that(min.getMinute() == max.getMinute());
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MINUTES).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Property
+				void precisionMinTimeTooLate(@ForAll("precisionMinTimeTooLateProvide") LocalTime time) {
+
+					Assume.that(time.getSecond() != 0 || time.getNano() != 0);
+
+					LocalDateTime min = LocalDateTime.of(LocalDate.MAX, time);
+					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MINUTES).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59);
+				}
+
+			}
+
+			@Group
+			class Seconds {
+
+				@Property
+				void precisionMaxTimeSoonAfterMinTime(
+						@ForAll("precisionNanoseconds") LocalDateTime min,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalDateTime max = min.plusNanos(nanos);
+
+					Assume.that(min.getNano() != 0);
+					Assume.that(min.getSecond() == max.getSecond());
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(SECONDS).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Property
+				void precisionMinTimeTooLate(
+						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
+						@ForAll @IntRange(min = 1, max = 999_999_999) int nanos
+				) {
+
+					time = time.withNano(nanos);
+					LocalDateTime min = LocalDateTime.of(LocalDate.MAX, time);
+					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(SECONDS).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
+				}
+
+			}
+
+			@Group
+			class Millis {
+
+				@Property
+				void precisionMaxTimeSoonAfterMinTime(
+						@ForAll("precisionNanoseconds") LocalDateTime min,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalDateTime max = min.plusNanos(nanos);
+
+					Assume.that(min.getNano() % 1_000_000 != 0);
+					Assume.that(min.getNano() % 1_000_000 + nanos < 1_000_000);
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MILLIS).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Property
+				void precisionMinTimeTooLate(
+						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
+						@ForAll @IntRange(min = 999_000_001, max = 999_999_999) int nanos
+				) {
+
+					time = time.withNano(nanos);
+					LocalDateTime min = LocalDateTime.of(LocalDate.MAX, time);
+					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MILLIS).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
+				}
+
+			}
+
+			@Group
+			class Micros {
+
+				@Property
+				void precisionMaxTimeSoonAfterMinTime(
+						@ForAll("precisionNanoseconds") LocalDateTime min,
+						@ForAll @IntRange(min = 1, max = 200) int nanos
+				) {
+
+					LocalDateTime max = min.plusNanos(nanos);
+
+					Assume.that(min.getNano() % 1_000 != 0);
+					Assume.that(min.getNano() % 1_000 + nanos < 1_000);
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MICROS).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Property
+				void precisionMinTimeTooLate(
+						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
+						@ForAll @IntRange(min = 999_999_001, max = 999_999_999) int nanos
+				) {
+
+					time = time.withNano(nanos);
+					LocalDateTime min = LocalDateTime.of(LocalDate.MAX, time);
+					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
+
+					assertThatThrownBy(
+							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MICROS).generator(1000)
+					).isInstanceOf(IllegalArgumentException.class);
+
+				}
+
+				@Provide
+				Arbitrary<LocalTime> precisionMinTimeTooLateProvide() {
+					return Times.times().hourBetween(23, 23).minuteBetween(59, 59).secondBetween(59, 59);
+				}
+
+			}
+
+			@Group
+			class Nanos {
+
+			}
+
 		}
 
 	}
