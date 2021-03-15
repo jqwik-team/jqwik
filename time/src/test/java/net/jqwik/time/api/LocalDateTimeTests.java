@@ -98,7 +98,7 @@ class LocalDateTimeTests {
 			LocalDateTime min = LocalDateTime.of(date, LocalTime.of(23, 59, 59, nanoEnd));
 			LocalDateTime max = LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0, 0, nanoStart));
 
-			LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().between(min, max);
+			LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().between(min, max).ofPrecision(NANOS);
 
 			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime).isNotNull();
