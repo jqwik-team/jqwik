@@ -260,9 +260,10 @@ void generateLocalDateTimesWithAnnotation(@ForAll @DateTimeRange(min = "2019-01-
 The following annotations can be used to constrain default generation of the enumerated types:
 
 - [`@DateTimeRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DateTimeRange.html)
+- [`@Precision`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/Precision.html)
 
 `@DateTimeRange` uses the standard format of its class. 
-Examples: `2013-05-25T01:34:22.231`.
+Example: `2013-05-25T01:34:22.231`.
 
 ##### Programmatic Generation of DateTimes
 
@@ -291,3 +292,4 @@ Here's the list of available methods:
 - The target type is `LocalDateTime`.
 - By default, only years between 1900 and 2500 are generated.
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
