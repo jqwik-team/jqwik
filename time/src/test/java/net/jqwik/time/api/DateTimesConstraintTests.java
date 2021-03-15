@@ -7,6 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.constraints.*;
 
+import static java.time.temporal.ChronoUnit.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.Arbitraries.*;
@@ -25,6 +26,44 @@ public class DateTimesConstraintTests {
 		@Property
 		void dateRangeMax(@ForAll @DateTimeRange(max = "2020-08-23T01:32:21.113943") LocalDateTime dateTime) {
 			assertThat(dateTime).isBeforeOrEqualTo(LocalDateTime.of(2020, Month.AUGUST, 23, 1, 32, 21, 113943000));
+		}
+
+		@Group
+		class Precisions {
+
+			@Property
+			void hours(@ForAll @Precision(ofPrecision = HOURS) LocalDateTime dateTime) {
+				assertThat(dateTime.getMinute()).isZero();
+				assertThat(dateTime.getSecond()).isZero();
+				assertThat(dateTime.getNano()).isZero();
+			}
+
+			@Property
+			void minutes(@ForAll @Precision(ofPrecision = MINUTES) LocalDateTime dateTime) {
+				assertThat(dateTime.getSecond()).isZero();
+				assertThat(dateTime.getNano()).isZero();
+			}
+
+			@Property
+			void seconds(@ForAll @Precision(ofPrecision = SECONDS) LocalDateTime dateTime) {
+				assertThat(dateTime.getNano()).isZero();
+			}
+
+			@Property
+			void millis(@ForAll @Precision(ofPrecision = MILLIS) LocalDateTime dateTime) {
+				assertThat(dateTime.getNano() % 1_000_000).isZero();
+			}
+
+			@Property
+			void micros(@ForAll @Precision(ofPrecision = MICROS) LocalDateTime dateTime) {
+				assertThat(dateTime.getNano() % 1_000).isZero();
+			}
+
+			@Property
+			void nanos(@ForAll @Precision(ofPrecision = NANOS) LocalDateTime dateTime) {
+				assertThat(dateTime).isNotNull();
+			}
+
 		}
 
 		@Group
@@ -138,6 +177,11 @@ public class DateTimesConstraintTests {
 			assertThat(string).isNotNull();
 		}
 
+		@Property
+		void precision(@ForAll @Precision(ofPrecision = HOURS) Byte b) {
+			assertThat(b).isNotNull();
+		}
+
 	}
 
 	@Group
@@ -163,6 +207,152 @@ public class DateTimesConstraintTests {
 						LocalDateTime.of(2020, Month.AUGUST, 23, 1, 32, 21, 113944000),
 						LocalDateTime.MAX
 				);
+			}
+
+		}
+
+		@Group
+		class PrecisionConstraint {
+
+			@Group
+			class Hours {
+
+				@Property
+				void localDateTime(@ForAll("dateTimes") @Precision(ofPrecision = HOURS) LocalDateTime dateTime) {
+					assertThat(dateTime.getMinute()).isEqualTo(0);
+					assertThat(dateTime.getSecond()).isEqualTo(0);
+					assertThat(dateTime.getNano()).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalDateTime> dateTimes() {
+					return of(
+							LocalDateTime.of(2021, 3, 15, 9, 0, 3),
+							LocalDateTime.of(1997, 12, 17, 10, 3, 0),
+							LocalDateTime.of(2020, 8, 23, 11, 0, 0),
+							LocalDateTime.of(2013, 5, 25, 12, 0, 0, 312),
+							LocalDateTime.of(1995, 3, 12, 13, 0, 0, 392_291_392),
+							LocalDateTime.of(2400, 2, 2, 14, 0, 0),
+							LocalDateTime.of(8473929, 3, 1, 15, 1, 1, 111_111_111)
+					);
+				}
+
+			}
+
+			@Group
+			class Minutes {
+
+				@Property
+				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = MINUTES) LocalDateTime dateTime) {
+					assertThat(dateTime.getSecond()).isEqualTo(0);
+					assertThat(dateTime.getNano()).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalDateTime> dateTimes() {
+					return of(
+							LocalDateTime.of(2021, 3, 15, 9, 12, 3),
+							LocalDateTime.of(1997, 12, 17, 10, 3, 0),
+							LocalDateTime.of(2020, 8, 23, 11, 13, 0, 333_211),
+							LocalDateTime.of(2013, 5, 25, 12, 14, 0, 312),
+							LocalDateTime.of(1995, 3, 12, 13, 13, 0, 392_291_392),
+							LocalDateTime.of(2400, 2, 2, 14, 44, 0),
+							LocalDateTime.of(8473929, 3, 1, 15, 1, 1, 111_111_111)
+					);
+				}
+
+			}
+
+			@Group
+			class Seconds {
+
+				@Property
+				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = SECONDS) LocalDateTime dateTime) {
+					assertThat(dateTime.getNano()).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalDateTime> dateTimes() {
+					return of(
+							LocalDateTime.of(2021, 3, 15, 9, 12, 3),
+							LocalDateTime.of(1997, 12, 17, 10, 3, 31),
+							LocalDateTime.of(2020, 8, 23, 11, 13, 32, 333_211),
+							LocalDateTime.of(2013, 5, 25, 12, 14, 11, 312),
+							LocalDateTime.of(1995, 3, 12, 13, 13, 33, 392_291_392),
+							LocalDateTime.of(2400, 2, 2, 14, 44, 14),
+							LocalDateTime.of(8473929, 3, 1, 15, 1, 1, 111_111_111)
+					);
+				}
+
+			}
+
+			@Group
+			class Millis {
+
+				@Property
+				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = MILLIS) LocalDateTime dateTime) {
+					assertThat(dateTime.getNano() % 1_000_000).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalDateTime> dateTimes() {
+					return of(
+							LocalDateTime.of(2021, 3, 15, 9, 12, 3, 322_000_000),
+							LocalDateTime.of(1997, 12, 17, 10, 3, 31, 321_000_000),
+							LocalDateTime.of(2020, 8, 23, 11, 13, 32, 333_211),
+							LocalDateTime.of(2013, 5, 25, 12, 14, 11, 312),
+							LocalDateTime.of(1995, 3, 12, 13, 13, 33, 392_291_392),
+							LocalDateTime.of(2400, 2, 2, 14, 44, 14, 312_000_000),
+							LocalDateTime.of(8473929, 3, 1, 15, 1, 1, 111_111_111)
+					);
+				}
+
+			}
+
+			@Group
+			class Micros {
+
+				@Property
+				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = MICROS) LocalDateTime dateTime) {
+					assertThat(dateTime.getNano() % 1_000).isEqualTo(0);
+				}
+
+				@Provide
+				Arbitrary<LocalDateTime> dateTimes() {
+					return of(
+							LocalDateTime.of(2021, 3, 15, 9, 12, 3, 322_212_000),
+							LocalDateTime.of(1997, 12, 17, 10, 3, 31, 321_312_000),
+							LocalDateTime.of(2020, 8, 23, 11, 13, 32, 333_211),
+							LocalDateTime.of(2013, 5, 25, 12, 14, 11, 312),
+							LocalDateTime.of(1995, 3, 12, 13, 13, 33, 392_291_392),
+							LocalDateTime.of(2400, 2, 2, 14, 44, 14, 312_344_000),
+							LocalDateTime.of(8473929, 3, 1, 15, 1, 1, 111_111_111)
+					);
+				}
+
+			}
+
+			@Group
+			class Nanos {
+
+				@Property
+				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = NANOS) LocalDateTime dateTime) {
+					assertThat(dateTime).isNotNull();
+				}
+
+				@Provide
+				Arbitrary<LocalDateTime> dateTimes() {
+					return of(
+							LocalDateTime.of(2021, 3, 15, 9, 12, 3, 322_212_333),
+							LocalDateTime.of(1997, 12, 17, 10, 3, 31, 321_312_111),
+							LocalDateTime.of(2020, 8, 23, 11, 13, 32, 333_211),
+							LocalDateTime.of(2013, 5, 25, 12, 14, 11, 312),
+							LocalDateTime.of(1995, 3, 12, 13, 13, 33, 392_291_392),
+							LocalDateTime.of(2400, 2, 2, 14, 44, 14, 312_344_000),
+							LocalDateTime.of(8473929, 3, 1, 15, 1, 1, 111_111_111)
+					);
+				}
+
 			}
 
 		}

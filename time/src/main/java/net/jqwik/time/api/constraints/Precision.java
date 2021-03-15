@@ -9,9 +9,9 @@ import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Constrain the range of generated hour parameters.
+ * Constrain the precision of generated times.
  * <p>
- * Applies to LocalTime, OffsetTime and Duration parameters which are also annotated with {@code @ForAll}.
+ * Applies to LocalDateTime, LocalTime, OffsetTime and Duration parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  * @see TimeRange

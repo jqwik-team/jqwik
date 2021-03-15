@@ -11,6 +11,25 @@ import net.jqwik.time.api.constraints.*;
 
 public class PrecisionConfigurator {
 
+	public static class ForLocalDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(LocalDateTime.class);
+		}
+
+		public Arbitrary<LocalDateTime> configure(Arbitrary<LocalDateTime> arbitrary, Precision range) {
+			ChronoUnit ofPrecision = range.ofPrecision();
+			if (arbitrary instanceof LocalDateTimeArbitrary) {
+				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
+				return localDateTimeArbitrary.ofPrecision(ofPrecision);
+			} else {
+				return arbitrary.filter(v -> filter(v, ofPrecision));
+			}
+		}
+
+	}
+
 	public static class ForLocalTime extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -84,6 +103,10 @@ public class PrecisionConfigurator {
 				if (nano % 1_000 != 0) return false;
 		}
 		return true;
+	}
+
+	private static boolean filter(LocalDateTime dateTime, ChronoUnit ofPrecision) {
+		return filter(dateTime.toLocalTime(), ofPrecision);
 	}
 
 	private static boolean filter(LocalTime time, ChronoUnit ofPrecision) {
