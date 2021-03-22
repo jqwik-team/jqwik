@@ -25,5 +25,5 @@ import static org.apiguardian.api.API.Status.*;
 @Documented
 @API(status = EXPERIMENTAL, since = "1.5.1")
 public @interface Precision {
-	ChronoUnit ofPrecision() default SECONDS;
+	ChronoUnit value() default SECONDS;
 }

@@ -10,7 +10,6 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.*;
 import net.jqwik.time.api.arbitraries.*;
 
-import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
@@ -34,7 +33,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		}
 
 		LocalDateArbitrary dates = Dates.dates();
-		LocalTimeArbitrary[] times = generateTimeArbitrary(effectiveMin, effectiveMax, ofPrecision);
+		TimeArbitraries times = generateTimeArbitraries(effectiveMin, effectiveMax, ofPrecision);
 
 		dates = dates.atTheEarliest(effectiveMin.toLocalDate());
 		dates = dates.atTheLatest(effectiveMax.toLocalDate());
@@ -47,13 +46,13 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 
 	}
 
-	private LocalTimeArbitrary timesByDate(LocalTimeArbitrary[] times, LocalDate date, LocalDate effectiveMin, LocalDate effectiveMax) {
+	private LocalTimeArbitrary timesByDate(TimeArbitraries times, LocalDate date, LocalDate effectiveMin, LocalDate effectiveMax) {
 		if (date.isEqual(effectiveMin)) {
-			return times[0];
+			return times.firstDay;
 		} else if (date.isEqual(effectiveMax)) {
-			return times[2];
+			return times.lastDay;
 		} else {
-			return times[1];
+			return times.daysBetween;
 		}
 	}
 
@@ -73,7 +72,8 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 			try {
 				effectiveDate = date.plusDays(1);
 			} catch (DateTimeException dateTimeException) {
-				throw new IllegalArgumentException("Date is LocalDate.MAX and must be increased by 1 day.");
+				throw new IllegalArgumentException("Min value must be increased but results in a DateTimeException: " + dateTimeException
+																																.getMessage());
 			}
 			date = effectiveDate;
 		}
@@ -92,14 +92,14 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		return LocalDateTime.of(date, time);
 	}
 
-	private LocalTimeArbitrary[] generateTimeArbitrary(LocalDateTime effectiveMin, LocalDateTime effectiveMax, ChronoUnit ofPrecision) {
-		LocalTimeArbitrary[] times = new LocalTimeArbitrary[3];
+	private TimeArbitraries generateTimeArbitraries(LocalDateTime effectiveMin, LocalDateTime effectiveMax, ChronoUnit ofPrecision) {
+		TimeArbitraries times = new TimeArbitraries();
 		if (effectiveMin.toLocalDate().isEqual(effectiveMax.toLocalDate())) {
-			times[0] = Times.times().between(effectiveMin.toLocalTime(), effectiveMax.toLocalTime()).ofPrecision(ofPrecision);
+			times.firstDay = Times.times().between(effectiveMin.toLocalTime(), effectiveMax.toLocalTime()).ofPrecision(ofPrecision);
 		} else {
-			times[0] = Times.times().atTheEarliest(effectiveMin.toLocalTime()).ofPrecision(ofPrecision);
-			times[1] = Times.times().ofPrecision(ofPrecision);
-			times[2] = Times.times().atTheLatest(effectiveMax.toLocalTime()).ofPrecision(ofPrecision);
+			times.firstDay = Times.times().atTheEarliest(effectiveMin.toLocalTime()).ofPrecision(ofPrecision);
+			times.daysBetween = Times.times().ofPrecision(ofPrecision);
+			times.lastDay = Times.times().atTheLatest(effectiveMax.toLocalTime()).ofPrecision(ofPrecision);
 		}
 		return times;
 	}
@@ -134,18 +134,21 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 
 	@Override
 	public LocalDateTimeArbitrary ofPrecision(ChronoUnit ofPrecision) {
-		if (!(ofPrecision.equals(HOURS)
-					  || ofPrecision.equals(MINUTES)
-					  || ofPrecision.equals(SECONDS)
-					  || ofPrecision.equals(MILLIS)
-					  || ofPrecision.equals(MICROS)
-					  || ofPrecision.equals(NANOS))) {
+		if (!DefaultLocalTimeArbitrary.ALLOWED_PRECISIONS.contains(ofPrecision)) {
 			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
 		}
 
 		DefaultLocalDateTimeArbitrary clone = typedClone();
 		clone.ofPrecision = ofPrecision;
 		return clone;
+	}
+
+	private class TimeArbitraries {
+
+		private LocalTimeArbitrary firstDay;
+		private LocalTimeArbitrary daysBetween;
+		private LocalTimeArbitrary lastDay;
+
 	}
 
 }

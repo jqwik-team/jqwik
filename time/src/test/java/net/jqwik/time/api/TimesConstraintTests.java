@@ -51,35 +51,35 @@ public class TimesConstraintTests {
 			class Precisions {
 
 				@Property
-				void hours(@ForAll @Precision(ofPrecision = HOURS) LocalTime time) {
+				void hours(@ForAll @Precision(value = HOURS) LocalTime time) {
 					assertThat(time.getMinute()).isZero();
 					assertThat(time.getSecond()).isZero();
 					assertThat(time.getNano()).isZero();
 				}
 
 				@Property
-				void minutes(@ForAll @Precision(ofPrecision = MINUTES) LocalTime time) {
+				void minutes(@ForAll @Precision(value = MINUTES) LocalTime time) {
 					assertThat(time.getSecond()).isZero();
 					assertThat(time.getNano()).isZero();
 				}
 
 				@Property
-				void seconds(@ForAll @Precision(ofPrecision = SECONDS) LocalTime time) {
+				void seconds(@ForAll @Precision(value = SECONDS) LocalTime time) {
 					assertThat(time.getNano()).isZero();
 				}
 
 				@Property
-				void millis(@ForAll @Precision(ofPrecision = MILLIS) LocalTime time) {
+				void millis(@ForAll @Precision(value = MILLIS) LocalTime time) {
 					assertThat(time.getNano() % 1_000_000).isZero();
 				}
 
 				@Property
-				void micros(@ForAll @Precision(ofPrecision = MICROS) LocalTime time) {
+				void micros(@ForAll @Precision(value = MICROS) LocalTime time) {
 					assertThat(time.getNano() % 1_000).isZero();
 				}
 
 				@Property
-				void nanos(@ForAll @Precision(ofPrecision = NANOS) LocalTime time) {
+				void nanos(@ForAll @Precision(value = NANOS) LocalTime time) {
 					assertThat(time).isNotNull();
 				}
 
@@ -235,61 +235,61 @@ public class TimesConstraintTests {
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void centuries(@ForAll @Precision(ofPrecision = CENTURIES) LocalTime time) {
+				void centuries(@ForAll @Precision(value = CENTURIES) LocalTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void days(@ForAll @Precision(ofPrecision = DAYS) LocalTime time) {
+				void days(@ForAll @Precision(value = DAYS) LocalTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void decades(@ForAll @Precision(ofPrecision = DECADES) LocalTime time) {
+				void decades(@ForAll @Precision(value = DECADES) LocalTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void eras(@ForAll @Precision(ofPrecision = ERAS) LocalTime time) {
+				void eras(@ForAll @Precision(value = ERAS) LocalTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void forever(@ForAll @Precision(ofPrecision = FOREVER) LocalTime time) {
+				void forever(@ForAll @Precision(value = FOREVER) LocalTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void halfDays(@ForAll @Precision(ofPrecision = HALF_DAYS) LocalTime time) {
+				void halfDays(@ForAll @Precision(value = HALF_DAYS) LocalTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void millennia(@ForAll @Precision(ofPrecision = MILLENNIA) LocalTime time) {
+				void millennia(@ForAll @Precision(value = MILLENNIA) LocalTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void months(@ForAll @Precision(ofPrecision = MONTHS) LocalTime time) {
+				void months(@ForAll @Precision(value = MONTHS) LocalTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void weeks(@ForAll @Precision(ofPrecision = WEEKS) LocalTime time) {
+				void weeks(@ForAll @Precision(value = WEEKS) LocalTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void years(@ForAll @Precision(ofPrecision = YEARS) LocalTime time) {
+				void years(@ForAll @Precision(value = YEARS) LocalTime time) {
 					//do nothing
 				}
 
@@ -342,35 +342,35 @@ public class TimesConstraintTests {
 			class Precisions {
 
 				@Property
-				void hours(@ForAll @Precision(ofPrecision = HOURS) OffsetTime time) {
+				void hours(@ForAll @Precision(value = HOURS) OffsetTime time) {
 					assertThat(time.getMinute()).isZero();
 					assertThat(time.getSecond()).isZero();
 					assertThat(time.getNano()).isZero();
 				}
 
 				@Property
-				void minutes(@ForAll @Precision(ofPrecision = MINUTES) OffsetTime time) {
+				void minutes(@ForAll @Precision(value = MINUTES) OffsetTime time) {
 					assertThat(time.getSecond()).isZero();
 					assertThat(time.getNano()).isZero();
 				}
 
 				@Property
-				void seconds(@ForAll @Precision(ofPrecision = SECONDS) OffsetTime time) {
+				void seconds(@ForAll @Precision(value = SECONDS) OffsetTime time) {
 					assertThat(time.getNano()).isZero();
 				}
 
 				@Property
-				void millis(@ForAll @Precision(ofPrecision = MILLIS) OffsetTime time) {
+				void millis(@ForAll @Precision(value = MILLIS) OffsetTime time) {
 					assertThat(time.getNano() % 1_000_000).isZero();
 				}
 
 				@Property
-				void micros(@ForAll @Precision(ofPrecision = MICROS) OffsetTime time) {
+				void micros(@ForAll @Precision(value = MICROS) OffsetTime time) {
 					assertThat(time.getNano() % 1_000).isZero();
 				}
 
 				@Property
-				void nanos(@ForAll @Precision(ofPrecision = NANOS) OffsetTime time) {
+				void nanos(@ForAll @Precision(value = NANOS) OffsetTime time) {
 					assertThat(time).isNotNull();
 				}
 
@@ -591,61 +591,61 @@ public class TimesConstraintTests {
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void centuries(@ForAll @Precision(ofPrecision = CENTURIES) OffsetTime time) {
+				void centuries(@ForAll @Precision(value = CENTURIES) OffsetTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void days(@ForAll @Precision(ofPrecision = DAYS) OffsetTime time) {
+				void days(@ForAll @Precision(value = DAYS) OffsetTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void decades(@ForAll @Precision(ofPrecision = DECADES) OffsetTime time) {
+				void decades(@ForAll @Precision(value = DECADES) OffsetTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void eras(@ForAll @Precision(ofPrecision = ERAS) OffsetTime time) {
+				void eras(@ForAll @Precision(value = ERAS) OffsetTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void forever(@ForAll @Precision(ofPrecision = FOREVER) OffsetTime time) {
+				void forever(@ForAll @Precision(value = FOREVER) OffsetTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void halfDays(@ForAll @Precision(ofPrecision = HALF_DAYS) OffsetTime time) {
+				void halfDays(@ForAll @Precision(value = HALF_DAYS) OffsetTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void millennia(@ForAll @Precision(ofPrecision = MILLENNIA) OffsetTime time) {
+				void millennia(@ForAll @Precision(value = MILLENNIA) OffsetTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void months(@ForAll @Precision(ofPrecision = MONTHS) OffsetTime time) {
+				void months(@ForAll @Precision(value = MONTHS) OffsetTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void weeks(@ForAll @Precision(ofPrecision = WEEKS) OffsetTime time) {
+				void weeks(@ForAll @Precision(value = WEEKS) OffsetTime time) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void years(@ForAll @Precision(ofPrecision = YEARS) OffsetTime time) {
+				void years(@ForAll @Precision(value = YEARS) OffsetTime time) {
 					//do nothing
 				}
 
@@ -754,35 +754,35 @@ public class TimesConstraintTests {
 		class Precisions {
 
 			@Property
-			void hours(@ForAll @Precision(ofPrecision = HOURS) Duration duration) {
+			void hours(@ForAll @Precision(value = HOURS) Duration duration) {
 				assertThat(getMinute(duration)).isZero();
 				assertThat(getSecond(duration)).isZero();
 				assertThat(duration.getNano()).isZero();
 			}
 
 			@Property
-			void minutes(@ForAll @Precision(ofPrecision = MINUTES) Duration duration) {
+			void minutes(@ForAll @Precision(value = MINUTES) Duration duration) {
 				assertThat(getSecond(duration)).isZero();
 				assertThat(duration.getNano()).isZero();
 			}
 
 			@Property
-			void seconds(@ForAll @Precision(ofPrecision = SECONDS) Duration duration) {
+			void seconds(@ForAll @Precision(value = SECONDS) Duration duration) {
 				assertThat(duration.getNano()).isZero();
 			}
 
 			@Property
-			void millis(@ForAll @Precision(ofPrecision = MILLIS) Duration duration) {
+			void millis(@ForAll @Precision(value = MILLIS) Duration duration) {
 				assertThat(duration.getNano() % 1_000_000).isZero();
 			}
 
 			@Property
-			void micros(@ForAll @Precision(ofPrecision = MICROS) Duration duration) {
+			void micros(@ForAll @Precision(value = MICROS) Duration duration) {
 				assertThat(duration.getNano() % 1_000).isZero();
 			}
 
 			@Property
-			void nanos(@ForAll @Precision(ofPrecision = NANOS) Duration duration) {
+			void nanos(@ForAll @Precision(value = NANOS) Duration duration) {
 				assertThat(duration).isNotNull();
 			}
 
@@ -849,61 +849,61 @@ public class TimesConstraintTests {
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void centuries(@ForAll @Precision(ofPrecision = CENTURIES) Duration duration) {
+				void centuries(@ForAll @Precision(value = CENTURIES) Duration duration) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void days(@ForAll @Precision(ofPrecision = DAYS) Duration duration) {
+				void days(@ForAll @Precision(value = DAYS) Duration duration) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void decades(@ForAll @Precision(ofPrecision = DECADES) Duration duration) {
+				void decades(@ForAll @Precision(value = DECADES) Duration duration) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void eras(@ForAll @Precision(ofPrecision = ERAS) Duration duration) {
+				void eras(@ForAll @Precision(value = ERAS) Duration duration) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void forever(@ForAll @Precision(ofPrecision = FOREVER) Duration duration) {
+				void forever(@ForAll @Precision(value = FOREVER) Duration duration) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void halfDays(@ForAll @Precision(ofPrecision = HALF_DAYS) Duration duration) {
+				void halfDays(@ForAll @Precision(value = HALF_DAYS) Duration duration) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void millennia(@ForAll @Precision(ofPrecision = MILLENNIA) Duration duration) {
+				void millennia(@ForAll @Precision(value = MILLENNIA) Duration duration) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void months(@ForAll @Precision(ofPrecision = MONTHS) Duration duration) {
+				void months(@ForAll @Precision(value = MONTHS) Duration duration) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void weeks(@ForAll @Precision(ofPrecision = WEEKS) Duration duration) {
+				void weeks(@ForAll @Precision(value = WEEKS) Duration duration) {
 					//do nothing
 				}
 
 				@Example
 				@ExpectFailure(failureType = IllegalArgumentException.class)
-				void years(@ForAll @Precision(ofPrecision = YEARS) Duration duration) {
+				void years(@ForAll @Precision(value = YEARS) Duration duration) {
 					//do nothing
 				}
 
@@ -942,7 +942,7 @@ public class TimesConstraintTests {
 		}
 
 		@Property
-		void precision(@ForAll @Precision(ofPrecision = HOURS) char c) {
+		void precision(@ForAll @Precision(value = HOURS) char c) {
 			assertThat(c).isNotNull();
 		}
 
@@ -1169,21 +1169,21 @@ public class TimesConstraintTests {
 			class Hours {
 
 				@Property
-				void localTime(@ForAll("times") @Precision(ofPrecision = HOURS) LocalTime time) {
+				void localTime(@ForAll("times") @Precision(value = HOURS) LocalTime time) {
 					assertThat(time.getMinute()).isEqualTo(0);
 					assertThat(time.getSecond()).isEqualTo(0);
 					assertThat(time.getNano()).isEqualTo(0);
 				}
 
 				@Property
-				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = HOURS) OffsetTime time) {
+				void offsetTime(@ForAll("offsetTimes") @Precision(value = HOURS) OffsetTime time) {
 					assertThat(time.getMinute()).isEqualTo(0);
 					assertThat(time.getSecond()).isEqualTo(0);
 					assertThat(time.getNano()).isEqualTo(0);
 				}
 
 				@Property
-				void duration(@ForAll("durations") @Precision(ofPrecision = HOURS) Duration duration) {
+				void duration(@ForAll("durations") @Precision(value = HOURS) Duration duration) {
 					assertThat(getMinute(duration)).isEqualTo(0);
 					assertThat(getSecond(duration)).isEqualTo(0);
 					assertThat(duration.getNano()).isEqualTo(0);
@@ -1234,19 +1234,19 @@ public class TimesConstraintTests {
 			class Minutes {
 
 				@Property
-				void localTime(@ForAll("times") @Precision(ofPrecision = MINUTES) LocalTime time) {
+				void localTime(@ForAll("times") @Precision(value = MINUTES) LocalTime time) {
 					assertThat(time.getSecond()).isEqualTo(0);
 					assertThat(time.getNano()).isEqualTo(0);
 				}
 
 				@Property
-				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MINUTES) OffsetTime time) {
+				void offsetTime(@ForAll("offsetTimes") @Precision(value = MINUTES) OffsetTime time) {
 					assertThat(time.getSecond()).isEqualTo(0);
 					assertThat(time.getNano()).isEqualTo(0);
 				}
 
 				@Property
-				void duration(@ForAll("durations") @Precision(ofPrecision = MINUTES) Duration duration) {
+				void duration(@ForAll("durations") @Precision(value = MINUTES) Duration duration) {
 					assertThat(getSecond(duration)).isEqualTo(0);
 					assertThat(duration.getNano()).isEqualTo(0);
 				}
@@ -1296,17 +1296,17 @@ public class TimesConstraintTests {
 			class Seconds {
 
 				@Property
-				void localTime(@ForAll("times") @Precision(ofPrecision = SECONDS) LocalTime time) {
+				void localTime(@ForAll("times") @Precision(value = SECONDS) LocalTime time) {
 					assertThat(time.getNano()).isEqualTo(0);
 				}
 
 				@Property
-				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = SECONDS) OffsetTime time) {
+				void offsetTime(@ForAll("offsetTimes") @Precision(value = SECONDS) OffsetTime time) {
 					assertThat(time.getNano()).isEqualTo(0);
 				}
 
 				@Property
-				void duration(@ForAll("durations") @Precision(ofPrecision = SECONDS) Duration duration) {
+				void duration(@ForAll("durations") @Precision(value = SECONDS) Duration duration) {
 					assertThat(duration.getNano()).isEqualTo(0);
 				}
 
@@ -1355,17 +1355,17 @@ public class TimesConstraintTests {
 			class Millis {
 
 				@Property
-				void localTime(@ForAll("times") @Precision(ofPrecision = MILLIS) LocalTime time) {
+				void localTime(@ForAll("times") @Precision(value = MILLIS) LocalTime time) {
 					assertThat(time.getNano() % 1_000_000).isEqualTo(0);
 				}
 
 				@Property
-				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MILLIS) OffsetTime time) {
+				void offsetTime(@ForAll("offsetTimes") @Precision(value = MILLIS) OffsetTime time) {
 					assertThat(time.getNano() % 1_000_000).isEqualTo(0);
 				}
 
 				@Property
-				void duration(@ForAll("durations") @Precision(ofPrecision = MILLIS) Duration duration) {
+				void duration(@ForAll("durations") @Precision(value = MILLIS) Duration duration) {
 					assertThat(duration.getNano() % 1_000_000).isEqualTo(0);
 				}
 
@@ -1414,17 +1414,17 @@ public class TimesConstraintTests {
 			class Micros {
 
 				@Property
-				void localTime(@ForAll("times") @Precision(ofPrecision = MICROS) LocalTime time) {
+				void localTime(@ForAll("times") @Precision(value = MICROS) LocalTime time) {
 					assertThat(time.getNano() % 1_000).isEqualTo(0);
 				}
 
 				@Property
-				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = MICROS) OffsetTime time) {
+				void offsetTime(@ForAll("offsetTimes") @Precision(value = MICROS) OffsetTime time) {
 					assertThat(time.getNano() % 1_000).isEqualTo(0);
 				}
 
 				@Property
-				void duration(@ForAll("durations") @Precision(ofPrecision = MICROS) Duration duration) {
+				void duration(@ForAll("durations") @Precision(value = MICROS) Duration duration) {
 					assertThat(duration.getNano() % 1_000).isEqualTo(0);
 				}
 
@@ -1473,17 +1473,17 @@ public class TimesConstraintTests {
 			class Nanos {
 
 				@Property
-				void localTime(@ForAll("times") @Precision(ofPrecision = NANOS) LocalTime time) {
+				void localTime(@ForAll("times") @Precision(value = NANOS) LocalTime time) {
 					assertThat(time).isNotNull();
 				}
 
 				@Property
-				void offsetTime(@ForAll("offsetTimes") @Precision(ofPrecision = NANOS) OffsetTime time) {
+				void offsetTime(@ForAll("offsetTimes") @Precision(value = NANOS) OffsetTime time) {
 					assertThat(time).isNotNull();
 				}
 
 				@Property
-				void duration(@ForAll("durations") @Precision(ofPrecision = NANOS) Duration duration) {
+				void duration(@ForAll("durations") @Precision(value = NANOS) Duration duration) {
 					assertThat(duration).isNotNull();
 				}
 

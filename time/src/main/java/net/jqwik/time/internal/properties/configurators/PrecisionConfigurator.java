@@ -19,7 +19,7 @@ public class PrecisionConfigurator {
 		}
 
 		public Arbitrary<LocalDateTime> configure(Arbitrary<LocalDateTime> arbitrary, Precision range) {
-			ChronoUnit ofPrecision = range.ofPrecision();
+			ChronoUnit ofPrecision = range.value();
 			if (arbitrary instanceof LocalDateTimeArbitrary) {
 				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
 				return localDateTimeArbitrary.ofPrecision(ofPrecision);
@@ -38,7 +38,7 @@ public class PrecisionConfigurator {
 		}
 
 		public Arbitrary<LocalTime> configure(Arbitrary<LocalTime> arbitrary, Precision range) {
-			ChronoUnit ofPrecision = range.ofPrecision();
+			ChronoUnit ofPrecision = range.value();
 			if (arbitrary instanceof LocalTimeArbitrary) {
 				LocalTimeArbitrary localTimeArbitrary = (LocalTimeArbitrary) arbitrary;
 				return localTimeArbitrary.ofPrecision(ofPrecision);
@@ -57,7 +57,7 @@ public class PrecisionConfigurator {
 		}
 
 		public Arbitrary<OffsetTime> configure(Arbitrary<OffsetTime> arbitrary, Precision range) {
-			ChronoUnit ofPrecision = range.ofPrecision();
+			ChronoUnit ofPrecision = range.value();
 			if (arbitrary instanceof OffsetTimeArbitrary) {
 				OffsetTimeArbitrary offsetTimeArbitrary = (OffsetTimeArbitrary) arbitrary;
 				return offsetTimeArbitrary.ofPrecision(ofPrecision);
@@ -76,7 +76,7 @@ public class PrecisionConfigurator {
 		}
 
 		public Arbitrary<Duration> configure(Arbitrary<Duration> arbitrary, Precision range) {
-			ChronoUnit ofPrecision = range.ofPrecision();
+			ChronoUnit ofPrecision = range.value();
 			if (arbitrary instanceof DurationArbitrary) {
 				DurationArbitrary durationArbitrary = (DurationArbitrary) arbitrary;
 				return durationArbitrary.ofPrecision(ofPrecision);
