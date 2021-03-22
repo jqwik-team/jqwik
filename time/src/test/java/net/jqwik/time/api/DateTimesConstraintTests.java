@@ -32,35 +32,35 @@ public class DateTimesConstraintTests {
 		class Precisions {
 
 			@Property
-			void hours(@ForAll @Precision(ofPrecision = HOURS) LocalDateTime dateTime) {
+			void hours(@ForAll @Precision(value = HOURS) LocalDateTime dateTime) {
 				assertThat(dateTime.getMinute()).isZero();
 				assertThat(dateTime.getSecond()).isZero();
 				assertThat(dateTime.getNano()).isZero();
 			}
 
 			@Property
-			void minutes(@ForAll @Precision(ofPrecision = MINUTES) LocalDateTime dateTime) {
+			void minutes(@ForAll @Precision(value = MINUTES) LocalDateTime dateTime) {
 				assertThat(dateTime.getSecond()).isZero();
 				assertThat(dateTime.getNano()).isZero();
 			}
 
 			@Property
-			void seconds(@ForAll @Precision(ofPrecision = SECONDS) LocalDateTime dateTime) {
+			void seconds(@ForAll @Precision(value = SECONDS) LocalDateTime dateTime) {
 				assertThat(dateTime.getNano()).isZero();
 			}
 
 			@Property
-			void millis(@ForAll @Precision(ofPrecision = MILLIS) LocalDateTime dateTime) {
+			void millis(@ForAll @Precision(value = MILLIS) LocalDateTime dateTime) {
 				assertThat(dateTime.getNano() % 1_000_000).isZero();
 			}
 
 			@Property
-			void micros(@ForAll @Precision(ofPrecision = MICROS) LocalDateTime dateTime) {
+			void micros(@ForAll @Precision(value = MICROS) LocalDateTime dateTime) {
 				assertThat(dateTime.getNano() % 1_000).isZero();
 			}
 
 			@Property
-			void nanos(@ForAll @Precision(ofPrecision = NANOS) LocalDateTime dateTime) {
+			void nanos(@ForAll @Precision(value = NANOS) LocalDateTime dateTime) {
 				assertThat(dateTime).isNotNull();
 			}
 
@@ -178,7 +178,7 @@ public class DateTimesConstraintTests {
 		}
 
 		@Property
-		void precision(@ForAll @Precision(ofPrecision = HOURS) Byte b) {
+		void precision(@ForAll @Precision(value = HOURS) Byte b) {
 			assertThat(b).isNotNull();
 		}
 
@@ -218,7 +218,7 @@ public class DateTimesConstraintTests {
 			class Hours {
 
 				@Property
-				void localDateTime(@ForAll("dateTimes") @Precision(ofPrecision = HOURS) LocalDateTime dateTime) {
+				void localDateTime(@ForAll("dateTimes") @Precision(value = HOURS) LocalDateTime dateTime) {
 					assertThat(dateTime.getMinute()).isEqualTo(0);
 					assertThat(dateTime.getSecond()).isEqualTo(0);
 					assertThat(dateTime.getNano()).isEqualTo(0);
@@ -243,7 +243,7 @@ public class DateTimesConstraintTests {
 			class Minutes {
 
 				@Property
-				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = MINUTES) LocalDateTime dateTime) {
+				void localTime(@ForAll("dateTimes") @Precision(value = MINUTES) LocalDateTime dateTime) {
 					assertThat(dateTime.getSecond()).isEqualTo(0);
 					assertThat(dateTime.getNano()).isEqualTo(0);
 				}
@@ -267,7 +267,7 @@ public class DateTimesConstraintTests {
 			class Seconds {
 
 				@Property
-				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = SECONDS) LocalDateTime dateTime) {
+				void localTime(@ForAll("dateTimes") @Precision(value = SECONDS) LocalDateTime dateTime) {
 					assertThat(dateTime.getNano()).isEqualTo(0);
 				}
 
@@ -290,7 +290,7 @@ public class DateTimesConstraintTests {
 			class Millis {
 
 				@Property
-				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = MILLIS) LocalDateTime dateTime) {
+				void localTime(@ForAll("dateTimes") @Precision(value = MILLIS) LocalDateTime dateTime) {
 					assertThat(dateTime.getNano() % 1_000_000).isEqualTo(0);
 				}
 
@@ -313,7 +313,7 @@ public class DateTimesConstraintTests {
 			class Micros {
 
 				@Property
-				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = MICROS) LocalDateTime dateTime) {
+				void localTime(@ForAll("dateTimes") @Precision(value = MICROS) LocalDateTime dateTime) {
 					assertThat(dateTime.getNano() % 1_000).isEqualTo(0);
 				}
 
@@ -336,7 +336,7 @@ public class DateTimesConstraintTests {
 			class Nanos {
 
 				@Property
-				void localTime(@ForAll("dateTimes") @Precision(ofPrecision = NANOS) LocalDateTime dateTime) {
+				void localTime(@ForAll("dateTimes") @Precision(value = NANOS) LocalDateTime dateTime) {
 					assertThat(dateTime).isNotNull();
 				}
 

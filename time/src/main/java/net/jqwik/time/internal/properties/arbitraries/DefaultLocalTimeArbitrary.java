@@ -2,6 +2,7 @@ package net.jqwik.time.internal.properties.arbitraries;
 
 import java.time.*;
 import java.time.temporal.*;
+import java.util.*;
 
 import org.apiguardian.api.*;
 
@@ -16,6 +17,7 @@ import static org.apiguardian.api.API.Status.*;
 public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> implements LocalTimeArbitrary {
 
 	public final static ChronoUnit DEFAULT_PRECISION = SECONDS;
+	public final static Set<ChronoUnit> ALLOWED_PRECISIONS = new HashSet<>(Arrays.asList(HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS));
 
 	private LocalTime timeMin = LocalTime.MIN;
 	private LocalTime timeMax = LocalTime.MAX;
@@ -254,12 +256,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 
 	@Override
 	public LocalTimeArbitrary ofPrecision(ChronoUnit ofPrecision) {
-		if (!(ofPrecision.equals(HOURS)
-					  || ofPrecision.equals(MINUTES)
-					  || ofPrecision.equals(SECONDS)
-					  || ofPrecision.equals(MILLIS)
-					  || ofPrecision.equals(MICROS)
-					  || ofPrecision.equals(NANOS))) {
+		if (!ALLOWED_PRECISIONS.contains(ofPrecision)) {
 			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
 		}
 
