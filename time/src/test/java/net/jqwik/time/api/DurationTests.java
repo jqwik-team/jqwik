@@ -650,559 +650,1093 @@ class DurationTests {
 	class ExhaustiveGeneration {
 
 		@Group
-		class PrecisionHours {
+		class Precision {
 
-			@Example
-			void betweenPositive() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(HOURS)
-							 .between(
-									 Duration.ofSeconds(7 * 60 * 60 + 4 * 60 + 55, 997_997_921),
-									 Duration.ofSeconds(11 * 60 * 60 + 8 * 60 + 31, 1_213_999)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+			@Group
+			class Hours {
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(8 * 60 * 60, 0),
-						Duration.ofSeconds(9 * 60 * 60, 0),
-						Duration.ofSeconds(10 * 60 * 60, 0),
-						Duration.ofSeconds(11 * 60 * 60, 0)
-				);
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(HOURS)
+								 .between(
+										 Duration.ofSeconds(7 * 60 * 60 + 4 * 60 + 55, 997_997_921),
+										 Duration.ofSeconds(11 * 60 * 60 + 8 * 60 + 31, 1_213_999)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(8 * 60 * 60, 0),
+							Duration.ofSeconds(9 * 60 * 60, 0),
+							Duration.ofSeconds(10 * 60 * 60, 0),
+							Duration.ofSeconds(11 * 60 * 60, 0)
+					);
+				}
+
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(HOURS)
+								 .between(
+										 Duration.ofSeconds(-11 * 60 * 60 - 8 * 60 - 11, 997_123_998),
+										 Duration.ofSeconds(-7 * 60 * 60 - 4 * 60 - 55, 1_999_999)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-11 * 60 * 60, 0),
+							Duration.ofSeconds(-10 * 60 * 60, 0),
+							Duration.ofSeconds(-9 * 60 * 60, 0),
+							Duration.ofSeconds(-8 * 60 * 60, 0)
+					);
+				}
+
+				@Example
+				void betweenAroundZero() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(HOURS)
+								 .between(
+										 Duration.ofSeconds(-2 * 60 * 60 - 2 * 60 - 33, -2_321_392),
+										 Duration.ofSeconds(60 * 60 + 60 + 28, 1_392_392)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-2 * 60 * 60, 0),
+							Duration.ofSeconds(-60 * 60, 0),
+							Duration.ZERO,
+							Duration.ofSeconds(60 * 60, 0)
+					);
+				}
+
 			}
 
-			@Example
-			void betweenNegative() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(HOURS)
-							 .between(
-									 Duration.ofSeconds(-11 * 60 * 60 - 8 * 60 - 11, 997_123_998),
-									 Duration.ofSeconds(-7 * 60 * 60 - 4 * 60 - 55, 1_999_999)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+			@Group
+			class Minutes {
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-11 * 60 * 60, 0),
-						Duration.ofSeconds(-10 * 60 * 60, 0),
-						Duration.ofSeconds(-9 * 60 * 60, 0),
-						Duration.ofSeconds(-8 * 60 * 60, 0)
-				);
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MINUTES)
+								 .between(
+										 Duration.ofSeconds(4 * 60 + 55, 997_997_921),
+										 Duration.ofSeconds(8 * 60 + 31, 1_213_999)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(5 * 60, 0),
+							Duration.ofSeconds(6 * 60, 0),
+							Duration.ofSeconds(7 * 60, 0),
+							Duration.ofSeconds(8 * 60, 0)
+					);
+				}
+
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MINUTES)
+								 .between(
+										 Duration.ofSeconds(-8 * 60 - 11, 997_123_998),
+										 Duration.ofSeconds(-4 * 60 - 55, 1_999_999)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-8 * 60, 0),
+							Duration.ofSeconds(-7 * 60, 0),
+							Duration.ofSeconds(-6 * 60, 0),
+							Duration.ofSeconds(-5 * 60, 0)
+					);
+				}
+
+				@Example
+				void betweenAroundZero() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MINUTES)
+								 .between(
+										 Duration.ofSeconds(-2 * 60 - 33, -2_321_392),
+										 Duration.ofSeconds(60 + 28, 1_392_392)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-2 * 60, 0),
+							Duration.ofSeconds(-60, 0),
+							Duration.ZERO,
+							Duration.ofSeconds(60, 0)
+					);
+				}
+
 			}
 
-			@Example
-			void betweenAroundZero() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(HOURS)
-							 .between(
-									 Duration.ofSeconds(-2 * 60 * 60 - 2 * 60 - 33, -2_321_392),
-									 Duration.ofSeconds(60 * 60 + 60 + 28, 1_392_392)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+			@Group
+			class Seconds {
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-2 * 60 * 60, 0),
-						Duration.ofSeconds(-60 * 60, 0),
-						Duration.ZERO,
-						Duration.ofSeconds(60 * 60, 0)
-				);
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(SECONDS)
+								 .between(
+										 Duration.ofSeconds(183726, 997_997_921),
+										 Duration.ofSeconds(183730, 1_213_999)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(183727, 0),
+							Duration.ofSeconds(183728, 0),
+							Duration.ofSeconds(183729, 0),
+							Duration.ofSeconds(183730, 0)
+					);
+				}
+
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(SECONDS)
+								 .between(
+										 Duration.ofSeconds(-183730, 997_123_998),
+										 Duration.ofSeconds(-183726, 1_999_999)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-183729, 0),
+							Duration.ofSeconds(-183728, 0),
+							Duration.ofSeconds(-183727, 0),
+							Duration.ofSeconds(-183726, 0)
+					);
+				}
+
+				@Example
+				void betweenAroundZero() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(SECONDS)
+								 .between(
+										 Duration.ofSeconds(-2, -2_321_392),
+										 Duration.ofSeconds(1, 1_392_392)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-2, 0),
+							Duration.ofSeconds(-1, 0),
+							Duration.ZERO,
+							Duration.ofSeconds(1, 0)
+					);
+				}
+
+			}
+
+			@Group
+			class Millis {
+
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MILLIS)
+								 .between(
+										 Duration.ofSeconds(183729, 997_997_921),
+										 Duration.ofSeconds(183730, 1_213_999)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(183729, 998_000_000),
+							Duration.ofSeconds(183729, 999_000_000),
+							Duration.ofSeconds(183730, 0),
+							Duration.ofSeconds(183730, 1_000_000)
+					);
+				}
+
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MILLIS)
+								 .between(
+										 Duration.ofSeconds(-183730, 997_123_998),
+										 Duration.ofSeconds(-183729, 1_999_999)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-183730, 998_000_000),
+							Duration.ofSeconds(-183730, 999_000_000),
+							Duration.ofSeconds(-183729, 0),
+							Duration.ofSeconds(-183729, 1_000_000)
+					);
+				}
+
+				@Example
+				void betweenNegativeOneSecond() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MILLIS)
+								 .between(
+										 Duration.ofSeconds(-1, -1_999_999),
+										 Duration.ofSeconds(0, -997_382_492)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-1, -1_000_000),
+							Duration.ofSeconds(-1, 0),
+							Duration.ofSeconds(0, -999_000_000),
+							Duration.ofSeconds(0, -998_000_000)
+					);
+				}
+
+				@Example
+				void betweenAroundZero() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MILLIS)
+								 .between(
+										 Duration.ofSeconds(0, -2_321_392),
+										 Duration.ofSeconds(0, 1_392_392)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(0, -2_000_000),
+							Duration.ofSeconds(0, -1_000_000),
+							Duration.ZERO,
+							Duration.ofSeconds(0, 1_000_000)
+					);
+				}
+
+				@Example
+				void betweenPositiveOneSecond() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MILLIS)
+								 .between(
+										 Duration.ofSeconds(0, 997_128_492),
+										 Duration.ofSeconds(1, 1_039_392)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(0, 998_000_000),
+							Duration.ofSeconds(0, 999_000_000),
+							Duration.ofSeconds(1, 0),
+							Duration.ofSeconds(1, 1_000_000)
+					);
+				}
+
+			}
+
+			@Group
+			class Micros {
+
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MICROS)
+								 .between(
+										 Duration.ofSeconds(183729, 999_997_921),
+										 Duration.ofSeconds(183730, 1_213)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(183729, 999_998_000),
+							Duration.ofSeconds(183729, 999_999_000),
+							Duration.ofSeconds(183730, 0),
+							Duration.ofSeconds(183730, 1_000)
+					);
+				}
+
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MICROS)
+								 .between(
+										 Duration.ofSeconds(-183730, 999_997_998),
+										 Duration.ofSeconds(-183729, 1_999)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-183730, 999_998_000),
+							Duration.ofSeconds(-183730, 999_999_000),
+							Duration.ofSeconds(-183729, 0),
+							Duration.ofSeconds(-183729, 1_000)
+					);
+				}
+
+				@Example
+				void betweenNegativeOneSecond() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MICROS)
+								 .between(
+										 Duration.ofSeconds(-1, -1_302),
+										 Duration.ofSeconds(0, -999_997_323)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-1, -1_000),
+							Duration.ofSeconds(-1, 0),
+							Duration.ofSeconds(0, -999_999_000),
+							Duration.ofSeconds(0, -999_998_000)
+					);
+				}
+
+				@Example
+				void betweenAroundZero() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MICROS)
+								 .between(
+										 Duration.ofSeconds(0, -2_321),
+										 Duration.ofSeconds(0, 1_392)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(0, -2_000),
+							Duration.ofSeconds(0, -1_000),
+							Duration.ZERO,
+							Duration.ofSeconds(0, 1_000)
+					);
+				}
+
+				@Example
+				void betweenPositiveOneSecond() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(MICROS)
+								 .between(
+										 Duration.ofSeconds(0, 999_997_213),
+										 Duration.ofSeconds(1, 1_023)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(0, 999_998_000),
+							Duration.ofSeconds(0, 999_999_000),
+							Duration.ofSeconds(1, 0),
+							Duration.ofSeconds(1, 1_000)
+					);
+				}
+
+			}
+
+			@Group
+			class Nanos {
+
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(NANOS)
+								 .between(
+										 Duration.ofSeconds(183729, 999_999_998),
+										 Duration.ofSeconds(183730, 1)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(183729, 999_999_998),
+							Duration.ofSeconds(183729, 999_999_999),
+							Duration.ofSeconds(183730, 0),
+							Duration.ofSeconds(183730, 1)
+					);
+				}
+
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(NANOS)
+								 .between(
+										 Duration.ofSeconds(-183730, 999_999_998),
+										 Duration.ofSeconds(-183729, 1)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-183730, 999_999_998),
+							Duration.ofSeconds(-183730, 999_999_999),
+							Duration.ofSeconds(-183729, 0),
+							Duration.ofSeconds(-183729, 1)
+					);
+				}
+
+				@Example
+				void betweenNegativeOneSecond() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(NANOS)
+								 .between(
+										 Duration.ofSeconds(-1, -1),
+										 Duration.ofSeconds(0, -999_999_998)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-1, -1),
+							Duration.ofSeconds(-1, 0),
+							Duration.ofSeconds(0, -999_999_999),
+							Duration.ofSeconds(0, -999_999_998)
+					);
+				}
+
+				@Example
+				void betweenAroundZero() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(NANOS)
+								 .between(
+										 Duration.ofSeconds(0, -2),
+										 Duration.ofSeconds(0, 1)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(0, -2),
+							Duration.ofSeconds(0, -1),
+							Duration.ZERO,
+							Duration.ofSeconds(0, 1)
+					);
+				}
+
+				@Example
+				void betweenPositiveOneSecond() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .ofPrecision(NANOS)
+								 .between(
+										 Duration.ofSeconds(0, 999_999_998),
+										 Duration.ofSeconds(1, 1)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(0, 999_999_998),
+							Duration.ofSeconds(0, 999_999_999),
+							Duration.ofSeconds(1, 0),
+							Duration.ofSeconds(1, 1)
+					);
+				}
+
 			}
 
 		}
 
 		@Group
-		class PrecisionMinutes {
+		class SetPrecisionImplicitly {
 
-			@Example
-			void betweenPositive() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MINUTES)
-							 .between(
-									 Duration.ofSeconds(4 * 60 + 55, 997_997_921),
-									 Duration.ofSeconds(8 * 60 + 31, 1_213_999)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+			@Group
+			class Seconds {
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(5 * 60, 0),
-						Duration.ofSeconds(6 * 60, 0),
-						Duration.ofSeconds(7 * 60, 0),
-						Duration.ofSeconds(8 * 60, 0)
-				);
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(91, 0),
+										 Duration.ofSeconds(94, 0)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(91, 0),
+							Duration.ofSeconds(92, 0),
+							Duration.ofSeconds(93, 0),
+							Duration.ofSeconds(94, 0)
+					);
+				}
+
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-94, 0),
+										 Duration.ofSeconds(-91, 0)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactlyInAnyOrder(
+							Duration.ofSeconds(-91, 0),
+							Duration.ofSeconds(-92, 0),
+							Duration.ofSeconds(-93, 0),
+							Duration.ofSeconds(-94, 0)
+					);
+				}
+
+				@Example
+				void betweenTheEarliestPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(117, 0),
+										 Duration.ofSeconds(120, 0)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(117, 0),
+							Duration.ofSeconds(118, 0),
+							Duration.ofSeconds(119, 0),
+							Duration.ofSeconds(120, 0)
+					);
+				}
+
+				@Example
+				void betweenTheEarliestNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-123, 0),
+										 Duration.ofSeconds(-120, 0)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactlyInAnyOrder(
+							Duration.ofSeconds(-120, 0),
+							Duration.ofSeconds(-121, 0),
+							Duration.ofSeconds(-122, 0),
+							Duration.ofSeconds(-123, 0)
+					);
+				}
+
+				@Example
+				void betweenTheLatestPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(120, 0),
+										 Duration.ofSeconds(123, 0)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(120, 0),
+							Duration.ofSeconds(121, 0),
+							Duration.ofSeconds(122, 0),
+							Duration.ofSeconds(123, 0)
+					);
+				}
+
+				@Example
+				void betweenTheLatestNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-120, 0),
+										 Duration.ofSeconds(-117, 0)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactlyInAnyOrder(
+							Duration.ofSeconds(-117, 0),
+							Duration.ofSeconds(-118, 0),
+							Duration.ofSeconds(-119, 0),
+							Duration.ofSeconds(-120, 0)
+					);
+				}
+
 			}
 
-			@Example
-			void betweenNegative() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MINUTES)
-							 .between(
-									 Duration.ofSeconds(-8 * 60 - 11, 997_123_998),
-									 Duration.ofSeconds(-4 * 60 - 55, 1_999_999)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+			@Group
+			class Millis {
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-8 * 60, 0),
-						Duration.ofSeconds(-7 * 60, 0),
-						Duration.ofSeconds(-6 * 60, 0),
-						Duration.ofSeconds(-5 * 60, 0)
-				);
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(123, 392_000_000),
+										 Duration.ofSeconds(123, 395_000_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(123, 392_000_000),
+							Duration.ofSeconds(123, 393_000_000),
+							Duration.ofSeconds(123, 394_000_000),
+							Duration.ofSeconds(123, 395_000_000)
+					);
+				}
+
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-123, 392_000_000),
+										 Duration.ofSeconds(-123, 395_000_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-123, 392_000_000),
+							Duration.ofSeconds(-123, 393_000_000),
+							Duration.ofSeconds(-123, 394_000_000),
+							Duration.ofSeconds(-123, 395_000_000)
+					);
+				}
+
+				@Example
+				void betweenTheEarliestPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(122, 997_000_000),
+										 Duration.ofSeconds(123, 0)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(122, 997_000_000),
+							Duration.ofSeconds(122, 998_000_000),
+							Duration.ofSeconds(122, 999_000_000),
+							Duration.ofSeconds(123, 0)
+					);
+				}
+
+				@Example
+				void betweenTheEarliestNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-122, 997_000_000),
+										 Duration.ofSeconds(-121, 0)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-122, 997_000_000),
+							Duration.ofSeconds(-122, 998_000_000),
+							Duration.ofSeconds(-122, 999_000_000),
+							Duration.ofSeconds(-121, 0)
+					);
+				}
+
+				@Example
+				void betweenTheLatestPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(123, 0),
+										 Duration.ofSeconds(123, 3_000_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(123, 0),
+							Duration.ofSeconds(123, 1_000_000),
+							Duration.ofSeconds(123, 2_000_000),
+							Duration.ofSeconds(123, 3_000_000)
+					);
+				}
+
+				@Example
+				void betweenTheLatestNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-123, 0),
+										 Duration.ofSeconds(-123, 3_000_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-123, 0),
+							Duration.ofSeconds(-123, 1_000_000),
+							Duration.ofSeconds(-123, 2_000_000),
+							Duration.ofSeconds(-123, 3_000_000)
+					);
+				}
+
 			}
 
-			@Example
-			void betweenAroundZero() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MINUTES)
-							 .between(
-									 Duration.ofSeconds(-2 * 60 - 33, -2_321_392),
-									 Duration.ofSeconds(60 + 28, 1_392_392)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+			@Group
+			class Micros {
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-2 * 60, 0),
-						Duration.ofSeconds(-60, 0),
-						Duration.ZERO,
-						Duration.ofSeconds(60, 0)
-				);
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(123, 392_412_000),
+										 Duration.ofSeconds(123, 392_415_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(123, 392_412_000),
+							Duration.ofSeconds(123, 392_413_000),
+							Duration.ofSeconds(123, 392_414_000),
+							Duration.ofSeconds(123, 392_415_000)
+					);
+				}
+
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-123, 392_412_000),
+										 Duration.ofSeconds(-123, 392_415_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-123, 392_412_000),
+							Duration.ofSeconds(-123, 392_413_000),
+							Duration.ofSeconds(-123, 392_414_000),
+							Duration.ofSeconds(-123, 392_415_000)
+					);
+				}
+
+				@Example
+				void betweenTheEarliestPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(122, 312_997_000),
+										 Duration.ofSeconds(122, 313_000_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(122, 312_997_000),
+							Duration.ofSeconds(122, 312_998_000),
+							Duration.ofSeconds(122, 312_999_000),
+							Duration.ofSeconds(122, 313_000_000)
+					);
+				}
+
+				@Example
+				void betweenTheEarliestNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-122, 312_997_000),
+										 Duration.ofSeconds(-122, 313_000_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-122, 312_997_000),
+							Duration.ofSeconds(-122, 312_998_000),
+							Duration.ofSeconds(-122, 312_999_000),
+							Duration.ofSeconds(-122, 313_000_000)
+					);
+				}
+
+				@Example
+				void betweenTheLatestPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(123, 312_000_000),
+										 Duration.ofSeconds(123, 312_003_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(123, 312_000_000),
+							Duration.ofSeconds(123, 312_001_000),
+							Duration.ofSeconds(123, 312_002_000),
+							Duration.ofSeconds(123, 312_003_000)
+					);
+				}
+
+				@Example
+				void betweenTheLatestNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-123, 312_000_000),
+										 Duration.ofSeconds(-123, 312_003_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-123, 312_000_000),
+							Duration.ofSeconds(-123, 312_001_000),
+							Duration.ofSeconds(-123, 312_002_000),
+							Duration.ofSeconds(-123, 312_003_000)
+					);
+				}
+
 			}
 
-		}
+			@Group
+			class Nanos {
 
-		@Group
-		class PrecisionSeconds {
+				@Example
+				void betweenPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(123, 392_412_221),
+										 Duration.ofSeconds(123, 392_412_224)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
 
-			@Example
-			void betweenPositive() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(SECONDS)
-							 .between(
-									 Duration.ofSeconds(183726, 997_997_921),
-									 Duration.ofSeconds(183730, 1_213_999)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(123, 392_412_221),
+							Duration.ofSeconds(123, 392_412_222),
+							Duration.ofSeconds(123, 392_412_223),
+							Duration.ofSeconds(123, 392_412_224)
+					);
+				}
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(183727, 0),
-						Duration.ofSeconds(183728, 0),
-						Duration.ofSeconds(183729, 0),
-						Duration.ofSeconds(183730, 0)
-				);
-			}
+				@Example
+				void betweenNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-123, 392_412_221),
+										 Duration.ofSeconds(-123, 392_412_224)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
 
-			@Example
-			void betweenNegative() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(SECONDS)
-							 .between(
-									 Duration.ofSeconds(-183730, 997_123_998),
-									 Duration.ofSeconds(-183726, 1_999_999)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-123, 392_412_221),
+							Duration.ofSeconds(-123, 392_412_222),
+							Duration.ofSeconds(-123, 392_412_223),
+							Duration.ofSeconds(-123, 392_412_224)
+					);
+				}
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-183729, 0),
-						Duration.ofSeconds(-183728, 0),
-						Duration.ofSeconds(-183727, 0),
-						Duration.ofSeconds(-183726, 0)
-				);
-			}
+				@Example
+				void betweenTheEarliestPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(122, 312_321_997),
+										 Duration.ofSeconds(122, 312_322_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
 
-			@Example
-			void betweenAroundZero() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(SECONDS)
-							 .between(
-									 Duration.ofSeconds(-2, -2_321_392),
-									 Duration.ofSeconds(1, 1_392_392)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(122, 312_321_997),
+							Duration.ofSeconds(122, 312_321_998),
+							Duration.ofSeconds(122, 312_321_999),
+							Duration.ofSeconds(122, 312_322_000)
+					);
+				}
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-2, 0),
-						Duration.ofSeconds(-1, 0),
-						Duration.ZERO,
-						Duration.ofSeconds(1, 0)
-				);
-			}
+				@Example
+				void betweenTheEarliestNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-122, 312_321_997),
+										 Duration.ofSeconds(-122, 312_322_000)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
 
-		}
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-122, 312_321_997),
+							Duration.ofSeconds(-122, 312_321_998),
+							Duration.ofSeconds(-122, 312_321_999),
+							Duration.ofSeconds(-122, 312_322_000)
+					);
+				}
 
-		@Group
-		class PrecisionMillis {
+				@Example
+				void betweenTheLatestPositive() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(123, 312_542_000),
+										 Duration.ofSeconds(123, 312_542_003)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
 
-			@Example
-			void betweenPositive() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MILLIS)
-							 .between(
-									 Duration.ofSeconds(183729, 997_997_921),
-									 Duration.ofSeconds(183730, 1_213_999)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(123, 312_542_000),
+							Duration.ofSeconds(123, 312_542_001),
+							Duration.ofSeconds(123, 312_542_002),
+							Duration.ofSeconds(123, 312_542_003)
+					);
+				}
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(183729, 998_000_000),
-						Duration.ofSeconds(183729, 999_000_000),
-						Duration.ofSeconds(183730, 0),
-						Duration.ofSeconds(183730, 1_000_000)
-				);
-			}
+				@Example
+				void betweenTheLatestNegative() {
+					Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
+							Times.durations()
+								 .between(
+										 Duration.ofSeconds(-123, 312_542_000),
+										 Duration.ofSeconds(-123, 312_542_003)
+								 )
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
 
-			@Example
-			void betweenNegative() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MILLIS)
-							 .between(
-									 Duration.ofSeconds(-183730, 997_123_998),
-									 Duration.ofSeconds(-183729, 1_999_999)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
+					ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							Duration.ofSeconds(-123, 312_542_000),
+							Duration.ofSeconds(-123, 312_542_001),
+							Duration.ofSeconds(-123, 312_542_002),
+							Duration.ofSeconds(-123, 312_542_003)
+					);
+				}
 
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-183730, 998_000_000),
-						Duration.ofSeconds(-183730, 999_000_000),
-						Duration.ofSeconds(-183729, 0),
-						Duration.ofSeconds(-183729, 1_000_000)
-				);
-			}
-
-			@Example
-			void betweenNegativeOneSecond() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MILLIS)
-							 .between(
-									 Duration.ofSeconds(-1, -1_999_999),
-									 Duration.ofSeconds(0, -997_382_492)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-1, -1_000_000),
-						Duration.ofSeconds(-1, 0),
-						Duration.ofSeconds(0, -999_000_000),
-						Duration.ofSeconds(0, -998_000_000)
-				);
-			}
-
-			@Example
-			void betweenAroundZero() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MILLIS)
-							 .between(
-									 Duration.ofSeconds(0, -2_321_392),
-									 Duration.ofSeconds(0, 1_392_392)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(0, -2_000_000),
-						Duration.ofSeconds(0, -1_000_000),
-						Duration.ZERO,
-						Duration.ofSeconds(0, 1_000_000)
-				);
-			}
-
-			@Example
-			void betweenPositiveOneSecond() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MILLIS)
-							 .between(
-									 Duration.ofSeconds(0, 997_128_492),
-									 Duration.ofSeconds(1, 1_039_392)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(0, 998_000_000),
-						Duration.ofSeconds(0, 999_000_000),
-						Duration.ofSeconds(1, 0),
-						Duration.ofSeconds(1, 1_000_000)
-				);
-			}
-
-		}
-
-		@Group
-		class PrecisionMicros {
-
-			@Example
-			void betweenPositive() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MICROS)
-							 .between(
-									 Duration.ofSeconds(183729, 999_997_921),
-									 Duration.ofSeconds(183730, 1_213)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(183729, 999_998_000),
-						Duration.ofSeconds(183729, 999_999_000),
-						Duration.ofSeconds(183730, 0),
-						Duration.ofSeconds(183730, 1_000)
-				);
-			}
-
-			@Example
-			void betweenNegative() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MICROS)
-							 .between(
-									 Duration.ofSeconds(-183730, 999_997_998),
-									 Duration.ofSeconds(-183729, 1_999)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-183730, 999_998_000),
-						Duration.ofSeconds(-183730, 999_999_000),
-						Duration.ofSeconds(-183729, 0),
-						Duration.ofSeconds(-183729, 1_000)
-				);
-			}
-
-			@Example
-			void betweenNegativeOneSecond() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MICROS)
-							 .between(
-									 Duration.ofSeconds(-1, -1_302),
-									 Duration.ofSeconds(0, -999_997_323)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-1, -1_000),
-						Duration.ofSeconds(-1, 0),
-						Duration.ofSeconds(0, -999_999_000),
-						Duration.ofSeconds(0, -999_998_000)
-				);
-			}
-
-			@Example
-			void betweenAroundZero() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MICROS)
-							 .between(
-									 Duration.ofSeconds(0, -2_321),
-									 Duration.ofSeconds(0, 1_392)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(0, -2_000),
-						Duration.ofSeconds(0, -1_000),
-						Duration.ZERO,
-						Duration.ofSeconds(0, 1_000)
-				);
-			}
-
-			@Example
-			void betweenPositiveOneSecond() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(MICROS)
-							 .between(
-									 Duration.ofSeconds(0, 999_997_213),
-									 Duration.ofSeconds(1, 1_023)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(0, 999_998_000),
-						Duration.ofSeconds(0, 999_999_000),
-						Duration.ofSeconds(1, 0),
-						Duration.ofSeconds(1, 1_000)
-				);
-			}
-
-		}
-
-		@Group
-		class PrecisionNanos {
-
-			@Example
-			void betweenPositive() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(NANOS)
-							 .between(
-									 Duration.ofSeconds(183729, 999_999_998),
-									 Duration.ofSeconds(183730, 1)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(183729, 999_999_998),
-						Duration.ofSeconds(183729, 999_999_999),
-						Duration.ofSeconds(183730, 0),
-						Duration.ofSeconds(183730, 1)
-				);
-			}
-
-			@Example
-			void betweenNegative() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(NANOS)
-							 .between(
-									 Duration.ofSeconds(-183730, 999_999_998),
-									 Duration.ofSeconds(-183729, 1)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-183730, 999_999_998),
-						Duration.ofSeconds(-183730, 999_999_999),
-						Duration.ofSeconds(-183729, 0),
-						Duration.ofSeconds(-183729, 1)
-				);
-			}
-
-			@Example
-			void betweenNegativeOneSecond() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(NANOS)
-							 .between(
-									 Duration.ofSeconds(-1, -1),
-									 Duration.ofSeconds(0, -999_999_998)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(-1, -1),
-						Duration.ofSeconds(-1, 0),
-						Duration.ofSeconds(0, -999_999_999),
-						Duration.ofSeconds(0, -999_999_998)
-				);
-			}
-
-			@Example
-			void betweenAroundZero() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(NANOS)
-							 .between(
-									 Duration.ofSeconds(0, -2),
-									 Duration.ofSeconds(0, 1)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(0, -2),
-						Duration.ofSeconds(0, -1),
-						Duration.ZERO,
-						Duration.ofSeconds(0, 1)
-				);
-			}
-
-			@Example
-			void betweenPositiveOneSecond() {
-				Optional<ExhaustiveGenerator<Duration>> optionalGenerator =
-						Times.durations()
-							 .ofPrecision(NANOS)
-							 .between(
-									 Duration.ofSeconds(0, 999_999_998),
-									 Duration.ofSeconds(1, 1)
-							 )
-							 .exhaustive();
-				assertThat(optionalGenerator).isPresent();
-
-				ExhaustiveGenerator<Duration> generator = optionalGenerator.get();
-				assertThat(generator.maxCount()).isEqualTo(4);
-				assertThat(generator).containsExactly(
-						Duration.ofSeconds(0, 999_999_998),
-						Duration.ofSeconds(0, 999_999_999),
-						Duration.ofSeconds(1, 0),
-						Duration.ofSeconds(1, 1)
-				);
 			}
 
 		}

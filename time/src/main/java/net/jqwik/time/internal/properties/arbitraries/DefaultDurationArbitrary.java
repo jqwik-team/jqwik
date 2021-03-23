@@ -21,7 +21,9 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	private Duration min = DEFAULT_MIN;
 	private Duration max = DEFAULT_MAX;
+
 	private ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.DEFAULT_PRECISION;
+	private boolean ofPrecisionSet = false;
 
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
@@ -30,7 +32,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		Duration effectiveMax = calculateEffectiveMax(max, ofPrecision);
 
 		if (effectiveMin.compareTo(effectiveMax) > 0) {
-			throw new IllegalArgumentException("The maximum duration must not be smaller than minimum duration.");
+			throw new IllegalArgumentException("The maximum duration is to soon after the minimum duration.");
 		}
 
 		BigInteger min = calculateValue(effectiveMin, ofPrecision);
@@ -84,7 +86,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 			}
 			return effective;
 		} catch (ArithmeticException e) {
-			throw new IllegalArgumentException("Min value must be increased but results in a " + e.getMessage());
+			throw new IllegalArgumentException("Min value must be increased because of precision " + precision + " but results in a " + e.getMessage());
 		}
 	}
 
@@ -127,7 +129,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 			}
 			return effective;
 		} catch (ArithmeticException e) {
-			throw new IllegalArgumentException("Max value must be decreased but results in a " + e.getMessage());
+			throw new IllegalArgumentException("Max value must be decreased because of precision " + precision + " but results in a " + e.getMessage());
 		}
 	}
 
@@ -188,6 +190,21 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	}
 
+	private void setOfPrecisionImplicitly(DefaultDurationArbitrary clone, Duration duration) {
+		if (clone.ofPrecisionSet) {
+			return;
+		}
+		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.calculateOfPrecisionFromNanos(duration.getNano());
+		if (clone.ofPrecision.compareTo(ofPrecision) > 0) {
+			clone.ofPrecision = ofPrecision;
+		}
+	}
+
+	private void setOfPrecisionImplicitly(DefaultDurationArbitrary clone, Duration min, Duration max) {
+		setOfPrecisionImplicitly(clone, min);
+		setOfPrecisionImplicitly(clone, max);
+	}
+
 	@Override
 	public DurationArbitrary between(Duration min, Duration max) {
 		if (min.compareTo(max) > 0) {
@@ -196,6 +213,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 			max = remember;
 		}
 		DefaultDurationArbitrary clone = typedClone();
+		setOfPrecisionImplicitly(clone, min, max);
 		clone.min = min;
 		clone.max = max;
 		return clone;
@@ -203,16 +221,12 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	@Override
 	public DurationArbitrary ofPrecision(ChronoUnit ofPrecision) {
-		if (!(ofPrecision.equals(HOURS)
-					  || ofPrecision.equals(MINUTES)
-					  || ofPrecision.equals(SECONDS)
-					  || ofPrecision.equals(MILLIS)
-					  || ofPrecision.equals(MICROS)
-					  || ofPrecision.equals(NANOS))) {
+		if (!DefaultLocalTimeArbitrary.ALLOWED_PRECISIONS.contains(ofPrecision)) {
 			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
 		}
 
 		DefaultDurationArbitrary clone = typedClone();
+		clone.ofPrecisionSet = true;
 		clone.ofPrecision = ofPrecision;
 		return clone;
 	}

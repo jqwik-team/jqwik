@@ -179,9 +179,8 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		return effective;
 	}
 
-	public static ChronoUnit calculateOfPrecisionFromTime(LocalTime time) {
+	public static ChronoUnit calculateOfPrecisionFromNanos(int nanos) {
 		ChronoUnit ofPrecision = DEFAULT_PRECISION;
-		int nanos = time.getNano();
 		if (nanos % 1_000 != 0) {
 			ofPrecision = NANOS;
 		} else if ((nanos / 1_000) % 1_000 != 0) {
@@ -190,6 +189,11 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 			ofPrecision = MILLIS;
 		}
 		return ofPrecision;
+	}
+
+	public static ChronoUnit calculateOfPrecisionFromTime(LocalTime time) {
+		int nanos = time.getNano();
+		return calculateOfPrecisionFromNanos(nanos);
 	}
 
 	private void setOfPrecisionImplicitly(DefaultLocalTimeArbitrary clone, LocalTime time) {
