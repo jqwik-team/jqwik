@@ -22,6 +22,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	private LocalDateTime max = null;
 
 	private ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.DEFAULT_PRECISION;
+	private boolean ofPrecisionSet = false;
 
 	@Override
 	protected Arbitrary<LocalDateTime> arbitrary() {
@@ -72,8 +73,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 			try {
 				effectiveDate = date.plusDays(1);
 			} catch (DateTimeException dateTimeException) {
-				throw new IllegalArgumentException("Min value must be increased but results in a DateTimeException: " + dateTimeException
-																																.getMessage());
+				throw e;
 			}
 			date = effectiveDate;
 		}
@@ -104,6 +104,16 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		return times;
 	}
 
+	private void setOfPrecisionImplicitly(DefaultLocalDateTimeArbitrary clone, LocalDateTime dateTime) {
+		if (clone.ofPrecisionSet) {
+			return;
+		}
+		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.calculateOfPrecisionFromTime(dateTime.toLocalTime());
+		if (clone.ofPrecision.compareTo(ofPrecision) > 0) {
+			clone.ofPrecision = ofPrecision;
+		}
+	}
+
 	@Override
 	public LocalDateTimeArbitrary atTheEarliest(LocalDateTime min) {
 		if (min.getYear() <= 0) {
@@ -114,6 +124,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		}
 
 		DefaultLocalDateTimeArbitrary clone = typedClone();
+		setOfPrecisionImplicitly(clone, min);
 		clone.min = min;
 		return clone;
 	}
@@ -128,6 +139,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		}
 
 		DefaultLocalDateTimeArbitrary clone = typedClone();
+		setOfPrecisionImplicitly(clone, max);
 		clone.max = max;
 		return clone;
 	}
@@ -139,6 +151,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		}
 
 		DefaultLocalDateTimeArbitrary clone = typedClone();
+		clone.ofPrecisionSet = true;
 		clone.ofPrecision = ofPrecision;
 		return clone;
 	}
