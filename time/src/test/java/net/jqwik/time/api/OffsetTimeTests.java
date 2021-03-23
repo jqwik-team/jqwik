@@ -537,181 +537,480 @@ class OffsetTimeTests {
 	@Group
 	class ExhaustiveGeneration {
 
-		@Example
-		void between() {
-			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
-					Times.offsetTimes()
-						 .between(
-								 LocalTime.of(11, 22, 33, 392_211_322),
-								 LocalTime.of(11, 22, 33, 392_211_325)
-						 )
-						 .ofPrecision(NANOS)
-						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -19, -33), ZoneOffset.ofHoursMinutesSeconds(0, -10, -53))
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+		@Group
+		class Precision {
 
-			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(4);
-			assertThat(generator).containsExactly(
-					OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_322), ZoneOffset.ofHoursMinutes(0, -15)),
-					OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_323), ZoneOffset.ofHoursMinutes(0, -15)),
-					OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_324), ZoneOffset.ofHoursMinutes(0, -15)),
-					OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_325), ZoneOffset.ofHoursMinutes(0, -15))
-			);
+			@Example
+			void nanos() {
+				Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+						Times.offsetTimes()
+							 .between(
+									 LocalTime.of(11, 22, 33, 392_211_322),
+									 LocalTime.of(11, 22, 33, 392_211_325)
+							 )
+							 .ofPrecision(NANOS)
+							 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -19, -33), ZoneOffset.ofHoursMinutesSeconds(0, -10, -53))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_322), ZoneOffset.ofHoursMinutes(0, -15)),
+						OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_323), ZoneOffset.ofHoursMinutes(0, -15)),
+						OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_324), ZoneOffset.ofHoursMinutes(0, -15)),
+						OffsetTime.of(LocalTime.of(11, 22, 33, 392_211_325), ZoneOffset.ofHoursMinutes(0, -15))
+				);
+			}
+
+			@Example
+			void micros() {
+				Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+						Times.offsetTimes()
+							 .between(
+									 LocalTime.of(11, 22, 33, 392_211_322),
+									 LocalTime.of(11, 22, 33, 392_214_325)
+							 )
+							 .ofPrecision(MICROS)
+							 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(3);
+				assertThat(generator).containsExactly(
+						OffsetTime.of(LocalTime.of(11, 22, 33, 392_212_000), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(11, 22, 33, 392_213_000), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(11, 22, 33, 392_214_000), ZoneOffset.ofHoursMinutes(0, 30))
+				);
+			}
+
+			@Example
+			void millis() {
+				Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+						Times.offsetTimes()
+							 .between(
+									 LocalTime.of(11, 22, 33, 392_211_322),
+									 LocalTime.of(11, 22, 33, 395_214_325)
+							 )
+							 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
+							 .ofPrecision(MILLIS)
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(3);
+				assertThat(generator).containsExactly(
+						OffsetTime.of(LocalTime.of(11, 22, 33, 393_000_000), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(11, 22, 33, 394_000_000), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(11, 22, 33, 395_000_000), ZoneOffset.ofHoursMinutes(0, 30))
+				);
+			}
+
+			@Example
+			void seconds() {
+				Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+						Times.offsetTimes()
+							 .between(
+									 LocalTime.of(11, 22, 33, 392_211_322),
+									 LocalTime.of(11, 22, 36, 395_214_325)
+							 )
+							 .ofPrecision(SECONDS)
+							 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(3);
+				assertThat(generator).containsExactly(
+						OffsetTime.of(LocalTime.of(11, 22, 34, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(11, 22, 35, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(11, 22, 36, 0), ZoneOffset.ofHoursMinutes(0, 30))
+				);
+			}
+
+			@Example
+			void minutes() {
+				Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+						Times.offsetTimes()
+							 .between(
+									 LocalTime.of(11, 22, 33, 392_211_322),
+									 LocalTime.of(11, 25, 36, 395_214_325)
+							 )
+							 .ofPrecision(MINUTES)
+							 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(3);
+				assertThat(generator).containsExactly(
+						OffsetTime.of(LocalTime.of(11, 23, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(11, 24, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(11, 25, 0, 0), ZoneOffset.ofHoursMinutes(0, 30))
+				);
+			}
+
+			@Example
+			void hours() {
+				Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+						Times.offsetTimes()
+							 .ofPrecision(HOURS)
+							 .between(
+									 LocalTime.of(11, 22, 33, 392_211_322),
+									 LocalTime.of(14, 25, 36, 395_214_325)
+							 )
+							 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(3);
+				assertThat(generator).containsExactly(
+						OffsetTime.of(LocalTime.of(12, 0, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(13, 0, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
+						OffsetTime.of(LocalTime.of(14, 0, 0, 0), ZoneOffset.ofHoursMinutes(0, 30))
+				);
+			}
+
 		}
 
-		@Example
-		void precisionMicros() {
-			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
-					Times.offsetTimes()
-						 .between(
-								 LocalTime.of(11, 22, 33, 392_211_322),
-								 LocalTime.of(11, 22, 33, 392_214_325)
-						 )
-						 .ofPrecision(MICROS)
-						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+		@Group
+		class SetPrecisionImplicitly {
 
-			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(3);
-			assertThat(generator).containsExactly(
-					OffsetTime.of(LocalTime.of(11, 22, 33, 392_212_000), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(11, 22, 33, 392_213_000), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(11, 22, 33, 392_214_000), ZoneOffset.ofHoursMinutes(0, 30))
-			);
+			@Group
+			class Seconds {
+
+				@Example
+				void between() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 31, 0),
+										 LocalTime.of(12, 22, 34, 0)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 31, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 32, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 34, 0), ZoneOffset.of("Z"))
+					);
+				}
+
+				@Example
+				void betweenTheEarliest() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 57, 0),
+										 LocalTime.of(12, 23, 0, 0)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 57, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 58, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 59, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 23, 0, 0), ZoneOffset.of("Z"))
+					);
+				}
+
+				@Example
+				void betweenTheLatest() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 0, 0),
+										 LocalTime.of(12, 22, 3, 0)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 0, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 1, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 2, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 3, 0), ZoneOffset.of("Z"))
+					);
+				}
+
+			}
+
+			@Group
+			class Millis {
+
+				@Example
+				void between() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 33, 392_000_000),
+										 LocalTime.of(12, 22, 33, 395_000_000)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 33, 392_000_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 393_000_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 394_000_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 395_000_000), ZoneOffset.of("Z"))
+					);
+				}
+
+				@Example
+				void betweenTheEarliest() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 32, 997_000_000),
+										 LocalTime.of(12, 22, 33, 0)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 32, 997_000_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 32, 998_000_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 32, 999_000_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 0), ZoneOffset.of("Z"))
+					);
+				}
+
+				@Example
+				void betweenTheLatest() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 33, 0),
+										 LocalTime.of(12, 22, 33, 3_000_000)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 33, 0), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 1_000_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 2_000_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 3_000_000), ZoneOffset.of("Z"))
+					);
+				}
+
+			}
+
+			@Group
+			class Micros {
+
+				@Example
+				void between() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 33, 392_412_000),
+										 LocalTime.of(12, 22, 33, 392_415_000)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 33, 392_412_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 392_413_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 392_414_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 392_415_000), ZoneOffset.of("Z"))
+					);
+				}
+
+				@Example
+				void betweenTheEarliest() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 32, 312_997_000),
+										 LocalTime.of(12, 22, 32, 313_000_000)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 32, 312_997_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 32, 312_998_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 32, 312_999_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 32, 313_000_000), ZoneOffset.of("Z"))
+					);
+				}
+
+				@Example
+				void betweenTheLatest() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 33, 312_000_000),
+										 LocalTime.of(12, 22, 33, 312_003_000)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 33, 312_000_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 312_001_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 312_002_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 312_003_000), ZoneOffset.of("Z"))
+					);
+				}
+
+			}
+
+			@Group
+			class Nanos {
+
+				@Example
+				void between() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 33, 392_412_221),
+										 LocalTime.of(12, 22, 33, 392_412_224)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 33, 392_412_221), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 392_412_222), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 392_412_223), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 392_412_224), ZoneOffset.of("Z"))
+					);
+				}
+
+				@Example
+				void betweenTheEarliest() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 32, 312_321_997),
+										 LocalTime.of(12, 22, 32, 312_322_000)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 32, 312_321_997), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 32, 312_321_998), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 32, 312_321_999), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 32, 312_322_000), ZoneOffset.of("Z"))
+					);
+				}
+
+				@Example
+				void betweenTheLatest() {
+					Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+							Times.offsetTimes()
+								 .between(
+										 LocalTime.of(12, 22, 33, 312_542_000),
+										 LocalTime.of(12, 22, 33, 312_542_003)
+								 )
+								 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"))
+								 .exhaustive();
+					assertThat(optionalGenerator).isPresent();
+
+					ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+					assertThat(generator.maxCount()).isEqualTo(4);
+					assertThat(generator).containsExactly(
+							OffsetTime.of(LocalTime.of(12, 22, 33, 312_542_000), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 312_542_001), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 312_542_002), ZoneOffset.of("Z")),
+							OffsetTime.of(LocalTime.of(12, 22, 33, 312_542_003), ZoneOffset.of("Z"))
+					);
+				}
+
+			}
+
 		}
 
-		@Example
-		void precisionMillis() {
-			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
-					Times.offsetTimes()
-						 .between(
-								 LocalTime.of(11, 22, 33, 392_211_322),
-								 LocalTime.of(11, 22, 33, 395_214_325)
-						 )
-						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
-						 .ofPrecision(MILLIS)
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+		@Group
+		class OffsetTimeMethods {
 
-			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(3);
-			assertThat(generator).containsExactly(
-					OffsetTime.of(LocalTime.of(11, 22, 33, 393_000_000), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(11, 22, 33, 394_000_000), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(11, 22, 33, 395_000_000), ZoneOffset.ofHoursMinutes(0, 30))
-			);
-		}
+			@Example
+			void offsetBetween() {
+				Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+						Times.offsetTimes()
+							 .between(
+									 LocalTime.of(11, 22, 33),
+									 LocalTime.of(11, 22, 33)
+							 )
+							 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -19, -33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
 
-		@Example
-		void precisionSeconds() {
-			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
-					Times.offsetTimes()
-						 .between(
-								 LocalTime.of(11, 22, 33, 392_211_322),
-								 LocalTime.of(11, 22, 36, 395_214_325)
-						 )
-						 .ofPrecision(SECONDS)
-						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+				ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+						OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, -15)),
+						OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 0)),
+						OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 15)),
+						OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 30))
+				);
+			}
 
-			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(3);
-			assertThat(generator).containsExactly(
-					OffsetTime.of(LocalTime.of(11, 22, 34, 0), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(11, 22, 35, 0), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(11, 22, 36, 0), ZoneOffset.ofHoursMinutes(0, 30))
-			);
-		}
+			@Example
+			void betweenMethods() {
+				Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
+						Times.offsetTimes()
+							 .between(
+									 LocalTime.of(11, 22, 33),
+									 LocalTime.of(11, 22, 34)
+							 )
+							 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -1, -33), ZoneOffset.ofHoursMinutesSeconds(0, 29, 11))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
 
-		@Example
-		void precisionMinutes() {
-			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
-					Times.offsetTimes()
-						 .between(
-								 LocalTime.of(11, 22, 33, 392_211_322),
-								 LocalTime.of(11, 25, 36, 395_214_325)
-						 )
-						 .ofPrecision(MINUTES)
-						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
+				ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactlyInAnyOrder(
+						OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 0)),
+						OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 15)),
+						OffsetTime.of(LocalTime.of(11, 22, 34), ZoneOffset.ofHoursMinutes(0, 0)),
+						OffsetTime.of(LocalTime.of(11, 22, 34), ZoneOffset.ofHoursMinutes(0, 15))
+				);
+			}
 
-			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(3);
-			assertThat(generator).containsExactly(
-					OffsetTime.of(LocalTime.of(11, 23, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(11, 24, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(11, 25, 0, 0), ZoneOffset.ofHoursMinutes(0, 30))
-			);
-		}
-
-		@Example
-		void precisionHours() {
-			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
-					Times.offsetTimes()
-						 .ofPrecision(HOURS)
-						 .between(
-								 LocalTime.of(11, 22, 33, 392_211_322),
-								 LocalTime.of(14, 25, 36, 395_214_325)
-						 )
-						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(3);
-			assertThat(generator).containsExactly(
-					OffsetTime.of(LocalTime.of(12, 0, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(13, 0, 0, 0), ZoneOffset.ofHoursMinutes(0, 30)),
-					OffsetTime.of(LocalTime.of(14, 0, 0, 0), ZoneOffset.ofHoursMinutes(0, 30))
-			);
-		}
-
-		@Example
-		void offsetBetween() {
-			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
-					Times.offsetTimes()
-						 .between(
-								 LocalTime.of(11, 22, 33),
-								 LocalTime.of(11, 22, 33)
-						 )
-						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -19, -33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(4);
-			assertThat(generator).containsExactly(
-					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, -15)),
-					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 0)),
-					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 15)),
-					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 30))
-			);
-		}
-
-		@Example
-		void betweenMethods() {
-			Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
-					Times.offsetTimes()
-						 .between(
-								 LocalTime.of(11, 22, 33),
-								 LocalTime.of(11, 22, 34)
-						 )
-						 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, -1, -33), ZoneOffset.ofHoursMinutesSeconds(0, 29, 11))
-						 .exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<OffsetTime> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(4);
-			assertThat(generator).containsExactlyInAnyOrder(
-					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 0)),
-					OffsetTime.of(LocalTime.of(11, 22, 33), ZoneOffset.ofHoursMinutes(0, 15)),
-					OffsetTime.of(LocalTime.of(11, 22, 34), ZoneOffset.ofHoursMinutes(0, 0)),
-					OffsetTime.of(LocalTime.of(11, 22, 34), ZoneOffset.ofHoursMinutes(0, 15))
-			);
 		}
 
 	}

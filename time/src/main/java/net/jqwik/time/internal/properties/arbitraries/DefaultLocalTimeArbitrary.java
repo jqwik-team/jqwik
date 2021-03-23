@@ -32,6 +32,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	private int secondMax = 59;
 
 	private ChronoUnit ofPrecision = DEFAULT_PRECISION;
+	private boolean ofPrecisionSet = false;
 
 	@Override
 	protected Arbitrary<LocalTime> arbitrary() {
@@ -141,7 +142,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 			}
 		}
 		if (startEffective.isAfter(effective)) {
-			throw new IllegalArgumentException("Hour is 23 and must be increased by 1.");
+			throw new IllegalArgumentException("Cannot use this min value with precision " + precision);
 		}
 		return effective;
 	}
@@ -178,6 +179,24 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		return effective;
 	}
 
+	private void setOfPrecisionImplicitly(DefaultLocalTimeArbitrary clone, LocalTime time) {
+		if (clone.ofPrecisionSet) {
+			return;
+		}
+		ChronoUnit ofPrecision = DEFAULT_PRECISION;
+		int nanos = time.getNano();
+		if (nanos % 1_000 != 0) {
+			ofPrecision = NANOS;
+		} else if ((nanos / 1_000) % 1_000 != 0) {
+			ofPrecision = MICROS;
+		} else if (nanos / 1_000_000 != 0) {
+			ofPrecision = MILLIS;
+		}
+		if (clone.ofPrecision.compareTo(ofPrecision) > 0) {
+			clone.ofPrecision = ofPrecision;
+		}
+	}
+
 	@Override
 	public LocalTimeArbitrary atTheEarliest(LocalTime min) {
 		if ((timeMax != null) && min.isAfter(timeMax)) {
@@ -185,6 +204,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		}
 
 		DefaultLocalTimeArbitrary clone = typedClone();
+		setOfPrecisionImplicitly(clone, min);
 		clone.timeMin = min;
 		return clone;
 	}
@@ -196,6 +216,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		}
 
 		DefaultLocalTimeArbitrary clone = typedClone();
+		setOfPrecisionImplicitly(clone, max);
 		clone.timeMax = max;
 		return clone;
 	}
@@ -261,6 +282,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		}
 
 		DefaultLocalTimeArbitrary clone = typedClone();
+		clone.ofPrecisionSet = true;
 		clone.ofPrecision = ofPrecision;
 		return clone;
 	}
