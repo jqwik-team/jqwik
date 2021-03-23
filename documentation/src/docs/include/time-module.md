@@ -210,7 +210,7 @@ Here's the list of available methods:
 ###### LocalTimeArbitrary
 
 - The target type is `LocalTime`.
-- By default, precision is seconds.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
 - You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
@@ -220,7 +220,7 @@ Here's the list of available methods:
 ###### OffsetTimeArbitrary
 
 - The target type is `OffsetTime`.
-- By default, precision is seconds.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 - You can constrain the minimum and maximum time value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
 - You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
@@ -291,5 +291,6 @@ Here's the list of available methods:
 
 - The target type is `LocalDateTime`.
 - By default, only years between 1900 and 2500 are generated.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
