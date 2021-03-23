@@ -39,7 +39,7 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 
 	/**
 	 * Constrain the precision of generated values.
-	 * Default value: Seconds.
+	 * Default value: Seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	LocalDateTimeArbitrary ofPrecision(ChronoUnit ofPrecision);
 
