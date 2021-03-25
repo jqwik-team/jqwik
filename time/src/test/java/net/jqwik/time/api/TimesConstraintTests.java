@@ -33,6 +33,11 @@ public class TimesConstraintTests {
 			}
 
 			@Property
+			void timeRangeDefaultNotAffectDefaultPrecision(@ForAll @TimeRange LocalTime time) {
+				assertThat(time.getNano()).isEqualTo(0);
+			}
+
+			@Property
 			void hourRangeBetween(@ForAll @HourRange(min = 11, max = 13) LocalTime time) {
 				assertThat(time.getHour()).isBetween(11, 13);
 			}
@@ -313,6 +318,11 @@ public class TimesConstraintTests {
 			@Property
 			void timeRangeMax(@ForAll @TimeRange(max = "03:49:32") OffsetTime time) {
 				assertThat(time.toLocalTime()).isBeforeOrEqualTo(LocalTime.of(3, 49, 32));
+			}
+
+			@Property
+			void timeRangeDefaultNotAffectDefaultPrecision(@ForAll @TimeRange OffsetTime time) {
+				assertThat(time.getNano()).isEqualTo(0);
 			}
 
 			@Property
@@ -739,15 +749,20 @@ public class TimesConstraintTests {
 	class DurationConstraints {
 
 		@Property
-		void zoneOffsetMin(@ForAll @DurationRange(min = "PT-3000H-39M-22.123111444S") Duration duration) {
+		void durationRangeMin(@ForAll @DurationRange(min = "PT-3000H-39M-22.123111444S") Duration duration) {
 			Duration start = Duration.ofSeconds(-3000 * 60 * 60 - 39 * 60 - 22, -123111444);
 			assertThat(duration.compareTo(start)).isGreaterThanOrEqualTo(0);
 		}
 
 		@Property
-		void zoneOffsetMax(@ForAll @DurationRange(max = "PT1999H22M11S") Duration duration) {
+		void durationRangeMax(@ForAll @DurationRange(max = "PT1999H22M11S") Duration duration) {
 			Duration end = Duration.ofSeconds(1999 * 60 * 60 + 22 * 60 + 11);
 			assertThat(duration.compareTo(end)).isLessThanOrEqualTo(0);
+		}
+
+		@Property
+		void durationRangeDefaultNotAffectDefaultPrecision(@ForAll @DurationRange Duration duration) {
+			assertThat(duration.getNano()).isEqualTo(0);
 		}
 
 		@Group

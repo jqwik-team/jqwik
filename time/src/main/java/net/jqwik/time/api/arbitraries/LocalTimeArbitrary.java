@@ -17,6 +17,7 @@ public interface LocalTimeArbitrary extends Arbitrary<LocalTime> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated local time values.
+	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	default LocalTimeArbitrary between(LocalTime min, LocalTime max) {
 		if (min.isAfter(max)) {
@@ -27,11 +28,13 @@ public interface LocalTimeArbitrary extends Arbitrary<LocalTime> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) bounder of generated local time values.
+	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	LocalTimeArbitrary atTheEarliest(LocalTime min);
 
 	/**
 	 * Set the allowed upper {@code max} (included) bounder of generated local time values.
+	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	LocalTimeArbitrary atTheLatest(LocalTime max);
 

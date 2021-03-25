@@ -25,5 +25,5 @@ import static org.apiguardian.api.API.Status.*;
 public @interface TimeRange {
 	String min() default "00:00:00";
 
-	String max() default "23:59:59.999999999";
+	String max() default "23:59:59.0";
 }

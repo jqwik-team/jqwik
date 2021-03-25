@@ -17,6 +17,7 @@ public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated time values.
+	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	default OffsetTimeArbitrary between(LocalTime min, LocalTime max) {
 		if (min.isAfter(max)) {
@@ -27,11 +28,13 @@ public interface OffsetTimeArbitrary extends Arbitrary<OffsetTime> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) bounder of generated time values.
+	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	OffsetTimeArbitrary atTheEarliest(LocalTime min);
 
 	/**
 	 * Set the allowed upper {@code max} (included) bounder of generated time values.
+	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	OffsetTimeArbitrary atTheLatest(LocalTime max);
 
