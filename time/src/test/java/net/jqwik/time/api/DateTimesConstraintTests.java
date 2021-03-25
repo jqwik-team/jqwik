@@ -19,13 +19,18 @@ public class DateTimesConstraintTests {
 	class LocalDateTimeConstraints {
 
 		@Property
-		void dateRangeMin(@ForAll @DateTimeRange(min = "2013-05-25T01:32:21.113943") LocalDateTime dateTime) {
+		void dateTimeRangeMin(@ForAll @DateTimeRange(min = "2013-05-25T01:32:21.113943") LocalDateTime dateTime) {
 			assertThat(dateTime).isAfterOrEqualTo(LocalDateTime.of(2013, Month.MAY, 25, 1, 32, 21, 113943000));
 		}
 
 		@Property
-		void dateRangeMax(@ForAll @DateTimeRange(max = "2020-08-23T01:32:21.113943") LocalDateTime dateTime) {
+		void dateTimeRangeMax(@ForAll @DateTimeRange(max = "2020-08-23T01:32:21.113943") LocalDateTime dateTime) {
 			assertThat(dateTime).isBeforeOrEqualTo(LocalDateTime.of(2020, Month.AUGUST, 23, 1, 32, 21, 113943000));
+		}
+
+		@Property
+		void dateTimeRangeDefaultNotAffectDefaultPrecision(@ForAll @DateTimeRange LocalDateTime dateTime) {
+			assertThat(dateTime.getNano()).isEqualTo(0);
 		}
 
 		@Group

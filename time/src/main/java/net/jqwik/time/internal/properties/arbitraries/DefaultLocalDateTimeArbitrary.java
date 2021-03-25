@@ -156,7 +156,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		return clone;
 	}
 
-	private class TimeArbitraries {
+	private static class TimeArbitraries {
 
 		private LocalTimeArbitrary firstDay;
 		private LocalTimeArbitrary daysBetween;

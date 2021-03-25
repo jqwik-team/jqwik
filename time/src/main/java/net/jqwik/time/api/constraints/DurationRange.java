@@ -20,5 +20,5 @@ import static org.apiguardian.api.API.Status.*;
 public @interface DurationRange {
 	String min() default "PT-2562047788015215H-30M-8S";
 
-	String max() default "PT2562047788015215H30M7.999999999S";
+	String max() default "PT2562047788015215H30M7.0S";
 }
