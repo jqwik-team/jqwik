@@ -458,14 +458,12 @@ class LocalDateTimeTests {
 			assertThat(value).isEqualTo(LocalDateTime.of(1900, JANUARY, 1, 0, 0, 0));
 		}
 
-		@Disabled("Produces StackOverFlow")
-		@Property
+		@Property(tries = 40)
 		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes();
 			TestingFalsifier<LocalDateTime> falsifier = dateTime -> dateTime.isBefore(LocalDateTime.of(2013, MAY, 25, 13, 12, 55));
 			LocalDateTime value = falsifyThenShrink(dateTimes, random, falsifier);
-			assertThat(value).isAfterOrEqualTo(LocalDateTime.of(2013, MAY, 25, 13, 12, 55));
-			assertThat(value).isBeforeOrEqualTo(LocalDateTime.of(2013, MAY, 26, 0, 0, 0));
+			assertThat(value).isEqualTo(LocalDateTime.of(2013, MAY, 25, 13, 12, 55));
 		}
 
 	}
