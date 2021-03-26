@@ -111,15 +111,16 @@ class ShrinkableBigIntegerTests {
 
 	@Group
 	class Growing {
+
 		@Example
 		void upToMax() {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(5L, 500000L));
 
 			Stream<BigInteger> grownValues = shrinkable.grow().map(Shrinkable::value);
-			assertThat(grownValues).containsExactly(
+			assertThat(grownValues).containsExactlyInAnyOrder(
 				BigInteger.valueOf(100001),
 				BigInteger.valueOf(100010),
-				BigInteger.valueOf(250000),
+				BigInteger.valueOf(300000),
 				BigInteger.valueOf(500000)
 			);
 		}
@@ -129,11 +130,33 @@ class ShrinkableBigIntegerTests {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(-100000, Range.of(-500000L, -5L));
 
 			Stream<BigInteger> grownValues = shrinkable.grow().map(Shrinkable::value);
-			assertThat(grownValues).containsExactly(
+			assertThat(grownValues).containsExactlyInAnyOrder(
 				BigInteger.valueOf(-100001),
 				BigInteger.valueOf(-100010),
-				BigInteger.valueOf(-250000),
+				BigInteger.valueOf(-300000),
 				BigInteger.valueOf(-500000)
+			);
+		}
+
+		@Example
+		void upOnlyProducesGrownValues() {
+			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(499998, Range.of(5L, 500000L));
+
+			Stream<BigInteger> grownValues = shrinkable.grow().map(Shrinkable::value);
+			assertThat(grownValues).containsExactlyInAnyOrder(
+					BigInteger.valueOf(499999),
+					BigInteger.valueOf(500000)
+			);
+		}
+
+		@Example
+		void downOnlyProducesGrownValues() {
+			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(-499998, Range.of(-500000L, -5L));
+
+			Stream<BigInteger> grownValues = shrinkable.grow().map(Shrinkable::value);
+			assertThat(grownValues).containsExactlyInAnyOrder(
+					BigInteger.valueOf(-499999),
+					BigInteger.valueOf(-500000)
 			);
 		}
 	}

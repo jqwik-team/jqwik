@@ -66,24 +66,28 @@ class BigIntegerGrower {
 	private Stream<Shrinkable<BigInteger>> growRight(BigInteger value, Range<BigInteger> range, BigInteger shrinkingTarget) {
 		return Stream
 				   .of(
-					   value.add(BigInteger.ONE),
+					   range.max,
+					   value.add(range.max.subtract(value).divide(BigInteger.valueOf(2))),
 					   value.add(BigInteger.TEN),
-					   range.max.divide(BigInteger.valueOf(2)),
-					   range.max
+					   value.add(BigInteger.ONE)
 				   )
+				   .filter(grownValue -> grownValue.compareTo(value) > 0)
 				   .filter(range::includes)
+				   .distinct()
 				   .map(grown -> new ShrinkableBigInteger(grown, range, shrinkingTarget));
 	}
 
 	private Stream<Shrinkable<BigInteger>> growLeft(BigInteger value, Range<BigInteger> range, BigInteger shrinkingTarget) {
 		return Stream
 				   .of(
-					   value.subtract(BigInteger.ONE),
+					   range.min,
+					   value.subtract(value.subtract(range.min).divide(BigInteger.valueOf(2))),
 					   value.subtract(BigInteger.TEN),
-					   range.min.divide(BigInteger.valueOf(2)),
-					   range.min
+					   value.subtract(BigInteger.ONE)
 				   )
+				   .filter(grownValue -> grownValue.compareTo(value) < 0)
 				   .filter(range::includes)
+				   .distinct()
 				   .map(grown -> new ShrinkableBigInteger(grown, range, shrinkingTarget));
 	}
 }

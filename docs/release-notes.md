@@ -44,7 +44,9 @@ and
 
 #### Bug Fixes
 
-Fixed memory leakage introduced in 1.5.0.
+- Fixed memory leakage introduced in 1.5.0.
+
+- Shrinking of flat mapped values would sometimes never end.
 
 ## 1.5.0
 

@@ -46,9 +46,11 @@ public class SizeOfListShrinker<T> {
 	}
 
 	private void appendLeftCut(List<T> toShrink, Set<List<T>> lists, int elementsToCut) {
-		List<T> leftCut = new ArrayList<>(toShrink);
-		cutFromLeft(leftCut, elementsToCut);
-		lists.add(leftCut);
+		lists.add(new ArrayList<>(cutFromLeft(toShrink, elementsToCut)));
+	}
+
+	private List<T> cutFromLeft(List<T> toShrink, int elementsToCut) {
+		return toShrink.subList(elementsToCut, toShrink.size());
 	}
 
 	private int calculateElementsToCut(int listSize) {
@@ -66,13 +68,6 @@ public class SizeOfListShrinker<T> {
 		return listSize / 2;
 	}
 
-	private void cutFromLeft(List<T> leftCut, int elementsToCut) {
-		if (elementsToCut == 0)
-			return;
-		leftCut.remove(0);
-		cutFromLeft(leftCut, --elementsToCut);
-	}
-
 	private void appendRightCuts(List<T> toShrink, Set<List<T>> lists) {
 		int elementsToCut = calculateElementsToCut(toShrink.size());
 		appendRightCut(toShrink, lists, elementsToCut);
@@ -82,15 +77,10 @@ public class SizeOfListShrinker<T> {
 	}
 
 	private void appendRightCut(List<T> toShrink, Set<List<T>> lists, int elementsToCut) {
-		List<T> rightCut = new ArrayList<>(toShrink);
-		cutFromRight(rightCut, elementsToCut);
-		lists.add(rightCut);
+		lists.add(new ArrayList<>(cutFromRight(toShrink, elementsToCut)));
 	}
 
-	private void cutFromRight(List<T> rightCut, int elementsToCut) {
-		if (elementsToCut == 0)
-			return;
-		rightCut.remove(rightCut.size() - 1);
-		cutFromRight(rightCut, --elementsToCut);
+	private List<T> cutFromRight(List<T> toShrink, int elementsToCut) {
+		return toShrink.subList(0, toShrink.size() - elementsToCut);
 	}
 }

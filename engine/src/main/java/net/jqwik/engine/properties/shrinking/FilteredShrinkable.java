@@ -86,7 +86,7 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 		return Stream.concat(
 			base.grow().flatMap(this::growToFirst),
 			base.grow().flatMap(this::growDeep)
-		);
+		).limit(10); // Might be too few for some shrinking problems
 	}
 
 	private boolean isIncluded(Shrinkable<T> shrinkable) {

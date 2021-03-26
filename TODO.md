@@ -5,11 +5,6 @@
         - label=<statistics label> to specify for which statistics to use
         - Make it repeatable
 
-    - Combinators should get some additional shrinking capabilities, e.g.
-      Combinators.combine(minutes, seconds)
-                 .as(Time::of)
-                 .addShrinkstep((m, s) -> Tuple.of(m-1, 60))
-
 - 1.5.x
 
     - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
