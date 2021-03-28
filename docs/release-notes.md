@@ -32,7 +32,9 @@ and
 
 #### New and Enhanced Features
 
-- The time module does now allow [generation of times](/docs/snapshot/user-guide.html#generation-of-times)
+- Time module
+  - [Generation of Times](/docs/snapshot/user-guide.html#generation-of-times)
+  - [Generation of DateTimes](/docs/snapshot/user-guide.html#generation-of-datetimes)
 
 - Added `StringArbitrary.excludeChars(char ... toExclude)`. 
   See https://github.com/jlink/jqwik/issues/167.
