@@ -12,6 +12,26 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 
 public class MonthRangeConfigurator {
 
+	public static class ForLocalDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(LocalDateTime.class);
+		}
+
+		public Arbitrary<LocalDateTime> configure(Arbitrary<LocalDateTime> arbitrary, MonthRange range) {
+			Month min = range.min();
+			Month max = range.max();
+			if (arbitrary instanceof LocalDateTimeArbitrary) {
+				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
+				return localDateTimeArbitrary.monthBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -114,6 +134,10 @@ public class MonthRangeConfigurator {
 
 	private static boolean filter(Month month, Month min, Month max) {
 		return month.compareTo(min) >= 0 && month.compareTo(max) <= 0;
+	}
+
+	private static boolean filter(LocalDateTime date, Month min, Month max) {
+		return filter(date.getMonth(), min, max);
 	}
 
 	private static boolean filter(LocalDate date, Month min, Month max) {

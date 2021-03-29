@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Constrain the range of generated positive year parameters.
  * <p>
- * Applies to LocalDate, Calendar, Date, Year and YearMonth parameters which are also annotated with {@code @ForAll}.
+ * Applies to LocalDateTime, LocalDate, Calendar, Date, Year and YearMonth parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  * @see DateRange

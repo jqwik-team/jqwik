@@ -61,4 +61,12 @@ net.jqwik.time.internal.properties.configurators.TimeRangeConfigurator$ForOffset
 #DateTime
 net.jqwik.time.internal.properties.configurators.DateTimeRangeConfigurator
 
+net.jqwik.time.internal.properties.configurators.DateRangeConfigurator$ForLocalDateTime
+
+net.jqwik.time.internal.properties.configurators.YearRangeConfigurator$ForLocalDateTime
+
+net.jqwik.time.internal.properties.configurators.MonthRangeConfigurator$ForLocalDateTime
+
+net.jqwik.time.internal.properties.configurators.DayOfMonthRangeConfigurator$ForLocalDateTime
+
 net.jqwik.time.internal.properties.configurators.PrecisionConfigurator$ForLocalDateTime

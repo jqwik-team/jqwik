@@ -11,6 +11,26 @@ import net.jqwik.time.api.constraints.*;
 
 public class YearRangeConfigurator {
 
+	public static class ForLocalDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(LocalDateTime.class);
+		}
+
+		public Arbitrary<LocalDateTime> configure(Arbitrary<LocalDateTime> arbitrary, YearRange range) {
+			int min = range.min();
+			int max = range.max();
+			if (arbitrary instanceof LocalDateTimeArbitrary) {
+				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
+				return localDateTimeArbitrary.yearBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -113,6 +133,10 @@ public class YearRangeConfigurator {
 
 	private static boolean filter(int year, int min, int max) {
 		return year >= min && year <= max;
+	}
+
+	private static boolean filter(LocalDateTime date, int min, int max) {
+		return filter(date.getYear(), min, max);
 	}
 
 	private static boolean filter(LocalDate date, int min, int max) {

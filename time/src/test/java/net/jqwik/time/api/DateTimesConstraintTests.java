@@ -33,6 +33,34 @@ public class DateTimesConstraintTests {
 			assertThat(dateTime.getNano()).isEqualTo(0);
 		}
 
+		@Property
+		void dateRangeMin(@ForAll @DateRange(min = "2013-05-25") LocalDateTime dateTime) {
+			assertThat(dateTime.toLocalDate()).isAfterOrEqualTo(LocalDate.of(2013, Month.MAY, 25));
+		}
+
+		@Property
+		void dateRangeMax(@ForAll @DateRange(max = "2020-08-23") LocalDateTime dateTime) {
+			assertThat(dateTime.toLocalDate()).isBeforeOrEqualTo(LocalDate.of(2020, Month.AUGUST, 23));
+		}
+
+		@Property
+		void yearRangeBetween500And700(@ForAll @YearRange(min = 500, max = 700) LocalDateTime dateTime) {
+			assertThat(dateTime.getYear()).isGreaterThanOrEqualTo(500);
+			assertThat(dateTime.getYear()).isLessThanOrEqualTo(700);
+		}
+
+		@Property
+		void monthRangeBetweenMarchAndJuly(@ForAll @MonthRange(min = Month.MARCH, max = Month.JULY) LocalDateTime dateTime) {
+			assertThat(dateTime.getMonth()).isGreaterThanOrEqualTo(Month.MARCH);
+			assertThat(dateTime.getMonth()).isLessThanOrEqualTo(Month.JULY);
+		}
+
+		@Property
+		void dayOfMonthRangeBetween15And20(@ForAll @DayOfMonthRange(min = 15, max = 20) LocalDateTime dateTime) {
+			assertThat(dateTime.getDayOfMonth()).isGreaterThanOrEqualTo(15);
+			assertThat(dateTime.getDayOfMonth()).isLessThanOrEqualTo(20);
+		}
+
 		@Group
 		class Precisions {
 
@@ -74,100 +102,158 @@ public class DateTimesConstraintTests {
 		@Group
 		class InvalidConfigurations {
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void minThrowsExceptionOnlyTime(@ForAll @DateTimeRange(min = "03:43:21") LocalDateTime dateTime) {
-				//do nothing
+			@Group
+			class DateTimeRangeConstraint {
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionOnlyTime(@ForAll @DateTimeRange(min = "03:43:21") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionOnlyTime(@ForAll @DateTimeRange(max = "03:43:21") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionOnlyTimeWithT(@ForAll @DateTimeRange(min = "T03:43:21") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionOnlyTimeWithT(@ForAll @DateTimeRange(max = "T03:43:21") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionOnlyDate(@ForAll @DateTimeRange(min = "2013-05-25") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionOnlyDate(@ForAll @DateTimeRange(max = "2013-05-25") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionYearMonth(@ForAll @DateTimeRange(min = "2013-05") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionYearMonth(@ForAll @DateTimeRange(max = "2013-05") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionIllegalString(@ForAll @DateTimeRange(min = "foo") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionIllegalString(@ForAll @DateTimeRange(max = "foo") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionMonthDay(@ForAll @DateTimeRange(min = "--05-25") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionMonthDay(@ForAll @DateTimeRange(max = "--05-25") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionDay(@ForAll @DateTimeRange(min = "13") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionDay(@ForAll @DateTimeRange(max = "13") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionPicoseconds(@ForAll @DateTimeRange(min = "2020-08-23T01:32:21.1139432111") LocalDateTime dateTime) {
+					//do nothing
+				}
+
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionPicoseconds(@ForAll @DateTimeRange(max = "2020-08-23T01:32:21.1139432111") LocalDateTime dateTime) {
+					//do nothing
+				}
+
 			}
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void maxThrowsExceptionOnlyTime(@ForAll @DateTimeRange(max = "03:43:21") LocalDateTime dateTime) {
-				//do nothing
-			}
+			@Group
+			class DateRangeConstraint {
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void minThrowsExceptionOnlyTimeWithT(@ForAll @DateTimeRange(min = "T03:43:21") LocalDateTime dateTime) {
-				//do nothing
-			}
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionYearMonth(@ForAll @DateRange(min = "2013-05") LocalDateTime dateTime) {
+					//do nothing
+				}
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void maxThrowsExceptionOnlyTimeWithT(@ForAll @DateTimeRange(max = "T03:43:21") LocalDateTime dateTime) {
-				//do nothing
-			}
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionYearMonth(@ForAll @DateRange(min = "2013-05") LocalDateTime dateTime) {
+					//do nothing
+				}
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void minThrowsExceptionOnlyDate(@ForAll @DateTimeRange(min = "2013-05-25") LocalDateTime dateTime) {
-				//do nothing
-			}
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionIllegalString(@ForAll @DateRange(min = "foo") LocalDateTime dateTime) {
+					//do nothing
+				}
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void maxThrowsExceptionOnlyDate(@ForAll @DateTimeRange(max = "2013-05-25") LocalDateTime dateTime) {
-				//do nothing
-			}
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionIllegalString(@ForAll @DateRange(max = "foo") LocalDateTime dateTime) {
+					//do nothing
+				}
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void minThrowsExceptionYearMonth(@ForAll @DateTimeRange(min = "2013-05") LocalDateTime dateTime) {
-				//do nothing
-			}
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionMonthDay(@ForAll @DateRange(min = "--05-25") LocalDateTime dateTime) {
+					//do nothing
+				}
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void maxThrowsExceptionYearMonth(@ForAll @DateTimeRange(max = "2013-05") LocalDateTime dateTime) {
-				//do nothing
-			}
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionMonthDay(@ForAll @DateRange(max = "--05-25") LocalDateTime dateTime) {
+					//do nothing
+				}
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void minThrowsExceptionIllegalString(@ForAll @DateTimeRange(min = "foo") LocalDateTime dateTime) {
-				//do nothing
-			}
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void minThrowsExceptionDay(@ForAll @DateRange(min = "13") LocalDateTime dateTime) {
+					//do nothing
+				}
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void maxThrowsExceptionIllegalString(@ForAll @DateTimeRange(max = "foo") LocalDateTime dateTime) {
-				//do nothing
-			}
+				@Example
+				@ExpectFailure(failureType = DateTimeParseException.class)
+				void maxThrowsExceptionDay(@ForAll @DateRange(max = "13") LocalDateTime dateTime) {
+					//do nothing
+				}
 
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void minThrowsExceptionMonthDay(@ForAll @DateTimeRange(min = "--05-25") LocalDateTime dateTime) {
-				//do nothing
-			}
-
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void maxThrowsExceptionMonthDay(@ForAll @DateTimeRange(max = "--05-25") LocalDateTime dateTime) {
-				//do nothing
-			}
-
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void minThrowsExceptionDay(@ForAll @DateTimeRange(min = "13") LocalDateTime dateTime) {
-				//do nothing
-			}
-
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void maxThrowsExceptionDay(@ForAll @DateTimeRange(max = "13") LocalDateTime dateTime) {
-				//do nothing
-			}
-
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void minThrowsExceptionPicoseconds(@ForAll @DateTimeRange(min = "2020-08-23T01:32:21.1139432111") LocalDateTime dateTime) {
-				//do nothing
-			}
-
-			@Example
-			@ExpectFailure(failureType = DateTimeParseException.class)
-			void maxThrowsExceptionPicoseconds(@ForAll @DateTimeRange(max = "2020-08-23T01:32:21.1139432111") LocalDateTime dateTime) {
-				//do nothing
 			}
 
 		}
@@ -193,22 +279,75 @@ public class DateTimesConstraintTests {
 	class ValidTypesWithOwnArbitraries {
 
 		@Group
-		class DateTimeRangeConstraint {
+		class ConstraintsWithoutPrecision {
 
-			@Property
-			void localDateTime(@ForAll("localDateTimes") @DateTimeRange(min = "2013-05-25T01:32:21.113943", max = "2020-08-23T01:32:21.113943") LocalDateTime dateTime) {
-				LocalDateTime min = LocalDateTime.of(2013, Month.MAY, 25, 1, 32, 21, 113943000);
-				LocalDateTime max = LocalDateTime.of(2020, Month.AUGUST, 23, 1, 32, 21, 113943000);
-				assertThat(dateTime).isBetween(min, max);
+			@Group
+			class DateTimeRangeConstraint {
+
+				@Property
+				void localDateTime(@ForAll("dateTimes") @DateTimeRange(min = "2013-05-25T01:32:21.113943", max = "2020-08-23T01:32:21.113943") LocalDateTime dateTime) {
+					LocalDateTime min = LocalDateTime.of(2013, Month.MAY, 25, 1, 32, 21, 113943000);
+					LocalDateTime max = LocalDateTime.of(2020, Month.AUGUST, 23, 1, 32, 21, 113943000);
+					assertThat(dateTime).isBetween(min, max);
+				}
+
+			}
+
+			@Group
+			class DateRangeConstraint {
+
+				@Property
+				void localDateTime(@ForAll("dateTimes") @DateRange(min = "2013-05-25", max = "2020-08-23") LocalDateTime dateTime) {
+					assertThat(dateTime.toLocalDate()).isAfterOrEqualTo(LocalDate.of(2013, Month.MAY, 25));
+					assertThat(dateTime.toLocalDate()).isBeforeOrEqualTo(LocalDate.of(2020, Month.AUGUST, 23));
+				}
+
+			}
+
+			@Group
+			class YearRangeConstraint {
+
+				@Property
+				void yearRangeBetween500And700(@ForAll("dateTimes") @YearRange(min = 2014, max = 2019) LocalDateTime dateTime) {
+					assertThat(dateTime.getYear()).isGreaterThanOrEqualTo(2014);
+					assertThat(dateTime.getYear()).isLessThanOrEqualTo(2019);
+				}
+
+			}
+
+			@Group
+			class MonthRangeConstraint {
+
+				@Property
+				void monthRangeBetweenMarchAndJuly(@ForAll("dateTimes") @MonthRange(min = Month.MARCH, max = Month.JULY) LocalDateTime dateTime) {
+					assertThat(dateTime.getMonth()).isGreaterThanOrEqualTo(Month.MARCH);
+					assertThat(dateTime.getMonth()).isLessThanOrEqualTo(Month.JULY);
+				}
+
+			}
+
+			@Group
+			class DayOfMonthRangeConstraint {
+
+				@Property
+				void dayOfMonthRangeBetween15And20(@ForAll("dateTimes") @DayOfMonthRange(min = 15, max = 20) LocalDateTime dateTime) {
+					assertThat(dateTime.getDayOfMonth()).isGreaterThanOrEqualTo(15);
+					assertThat(dateTime.getDayOfMonth()).isLessThanOrEqualTo(20);
+				}
+
 			}
 
 			@Provide
-			Arbitrary<LocalDateTime> localDateTimes() {
+			Arbitrary<LocalDateTime> dateTimes() {
 				return of(
 						LocalDateTime.MIN,
-						LocalDateTime.of(2013, Month.MAY, 25, 1, 32, 21, 113942000),
-						LocalDateTime.of(2017, Month.FEBRUARY, 24, 2, 43, 59),
+						LocalDateTime.of(2013, Month.MAY, 24, 1, 32, 21, 113942000),
+						LocalDateTime.of(2014, Month.FEBRUARY, 24, 2, 43, 59),
+						LocalDateTime.of(2014, Month.FEBRUARY, 14, 2, 43, 59),
+						LocalDateTime.of(2014, Month.FEBRUARY, 15, 2, 43, 59),
 						LocalDateTime.of(2019, Month.JULY, 11, 4, 31, 48, 1),
+						LocalDateTime.of(2019, Month.JULY, 20, 4, 31, 48, 1),
+						LocalDateTime.of(2019, Month.JULY, 21, 4, 31, 48, 1),
 						LocalDateTime.of(2020, Month.AUGUST, 23, 1, 32, 21, 113944000),
 						LocalDateTime.MAX
 				);
