@@ -23,6 +23,10 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 
 	private LocalDate minDate = null;
 	private LocalDate maxDate = null;
+	private Month minMonth = null;
+	private Month maxMonth = null;
+	private int minDayOfMonth = -1;
+	private int maxDayOfMonth = -1;
 
 	private ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.DEFAULT_PRECISION;
 	private boolean ofPrecisionSet = false;
@@ -42,12 +46,24 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		dates = dates.atTheEarliest(effectiveMin.toLocalDate());
 		dates = dates.atTheLatest(effectiveMax.toLocalDate());
 
+		dates = setDateParams(dates);
+
 		LocalDate effectiveMinDate = effectiveMin.toLocalDate();
 		LocalDate effectiveMaxDate = effectiveMax.toLocalDate();
 
 		return dates.flatMap(date -> timesByDate(times, date, effectiveMinDate, effectiveMaxDate)
 											 .map(time -> LocalDateTime.of(date, time)));
 
+	}
+
+	private LocalDateArbitrary setDateParams(LocalDateArbitrary dates) {
+		if (minMonth != null && maxMonth != null) {
+			dates = dates.monthBetween(minMonth, maxMonth);
+		}
+		if (minDayOfMonth != -1 && maxDayOfMonth != -1) {
+			dates = dates.dayOfMonthBetween(minDayOfMonth, maxDayOfMonth);
+		}
+		return dates;
 	}
 
 	private LocalTimeArbitrary timesByDate(TimeArbitraries times, LocalDate date, LocalDate effectiveMin, LocalDate effectiveMax) {
@@ -184,6 +200,51 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		DefaultLocalDateTimeArbitrary clone = typedClone();
 		clone.minDate = min;
 		clone.maxDate = max;
+		return clone;
+	}
+
+	@Override
+	public LocalDateTimeArbitrary yearBetween(Year min, Year max) {
+		if (min.isAfter(max)) {
+			Year remember = min;
+			min = max;
+			max = remember;
+		}
+
+		if (min.getValue() <= 0 || max.getValue() <= 0) {
+			throw new IllegalArgumentException("Minimum year in a date time must be > 0");
+		}
+
+		LocalDate minDate = LocalDate.of(min.getValue(), 1, 1);
+		LocalDate maxDate = LocalDate.of(max.getValue(), 12, 31);
+		return dateBetween(minDate, maxDate);
+	}
+
+	@Override
+	public LocalDateTimeArbitrary monthBetween(Month min, Month max) {
+		if (min.compareTo(max) > 0) {
+			Month remember = min;
+			min = max;
+			max = remember;
+		}
+
+		DefaultLocalDateTimeArbitrary clone = typedClone();
+		clone.minMonth = min;
+		clone.maxMonth = max;
+		return clone;
+	}
+
+	@Override
+	public LocalDateTimeArbitrary dayOfMonthBetween(int min, int max) {
+		if (min > max) {
+			int remember = min;
+			min = max;
+			max = remember;
+		}
+
+		DefaultLocalDateTimeArbitrary clone = typedClone();
+		clone.minDayOfMonth = Math.max(1, Math.min(31, min));
+		clone.maxDayOfMonth = Math.max(1, Math.min(31, max));
 		return clone;
 	}
 
