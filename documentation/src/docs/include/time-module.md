@@ -260,10 +260,14 @@ void generateLocalDateTimesWithAnnotation(@ForAll @DateTimeRange(min = "2019-01-
 The following annotations can be used to constrain default generation of the enumerated types:
 
 - [`@DateTimeRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DateTimeRange.html)
+- [`@DateRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DateRange.html)
+- [`@YearRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/YearRange.html)
+- [`@MonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/MonthRange.html)
+- [`@DayOfMonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DayOfMonthRange.html)
 - [`@Precision`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/Precision.html)
 
-`@DateTimeRange` uses the standard format of its class. 
-Example: `2013-05-25T01:34:22.231`.
+`@DateTimeRange` and `@DateRange` use the standard format of their classes. 
+Examples: `2013-05-25T01:34:22.231` and `2013-05-25`.
 
 ##### Programmatic Generation of DateTimes
 
@@ -287,10 +291,15 @@ Here's the list of available methods:
 
 - [`LocalDateTimeArbitrary dateTimes()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#dateTimes())
 
+
 ###### LocalDateTimeArbitrary
 
 - The target type is `LocalDateTime`.
 - By default, only years between 1900 and 2500 are generated.
 - By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain its minimum and maximum value for dates using `dateBetween(min, max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
