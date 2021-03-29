@@ -196,7 +196,6 @@ class LocalDateTimeTests {
 		@Group
 		class DateMethods {
 
-			@Disabled("not implemented")
 			@Group
 			class DateBetweenMethod {
 
@@ -227,7 +226,29 @@ class LocalDateTimeTests {
 
 				}
 
-				//TODO: between AND dateBetween is set
+				@Property(tries = 2000)
+				void betweenDateSetWhenBetweenSet(
+						@ForAll LocalDate minDate,
+						@ForAll LocalDate maxDate,
+						@ForAll("dateTimes") LocalDateTime min,
+						@ForAll("dateTimes") LocalDateTime max,
+						@ForAll Random random
+				) {
+
+					Assume.that(!minDate.isAfter(maxDate));
+					Assume.that(!min.isAfter(max));
+					Assume.that(!(minDate.isBefore(min.toLocalDate()) && maxDate.isBefore(min.toLocalDate())));
+					Assume.that(!(minDate.isAfter(max.toLocalDate()) && maxDate.isAfter(max.toLocalDate())));
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().between(min, max).dateBetween(minDate, maxDate);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime).isBetween(min, max);
+						assertThat(dateTime.toLocalDate()).isBetween(minDate, maxDate);
+						return true;
+					});
+
+				}
 
 			}
 
@@ -1440,7 +1461,6 @@ class LocalDateTimeTests {
 			) {
 				date = date.withYear(year);
 				LocalDateTime dateTime = LocalDateTime.of(date, time);
-				System.out.println(dateTime);
 				assertThatThrownBy(
 						() -> DateTimes.dateTimes().atTheEarliest(dateTime)
 				).isInstanceOf(IllegalArgumentException.class);
@@ -1462,7 +1482,6 @@ class LocalDateTimeTests {
 			) {
 				date = date.withYear(year);
 				LocalDateTime dateTime = LocalDateTime.of(date, time);
-				System.out.println(dateTime);
 				assertThatThrownBy(
 						() -> DateTimes.dateTimes().atTheLatest(dateTime)
 				).isInstanceOf(IllegalArgumentException.class);
@@ -1473,6 +1492,25 @@ class LocalDateTimeTests {
 				Assume.that(min.isAfter(max));
 				assertThatThrownBy(
 						() -> DateTimes.dateTimes().atTheEarliest(min).atTheLatest(max)
+				).isInstanceOf(IllegalArgumentException.class);
+			}
+
+			@Property
+			void dateBetweenMinAfterMax(@ForAll LocalDate min, @ForAll LocalDate max) {
+				Assume.that(min.isAfter(max));
+				assertThatThrownBy(
+						() -> DateTimes.dateTimes().dateBetween(min, max)
+				).isInstanceOf(IllegalArgumentException.class);
+			}
+
+			@Property
+			void dateBetweenYearMustNotBelow1(
+					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
+					@ForAll @LeapYears(withLeapYears = false) LocalDate date
+			) {
+				LocalDate effective = date.withYear(year);
+				assertThatThrownBy(
+						() -> DateTimes.dateTimes().dateBetween(effective, effective)
 				).isInstanceOf(IllegalArgumentException.class);
 			}
 
