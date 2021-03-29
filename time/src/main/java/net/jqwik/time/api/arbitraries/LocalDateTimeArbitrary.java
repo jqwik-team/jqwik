@@ -41,6 +41,11 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	LocalDateTimeArbitrary atTheLatest(LocalDateTime max);
 
 	/**
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated local date values.
+	 */
+	LocalDateTimeArbitrary dateBetween(LocalDate min, LocalDate max);
+
+	/**
 	 * Constrain the precision of generated values.
 	 * Default value: Seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */

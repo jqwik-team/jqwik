@@ -194,7 +194,47 @@ class LocalDateTimeTests {
 		}
 
 		@Group
-		class CheckTimeMethods {
+		class DateMethods {
+
+			@Disabled("not implemented")
+			@Group
+			class DateBetweenMethod {
+
+				@Property
+				void between(@ForAll LocalDate min, @ForAll LocalDate max, @ForAll Random random) {
+
+					Assume.that(!min.isAfter(max));
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dateBetween(min, max);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.toLocalDate()).isAfterOrEqualTo(min);
+						assertThat(dateTime.toLocalDate()).isBeforeOrEqualTo(max);
+						return true;
+					});
+
+				}
+
+				@Property
+				void betweenSame(@ForAll LocalDate same, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dateBetween(same, same);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.toLocalDate()).isEqualTo(same);
+						return true;
+					});
+
+				}
+
+				//TODO: between AND dateBetween is set
+
+			}
+
+		}
+
+		@Group
+		class TimeMethods {
 
 			@Group
 			class PrecisionMethods {
