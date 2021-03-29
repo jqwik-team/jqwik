@@ -12,6 +12,26 @@ import net.jqwik.time.api.constraints.*;
 
 public class DayOfMonthRangeConfigurator {
 
+	public static class ForLocalDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(LocalDateTime.class);
+		}
+
+		public Arbitrary<LocalDateTime> configure(Arbitrary<LocalDateTime> arbitrary, DayOfMonthRange range) {
+			int min = range.min();
+			int max = range.max();
+			if (arbitrary instanceof LocalDateTimeArbitrary) {
+				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
+				return localDateTimeArbitrary.dayOfMonthBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -114,6 +134,10 @@ public class DayOfMonthRangeConfigurator {
 
 	private static boolean filter(int dayOfMonth, int min, int max) {
 		return dayOfMonth >= min && dayOfMonth <= max;
+	}
+
+	private static boolean filter(LocalDateTime date, int min, int max) {
+		return filter(date.getDayOfMonth(), min, max);
 	}
 
 	private static boolean filter(LocalDate date, int min, int max) {

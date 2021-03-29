@@ -12,6 +12,26 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 
 public class DateRangeConfigurator {
 
+	public static class ForLocalDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(LocalDateTime.class);
+		}
+
+		public Arbitrary<LocalDateTime> configure(Arbitrary<LocalDateTime> arbitrary, DateRange range) {
+			LocalDate min = isoDateToLocalDate(range.min());
+			LocalDate max = isoDateToLocalDate(range.max());
+			if (arbitrary instanceof LocalDateTimeArbitrary) {
+				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
+				return localDateTimeArbitrary.dateBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -70,6 +90,10 @@ public class DateRangeConfigurator {
 			}
 		}
 
+	}
+
+	private static boolean filter(LocalDateTime date, LocalDate min, LocalDate max) {
+		return filter(date.toLocalDate(), min, max);
 	}
 
 	private static boolean filter(LocalDate date, LocalDate min, LocalDate max) {
