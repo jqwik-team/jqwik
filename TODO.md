@@ -2,8 +2,7 @@
 
     - @StatisticsReportFormat
       https://github.com/jlink/jqwik/issues/146
-        - label=<statistics label> to specify for which statistics to use
-        - Make it repeatable
+        - Document label=<statistics label> to specify for which statistics to use
 
 - 1.5.x
 

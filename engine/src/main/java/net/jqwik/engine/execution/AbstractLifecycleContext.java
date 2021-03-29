@@ -2,6 +2,7 @@ package net.jqwik.engine.execution;
 
 import java.lang.annotation.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
@@ -12,7 +13,7 @@ import net.jqwik.engine.descriptor.*;
 
 abstract class AbstractLifecycleContext implements LifecycleContext {
 
-	private final Reporter reporter;
+	private Reporter reporter;
 	private final TestDescriptor self;
 
 	protected AbstractLifecycleContext(Reporter reporter, TestDescriptor self) {
@@ -23,6 +24,11 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 	@Override
 	public Reporter reporter() {
 		return reporter;
+	}
+
+	@Override
+	public void wrapReporter(Function<Reporter, Reporter> wrapper) {
+		this.reporter = wrapper.apply(this.reporter);
 	}
 
 	@Override
@@ -53,8 +59,8 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 
 	private Optional<ContainerClassDescriptor> parentContainer(TestDescriptor descriptor) {
 		return descriptor.getParent()
-				   .filter(parent -> parent instanceof ContainerClassDescriptor)
-				   .map(parent -> (ContainerClassDescriptor) parent);
+						 .filter(parent -> parent instanceof ContainerClassDescriptor)
+						 .map(parent -> (ContainerClassDescriptor) parent);
 	}
 
 	private <T extends Annotation> void appendAnnotations(

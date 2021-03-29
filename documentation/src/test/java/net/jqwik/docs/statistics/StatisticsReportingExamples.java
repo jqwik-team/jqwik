@@ -31,6 +31,15 @@ class StatisticsReportingExamples {
 		Statistics.collect(range);
 	}
 
+	@Property
+	@StatisticsReport(label = "count", format = ReportOnlyCount.class)
+	@StatisticsReport(label = "rates", format = MyStatisticsFormat.class)
+	void differFormatsByLabel(@ForAll Integer anInt) {
+		Statistics.label("count").collect(anInt);
+		String range = anInt < 0 ? "negative" : anInt > 0 ? "positive" : "zero";
+		Statistics.label("rates").collect(range);
+	}
+
 	class MyStatisticsFormat implements StatisticsReportFormat {
 		@Override
 		public List<String> formatReport(List<StatisticsEntry> entries) {

@@ -13,7 +13,6 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 
 	private final PropertyMethodDescriptor methodDescriptor;
 	private final Object testInstance;
-	private final Reporter reporter;
 	private final ParameterSupplierResolver parameterSupplierResolver;
 
 	public DefaultPropertyLifecycleContext(
@@ -26,7 +25,6 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook, this);
 		this.methodDescriptor = methodDescriptor;
 		this.testInstance = testInstance;
-		this.reporter = reporter;
 	}
 
 	@Override
@@ -52,11 +50,6 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 	@Override
 	public Object testInstance() {
 		return testInstance;
-	}
-
-	@Override
-	public Reporter reporter() {
-		return reporter;
 	}
 
 	@Override

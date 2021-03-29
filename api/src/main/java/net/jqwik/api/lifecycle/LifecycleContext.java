@@ -3,6 +3,7 @@ package net.jqwik.api.lifecycle;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.apiguardian.api.*;
 
@@ -49,6 +50,15 @@ public interface LifecycleContext {
 	 * @return Current instance to test reporter
 	 */
 	Reporter reporter();
+
+	/**
+	 * Wrap reporter instance
+	 *
+	 * @param wrapper Wrapping function that takes original reporter and returns a wrapped instance
+	 */
+	// Not sure this is a good idea because it makes the context object mutable
+	@API(status = EXPERIMENTAL, since = "1.5.1")
+	void wrapReporter(Function<Reporter, Reporter> wrapper);
 
 	/**
 	 * Retrieve an annotation if present at the current test element.

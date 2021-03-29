@@ -193,6 +193,10 @@ public class TestHelper {
 			}
 
 			@Override
+			public void wrapReporter(Function<Reporter, Reporter> wrapper) {
+			}
+
+			@Override
 			public <T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass) {
 				return Optional.empty();
 			}

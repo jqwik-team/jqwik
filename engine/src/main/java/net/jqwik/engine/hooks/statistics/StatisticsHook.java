@@ -2,8 +2,10 @@ package net.jqwik.engine.hooks.statistics;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.StatisticsReport.*;
@@ -55,30 +57,62 @@ public class StatisticsHook implements AroundPropertyHook {
 	}
 
 	private void createStatisticsReports(Map<String, StatisticsCollectorImpl> collectors, PropertyLifecycleContext context) {
-		StatisticsReportFormat reportFormat = new StandardStatisticsReportFormat();
-		Optional<StatisticsReport> optionalStatisticsReport =
-			JqwikAnnotationSupport.findAnnotationOnElementOrContainer(context.targetMethod(), StatisticsReport.class);
+		List<StatisticsReport> statisticsReportAnnotations = JqwikAnnotationSupport.findRepeatableAnnotationOnElementOrContainer(
+			context.targetMethod(),
+			StatisticsReport.class
+		);
 
-		if (optionalStatisticsReport.isPresent()) {
-			StatisticsReport reportConfiguration = optionalStatisticsReport.get();
-			if (reportConfiguration.value() == StatisticsReportMode.OFF) {
-				return;
+		Set<Tuple3<String, StatisticsCollectorImpl, StatisticsReportFormat>> reports =
+			collectors.entrySet().stream()
+					  .map(entry -> {
+						  String label = entry.getKey();
+						  return Tuple.of(label, entry.getValue(), determineFormat(label, statisticsReportAnnotations, context));
+					  })
+					  .collect(Collectors.toSet());
+
+		report(reports, context.reporter(), context.extendedLabel());
+	}
+
+	private StatisticsReportFormat determineFormat(
+		String label,
+		List<StatisticsReport> statisticsReportAnnotations,
+		PropertyLifecycleContext context
+	) {
+		boolean defaultReportFormatSet = false;
+		StatisticsReportFormat defaultReportFormat = new StandardStatisticsReportFormat();
+
+		for (StatisticsReport annotation : statisticsReportAnnotations) {
+			if (annotation.label().equals(label)) {
+				return createReportFormat(annotation, context);
 			}
-			if (reportConfiguration.value() == StatisticsReportMode.PLUG_IN) {
-				reportFormat = JqwikReflectionSupport.newInstanceInTestContext(reportConfiguration.format(), context.testInstance());
+			if (!defaultReportFormatSet && annotation.label().equals(StatisticsReport.ALL_LABELS)) {
+				defaultReportFormat = createReportFormat(annotation, context);
+				defaultReportFormatSet = true;
 			}
 		}
-		report(collectors, context.reporter(), context.extendedLabel(), reportFormat);
+		return defaultReportFormat;
+	}
+
+	private StatisticsReportFormat createReportFormat(StatisticsReport annotation, PropertyLifecycleContext context) {
+		if (annotation.value() == StatisticsReportMode.OFF) {
+			return null;
+		} else if (annotation.value() == StatisticsReportMode.PLUG_IN) {
+			return JqwikReflectionSupport.newInstanceInTestContext(annotation.format(), context.testInstance());
+		} else {
+			return new StandardStatisticsReportFormat();
+		}
 	}
 
 	private void report(
-		Map<String, StatisticsCollectorImpl> collectors,
+		Set<Tuple3<String, StatisticsCollectorImpl, StatisticsReportFormat>> reports,
 		Reporter reporter,
-		String propertyName,
-		StatisticsReportFormat reportFormat
+		String propertyName
 	) {
-		for (StatisticsCollectorImpl collector : collectors.values()) {
-			StatisticsPublisher reportGenerator = new StatisticsPublisher(collector, reportFormat);
+		for (Tuple3<String, StatisticsCollectorImpl, StatisticsReportFormat> report : reports) {
+			if (report.get3() == null) {
+				continue;
+			}
+			StatisticsPublisher reportGenerator = new StatisticsPublisher(report.get2(), report.get3());
 			reportGenerator.publish(reporter, propertyName);
 		}
 	}

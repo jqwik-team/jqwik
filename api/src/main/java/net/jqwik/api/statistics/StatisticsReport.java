@@ -26,10 +26,17 @@ import static org.apiguardian.api.API.Status.*;
  * 			Use {@code @StatisticsReport(format = YourReportFormat.class)} to plug in your own format.
  *  	</li>
  * </ul>
+ *
+ * <p>
+ *     This annotation is repeatable when used on property methods.
+ *     In this case use {@linkplain #label()} to specify for which statistics collection the given report format shall be used.
+ * </p>
+ *
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Repeatable(StatisticsReportList.class)
 @API(status = EXPERIMENTAL, since = "1.2.3")
 public @interface StatisticsReport {
 
@@ -56,6 +63,8 @@ public @interface StatisticsReport {
 		PLUG_IN
 	}
 
+	String ALL_LABELS = "";
+
 	StatisticsReportMode value() default StatisticsReportMode.PLUG_IN;
 
 	/**
@@ -64,4 +73,9 @@ public @interface StatisticsReport {
 	 */
 	Class<? extends StatisticsReportFormat> format() default None.class;
 
+	/**
+	 * The statistics label to which the format in this annotation should be applied.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.1")
+	String label() default ALL_LABELS;
 }

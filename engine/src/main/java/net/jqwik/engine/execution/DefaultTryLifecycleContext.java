@@ -3,6 +3,7 @@ package net.jqwik.engine.execution;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
@@ -47,6 +48,11 @@ public class DefaultTryLifecycleContext implements TryLifecycleContext {
 	@Override
 	public Reporter reporter() {
 		return propertyContext.reporter();
+	}
+
+	@Override
+	public void wrapReporter(Function<Reporter, Reporter> wrapper) {
+		propertyContext.wrapReporter(wrapper);
 	}
 
 	@Override

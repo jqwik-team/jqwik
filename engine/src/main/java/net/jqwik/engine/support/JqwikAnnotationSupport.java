@@ -76,6 +76,22 @@ public class JqwikAnnotationSupport {
 		return Optional.empty();
 	}
 
+	public static <A extends Annotation> List<A> findRepeatableAnnotationOnElementOrContainer(
+		AnnotatedElement element,
+		Class<A> annotationType
+	) {
+		List<A> annotations = new ArrayList<>(AnnotationSupport.findRepeatableAnnotations(element, annotationType));
+		if (element instanceof Member) {
+			AnnotatedElement container = ((Member) element).getDeclaringClass();
+			annotations.addAll(findRepeatableAnnotationOnElementOrContainer(container, annotationType));
+		}
+		if (isGroup(element)) {
+			AnnotatedElement container = getGroupContainer((Class<?>) element);
+			annotations.addAll(findRepeatableAnnotationOnElementOrContainer(container, annotationType));
+		}
+		return annotations;
+	}
+
 	private static AnnotatedElement getGroupContainer(Class<?> group) {
 		return group.getDeclaringClass();
 	}
