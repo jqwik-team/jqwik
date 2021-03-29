@@ -143,6 +143,8 @@ The `value` attribute is of type
   you only have to provide the `format` attribute
   [as shown below](#plug-in-your-own-statistics-report-format)
 
+When using [labeled statistics](#labeled-statistics) you can set mode and format
+for each label individually by using the annotation attribute `@StatisticsReport.value`.
 
 #### Switch Statistics Reporting Off
 

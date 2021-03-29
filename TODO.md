@@ -1,8 +1,8 @@
 - 1.5.1
 
-    - @StatisticsReportFormat
-      https://github.com/jlink/jqwik/issues/146
-        - Document label=<statistics label> to specify for which statistics to use
+    - Generate documentation
+      
+    - Release
 
 - 1.5.x
 

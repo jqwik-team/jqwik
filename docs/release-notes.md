@@ -32,9 +32,13 @@ and
 
 #### New and Enhanced Features
 
+- Implemented `@StatisticsReport.label` as suggested in 
+  https://github.com/jlink/jqwik/issues/146.
+
 - Time module
   - [Generation of Times](/docs/snapshot/user-guide.html#generation-of-times)
   - [Generation of DateTimes](/docs/snapshot/user-guide.html#generation-of-datetimes)
+    got its first rudimentary support.
 
 - Added `StringArbitrary.excludeChars(char ... toExclude)`. 
   See https://github.com/jlink/jqwik/issues/167.
