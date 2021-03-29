@@ -1238,7 +1238,7 @@ class LocalTimeTests {
 	}
 
 	@Group
-	class CheckEqualDistribution {
+	class CheckDistribution {
 
 		@Property
 		void hours(@ForAll("times") LocalTime time) {
@@ -1326,7 +1326,7 @@ class LocalTimeTests {
 
 		private void check60Coverage(StatisticsCoverage coverage) {
 			for (int value = 0; value < 60; value++) {
-				coverage.check(value).percentage(p -> p >= 0.3);
+				coverage.check(value).count(c -> c > 0);
 			}
 		}
 
