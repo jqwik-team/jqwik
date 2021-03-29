@@ -252,6 +252,170 @@ class LocalDateTimeTests {
 
 			}
 
+			@Group
+			class YearMethods {
+
+				@Property
+				void yearBetween(@ForAll("years") int min, @ForAll("years") int max, @ForAll Random random) {
+
+					Assume.that(min <= max);
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().yearBetween(min, max);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getYear()).isGreaterThanOrEqualTo(min);
+						assertThat(dateTime.getYear()).isLessThanOrEqualTo(max);
+						return true;
+					});
+
+				}
+
+				@Property
+				void yearBetweenSame(@ForAll("years") int year, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().yearBetween(year, year);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getYear()).isEqualTo(year);
+						return true;
+					});
+
+				}
+
+				@Property
+				void yearBetweenMinAfterMax(@ForAll("years") int min, @ForAll("years") int max, @ForAll Random random) {
+
+					Assume.that(min > max);
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().yearBetween(min, max);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getYear()).isGreaterThanOrEqualTo(max);
+						assertThat(dateTime.getYear()).isLessThanOrEqualTo(min);
+						return true;
+					});
+
+				}
+
+				@Provide
+				Arbitrary<Integer> years() {
+					return Arbitraries.integers().between(1, LocalDateTime.MAX.getYear());
+				}
+
+			}
+
+			@Group
+			class MonthMethods {
+
+				@Property
+				void monthBetween(@ForAll("months") int min, @ForAll("months") int max, @ForAll Random random) {
+
+					Assume.that(min <= max);
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().monthBetween(min, max);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getMonth()).isGreaterThanOrEqualTo(Month.of(min));
+						assertThat(dateTime.getMonth()).isLessThanOrEqualTo(Month.of(max));
+						return true;
+					});
+
+				}
+
+				@Property
+				void monthBetweenSame(@ForAll("months") int month, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().monthBetween(month, month);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getMonth()).isEqualTo(Month.of(month));
+						return true;
+					});
+
+				}
+
+				@Property
+				void monthBetweenMinAfterMax(@ForAll("months") int min, @ForAll("months") int max, @ForAll Random random) {
+
+					Assume.that(min > max);
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().monthBetween(min, max);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getMonth()).isGreaterThanOrEqualTo(Month.of(max));
+						assertThat(dateTime.getMonth()).isLessThanOrEqualTo(Month.of(min));
+						return true;
+					});
+
+				}
+
+				@Provide
+				Arbitrary<Integer> months() {
+					return Arbitraries.integers().between(1, 12);
+				}
+
+			}
+
+			@Group
+			class DayOfMonthMethods {
+
+				@Property
+				void dayOfMonthBetween(
+						@ForAll("dayOfMonths") int min,
+						@ForAll("dayOfMonths") int max,
+						@ForAll Random random
+				) {
+
+					Assume.that(min <= max);
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dayOfMonthBetween(min, max);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getDayOfMonth()).isGreaterThanOrEqualTo(min);
+						assertThat(dateTime.getDayOfMonth()).isLessThanOrEqualTo(max);
+						return true;
+					});
+
+				}
+
+				@Property
+				void dayOfMonthBetweenStartAfterEnd(
+						@ForAll("dayOfMonths") int min,
+						@ForAll("dayOfMonths") int max,
+						@ForAll Random random
+				) {
+
+					Assume.that(min > max);
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dayOfMonthBetween(min, max);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getDayOfMonth()).isGreaterThanOrEqualTo(max);
+						assertThat(dateTime.getDayOfMonth()).isLessThanOrEqualTo(min);
+						return true;
+					});
+
+				}
+
+				@Property
+				void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dayOfMonthBetween(dayOfMonth, dayOfMonth);
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getDayOfMonth()).isEqualTo(dayOfMonth);
+						return true;
+					});
+
+				}
+
+				@Provide
+				Arbitrary<Integer> dayOfMonths() {
+					return Arbitraries.integers().between(1, 31);
+				}
+
+			}
+
 		}
 
 		@Group
@@ -1511,6 +1675,13 @@ class LocalDateTimeTests {
 				LocalDate effective = date.withYear(year);
 				assertThatThrownBy(
 						() -> DateTimes.dateTimes().dateBetween(effective, effective)
+				).isInstanceOf(IllegalArgumentException.class);
+			}
+
+			@Property
+			void yearBetweenYearMustNotBelow1(@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year) {
+				assertThatThrownBy(
+						() -> DateTimes.dateTimes().yearBetween(year, year)
 				).isInstanceOf(IllegalArgumentException.class);
 			}
 

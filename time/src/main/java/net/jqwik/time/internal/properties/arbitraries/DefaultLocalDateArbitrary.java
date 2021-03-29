@@ -165,7 +165,7 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 
 	@Override
 	public LocalDateArbitrary yearBetween(Year min, Year max) {
-		if (!min.isBefore(max)) {
+		if (min.isAfter(max)) {
 			Year remember = min;
 			min = max;
 			max = remember;
@@ -204,8 +204,8 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 			max = remember;
 		}
 		DefaultLocalDateArbitrary clone = typedClone();
-		clone.dayOfMonthMin = Math.max(1, min);
-		clone.dayOfMonthMax = Math.min(31, max);
+		clone.dayOfMonthMin = Math.max(1, Math.min(31, min));
+		clone.dayOfMonthMax = Math.max(1, Math.min(31, max));
 		return clone;
 	}
 
