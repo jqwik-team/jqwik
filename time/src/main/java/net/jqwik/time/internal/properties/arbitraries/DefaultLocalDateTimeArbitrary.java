@@ -145,6 +145,11 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	}
 
 	@Override
+	public LocalDateTimeArbitrary dateBetween(LocalDate min, LocalDate max) {
+		return null;
+	}
+
+	@Override
 	public LocalDateTimeArbitrary ofPrecision(ChronoUnit ofPrecision) {
 		if (!DefaultLocalTimeArbitrary.ALLOWED_PRECISIONS.contains(ofPrecision)) {
 			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
