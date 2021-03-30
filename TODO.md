@@ -1,4 +1,4 @@
-- 1.5.x
+- 1.5.2
 
     - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
       to replace Combinators.withBuilder() but target cannot change across
@@ -17,21 +17,27 @@
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
 
-    - Web Module:
-        - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
-
-    - EdgeCases.Configuration.withProbability(double injectProbability)
-
     - Time Module:
-      - DateTimes. See https://github.com/jlink/jqwik/issues/175
-      - Generate Instant, LocalTime, ZonedTime etc.
-      - [LocalDate|Calendar|DateArbitrary].shrinkTowards(date)
+        - DateTimes. See https://github.com/jlink/jqwik/issues/175
+        - Generate Instant, OffsetDateTime, Date, Calendar
+        - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
 
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
       reporting of property's results. May require a new lifecycle hook.
         - Apply annotation wherever reporting is test collateral
         - Make it configurable, e.g. `jqwik.reporting.statistics.onfailureonly`
       
+- 1.5.x
+
+    - Decimals/Floats Arbitraries:
+        - Arbitrary.injectNaN()|injectNegativeInfinity()|injectPositiveInfinity()
+          |injectMinValue()|injectMinNormal()|injectSpecialValues()
+        
+    - Web Module:
+        - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
+
+    - EdgeCases.Configuration.withProbability(double injectProbability)
+
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
             - forType(Class<T> targetType, int depth)
