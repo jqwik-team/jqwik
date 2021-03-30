@@ -1,9 +1,3 @@
-- 1.5.1
-
-    - Generate documentation
-      
-    - Release
-
 - 1.5.x
 
     - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()

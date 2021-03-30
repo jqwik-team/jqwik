@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.5.1-SNAPSHOT](#151-snapshot)
+- [1.5.1](#151)
 - [1.5.0](#150)
 - [1.4.0](#140)
 - [1.3.x](#13x)
@@ -22,12 +22,12 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.5.1-SNAPSHOT
+## 1.5.1
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.5.1/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.5.1/javadoc/index.html">javadoc</a>
 </p>
 
 #### New and Enhanced Features
@@ -36,8 +36,8 @@ and
   https://github.com/jlink/jqwik/issues/146.
 
 - Time module
-  - [Generation of Times](/docs/snapshot/user-guide.html#generation-of-times)
-  - [Generation of DateTimes](/docs/snapshot/user-guide.html#generation-of-datetimes)
+  - [Generation of Times](/docs/1.5.1/user-guide.html#generation-of-times)
+  - [Generation of DateTimes](/docs/1.5.1/user-guide.html#generation-of-datetimes)
     got its first rudimentary support.
 
 - Added `StringArbitrary.excludeChars(char ... toExclude)`. 
