@@ -43,6 +43,7 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated local date values.
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
 	LocalDateTimeArbitrary dateBetween(LocalDate min, LocalDate max);
 
 	/**
@@ -52,6 +53,7 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	 * <p>Calling this method is equivalent to calling {@linkplain #dateBetween(LocalDate, LocalDate)}
 	 * assuming Jan 1 and Dec 31 as first and last day of those years.</p>
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
 	LocalDateTimeArbitrary yearBetween(Year min, Year max);
 
 	/**
@@ -61,6 +63,7 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	 * <p>Calling this method is equivalent to calling {@linkplain #dateBetween(LocalDate, LocalDate)}
 	 * assuming Jan 1 and Dec 31 as first and last day of those years.</p>
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
 	default LocalDateTimeArbitrary yearBetween(int min, int max) {
 		return yearBetween(Year.of(min), Year.of(max));
 	}
@@ -68,12 +71,14 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated month values.
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
 	LocalDateTimeArbitrary monthBetween(Month min, Month max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated month values.
 	 * The {@code int} values can be between 1 and 12.
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
 	default LocalDateTimeArbitrary monthBetween(int min, int max) {
 		return monthBetween(Month.of(min), Month.of(max));
 	}
@@ -82,12 +87,14 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated day of month values.
 	 * The {@code int} values can be between 1 and 31.
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
 	LocalDateTimeArbitrary dayOfMonthBetween(int min, int max);
 
 	/**
 	 * Constrain the precision of generated values.
 	 * Default value: Seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
 	LocalDateTimeArbitrary ofPrecision(ChronoUnit ofPrecision);
 
 }
