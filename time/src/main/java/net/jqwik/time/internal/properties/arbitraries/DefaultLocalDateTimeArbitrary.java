@@ -6,30 +6,19 @@ import java.time.temporal.*;
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.*;
 import net.jqwik.time.api.arbitraries.*;
 
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
-public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateTime> implements LocalDateTimeArbitrary {
+public class DefaultLocalDateTimeArbitrary extends LocalDateTimeSupport<LocalDateTime> implements LocalDateTimeArbitrary {
 
 	private static final LocalDateTime DEFAULT_MIN = LocalDateTime.of(DefaultLocalDateArbitrary.DEFAULT_MIN_DATE, LocalTime.MIN);
 	private static final LocalDateTime DEFAULT_MAX = LocalDateTime.of(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE, LocalTime.MAX);
 
 	private LocalDateTime min = null;
 	private LocalDateTime max = null;
-
-	private LocalDate minDate = null;
-	private LocalDate maxDate = null;
-	private Month minMonth = null;
-	private Month maxMonth = null;
-	private int minDayOfMonth = -1;
-	private int maxDayOfMonth = -1;
-
-	private ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.DEFAULT_PRECISION;
-	private boolean ofPrecisionSet = false;
 
 	@Override
 	protected Arbitrary<LocalDateTime> arbitrary() {
