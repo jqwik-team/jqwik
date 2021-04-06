@@ -15,7 +15,7 @@ public abstract class ValueRange<T> {
 		//do nothing in default case
 	}
 
-	public void set(T min, T max) {
+	public ValueRange<T> set(T min, T max) {
 		min = min != null ? min : this.min;
 		max = max != null ? max : this.max;
 		Parameter parameter = new Parameter(min, max);
@@ -23,6 +23,7 @@ public abstract class ValueRange<T> {
 		exceptionCheck(parameter);
 		this.min = parameter.min;
 		this.max = parameter.max;
+		return this;
 	}
 
 	public T getMin() {

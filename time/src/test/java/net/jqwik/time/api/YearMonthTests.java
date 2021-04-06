@@ -171,6 +171,21 @@ class YearMonthTests {
 			}
 
 			@Property
+			void monthBetweenMinAfterMax(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+
+				Assume.that(startMonth > endMonth);
+
+				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().monthBetween(startMonth, endMonth);
+
+				assertAllGenerated(yearMonths.generator(1000, true), random, ym -> {
+					assertThat(ym.getMonth()).isGreaterThanOrEqualTo(Month.of(endMonth));
+					assertThat(ym.getMonth()).isLessThanOrEqualTo(Month.of(startMonth));
+					return true;
+				});
+
+			}
+
+			@Property
 			void monthBetweenSame(@ForAll("months") int month, @ForAll Random random) {
 
 				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().monthBetween(month, month);
@@ -344,14 +359,6 @@ class YearMonthTests {
 			Assume.that(startYearMonth.isAfter(endYearMonth));
 			assertThatThrownBy(
 					() -> Dates.yearMonths().atTheLatest(endYearMonth).atTheEarliest(startYearMonth)
-			).isInstanceOf(IllegalArgumentException.class);
-		}
-
-		@Property
-		void minMonthAfterMaxMonth(@ForAll Month min, @ForAll Month max) {
-			Assume.that(min.compareTo(max) > 0);
-			assertThatThrownBy(
-					() -> Dates.yearMonths().monthBetween(min, max)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 

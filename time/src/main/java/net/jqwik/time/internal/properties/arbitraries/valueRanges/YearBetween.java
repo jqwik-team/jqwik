@@ -4,14 +4,17 @@ import java.time.*;
 
 public class YearBetween extends ValueRange<Year> {
 
-	private boolean useInCalendar;
+	private boolean useInCalendar = false;
+	private boolean allowBelow0 = false;
 
-	public YearBetween() {
-		this(false);
+	public YearBetween useInCalendar() {
+		useInCalendar = true;
+		return this;
 	}
 
-	public YearBetween(boolean useInCalendar) {
-		this.useInCalendar = useInCalendar;
+	public YearBetween allowBelow0() {
+		allowBelow0 = true;
+		return this;
 	}
 
 	@Override
@@ -23,10 +26,10 @@ public class YearBetween extends ValueRange<Year> {
 
 	@Override
 	protected void exceptionCheck(Parameter parameter) {
-		if (parameter.getMin() != null && parameter.getMin().getValue() <= 0) {
+		if (!allowBelow0 && parameter.getMin() != null && parameter.getMin().getValue() <= 0) {
 			throw new IllegalArgumentException("Minimum year must be > 0");
 		}
-		if (parameter.getMax() != null && parameter.getMax().getValue() <= 0) {
+		if (!allowBelow0 && parameter.getMax() != null && parameter.getMax().getValue() <= 0) {
 			throw new IllegalArgumentException("Maximum year must be > 0");
 		}
 		if (useInCalendar && parameter.getMin() != null && parameter.getMin().getValue() > 292_278_993) {
