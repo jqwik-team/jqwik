@@ -19,19 +19,11 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	private static final LocalDateTime DEFAULT_MIN = LocalDateTime.of(DefaultLocalDateArbitrary.DEFAULT_MIN_DATE, LocalTime.MIN);
 	private static final LocalDateTime DEFAULT_MAX = LocalDateTime.of(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE, LocalTime.MAX);
 
-	private LocalDateTimeBetween dateTimeBetween;
-	private LocalDateBetween dateBetween;
-	private DayOfMonthBetween dayOfMonthBetween;
-	private MonthBetween monthBetween;
-	private OfPrecision ofPrecision;
-
-	public DefaultLocalDateTimeArbitrary() {
-		dateTimeBetween = new LocalDateTimeBetween();
-		dateBetween = new LocalDateBetween();
-		dayOfMonthBetween = new DayOfMonthBetween();
-		monthBetween = new MonthBetween();
-		ofPrecision = new OfPrecision();
-	}
+	private LocalDateTimeBetween dateTimeBetween = new LocalDateTimeBetween();
+	private LocalDateBetween dateBetween = new LocalDateBetween();
+	private DayOfMonthBetween dayOfMonthBetween = new DayOfMonthBetween();
+	private MonthBetween monthBetween = new MonthBetween();
+	private OfPrecision ofPrecision = new OfPrecision();
 
 	@Override
 	protected Arbitrary<LocalDateTime> arbitrary() {
@@ -43,7 +35,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		}
 
 		LocalDateArbitrary dates = Dates.dates();
-		TimeArbitraries times = generateTimeArbitraries(effectiveMin, effectiveMax, ofPrecision.get());
+		TimeArbitraries times = generateTimeArbitraries(effectiveMin, effectiveMax, ofPrecision);
 
 		dates = dates.atTheEarliest(effectiveMin.toLocalDate());
 		dates = dates.atTheLatest(effectiveMax.toLocalDate());
@@ -98,7 +90,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		LocalDate date = effective.toLocalDate();
 		LocalTime time = effective.toLocalTime();
 		try {
-			time = DefaultLocalTimeArbitrary.calculateEffectiveMinWithPrecision(time, ofPrecision.get());
+			time = DefaultLocalTimeArbitrary.calculateEffectiveMinWithPrecision(time, ofPrecision);
 		} catch (IllegalArgumentException e) {
 			time = LocalTime.MIN;
 			LocalDate effectiveDate;
@@ -134,18 +126,18 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	private LocalDateTime calculateEffectiveMaxWithPrecision(LocalDateTime effective) {
 		LocalDate date = effective.toLocalDate();
 		LocalTime time = effective.toLocalTime();
-		time = DefaultLocalTimeArbitrary.calculateEffectiveMaxWithPrecision(time, ofPrecision.get());
+		time = DefaultLocalTimeArbitrary.calculateEffectiveMaxWithPrecision(time, ofPrecision);
 		return LocalDateTime.of(date, time);
 	}
 
-	private TimeArbitraries generateTimeArbitraries(LocalDateTime effectiveMin, LocalDateTime effectiveMax, ChronoUnit ofPrecision) {
+	private TimeArbitraries generateTimeArbitraries(LocalDateTime effectiveMin, LocalDateTime effectiveMax, OfPrecision ofPrecision) {
 		TimeArbitraries times = new TimeArbitraries();
 		if (effectiveMin.toLocalDate().isEqual(effectiveMax.toLocalDate())) {
-			times.firstDay = Times.times().between(effectiveMin.toLocalTime(), effectiveMax.toLocalTime()).ofPrecision(ofPrecision);
+			times.firstDay = Times.times().between(effectiveMin.toLocalTime(), effectiveMax.toLocalTime()).ofPrecision(ofPrecision.get());
 		} else {
-			times.firstDay = Times.times().atTheEarliest(effectiveMin.toLocalTime()).ofPrecision(ofPrecision);
-			times.daysBetween = Times.times().ofPrecision(ofPrecision);
-			times.lastDay = Times.times().atTheLatest(effectiveMax.toLocalTime()).ofPrecision(ofPrecision);
+			times.firstDay = Times.times().atTheEarliest(effectiveMin.toLocalTime()).ofPrecision(ofPrecision.get());
+			times.daysBetween = Times.times().ofPrecision(ofPrecision.get());
+			times.lastDay = Times.times().atTheLatest(effectiveMax.toLocalTime()).ofPrecision(ofPrecision.get());
 		}
 		return times;
 	}

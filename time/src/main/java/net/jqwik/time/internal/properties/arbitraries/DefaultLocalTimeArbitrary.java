@@ -9,6 +9,7 @@ import org.apiguardian.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.arbitraries.*;
+import net.jqwik.time.internal.properties.arbitraries.valueRanges.*;
 
 import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
@@ -113,6 +114,10 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		return effective;
 	}
 
+	public static LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, OfPrecision precision) {
+		return calculateEffectiveMinWithPrecision(effective, precision.get());
+	}
+
 	@SuppressWarnings("OverlyComplexMethod")
 	public static LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, ChronoUnit precision) {
 		LocalTime startEffective = effective;
@@ -161,6 +166,10 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		}
 		effective = calculateEffectiveMaxWithPrecision(effective, ofPrecision);
 		return effective;
+	}
+
+	public static LocalTime calculateEffectiveMaxWithPrecision(LocalTime effective, OfPrecision ofPrecision) {
+		return calculateEffectiveMaxWithPrecision(effective, ofPrecision.get());
 	}
 
 	public static LocalTime calculateEffectiveMaxWithPrecision(LocalTime effective, ChronoUnit ofPrecision) {

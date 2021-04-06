@@ -14,8 +14,5 @@ public class LocalDateTimeBetween extends ValueRange<LocalDateTime> {
 		if (parameter.getMin() != null && parameter.getMax() != null && parameter.getMin().isAfter(parameter.getMax())) {
 			throw new IllegalArgumentException("Minimum date time must not be after maximum date time");
 		}
-		if (parameter.getMin() != null && parameter.getMax() != null && parameter.getMax().isBefore(parameter.getMin())) {
-			throw new IllegalArgumentException("Maximum date time must not be before minimum date time");
-		}
 	}
 }
