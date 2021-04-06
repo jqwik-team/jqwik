@@ -178,6 +178,21 @@ class CalendarTests {
 			}
 
 			@Property
+			void monthBetweenMinAfterMax(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+
+				Assume.that(startMonth > endMonth);
+
+				Arbitrary<Calendar> dates = Dates.datesAsCalendar().monthBetween(startMonth, endMonth);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(date)).isGreaterThanOrEqualTo(Month.of(endMonth));
+					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(date)).isLessThanOrEqualTo(Month.of(startMonth));
+					return true;
+				});
+
+			}
+
+			@Property
 			void monthBetweenSame(@ForAll("months") int month, @ForAll Random random) {
 
 				Arbitrary<Calendar> dates = Dates.datesAsCalendar().monthBetween(month, month);
@@ -599,14 +614,6 @@ class CalendarTests {
 			assertThatThrownBy(
 					() -> Dates.datesAsCalendar().monthBetween(13, 1)
 			).isInstanceOf(DateTimeException.class);
-		}
-
-		@Property
-		void minMonthAfterMax(@ForAll Month min, @ForAll Month max) {
-			Assume.that(min.compareTo(max) > 0);
-			assertThatThrownBy(
-					() -> Dates.datesAsCalendar().monthBetween(min, max)
-			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 	}

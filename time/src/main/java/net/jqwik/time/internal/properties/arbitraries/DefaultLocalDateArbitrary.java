@@ -155,9 +155,9 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	public LocalDateArbitrary yearBetween(Year min, Year max) {
 		YearBetween yearBetween = new YearBetween();
 		yearBetween.set(min, max);
-		LocalDate minDate = LocalDate.of(yearBetween.getMin().getValue(), 1, 1);
-		LocalDate maxDate = LocalDate.of(yearBetween.getMax().getValue(), 12, 31);
-		return between(minDate, maxDate);
+		DefaultLocalDateArbitrary clone = typedClone();
+		clone.dateBetween.setYearBetween(yearBetween);
+		return clone;
 	}
 
 	@Override

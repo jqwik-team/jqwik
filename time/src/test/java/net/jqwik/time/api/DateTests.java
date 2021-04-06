@@ -174,8 +174,27 @@ class DateTests {
 
 				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date)))
-							.isGreaterThanOrEqualTo(Month.of(startMonth));
+						.isGreaterThanOrEqualTo(Month.of(startMonth));
 					assertThat(DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isLessThanOrEqualTo(Month.of(endMonth));
+					return true;
+				});
+
+			}
+
+			@Property
+			void monthBetweenMinAfterMax(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+
+				Assume.that(startMonth > endMonth);
+
+				Arbitrary<Date> dates = Dates.datesAsDate().monthBetween(startMonth, endMonth);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(
+						DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isGreaterThanOrEqualTo(Month.of(endMonth)
+					);
+					assertThat(
+						DefaultCalendarArbitrary.calendarMonthToMonth(dateToCalendar(date))).isLessThanOrEqualTo(Month.of(startMonth)
+					);
 					return true;
 				});
 
@@ -217,9 +236,9 @@ class DateTests {
 
 			@Property
 			void dayOfMonthBetween(
-					@ForAll("dayOfMonths") int startDayOfMonth,
-					@ForAll("dayOfMonths") int endDayOfMonth,
-					@ForAll Random random
+				@ForAll("dayOfMonths") int startDayOfMonth,
+				@ForAll("dayOfMonths") int endDayOfMonth,
+				@ForAll Random random
 			) {
 
 				Assume.that(startDayOfMonth <= endDayOfMonth);
@@ -317,65 +336,65 @@ class DateTests {
 		@Example
 		void between() {
 			Optional<ExhaustiveGenerator<Date>> optionalGenerator =
-					Dates.datesAsDate()
-						 .between(
-								 getDate(42, Calendar.DECEMBER, 30),
-								 getDate(43, Calendar.JANUARY, 2)
-						 )
-						 .exhaustive();
+				Dates.datesAsDate()
+					 .between(
+						 getDate(42, Calendar.DECEMBER, 30),
+						 getDate(43, Calendar.JANUARY, 2)
+					 )
+					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Date> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(4); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
-					getDate(42, Calendar.DECEMBER, 30),
-					getDate(42, Calendar.DECEMBER, 31),
-					getDate(43, Calendar.JANUARY, 1),
-					getDate(43, Calendar.JANUARY, 2)
+				getDate(42, Calendar.DECEMBER, 30),
+				getDate(42, Calendar.DECEMBER, 31),
+				getDate(43, Calendar.JANUARY, 1),
+				getDate(43, Calendar.JANUARY, 2)
 			);
 		}
 
 		@Example
 		void onlyMonthsWithSameYearAndDayOfMonth() {
 			Optional<ExhaustiveGenerator<Date>> optionalGenerator =
-					Dates.datesAsDate()
-						 .yearBetween(1997, 1997)
-						 .dayOfMonthBetween(17, 17)
-						 .onlyMonths(MARCH, OCTOBER, DECEMBER)
-						 .exhaustive();
+				Dates.datesAsDate()
+					 .yearBetween(1997, 1997)
+					 .dayOfMonthBetween(17, 17)
+					 .onlyMonths(MARCH, OCTOBER, DECEMBER)
+					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Date> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(292); // Cannot know the exact number of filtered elements in advance
 			assertThat(generator).containsExactly(
-					getDate(1997, Calendar.MARCH, 17),
-					getDate(1997, Calendar.OCTOBER, 17),
-					getDate(1997, Calendar.DECEMBER, 17)
+				getDate(1997, Calendar.MARCH, 17),
+				getDate(1997, Calendar.OCTOBER, 17),
+				getDate(1997, Calendar.DECEMBER, 17)
 			);
 		}
 
 		@Example
 		void onlyDaysOfWeekWithSameYearAndMonth() {
 			Optional<ExhaustiveGenerator<Date>> optionalGenerator =
-					Dates.datesAsDate()
-						 .yearBetween(2020, 2020)
-						 .monthBetween(12, 12)
-						 .onlyDaysOfWeek(DayOfWeek.MONDAY, DayOfWeek.THURSDAY)
-						 .exhaustive();
+				Dates.datesAsDate()
+					 .yearBetween(2020, 2020)
+					 .monthBetween(12, 12)
+					 .onlyDaysOfWeek(DayOfWeek.MONDAY, DayOfWeek.THURSDAY)
+					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Date> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(31); // Cannot know the exact number of filtered elements in advance
 			assertThat(generator).containsExactly(
-					getDate(2020, Calendar.DECEMBER, 3),
-					getDate(2020, Calendar.DECEMBER, 7),
-					getDate(2020, Calendar.DECEMBER, 10),
-					getDate(2020, Calendar.DECEMBER, 14),
-					getDate(2020, Calendar.DECEMBER, 17),
-					getDate(2020, Calendar.DECEMBER, 21),
-					getDate(2020, Calendar.DECEMBER, 24),
-					getDate(2020, Calendar.DECEMBER, 28),
-					getDate(2020, Calendar.DECEMBER, 31)
+				getDate(2020, Calendar.DECEMBER, 3),
+				getDate(2020, Calendar.DECEMBER, 7),
+				getDate(2020, Calendar.DECEMBER, 10),
+				getDate(2020, Calendar.DECEMBER, 14),
+				getDate(2020, Calendar.DECEMBER, 17),
+				getDate(2020, Calendar.DECEMBER, 21),
+				getDate(2020, Calendar.DECEMBER, 24),
+				getDate(2020, Calendar.DECEMBER, 28),
+				getDate(2020, Calendar.DECEMBER, 31)
 			);
 		}
 
@@ -390,37 +409,37 @@ class DateTests {
 			Set<Date> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-					getDate(1900, Calendar.JANUARY, 1),
-					getDate(1904, Calendar.FEBRUARY, 29),
-					getDate(2500, Calendar.DECEMBER, 31)
+				getDate(1900, Calendar.JANUARY, 1),
+				getDate(1904, Calendar.FEBRUARY, 29),
+				getDate(2500, Calendar.DECEMBER, 31)
 			);
 		}
 
 		@Example
 		void between() {
 			DateArbitrary dates =
-					Dates.datesAsDate()
-						 .between(getDate(100, Calendar.MARCH, 24), getDate(200, Calendar.NOVEMBER, 10));
+				Dates.datesAsDate()
+					 .between(getDate(100, Calendar.MARCH, 24), getDate(200, Calendar.NOVEMBER, 10));
 			Set<Date> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-					getDate(100, Calendar.MARCH, 24),
-					getDate(104, Calendar.FEBRUARY, 29),
-					getDate(200, Calendar.NOVEMBER, 10)
+				getDate(100, Calendar.MARCH, 24),
+				getDate(104, Calendar.FEBRUARY, 29),
+				getDate(200, Calendar.NOVEMBER, 10)
 			);
 		}
 
 		@Example
 		void betweenMonth() {
 			DateArbitrary dates =
-					Dates.datesAsDate()
-						 .yearBetween(400, 402)
-						 .monthBetween(3, 11);
+				Dates.datesAsDate()
+					 .yearBetween(400, 402)
+					 .monthBetween(3, 11);
 			Set<Date> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-					getDate(400, Calendar.MARCH, 1),
-					getDate(402, Calendar.NOVEMBER, 30)
+				getDate(400, Calendar.MARCH, 1),
+				getDate(402, Calendar.NOVEMBER, 30)
 			);
 		}
 
@@ -488,15 +507,15 @@ class DateTests {
 
 		@Property
 		void atTheEarliestYearNotBelow1(
-				@ForAll @IntRange(min = -5000, max = 0) int year,
-				@ForAll Month month,
-				@ForAll @DayOfMonthRange int day
+			@ForAll @IntRange(min = -5000, max = 0) int year,
+			@ForAll Month month,
+			@ForAll @DayOfMonthRange int day
 		) {
 			//Not existing Dates throws no exception but are changed to another existing date
 			Calendar calendar = new Calendar.Builder().setDate(year, DefaultCalendarArbitrary.monthToCalendarMonth(month), day).build();
 			Date date = calendar.getTime();
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().atTheEarliest(date)
+				() -> Dates.datesAsDate().atTheEarliest(date)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -506,7 +525,7 @@ class DateTests {
 													  .build();
 			Date date = calendar.getTime();
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().atTheEarliest(date)
+				() -> Dates.datesAsDate().atTheEarliest(date)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -514,21 +533,21 @@ class DateTests {
 		void atTheEarliestMinDateAfterMaxDate(@ForAll("dates") Date min, @ForAll("dates") Date max) {
 			Assume.that(min.after(max));
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().atTheLatest(max).atTheEarliest(min)
+				() -> Dates.datesAsDate().atTheLatest(max).atTheEarliest(min)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Property
 		void atTheLatestYearNotBelow1(
-				@ForAll @IntRange(min = -5000, max = 0) int year,
-				@ForAll Month month,
-				@ForAll @DayOfMonthRange int day
+			@ForAll @IntRange(min = -5000, max = 0) int year,
+			@ForAll Month month,
+			@ForAll @DayOfMonthRange int day
 		) {
 			//Not existing Dates throws no exception but are changed to another existing date
 			Calendar calendar = new Calendar.Builder().setDate(year, DefaultCalendarArbitrary.monthToCalendarMonth(month), day).build();
 			Date date = calendar.getTime();
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().atTheLatest(date)
+				() -> Dates.datesAsDate().atTheLatest(date)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -538,7 +557,7 @@ class DateTests {
 													  .build();
 			Date date = calendar.getTime();
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().atTheLatest(date)
+				() -> Dates.datesAsDate().atTheLatest(date)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -546,79 +565,71 @@ class DateTests {
 		void atTheLatestMinDateAfterMaxDate(@ForAll("dates") Date min, @ForAll("dates") Date max) {
 			Assume.that(min.after(max));
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().atTheEarliest(min).atTheLatest(max)
+				() -> Dates.datesAsDate().atTheEarliest(min).atTheLatest(max)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void minYearMustNotBeBelow1() {
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().yearBetween(0, 2000)
+				() -> Dates.datesAsDate().yearBetween(0, 2000)
 			).isInstanceOf(IllegalArgumentException.class);
 
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().yearBetween(-1000, 2000)
+				() -> Dates.datesAsDate().yearBetween(-1000, 2000)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void minYearMustNotBeOver292278993() {
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().yearBetween(292_278_994, 2000)
+				() -> Dates.datesAsDate().yearBetween(292_278_994, 2000)
 			).isInstanceOf(IllegalArgumentException.class);
 
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().yearBetween(Year.MAX_VALUE, 2000)
+				() -> Dates.datesAsDate().yearBetween(Year.MAX_VALUE, 2000)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void maxYearMustNotBeBelow1() {
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().yearBetween(2000, 0)
+				() -> Dates.datesAsDate().yearBetween(2000, 0)
 			).isInstanceOf(IllegalArgumentException.class);
 
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().yearBetween(2000, -1000)
+				() -> Dates.datesAsDate().yearBetween(2000, -1000)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void maxYearMustNotBeOver292278993() {
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().yearBetween(2000, 292_278_994)
+				() -> Dates.datesAsDate().yearBetween(2000, 292_278_994)
 			).isInstanceOf(IllegalArgumentException.class);
 
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().yearBetween(2000, Year.MAX_VALUE)
+				() -> Dates.datesAsDate().yearBetween(2000, Year.MAX_VALUE)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void monthsMustBeBetween1And12() {
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().monthBetween(0, 12)
+				() -> Dates.datesAsDate().monthBetween(0, 12)
 			).isInstanceOf(DateTimeException.class);
 
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().monthBetween(12, 0)
+				() -> Dates.datesAsDate().monthBetween(12, 0)
 			).isInstanceOf(DateTimeException.class);
 
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().monthBetween(1, 13)
+				() -> Dates.datesAsDate().monthBetween(1, 13)
 			).isInstanceOf(DateTimeException.class);
 
 			assertThatThrownBy(
-					() -> Dates.datesAsDate().monthBetween(13, 1)
+				() -> Dates.datesAsDate().monthBetween(13, 1)
 			).isInstanceOf(DateTimeException.class);
-		}
-
-		@Property
-		void monthBetweenMinMonthAfterMaxMonth(@ForAll Month min, @ForAll Month max) {
-			Assume.that(min.compareTo(max) > 0);
-			assertThatThrownBy(
-					() -> Dates.datesAsDate().monthBetween(min, max)
-			).isInstanceOf(IllegalArgumentException.class);
 		}
 
 	}
