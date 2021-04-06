@@ -3,10 +3,10 @@ package net.jqwik.time.internal.properties.arbitraries.valueRanges;
 public class DayOfMonthBetween extends ValueRange<Integer> {
 
 	@Override
-	public void set(Integer min, Integer max) {
+	public DayOfMonthBetween set(Integer min, Integer max) {
 		min = Math.max(1, Math.min(31, min));
 		max = Math.max(1, Math.min(31, max));
-		super.set(min, max);
+		return (DayOfMonthBetween) super.set(min, max);
 	}
 
 	@Override

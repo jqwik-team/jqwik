@@ -149,10 +149,9 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 
 	@Override
 	public CalendarArbitrary yearBetween(Year min, Year max) {
-		YearBetween yearBetween = new YearBetween(true);
-		yearBetween.set(min, max);
+		YearBetween yearBetween = (YearBetween) new YearBetween().useInCalendar().set(min, max);
 		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates.yearBetween(min, max);
+		clone.dates.yearBetween(yearBetween.getMin(), yearBetween.getMax());
 		return clone;
 	}
 
