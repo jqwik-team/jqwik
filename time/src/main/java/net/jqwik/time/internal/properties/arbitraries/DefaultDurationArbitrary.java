@@ -9,6 +9,7 @@ import org.apiguardian.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.arbitraries.*;
+import net.jqwik.time.internal.properties.arbitraries.valueRanges.*;
 
 import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
@@ -19,14 +20,14 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	public static final Duration DEFAULT_MIN = Duration.ofSeconds(Long.MIN_VALUE, 0);
 	public static final Duration DEFAULT_MAX = Duration.ofSeconds(Long.MAX_VALUE, 999_999_999);
 
-	private Duration min = DEFAULT_MIN;
-	private Duration max = DEFAULT_MAX;
-
-	private ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.DEFAULT_PRECISION;
-	private boolean ofPrecisionSet = false;
+	private final DurationBetween durationBetween = new DurationBetween();
+	private final OfPrecision ofPrecision = new OfPrecision();
 
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
+
+		Duration min = durationBetween.getMin() != null ? durationBetween.getMin() : DEFAULT_MIN;
+		Duration max = durationBetween.getMax() != null ? durationBetween.getMax() : DEFAULT_MAX;
 
 		Duration effectiveMin = calculateEffectiveMin(min, ofPrecision);
 		Duration effectiveMax = calculateEffectiveMax(max, ofPrecision);
@@ -35,20 +36,22 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 			throw new IllegalArgumentException("The maximum duration is to soon after the minimum duration.");
 		}
 
-		BigInteger min = calculateValue(effectiveMin, ofPrecision);
-		BigInteger max = calculateValue(effectiveMax, ofPrecision);
+		BigInteger bigIntegerMin = calculateValue(effectiveMin, ofPrecision);
+		BigInteger bigIntegerMax = calculateValue(effectiveMax, ofPrecision);
 
 		Arbitrary<BigInteger> bigIntegers = Arbitraries.bigIntegers()
-													   .between(min, max)
+													   .between(bigIntegerMin, bigIntegerMax)
 													   .withDistribution(RandomDistribution.uniform())
-													   .edgeCases(edgeCases -> edgeCases.includeOnly(min, BigInteger.ZERO, max));
+													   .edgeCases(edgeCases -> edgeCases
+																				   .includeOnly(bigIntegerMin, BigInteger.ZERO, bigIntegerMax));
 
 		return bigIntegers.map(big -> calculateDuration(big, ofPrecision));
 
 	}
 
 	@SuppressWarnings("OverlyComplexMethod")
-	static private Duration calculateEffectiveMin(Duration min, ChronoUnit precision) {
+	static private Duration calculateEffectiveMin(Duration min, OfPrecision ofPrecision) {
+		ChronoUnit precision = ofPrecision.get();
 		try {
 			Duration effective = min;
 			if (precision.compareTo(NANOS) >= 1) {
@@ -91,7 +94,8 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	}
 
 	@SuppressWarnings("OverlyComplexMethod")
-	static private Duration calculateEffectiveMax(Duration max, ChronoUnit precision) {
+	static private Duration calculateEffectiveMax(Duration max, OfPrecision ofPrecision) {
+		ChronoUnit precision = ofPrecision.get();
 		try {
 			Duration effective = max;
 			if (precision.compareTo(NANOS) >= 1) {
@@ -133,7 +137,9 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		}
 	}
 
-	private BigInteger calculateValue(Duration effective, ChronoUnit precision) {
+	private BigInteger calculateValue(Duration effective, OfPrecision ofPrecision) {
+
+		ChronoUnit precision = ofPrecision.get();
 
 		BigInteger helperMultiply = new BigInteger(1_000_000_000 + "");
 		BigInteger helperDivide1000 = new BigInteger(1_000 + "");
@@ -163,7 +169,9 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	}
 
-	static private Duration calculateDuration(BigInteger bigInteger, ChronoUnit precision) {
+	static private Duration calculateDuration(BigInteger bigInteger, OfPrecision ofPrecision) {
+
+		ChronoUnit precision = ofPrecision.get();
 
 		BigInteger helperDivide = new BigInteger(1_000_000_000 + "");
 		BigInteger helperMultiply1000 = new BigInteger(1_000 + "");
@@ -191,43 +199,32 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	}
 
 	private void setOfPrecisionImplicitly(DefaultDurationArbitrary clone, Duration duration) {
-		if (clone.ofPrecisionSet) {
+		if (clone.ofPrecision.isSet()) {
 			return;
 		}
 		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.calculateOfPrecisionFromNanos(duration.getNano());
-		if (clone.ofPrecision.compareTo(ofPrecision) > 0) {
-			clone.ofPrecision = ofPrecision;
+		if (clone.ofPrecision.get().compareTo(ofPrecision) > 0) {
+			clone.ofPrecision.setProgrammatically(ofPrecision);
 		}
 	}
 
-	private void setOfPrecisionImplicitly(DefaultDurationArbitrary clone, Duration min, Duration max) {
-		setOfPrecisionImplicitly(clone, min);
-		setOfPrecisionImplicitly(clone, max);
+	private void setOfPrecisionImplicitly(DefaultDurationArbitrary clone) {
+		setOfPrecisionImplicitly(clone, clone.durationBetween.getMin());
+		setOfPrecisionImplicitly(clone, clone.durationBetween.getMax());
 	}
 
 	@Override
 	public DurationArbitrary between(Duration min, Duration max) {
-		if (min.compareTo(max) > 0) {
-			Duration remember = min;
-			min = max;
-			max = remember;
-		}
 		DefaultDurationArbitrary clone = typedClone();
-		setOfPrecisionImplicitly(clone, min, max);
-		clone.min = min;
-		clone.max = max;
+		clone.durationBetween.set(min, max);
+		setOfPrecisionImplicitly(clone);
 		return clone;
 	}
 
 	@Override
 	public DurationArbitrary ofPrecision(ChronoUnit ofPrecision) {
-		if (!DefaultLocalTimeArbitrary.ALLOWED_PRECISIONS.contains(ofPrecision)) {
-			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
-		}
-
 		DefaultDurationArbitrary clone = typedClone();
-		clone.ofPrecisionSet = true;
-		clone.ofPrecision = ofPrecision;
+		clone.ofPrecision.set(ofPrecision);
 		return clone;
 	}
 

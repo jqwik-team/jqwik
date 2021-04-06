@@ -7,6 +7,7 @@ import org.apiguardian.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.arbitraries.*;
+import net.jqwik.time.internal.properties.arbitraries.valueRanges.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -16,8 +17,7 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 	public static final ZoneOffset DEFAULT_MIN = ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0);
 	public static final ZoneOffset DEFAULT_MAX = ZoneOffset.ofHoursMinutesSeconds(14, 0, 0);
 
-	private ZoneOffset offsetMin = DEFAULT_MIN;
-	private ZoneOffset offsetMax = DEFAULT_MAX;
+	private final ZoneOffsetBetween zoneOffsetBetween = new ZoneOffsetBetween();
 
 	@Override
 	protected Arbitrary<ZoneOffset> arbitrary() {
@@ -42,6 +42,7 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 	}
 
 	private ZoneOffset calculateEffectiveMin() {
+		ZoneOffset offsetMin = zoneOffsetBetween.getMin() != null ? zoneOffsetBetween.getMin() : DEFAULT_MIN;
 		boolean isNegative = offsetMin.getTotalSeconds() < 0;
 		int hour = calculateHourValue(offsetMin);
 		int minute = calculateMinuteValue(offsetMin);
@@ -69,6 +70,7 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 	}
 
 	private ZoneOffset calculateEffectiveMax() {
+		ZoneOffset offsetMax = zoneOffsetBetween.getMax() != null ? zoneOffsetBetween.getMax() : DEFAULT_MAX;
 		boolean isNegative = offsetMax.getTotalSeconds() < 0;
 		int hour = calculateHourValue(offsetMax);
 		int minute = calculateMinuteValue(offsetMax);
@@ -126,21 +128,14 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 
 	@Override
 	public ZoneOffsetArbitrary between(ZoneOffset min, ZoneOffset max) {
-		if (min.getTotalSeconds() > max.getTotalSeconds()) {
-			ZoneOffset remember = min;
-			min = max;
-			max = remember;
-		}
-
 		if (min.getTotalSeconds() < DEFAULT_MIN.getTotalSeconds()
-					|| min.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()
-					|| max.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()) {
+				|| min.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()
+				|| max.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()) {
 			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
 		}
 
 		DefaultZoneOffsetArbitrary clone = typedClone();
-		clone.offsetMin = min;
-		clone.offsetMax = max;
+		clone.zoneOffsetBetween.set(min, max);
 		return clone;
 	}
 

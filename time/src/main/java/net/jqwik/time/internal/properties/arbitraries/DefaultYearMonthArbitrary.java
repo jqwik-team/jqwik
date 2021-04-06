@@ -19,9 +19,9 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 	private static final YearMonth DEFAULT_MIN = YearMonth.of(1900, 1);
 	private static final YearMonth DEFAULT_MAX = YearMonth.of(2500, 12);
 
-	private YearMonthBetween yearMonthBetween = new YearMonthBetween();
-	private AllowedMonths allowedMonths = new AllowedMonths();
-	private WithLeapYears withLeapYears = new WithLeapYears();
+	private final YearMonthBetween yearMonthBetween = new YearMonthBetween();
+	private final AllowedMonths allowedMonths = new AllowedMonths();
+	private final WithLeapYears withLeapYears = new WithLeapYears();
 
 	@Override
 	protected Arbitrary<YearMonth> arbitrary() {

@@ -7,20 +7,25 @@ import org.apiguardian.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.arbitraries.*;
+import net.jqwik.time.internal.properties.arbitraries.valueRanges.*;
 
 import static org.apiguardian.api.API.Status.*;
+
+import static net.jqwik.time.internal.properties.arbitraries.valueRanges.PeriodBetween.*;
 
 @API(status = INTERNAL)
 public class DefaultPeriodArbitrary extends ArbitraryDecorator<Period> implements PeriodArbitrary {
 
-	private final static long DAYS_PER_MONTH = 31L; // The maximum
-	private final static long DAYS_PER_YEAR = 372L; // 31 * 12
+	private final static Period DEFAULT_MIN = Period.ofYears(-1000);
+	private final static Period DEFAULT_MAX = Period.ofYears(1000);
 
-	private Period min = Period.ofYears(-1000);
-	private Period max = Period.ofYears(1000);
+	private final PeriodBetween periodBetween = new PeriodBetween();
 
 	@Override
 	protected Arbitrary<Period> arbitrary() {
+
+		Period min = periodBetween.getMin() != null ? periodBetween.getMin() : DEFAULT_MIN;
+		Period max = periodBetween.getMax() != null ? periodBetween.getMax() : DEFAULT_MAX;
 
 		long minInDays = inDays(min);
 		long maxInDays = inDays(max);
@@ -44,20 +49,10 @@ public class DefaultPeriodArbitrary extends ArbitraryDecorator<Period> implement
 		return Period.of(years, months, days);
 	}
 
-	static private long inDays(Period period) {
-		return period.getYears() * DAYS_PER_YEAR + period.getMonths() * DAYS_PER_MONTH + period.getDays();
-	}
-
 	@Override
 	public PeriodArbitrary between(Period min, Period max) {
-		if (inDays(min) > inDays(max)) {
-			Period remember = min;
-			min = max;
-			max = remember;
-		}
 		DefaultPeriodArbitrary clone = typedClone();
-		clone.min = min;
-		clone.max = max;
+		clone.periodBetween.set(min, max);
 		return clone;
 	}
 

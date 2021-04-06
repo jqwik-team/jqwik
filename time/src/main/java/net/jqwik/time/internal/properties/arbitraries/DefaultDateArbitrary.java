@@ -15,7 +15,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultDateArbitrary extends ArbitraryDecorator<Date> implements DateArbitrary {
 
-	private final CalendarArbitrary calendars = Dates.datesAsCalendar();
+	private CalendarArbitrary calendars = Dates.datesAsCalendar();
 
 	@Override
 	protected Arbitrary<Date> arbitrary() {
@@ -31,56 +31,56 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<Date> implements Da
 	@Override
 	public DateArbitrary atTheEarliest(Date min) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.calendars.atTheEarliest(dateToCalendar(min));
+		clone.calendars = clone.calendars.atTheEarliest(dateToCalendar(min));
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary atTheLatest(Date max) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.calendars.atTheLatest(dateToCalendar(max));
+		clone.calendars = clone.calendars.atTheLatest(dateToCalendar(max));
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary yearBetween(Year min, Year max) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.calendars.yearBetween(min, max);
+		clone.calendars = clone.calendars.yearBetween(min, max);
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary monthBetween(Month min, Month max) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.calendars.monthBetween(min, max);
+		clone.calendars = clone.calendars.monthBetween(min, max);
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary onlyMonths(Month... months) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.calendars.onlyMonths(months);
+		clone.calendars = clone.calendars.onlyMonths(months);
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary dayOfMonthBetween(int min, int max) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.calendars.dayOfMonthBetween(min, max);
+		clone.calendars = clone.calendars.dayOfMonthBetween(min, max);
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.calendars.onlyDaysOfWeek(daysOfWeek);
+		clone.calendars = clone.calendars.onlyDaysOfWeek(daysOfWeek);
 		return clone;
 	}
 
 	@Override
 	public DateArbitrary leapYears(boolean withLeapYears) {
 		DefaultDateArbitrary clone = typedClone();
-		clone.calendars.leapYears(withLeapYears);
+		clone.calendars = clone.calendars.leapYears(withLeapYears);
 		return clone;
 	}
 

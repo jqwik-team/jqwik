@@ -19,11 +19,11 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	public static final LocalDate DEFAULT_MIN_DATE = LocalDate.of(1900, 1, 1);
 	public static final LocalDate DEFAULT_MAX_DATE = LocalDate.of(2500, 12, 31);
 
-	private LocalDateBetween dateBetween = new LocalDateBetween();
-	private DayOfMonthBetween dayOfMonthBetween = new DayOfMonthBetween();
-	private AllowedMonths allowedMonths = new AllowedMonths();
-	private AllowedDayOfWeeks allowedDayOfWeeks = new AllowedDayOfWeeks();
-	private WithLeapYears withLeapYears = new WithLeapYears();
+	private final LocalDateBetween dateBetween = new LocalDateBetween();
+	private final DayOfMonthBetween dayOfMonthBetween = new DayOfMonthBetween();
+	private final AllowedMonths allowedMonths = new AllowedMonths();
+	private final AllowedDayOfWeeks allowedDayOfWeeks = new AllowedDayOfWeeks();
+	private final WithLeapYears withLeapYears = new WithLeapYears();
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {

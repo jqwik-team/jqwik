@@ -16,7 +16,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> implements CalendarArbitrary {
 
-	private final LocalDateArbitrary dates = Dates.dates();
+	private LocalDateArbitrary dates = Dates.dates();
 
 	@Override
 	protected Arbitrary<Calendar> arbitrary() {
@@ -129,7 +129,7 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 		}
 
 		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates.atTheEarliest(calendarToLocalDate(min));
+		clone.dates = clone.dates.atTheEarliest(calendarToLocalDate(min));
 		return clone;
 	}
 
@@ -143,7 +143,7 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 		}
 
 		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates.atTheLatest(calendarToLocalDate(max));
+		clone.dates = clone.dates.atTheLatest(calendarToLocalDate(max));
 		return clone;
 	}
 
@@ -151,42 +151,42 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 	public CalendarArbitrary yearBetween(Year min, Year max) {
 		YearBetween yearBetween = (YearBetween) new YearBetween().useInCalendar().set(min, max);
 		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates.yearBetween(yearBetween.getMin(), yearBetween.getMax());
+		clone.dates = clone.dates.yearBetween(yearBetween.getMin(), yearBetween.getMax());
 		return clone;
 	}
 
 	@Override
 	public CalendarArbitrary monthBetween(Month min, Month max) {
 		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates.monthBetween(min, max);
+		clone.dates = clone.dates.monthBetween(min, max);
 		return clone;
 	}
 
 	@Override
 	public CalendarArbitrary onlyMonths(Month... months) {
 		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates.onlyMonths(months);
+		clone.dates = clone.dates.onlyMonths(months);
 		return clone;
 	}
 
 	@Override
 	public CalendarArbitrary dayOfMonthBetween(int min, int max) {
 		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates.dayOfMonthBetween(min, max);
+		clone.dates = clone.dates.dayOfMonthBetween(min, max);
 		return clone;
 	}
 
 	@Override
 	public CalendarArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
 		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates.onlyDaysOfWeek(daysOfWeek);
+		clone.dates = clone.dates.onlyDaysOfWeek(daysOfWeek);
 		return clone;
 	}
 
 	@Override
 	public CalendarArbitrary leapYears(boolean withLeapYears) {
 		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates.leapYears(withLeapYears);
+		clone.dates = clone.dates.leapYears(withLeapYears);
 		return clone;
 	}
 
