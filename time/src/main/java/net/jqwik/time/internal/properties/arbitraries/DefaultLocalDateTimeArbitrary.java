@@ -6,19 +6,31 @@ import java.time.temporal.*;
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.*;
 import net.jqwik.time.api.arbitraries.*;
+import net.jqwik.time.internal.properties.arbitraries.valueRanges.*;
 
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
-public class DefaultLocalDateTimeArbitrary extends LocalDateTimeSupport<LocalDateTime> implements LocalDateTimeArbitrary {
+public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateTime> implements LocalDateTimeArbitrary {
 
 	private static final LocalDateTime DEFAULT_MIN = LocalDateTime.of(DefaultLocalDateArbitrary.DEFAULT_MIN_DATE, LocalTime.MIN);
 	private static final LocalDateTime DEFAULT_MAX = LocalDateTime.of(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE, LocalTime.MAX);
 
 	private LocalDateTime min = null;
 	private LocalDateTime max = null;
+
+	private LocalDate minDate = null;
+	private LocalDate maxDate = null;
+	private int minDayOfMonth = -1;
+	private int maxDayOfMonth = -1;
+
+	private ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.DEFAULT_PRECISION;
+	private boolean ofPrecisionSet = false;
+
+	private MonthBetween monthBetween;
 
 	@Override
 	protected Arbitrary<LocalDateTime> arbitrary() {
@@ -46,8 +58,8 @@ public class DefaultLocalDateTimeArbitrary extends LocalDateTimeSupport<LocalDat
 	}
 
 	private LocalDateArbitrary setDateParams(LocalDateArbitrary dates) {
-		if (minMonth != null && maxMonth != null) {
-			dates = dates.monthBetween(minMonth, maxMonth);
+		if (monthBetween.getMin() != null && monthBetween.getMax() != null) {
+			dates = dates.monthBetween(monthBetween.getMin(), monthBetween.getMax());
 		}
 		if (minDayOfMonth != -1 && maxDayOfMonth != -1) {
 			dates = dates.dayOfMonthBetween(minDayOfMonth, maxDayOfMonth);
@@ -211,15 +223,8 @@ public class DefaultLocalDateTimeArbitrary extends LocalDateTimeSupport<LocalDat
 
 	@Override
 	public LocalDateTimeArbitrary monthBetween(Month min, Month max) {
-		if (min.compareTo(max) > 0) {
-			Month remember = min;
-			min = max;
-			max = remember;
-		}
-
 		DefaultLocalDateTimeArbitrary clone = typedClone();
-		clone.minMonth = min;
-		clone.maxMonth = max;
+		clone.monthBetween.set(min, max);
 		return clone;
 	}
 
