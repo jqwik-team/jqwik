@@ -1,21 +1,28 @@
 package net.jqwik.time.internal.properties.arbitraries.valueRanges;
 
-public abstract class ValueRange<T, U> {
+public abstract class ValueRange<T> {
 
-	protected T min;
-	protected T max;
+	private T min;
+	private T max;
 
-	private void exceptionCheck() {
+	protected void exceptionCheck(Parameter parameter) {
 		//Override if needed
 		//do nothing in default case
 	}
 
-	protected abstract void minMaxChanger();
+	protected void minMaxChanger(Parameter parameter) {
+		//Override if needed
+		//do nothing in default case
+	}
 
 	public void set(T min, T max) {
-		exceptionCheck();
-		this.min = min;
-		this.max = max;
+		min = min != null ? min : this.min;
+		max = max != null ? max : this.max;
+		Parameter parameter = new Parameter(min, max);
+		minMaxChanger(parameter);
+		exceptionCheck(parameter);
+		this.min = parameter.min;
+		this.max = parameter.max;
 	}
 
 	public T getMin() {
@@ -24,6 +31,30 @@ public abstract class ValueRange<T, U> {
 
 	public T getMax() {
 		return max;
+	}
+
+	protected class Parameter {
+		private T min;
+		private T max;
+
+		private Parameter(T min, T max) {
+			this.min = min;
+			this.max = max;
+		}
+
+		protected T getMin() {
+			return min;
+		}
+
+		protected T getMax() {
+			return max;
+		}
+
+		protected void changeMinMax() {
+			T remember = min;
+			min = max;
+			max = remember;
+		}
 	}
 
 }
