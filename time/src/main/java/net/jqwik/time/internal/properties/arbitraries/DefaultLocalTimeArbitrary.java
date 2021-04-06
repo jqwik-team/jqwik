@@ -2,7 +2,6 @@ package net.jqwik.time.internal.properties.arbitraries;
 
 import java.time.*;
 import java.time.temporal.*;
-import java.util.*;
 
 import org.apiguardian.api.*;
 
@@ -17,23 +16,11 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> implements LocalTimeArbitrary {
 
-	public final static ChronoUnit DEFAULT_PRECISION = SECONDS;
-	public final static Set<ChronoUnit> ALLOWED_PRECISIONS = new HashSet<>(Arrays.asList(HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS));
-
-	private LocalTime timeMin = LocalTime.MIN;
-	private LocalTime timeMax = LocalTime.MAX;
-
-	private int hourMin = 0;
-	private int hourMax = 23;
-
-	private int minuteMin = 0;
-	private int minuteMax = 59;
-
-	private int secondMin = 0;
-	private int secondMax = 59;
-
-	private ChronoUnit ofPrecision = DEFAULT_PRECISION;
-	private boolean ofPrecisionSet = false;
+	private final LocalTimeBetween timeBetween = new LocalTimeBetween();
+	private final HourBetween hourBetween = (HourBetween) new HourBetween().set(0, 23);
+	private final MinuteBetween minuteBetween = (MinuteBetween) new MinuteBetween().set(0, 59);
+	private final SecondBetween secondBetween = (SecondBetween) new SecondBetween().set(0, 59);
+	private final OfPrecision ofPrecision = new OfPrecision();
 
 	@Override
 	protected Arbitrary<LocalTime> arbitrary() {
@@ -54,18 +41,18 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		Arbitrary<LocalTime> localTimes = longs.map(v -> calculateLocalTime(v, effectiveMin, ofPrecision));
 
 		localTimes = localTimes.filter(
-				v -> v.getMinute() >= minuteMin
-							 && v.getMinute() <= minuteMax
-							 && v.getSecond() >= secondMin
-							 && v.getSecond() <= secondMax
+			v -> v.getMinute() >= minuteBetween.getMin()
+					 && v.getMinute() <= minuteBetween.getMax()
+					 && v.getSecond() >= secondBetween.getMin()
+					 && v.getSecond() <= secondBetween.getMax()
 		);
 
 		return localTimes;
 
 	}
 
-	static private LocalTime calculateLocalTime(long longAdd, LocalTime effectiveMin, ChronoUnit precision) {
-		switch (precision) {
+	static private LocalTime calculateLocalTime(long longAdd, LocalTime effectiveMin, OfPrecision precision) {
+		switch (precision.get()) {
 			case HOURS:
 				return effectiveMin.plusHours(longAdd);
 			case MINUTES:
@@ -82,7 +69,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	private long calculateLongEnd(LocalTime effectiveMin, LocalTime effectiveMax) {
-		switch (ofPrecision) {
+		switch (ofPrecision.get()) {
 			case HOURS:
 				return HOURS.between(effectiveMin, effectiveMax);
 			case MINUTES:
@@ -99,13 +86,13 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	private LocalTime calculateEffectiveMin() {
-		LocalTime effective = timeMin;
-		if (hourMin > effective.getHour()) {
-			effective = effective.withHour(hourMin);
-			if (minuteMin > effective.getMinute()) {
-				effective = effective.withMinute(minuteMin);
-				if (secondMin > effective.getSecond()) {
-					effective = effective.withSecond(secondMin);
+		LocalTime effective = timeBetween.getMin() != null ? timeBetween.getMin() : LocalTime.MIN;
+		if (hourBetween.getMin() > effective.getHour()) {
+			effective = effective.withHour(hourBetween.getMin());
+			if (minuteBetween.getMin() > effective.getMinute()) {
+				effective = effective.withMinute(minuteBetween.getMin());
+				if (secondBetween.getMin() > effective.getSecond()) {
+					effective = effective.withSecond(secondBetween.getMin());
 					effective = effective.withNano(0);
 				}
 			}
@@ -153,13 +140,13 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	private LocalTime calculateEffectiveMax() {
-		LocalTime effective = timeMax;
-		if (hourMax < effective.getHour()) {
-			effective = effective.withHour(hourMax);
-			if (minuteMax < effective.getMinute()) {
-				effective = effective.withMinute(minuteMax);
-				if (secondMax < effective.getSecond()) {
-					effective = effective.withSecond(secondMax);
+		LocalTime effective = timeBetween.getMax() != null ? timeBetween.getMax() : LocalTime.MAX;
+		if (hourBetween.getMax() < effective.getHour()) {
+			effective = effective.withHour(hourBetween.getMax());
+			if (minuteBetween.getMax() < effective.getMinute()) {
+				effective = effective.withMinute(minuteBetween.getMax());
+				if (secondBetween.getMax() < effective.getSecond()) {
+					effective = effective.withSecond(secondBetween.getMax());
 					effective = effective.withNano(999_999_999);
 				}
 			}
@@ -189,7 +176,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	public static ChronoUnit calculateOfPrecisionFromNanos(int nanos) {
-		ChronoUnit ofPrecision = DEFAULT_PRECISION;
+		ChronoUnit ofPrecision = OfPrecision.DEFAULT;
 		if (nanos % 1_000 != 0) {
 			ofPrecision = NANOS;
 		} else if ((nanos / 1_000) % 1_000 != 0) {
@@ -206,102 +193,56 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	private void setOfPrecisionImplicitly(DefaultLocalTimeArbitrary clone, LocalTime time) {
-		if (clone.ofPrecisionSet) {
+		if (clone.ofPrecision.isSet()) {
 			return;
 		}
 		ChronoUnit ofPrecision = calculateOfPrecisionFromTime(time);
-		if (clone.ofPrecision.compareTo(ofPrecision) > 0) {
-			clone.ofPrecision = ofPrecision;
+		if (clone.ofPrecision.get().compareTo(ofPrecision) > 0) {
+			clone.ofPrecision.setProgrammatically(ofPrecision);
 		}
 	}
 
 	@Override
 	public LocalTimeArbitrary atTheEarliest(LocalTime min) {
-		if ((timeMax != null) && min.isAfter(timeMax)) {
-			throw new IllegalArgumentException("Minimum time must not be after maximum time");
-		}
-
 		DefaultLocalTimeArbitrary clone = typedClone();
+		clone.timeBetween.set(min, null);
 		setOfPrecisionImplicitly(clone, min);
-		clone.timeMin = min;
 		return clone;
 	}
 
 	@Override
 	public LocalTimeArbitrary atTheLatest(LocalTime max) {
-		if ((timeMin != null) && max.isBefore(timeMin)) {
-			throw new IllegalArgumentException("Maximum time must not be before minimum time");
-		}
-
 		DefaultLocalTimeArbitrary clone = typedClone();
+		clone.timeBetween.set(null, max);
 		setOfPrecisionImplicitly(clone, max);
-		clone.timeMax = max;
 		return clone;
 	}
 
 	@Override
 	public LocalTimeArbitrary hourBetween(int min, int max) {
-		if (min > max) {
-			int remember = min;
-			min = max;
-			max = remember;
-		}
-
-		if (min < 0 || max > 23) {
-			throw new IllegalArgumentException("Hour value must be between 0 and 23.");
-		}
-
 		DefaultLocalTimeArbitrary clone = typedClone();
-		clone.hourMin = min;
-		clone.hourMax = max;
+		clone.hourBetween.set(min, max);
 		return clone;
 	}
 
 	@Override
 	public LocalTimeArbitrary minuteBetween(int min, int max) {
-		if (min > max) {
-			int remember = min;
-			min = max;
-			max = remember;
-		}
-
-		if (min < 0 || max > 59) {
-			throw new IllegalArgumentException("Minute value must be between 0 and 59.");
-		}
-
 		DefaultLocalTimeArbitrary clone = typedClone();
-		clone.minuteMin = min;
-		clone.minuteMax = max;
+		clone.minuteBetween.set(min, max);
 		return clone;
 	}
 
 	@Override
 	public LocalTimeArbitrary secondBetween(int min, int max) {
-		if (min > max) {
-			int remember = min;
-			min = max;
-			max = remember;
-		}
-
-		if (min < 0 || max > 59) {
-			throw new IllegalArgumentException("Second value must be between 0 and 59.");
-		}
-
 		DefaultLocalTimeArbitrary clone = typedClone();
-		clone.secondMin = min;
-		clone.secondMax = max;
+		clone.secondBetween.set(min, max);
 		return clone;
 	}
 
 	@Override
 	public LocalTimeArbitrary ofPrecision(ChronoUnit ofPrecision) {
-		if (!ALLOWED_PRECISIONS.contains(ofPrecision)) {
-			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
-		}
-
 		DefaultLocalTimeArbitrary clone = typedClone();
-		clone.ofPrecisionSet = true;
-		clone.ofPrecision = ofPrecision;
+		clone.ofPrecision.set(ofPrecision);
 		return clone;
 	}
 

@@ -19,11 +19,11 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	private static final LocalDateTime DEFAULT_MIN = LocalDateTime.of(DefaultLocalDateArbitrary.DEFAULT_MIN_DATE, LocalTime.MIN);
 	private static final LocalDateTime DEFAULT_MAX = LocalDateTime.of(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE, LocalTime.MAX);
 
-	private LocalDateTimeBetween dateTimeBetween = new LocalDateTimeBetween();
-	private LocalDateBetween dateBetween = new LocalDateBetween();
-	private DayOfMonthBetween dayOfMonthBetween = new DayOfMonthBetween();
-	private MonthBetween monthBetween = new MonthBetween();
-	private OfPrecision ofPrecision = new OfPrecision();
+	private final LocalDateTimeBetween dateTimeBetween = new LocalDateTimeBetween();
+	private final LocalDateBetween dateBetween = new LocalDateBetween();
+	private final DayOfMonthBetween dayOfMonthBetween = new DayOfMonthBetween();
+	private final MonthBetween monthBetween = new MonthBetween();
+	private final OfPrecision ofPrecision = new OfPrecision();
 
 	@Override
 	protected Arbitrary<LocalDateTime> arbitrary() {
