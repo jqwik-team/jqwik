@@ -129,6 +129,7 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 	@Override
 	public ZoneOffsetArbitrary between(ZoneOffset min, ZoneOffset max) {
 		if (min.getTotalSeconds() < DEFAULT_MIN.getTotalSeconds()
+				|| max.getTotalSeconds() < DEFAULT_MIN.getTotalSeconds()
 				|| min.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()
 				|| max.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()) {
 			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
