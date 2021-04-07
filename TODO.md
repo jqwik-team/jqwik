@@ -27,6 +27,10 @@
         - Apply annotation wherever reporting is test collateral
         - Make it configurable, e.g. `jqwik.reporting.statistics.onfailureonly`
       
+    - Inherit `@Group` annotated inner classes when reusing a test container through "extends."
+      See https://github.com/jlink/jqwik/issues/179
+      
+
 - 1.5.x
 
     - Decimals/Floats Arbitraries:
