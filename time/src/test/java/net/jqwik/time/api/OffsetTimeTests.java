@@ -1532,28 +1532,6 @@ class OffsetTimeTests {
 		class InvalidValues {
 
 			@Property
-			void minTimeAfterMaxTime(@ForAll("localTimes") LocalTime minTime, @ForAll("localTimes") LocalTime maxTime) {
-
-				Assume.that(minTime.isAfter(maxTime));
-
-				assertThatThrownBy(
-						() -> Times.offsetTimes().atTheLatest(maxTime).atTheEarliest(minTime)
-				).isInstanceOf(IllegalArgumentException.class);
-
-			}
-
-			@Property
-			void maxTimeBeforeMinTime(@ForAll("localTimes") LocalTime minTime, @ForAll("localTimes") LocalTime maxTime) {
-
-				Assume.that(maxTime.isBefore(minTime));
-
-				assertThatThrownBy(
-						() -> Times.offsetTimes().atTheEarliest(minTime).atTheLatest(maxTime)
-				).isInstanceOf(IllegalArgumentException.class);
-
-			}
-
-			@Property
 			void minMaxSecond(@ForAll int minSecond, @ForAll int maxSecond) {
 
 				Assume.that(minSecond < 0 || minSecond > 59 || maxSecond < 0 || maxSecond > 59);

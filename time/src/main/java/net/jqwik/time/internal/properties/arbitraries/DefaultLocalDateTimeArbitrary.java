@@ -30,9 +30,6 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 
 		LocalDateTime effectiveMin = calculateEffectiveMin();
 		LocalDateTime effectiveMax = calculateEffectiveMax(effectiveMin);
-		if (effectiveMax.isBefore(effectiveMin)) {
-			throw new IllegalArgumentException("The maximum date time is too soon after the minimum date time.");
-		}
 
 		LocalDateArbitrary dates = Dates.dates();
 		TimeArbitraries times = generateTimeArbitraries(effectiveMin, effectiveMax, ofPrecision);

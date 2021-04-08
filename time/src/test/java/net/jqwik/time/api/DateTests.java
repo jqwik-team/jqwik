@@ -72,12 +72,50 @@ class DateTests {
 			}
 
 			@Property
+			void atTheEarliestAtTheLatestMinAfterMax(
+				@ForAll("dates") Date startDate,
+				@ForAll("dates") Date endDate,
+				@ForAll Random random
+			) {
+
+				Assume.that(startDate.after(endDate));
+
+				Arbitrary<Date> dates = Dates.datesAsDate().atTheEarliest(startDate).atTheLatest(endDate);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(date).isAfterOrEqualTo(endDate);
+					assertThat(date).isBeforeOrEqualTo(startDate);
+					return true;
+				});
+
+			}
+
+			@Property
 			void atTheLatest(@ForAll("dates") Date endDate, @ForAll Random random) {
 
 				Arbitrary<Date> dates = Dates.datesAsDate().atTheLatest(endDate);
 
 				assertAllGenerated(dates.generator(1000, true), random, date -> {
 					assertThat(date).isBeforeOrEqualTo(endDate);
+					return true;
+				});
+
+			}
+
+			@Property
+			void atTheLatestAtTheEarliestMinAfterMax(
+				@ForAll("dates") Date startDate,
+				@ForAll("dates") Date endDate,
+				@ForAll Random random
+			) {
+
+				Assume.that(startDate.after(endDate));
+
+				Arbitrary<Date> dates = Dates.datesAsDate().atTheLatest(endDate).atTheEarliest(startDate);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(date).isAfterOrEqualTo(endDate);
+					assertThat(date).isBeforeOrEqualTo(startDate);
 					return true;
 				});
 
@@ -530,14 +568,6 @@ class DateTests {
 		}
 
 		@Property
-		void atTheEarliestMinDateAfterMaxDate(@ForAll("dates") Date min, @ForAll("dates") Date max) {
-			Assume.that(min.after(max));
-			assertThatThrownBy(
-				() -> Dates.datesAsDate().atTheLatest(max).atTheEarliest(min)
-			).isInstanceOf(IllegalArgumentException.class);
-		}
-
-		@Property
 		void atTheLatestYearNotBelow1(
 			@ForAll @IntRange(min = -5000, max = 0) int year,
 			@ForAll Month month,
@@ -558,14 +588,6 @@ class DateTests {
 			Date date = calendar.getTime();
 			assertThatThrownBy(
 				() -> Dates.datesAsDate().atTheLatest(date)
-			).isInstanceOf(IllegalArgumentException.class);
-		}
-
-		@Property
-		void atTheLatestMinDateAfterMaxDate(@ForAll("dates") Date min, @ForAll("dates") Date max) {
-			Assume.that(min.after(max));
-			assertThatThrownBy(
-				() -> Dates.datesAsDate().atTheEarliest(min).atTheLatest(max)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 

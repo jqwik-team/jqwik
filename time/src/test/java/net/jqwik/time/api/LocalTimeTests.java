@@ -143,12 +143,50 @@ class LocalTimeTests {
 			}
 
 			@Property
+			void atTheEarliestAtTheLatestMinAfterMax(
+				@ForAll("times") LocalTime startTime,
+				@ForAll("times") LocalTime endTime,
+				@ForAll Random random
+			) {
+
+				Assume.that(startTime.isAfter(endTime));
+
+				Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).atTheLatest(endTime);
+
+				assertAllGenerated(times.generator(1000), random, time -> {
+					assertThat(time).isAfterOrEqualTo(endTime);
+					assertThat(time).isBeforeOrEqualTo(startTime);
+					return true;
+				});
+
+			}
+
+			@Property
 			void atTheLatest(@ForAll("times") LocalTime endTime, @ForAll Random random) {
 
 				Arbitrary<LocalTime> times = Times.times().atTheLatest(endTime);
 
 				assertAllGenerated(times.generator(1000), random, time -> {
 					assertThat(time).isBeforeOrEqualTo(endTime);
+					return true;
+				});
+
+			}
+
+			@Property
+			void atTheLatestAtTheEarliestMinAfterMax(
+				@ForAll("times") LocalTime startTime,
+				@ForAll("times") LocalTime endTime,
+				@ForAll Random random
+			) {
+
+				Assume.that(startTime.isAfter(endTime));
+
+				Arbitrary<LocalTime> times = Times.times().atTheLatest(endTime).atTheEarliest(startTime);
+
+				assertAllGenerated(times.generator(1000), random, time -> {
+					assertThat(time).isAfterOrEqualTo(endTime);
+					assertThat(time).isBeforeOrEqualTo(startTime);
 					return true;
 				});
 
@@ -1337,28 +1375,6 @@ class LocalTimeTests {
 
 		@Group
 		class InvalidValues {
-
-			@Property
-			void minTimeAfterMaxTime(@ForAll("times") LocalTime minTime, @ForAll("times") LocalTime maxTime) {
-
-				Assume.that(minTime.isAfter(maxTime));
-
-				assertThatThrownBy(
-						() -> Times.times().atTheLatest(maxTime).atTheEarliest(minTime)
-				).isInstanceOf(IllegalArgumentException.class);
-
-			}
-
-			@Property
-			void maxTimeBeforeMinTime(@ForAll("times") LocalTime minTime, @ForAll("times") LocalTime maxTime) {
-
-				Assume.that(maxTime.isBefore(minTime));
-
-				assertThatThrownBy(
-						() -> Times.times().atTheEarliest(minTime).atTheLatest(maxTime)
-				).isInstanceOf(IllegalArgumentException.class);
-
-			}
 
 			@Property
 			void minMaxSecond(@ForAll int minSecond, @ForAll int maxSecond) {
