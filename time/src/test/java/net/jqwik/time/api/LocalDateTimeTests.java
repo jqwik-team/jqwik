@@ -138,12 +138,50 @@ class LocalDateTimeTests {
 			}
 
 			@Property
+			void atTheEarliestAtTheLatestMinAfterMax(
+				@ForAll("dateTimes") LocalDateTime min,
+				@ForAll("dateTimes") LocalDateTime max,
+				@ForAll Random random
+			) {
+
+				Assume.that(min.isAfter(max));
+
+				Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().atTheEarliest(min).atTheLatest(max);
+
+				assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+					assertThat(dateTime).isAfterOrEqualTo(max);
+					assertThat(dateTime).isBeforeOrEqualTo(min);
+					return true;
+				});
+
+			}
+
+			@Property
 			void atTheLatest(@ForAll("dateTimes") LocalDateTime max, @ForAll Random random) {
 
 				Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().atTheLatest(max);
 
 				assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 					assertThat(dateTime).isBeforeOrEqualTo(max);
+					return true;
+				});
+
+			}
+
+			@Property
+			void atTheLatestAtTheEarliestMinAfterMax(
+				@ForAll("dateTimes") LocalDateTime min,
+				@ForAll("dateTimes") LocalDateTime max,
+				@ForAll Random random
+			) {
+
+				Assume.that(min.isAfter(max));
+
+				Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().atTheLatest(max).atTheEarliest(min);
+
+				assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+					assertThat(dateTime).isAfterOrEqualTo(max);
+					assertThat(dateTime).isBeforeOrEqualTo(min);
 					return true;
 				});
 
@@ -1631,14 +1669,6 @@ class LocalDateTimeTests {
 			}
 
 			@Property
-			void atTheEarliestMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max) {
-				Assume.that(min.isAfter(max));
-				assertThatThrownBy(
-						() -> DateTimes.dateTimes().atTheLatest(max).atTheEarliest(min)
-				).isInstanceOf(IllegalArgumentException.class);
-			}
-
-			@Property
 			void atTheLatestYearMustNotBelow1(
 					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
 					@ForAll @LeapYears(withLeapYears = false) LocalDate date,
@@ -1648,22 +1678,6 @@ class LocalDateTimeTests {
 				LocalDateTime dateTime = LocalDateTime.of(date, time);
 				assertThatThrownBy(
 						() -> DateTimes.dateTimes().atTheLatest(dateTime)
-				).isInstanceOf(IllegalArgumentException.class);
-			}
-
-			@Property
-			void atTheLatestMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max) {
-				Assume.that(min.isAfter(max));
-				assertThatThrownBy(
-						() -> DateTimes.dateTimes().atTheEarliest(min).atTheLatest(max)
-				).isInstanceOf(IllegalArgumentException.class);
-			}
-
-			@Property
-			void dateBetweenMinAfterMax(@ForAll LocalDate min, @ForAll LocalDate max) {
-				Assume.that(min.isAfter(max));
-				assertThatThrownBy(
-						() -> DateTimes.dateTimes().dateBetween(min, max)
 				).isInstanceOf(IllegalArgumentException.class);
 			}
 

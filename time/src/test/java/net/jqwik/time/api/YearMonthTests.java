@@ -60,6 +60,25 @@ class YearMonthTests {
 			}
 
 			@Property
+			void atTheEarliestAtTheLatestMinAfterMax(
+				@ForAll("yearMonths") YearMonth min,
+				@ForAll("yearMonths") YearMonth max,
+				@ForAll Random random
+			) {
+
+				Assume.that(min.isAfter(max));
+
+				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().atTheEarliest(min).atTheLatest(max);
+
+				assertAllGenerated(yearMonths.generator(1000, true), random, ym -> {
+					assertThat(ym).isGreaterThanOrEqualTo(max);
+					assertThat(ym).isLessThanOrEqualTo(min);
+					return true;
+				});
+
+			}
+
+			@Property
 			void atTheLatest(@ForAll("yearMonths") YearMonth yearMonth, @ForAll Random random) {
 
 				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().atTheLatest(yearMonth);
@@ -72,10 +91,29 @@ class YearMonthTests {
 			}
 
 			@Property
+			void atTheLatestAtTheEarliestMinAfterMax(
+				@ForAll("yearMonths") YearMonth min,
+				@ForAll("yearMonths") YearMonth max,
+				@ForAll Random random
+			) {
+
+				Assume.that(min.isAfter(max));
+
+				Arbitrary<YearMonth> yearMonths = Dates.yearMonths().atTheLatest(max).atTheEarliest(min);
+
+				assertAllGenerated(yearMonths.generator(1000, true), random, ym -> {
+					assertThat(ym).isGreaterThanOrEqualTo(max);
+					assertThat(ym).isLessThanOrEqualTo(min);
+					return true;
+				});
+
+			}
+
+			@Property
 			void between(
-					@ForAll("yearMonths") YearMonth startYearMonth,
-					@ForAll("yearMonths") YearMonth endYearMonth,
-					@ForAll Random random
+				@ForAll("yearMonths") YearMonth startYearMonth,
+				@ForAll("yearMonths") YearMonth endYearMonth,
+				@ForAll Random random
 			) {
 
 				Assume.that(!startYearMonth.isAfter(endYearMonth));
@@ -343,22 +381,6 @@ class YearMonthTests {
 		void atTheLatestYearMustNotBeBelow1(@ForAll @IntRange(min = -999_999_999, max = 0) int year, @ForAll Month month) {
 			assertThatThrownBy(
 					() -> Dates.yearMonths().atTheLatest(YearMonth.of(year, month))
-			).isInstanceOf(IllegalArgumentException.class);
-		}
-
-		@Property
-		void maxYearMonthBeforeMinYearMonth(@ForAll("yearMonths") YearMonth startYearMonth, @ForAll("yearMonths") YearMonth endYearMonth) {
-			Assume.that(startYearMonth.isAfter(endYearMonth));
-			assertThatThrownBy(
-					() -> Dates.yearMonths().atTheEarliest(startYearMonth).atTheLatest(endYearMonth)
-			).isInstanceOf(IllegalArgumentException.class);
-		}
-
-		@Property
-		void mainYearMonthAfterMaxYearMonth(@ForAll("yearMonths") YearMonth startYearMonth, @ForAll("yearMonths") YearMonth endYearMonth) {
-			Assume.that(startYearMonth.isAfter(endYearMonth));
-			assertThatThrownBy(
-					() -> Dates.yearMonths().atTheLatest(endYearMonth).atTheEarliest(startYearMonth)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 

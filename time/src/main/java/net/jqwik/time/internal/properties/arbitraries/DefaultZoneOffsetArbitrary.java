@@ -14,8 +14,8 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> implements ZoneOffsetArbitrary {
 
-	public static final ZoneOffset DEFAULT_MIN = ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0);
-	public static final ZoneOffset DEFAULT_MAX = ZoneOffset.ofHoursMinutesSeconds(14, 0, 0);
+	public static final ZoneOffset DEFAULT_MIN = ZoneOffset.ofHoursMinutesSeconds(14, 0, 0);
+	public static final ZoneOffset DEFAULT_MAX = ZoneOffset.ofHoursMinutesSeconds(-12, 0, 0);
 
 	private final ZoneOffsetBetween zoneOffsetBetween = new ZoneOffsetBetween();
 
@@ -25,28 +25,28 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 		ZoneOffset effectiveMin = calculateEffectiveMin();
 		ZoneOffset effectiveMax = calculateEffectiveMax();
 
-		if (effectiveMin.getTotalSeconds() > effectiveMax.getTotalSeconds()) {
+		if (effectiveMin.compareTo(effectiveMax) > 0) {
 			throw new IllegalArgumentException("With this configuration is no value possible.");
 		}
 
-		int min = calculateIndex(effectiveMin);
-		int max = calculateIndex(effectiveMax);
+		int maxInt = calculateIndex(effectiveMin);
+		int minInt = calculateIndex(effectiveMax);
 
 		Arbitrary<Integer> indexes = Arbitraries.integers()
 												.withDistribution(RandomDistribution.uniform())
-												.between(min, max)
-												.edgeCases(edgeCases -> edgeCases.includeOnly(min, 0, max));
+												.between(minInt, maxInt)
+												.edgeCases(edgeCases -> edgeCases.includeOnly(minInt, 0, maxInt));
 
 		return indexes.map(DefaultZoneOffsetArbitrary::calculateOffset);
 
 	}
 
-	private ZoneOffset calculateEffectiveMin() {
-		ZoneOffset offsetMin = zoneOffsetBetween.getMin() != null ? zoneOffsetBetween.getMin() : DEFAULT_MIN;
-		boolean isNegative = offsetMin.getTotalSeconds() < 0;
-		int hour = calculateHourValue(offsetMin);
-		int minute = calculateMinuteValue(offsetMin);
-		int second = calculateSecondValue(offsetMin);
+	private ZoneOffset calculateEffectiveMax() {
+		ZoneOffset offsetMax = zoneOffsetBetween.getMax() != null ? zoneOffsetBetween.getMax() : DEFAULT_MAX;
+		boolean isNegative = offsetMax.getTotalSeconds() < 0;
+		int hour = calculateHourValue(offsetMax);
+		int minute = calculateMinuteValue(offsetMax);
+		int second = calculateSecondValue(offsetMax);
 		if (second != 0) {
 			if (!isNegative) {
 				minute++;
@@ -69,12 +69,12 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 		return ZoneOffset.ofHoursMinutes(hour, minute);
 	}
 
-	private ZoneOffset calculateEffectiveMax() {
-		ZoneOffset offsetMax = zoneOffsetBetween.getMax() != null ? zoneOffsetBetween.getMax() : DEFAULT_MAX;
-		boolean isNegative = offsetMax.getTotalSeconds() < 0;
-		int hour = calculateHourValue(offsetMax);
-		int minute = calculateMinuteValue(offsetMax);
-		int second = calculateSecondValue(offsetMax);
+	private ZoneOffset calculateEffectiveMin() {
+		ZoneOffset offsetMin = zoneOffsetBetween.getMin() != null ? zoneOffsetBetween.getMin() : DEFAULT_MIN;
+		boolean isNegative = offsetMin.getTotalSeconds() < 0;
+		int hour = calculateHourValue(offsetMin);
+		int minute = calculateMinuteValue(offsetMin);
+		int second = calculateSecondValue(offsetMin);
 		if (second != 0) {
 			if (isNegative) {
 				minute++;
@@ -128,10 +128,10 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 
 	@Override
 	public ZoneOffsetArbitrary between(ZoneOffset min, ZoneOffset max) {
-		if (min.getTotalSeconds() < DEFAULT_MIN.getTotalSeconds()
-				|| max.getTotalSeconds() < DEFAULT_MIN.getTotalSeconds()
-				|| min.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()
-				|| max.getTotalSeconds() > DEFAULT_MAX.getTotalSeconds()) {
+		if (min.compareTo(DEFAULT_MAX) > 0
+				|| max.compareTo(DEFAULT_MAX) > 0
+				|| min.compareTo(DEFAULT_MIN) < 0
+				|| max.compareTo(DEFAULT_MIN) < 0) {
 			throw new IllegalArgumentException("Offset must be between -12:00:00 and +14:00:00.");
 		}
 

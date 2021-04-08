@@ -2,7 +2,7 @@ package net.jqwik.time.internal.properties.arbitraries.valueRanges;
 
 import java.time.*;
 
-public class PeriodBetween extends ValueRange<Period> {
+public class PeriodBetween extends Between<Period> {
 
 	public final static long DAYS_PER_MONTH = 31L; // The maximum
 	public final static long DAYS_PER_YEAR = 372L; // 31 * 12
@@ -12,10 +12,11 @@ public class PeriodBetween extends ValueRange<Period> {
 	}
 
 	@Override
-	protected void minMaxChanger(Parameter parameter) {
-		if (inDays(parameter.getMin()) > inDays(parameter.getMax())) {
-			parameter.changeMinMax();
+	protected boolean minIsBeforeMax(Period min, Period max) {
+		if (inDays(min) > inDays(max)) {
+			return false;
 		}
+		return true;
 	}
 
 }
