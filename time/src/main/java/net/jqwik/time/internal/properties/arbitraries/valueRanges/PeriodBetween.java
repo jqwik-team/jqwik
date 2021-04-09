@@ -13,10 +13,7 @@ public class PeriodBetween extends Between<Period> {
 
 	@Override
 	protected boolean minIsBeforeMax(Period min, Period max) {
-		if (inDays(min) > inDays(max)) {
-			return false;
-		}
-		return true;
+		return inDays(min) <= inDays(max);
 	}
 
 }
