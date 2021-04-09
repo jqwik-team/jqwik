@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.edgeCases.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -83,23 +84,34 @@ class ArrayArbitraryTests {
 		});
 	}
 
-	@Example
-	void edgeCases() {
-		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
-		ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
-		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+	@Group
+	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
+			return Arbitraries.of(arbitrary);
+		}
+
+		@Example
+		void edgeCases() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 				new Integer[]{},
 				new Integer[]{-10},
 				new Integer[]{10}
-		);
-		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(3);
-	}
+			);
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(3);
+		}
 
-	@Example
-	void edgeCasesAreFilteredByUniquenessConstraints() {
-		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
-		ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class).ofSize(2).uniqueElements(i -> i);
-		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
+		@Example
+		void edgeCasesAreFilteredByUniquenessConstraints() {
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
+			ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class).ofSize(2).uniqueElements(i -> i);
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
+		}
 	}
 
 	private boolean isUniqueModulo(Integer[] array, int modulo) {

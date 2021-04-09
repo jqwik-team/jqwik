@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.edgeCases.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -113,7 +114,15 @@ class MapArbitraryTests {
 	}
 
 	@Group
-	class EdgeCasesGeneration {
+	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
+			Arbitrary<Integer> values = Arbitraries.of(10, 100);
+			Arbitrary<Map<String, Integer>> arbitrary = Arbitraries.maps(keys, values);
+			return Arbitraries.of(arbitrary);
+		}
 
 		@Example
 		void edgeCases() {

@@ -13,16 +13,28 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
-class ArbitrariesEdgeCasesTests {
+class ArbitrariesEdgeCasesTests implements GenericEdgeCasesProperties {
+
+	@Override
+	public Arbitrary<Arbitrary<?>> arbitraries() {
+		return Arbitraries.of(
+			entriesArbitrary(),
+			Arbitraries.just("abc"),
+			Arbitraries.create(() -> "new string"),
+			recursiveArbitrary(),
+			Arbitraries.shuffle(1, 2, 3),
+			oneOfArbitrary(),
+			frequencyOfArbitrary(),
+			functionArbitrary()
+		);
+	}
 
 	enum MyEnum {FIRST, B, C, LAST}
 
 	@Example
 	@Label("Arbitraries.entries(key, value)")
 	void entries() {
-		StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
-		Arbitrary<Integer> values = Arbitraries.of(10, 100);
-		Arbitrary<Map.Entry<String, Integer>> arbitrary = Arbitraries.entries(keys, values);
+		Arbitrary<Map.Entry<String, Integer>> arbitrary = entriesArbitrary();
 		EdgeCases<Map.Entry<String, Integer>> edgeCases = arbitrary.edgeCases();
 		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 				mapEntry("a", 10),
@@ -32,6 +44,13 @@ class ArbitrariesEdgeCasesTests {
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
+	}
+
+	private Arbitrary<Map.Entry<String, Integer>> entriesArbitrary() {
+		StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
+		Arbitrary<Integer> values = Arbitraries.of(10, 100);
+		Arbitrary<Map.Entry<String, Integer>> arbitrary = Arbitraries.entries(keys, values);
+		return arbitrary;
 	}
 
 	private <K, V> Map.Entry<K, V> mapEntry(K key, V value) {
@@ -76,12 +95,16 @@ class ArbitrariesEdgeCasesTests {
 	@Example
 	@Label("Arbitraries.recursive()")
 	void recursive() {
-		Arbitrary<Integer> base = Arbitraries.of(5, 10);
-		Arbitrary<Integer> arbitrary = Arbitraries.recursive(() -> base, list -> list.map(i -> i + 1), 3);
+		Arbitrary<Integer> arbitrary = recursiveArbitrary();
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(collectEdgeCaseValues(edgeCases)).containsExactly(8, 13);
 		// make sure edge cases can be repeatedly generated
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
+	}
+
+	private Arbitrary<Integer> recursiveArbitrary() {
+		Arbitrary<Integer> base = Arbitraries.of(5, 10);
+		return Arbitraries.recursive(() -> base, list -> list.map(i -> i + 1), 3);
 	}
 
 	@Example
@@ -97,10 +120,7 @@ class ArbitrariesEdgeCasesTests {
 	@Example
 	@Label("Arbitraries.oneOf(values)")
 	void oneOf() {
-		Arbitrary<Integer> arbitrary = Arbitraries.oneOf(
-				Arbitraries.integers().between(-1, 1),
-				Arbitraries.of(100, 10000)
-		);
+		Arbitrary<Integer> arbitrary = oneOfArbitrary();
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 				-1, 0, 1, 100, 10000
@@ -109,19 +129,30 @@ class ArbitrariesEdgeCasesTests {
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(5);
 	}
 
+	private Arbitrary<Integer> oneOfArbitrary() {
+		return Arbitraries.oneOf(
+				Arbitraries.integers().between(-1, 1),
+				Arbitraries.of(100, 10000)
+		);
+	}
+
 	@Example
 	@Label("Arbitraries.frequencyOf(tuples)")
 	void frequencyOf() {
-		Arbitrary<Integer> arbitrary = Arbitraries.frequencyOf(
-				Tuple.of(1, Arbitraries.integers().between(-1, 1)),
-				Tuple.of(2, Arbitraries.integers().greaterOrEqual(100))
-		);
+		Arbitrary<Integer> arbitrary = frequencyOfArbitrary();
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 				-1, 0, 1, 100, 101, Integer.MAX_VALUE - 1, Integer.MAX_VALUE
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(7);
+	}
+
+	private Arbitrary<Integer> frequencyOfArbitrary() {
+		return Arbitraries.frequencyOf(
+			Tuple.of(1, Arbitraries.integers().between(-1, 1)),
+			Tuple.of(2, Arbitraries.integers().greaterOrEqual(100))
+		);
 	}
 
 	@Example
@@ -142,9 +173,7 @@ class ArbitrariesEdgeCasesTests {
 	@Example
 	@Label("Functions.function(type, returnArbitrary)")
 	void functionHasConstantFunctionsAsEdgeCases() {
-		Arbitrary<Integer> integers = Arbitraries.integers().between(10, 100);
-		Arbitrary<Function<String, Integer>> arbitrary =
-				Functions.function(Function.class).returns(integers);
+		Arbitrary<Function<String, Integer>> arbitrary = functionArbitrary();
 
 		EdgeCases<Function<String, Integer>> edgeCases = arbitrary.edgeCases();
 		Set<Function<String, Integer>> functions = collectEdgeCaseValues(edgeCases);
@@ -158,8 +187,22 @@ class ArbitrariesEdgeCasesTests {
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
 	}
 
+	private Arbitrary<Function<String, Integer>> functionArbitrary() {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(10, 100);
+		return Functions.function(Function.class).returns(integers);
+	}
+
 	@Group
-	class OfValues {
+	class OfValues implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.of(4, 9, 2, 1, 66, 2),
+				frequencyArbitrary(),
+				Arbitraries.of(MyEnum.class)
+			);
+		}
 
 		@Example
 		@Label("Arbitraries.of(true, false)")
@@ -208,6 +251,15 @@ class ArbitrariesEdgeCasesTests {
 		@Example
 		@Label("Arbitraries.frequency()")
 		void frequency() {
+			Arbitrary<Integer> arbitrary = frequencyArbitrary();
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases))
+					.containsExactlyInAnyOrder(4, 2);
+			// make sure edge cases can be repeatedly generated
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
+		}
+
+		private Arbitrary<Integer> frequencyArbitrary() {
 			Arbitrary<Integer> arbitrary = Arbitraries.frequency(
 					Tuple.of(1, 4),
 					Tuple.of(1, 9),
@@ -216,11 +268,7 @@ class ArbitrariesEdgeCasesTests {
 					Tuple.of(1, 66),
 					Tuple.of(1, 2)
 			);
-			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCaseValues(edgeCases))
-					.containsExactlyInAnyOrder(4, 2);
-			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
+			return arbitrary;
 		}
 
 		@Example
@@ -236,7 +284,16 @@ class ArbitrariesEdgeCasesTests {
 
 	@Group
 	@Label("Arbitraries.strings()|chars()")
-	class StringsAndChars {
+	class StringsAndChars implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.strings(),
+				Arbitraries.chars()
+			);
+		}
+
 		@Example
 		void singleRangeChars() {
 			CharacterArbitrary arbitrary = Arbitraries.chars().range('a', 'z');

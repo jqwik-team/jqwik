@@ -33,7 +33,7 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 			final Function<List<Object>, R> combineFunction,
 			int maxEdgeCases
 	) {
-		if (arbitraries.isEmpty()) {
+		if (arbitraries.isEmpty() || maxEdgeCases <= 0) {
 			return EdgeCases.none();
 		}
 		Arbitrary<List<Object>> combinedArbitrary = null;

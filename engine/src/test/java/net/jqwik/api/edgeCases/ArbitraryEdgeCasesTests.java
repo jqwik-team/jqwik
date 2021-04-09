@@ -10,11 +10,25 @@ import static net.jqwik.api.ArbitraryTestHelper.assertAllGenerated;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
-class ArbitraryEdgeCasesTests {
+class ArbitraryEdgeCasesTests implements GenericEdgeCasesProperties {
+
+	@Override
+	public Arbitrary<Arbitrary<?>> arbitraries() {
+		return Arbitraries.of(
+			mappingArbitrary(),
+			filteringArbitrary(),
+			ignoringExceptionArbitrary(),
+			Arbitraries.of(-10, 10).injectNull(0.1),
+			Arbitraries.integers().between(-10, 10).fixGenSize(100),
+			Arbitraries.of(-10, 10).optional(),
+			Arbitraries.just(42).tuple5(),
+			flatMappingArbitrary()
+		);
+	}
 
 	@Example
 	void mapping() {
-		Arbitrary<String> arbitrary = Arbitraries.integers().between(-10, 10).map(i -> Integer.toString(i));
+		Arbitrary<String> arbitrary = mappingArbitrary();
 		EdgeCases<String> edgeCases = arbitrary.edgeCases();
 		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 				"-10", "-9", "-2", "-1", "0", "1", "2", "9", "10"
@@ -23,9 +37,13 @@ class ArbitraryEdgeCasesTests {
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(9);
 	}
 
+	private Arbitrary<String> mappingArbitrary() {
+		return Arbitraries.integers().between(-10, 10).map(i -> Integer.toString(i));
+	}
+
 	@Example
 	void filtering() {
-		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-10, 10).filter(i -> i % 2 == 0);
+		Arbitrary<Integer> arbitrary = filteringArbitrary();
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 				-10, -2, 0, 2, 10
@@ -34,8 +52,22 @@ class ArbitraryEdgeCasesTests {
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(5);
 	}
 
+	private Arbitrary<Integer> filteringArbitrary() {
+		return Arbitraries.integers().between(-10, 10).filter(i -> i % 2 == 0);
+	}
+
 	@Example
 	void ignoringExceptions() {
+		Arbitrary<Integer> arbitrary = ignoringExceptionArbitrary();
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
+				-10, -2, 0, 2, 10
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(5);
+	}
+
+	private Arbitrary<Integer> ignoringExceptionArbitrary() {
 		Arbitrary<Integer> arbitrary =
 				Arbitraries.integers().between(-10, 10)
 						   .map(i -> {
@@ -45,12 +77,7 @@ class ArbitraryEdgeCasesTests {
 							   return i;
 						   })
 						   .ignoreException(IllegalArgumentException.class);
-		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
-				-10, -2, 0, 2, 10
-		);
-		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(5);
+		return arbitrary;
 	}
 
 	@Example
@@ -77,8 +104,7 @@ class ArbitraryEdgeCasesTests {
 
 	@Example
 	void flatMapping() {
-		Arbitrary<Integer> arbitrary = Arbitraries.of(5, 10)
-												  .flatMap(i -> Arbitraries.integers().between(i, i * 10));
+		Arbitrary<Integer> arbitrary = flatMappingArbitrary();
 
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
@@ -86,6 +112,11 @@ class ArbitraryEdgeCasesTests {
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(8);
+	}
+
+	private Arbitrary<Integer> flatMappingArbitrary() {
+		return Arbitraries.of(5, 10)
+						  .flatMap(i -> Arbitraries.integers().between(i, i * 10));
 	}
 
 	@Example

@@ -21,12 +21,12 @@ public class EdgeCasesSupport {
 			@Override
 			public String toString() {
 				String edgeCases =
-						suppliers
-								.stream()
-								.map(Supplier::get)
-								.map(Shrinkable::value)
-								.map(JqwikStringSupport::displayString)
-								.collect(Collectors.joining(", "));
+					suppliers
+						.stream()
+						.map(Supplier::get)
+						.map(Shrinkable::value)
+						.map(JqwikStringSupport::displayString)
+						.collect(Collectors.joining(", "));
 				return String.format("EdgeCases[%s]", edgeCases);
 			}
 		};
@@ -59,7 +59,7 @@ public class EdgeCasesSupport {
 	}
 
 	public static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases, int maxEdgeCases) {
-		if (edgeCases.isEmpty() || maxEdgeCases == 0) {
+		if (edgeCases.isEmpty() || maxEdgeCases <= 0) {
 			return EdgeCases.none();
 		}
 		if (edgeCases.size() == 1) {
@@ -71,10 +71,11 @@ public class EdgeCasesSupport {
 			if (edgeCase.isEmpty()) {
 				continue;
 			}
-			List<Supplier<Shrinkable<T>>> suppliers = edgeCase.suppliers()
-															  .stream()
-															  .limit(remainingMaxEdgeCases)
-															  .collect(Collectors.toList());
+			List<Supplier<Shrinkable<T>>> suppliers =
+				edgeCase.suppliers()
+						.stream()
+						.limit(Math.max(0, remainingMaxEdgeCases))
+						.collect(Collectors.toList());
 			concatenatedSuppliers.addAll(suppliers);
 			remainingMaxEdgeCases = remainingMaxEdgeCases - suppliers.size();
 		}
@@ -83,9 +84,9 @@ public class EdgeCasesSupport {
 
 	public static <T> EdgeCases<T> fromShrinkables(List<Shrinkable<T>> shrinkables) {
 		return () -> shrinkables
-							 .stream()
-							 .map(shrinkable -> (Supplier<Shrinkable<T>>) () -> shrinkable)
-							 .collect(Collectors.toList());
+						 .stream()
+						 .map(shrinkable -> (Supplier<Shrinkable<T>>) () -> shrinkable)
+						 .collect(Collectors.toList());
 	}
 
 	public static <T, U> EdgeCases<U> map(EdgeCases<T> self, Function<T, U> mapper) {
@@ -94,42 +95,42 @@ public class EdgeCasesSupport {
 
 	public static <T, U> EdgeCases<U> mapShrinkable(EdgeCases<T> self, Function<Shrinkable<T>, Shrinkable<U>> mapper) {
 		List<Supplier<Shrinkable<U>>> mappedSuppliers =
-				self.suppliers().stream()
-					.map(tSupplier -> mapper.apply(tSupplier.get()))
-					.filter(Objects::nonNull)
-					.map(uShrinkable -> (Supplier<Shrinkable<U>>) () -> uShrinkable)
-					.collect(Collectors.toList());
+			self.suppliers().stream()
+				.map(tSupplier -> mapper.apply(tSupplier.get()))
+				.filter(Objects::nonNull)
+				.map(uShrinkable -> (Supplier<Shrinkable<U>>) () -> uShrinkable)
+				.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(mappedSuppliers);
 	}
 
 	public static <T> EdgeCases<T> filter(EdgeCases<T> self, Predicate<T> filterPredicate) {
 		List<Supplier<Shrinkable<T>>> filteredSuppliers =
-				self.suppliers().stream()
-					.filter(supplier -> filterPredicate.test(supplier.get().value()))
-					.map(supplier -> (Supplier<Shrinkable<T>>) () -> new FilteredShrinkable<>(supplier.get(), filterPredicate))
-					.collect(Collectors.toList());
+			self.suppliers().stream()
+				.filter(supplier -> filterPredicate.test(supplier.get().value()))
+				.map(supplier -> (Supplier<Shrinkable<T>>) () -> new FilteredShrinkable<>(supplier.get(), filterPredicate))
+				.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(filteredSuppliers);
 	}
 
 	public static <T> EdgeCases<T> ignoreException(final EdgeCases<T> self, final Class<? extends Throwable> exceptionType) {
 		List<Supplier<Shrinkable<T>>> filteredSuppliers =
-				self.suppliers().stream()
-					.filter(supplier -> {
-						try {
-							supplier.get().value();
-							return true;
-						} catch (Throwable throwable) {
-							if (exceptionType.isAssignableFrom(throwable.getClass())) {
-								return false;
-							}
-							throw throwable;
+			self.suppliers().stream()
+				.filter(supplier -> {
+					try {
+						supplier.get().value();
+						return true;
+					} catch (Throwable throwable) {
+						if (exceptionType.isAssignableFrom(throwable.getClass())) {
+							return false;
 						}
-					})
-					.map(shrinkableSupplier -> (Supplier<Shrinkable<T>>) () -> {
-						Shrinkable<T> tShrinkable = shrinkableSupplier.get();
-						return new IgnoreExceptionShrinkable<T>(tShrinkable, exceptionType);
-					})
-					.collect(Collectors.toList());
+						throw throwable;
+					}
+				})
+				.map(shrinkableSupplier -> (Supplier<Shrinkable<T>>) () -> {
+					Shrinkable<T> tShrinkable = shrinkableSupplier.get();
+					return new IgnoreExceptionShrinkable<T>(tShrinkable, exceptionType);
+				})
+				.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(filteredSuppliers);
 	}
 
@@ -141,29 +142,29 @@ public class EdgeCasesSupport {
 	}
 
 	public static <T, U> EdgeCases<U> flatMapArbitrary(
-			EdgeCases<T> self,
-			Function<T, Arbitrary<U>> mapper,
-			int maxEdgeCases
+		EdgeCases<T> self,
+		Function<T, Arbitrary<U>> mapper,
+		int maxEdgeCases
 	) {
 		List<Supplier<Shrinkable<U>>> flatMappedSuppliers =
-				self.suppliers().stream()
-					.flatMap(tSupplier -> {
-						T t = tSupplier.get().value();
-						return mapper.apply(t).edgeCases(maxEdgeCases).suppliers()
-									 .stream()
-									 .map(uSupplier -> {
-										 Function<T, Shrinkable<U>> shrinkableMapper =
-												 newT -> mapper.apply(newT).generator(1000)
-															   .next(SourceOfRandomness.newRandom(42L));
-										 return (Supplier<Shrinkable<U>>) () -> new FixedValueFlatMappedShrinkable<>(
-												 tSupplier.get(),
-												 shrinkableMapper,
-												 uSupplier
-										 );
-									 });
-					})
-					.limit(maxEdgeCases)
-					.collect(Collectors.toList());
+			self.suppliers().stream()
+				.flatMap(tSupplier -> {
+					T t = tSupplier.get().value();
+					return mapper.apply(t).edgeCases(maxEdgeCases).suppliers()
+								 .stream()
+								 .map(uSupplier -> {
+									 Function<T, Shrinkable<U>> shrinkableMapper =
+										 newT -> mapper.apply(newT).generator(1000)
+													   .next(SourceOfRandomness.newRandom(42L));
+									 return (Supplier<Shrinkable<U>>) () -> new FixedValueFlatMappedShrinkable<>(
+										 tSupplier.get(),
+										 shrinkableMapper,
+										 uSupplier
+									 );
+								 });
+				})
+				.limit(Math.max(0, maxEdgeCases))
+				.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(flatMappedSuppliers);
 	}
 

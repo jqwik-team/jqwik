@@ -13,7 +13,15 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
 
 @SuppressWarnings("Convert2MethodRef")
-class CombinatorsEdgeCasesTests {
+class CombinatorsEdgeCasesTests implements GenericEdgeCasesProperties {
+
+	@Override
+	public Arbitrary<Arbitrary<?>> arbitraries() {
+		Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+		Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+		Arbitrary<Integer> plus = Combinators.combine(a1, a2).as((i1, i2) -> i1 + i2);
+		return Arbitraries.of(plus);
+	}
 
 	@Example
 	void combine2arbitraries() {

@@ -56,7 +56,7 @@ class IntegralGeneratingArbitrary extends TypedCloneable implements Arbitrary<Bi
 					range,
 					shrinkingTarget
 				))
-				.limit(maxEdgeCases)
+				.limit(Math.max(0, maxEdgeCases))
 				.collect(Collectors.toList());
 		EdgeCases<BigInteger> defaultEdgeCases = EdgeCasesSupport.fromShrinkables(shrinkables);
 		IntegralEdgeCasesConfiguration configuration = new IntegralEdgeCasesConfiguration(range, shrinkingTarget);

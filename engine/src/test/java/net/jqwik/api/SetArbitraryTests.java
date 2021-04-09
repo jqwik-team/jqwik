@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.edgeCases.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -177,7 +178,14 @@ class SetArbitraryTests {
 	}
 
 	@Group
-	class EdgeCasesGeneration {
+	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			Arbitrary<Set<Integer>> arbitrary = ints.set();
+			return Arbitraries.of(arbitrary);
+		}
 
 		@Example
 		void setEdgeCases() {

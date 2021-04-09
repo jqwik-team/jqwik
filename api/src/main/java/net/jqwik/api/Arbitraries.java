@@ -562,7 +562,9 @@ public class Arbitraries {
 
 			@Override
 			public EdgeCases<T> edgeCases(int maxEdgeCases) {
-				return edgeCasesSupplier.apply(maxEdgeCases);
+				return maxEdgeCases <= 0
+						   ? EdgeCases.none()
+						   : edgeCasesSupplier.apply(maxEdgeCases);
 			}
 		};
 	}

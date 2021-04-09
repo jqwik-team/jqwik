@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.5.2-SNAPSHOT](#152-snapshot)
 - [1.5.1](#151)
 - [1.5.0](#150)
 - [1.4.0](#140)
@@ -20,6 +21,17 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+## 1.5.2-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+- Fixed bug in edge case generation: https://github.com/jlink/jqwik/issues/180
 
 
 ## 1.5.1

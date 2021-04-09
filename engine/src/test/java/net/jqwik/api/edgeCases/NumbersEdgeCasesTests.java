@@ -26,7 +26,16 @@ class NumbersEdgeCasesTests {
 	}
 
 	@Group
-	class Decimals {
+	class Decimals implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.bigDecimals(),
+				Arbitraries.floats(),
+				Arbitraries.doubles()
+			);
+		}
 
 		@Example
 		void bigDecimals() {
@@ -188,7 +197,18 @@ class NumbersEdgeCasesTests {
 	}
 
 	@Group
-	class Integrals {
+	class Integrals implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.integers(),
+				Arbitraries.shorts(),
+				Arbitraries.bytes(),
+				Arbitraries.longs(),
+				Arbitraries.bigIntegers()
+			);
+		}
 
 		@Example
 		void intEdgeCases() {

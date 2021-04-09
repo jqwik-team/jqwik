@@ -35,7 +35,7 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 					   )
 					   .map(shrinkableBigInteger -> shrinkableBigInteger.map(BigInteger::intValueExact))
 					   .map(shrinkableInteger -> shrinkableInteger.map(anInt -> ((char) (int) anInt)))
-					   .limit(maxEdgeCases)
+					   .limit(Math.max(0, maxEdgeCases))
 					   .collect(Collectors.toList());
 	}
 

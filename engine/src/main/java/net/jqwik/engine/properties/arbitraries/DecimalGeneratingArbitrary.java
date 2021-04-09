@@ -85,7 +85,7 @@ class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<Big
 					   return new ShrinkableBigInteger(bigIntegerValue, bigIntegerRange, shrinkingTarget);
 				   })
 				   .map(shrinkableBigInteger -> shrinkableBigInteger.map(bigInteger -> scaledBigDecimal(bigInteger, scale)))
-				   .limit(maxEdgeCases)
+				   .limit(Math.max(0, maxEdgeCases))
 				   .collect(Collectors.toList());
 	}
 

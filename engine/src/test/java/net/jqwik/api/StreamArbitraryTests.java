@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.edgeCases.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
 import static java.util.Arrays.*;
@@ -80,35 +81,47 @@ class StreamArbitraryTests {
 	}
 
 
+	@Group
+	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
 
-	@Example
-	void edgeCases() {
-		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
-		Arbitrary<Stream<Integer>> arbitrary = ints.stream();
-		Set<Stream<Integer>> streams = collectEdgeCaseValues(arbitrary.edgeCases());
-		Set<List<Integer>> lists = streams.stream().map(stream -> stream.collect(Collectors.toList())).collect(Collectors.toSet());
-		assertThat(lists).containsExactlyInAnyOrder(
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			Arbitrary<Stream<Integer>> arbitrary = ints.stream();
+			return Arbitraries.of(arbitrary);
+		}
+
+		@Example
+		void edgeCases() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			Arbitrary<Stream<Integer>> arbitrary = ints.stream();
+			Set<Stream<Integer>> streams = collectEdgeCaseValues(arbitrary.edgeCases());
+			Set<List<Integer>> lists = streams.stream().map(stream -> stream.collect(Collectors.toList())).collect(Collectors.toSet());
+			assertThat(lists).containsExactlyInAnyOrder(
 				Collections.emptyList(),
 				Collections.singletonList(-10),
 				Collections.singletonList(10)
-		);
-		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(3);
+			);
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(3);
+		}
+
+		@Example
+		void edgeCasesAreReportable() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			Arbitrary<Stream<Integer>> arbitrary = ints.stream();
+			Set<Stream<Integer>> streams = collectEdgeCaseValues(arbitrary.edgeCases());
+			assertThat(streams).allMatch(s -> s instanceof ReportableStream);
+		}
+
+		@Example
+		void edgeCasesAreFilteredByUniquenessConstraints() {
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
+			Arbitrary<Stream<Integer>> arbitrary = ints.stream().ofSize(2).uniqueElements(i -> i);
+			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
+		}
+
 	}
 
-	@Example
-	void edgeCasesAreReportable() {
-		Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
-		Arbitrary<Stream<Integer>> arbitrary = ints.stream();
-		Set<Stream<Integer>> streams = collectEdgeCaseValues(arbitrary.edgeCases());
-		assertThat(streams).allMatch(s -> s instanceof ReportableStream);
-	}
-
-	@Example
-	void edgeCasesAreFilteredByUniquenessConstraints() {
-		IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
-		Arbitrary<Stream<Integer>> arbitrary = ints.stream().ofSize(2).uniqueElements(i -> i);
-		assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).isEmpty();
-	}
 
 	@Group
 	class ExhaustiveGeneration {

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.edgeCases.*;
 import net.jqwik.engine.*;
 
 import static java.util.Arrays.*;
@@ -249,7 +250,14 @@ class ListArbitraryTests {
 	}
 
 	@Group
-	class EdgeCasesGeneration {
+	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			Arbitrary<List<Integer>> arbitrary = ints.list();
+			return Arbitraries.of(arbitrary);
+		}
 
 		@Example
 		void edgeCases() {
