@@ -79,6 +79,11 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 			BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator,
 			int maxEdgeCases
 	) {
+		// Optimization. Already handled by EdgeCases.concat(..)
+		if (maxEdgeCases <= 0) {
+			return EdgeCases.none();
+		}
+
 		EdgeCases<C> emptyListEdgeCase = (minSize == 0) ? emptyListEdgeCase(shrinkableCreator) : EdgeCases.none();
 
 		int effectiveMaxEdgeCases = maxEdgeCases - emptyListEdgeCase.size();

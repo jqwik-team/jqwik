@@ -7,11 +7,17 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.statistics.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
-class DefaultStringArbitraryTests {
+class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
+
+	@Override
+	public Arbitrary<Arbitrary<?>> arbitraries() {
+		return Arbitraries.of(arbitrary);
+	}
 
 	StringArbitrary arbitrary = new DefaultStringArbitrary();
 

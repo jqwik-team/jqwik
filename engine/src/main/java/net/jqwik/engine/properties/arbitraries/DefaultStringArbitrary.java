@@ -36,6 +36,11 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 
 	@Override
 	public EdgeCases<String> edgeCases(int maxEdgeCases) {
+		// Optimization. Already handled by EdgeCases.concat(..)
+		if (maxEdgeCases <= 0) {
+			return EdgeCases.none();
+		}
+
 		EdgeCases<String> emptyStringEdgeCases =
 				hasEmptyStringEdgeCase() ? emptyStringEdgeCase() : EdgeCases.none();
 
