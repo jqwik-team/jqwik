@@ -9,7 +9,7 @@ ext {
 	opentest4jVersion = '1.2.0'
 	archunitVersion = '0.17.0'
 	assertJVersion = '3.19.0'
-	mockitoVersion = '3.8.0'
+	mockitoVersion = '3.9.0'
 	systemLambdaVersion = '1.1.0'
 	moduleName = 'net.jqwik'
 	jqwikVersion = '1.5.2-SNAPSHOT'
