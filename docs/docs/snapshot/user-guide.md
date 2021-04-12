@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.5.1-SNAPSHOT
+title: jqwik User Guide - 1.5.2-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.5.1-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.5.2-SNAPSHOT</span>
 </h1>
 
 <h3>Table of Contents
@@ -81,6 +81,7 @@ title: jqwik User Guide - 1.5.1-SNAPSHOT
   - [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
   - [Parameter Provider Methods](#parameter-provider-methods)
+  - [Provider Methods with Parameters](#provider-methods-with-parameters)
   - [Providing Arbitraries for Embedded Types](#providing-arbitraries-for-embedded-types)
   - [Static `Arbitraries` methods](#static-arbitraries-methods)
     - [Generate values yourself](#generate-values-yourself)
@@ -167,6 +168,7 @@ title: jqwik User Guide - 1.5.1-SNAPSHOT
   - [Time Module](#time-module)
     - [Generation of Dates](#generation-of-dates)
     - [Generation of Times](#generation-of-times)
+    - [Generation of DateTimes](#generation-of-datetimes)
   - [Testing Module](#testing-module)
 - [Advanced Topics](#advanced-topics)
   - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
@@ -220,7 +222,7 @@ repositories {
 ext.junitPlatformVersion = '1.7.1'
 ext.junitJupiterVersion = '5.7.1'
 
-ext.jqwikVersion = '1.5.1-SNAPSHOT'
+ext.jqwikVersion = '1.5.2-SNAPSHOT'
 
 compileTestJava {
     // To enable argument names in reporting and debugging
@@ -319,7 +321,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.5.1-SNAPSHOT</version>
+        <version>1.5.2-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -347,15 +349,15 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-api-1.5.1-SNAPSHOT.jar`
-- `jqwik-engine-1.5.1-SNAPSHOT.jar`
+- `jqwik-api-1.5.2-SNAPSHOT.jar`
+- `jqwik-engine-1.5.2-SNAPSHOT.jar`
 - `junit-platform-engine-1.7.1.jar`
 - `junit-platform-commons-1.7.1.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
-- `jqwik-web-1.5.1-SNAPSHOT.jar`
-- `jqwik-time-1.5.1-SNAPSHOT.jar`
+- `jqwik-web-1.5.2-SNAPSHOT.jar`
+- `jqwik-time-1.5.2-SNAPSHOT.jar`
 
 
 
@@ -370,7 +372,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html).
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with
-[`@ForAll`](/docs/1.5.1-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.5.2-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -1351,6 +1353,49 @@ Parameter provision usually starts with a
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
 by one or more [filtering](#filtering), [mapping](#mapping) or
 [combining](#combining-arbitraries) actions.
+
+### Provider Methods with Parameters
+
+The examples of [provider methods](#parameter-provider-methods) you've seen so far
+had no parameters. In more complicated scenarios, however, you may want to tune
+an arbitrary depending on the concrete parameter to be generated.
+
+Imagine you want to randomly choose one of your favourite primes; that's easy:
+
+```java
+@Property
+void favouritePrimes(@ForAll("favouritePrimes") int aFavourite) {
+}
+
+@Provide
+Arbitrary<Integer> favouritePrimes() {
+	return Arbitraries.of(3, 5, 7, 13, 17, 23, 41, 101);
+}
+```
+
+From time to time, though, you need it as a `BigInteger` instead of an `int`. 
+You can kill both types with a single method:
+
+```java
+@Property
+void favouritePrimesAsInts(@ForAll("favouritePrimes") int aFavourite) { ... }
+
+@Property
+void favouritePrimesAsBigInts(@ForAll("favouritePrimes") BigInteger aFavourite) { ... }
+
+@Provide
+Arbitrary<?> favouritePrimes(TypeUsage targetType) {
+	Arbitrary<Integer> ints = Arbitraries.of(3, 5, 7, 13, 17, 23, 41);
+	if (targetType.getRawType().equals(BigInteger.class)) {
+		return ints.map(BigInteger::valueOf);
+	}
+	return ints;
+}
+```
+
+Mind the parameters and return type of `favouritePrimes()`. 
+The second parameter `ArbitraryProvider.SubtypeProvider subtypeProvider` is optional and can be left out;
+it would be needed in case of variable subtypes that require their own dynamic resolution.
 
 
 ### Providing Arbitraries for Embedded Types
@@ -3175,6 +3220,8 @@ The `value` attribute is of type
   you only have to provide the `format` attribute
   [as shown below](#plug-in-your-own-statistics-report-format)
 
+When using [labeled statistics](#labeled-statistics) you can set mode and format
+for each label individually by using the annotation attribute `@StatisticsReport.value`.
 
 #### Switch Statistics Reporting Off
 
@@ -4143,6 +4190,10 @@ The module provides:
 - [Generation of Times](#generation-of-times)
     - [default generation](#default-generation-of-times) for time-related Java types
     - [Programmatic API](#programmatic-generation-of-times) to configure time-related types
+    
+- [Generation of DateTimes](#generation-of-datetimes)
+    - [default generation](#default-generation-of-datetimes) for date time-related Java types
+    - [Programmatic API](#programmatic-generation-of-datetimes) to configure date time-related types
 
 #### Generation of Dates
 
@@ -4337,7 +4388,7 @@ Here's the list of available methods:
 ###### LocalTimeArbitrary
 
 - The target type is `LocalTime`.
-- By default, precision is seconds.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
 - You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
@@ -4347,7 +4398,7 @@ Here's the list of available methods:
 ###### OffsetTimeArbitrary
 
 - The target type is `OffsetTime`.
-- By default, precision is seconds.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 - You can constrain the minimum and maximum time value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
 - You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
@@ -4365,6 +4416,70 @@ Here's the list of available methods:
 - The target type is `Duration`.
 - By default, precision is seconds.
 - You can constrain its minimum and maximum value using `between(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+#### Generation of DateTimes
+
+##### Default Generation of DateTimes
+
+Default generation currently is supported for `LocalDateTime`. 
+Here's a small example:
+
+```java
+@Property
+void generateLocalDateTimesWithAnnotation(@ForAll @DateTimeRange(min = "2019-01-01T01:32:21", max = "2020-12-31T03:11:11") LocalDateTime localDateTime) {
+  assertThat(localDateTime).isBetween(
+    LocalDateTime.of(2019, 1, 1, 1, 32, 21),
+    LocalDateTime.of(2020, 12, 31, 3, 11, 11)
+  );
+}
+```
+
+The following annotations can be used to constrain default generation of the enumerated types:
+
+- [`@DateTimeRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DateTimeRange.html)
+- [`@DateRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DateRange.html)
+- [`@YearRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/YearRange.html)
+- [`@MonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/MonthRange.html)
+- [`@DayOfMonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DayOfMonthRange.html)
+- [`@Precision`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/Precision.html)
+
+`@DateTimeRange` and `@DateRange` use the standard format of their classes. 
+Examples: `2013-05-25T01:34:22.231` and `2013-05-25`.
+
+##### Programmatic Generation of DateTimes
+
+Programmatic generation of date times always starts with a static
+method call on class [`DateTimes`](/docs/snapshot/javadoc/net/jqwik/time/api/DateTimes.html).
+For example:
+
+```java
+@Property
+void generateLocalDateTimes(@ForAll("dateTimes") LocalDateTime localDateTime) {
+  assertThat(localDateTime).isAfter(LocalDateTime.of(2013, 5, 25, 19, 48, 32));
+}
+
+@Provide
+Arbitrary<LocalDateTime> dateTimes() {
+  return DateTimes.dateTimes().atTheEarliest(LocalDateTime.of(2013, 5, 25, 19, 48, 33));
+}
+```
+
+Here's the list of available methods:
+
+- [`LocalDateTimeArbitrary dateTimes()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#dateTimes())
+
+
+###### LocalDateTimeArbitrary
+
+- The target type is `LocalDateTime`.
+- By default, only years between 1900 and 2500 are generated.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain its minimum and maximum value for dates using `dateBetween(min, max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
 
 
@@ -4891,4 +5006,4 @@ If a certain element, e.g. a method, is not annotated itself, then it carries th
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#151-snapshot).
+Read this version's [release notes](/release-notes.html#152-snapshot).
