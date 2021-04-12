@@ -1504,6 +1504,7 @@ class LocalDateTimeTests {
 	}
 
 	@Group
+	@PropertyDefaults(tries = 2000)
 	class CheckEqualDistribution {
 
 		@Property
