@@ -77,11 +77,4 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<Date> implements Da
 		return clone;
 	}
 
-	@Override
-	public DateArbitrary leapYears(boolean withLeapYears) {
-		DefaultDateArbitrary clone = typedClone();
-		clone.calendars = clone.calendars.leapYears(withLeapYears);
-		return clone;
-	}
-
 }

@@ -1687,7 +1687,7 @@ class LocalDateTimeTests {
 			@Property
 			void atTheEarliestYearMustNotBelow1(
 					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
-					@ForAll @LeapYears(withLeapYears = false) LocalDate date,
+					@ForAll @YearRange(min = 2001, max = 2001) LocalDate date,
 					@ForAll LocalTime time
 			) {
 				date = date.withYear(year);
@@ -1700,7 +1700,7 @@ class LocalDateTimeTests {
 			@Property
 			void atTheLatestYearMustNotBelow1(
 					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
-					@ForAll @LeapYears(withLeapYears = false) LocalDate date,
+					@ForAll @YearRange(min = 2001, max = 2001) LocalDate date,
 					@ForAll LocalTime time
 			) {
 				date = date.withYear(year);
@@ -1713,7 +1713,7 @@ class LocalDateTimeTests {
 			@Property
 			void dateBetweenYearMustNotBelow1(
 					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
-					@ForAll @LeapYears(withLeapYears = false) LocalDate date
+					@ForAll @YearRange(min = 2001, max = 2001) LocalDate date
 			) {
 				LocalDate effective = date.withYear(year);
 				assertThatThrownBy(

@@ -23,7 +23,6 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	private final DayOfMonthBetween dayOfMonthBetween = new DayOfMonthBetween();
 	private final AllowedMonths allowedMonths = new AllowedMonths();
 	private final AllowedDayOfWeeks allowedDayOfWeeks = new AllowedDayOfWeeks();
-	private final WithLeapYears withLeapYears = new WithLeapYears();
 
 	@Override
 	protected Arbitrary<LocalDate> arbitrary() {
@@ -60,10 +59,6 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 			localDates = localDates
 							 .filter(date -> date.getDayOfMonth() >= dayOfMonthBetween.getMin() && date.getDayOfMonth() <= dayOfMonthBetween
 																															   .getMax());
-		}
-
-		if (!withLeapYears.get()) {
-			localDates = localDates.filter(date -> !new GregorianCalendar().isLeapYear(date.getYear()));
 		}
 
 		return localDates;
@@ -185,13 +180,6 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	public LocalDateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
 		DefaultLocalDateArbitrary clone = typedClone();
 		clone.allowedDayOfWeeks.set(daysOfWeek);
-		return clone;
-	}
-
-	@Override
-	public LocalDateArbitrary leapYears(boolean withLeapYears) {
-		DefaultLocalDateArbitrary clone = typedClone();
-		clone.withLeapYears.set(withLeapYears);
 		return clone;
 	}
 
