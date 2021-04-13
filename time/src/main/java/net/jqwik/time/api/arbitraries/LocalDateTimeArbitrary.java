@@ -86,7 +86,7 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	/**
 	 * Set an array of allowed {@code months}.
 	 */
-	LocalDateArbitrary onlyMonths(Month... months);
+	LocalDateTimeArbitrary onlyMonths(Month... months);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated day of month values.
@@ -98,7 +98,7 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	/**
 	 * Set an array of allowed {@code daysOfWeek}.
 	 */
-	LocalDateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
+	LocalDateTimeArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
 
 	/**
 	 * Constrain the precision of generated values.
