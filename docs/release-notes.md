@@ -32,6 +32,8 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- Removed `leapYears(boolean withLeapyear)` from all date generating arbitraries.
+
 #### Bug Fixes
 
 - Fixed bug in edge case generation: https://github.com/jlink/jqwik/issues/180
