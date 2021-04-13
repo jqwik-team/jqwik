@@ -188,10 +188,20 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	}
 
 	@Override
+	public LocalDateArbitrary onlyMonths(Month... months) {
+		return null;
+	}
+
+	@Override
 	public LocalDateTimeArbitrary dayOfMonthBetween(int min, int max) {
 		DefaultLocalDateTimeArbitrary clone = typedClone();
 		clone.dayOfMonthBetween.set(min, max);
 		return clone;
+	}
+
+	@Override
+	public LocalDateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
+		return null;
 	}
 
 	@Override
