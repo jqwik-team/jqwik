@@ -85,9 +85,4 @@ public interface LocalDateArbitrary extends Arbitrary<LocalDate> {
 	 */
 	LocalDateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
 
-	/**
-	 * Decide whether leap years are generated or not
-	 */
-	LocalDateArbitrary leapYears(boolean withLeapYears);
-
 }

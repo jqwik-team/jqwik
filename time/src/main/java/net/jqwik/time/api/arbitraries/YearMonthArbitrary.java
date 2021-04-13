@@ -66,9 +66,4 @@ public interface YearMonthArbitrary extends Arbitrary<YearMonth> {
 	 */
 	YearMonthArbitrary onlyMonths(Month... months);
 
-	/**
-	 * Decide whether leap years are generated or not
-	 */
-	YearMonthArbitrary leapYears(boolean withLeapYears);
-
 }

@@ -183,11 +183,4 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 		return clone;
 	}
 
-	@Override
-	public CalendarArbitrary leapYears(boolean withLeapYears) {
-		DefaultCalendarArbitrary clone = typedClone();
-		clone.dates = clone.dates.leapYears(withLeapYears);
-		return clone;
-	}
-
 }

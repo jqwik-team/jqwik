@@ -21,7 +21,6 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 
 	private final YearMonthBetween yearMonthBetween = new YearMonthBetween();
 	private final AllowedMonths allowedMonths = new AllowedMonths();
-	private final WithLeapYears withLeapYears = new WithLeapYears();
 
 	@Override
 	protected Arbitrary<YearMonth> arbitrary() {
@@ -41,10 +40,6 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 
 		if (allowedMonths.get().size() < 12) {
 			yearMonths = yearMonths.filter(yearMonth -> allowedMonths.get().contains(yearMonth.getMonth()));
-		}
-
-		if (!withLeapYears.get()) {
-			yearMonths = yearMonths.filter(date -> !new GregorianCalendar().isLeapYear(date.getYear()));
 		}
 
 		return yearMonths;
@@ -84,13 +79,6 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 	public YearMonthArbitrary onlyMonths(Month... months) {
 		DefaultYearMonthArbitrary clone = typedClone();
 		clone.allowedMonths.set(months);
-		return clone;
-	}
-
-	@Override
-	public YearMonthArbitrary leapYears(boolean withLeapYears) {
-		DefaultYearMonthArbitrary clone = typedClone();
-		clone.withLeapYears.set(withLeapYears);
 		return clone;
 	}
 

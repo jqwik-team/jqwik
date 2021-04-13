@@ -13,11 +13,6 @@ net.jqwik.time.internal.properties.configurators.DayOfWeekRangeConfigurator$ForL
 net.jqwik.time.internal.properties.configurators.DayOfWeekRangeConfigurator$ForCalendar
 net.jqwik.time.internal.properties.configurators.DayOfWeekRangeConfigurator$ForDate
 
-net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator$ForLocalDate
-net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator$ForCalendar
-net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator$ForDate
-net.jqwik.time.internal.properties.configurators.LeapYearsConfigurator$ForYearMonth
-
 net.jqwik.time.internal.properties.configurators.MonthDayRangeConfigurator
 
 net.jqwik.time.internal.properties.configurators.MonthRangeConfigurator$ForLocalDate

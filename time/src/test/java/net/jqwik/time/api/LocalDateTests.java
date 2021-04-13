@@ -90,11 +90,6 @@ class LocalDateTests {
 			assertThat(localDate).isNotNull();
 		}
 
-		@Property
-		void noLeapYearIsGenerated(@ForAll @LeapYears(withLeapYears = false) LocalDate date) {
-			assertThat(new GregorianCalendar().isLeapYear(date.getYear())).isFalse();
-		}
-
 	}
 
 	@Group
@@ -384,21 +379,6 @@ class LocalDateTests {
 					assertThat(date.getDayOfWeek()).isIn(dayOfWeeks);
 					return true;
 				});
-			}
-
-		}
-
-		@Group
-		class LeapYearMethod {
-
-			@Provide
-			LocalDateArbitrary noLeapYears() {
-				return Dates.dates().leapYears(false);
-			}
-
-			@Property
-			void yearIsNotALeapYear(@ForAll("noLeapYears") LocalDate date) {
-				assertThat(new GregorianCalendar().isLeapYear(date.getYear())).isFalse();
 			}
 
 		}

@@ -86,9 +86,4 @@ public interface CalendarArbitrary extends Arbitrary<Calendar> {
 	 */
 	CalendarArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
 
-	/**
-	 * Decide whether leap years are generated or not
-	 */
-	CalendarArbitrary leapYears(boolean withLeapYears);
-
 }

@@ -46,11 +46,6 @@ class DateTests {
 			assertThat(date).isNotNull();
 		}
 
-		@Property
-		void noLeapYearIsGenerated(@ForAll("dates") @LeapYears(withLeapYears = false) Date date) {
-			assertThat(new GregorianCalendar().isLeapYear(dateToCalendar(date).get(Calendar.YEAR))).isFalse();
-		}
-
 	}
 
 	@Group
@@ -322,21 +317,6 @@ class DateTests {
 					assertThat(DefaultCalendarArbitrary.calendarDayOfWeekToDayOfWeek(dateToCalendar(date))).isIn(dayOfWeeks);
 					return true;
 				});
-			}
-
-		}
-
-		@Group
-		class LeapYearMethod {
-
-			@Provide
-			DateArbitrary noLeapYears() {
-				return Dates.datesAsDate().leapYears(false);
-			}
-
-			@Property
-			void yearIsNotALeapYear(@ForAll("noLeapYears") Date date) {
-				assertThat(new GregorianCalendar().isLeapYear(dateToCalendar(date).get(Calendar.YEAR))).isFalse();
 			}
 
 		}

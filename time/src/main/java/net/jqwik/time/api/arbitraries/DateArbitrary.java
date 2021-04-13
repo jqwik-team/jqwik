@@ -86,9 +86,4 @@ public interface DateArbitrary extends Arbitrary<Date> {
 	 */
 	DateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
 
-	/**
-	 * Decide whether leap years are generated or not
-	 */
-	DateArbitrary leapYears(boolean withLeapYears);
-
 }
