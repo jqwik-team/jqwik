@@ -387,6 +387,18 @@ class LocalDateTimeTests {
 
 				}
 
+				@Property
+				void onlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().onlyMonths(months.toArray(new Month[]{}));
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getMonth()).isIn(months);
+						return true;
+					});
+
+				}
+
 				@Provide
 				Arbitrary<Integer> months() {
 					return Arbitraries.integers().between(1, 12);
@@ -450,6 +462,22 @@ class LocalDateTimeTests {
 				@Provide
 				Arbitrary<Integer> dayOfMonths() {
 					return Arbitraries.integers().between(1, 31);
+				}
+
+			}
+
+			@Group
+			class OnlyDaysOfWeekMethods {
+
+				@Property
+				void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
+
+					assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+						assertThat(dateTime.getDayOfWeek()).isIn(dayOfWeeks);
+						return true;
+					});
 				}
 
 			}

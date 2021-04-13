@@ -163,7 +163,7 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	public LocalDateArbitrary monthBetween(Month min, Month max) {
 		MonthBetween monthBetween = (MonthBetween) new MonthBetween().set(min, max);
 		DefaultLocalDateArbitrary clone = typedClone();
-		clone.allowedMonths.setBetween(monthBetween);
+		clone.allowedMonths.set(monthBetween);
 		return clone;
 	}
 

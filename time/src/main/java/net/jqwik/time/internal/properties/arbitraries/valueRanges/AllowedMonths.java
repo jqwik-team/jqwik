@@ -11,7 +11,7 @@ public class AllowedMonths extends AllowedUnits<Month> {
 		allowed = new HashSet<>(Arrays.asList(Month.values()));
 	}
 
-	public void setBetween(MonthBetween monthBetween) {
+	public void set(MonthBetween monthBetween) {
 		allowed = Arrays.stream(Month.values())
 						.filter(m -> m.compareTo(monthBetween.getMin()) >= 0 && m.compareTo(monthBetween.getMax()) <= 0)
 						.collect(Collectors.toSet());

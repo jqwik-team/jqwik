@@ -21,8 +21,10 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 
 	private final LocalDateTimeBetween dateTimeBetween = new LocalDateTimeBetween();
 	private final LocalDateBetween dateBetween = new LocalDateBetween();
+	private final AllowedMonths allowedMonths = new AllowedMonths();
 	private final DayOfMonthBetween dayOfMonthBetween = new DayOfMonthBetween();
-	private final MonthBetween monthBetween = new MonthBetween();
+	private final AllowedDayOfWeeks allowedDayOfWeeks = new AllowedDayOfWeeks();
+
 	private final OfPrecision ofPrecision = new OfPrecision();
 
 	@Override
@@ -48,12 +50,11 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	}
 
 	private LocalDateArbitrary setDateParams(LocalDateArbitrary dates) {
-		if (monthBetween.getMin() != null && monthBetween.getMax() != null) {
-			dates = dates.monthBetween(monthBetween.getMin(), monthBetween.getMax());
-		}
+		dates = dates.onlyMonths(allowedMonths.get().toArray(new Month[]{}));
 		if (dayOfMonthBetween.getMin() != null && dayOfMonthBetween.getMax() != null) {
 			dates = dates.dayOfMonthBetween(dayOfMonthBetween.getMin(), dayOfMonthBetween.getMax());
 		}
+		dates = dates.onlyDaysOfWeek(allowedDayOfWeeks.get().toArray(new DayOfWeek[]{}));
 		return dates;
 	}
 
@@ -182,14 +183,17 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 
 	@Override
 	public LocalDateTimeArbitrary monthBetween(Month min, Month max) {
+		MonthBetween monthBetween = (MonthBetween) new MonthBetween().set(min, max);
 		DefaultLocalDateTimeArbitrary clone = typedClone();
-		clone.monthBetween.set(min, max);
+		clone.allowedMonths.set(monthBetween);
 		return clone;
 	}
 
 	@Override
-	public LocalDateArbitrary onlyMonths(Month... months) {
-		return null;
+	public LocalDateTimeArbitrary onlyMonths(Month... months) {
+		DefaultLocalDateTimeArbitrary clone = typedClone();
+		clone.allowedMonths.set(months);
+		return clone;
 	}
 
 	@Override
@@ -200,8 +204,10 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	}
 
 	@Override
-	public LocalDateArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
-		return null;
+	public LocalDateTimeArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek) {
+		DefaultLocalDateTimeArbitrary clone = typedClone();
+		clone.allowedDayOfWeeks.set(daysOfWeek);
+		return clone;
 	}
 
 	@Override

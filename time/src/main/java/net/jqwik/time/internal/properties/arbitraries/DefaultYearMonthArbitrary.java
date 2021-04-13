@@ -76,7 +76,7 @@ public class DefaultYearMonthArbitrary extends ArbitraryDecorator<YearMonth> imp
 	public YearMonthArbitrary monthBetween(Month min, Month max) {
 		MonthBetween monthBetween = (MonthBetween) new MonthBetween().set(min, max);
 		DefaultYearMonthArbitrary clone = typedClone();
-		clone.allowedMonths.setBetween(monthBetween);
+		clone.allowedMonths.set(monthBetween);
 		return clone;
 	}
 
