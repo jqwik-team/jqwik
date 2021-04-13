@@ -86,6 +86,7 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	/**
 	 * Set an array of allowed {@code months}.
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
 	LocalDateTimeArbitrary onlyMonths(Month... months);
 
 	/**
@@ -98,6 +99,7 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	/**
 	 * Set an array of allowed {@code daysOfWeek}.
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
 	LocalDateTimeArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
 
 	/**
