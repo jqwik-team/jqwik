@@ -12,6 +12,25 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 
 public class DayOfWeekRangeConfigurator {
 
+	public static class ForLocalDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(LocalDateTime.class);
+		}
+
+		public Arbitrary<LocalDateTime> configure(Arbitrary<LocalDateTime> arbitrary, DayOfWeekRange range) {
+			DayOfWeek[] dayOfWeeks = createDayOfWeekArray(range);
+			if (arbitrary instanceof LocalDateTimeArbitrary) {
+				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
+				return localDateTimeArbitrary.onlyDaysOfWeek(dayOfWeeks);
+			} else {
+				return arbitrary.filter(v -> filter(v, dayOfWeeks));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -84,6 +103,10 @@ public class DayOfWeekRangeConfigurator {
 			}
 		}
 		return false;
+	}
+
+	private static boolean filter(LocalDateTime dateTime, DayOfWeek[] dayOfWeeks) {
+		return filter(dateTime.getDayOfWeek(), dayOfWeeks);
 	}
 
 	private static boolean filter(LocalDate date, DayOfWeek[] dayOfWeeks) {

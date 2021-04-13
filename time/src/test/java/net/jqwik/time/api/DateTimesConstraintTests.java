@@ -61,6 +61,22 @@ public class DateTimesConstraintTests {
 			assertThat(dateTime.getDayOfMonth()).isLessThanOrEqualTo(20);
 		}
 
+		@Property
+		void dayOfWeekRangeOnlyMonday(@ForAll @DayOfWeekRange(max = DayOfWeek.MONDAY) LocalDateTime dateTime) {
+			assertThat(dateTime.getDayOfWeek()).isEqualTo(DayOfWeek.MONDAY);
+		}
+
+		@Property
+		void dayOfWeekRangeOnlySunday(@ForAll @DayOfWeekRange(min = DayOfWeek.SUNDAY) LocalDateTime dateTime) {
+			assertThat(dateTime.getDayOfWeek()).isEqualTo(DayOfWeek.SUNDAY);
+		}
+
+		@Property
+		void dayOfWeekRangeBetweenTuesdayAndFriday(@ForAll @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) LocalDateTime dateTime) {
+			assertThat(dateTime.getDayOfWeek()).isGreaterThanOrEqualTo(DayOfWeek.TUESDAY);
+			assertThat(dateTime.getDayOfWeek()).isLessThanOrEqualTo(DayOfWeek.FRIDAY);
+		}
+
 		@Group
 		class Precisions {
 
@@ -337,6 +353,16 @@ public class DateTimesConstraintTests {
 
 			}
 
+			@Group
+			class DayOfWeekRangeConstraint {
+
+				@Property
+				void localDateTime(@ForAll("dateTimes") @DayOfWeekRange(min = DayOfWeek.TUESDAY, max = DayOfWeek.FRIDAY) LocalDateTime dateTime) {
+					assertThat(dateTime.getDayOfWeek()).isBetween(DayOfWeek.TUESDAY, DayOfWeek.FRIDAY);
+				}
+
+			}
+
 			@Provide
 			Arbitrary<LocalDateTime> dateTimes() {
 				return of(
@@ -349,6 +375,8 @@ public class DateTimesConstraintTests {
 						LocalDateTime.of(2019, Month.JULY, 20, 4, 31, 48, 1),
 						LocalDateTime.of(2019, Month.JULY, 21, 4, 31, 48, 1),
 						LocalDateTime.of(2020, Month.AUGUST, 23, 1, 32, 21, 113944000),
+						LocalDateTime.of(2021, Month.APRIL, 12, 3, 32, 21, 113944000),
+						LocalDateTime.of(2021, Month.APRIL, 17, 3, 32, 21, 113944000),
 						LocalDateTime.MAX
 				);
 			}
