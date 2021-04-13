@@ -264,6 +264,7 @@ The following annotations can be used to constrain default generation of the enu
 - [`@YearRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/YearRange.html)
 - [`@MonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/MonthRange.html)
 - [`@DayOfMonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DayOfMonthRange.html)
+- [`@DayOfWeekRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DayOfWeekRange.html)
 - [`@Precision`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/Precision.html)
 
 `@DateTimeRange` and `@DateRange` use the standard format of their classes. 
@@ -301,5 +302,7 @@ Here's the list of available methods:
 - You can constrain its minimum and maximum value for dates using `dateBetween(min, max)`.
 - You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
 - You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
+- You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
