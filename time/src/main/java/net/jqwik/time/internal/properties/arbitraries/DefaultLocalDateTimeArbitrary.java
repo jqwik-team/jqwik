@@ -45,7 +45,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		LocalDate effectiveMaxDate = effectiveMax.toLocalDate();
 
 		return dates.flatMap(date -> timesByDate(times, date, effectiveMinDate, effectiveMaxDate)
-											 .map(time -> LocalDateTime.of(date, time)));
+										 .map(time -> LocalDateTime.of(date, time)));
 
 	}
 
@@ -208,6 +208,26 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		DefaultLocalDateTimeArbitrary clone = typedClone();
 		clone.allowedDayOfWeeks.set(daysOfWeek);
 		return clone;
+	}
+
+	@Override
+	public LocalDateTimeArbitrary timeBetween(LocalTime min, LocalTime max) {
+		return null;
+	}
+
+	@Override
+	public LocalTimeArbitrary hourBetween(int min, int max) {
+		return null;
+	}
+
+	@Override
+	public LocalTimeArbitrary minuteBetween(int min, int max) {
+		return null;
+	}
+
+	@Override
+	public LocalTimeArbitrary secondBetween(int min, int max) {
+		return null;
 	}
 
 	@Override

@@ -103,6 +103,34 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	LocalDateTimeArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
 
 	/**
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated local time values.
+	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
+	LocalDateTimeArbitrary timeBetween(LocalTime min, LocalTime max);
+
+	/**
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated hour values.
+	 * The hours can be between {@code 0} and {@code 23}.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
+	LocalTimeArbitrary hourBetween(int min, int max);
+
+	/**
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated minute values.
+	 * The minutes can be between {@code 0} and {@code 59}.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
+	LocalTimeArbitrary minuteBetween(int min, int max);
+
+	/**
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated second values.
+	 * The minutes can be between {@code 0} and {@code 59}.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.2")
+	LocalTimeArbitrary secondBetween(int min, int max);
+
+	/**
 	 * Constrain the precision of generated values.
 	 * Default value: Seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */

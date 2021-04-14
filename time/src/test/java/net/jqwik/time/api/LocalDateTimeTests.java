@@ -67,10 +67,10 @@ class LocalDateTimeTests {
 
 		@Property
 		void onlyFewValuesPossibleAtEndOfDayPrecisionSeconds(
-				@ForAll LocalDate date,
-				@ForAll @IntRange(min = 50, max = 59) int secondEnd,
-				@ForAll @IntRange(min = 0, max = 10) int secondStart,
-				@ForAll Random random
+			@ForAll LocalDate date,
+			@ForAll @IntRange(min = 50, max = 59) int secondEnd,
+			@ForAll @IntRange(min = 0, max = 10) int secondStart,
+			@ForAll Random random
 		) {
 
 			Assume.that(!date.isEqual(LocalDate.MAX));
@@ -88,10 +88,10 @@ class LocalDateTimeTests {
 
 		@Property
 		void onlyFewValuesPossibleAtEndOfDayPrecisionNanos(
-				@ForAll LocalDate date,
-				@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanoEnd,
-				@ForAll @IntRange(min = 0, max = 200) int nanoStart,
-				@ForAll Random random
+			@ForAll LocalDate date,
+			@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanoEnd,
+			@ForAll @IntRange(min = 0, max = 200) int nanoStart,
+			@ForAll Random random
 		) {
 
 			Assume.that(!date.isEqual(LocalDate.MAX));
@@ -266,11 +266,11 @@ class LocalDateTimeTests {
 
 				@Property(tries = 2000)
 				void betweenDateSetWhenBetweenSet(
-						@ForAll LocalDate minDate,
-						@ForAll LocalDate maxDate,
-						@ForAll("dateTimes") LocalDateTime min,
-						@ForAll("dateTimes") LocalDateTime max,
-						@ForAll Random random
+					@ForAll LocalDate minDate,
+					@ForAll LocalDate maxDate,
+					@ForAll("dateTimes") LocalDateTime min,
+					@ForAll("dateTimes") LocalDateTime max,
+					@ForAll Random random
 				) {
 
 					Assume.that(!minDate.isAfter(maxDate));
@@ -411,9 +411,9 @@ class LocalDateTimeTests {
 
 				@Property
 				void dayOfMonthBetween(
-						@ForAll("dayOfMonths") int min,
-						@ForAll("dayOfMonths") int max,
-						@ForAll Random random
+					@ForAll("dayOfMonths") int min,
+					@ForAll("dayOfMonths") int max,
+					@ForAll Random random
 				) {
 
 					Assume.that(min <= max);
@@ -430,9 +430,9 @@ class LocalDateTimeTests {
 
 				@Property
 				void dayOfMonthBetweenStartAfterEnd(
-						@ForAll("dayOfMonths") int min,
-						@ForAll("dayOfMonths") int max,
-						@ForAll Random random
+					@ForAll("dayOfMonths") int min,
+					@ForAll("dayOfMonths") int max,
+					@ForAll Random random
 				) {
 
 					Assume.that(min > max);
@@ -593,9 +593,9 @@ class LocalDateTimeTests {
 					void precisionMinTimePrecisionMillis(@ForAll("precisionMilliseconds") LocalDateTime min, @ForAll Random random) {
 
 						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-											|| min.getHour() != 23
-											|| min.getMinute() != 59
-											|| min.getSecond() != 59);
+										|| min.getHour() != 23
+										|| min.getMinute() != 59
+										|| min.getSecond() != 59);
 
 						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(SECONDS);
 
@@ -611,9 +611,9 @@ class LocalDateTimeTests {
 					void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
 
 						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-											|| min.getHour() != 23
-											|| min.getMinute() != 59
-											|| min.getSecond() != 59);
+										|| min.getHour() != 23
+										|| min.getMinute() != 59
+										|| min.getSecond() != 59);
 
 						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(SECONDS);
 
@@ -639,10 +639,10 @@ class LocalDateTimeTests {
 					void precisionMinTimePrecisionMicros(@ForAll("precisionMicroseconds") LocalDateTime min, @ForAll Random random) {
 
 						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-											|| min.getHour() != 23
-											|| min.getMinute() != 59
-											|| min.getSecond() != 59
-											|| min.getNano() < 999_000_001);
+										|| min.getHour() != 23
+										|| min.getMinute() != 59
+										|| min.getSecond() != 59
+										|| min.getNano() < 999_000_001);
 
 						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MILLIS);
 
@@ -658,10 +658,10 @@ class LocalDateTimeTests {
 					void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
 
 						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-											|| min.getHour() != 23
-											|| min.getMinute() != 59
-											|| min.getSecond() != 59
-											|| min.getNano() < 999_000_001);
+										|| min.getHour() != 23
+										|| min.getMinute() != 59
+										|| min.getSecond() != 59
+										|| min.getNano() < 999_000_001);
 
 						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MILLIS);
 
@@ -687,10 +687,10 @@ class LocalDateTimeTests {
 					void precisionMinTimePrecisionNanos(@ForAll("precisionNanoseconds") LocalDateTime min, @ForAll Random random) {
 
 						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-											|| min.getHour() != 23
-											|| min.getMinute() != 59
-											|| min.getSecond() != 59
-											|| min.getNano() < 999_999_001);
+										|| min.getHour() != 23
+										|| min.getMinute() != 59
+										|| min.getSecond() != 59
+										|| min.getNano() < 999_999_001);
 
 						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MICROS);
 
@@ -706,10 +706,10 @@ class LocalDateTimeTests {
 					void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
 
 						Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-											|| min.getHour() != 23
-											|| min.getMinute() != 59
-											|| min.getSecond() != 59
-											|| min.getNano() < 999_999_001);
+										|| min.getHour() != 23
+										|| min.getMinute() != 59
+										|| min.getSecond() != 59
+										|| min.getNano() < 999_999_001);
 
 						Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MICROS);
 
@@ -768,132 +768,132 @@ class LocalDateTimeTests {
 			@Example
 			void nanos() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-						DateTimes.dateTimes()
-								 .between(
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_325)
-								 )
-								 .ofPrecision(NANOS)
-								 .exhaustive();
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_325)
+							 )
+							 .ofPrecision(NANOS)
+							 .exhaustive();
 				assertThat(optionalGenerator).isPresent();
 
 				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 				assertThat(generator.maxCount()).isEqualTo(4);
 				assertThat(generator).containsExactly(
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_323),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_324),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_325)
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_323),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_324),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_325)
 				);
 			}
 
 			@Example
 			void micros() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-						DateTimes.dateTimes()
-								 .between(
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_215_325)
-								 )
-								 .ofPrecision(MICROS)
-								 .exhaustive();
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_215_325)
+							 )
+							 .ofPrecision(MICROS)
+							 .exhaustive();
 				assertThat(optionalGenerator).isPresent();
 
 				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 				assertThat(generator.maxCount()).isEqualTo(4);
 				assertThat(generator).containsExactly(
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_212_000),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_213_000),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_214_000),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_215_000)
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_212_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_213_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_214_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_215_000)
 				);
 			}
 
 			@Example
 			void millis() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-						DateTimes.dateTimes()
-								 .between(
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 396_211_325)
-								 )
-								 .ofPrecision(MILLIS)
-								 .exhaustive();
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 396_211_325)
+							 )
+							 .ofPrecision(MILLIS)
+							 .exhaustive();
 				assertThat(optionalGenerator).isPresent();
 
 				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 				assertThat(generator.maxCount()).isEqualTo(4);
 				assertThat(generator).containsExactly(
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 393_000_000),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 394_000_000),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 395_000_000),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 31, 396_000_000)
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 393_000_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 394_000_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 395_000_000),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31, 396_000_000)
 				);
 			}
 
 			@Example
 			void seconds() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-						DateTimes.dateTimes()
-								 .between(
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 35, 392_211_325)
-								 )
-								 .ofPrecision(SECONDS)
-								 .exhaustive();
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 35, 392_211_325)
+							 )
+							 .ofPrecision(SECONDS)
+							 .exhaustive();
 				assertThat(optionalGenerator).isPresent();
 
 				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 				assertThat(generator.maxCount()).isEqualTo(4);
 				assertThat(generator).containsExactly(
-						LocalDateTime.of(2013, 5, 25, 11, 22, 32),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 33),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 34),
-						LocalDateTime.of(2013, 5, 25, 11, 22, 35)
+					LocalDateTime.of(2013, 5, 25, 11, 22, 32),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 33),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 34),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 35)
 				);
 			}
 
 			@Example
 			void minutes() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-						DateTimes.dateTimes()
-								 .between(
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-										 LocalDateTime.of(2013, 5, 25, 11, 26, 35, 392_211_325)
-								 )
-								 .ofPrecision(MINUTES)
-								 .exhaustive();
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+								 LocalDateTime.of(2013, 5, 25, 11, 26, 35, 392_211_325)
+							 )
+							 .ofPrecision(MINUTES)
+							 .exhaustive();
 				assertThat(optionalGenerator).isPresent();
 
 				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 				assertThat(generator.maxCount()).isEqualTo(4);
 				assertThat(generator).containsExactly(
-						LocalDateTime.of(2013, 5, 25, 11, 23, 0),
-						LocalDateTime.of(2013, 5, 25, 11, 24, 0),
-						LocalDateTime.of(2013, 5, 25, 11, 25, 0),
-						LocalDateTime.of(2013, 5, 25, 11, 26, 0)
+					LocalDateTime.of(2013, 5, 25, 11, 23, 0),
+					LocalDateTime.of(2013, 5, 25, 11, 24, 0),
+					LocalDateTime.of(2013, 5, 25, 11, 25, 0),
+					LocalDateTime.of(2013, 5, 25, 11, 26, 0)
 				);
 			}
 
 			@Example
 			void hours() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-						DateTimes.dateTimes()
-								 .between(
-										 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-										 LocalDateTime.of(2013, 5, 25, 15, 26, 35, 392_211_325)
-								 )
-								 .ofPrecision(HOURS)
-								 .exhaustive();
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
+								 LocalDateTime.of(2013, 5, 25, 15, 26, 35, 392_211_325)
+							 )
+							 .ofPrecision(HOURS)
+							 .exhaustive();
 				assertThat(optionalGenerator).isPresent();
 
 				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 				assertThat(generator.maxCount()).isEqualTo(4);
 				assertThat(generator).containsExactly(
-						LocalDateTime.of(2013, 5, 25, 12, 0, 0),
-						LocalDateTime.of(2013, 5, 25, 13, 0, 0),
-						LocalDateTime.of(2013, 5, 25, 14, 0, 0),
-						LocalDateTime.of(2013, 5, 25, 15, 0, 0)
+					LocalDateTime.of(2013, 5, 25, 12, 0, 0),
+					LocalDateTime.of(2013, 5, 25, 13, 0, 0),
+					LocalDateTime.of(2013, 5, 25, 14, 0, 0),
+					LocalDateTime.of(2013, 5, 25, 15, 0, 0)
 				);
 			}
 
@@ -908,63 +908,63 @@ class LocalDateTimeTests {
 				@Example
 				void between() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 31, 0),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 34, 0)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 31, 0),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 34, 0)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 31, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 34, 0)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 31, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 34, 0)
 					);
 				}
 
 				@Example
 				void betweenTheEarliest() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 57, 0),
-											 LocalDateTime.of(2013, 5, 25, 12, 23, 0, 0)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 57, 0),
+									 LocalDateTime.of(2013, 5, 25, 12, 23, 0, 0)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 57, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 58, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 59, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 23, 0, 0)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 57, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 58, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 59, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 23, 0, 0)
 					);
 				}
 
 				@Example
 				void betweenTheLatest() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 0, 0),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 3, 0)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 0, 0),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 3, 0)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 0, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 1, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 2, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 3, 0)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 0, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 1, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 2, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 3, 0)
 					);
 				}
 
@@ -976,63 +976,63 @@ class LocalDateTimeTests {
 				@Example
 				void between() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_000_000),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 395_000_000)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_000_000),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 395_000_000)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_000_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 393_000_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 394_000_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 395_000_000)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_000_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 393_000_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 394_000_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 395_000_000)
 					);
 				}
 
 				@Example
 				void betweenTheEarliest() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 997_000_000),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 997_000_000),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 997_000_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 998_000_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 999_000_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 997_000_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 998_000_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 999_000_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0)
 					);
 				}
 
 				@Example
 				void betweenTheLatest() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 3_000_000)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 3_000_000)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 1_000_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 2_000_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 3_000_000)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 0),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 1_000_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 2_000_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 3_000_000)
 					);
 				}
 
@@ -1044,63 +1044,63 @@ class LocalDateTimeTests {
 				@Example
 				void between() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_000),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_415_000)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_000),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_415_000)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_413_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_414_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_415_000)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_413_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_414_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_415_000)
 					);
 				}
 
 				@Example
 				void betweenTheEarliest() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_997_000),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 313_000_000)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_997_000),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 313_000_000)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_997_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_998_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_999_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 313_000_000)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_997_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_998_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_999_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 313_000_000)
 					);
 				}
 
 				@Example
 				void betweenTheLatest() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_000_000),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_003_000)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_000_000),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_003_000)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_000_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_001_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_002_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_003_000)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_000_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_001_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_002_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_003_000)
 					);
 				}
 
@@ -1112,63 +1112,63 @@ class LocalDateTimeTests {
 				@Example
 				void between() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_221),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_224)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_221),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_224)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_221),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_222),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_223),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_224)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_221),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_222),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_223),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 392_412_224)
 					);
 				}
 
 				@Example
 				void betweenTheEarliest() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_321_997),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_322_000)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_321_997),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_322_000)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_321_997),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_321_998),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_321_999),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_322_000)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_321_997),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_321_998),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_321_999),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 32, 312_322_000)
 					);
 				}
 
 				@Example
 				void betweenTheLatest() {
 					Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
-							DateTimes.dateTimes()
-									 .between(
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_000),
-											 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_003)
-									 )
-									 .exhaustive();
+						DateTimes.dateTimes()
+								 .between(
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_000),
+									 LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_003)
+								 )
+								 .exhaustive();
 					assertThat(optionalGenerator).isPresent();
 
 					ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
 					assertThat(generator.maxCount()).isEqualTo(4);
 					assertThat(generator).containsExactly(
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_000),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_001),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_002),
-							LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_003)
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_000),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_001),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_002),
+						LocalDateTime.of(2013, 5, 25, 12, 22, 33, 312_542_003)
 					);
 				}
 
@@ -1190,50 +1190,50 @@ class LocalDateTimeTests {
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(1900, 1, 1, 0, 0, 0),
-						LocalDateTime.of(1900, 1, 1, 23, 0, 0),
-						LocalDateTime.of(1904, 2, 29, 0, 0, 0),
-						LocalDateTime.of(1904, 2, 29, 23, 0, 0),
-						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
-						LocalDateTime.of(2500, 12, 31, 23, 0, 0)
+					LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+					LocalDateTime.of(1900, 1, 1, 23, 0, 0),
+					LocalDateTime.of(1904, 2, 29, 0, 0, 0),
+					LocalDateTime.of(1904, 2, 29, 23, 0, 0),
+					LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+					LocalDateTime.of(2500, 12, 31, 23, 0, 0)
 				);
 			}
 
 			@Example
 			void between() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(HOURS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(HOURS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 12, 0, 0),
-						LocalDateTime.of(2013, MAY, 25, 23, 0, 0),
-						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0),
-						LocalDateTime.of(2016, FEBRUARY, 29, 23, 0, 0),
-						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0),
-						LocalDateTime.of(2020, AUGUST, 23, 21, 0, 0)
+					LocalDateTime.of(2013, MAY, 25, 12, 0, 0),
+					LocalDateTime.of(2013, MAY, 25, 23, 0, 0),
+					LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0),
+					LocalDateTime.of(2016, FEBRUARY, 29, 23, 0, 0),
+					LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0),
+					LocalDateTime.of(2020, AUGUST, 23, 21, 0, 0)
 				);
 			}
 
 			@Example
 			void betweenSameDate() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(HOURS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(HOURS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 12, 0, 0),
-						LocalDateTime.of(2013, MAY, 25, 21, 0, 0)
+					LocalDateTime.of(2013, MAY, 25, 12, 0, 0),
+					LocalDateTime.of(2013, MAY, 25, 21, 0, 0)
 				);
 			}
 
@@ -1248,50 +1248,50 @@ class LocalDateTimeTests {
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(1900, 1, 1, 0, 0, 0),
-						LocalDateTime.of(1900, 1, 1, 23, 59, 0),
-						LocalDateTime.of(1904, 2, 29, 0, 0, 0),
-						LocalDateTime.of(1904, 2, 29, 23, 59, 0),
-						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
-						LocalDateTime.of(2500, 12, 31, 23, 59, 0)
+					LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+					LocalDateTime.of(1900, 1, 1, 23, 59, 0),
+					LocalDateTime.of(1904, 2, 29, 0, 0, 0),
+					LocalDateTime.of(1904, 2, 29, 23, 59, 0),
+					LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+					LocalDateTime.of(2500, 12, 31, 23, 59, 0)
 				);
 			}
 
 			@Example
 			void between() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(MINUTES)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(MINUTES)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 24, 0),
-						LocalDateTime.of(2013, MAY, 25, 23, 59, 0),
-						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0),
-						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 0),
-						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0),
-						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 0)
+					LocalDateTime.of(2013, MAY, 25, 11, 24, 0),
+					LocalDateTime.of(2013, MAY, 25, 23, 59, 0),
+					LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0),
+					LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 0),
+					LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0),
+					LocalDateTime.of(2020, AUGUST, 23, 21, 15, 0)
 				);
 			}
 
 			@Example
 			void betweenSameDate() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(MINUTES)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(MINUTES)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 24, 0),
-						LocalDateTime.of(2013, MAY, 25, 21, 15, 0)
+					LocalDateTime.of(2013, MAY, 25, 11, 24, 0),
+					LocalDateTime.of(2013, MAY, 25, 21, 15, 0)
 				);
 			}
 
@@ -1306,50 +1306,50 @@ class LocalDateTimeTests {
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(1900, 1, 1, 0, 0, 0),
-						LocalDateTime.of(1900, 1, 1, 23, 59, 59),
-						LocalDateTime.of(1904, 2, 29, 0, 0, 0),
-						LocalDateTime.of(1904, 2, 29, 23, 59, 59),
-						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
-						LocalDateTime.of(2500, 12, 31, 23, 59, 59)
+					LocalDateTime.of(1900, 1, 1, 0, 0, 0),
+					LocalDateTime.of(1900, 1, 1, 23, 59, 59),
+					LocalDateTime.of(1904, 2, 29, 0, 0, 0),
+					LocalDateTime.of(1904, 2, 29, 23, 59, 59),
+					LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+					LocalDateTime.of(2500, 12, 31, 23, 59, 59)
 				);
 			}
 
 			@Example
 			void between() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(SECONDS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(SECONDS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 23, 22),
-						LocalDateTime.of(2013, MAY, 25, 23, 59, 59),
-						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0),
-						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59),
-						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0),
-						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19)
+					LocalDateTime.of(2013, MAY, 25, 11, 23, 22),
+					LocalDateTime.of(2013, MAY, 25, 23, 59, 59),
+					LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0),
+					LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59),
+					LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0),
+					LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19)
 				);
 			}
 
 			@Example
 			void betweenSameDate() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(SECONDS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(SECONDS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 23, 22),
-						LocalDateTime.of(2013, MAY, 25, 21, 15, 19)
+					LocalDateTime.of(2013, MAY, 25, 11, 23, 22),
+					LocalDateTime.of(2013, MAY, 25, 21, 15, 19)
 				);
 			}
 
@@ -1364,50 +1364,50 @@ class LocalDateTimeTests {
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0),
-						LocalDateTime.of(1900, 1, 1, 23, 59, 59, 999_000_000),
-						LocalDateTime.of(1904, 2, 29, 0, 0, 0, 0),
-						LocalDateTime.of(1904, 2, 29, 23, 59, 59, 999_000_000),
-						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
-						LocalDateTime.of(2500, 12, 31, 23, 59, 59, 999_000_000)
+					LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0),
+					LocalDateTime.of(1900, 1, 1, 23, 59, 59, 999_000_000),
+					LocalDateTime.of(1904, 2, 29, 0, 0, 0, 0),
+					LocalDateTime.of(1904, 2, 29, 23, 59, 59, 999_000_000),
+					LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+					LocalDateTime.of(2500, 12, 31, 23, 59, 59, 999_000_000)
 				);
 			}
 
 			@Example
 			void between() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(MILLIS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(MILLIS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 302_000_000),
-						LocalDateTime.of(2013, MAY, 25, 23, 59, 59, 999_000_000),
-						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0, 0),
-						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59, 999_000_000),
-						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0, 0),
-						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_000_000)
+					LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 302_000_000),
+					LocalDateTime.of(2013, MAY, 25, 23, 59, 59, 999_000_000),
+					LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0, 0),
+					LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59, 999_000_000),
+					LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0, 0),
+					LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_000_000)
 				);
 			}
 
 			@Example
 			void betweenSameDate() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(MILLIS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(MILLIS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 302_000_000),
-						LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_000_000)
+					LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 302_000_000),
+					LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_000_000)
 				);
 			}
 
@@ -1422,50 +1422,50 @@ class LocalDateTimeTests {
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0),
-						LocalDateTime.of(1900, 1, 1, 23, 59, 59, 999_999_000),
-						LocalDateTime.of(1904, 2, 29, 0, 0, 0, 0),
-						LocalDateTime.of(1904, 2, 29, 23, 59, 59, 999_999_000),
-						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
-						LocalDateTime.of(2500, 12, 31, 23, 59, 59, 999_999_000)
+					LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0),
+					LocalDateTime.of(1900, 1, 1, 23, 59, 59, 999_999_000),
+					LocalDateTime.of(1904, 2, 29, 0, 0, 0, 0),
+					LocalDateTime.of(1904, 2, 29, 23, 59, 59, 999_999_000),
+					LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+					LocalDateTime.of(2500, 12, 31, 23, 59, 59, 999_999_000)
 				);
 			}
 
 			@Example
 			void between() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(MICROS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(MICROS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_429_000),
-						LocalDateTime.of(2013, MAY, 25, 23, 59, 59, 999_999_000),
-						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0, 0),
-						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59, 999_999_000),
-						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0, 0),
-						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_000)
+					LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_429_000),
+					LocalDateTime.of(2013, MAY, 25, 23, 59, 59, 999_999_000),
+					LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0, 0),
+					LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59, 999_999_000),
+					LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0, 0),
+					LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_000)
 				);
 			}
 
 			@Example
 			void betweenSameDate() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(MICROS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(MICROS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_429_000),
-						LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_000)
+					LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_429_000),
+					LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_000)
 				);
 			}
 
@@ -1480,50 +1480,50 @@ class LocalDateTimeTests {
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0),
-						LocalDateTime.of(1900, 1, 1, 23, 59, 59, 999_999_999),
-						LocalDateTime.of(1904, 2, 29, 0, 0, 0, 0),
-						LocalDateTime.of(1904, 2, 29, 23, 59, 59, 999_999_999),
-						LocalDateTime.of(2500, 12, 31, 0, 0, 0),
-						LocalDateTime.of(2500, 12, 31, 23, 59, 59, 999_999_999)
+					LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0),
+					LocalDateTime.of(1900, 1, 1, 23, 59, 59, 999_999_999),
+					LocalDateTime.of(1904, 2, 29, 0, 0, 0, 0),
+					LocalDateTime.of(1904, 2, 29, 23, 59, 59, 999_999_999),
+					LocalDateTime.of(2500, 12, 31, 0, 0, 0),
+					LocalDateTime.of(2500, 12, 31, 23, 59, 59, 999_999_999)
 				);
 			}
 
 			@Example
 			void between() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(NANOS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(NANOS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(6);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-						LocalDateTime.of(2013, MAY, 25, 23, 59, 59, 999_999_999),
-						LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0, 0),
-						LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59, 999_999_999),
-						LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0, 0),
-						LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+					LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+					LocalDateTime.of(2013, MAY, 25, 23, 59, 59, 999_999_999),
+					LocalDateTime.of(2016, FEBRUARY, 29, 0, 0, 0, 0),
+					LocalDateTime.of(2016, FEBRUARY, 29, 23, 59, 59, 999_999_999),
+					LocalDateTime.of(2020, AUGUST, 23, 0, 0, 0, 0),
+					LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
 				);
 			}
 
 			@Example
 			void betweenSameDate() {
 				LocalDateTimeArbitrary times =
-						DateTimes.dateTimes()
-								 .ofPrecision(NANOS)
-								 .between(
-										 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-										 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
-								 );
+					DateTimes.dateTimes()
+							 .ofPrecision(NANOS)
+							 .between(
+								 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+								 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 );
 				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 				assertThat(edgeCases).hasSize(2);
 				assertThat(edgeCases).containsExactlyInAnyOrder(
-						LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-						LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+					LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
+					LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
 				);
 			}
 
@@ -1686,45 +1686,45 @@ class LocalDateTimeTests {
 
 			@Property
 			void atTheEarliestYearMustNotBelow1(
-					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
-					@ForAll @YearRange(min = 2001, max = 2001) LocalDate date,
-					@ForAll LocalTime time
+				@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
+				@ForAll @YearRange(min = 2001, max = 2001) LocalDate date,
+				@ForAll LocalTime time
 			) {
 				date = date.withYear(year);
 				LocalDateTime dateTime = LocalDateTime.of(date, time);
 				assertThatThrownBy(
-						() -> DateTimes.dateTimes().atTheEarliest(dateTime)
+					() -> DateTimes.dateTimes().atTheEarliest(dateTime)
 				).isInstanceOf(IllegalArgumentException.class);
 			}
 
 			@Property
 			void atTheLatestYearMustNotBelow1(
-					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
-					@ForAll @YearRange(min = 2001, max = 2001) LocalDate date,
-					@ForAll LocalTime time
+				@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
+				@ForAll @YearRange(min = 2001, max = 2001) LocalDate date,
+				@ForAll LocalTime time
 			) {
 				date = date.withYear(year);
 				LocalDateTime dateTime = LocalDateTime.of(date, time);
 				assertThatThrownBy(
-						() -> DateTimes.dateTimes().atTheLatest(dateTime)
+					() -> DateTimes.dateTimes().atTheLatest(dateTime)
 				).isInstanceOf(IllegalArgumentException.class);
 			}
 
 			@Property
 			void dateBetweenYearMustNotBelow1(
-					@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
-					@ForAll @YearRange(min = 2001, max = 2001) LocalDate date
+				@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year,
+				@ForAll @YearRange(min = 2001, max = 2001) LocalDate date
 			) {
 				LocalDate effective = date.withYear(year);
 				assertThatThrownBy(
-						() -> DateTimes.dateTimes().dateBetween(effective, effective)
+					() -> DateTimes.dateTimes().dateBetween(effective, effective)
 				).isInstanceOf(IllegalArgumentException.class);
 			}
 
 			@Property
 			void yearBetweenYearMustNotBelow1(@ForAll @IntRange(min = Year.MIN_VALUE, max = 0) int year) {
 				assertThatThrownBy(
-						() -> DateTimes.dateTimes().yearBetween(year, year)
+					() -> DateTimes.dateTimes().yearBetween(year, year)
 				).isInstanceOf(IllegalArgumentException.class);
 			}
 
@@ -1747,7 +1747,7 @@ class LocalDateTimeTests {
 					Assume.that(!chronoUnit.equals(HOURS));
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().ofPrecision(chronoUnit)
+						() -> DateTimes.dateTimes().ofPrecision(chronoUnit)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1759,8 +1759,8 @@ class LocalDateTimeTests {
 
 				@Property
 				void precisionMaxSoonAfterMin(
-						@ForAll("precisionNanoseconds") LocalDateTime min,
-						@ForAll @IntRange(min = 1, max = 200) int nanos
+					@ForAll("precisionNanoseconds") LocalDateTime min,
+					@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
 					LocalDateTime max = min.plusNanos(nanos);
@@ -1769,7 +1769,7 @@ class LocalDateTimeTests {
 					Assume.that(min.getHour() == max.getHour());
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(HOURS).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(HOURS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1783,7 +1783,7 @@ class LocalDateTimeTests {
 					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(HOURS).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(HOURS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1800,8 +1800,8 @@ class LocalDateTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionNanoseconds") LocalDateTime min,
-						@ForAll @IntRange(min = 1, max = 200) int nanos
+					@ForAll("precisionNanoseconds") LocalDateTime min,
+					@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
 					LocalDateTime max = min.plusNanos(nanos);
@@ -1810,7 +1810,7 @@ class LocalDateTimeTests {
 					Assume.that(min.getMinute() == max.getMinute());
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MINUTES).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(MINUTES).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1824,7 +1824,7 @@ class LocalDateTimeTests {
 					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MINUTES).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(MINUTES).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1841,8 +1841,8 @@ class LocalDateTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionNanoseconds") LocalDateTime min,
-						@ForAll @IntRange(min = 1, max = 200) int nanos
+					@ForAll("precisionNanoseconds") LocalDateTime min,
+					@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
 					LocalDateTime max = min.plusNanos(nanos);
@@ -1851,15 +1851,15 @@ class LocalDateTimeTests {
 					Assume.that(min.getSecond() == max.getSecond());
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(SECONDS).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(SECONDS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
 				@Property
 				void precisionMinTimeTooLate(
-						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
-						@ForAll @IntRange(min = 1, max = 999_999_999) int nanos
+					@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
+					@ForAll @IntRange(min = 1, max = 999_999_999) int nanos
 				) {
 
 					time = time.withNano(nanos);
@@ -1867,7 +1867,7 @@ class LocalDateTimeTests {
 					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(SECONDS).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(SECONDS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1884,8 +1884,8 @@ class LocalDateTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionNanoseconds") LocalDateTime min,
-						@ForAll @IntRange(min = 1, max = 200) int nanos
+					@ForAll("precisionNanoseconds") LocalDateTime min,
+					@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
 					LocalDateTime max = min.plusNanos(nanos);
@@ -1894,15 +1894,15 @@ class LocalDateTimeTests {
 					Assume.that(min.getNano() % 1_000_000 + nanos < 1_000_000);
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MILLIS).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(MILLIS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
 				@Property
 				void precisionMinTimeTooLate(
-						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
-						@ForAll @IntRange(min = 999_000_001, max = 999_999_999) int nanos
+					@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
+					@ForAll @IntRange(min = 999_000_001, max = 999_999_999) int nanos
 				) {
 
 					time = time.withNano(nanos);
@@ -1910,7 +1910,7 @@ class LocalDateTimeTests {
 					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MILLIS).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(MILLIS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
@@ -1927,8 +1927,8 @@ class LocalDateTimeTests {
 
 				@Property
 				void precisionMaxTimeSoonAfterMinTime(
-						@ForAll("precisionNanoseconds") LocalDateTime min,
-						@ForAll @IntRange(min = 1, max = 200) int nanos
+					@ForAll("precisionNanoseconds") LocalDateTime min,
+					@ForAll @IntRange(min = 1, max = 200) int nanos
 				) {
 
 					LocalDateTime max = min.plusNanos(nanos);
@@ -1937,15 +1937,15 @@ class LocalDateTimeTests {
 					Assume.that(min.getNano() % 1_000 + nanos < 1_000);
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MICROS).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(MICROS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
 
 				@Property
 				void precisionMinTimeTooLate(
-						@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
-						@ForAll @IntRange(min = 999_999_001, max = 999_999_999) int nanos
+					@ForAll("precisionMinTimeTooLateProvide") LocalTime time,
+					@ForAll @IntRange(min = 999_999_001, max = 999_999_999) int nanos
 				) {
 
 					time = time.withNano(nanos);
@@ -1953,7 +1953,7 @@ class LocalDateTimeTests {
 					LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
 
 					assertThatThrownBy(
-							() -> DateTimes.dateTimes().between(min, max).ofPrecision(MICROS).generator(1000)
+						() -> DateTimes.dateTimes().between(min, max).ofPrecision(MICROS).generator(1000)
 					).isInstanceOf(IllegalArgumentException.class);
 
 				}
