@@ -1382,7 +1382,7 @@ class LocalTimeTests {
 				Assume.that(minSecond < 0 || minSecond > 59 || maxSecond < 0 || maxSecond > 59);
 
 				assertThatThrownBy(
-						() -> Times.times().hourBetween(minSecond, maxSecond)
+					() -> Times.times().secondBetween(minSecond, maxSecond)
 				).isInstanceOf(IllegalArgumentException.class);
 
 			}
@@ -1393,7 +1393,7 @@ class LocalTimeTests {
 				Assume.that(minMinute < 0 || minMinute > 59 || maxMinute < 0 || maxMinute > 59);
 
 				assertThatThrownBy(
-						() -> Times.times().hourBetween(minMinute, maxMinute)
+					() -> Times.times().minuteBetween(minMinute, maxMinute)
 				).isInstanceOf(IllegalArgumentException.class);
 
 			}
