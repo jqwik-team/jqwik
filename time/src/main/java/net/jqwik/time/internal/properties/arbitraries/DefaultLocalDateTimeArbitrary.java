@@ -20,11 +20,16 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	private static final LocalDateTime DEFAULT_MAX = LocalDateTime.of(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE, LocalTime.MAX);
 
 	private final LocalDateTimeBetween dateTimeBetween = new LocalDateTimeBetween();
+
 	private final LocalDateBetween dateBetween = new LocalDateBetween();
 	private final AllowedMonths allowedMonths = new AllowedMonths();
 	private final DayOfMonthBetween dayOfMonthBetween = new DayOfMonthBetween();
 	private final AllowedDayOfWeeks allowedDayOfWeeks = new AllowedDayOfWeeks();
 
+	private final LocalTimeBetween timeBetween = new LocalTimeBetween();
+	private final HourBetween hourBetween = new HourBetween();
+	private final MinuteBetween minuteBetween = new MinuteBetween();
+	private final SecondBetween secondBetween = new SecondBetween();
 	private final OfPrecision ofPrecision = new OfPrecision();
 
 	@Override
@@ -212,22 +217,30 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 
 	@Override
 	public LocalDateTimeArbitrary timeBetween(LocalTime min, LocalTime max) {
-		return null;
+		DefaultLocalDateTimeArbitrary clone = typedClone();
+		clone.timeBetween.set(min, max);
+		return clone;
 	}
 
 	@Override
 	public LocalDateTimeArbitrary hourBetween(int min, int max) {
-		return null;
+		DefaultLocalDateTimeArbitrary clone = typedClone();
+		clone.hourBetween.set(min, max);
+		return clone;
 	}
 
 	@Override
 	public LocalDateTimeArbitrary minuteBetween(int min, int max) {
-		return null;
+		DefaultLocalDateTimeArbitrary clone = typedClone();
+		clone.minuteBetween.set(min, max);
+		return clone;
 	}
 
 	@Override
 	public LocalDateTimeArbitrary secondBetween(int min, int max) {
-		return null;
+		DefaultLocalDateTimeArbitrary clone = typedClone();
+		clone.secondBetween.set(min, max);
+		return clone;
 	}
 
 	@Override
