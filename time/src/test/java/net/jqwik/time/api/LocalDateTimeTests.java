@@ -487,6 +487,166 @@ class LocalDateTimeTests {
 		@Group
 		class TimeMethods {
 
+			@Disabled
+			@Group
+			class TimeBetweenMethods {
+
+				@Property
+				void timeBetween(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll Random random) {
+
+					Assume.that(!min.isAfter(max));
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().timeBetween(min, max);
+
+					assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+						assertThat(dateTime.toLocalTime()).isAfterOrEqualTo(min);
+						assertThat(dateTime.toLocalTime()).isBeforeOrEqualTo(max);
+						return true;
+					});
+				}
+
+				@Property
+				void timeBetweenMaxBeforeMin(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll Random random) {
+
+					Assume.that(min.isAfter(max));
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().timeBetween(min, max);
+
+					assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+						assertThat(dateTime.toLocalTime()).isAfterOrEqualTo(max);
+						assertThat(dateTime.toLocalTime()).isBeforeOrEqualTo(min);
+						return true;
+					});
+				}
+
+				@Property
+				void betweenSame(@ForAll LocalTime same, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().timeBetween(same, same);
+
+					assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+						assertThat(dateTime.toLocalTime()).isEqualTo(same);
+						return true;
+					});
+
+				}
+
+			}
+
+			@Disabled
+			@Group
+			class HourMethods {
+
+				@Property
+				void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll Random random) {
+
+					Assume.that(startHour <= endHour);
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().hourBetween(startHour, endHour);
+
+					assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+						assertThat(dateTime.getHour()).isGreaterThanOrEqualTo(startHour);
+						assertThat(dateTime.getHour()).isLessThanOrEqualTo(endHour);
+						return true;
+					});
+
+				}
+
+				@Property
+				void hourBetweenSame(@ForAll("hours") int hour, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().hourBetween(hour, hour);
+
+					assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+						assertThat(dateTime.getHour()).isEqualTo(hour);
+						return true;
+					});
+
+				}
+
+				@Provide
+				Arbitrary<Integer> hours() {
+					return Arbitraries.integers().between(0, 23);
+				}
+
+			}
+
+			@Disabled
+			@Group
+			class MinuteMethods {
+
+				@Property
+				void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll Random random) {
+
+					Assume.that(startMinute <= endMinute);
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().minuteBetween(startMinute, endMinute);
+
+					assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+						assertThat(dateTime.getMinute()).isGreaterThanOrEqualTo(startMinute);
+						assertThat(dateTime.getMinute()).isLessThanOrEqualTo(endMinute);
+						return true;
+					});
+
+				}
+
+				@Property
+				void minuteBetweenSame(@ForAll("minutes") int minute, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().minuteBetween(minute, minute);
+
+					assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+						assertThat(dateTime.getMinute()).isEqualTo(minute);
+						return true;
+					});
+
+				}
+
+				@Provide
+				Arbitrary<Integer> minutes() {
+					return Arbitraries.integers().between(0, 59);
+				}
+
+			}
+
+			@Disabled
+			@Group
+			class SecondMethods {
+
+				@Property
+				void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll Random random) {
+
+					Assume.that(startSecond <= endSecond);
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().secondBetween(startSecond, endSecond);
+
+					assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+						assertThat(dateTime.getSecond()).isGreaterThanOrEqualTo(startSecond);
+						assertThat(dateTime.getSecond()).isLessThanOrEqualTo(endSecond);
+						return true;
+					});
+
+				}
+
+				@Property
+				void secondBetweenSame(@ForAll("seconds") int second, @ForAll Random random) {
+
+					Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().secondBetween(second, second);
+
+					assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+						assertThat(dateTime.getSecond()).isEqualTo(second);
+						return true;
+					});
+
+				}
+
+				@Provide
+				Arbitrary<Integer> seconds() {
+					return Arbitraries.integers().between(0, 59);
+				}
+
+			}
+
 			@Group
 			class PrecisionMethods {
 
@@ -761,6 +921,171 @@ class LocalDateTimeTests {
 
 	@Group
 	class ExhaustiveGeneration {
+
+		@Disabled
+		@Group
+		class BetweenMethods {
+
+			@Example
+			void timeBetweenSmallerThanBetween() {
+				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 10, 22, 31, 0),
+								 LocalDateTime.of(2013, 5, 25, 13, 22, 31, 0)
+							 )
+							 .timeBetween(LocalTime.of(11, 22, 31), LocalTime.of(11, 22, 34))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 32),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 33),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 34)
+				);
+			}
+
+			@Example
+			void betweenSmallerThanTimeBetween() {
+				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 0),
+								 LocalDateTime.of(2013, 5, 25, 11, 22, 34, 0)
+							 )
+							 .timeBetween(LocalTime.of(10, 22, 31), LocalTime.of(13, 22, 31))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 32),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 33),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 34)
+				);
+			}
+
+			@Example
+			void hourMinutesSecondsBetweenSmallerThenOther() {
+				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 10, 22, 31, 0),
+								 LocalDateTime.of(2013, 5, 25, 12, 22, 34, 0)
+							 )
+							 .timeBetween(LocalTime.of(9, 22, 31), LocalTime.of(13, 22, 31))
+							 .hourBetween(11, 11)
+							 .minuteBetween(22, 22)
+							 .secondBetween(31, 34)
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 11, 22, 31),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 32),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 33),
+					LocalDateTime.of(2013, 5, 25, 11, 22, 34)
+				);
+			}
+
+			@Example
+			void dateBetweenSmallerThenBetween() {
+				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(1992, 5, 25, 10, 22, 31, 0),
+								 LocalDateTime.of(2103, 5, 25, 12, 22, 34, 0)
+							 )
+							 .timeBetween(LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0))
+							 .dateBetween(LocalDate.of(2013, 5, 25), LocalDate.of(2013, 5, 28))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 0, 0, 0),
+					LocalDateTime.of(2013, 5, 26, 0, 0, 0),
+					LocalDateTime.of(2013, 5, 27, 0, 0, 0),
+					LocalDateTime.of(2013, 5, 28, 0, 0, 0)
+				);
+			}
+
+			@Example
+			void betweenSmallerThenDateBetween() {
+				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 0, 0, 0, 0),
+								 LocalDateTime.of(2013, 5, 28, 0, 0, 0, 0)
+							 )
+							 .timeBetween(LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0))
+							 .dateBetween(LocalDate.of(1997, 12, 17), LocalDate.of(2210, 5, 28))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 0, 0, 0),
+					LocalDateTime.of(2013, 5, 26, 0, 0, 0),
+					LocalDateTime.of(2013, 5, 27, 0, 0, 0),
+					LocalDateTime.of(2013, 5, 28, 0, 0, 0)
+				);
+			}
+
+			@Example
+			void betweenAndTimeBetweenBeginning() {
+				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 24, 10, 22, 31, 0),
+								 LocalDateTime.of(2013, 5, 28, 12, 22, 34, 0)
+							 )
+							 .timeBetween(LocalTime.of(1, 33, 12), LocalTime.of(1, 33, 12))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 1, 33, 12),
+					LocalDateTime.of(2013, 5, 26, 1, 33, 12),
+					LocalDateTime.of(2013, 5, 27, 1, 33, 12),
+					LocalDateTime.of(2013, 5, 28, 1, 33, 12)
+				);
+			}
+
+			@Example
+			void betweenAndTimeBetweenEnd() {
+				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .between(
+								 LocalDateTime.of(2013, 5, 25, 10, 22, 31, 0),
+								 LocalDateTime.of(2013, 5, 29, 12, 22, 34, 0)
+							 )
+							 .timeBetween(LocalTime.of(15, 33, 12), LocalTime.of(1, 33, 12))
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 5, 25, 15, 33, 12),
+					LocalDateTime.of(2013, 5, 26, 15, 33, 12),
+					LocalDateTime.of(2013, 5, 27, 15, 33, 12),
+					LocalDateTime.of(2013, 5, 28, 15, 33, 12)
+				);
+			}
+
+		}
 
 		@Group
 		class Precision {
@@ -1726,6 +2051,42 @@ class LocalDateTimeTests {
 				assertThatThrownBy(
 					() -> DateTimes.dateTimes().yearBetween(year, year)
 				).isInstanceOf(IllegalArgumentException.class);
+			}
+
+			@Disabled
+			@Property
+			void minMaxSecond(@ForAll int minSecond, @ForAll int maxSecond) {
+
+				Assume.that(minSecond < 0 || minSecond > 59 || maxSecond < 0 || maxSecond > 59);
+
+				assertThatThrownBy(
+					() -> DateTimes.dateTimes().hourBetween(minSecond, maxSecond)
+				).isInstanceOf(IllegalArgumentException.class);
+
+			}
+
+			@Disabled
+			@Property
+			void minMaxMinute(@ForAll int minMinute, @ForAll int maxMinute) {
+
+				Assume.that(minMinute < 0 || minMinute > 59 || maxMinute < 0 || maxMinute > 59);
+
+				assertThatThrownBy(
+					() -> DateTimes.dateTimes().hourBetween(minMinute, maxMinute)
+				).isInstanceOf(IllegalArgumentException.class);
+
+			}
+
+			@Disabled
+			@Property
+			void minMaxHour(@ForAll int minHour, @ForAll int maxHour) {
+
+				Assume.that(minHour < 0 || minHour > 23 || maxHour < 0 || maxHour > 23);
+
+				assertThatThrownBy(
+					() -> DateTimes.dateTimes().hourBetween(minHour, maxHour)
+				).isInstanceOf(IllegalArgumentException.class);
+
 			}
 
 		}

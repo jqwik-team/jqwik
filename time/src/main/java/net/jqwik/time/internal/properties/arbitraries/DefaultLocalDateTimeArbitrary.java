@@ -216,17 +216,17 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	}
 
 	@Override
-	public LocalTimeArbitrary hourBetween(int min, int max) {
+	public LocalDateTimeArbitrary hourBetween(int min, int max) {
 		return null;
 	}
 
 	@Override
-	public LocalTimeArbitrary minuteBetween(int min, int max) {
+	public LocalDateTimeArbitrary minuteBetween(int min, int max) {
 		return null;
 	}
 
 	@Override
-	public LocalTimeArbitrary secondBetween(int min, int max) {
+	public LocalDateTimeArbitrary secondBetween(int min, int max) {
 		return null;
 	}
 

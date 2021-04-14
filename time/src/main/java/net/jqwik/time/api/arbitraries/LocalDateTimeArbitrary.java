@@ -114,21 +114,21 @@ public interface LocalDateTimeArbitrary extends Arbitrary<LocalDateTime> {
 	 * The hours can be between {@code 0} and {@code 23}.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.2")
-	LocalTimeArbitrary hourBetween(int min, int max);
+	LocalDateTimeArbitrary hourBetween(int min, int max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated minute values.
 	 * The minutes can be between {@code 0} and {@code 59}.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.2")
-	LocalTimeArbitrary minuteBetween(int min, int max);
+	LocalDateTimeArbitrary minuteBetween(int min, int max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated second values.
 	 * The minutes can be between {@code 0} and {@code 59}.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.2")
-	LocalTimeArbitrary secondBetween(int min, int max);
+	LocalDateTimeArbitrary secondBetween(int min, int max);
 
 	/**
 	 * Constrain the precision of generated values.
