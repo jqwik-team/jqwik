@@ -919,7 +919,6 @@ class LocalDateTimeTests {
 
 	}
 
-	@Disabled
 	@Group
 	class ExhaustiveGeneration {
 
@@ -978,7 +977,7 @@ class LocalDateTimeTests {
 								 LocalDateTime.of(2013, 5, 25, 10, 22, 31, 0),
 								 LocalDateTime.of(2013, 5, 25, 12, 22, 34, 0)
 							 )
-							 .timeBetween(LocalTime.of(9, 22, 31), LocalTime.of(13, 22, 31))
+							 .timeBetween(LocalTime.of(9, 21, 11), LocalTime.of(13, 25, 31))
 							 .hourBetween(11, 11)
 							 .minuteBetween(22, 22)
 							 .secondBetween(31, 34)
@@ -995,6 +994,7 @@ class LocalDateTimeTests {
 				);
 			}
 
+			@Disabled
 			@Example
 			void dateBetweenSmallerThenBetween() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
@@ -1018,6 +1018,7 @@ class LocalDateTimeTests {
 				);
 			}
 
+			@Disabled
 			@Example
 			void betweenSmallerThenDateBetween() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
@@ -1041,6 +1042,7 @@ class LocalDateTimeTests {
 				);
 			}
 
+			@Disabled
 			@Example
 			void betweenAndTimeBetweenBeginning() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
@@ -1063,6 +1065,7 @@ class LocalDateTimeTests {
 				);
 			}
 
+			@Disabled
 			@Example
 			void betweenAndTimeBetweenEnd() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
@@ -1071,7 +1074,7 @@ class LocalDateTimeTests {
 								 LocalDateTime.of(2013, 5, 25, 10, 22, 31, 0),
 								 LocalDateTime.of(2013, 5, 29, 12, 22, 34, 0)
 							 )
-							 .timeBetween(LocalTime.of(15, 33, 12), LocalTime.of(1, 33, 12))
+							 .timeBetween(LocalTime.of(15, 33, 12), LocalTime.of(15, 33, 12))
 							 .exhaustive();
 				assertThat(optionalGenerator).isPresent();
 
@@ -2088,10 +2091,10 @@ class LocalDateTimeTests {
 
 		}
 
-		@Disabled
 		@Group
 		class InvalidCombination {
 
+			@Disabled
 			@Property
 			void hourMinuteSecondTimeBetween(
 				@ForAll @Precision(value = NANOS) LocalTime min,
@@ -2120,6 +2123,7 @@ class LocalDateTimeTests {
 
 			}
 
+			@Disabled
 			@Property
 			void hourMinuteSecondBetweenAndBetween(
 				@ForAll LocalDate date,
@@ -2152,6 +2156,7 @@ class LocalDateTimeTests {
 
 			}
 
+			@Disabled
 			@Property
 			void timeBetweenAndBetween(
 				@ForAll LocalDate date,

@@ -66,6 +66,7 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	}
 
 	private LocalDate effectiveMaxDate() {
+		//TODO: MAYBE BUG?
 		LocalDate effective = dateBetween.getMax() == null ? DEFAULT_MAX_DATE : dateBetween.getMax();
 		int latestMonth = latestAllowedMonth();
 		if (latestMonth < effective.getMonth().getValue()) {
