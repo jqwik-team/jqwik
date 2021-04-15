@@ -92,7 +92,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		SecondBetween secondBetween,
 		OfPrecision ofPrecision
 	) {
-		checkMinValuesAndPrecisionSet(minuteBetween, secondBetween, ofPrecision);
+		checkMinValuesAndPrecision(minuteBetween, secondBetween, ofPrecision);
 		LocalTime effective = timeBetween.getMin() != null ? timeBetween.getMin() : LocalTime.MIN;
 		if (hourBetween.getMin() > effective.getHour()) {
 			effective = effective.withHour(hourBetween.getMin());
@@ -110,7 +110,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		return effective;
 	}
 
-	private static void checkMinValuesAndPrecisionSet(MinuteBetween minuteBetween, SecondBetween secondBetween, OfPrecision ofPrecision) {
+	private static void checkMinValuesAndPrecision(MinuteBetween minuteBetween, SecondBetween secondBetween, OfPrecision ofPrecision) {
 		if (ofPrecision.get().compareTo(SECONDS) > 0) {
 			if (secondBetween.getMin() > 0) {
 				throwMinValueAndPrecisionException(secondBetween.getMin(), "second", ofPrecision.get());
