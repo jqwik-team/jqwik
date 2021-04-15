@@ -28,7 +28,7 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	protected Arbitrary<LocalDate> arbitrary() {
 
 		LocalDate effectiveMin = effectiveMinDate();
-		LocalDate effectiveMax = effectiveMaxDate();
+		LocalDate effectiveMax = effectiveMaxDate(effectiveMin);
 
 		long days = DAYS.between(effectiveMin, effectiveMax);
 
@@ -66,7 +66,7 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 
 	}
 
-	private LocalDate effectiveMaxDate() {
+	private LocalDate effectiveMaxDate(LocalDate effectiveMin) {
 		LocalDate effective = dateBetween.getMax() == null ? DEFAULT_MAX_DATE : dateBetween.getMax();
 		int earliestMonth = earliestAllowedMonth();
 		int latestMonth = latestAllowedMonth();
@@ -79,6 +79,9 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 		}
 		if (dayOfMonthBetween.getMax() != null && dayOfMonthBetween.getMax() < effective.getDayOfMonth()) {
 			effective = effective.withDayOfMonth(dayOfMonthBetween.getMax());
+		}
+		if (effectiveMin.isAfter(effective)) {
+			throw new IllegalArgumentException("These min/max configurations cannot be used together: No values are possible.");
 		}
 		return effective;
 	}
