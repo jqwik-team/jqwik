@@ -440,7 +440,7 @@ class LocalDateTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(292); // Cannot know the exact number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(276); // Cannot know the exact number of filtered elements in advance
 			assertThat(generator).containsExactly(
 				LocalDate.of(1997, Month.MARCH, 17),
 				LocalDate.of(1997, Month.OCTOBER, 17),
@@ -470,6 +470,144 @@ class LocalDateTests {
 				LocalDate.of(2020, Month.DECEMBER, 24),
 				LocalDate.of(2020, Month.DECEMBER, 28),
 				LocalDate.of(2020, Month.DECEMBER, 31)
+			);
+		}
+
+		@Example
+		void dayOfMonthBetweenAndBetweenGreater() {
+			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2010, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .onlyMonths(Month.DECEMBER)
+					 .dayOfMonthBetween(27, 28)
+					 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(367);
+			assertThat(generator).containsExactly(
+				LocalDate.of(2010, Month.DECEMBER, 27),
+				LocalDate.of(2010, Month.DECEMBER, 28),
+				LocalDate.of(2011, Month.DECEMBER, 27),
+				LocalDate.of(2011, Month.DECEMBER, 28)
+			);
+		}
+
+		@Example
+		void dayOfMonthBetweenAndBetween() {
+			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2011, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .onlyMonths(Month.JUNE)
+					 .dayOfMonthBetween(21, 22)
+					 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(368);
+			assertThat(generator).containsExactly(
+				LocalDate.of(2011, Month.JUNE, 21),
+				LocalDate.of(2011, Month.JUNE, 22),
+				LocalDate.of(2012, Month.JUNE, 21),
+				LocalDate.of(2012, Month.JUNE, 22)
+			);
+		}
+
+		@Example
+		void dayOfMonthBetweenAndBetweenLess() {
+			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2010, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .onlyMonths(Month.FEBRUARY)
+					 .dayOfMonthBetween(12, 13)
+					 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(367);
+			assertThat(generator).containsExactly(
+				LocalDate.of(2011, Month.FEBRUARY, 12),
+				LocalDate.of(2011, Month.FEBRUARY, 13),
+				LocalDate.of(2012, Month.FEBRUARY, 12),
+				LocalDate.of(2012, Month.FEBRUARY, 13)
+			);
+		}
+
+		@Example
+		void monthBetweenAndBetweenGreater() {
+			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2010, Month.MAY, 19),
+						 LocalDate.of(2012, Month.SEPTEMBER, 25)
+					 )
+					 .monthBetween(Month.OCTOBER, Month.NOVEMBER)
+					 .dayOfMonthBetween(21, 21)
+					 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(397);
+			assertThat(generator).containsExactly(
+				LocalDate.of(2010, Month.OCTOBER, 21),
+				LocalDate.of(2010, Month.NOVEMBER, 21),
+				LocalDate.of(2011, Month.OCTOBER, 21),
+				LocalDate.of(2011, Month.NOVEMBER, 21)
+			);
+		}
+
+		@Example
+		void monthBetweenAndBetween() {
+			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2011, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .monthBetween(Month.JUNE, Month.JULY)
+					 .dayOfMonthBetween(21, 21)
+					 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(397);
+			assertThat(generator).containsExactly(
+				LocalDate.of(2011, Month.JUNE, 21),
+				LocalDate.of(2011, Month.JULY, 21),
+				LocalDate.of(2012, Month.JUNE, 21),
+				LocalDate.of(2012, Month.JULY, 21)
+			);
+		}
+
+		@Example
+		void monthBetweenAndBetweenLess() {
+			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2010, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .monthBetween(Month.JANUARY, Month.FEBRUARY)
+					 .dayOfMonthBetween(20, 20)
+					 .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(397);
+			assertThat(generator).containsExactly(
+				LocalDate.of(2011, Month.JANUARY, 20),
+				LocalDate.of(2011, Month.FEBRUARY, 20),
+				LocalDate.of(2012, Month.JANUARY, 20),
+				LocalDate.of(2012, Month.FEBRUARY, 20)
 			);
 		}
 
@@ -515,6 +653,114 @@ class LocalDateTests {
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 				LocalDate.of(400, Month.MARCH, 1),
 				LocalDate.of(402, Month.NOVEMBER, 30)
+			);
+		}
+
+		@Example
+		void dayOfMonthBetweenAndBetweenGreater() {
+			LocalDateArbitrary dates =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2010, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .onlyMonths(Month.DECEMBER)
+					 .dayOfMonthBetween(27, 28);
+			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+				LocalDate.of(2010, Month.DECEMBER, 27),
+				LocalDate.of(2011, Month.DECEMBER, 28)
+			);
+		}
+
+		@Example
+		void dayOfMonthBetweenAndBetween() {
+			LocalDateArbitrary dates =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2011, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .onlyMonths(Month.JUNE)
+					 .dayOfMonthBetween(21, 22);
+			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+				LocalDate.of(2011, Month.JUNE, 21),
+				LocalDate.of(2012, Month.JUNE, 22)
+			);
+		}
+
+		@Example
+		void dayOfMonthBetweenAndBetweenLess() {
+			LocalDateArbitrary dates =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2010, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .onlyMonths(Month.FEBRUARY)
+					 .dayOfMonthBetween(12, 13);
+			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+				LocalDate.of(2011, Month.FEBRUARY, 12),
+				LocalDate.of(2012, Month.FEBRUARY, 13)
+			);
+		}
+
+		@Example
+		void monthBetweenAndBetweenGreater() {
+			LocalDateArbitrary dates =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2010, Month.MAY, 19),
+						 LocalDate.of(2012, Month.SEPTEMBER, 25)
+					 )
+					 .monthBetween(Month.OCTOBER, Month.NOVEMBER)
+					 .dayOfMonthBetween(21, 21);
+			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+				LocalDate.of(2010, Month.OCTOBER, 21),
+				LocalDate.of(2011, Month.NOVEMBER, 21)
+			);
+		}
+
+		@Example
+		void monthBetweenAndBetween() {
+			LocalDateArbitrary dates =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2011, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .monthBetween(Month.JUNE, Month.JULY)
+					 .dayOfMonthBetween(21, 21);
+			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+				LocalDate.of(2011, Month.JUNE, 21),
+				LocalDate.of(2012, Month.JULY, 21)
+			);
+		}
+
+		@Example
+		void monthBetweenAndBetweenLess() {
+			LocalDateArbitrary dates =
+				Dates.dates()
+					 .between(
+						 LocalDate.of(2010, Month.MAY, 19),
+						 LocalDate.of(2012, Month.NOVEMBER, 25)
+					 )
+					 .monthBetween(Month.JANUARY, Month.FEBRUARY)
+					 .dayOfMonthBetween(20, 20);
+			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
+			assertThat(edgeCases).hasSize(2);
+			assertThat(edgeCases).containsExactlyInAnyOrder(
+				LocalDate.of(2011, Month.JANUARY, 20),
+				LocalDate.of(2012, Month.FEBRUARY, 20)
 			);
 		}
 
