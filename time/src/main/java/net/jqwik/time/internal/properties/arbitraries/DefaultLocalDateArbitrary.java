@@ -56,9 +56,10 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 				&& dayOfMonthBetween.getMin() != null
 				&& dayOfMonthBetween.getMax() - dayOfMonthBetween.getMin() != 30
 		) {
-			localDates = localDates
-							 .filter(date -> date.getDayOfMonth() >= dayOfMonthBetween.getMin() && date.getDayOfMonth() <= dayOfMonthBetween
-																															   .getMax());
+			localDates = localDates.filter(date ->
+											   date.getDayOfMonth() >= dayOfMonthBetween.getMin()
+												   && date.getDayOfMonth() <= dayOfMonthBetween.getMax()
+			);
 		}
 
 		return localDates;
@@ -66,16 +67,19 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	}
 
 	private LocalDate effectiveMaxDate() {
-		//TODO: MAYBE BUG?
 		LocalDate effective = dateBetween.getMax() == null ? DEFAULT_MAX_DATE : dateBetween.getMax();
+		int earliestMonth = earliestAllowedMonth();
 		int latestMonth = latestAllowedMonth();
+		if (earliestMonth > effective.getMonth().getValue()) {
+			effective = effective.withMonth(12).withDayOfMonth(31).minusYears(1);
+		}
 		if (latestMonth < effective.getMonth().getValue()) {
-			return effective.withMonth(latestMonth);
+			effective = effective.withMonth(latestMonth + 1);
+			effective = effective.minusDays(effective.getDayOfMonth());
 		}
 		if (dayOfMonthBetween.getMax() != null && dayOfMonthBetween.getMax() < effective.getDayOfMonth()) {
-			return effective.withDayOfMonth(dayOfMonthBetween.getMax());
+			effective = effective.withDayOfMonth(dayOfMonthBetween.getMax());
 		}
-
 		return effective;
 	}
 
@@ -90,11 +94,15 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	private LocalDate effectiveMinDate() {
 		LocalDate effective = dateBetween.getMin() == null ? DEFAULT_MIN_DATE : dateBetween.getMin();
 		int earliestMonth = earliestAllowedMonth();
+		int latestMonth = latestAllowedMonth();
+		if (latestMonth < effective.getMonth().getValue()) {
+			effective = effective.withDayOfMonth(1).withMonth(1).plusYears(1);
+		}
 		if (earliestMonth > effective.getMonth().getValue()) {
-			return effective.withMonth(earliestMonth);
+			effective = effective.withMonth(earliestMonth).withDayOfMonth(1);
 		}
 		if (dayOfMonthBetween.getMin() != null && dayOfMonthBetween.getMin() > effective.getDayOfMonth()) {
-			return effective.withDayOfMonth(dayOfMonthBetween.getMin());
+			effective = effective.withDayOfMonth(dayOfMonthBetween.getMin());
 		}
 		return effective;
 	}
