@@ -906,6 +906,17 @@ class LocalDateTests {
 			}
 		}
 
+		@Example
+		void invalidCombinationOfMinMaxValues() {
+			assertThatThrownBy(
+				() -> Dates.dates()
+						   .between(LocalDate.of(2011, 5, 1), LocalDate.of(2012, 2, 1))
+						   .monthBetween(3, 4)
+						   .dayOfMonthBetween(11, 13)
+						   .generator(1)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
 	}
 
 }
