@@ -99,12 +99,15 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 			effective = effective.withMinute(0);
 			effective = effective.withSecond(0);
 			effective = effective.withNano(0);
-			if (minuteBetween.getMin() > effective.getMinute()) {
-				effective = effective.withMinute(minuteBetween.getMin());
-				if (secondBetween.getMin() > effective.getSecond()) {
-					effective = effective.withSecond(secondBetween.getMin());
-				}
-			}
+		}
+		if (minuteBetween.getMin() > effective.getMinute()) {
+			effective = effective.withMinute(minuteBetween.getMin());
+			effective = effective.withSecond(0);
+			effective = effective.withNano(0);
+		}
+		if (secondBetween.getMin() > effective.getSecond()) {
+			effective = effective.withSecond(secondBetween.getMin());
+			effective = effective.withNano(0);
 		}
 		effective = calculateEffectiveMinWithPrecision(effective, ofPrecision);
 		return effective;
@@ -172,12 +175,15 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 			effective = effective.withMinute(59);
 			effective = effective.withSecond(59);
 			effective = effective.withNano(999_999_999);
-			if (minuteBetween.getMax() < effective.getMinute()) {
-				effective = effective.withMinute(minuteBetween.getMax());
-				if (secondBetween.getMax() < effective.getSecond()) {
-					effective = effective.withSecond(secondBetween.getMax());
-				}
-			}
+		}
+		if (minuteBetween.getMax() < effective.getMinute()) {
+			effective = effective.withMinute(minuteBetween.getMax());
+			effective = effective.withSecond(59);
+			effective = effective.withNano(999_999_999);
+		}
+		if (secondBetween.getMax() < effective.getSecond()) {
+			effective = effective.withSecond(secondBetween.getMax());
+			effective = effective.withNano(999_999_999);
 		}
 		effective = calculateEffectiveMaxWithPrecision(effective, ofPrecision);
 		return effective;

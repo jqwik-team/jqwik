@@ -79,8 +79,13 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		effective = calculateEffectiveMinWithPrecision(effective);
 		LocalTime effectiveMinTime = DefaultLocalTimeArbitrary
 										 .calculateEffectiveMin(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
-		effective = calculateEffectiveMinWithMinTime(effective, effectiveMinTime);
-		//System.out.println(effectiveMinTime);
+		LocalTime effectiveMaxTime = DefaultLocalTimeArbitrary
+										 .calculateEffectiveMax(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
+		if (effectiveMinTime.isAfter(effectiveMaxTime)) {
+			throw new IllegalArgumentException("These min/max values cannot be used with these time min/max values");
+		}
+		effective = calculateEffectiveMinWithMinTime(effective, effectiveMinTime, effectiveMaxTime);
+		//System.out.println(effectiveMinTime + " - " + hourBetween.getMin() + ":" + minuteBetween.getMin() + ":" + secondBetween.getMin());
 		//System.out.println(effective);
 		return effective;
 	}
@@ -115,10 +120,12 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		return LocalDateTime.of(date, time);
 	}
 
-	private LocalDateTime calculateEffectiveMinWithMinTime(LocalDateTime effective, LocalTime minTime) {
+	private LocalDateTime calculateEffectiveMinWithMinTime(LocalDateTime effective, LocalTime minTime, LocalTime maxTime) {
 		if (effective.toLocalTime().isBefore(minTime)) {
 			return LocalDateTime.of(effective.toLocalDate(), minTime);
-		} //TODO
+		} else if (effective.toLocalTime().isAfter(maxTime)) {
+			return LocalDateTime.of(effective.toLocalDate().plusDays(1), minTime);
+		}
 		return effective;
 	}
 
@@ -126,9 +133,11 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		LocalDateTime effective = calculateEffectiveMaxDate(dateTimeBetween.getMax());
 		effective = effective != null ? effective : DEFAULT_MAX;
 		effective = calculateEffectiveMaxWithPrecision(effective);
+		LocalTime effectiveMinTime = DefaultLocalTimeArbitrary
+										 .calculateEffectiveMin(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
 		LocalTime effectiveMaxTime = DefaultLocalTimeArbitrary
 										 .calculateEffectiveMax(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
-		effective = calculateEffectiveMaxWithMaxTime(effective, effectiveMaxTime);
+		effective = calculateEffectiveMaxWithMaxTime(effective, effectiveMinTime, effectiveMaxTime);
 		//System.out.println("bis");
 		//System.out.println(effectiveMaxTime);
 		//System.out.println(effective);
@@ -155,23 +164,49 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		return LocalDateTime.of(date, time);
 	}
 
-	private LocalDateTime calculateEffectiveMaxWithMaxTime(LocalDateTime effective, LocalTime maxTime) {
+	private LocalDateTime calculateEffectiveMaxWithMaxTime(LocalDateTime effective, LocalTime minTime, LocalTime maxTime) {
 		if (effective.toLocalTime().isAfter(maxTime)) {
 			return LocalDateTime.of(effective.toLocalDate(), maxTime);
-		} //TODO
+		} else if (effective.toLocalTime().isBefore(minTime)) {
+			return LocalDateTime.of(effective.toLocalDate().minusDays(1), minTime);
+		}
 		return effective;
 	}
 
 	private TimeArbitraries generateTimeArbitraries(LocalDateTime effectiveMin, LocalDateTime effectiveMax, OfPrecision ofPrecision) {
+		boolean oneDay = false;
 		TimeArbitraries times = new TimeArbitraries();
 		if (effectiveMin.toLocalDate().isEqual(effectiveMax.toLocalDate())) {
+			oneDay = true;
 			times.firstDay = Times.times().between(effectiveMin.toLocalTime(), effectiveMax.toLocalTime()).ofPrecision(ofPrecision.get());
 		} else {
 			times.firstDay = Times.times().atTheEarliest(effectiveMin.toLocalTime()).ofPrecision(ofPrecision.get());
 			times.daysBetween = Times.times().ofPrecision(ofPrecision.get());
 			times.lastDay = Times.times().atTheLatest(effectiveMax.toLocalTime()).ofPrecision(ofPrecision.get());
 		}
+		setTimeParams(times, oneDay);
 		return times;
+	}
+
+	private void setTimeParams(TimeArbitraries times, boolean oneDay) {
+		if (timeBetween.getMin() != null && timeBetween.getMax() != null) {
+			if (!oneDay) {
+				times.firstDay = times.firstDay.atTheLatest(timeBetween.getMax());
+				times.daysBetween = times.daysBetween.between(timeBetween.getMin(), timeBetween.getMax());
+				times.lastDay = times.lastDay.atTheEarliest(timeBetween.getMin());
+			}
+		}
+		times.firstDay = times.firstDay.hourBetween(hourBetween.getMin(), hourBetween.getMax())
+									   .minuteBetween(minuteBetween.getMin(), minuteBetween.getMax())
+									   .secondBetween(secondBetween.getMin(), secondBetween.getMax());
+		if (!oneDay) {
+			times.daysBetween = times.daysBetween.hourBetween(hourBetween.getMin(), hourBetween.getMax())
+												 .minuteBetween(minuteBetween.getMin(), minuteBetween.getMax())
+												 .secondBetween(secondBetween.getMin(), secondBetween.getMax());
+			times.lastDay = times.lastDay.hourBetween(hourBetween.getMin(), hourBetween.getMax())
+										 .minuteBetween(minuteBetween.getMin(), minuteBetween.getMax())
+										 .secondBetween(secondBetween.getMin(), secondBetween.getMax());
+		}
 	}
 
 	private void setOfPrecisionImplicitly(DefaultLocalDateTimeArbitrary clone, LocalDateTime dateTime) {
