@@ -383,7 +383,7 @@ class DateTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Date> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(292); // Cannot know the exact number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(276); // Cannot know the exact number of filtered elements in advance
 			assertThat(generator).containsExactly(
 				getDate(1997, Calendar.MARCH, 17),
 				getDate(1997, Calendar.OCTOBER, 17),
