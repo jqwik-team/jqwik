@@ -502,7 +502,6 @@ class LocalDateTimeTests {
 		@Group
 		class TimeMethods {
 
-			@Disabled
 			@Group
 			class TimeBetweenMethods {
 
@@ -548,7 +547,6 @@ class LocalDateTimeTests {
 
 			}
 
-			@Disabled
 			@Group
 			class HourMethods {
 
@@ -581,7 +579,6 @@ class LocalDateTimeTests {
 
 			}
 
-			@Disabled
 			@Group
 			class MinuteMethods {
 
@@ -614,7 +611,6 @@ class LocalDateTimeTests {
 
 			}
 
-			@Disabled
 			@Group
 			class SecondMethods {
 
@@ -994,7 +990,6 @@ class LocalDateTimeTests {
 				);
 			}
 
-			@Disabled
 			@Example
 			void dateBetweenSmallerThenBetween() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
@@ -1018,7 +1013,6 @@ class LocalDateTimeTests {
 				);
 			}
 
-			@Disabled
 			@Example
 			void betweenSmallerThenDateBetween() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
@@ -1042,7 +1036,6 @@ class LocalDateTimeTests {
 				);
 			}
 
-			@Disabled
 			@Example
 			void betweenAndTimeBetweenBeginning() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
@@ -1065,7 +1058,6 @@ class LocalDateTimeTests {
 				);
 			}
 
-			@Disabled
 			@Example
 			void betweenAndTimeBetweenEnd() {
 				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
@@ -2092,10 +2084,10 @@ class LocalDateTimeTests {
 		}
 
 		@Group
+		@PropertyDefaults(tries = 5_000, shrinking = ShrinkingMode.OFF)
 		class InvalidCombination {
 
-			@Disabled
-			@Property
+			@Property(maxDiscardRatio = 25)
 			void hourMinuteSecondTimeBetween(
 				@ForAll @Precision(value = NANOS) LocalTime min,
 				@ForAll @Precision(value = NANOS) LocalTime max,
@@ -2107,24 +2099,24 @@ class LocalDateTimeTests {
 				@ForAll("seconds") int maxSecond
 			) {
 
-				Assume.that(!min.isAfter(max));
-				Assume
-					.that(minHour < maxHour || (minHour == maxHour && (minMinute < maxMinute || (minMinute == maxMinute && minSecond <= maxSecond))));
-
 				LocalTime minFromValues = LocalTime.of(minHour, minMinute, minSecond);
-				LocalTime maxFromValues = LocalTime.of(minHour, minMinute, minSecond);
+				LocalTime maxFromValues = LocalTime.of(maxHour, maxMinute, maxSecond);
 
+				Assume.that(!min.isAfter(max));
+				Assume.that(minHour <= maxHour && minMinute <= maxMinute && minSecond <= maxSecond);
 				Assume.that(max.isBefore(minFromValues) || min.isAfter(maxFromValues));
 
 				assertThatThrownBy(
-					() -> DateTimes.dateTimes().timeBetween(min, max).hourBetween(minHour, maxHour).minuteBetween(minMinute, maxMinute)
-								   .secondBetween(minSecond, maxSecond).generator(1)
+					() -> DateTimes.dateTimes().timeBetween(min, max)
+								   .hourBetween(minHour, maxHour)
+								   .minuteBetween(minMinute, maxMinute)
+								   .secondBetween(minSecond, maxSecond)
+								   .generator(1)
 				).isInstanceOf(IllegalArgumentException.class);
 
 			}
 
-			@Disabled
-			@Property
+			@Property(maxDiscardRatio = 25)
 			void hourMinuteSecondBetweenAndBetween(
 				@ForAll LocalDate date,
 				@ForAll @Precision(value = NANOS) LocalTime min,
@@ -2137,27 +2129,28 @@ class LocalDateTimeTests {
 				@ForAll("seconds") int maxSecond
 			) {
 
-				Assume.that(!min.isAfter(max));
-				Assume
-					.that(minHour < maxHour || (minHour == maxHour && (minMinute < maxMinute || (minMinute == maxMinute && minSecond <= maxSecond))));
-
 				LocalTime minFromValues = LocalTime.of(minHour, minMinute, minSecond);
-				LocalTime maxFromValues = LocalTime.of(minHour, minMinute, minSecond);
+				LocalTime maxFromValues = LocalTime.of(maxHour, maxMinute, maxSecond);
 
+				Assume.that(!min.isAfter(max));
+				Assume.that(minHour <= maxHour && minMinute <= maxMinute && minSecond <= maxSecond);
 				Assume.that(max.isBefore(minFromValues) || min.isAfter(maxFromValues));
 
 				LocalDateTime minDateTime = LocalDateTime.of(date, min);
 				LocalDateTime maxDateTime = LocalDateTime.of(date, max);
 
 				assertThatThrownBy(
-					() -> DateTimes.dateTimes().between(minDateTime, maxDateTime).hourBetween(minHour, maxHour)
-								   .minuteBetween(minMinute, maxMinute).secondBetween(minSecond, maxSecond).generator(1)
+					() -> DateTimes.dateTimes()
+								   .between(minDateTime, maxDateTime)
+								   .hourBetween(minHour, maxHour)
+								   .minuteBetween(minMinute, maxMinute)
+								   .secondBetween(minSecond, maxSecond)
+								   .generator(1)
 				).isInstanceOf(IllegalArgumentException.class);
 
 			}
 
-			@Disabled
-			@Property
+			@Property(tries = 5_000, maxDiscardRatio = 25)
 			void timeBetweenAndBetween(
 				@ForAll LocalDate date,
 				@ForAll @Precision(value = NANOS) LocalTime min,
@@ -2168,7 +2161,6 @@ class LocalDateTimeTests {
 
 				Assume.that(!min.isAfter(max));
 				Assume.that(!minTime.isAfter(maxTime));
-
 				Assume.that(max.isBefore(minTime) || min.isAfter(maxTime));
 
 				LocalDateTime minDateTime = LocalDateTime.of(date, min);
