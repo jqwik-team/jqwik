@@ -367,19 +367,19 @@ class CalendarTests {
 		@Example
 		void onlyMonthsWithSameYearAndDayOfMonth() {
 			Optional<ExhaustiveGenerator<Calendar>> optionalGenerator =
-					Dates.datesAsCalendar()
-						 .yearBetween(1997, 1997)
-						 .dayOfMonthBetween(17, 17)
-						 .onlyMonths(Month.MARCH, Month.OCTOBER, Month.DECEMBER)
-						 .exhaustive();
+				Dates.datesAsCalendar()
+					 .yearBetween(1997, 1997)
+					 .dayOfMonthBetween(17, 17)
+					 .onlyMonths(Month.MARCH, Month.OCTOBER, Month.DECEMBER)
+					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Calendar> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(292); // Cannot know the exact number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(276); // Cannot know the exact number of filtered elements in advance
 			assertThat(generator).containsExactly(
-					getCalendar(1997, Calendar.MARCH, 17),
-					getCalendar(1997, Calendar.OCTOBER, 17),
-					getCalendar(1997, Calendar.DECEMBER, 17)
+				getCalendar(1997, Calendar.MARCH, 17),
+				getCalendar(1997, Calendar.OCTOBER, 17),
+				getCalendar(1997, Calendar.DECEMBER, 17)
 			);
 		}
 

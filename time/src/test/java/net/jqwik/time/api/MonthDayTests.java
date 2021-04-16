@@ -236,18 +236,18 @@ class MonthDayTests {
 		@Example
 		void onlyMonthsWithSameDayOfMonths() {
 			Optional<ExhaustiveGenerator<MonthDay>> optionalGenerator =
-					Dates.monthDays()
-						 .dayOfMonthBetween(17, 17)
-						 .onlyMonths(Month.APRIL, Month.AUGUST, Month.OCTOBER)
-						 .exhaustive();
+				Dates.monthDays()
+					 .dayOfMonthBetween(17, 17)
+					 .onlyMonths(Month.APRIL, Month.AUGUST, Month.OCTOBER)
+					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<MonthDay> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(214); // Cannot know the number of filtered elements in advance
+			assertThat(generator.maxCount()).isEqualTo(184); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
-					MonthDay.of(Month.APRIL, 17),
-					MonthDay.of(Month.AUGUST, 17),
-					MonthDay.of(Month.OCTOBER, 17)
+				MonthDay.of(Month.APRIL, 17),
+				MonthDay.of(Month.AUGUST, 17),
+				MonthDay.of(Month.OCTOBER, 17)
 			);
 		}
 
