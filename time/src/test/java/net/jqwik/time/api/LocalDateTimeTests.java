@@ -1080,6 +1080,30 @@ class LocalDateTimeTests {
 				);
 			}
 
+			@Example
+			void dateBetweenAndBetweenMethods() {
+				Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
+					DateTimes.dateTimes()
+							 .dateBetween(
+								 LocalDate.of(2013, 5, 25),
+								 LocalDate.of(2014, 11, 29)
+							 )
+							 .timeBetween(LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0))
+							 .onlyMonths(AUGUST)
+							 .dayOfMonthBetween(11, 12)
+							 .exhaustive();
+				assertThat(optionalGenerator).isPresent();
+
+				ExhaustiveGenerator<LocalDateTime> generator = optionalGenerator.get();
+				assertThat(generator.maxCount()).isEqualTo(4);
+				assertThat(generator).containsExactly(
+					LocalDateTime.of(2013, 8, 11, 0, 0, 0),
+					LocalDateTime.of(2013, 8, 12, 0, 0, 0),
+					LocalDateTime.of(2014, 8, 11, 0, 0, 0),
+					LocalDateTime.of(2014, 8, 12, 0, 0, 0)
+				);
+			}
+
 		}
 
 		@Group
@@ -1500,6 +1524,51 @@ class LocalDateTimeTests {
 
 	@Group
 	class EdgeCasesTests {
+
+		@Group
+		class BetweenMethods {
+
+			@Example
+			void dateBetweenAndBetweenMethods() {
+				LocalDateTimeArbitrary dateTimes =
+					DateTimes.dateTimes()
+							 .dateBetween(
+								 LocalDate.of(2013, 5, 25),
+								 LocalDate.of(2014, 11, 29)
+							 )
+							 .timeBetween(LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0))
+							 .onlyMonths(AUGUST)
+							 .dayOfMonthBetween(11, 12);
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
+				assertThat(edgeCases).hasSize(2);
+
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+					LocalDateTime.of(2013, 8, 11, 0, 0, 0),
+					LocalDateTime.of(2014, 8, 12, 0, 0, 0)
+				);
+			}
+
+			@Example
+			void dateBetweenAndBetweenMethodsNearAtBeginningAndEnd() {
+				LocalDateTimeArbitrary dateTimes =
+					DateTimes.dateTimes()
+							 .dateBetween(
+								 LocalDate.of(2013, 5, 25),
+								 LocalDate.of(2015, 5, 26)
+							 )
+							 .timeBetween(LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0))
+							 .onlyMonths(MAY)
+							 .dayOfMonthBetween(25, 26);
+				Set<LocalDateTime> edgeCases = collectEdgeCaseValues(dateTimes.edgeCases());
+				assertThat(edgeCases).hasSize(2);
+
+				assertThat(edgeCases).containsExactlyInAnyOrder(
+					LocalDateTime.of(2013, 5, 25, 0, 0, 0),
+					LocalDateTime.of(2015, 5, 26, 0, 0, 0)
+				);
+			}
+
+		}
 
 		@Group
 		class PrecisionHours {
@@ -2150,7 +2219,7 @@ class LocalDateTimeTests {
 
 			}
 
-			@Property(tries = 5_000, maxDiscardRatio = 25)
+			@Property(maxDiscardRatio = 25)
 			void timeBetweenAndBetween(
 				@ForAll LocalDate date,
 				@ForAll @Precision(value = NANOS) LocalTime min,
@@ -2168,6 +2237,29 @@ class LocalDateTimeTests {
 
 				assertThatThrownBy(
 					() -> DateTimes.dateTimes().between(minDateTime, maxDateTime).timeBetween(minTime, maxTime).generator(1)
+				).isInstanceOf(IllegalArgumentException.class);
+
+			}
+
+			@Property
+			void dateBetweenAndBetween(
+				@ForAll LocalDate date,
+				@ForAll @Size(min = 1) Set<Month> months,
+				@ForAll @DayOfMonthRange int minDayOfMonth,
+				@ForAll @DayOfMonthRange int maxDayOfMonth
+			) {
+
+				Assume.that(minDayOfMonth <= maxDayOfMonth);
+				Assume.that(
+					!months.contains(date.getMonth()) || date.getDayOfMonth() > maxDayOfMonth || date.getDayOfMonth() < minDayOfMonth
+				);
+
+				assertThatThrownBy(
+					() -> DateTimes.dateTimes()
+								   .dateBetween(date, date)
+								   .onlyMonths(months.toArray(new Month[]{}))
+								   .dayOfMonthBetween(minDayOfMonth, maxDayOfMonth)
+								   .generator(1)
 				).isInstanceOf(IllegalArgumentException.class);
 
 			}
