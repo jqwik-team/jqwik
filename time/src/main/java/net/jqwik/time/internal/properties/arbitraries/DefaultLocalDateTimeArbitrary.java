@@ -85,8 +85,6 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 			throw new IllegalArgumentException("These min/max values cannot be used with these time min/max values");
 		}
 		effective = calculateEffectiveMinWithMinTime(effective, effectiveMinTime, effectiveMaxTime);
-		//System.out.println(effectiveMinTime + " - " + hourBetween.getMin() + ":" + minuteBetween.getMin() + ":" + secondBetween.getMin());
-		//System.out.println(effective);
 		return effective;
 	}
 
@@ -109,8 +107,6 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 			time = LocalTime.MIN;
 			LocalDate effectiveDate;
 			try {
-				//TODO: BUG!
-				//Wrong value when dayOfMonth/month/year between is used :/
 				effectiveDate = date.plusDays(1);
 			} catch (DateTimeException dateTimeException) {
 				throw e;
@@ -138,9 +134,6 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		LocalTime effectiveMaxTime = DefaultLocalTimeArbitrary
 										 .calculateEffectiveMax(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
 		effective = calculateEffectiveMaxWithMaxTime(effective, effectiveMinTime, effectiveMaxTime);
-		//System.out.println("bis");
-		//System.out.println(effectiveMaxTime);
-		//System.out.println(effective);
 		if (effectiveMin.isAfter(effective)) {
 			throw new IllegalArgumentException("These date time min/max values cannot be used with these date min/max values");
 		}

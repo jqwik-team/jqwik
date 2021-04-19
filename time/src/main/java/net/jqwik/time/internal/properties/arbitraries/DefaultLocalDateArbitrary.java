@@ -30,6 +30,8 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 		LocalDate effectiveMin = effectiveMinDate();
 		LocalDate effectiveMax = effectiveMaxDate(effectiveMin);
 
+		checkIfValuesArePossible(effectiveMin, effectiveMax);
+
 		long days = DAYS.between(effectiveMin, effectiveMax);
 
 		Arbitrary<Long> day =
@@ -64,6 +66,19 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 
 		return localDates;
 
+	}
+
+	private void checkIfValuesArePossible(LocalDate min, LocalDate max) {
+		//TODO: Methode muss getestet werden!!!!! - Besonderer Testfall: z.B. Februar erlaubt, aber nur 31.
+		if (max.getYear() - 2 >= min.getYear()) {
+			return;
+		}
+		for (LocalDate date = min; !date.isAfter(max); date = date.plusDays(1)) {
+			if (allowedMonths.get().contains(date.getMonth())) {
+				return;
+			}
+		}
+		throw new IllegalArgumentException("These min/max configurations cannot be used together: No values are possible.");
 	}
 
 	private LocalDate effectiveMaxDate(LocalDate effectiveMin) {
@@ -102,10 +117,14 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 			effective = effective.withDayOfMonth(1).withMonth(1).plusYears(1);
 		}
 		if (earliestMonth > effective.getMonth().getValue()) {
-			effective = effective.withMonth(earliestMonth).withDayOfMonth(1);
+			effective = effective.withDayOfMonth(1).withMonth(earliestMonth);
 		}
 		if (dayOfMonthBetween.getMin() != null && dayOfMonthBetween.getMin() > effective.getDayOfMonth()) {
-			effective = effective.withDayOfMonth(dayOfMonthBetween.getMin());
+			try {
+				effective = effective.withDayOfMonth(dayOfMonthBetween.getMin());
+			} catch (DateTimeException e) {
+				effective = effective.plusMonths(1).withDayOfMonth(dayOfMonthBetween.getMin());
+			}
 		}
 		return effective;
 	}
