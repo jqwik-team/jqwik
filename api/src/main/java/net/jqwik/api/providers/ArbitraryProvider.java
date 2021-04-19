@@ -73,7 +73,12 @@ public interface ArbitraryProvider {
 	 * <p>
 	 * Only {@code targetType}s that have been allowed by {@linkplain #canProvideFor(TypeUsage)}
 	 * will be given to this method.
+	 * </p>
 	 * <p>
+	 * For each try a single, randomly chosen element of the set will be used to generate
+	 * all objects represented by this arbitrary. This is necessary in order to make
+	 * generation of parameterized types stable.
+	 * </p>
 	 * {@code subtypeProvider} can be used to get the arbitraries for any type argument of {@code targetType}.
 	 */
 	Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider);
