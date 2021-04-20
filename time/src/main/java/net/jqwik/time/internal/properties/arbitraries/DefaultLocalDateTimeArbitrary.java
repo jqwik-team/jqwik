@@ -11,6 +11,7 @@ import net.jqwik.time.api.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.internal.properties.arbitraries.valueRanges.*;
 
+import static java.time.Month.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
@@ -101,15 +102,14 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	private LocalDateTime calculateEffectiveMinWithPrecision(LocalDateTime effective) {
 		LocalDate date = effective.toLocalDate();
 		LocalTime time = effective.toLocalTime();
-		try {
-			time = DefaultLocalTimeArbitrary.calculateEffectiveMinWithPrecision(time, ofPrecision);
-		} catch (IllegalArgumentException e) {
+		time = DefaultLocalTimeArbitrary.calculateEffectiveMinWithPrecisionFromOtherClass(time, ofPrecision);
+		if (time == null) {
 			time = LocalTime.MIN;
 			LocalDate effectiveDate;
-			try {
+			if (date.getYear() < 999_999_999 || date.getMonth() != DECEMBER || date.getDayOfMonth() < 31) {
 				effectiveDate = date.plusDays(1);
-			} catch (DateTimeException dateTimeException) {
-				throw e;
+			} else {
+				throw new IllegalArgumentException("Cannot use this min value with precision " + ofPrecision.get());
 			}
 			date = effectiveDate;
 		}

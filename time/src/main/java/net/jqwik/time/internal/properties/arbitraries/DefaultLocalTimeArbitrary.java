@@ -128,8 +128,16 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		throw new IllegalArgumentException("Can't use " + val + " as minimum " + unit + " with precision " + precision + ".");
 	}
 
+	private static LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, OfPrecision ofPrecision) {
+		return calculateEffectiveMinWithPrecision(effective, ofPrecision, false);
+	}
+
+	public static LocalTime calculateEffectiveMinWithPrecisionFromOtherClass(LocalTime effective, OfPrecision ofPrecision) {
+		return calculateEffectiveMinWithPrecision(effective, ofPrecision, true);
+	}
+
 	@SuppressWarnings("OverlyComplexMethod")
-	public static LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, OfPrecision ofPrecision) {
+	private static LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, OfPrecision ofPrecision, boolean fromOtherClass) {
 		LocalTime startEffective = effective;
 		if (ofPrecision.get().compareTo(NANOS) >= 1) {
 			if (effective.getNano() % 1_000 != 0) {
@@ -157,7 +165,10 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 			}
 		}
 		if (startEffective.isAfter(effective)) {
-			throw new IllegalArgumentException("Cannot use this min value with precision " + ofPrecision);
+			if (fromOtherClass) {
+				return null;
+			}
+			throw new IllegalArgumentException("Cannot use this min value with precision " + ofPrecision.get());
 		}
 		return effective;
 	}

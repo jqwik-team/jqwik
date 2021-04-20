@@ -10,6 +10,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.internal.properties.arbitraries.valueRanges.*;
 
+import static java.time.Month.*;
 import static java.time.temporal.ChronoUnit.*;
 import static org.apiguardian.api.API.Status.*;
 
@@ -120,13 +121,26 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 			effective = effective.withDayOfMonth(1).withMonth(earliestMonth);
 		}
 		if (dayOfMonthBetween.getMin() != null && dayOfMonthBetween.getMin() > effective.getDayOfMonth()) {
-			try {
+			if (isValidDate(effective.getYear(), effective.getMonth(), dayOfMonthBetween.getMin())) {
 				effective = effective.withDayOfMonth(dayOfMonthBetween.getMin());
-			} catch (DateTimeException e) {
+			} else {
 				effective = effective.plusMonths(1).withDayOfMonth(dayOfMonthBetween.getMin());
 			}
 		}
 		return effective;
+	}
+
+	private boolean isValidDate(int year, Month month, int dayOfMonth) {
+		return !(
+			(dayOfMonth > 31 || dayOfMonth < 1)
+				|| (dayOfMonth == 31 && (month == FEBRUARY || month == APRIL || month == JUNE || month == SEPTEMBER || month == NOVEMBER))
+				|| (dayOfMonth == 30 && month == FEBRUARY)
+				|| (dayOfMonth == 29 && month == FEBRUARY && !isLeapYear(year))
+		);
+	}
+
+	private boolean isLeapYear(int year) {
+		return new GregorianCalendar().isLeapYear(year);
 	}
 
 	private int earliestAllowedMonth() {
@@ -148,7 +162,7 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 
 	private long nextLeapDayOffset(LocalDate date, long base) {
 		if (date.isLeapYear()) {
-			if (date.getMonth().compareTo(Month.FEBRUARY) <= 0) {
+			if (date.getMonth().compareTo(FEBRUARY) <= 0) {
 				LocalDate leapDaySameYear = date.withMonth(2).withDayOfMonth(29);
 				long offset = DAYS.between(date, leapDaySameYear);
 				return base + offset;
