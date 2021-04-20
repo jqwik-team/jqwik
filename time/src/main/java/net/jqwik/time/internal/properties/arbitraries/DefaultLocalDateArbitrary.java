@@ -75,7 +75,10 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 			return;
 		}
 		for (LocalDate date = min; !date.isAfter(max); date = date.plusDays(1)) {
-			if (allowedMonths.get().contains(date.getMonth())) {
+			if (dayOfMonthBetween.getMin() >= date.getDayOfMonth()
+					&& dayOfMonthBetween.getMax() <= date.getDayOfMonth()
+					&& allowedMonths.get().contains(date.getMonth())
+			) {
 				return;
 			}
 		}
