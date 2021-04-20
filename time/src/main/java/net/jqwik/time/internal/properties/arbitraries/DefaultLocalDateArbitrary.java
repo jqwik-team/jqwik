@@ -70,19 +70,72 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 	}
 
 	private void checkIfValuesArePossible(LocalDate min, LocalDate max) {
-		//TODO: Methode muss getestet werden!!!!! - Besonderer Testfall: z.B. Februar erlaubt, aber nur 31.
 		if (max.getYear() - 2 >= min.getYear()) {
-			return;
-		}
-		for (LocalDate date = min; !date.isAfter(max); date = date.plusDays(1)) {
-			if (dayOfMonthBetween.getMin() >= date.getDayOfMonth()
-					&& dayOfMonthBetween.getMax() <= date.getDayOfMonth()
-					&& allowedMonths.get().contains(date.getMonth())
-			) {
+			if (valuesArePossible()) {
 				return;
+			}
+		} else {
+			int minDayOfMonth = dayOfMonthBetween.getMin() == null ? 1 : dayOfMonthBetween.getMin();
+			int maxDayOfMonth = dayOfMonthBetween.getMax() == null ? 31 : dayOfMonthBetween.getMax();
+			for (LocalDate date = min; !date.isAfter(max); date = date.plusDays(1)) {
+				if (minDayOfMonth <= date.getDayOfMonth()
+						&& maxDayOfMonth >= date.getDayOfMonth()
+						&& allowedMonths.get().contains(date.getMonth())
+				) {
+					return;
+				}
 			}
 		}
 		throw new IllegalArgumentException("These min/max configurations cannot be used together: No values are possible.");
+	}
+
+	private boolean valuesArePossible() {
+		int min = dayOfMonthBetween.getMin() == null ? 1 : dayOfMonthBetween.getMin();
+		return !(
+			(min == 31 && !allowedMonthContainsMonthWith31Days())
+				|| (min == 30 && !allowedMonthContainsNotOnlyFebruary())
+				|| (min == 29
+						&& !allowedMonthContainsNotOnlyFebruary()
+						&& !leapYearPossible(dateBetween.getMin().getYear(), dateBetween.getMax().getYear()))
+		);
+	}
+
+	private boolean allowedMonthContainsMonthWith31Days() {
+		Set<Month> allowed = allowedMonths.get();
+		return allowed.contains(JANUARY)
+				   || allowed.contains(MARCH)
+				   || allowed.contains(MAY)
+				   || allowed.contains(JULY)
+				   || allowed.contains(AUGUST)
+				   || allowed.contains(OCTOBER)
+				   || allowed.contains(DECEMBER);
+	}
+
+	private boolean allowedMonthContainsNotOnlyFebruary() {
+		Set<Month> allowed = allowedMonths.get();
+		return allowed.contains(JANUARY)
+				   || allowed.contains(MARCH)
+				   || allowed.contains(APRIL)
+				   || allowed.contains(MAY)
+				   || allowed.contains(JUNE)
+				   || allowed.contains(JULY)
+				   || allowed.contains(AUGUST)
+				   || allowed.contains(SEPTEMBER)
+				   || allowed.contains(OCTOBER)
+				   || allowed.contains(NOVEMBER)
+				   || allowed.contains(DECEMBER);
+	}
+
+	public static boolean leapYearPossible(int min, int max) {
+		if (max - min >= 8) {
+			return true;
+		}
+		for (int y = min; y <= max; y++) {
+			if (isLeapYear(y)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private LocalDate effectiveMaxDate(LocalDate effectiveMin) {
@@ -142,7 +195,7 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 		);
 	}
 
-	private boolean isLeapYear(int year) {
+	public static boolean isLeapYear(int year) {
 		return new GregorianCalendar().isLeapYear(year);
 	}
 

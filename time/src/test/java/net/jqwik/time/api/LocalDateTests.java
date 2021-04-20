@@ -9,7 +9,9 @@ import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
+import static java.time.Month.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
@@ -254,8 +256,8 @@ class LocalDateTests {
 				Arbitrary<LocalDate> dates = Dates.dates().monthBetween(startMonth, endMonth);
 
 				assertAllGenerated(dates.generator(1000, true), random, date -> {
-					assertThat(date.getMonth()).isGreaterThanOrEqualTo(Month.of(startMonth));
-					assertThat(date.getMonth()).isLessThanOrEqualTo(Month.of(endMonth));
+					assertThat(date.getMonth()).isGreaterThanOrEqualTo(of(startMonth));
+					assertThat(date.getMonth()).isLessThanOrEqualTo(of(endMonth));
 					return true;
 				});
 
@@ -269,8 +271,8 @@ class LocalDateTests {
 				Arbitrary<LocalDate> dates = Dates.dates().monthBetween(startMonth, endMonth);
 
 				assertAllGenerated(dates.generator(1000, true), random, date -> {
-					assertThat(date.getMonth()).isGreaterThanOrEqualTo(Month.of(endMonth));
-					assertThat(date.getMonth()).isLessThanOrEqualTo(Month.of(startMonth));
+					assertThat(date.getMonth()).isGreaterThanOrEqualTo(of(endMonth));
+					assertThat(date.getMonth()).isLessThanOrEqualTo(of(startMonth));
 					return true;
 				});
 
@@ -282,7 +284,7 @@ class LocalDateTests {
 				Arbitrary<LocalDate> dates = Dates.dates().monthBetween(month, month);
 
 				assertAllGenerated(dates.generator(1000, true), random, date -> {
-					assertThat(date.getMonth()).isEqualTo(Month.of(month));
+					assertThat(date.getMonth()).isEqualTo(of(month));
 					return true;
 				});
 
@@ -383,6 +385,81 @@ class LocalDateTests {
 
 		}
 
+		@Group
+		class MultipleCombinations {
+
+			@Property
+			void onlyFebruary29MoreThan8YearsBetween(
+				@ForAll LocalDate min,
+				@ForAll LocalDate max,
+				@ForAll @IntRange(max = 2) int offset,
+				@ForAll Random random
+			) {
+				Assume.that(max.getYear() - min.getYear() >= 8);
+
+				int minDayOfMonth = 29;
+				int maxDayOfMonth = minDayOfMonth + offset;
+
+				Arbitrary<LocalDate> dates = Dates.dates()
+												  .between(min, max)
+												  .onlyMonths(FEBRUARY)
+												  .dayOfMonthBetween(minDayOfMonth, maxDayOfMonth);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(date).isBetween(min, max);
+					assertThat(date.getMonth()).isEqualTo(FEBRUARY);
+					assertThat(date.getDayOfMonth()).isEqualTo(29);
+					return true;
+				});
+
+			}
+
+			@Property
+			void onlyFebruary29With1To7YearsBetween(
+				@ForAll LocalDate min,
+				@ForAll MonthDay monthDay,
+				@ForAll @IntRange(max = 7) int yearOffset,
+				@ForAll @IntRange(max = 2) int dayOfMonthOffset,
+				@ForAll Random random
+			) {
+
+				Assume.that(
+					yearOffset > 0
+						|| min.getMonth().compareTo(monthDay.getMonth()) >= 0
+						|| min.getDayOfMonth() <= monthDay.getDayOfMonth()
+				);
+				Assume.that(
+					DefaultLocalDateArbitrary.isLeapYear(min.getYear() + yearOffset)
+						|| !monthDay.equals(MonthDay.of(FEBRUARY, 29))
+				);
+				Assume.that(DefaultLocalDateArbitrary.leapYearPossible(min.getYear(), min.getYear() + yearOffset));
+				Assume.that(!DefaultLocalDateArbitrary.isLeapYear(min.getYear()) || min.getMonth().compareTo(FEBRUARY) <= 0);
+				Assume.that(
+					!DefaultLocalDateArbitrary.isLeapYear(min.getYear() + yearOffset)
+						|| monthDay.compareTo(MonthDay.of(FEBRUARY, 29)) >= 0
+				);
+
+				LocalDate max = LocalDate.of(min.getYear() + yearOffset, monthDay.getMonth(), monthDay.getDayOfMonth());
+
+				int minDayOfMonth = 29;
+				int maxDayOfMonth = minDayOfMonth + dayOfMonthOffset;
+
+				Arbitrary<LocalDate> dates = Dates.dates()
+												  .between(min, max)
+												  .onlyMonths(FEBRUARY)
+												  .dayOfMonthBetween(minDayOfMonth, maxDayOfMonth);
+
+				assertAllGenerated(dates.generator(1000, true), random, date -> {
+					assertThat(date).isBetween(min, max);
+					assertThat(date.getMonth()).isEqualTo(FEBRUARY);
+					assertThat(date.getDayOfMonth()).isEqualTo(29);
+					return true;
+				});
+
+			}
+
+		}
+
 	}
 
 	@Group
@@ -392,15 +469,15 @@ class LocalDateTests {
 		void defaultShrinking(@ForAll Random random) {
 			LocalDateArbitrary dates = Dates.dates();
 			LocalDate value = falsifyThenShrink(dates, random);
-			assertThat(value).isEqualTo(LocalDate.of(1900, Month.JANUARY, 1));
+			assertThat(value).isEqualTo(LocalDate.of(1900, JANUARY, 1));
 		}
 
 		@Property
 		void shrinksToSmallestFailingValue(@ForAll Random random) {
 			LocalDateArbitrary dates = Dates.dates();
-			TestingFalsifier<LocalDate> falsifier = date -> date.isBefore(LocalDate.of(2013, Month.MAY, 25));
+			TestingFalsifier<LocalDate> falsifier = date -> date.isBefore(LocalDate.of(2013, MAY, 25));
 			LocalDate value = falsifyThenShrink(dates, random, falsifier);
-			assertThat(value).isEqualTo(LocalDate.of(2013, Month.MAY, 25));
+			assertThat(value).isEqualTo(LocalDate.of(2013, MAY, 25));
 		}
 
 	}
@@ -413,8 +490,8 @@ class LocalDateTests {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(42, Month.DECEMBER, 30),
-						 LocalDate.of(43, Month.JANUARY, 2)
+						 LocalDate.of(42, DECEMBER, 30),
+						 LocalDate.of(43, JANUARY, 2)
 					 )
 					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -422,10 +499,10 @@ class LocalDateTests {
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(4); // Cannot know the number of filtered elements in advance
 			assertThat(generator).containsExactly(
-				LocalDate.of(42, Month.DECEMBER, 30),
-				LocalDate.of(42, Month.DECEMBER, 31),
-				LocalDate.of(43, Month.JANUARY, 1),
-				LocalDate.of(43, Month.JANUARY, 2)
+				LocalDate.of(42, DECEMBER, 30),
+				LocalDate.of(42, DECEMBER, 31),
+				LocalDate.of(43, JANUARY, 1),
+				LocalDate.of(43, JANUARY, 2)
 			);
 		}
 
@@ -435,16 +512,16 @@ class LocalDateTests {
 				Dates.dates()
 					 .yearBetween(1997, 1997)
 					 .dayOfMonthBetween(17, 17)
-					 .onlyMonths(Month.MARCH, Month.OCTOBER, Month.DECEMBER)
+					 .onlyMonths(MARCH, OCTOBER, DECEMBER)
 					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(276); // Cannot know the exact number of filtered elements in advance
 			assertThat(generator).containsExactly(
-				LocalDate.of(1997, Month.MARCH, 17),
-				LocalDate.of(1997, Month.OCTOBER, 17),
-				LocalDate.of(1997, Month.DECEMBER, 17)
+				LocalDate.of(1997, MARCH, 17),
+				LocalDate.of(1997, OCTOBER, 17),
+				LocalDate.of(1997, DECEMBER, 17)
 			);
 		}
 
@@ -461,15 +538,15 @@ class LocalDateTests {
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(31); // Cannot know the exact number of filtered elements in advance
 			assertThat(generator).containsExactly(
-				LocalDate.of(2020, Month.DECEMBER, 3),
-				LocalDate.of(2020, Month.DECEMBER, 7),
-				LocalDate.of(2020, Month.DECEMBER, 10),
-				LocalDate.of(2020, Month.DECEMBER, 14),
-				LocalDate.of(2020, Month.DECEMBER, 17),
-				LocalDate.of(2020, Month.DECEMBER, 21),
-				LocalDate.of(2020, Month.DECEMBER, 24),
-				LocalDate.of(2020, Month.DECEMBER, 28),
-				LocalDate.of(2020, Month.DECEMBER, 31)
+				LocalDate.of(2020, DECEMBER, 3),
+				LocalDate.of(2020, DECEMBER, 7),
+				LocalDate.of(2020, DECEMBER, 10),
+				LocalDate.of(2020, DECEMBER, 14),
+				LocalDate.of(2020, DECEMBER, 17),
+				LocalDate.of(2020, DECEMBER, 21),
+				LocalDate.of(2020, DECEMBER, 24),
+				LocalDate.of(2020, DECEMBER, 28),
+				LocalDate.of(2020, DECEMBER, 31)
 			);
 		}
 
@@ -478,10 +555,10 @@ class LocalDateTests {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2010, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2010, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .onlyMonths(Month.DECEMBER)
+					 .onlyMonths(DECEMBER)
 					 .dayOfMonthBetween(27, 28)
 					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -489,10 +566,10 @@ class LocalDateTests {
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(367);
 			assertThat(generator).containsExactly(
-				LocalDate.of(2010, Month.DECEMBER, 27),
-				LocalDate.of(2010, Month.DECEMBER, 28),
-				LocalDate.of(2011, Month.DECEMBER, 27),
-				LocalDate.of(2011, Month.DECEMBER, 28)
+				LocalDate.of(2010, DECEMBER, 27),
+				LocalDate.of(2010, DECEMBER, 28),
+				LocalDate.of(2011, DECEMBER, 27),
+				LocalDate.of(2011, DECEMBER, 28)
 			);
 		}
 
@@ -501,10 +578,10 @@ class LocalDateTests {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2011, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2011, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .onlyMonths(Month.JUNE)
+					 .onlyMonths(JUNE)
 					 .dayOfMonthBetween(21, 22)
 					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -512,10 +589,10 @@ class LocalDateTests {
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(368);
 			assertThat(generator).containsExactly(
-				LocalDate.of(2011, Month.JUNE, 21),
-				LocalDate.of(2011, Month.JUNE, 22),
-				LocalDate.of(2012, Month.JUNE, 21),
-				LocalDate.of(2012, Month.JUNE, 22)
+				LocalDate.of(2011, JUNE, 21),
+				LocalDate.of(2011, JUNE, 22),
+				LocalDate.of(2012, JUNE, 21),
+				LocalDate.of(2012, JUNE, 22)
 			);
 		}
 
@@ -524,10 +601,10 @@ class LocalDateTests {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2010, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2010, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .onlyMonths(Month.FEBRUARY)
+					 .onlyMonths(FEBRUARY)
 					 .dayOfMonthBetween(12, 13)
 					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -535,10 +612,10 @@ class LocalDateTests {
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(367);
 			assertThat(generator).containsExactly(
-				LocalDate.of(2011, Month.FEBRUARY, 12),
-				LocalDate.of(2011, Month.FEBRUARY, 13),
-				LocalDate.of(2012, Month.FEBRUARY, 12),
-				LocalDate.of(2012, Month.FEBRUARY, 13)
+				LocalDate.of(2011, FEBRUARY, 12),
+				LocalDate.of(2011, FEBRUARY, 13),
+				LocalDate.of(2012, FEBRUARY, 12),
+				LocalDate.of(2012, FEBRUARY, 13)
 			);
 		}
 
@@ -547,10 +624,10 @@ class LocalDateTests {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2010, Month.MAY, 19),
-						 LocalDate.of(2012, Month.SEPTEMBER, 25)
+						 LocalDate.of(2010, MAY, 19),
+						 LocalDate.of(2012, SEPTEMBER, 25)
 					 )
-					 .monthBetween(Month.OCTOBER, Month.NOVEMBER)
+					 .monthBetween(OCTOBER, NOVEMBER)
 					 .dayOfMonthBetween(21, 21)
 					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -558,10 +635,10 @@ class LocalDateTests {
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(397);
 			assertThat(generator).containsExactly(
-				LocalDate.of(2010, Month.OCTOBER, 21),
-				LocalDate.of(2010, Month.NOVEMBER, 21),
-				LocalDate.of(2011, Month.OCTOBER, 21),
-				LocalDate.of(2011, Month.NOVEMBER, 21)
+				LocalDate.of(2010, OCTOBER, 21),
+				LocalDate.of(2010, NOVEMBER, 21),
+				LocalDate.of(2011, OCTOBER, 21),
+				LocalDate.of(2011, NOVEMBER, 21)
 			);
 		}
 
@@ -570,10 +647,10 @@ class LocalDateTests {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2011, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2011, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .monthBetween(Month.JUNE, Month.JULY)
+					 .monthBetween(JUNE, JULY)
 					 .dayOfMonthBetween(21, 21)
 					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -581,10 +658,10 @@ class LocalDateTests {
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(397);
 			assertThat(generator).containsExactly(
-				LocalDate.of(2011, Month.JUNE, 21),
-				LocalDate.of(2011, Month.JULY, 21),
-				LocalDate.of(2012, Month.JUNE, 21),
-				LocalDate.of(2012, Month.JULY, 21)
+				LocalDate.of(2011, JUNE, 21),
+				LocalDate.of(2011, JULY, 21),
+				LocalDate.of(2012, JUNE, 21),
+				LocalDate.of(2012, JULY, 21)
 			);
 		}
 
@@ -593,10 +670,10 @@ class LocalDateTests {
 			Optional<ExhaustiveGenerator<LocalDate>> optionalGenerator =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2010, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2010, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .monthBetween(Month.JANUARY, Month.FEBRUARY)
+					 .monthBetween(JANUARY, FEBRUARY)
 					 .dayOfMonthBetween(20, 20)
 					 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
@@ -604,10 +681,10 @@ class LocalDateTests {
 			ExhaustiveGenerator<LocalDate> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(397);
 			assertThat(generator).containsExactly(
-				LocalDate.of(2011, Month.JANUARY, 20),
-				LocalDate.of(2011, Month.FEBRUARY, 20),
-				LocalDate.of(2012, Month.JANUARY, 20),
-				LocalDate.of(2012, Month.FEBRUARY, 20)
+				LocalDate.of(2011, JANUARY, 20),
+				LocalDate.of(2011, FEBRUARY, 20),
+				LocalDate.of(2012, JANUARY, 20),
+				LocalDate.of(2012, FEBRUARY, 20)
 			);
 		}
 
@@ -632,13 +709,13 @@ class LocalDateTests {
 		void between() {
 			LocalDateArbitrary dates =
 				Dates.dates()
-					 .between(LocalDate.of(100, Month.MARCH, 24), LocalDate.of(200, Month.NOVEMBER, 10));
+					 .between(LocalDate.of(100, MARCH, 24), LocalDate.of(200, NOVEMBER, 10));
 			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(3);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-				LocalDate.of(100, Month.MARCH, 24),
-				LocalDate.of(104, Month.FEBRUARY, 29),
-				LocalDate.of(200, Month.NOVEMBER, 10)
+				LocalDate.of(100, MARCH, 24),
+				LocalDate.of(104, FEBRUARY, 29),
+				LocalDate.of(200, NOVEMBER, 10)
 			);
 		}
 
@@ -651,8 +728,8 @@ class LocalDateTests {
 			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-				LocalDate.of(400, Month.MARCH, 1),
-				LocalDate.of(402, Month.NOVEMBER, 30)
+				LocalDate.of(400, MARCH, 1),
+				LocalDate.of(402, NOVEMBER, 30)
 			);
 		}
 
@@ -661,16 +738,16 @@ class LocalDateTests {
 			LocalDateArbitrary dates =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2010, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2010, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .onlyMonths(Month.DECEMBER)
+					 .onlyMonths(DECEMBER)
 					 .dayOfMonthBetween(27, 28);
 			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-				LocalDate.of(2010, Month.DECEMBER, 27),
-				LocalDate.of(2011, Month.DECEMBER, 28)
+				LocalDate.of(2010, DECEMBER, 27),
+				LocalDate.of(2011, DECEMBER, 28)
 			);
 		}
 
@@ -679,16 +756,16 @@ class LocalDateTests {
 			LocalDateArbitrary dates =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2011, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2011, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .onlyMonths(Month.JUNE)
+					 .onlyMonths(JUNE)
 					 .dayOfMonthBetween(21, 22);
 			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-				LocalDate.of(2011, Month.JUNE, 21),
-				LocalDate.of(2012, Month.JUNE, 22)
+				LocalDate.of(2011, JUNE, 21),
+				LocalDate.of(2012, JUNE, 22)
 			);
 		}
 
@@ -697,16 +774,16 @@ class LocalDateTests {
 			LocalDateArbitrary dates =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2010, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2010, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .onlyMonths(Month.FEBRUARY)
+					 .onlyMonths(FEBRUARY)
 					 .dayOfMonthBetween(12, 13);
 			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-				LocalDate.of(2011, Month.FEBRUARY, 12),
-				LocalDate.of(2012, Month.FEBRUARY, 13)
+				LocalDate.of(2011, FEBRUARY, 12),
+				LocalDate.of(2012, FEBRUARY, 13)
 			);
 		}
 
@@ -715,16 +792,16 @@ class LocalDateTests {
 			LocalDateArbitrary dates =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2010, Month.MAY, 19),
-						 LocalDate.of(2012, Month.SEPTEMBER, 25)
+						 LocalDate.of(2010, MAY, 19),
+						 LocalDate.of(2012, SEPTEMBER, 25)
 					 )
-					 .monthBetween(Month.OCTOBER, Month.NOVEMBER)
+					 .monthBetween(OCTOBER, NOVEMBER)
 					 .dayOfMonthBetween(21, 21);
 			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-				LocalDate.of(2010, Month.OCTOBER, 21),
-				LocalDate.of(2011, Month.NOVEMBER, 21)
+				LocalDate.of(2010, OCTOBER, 21),
+				LocalDate.of(2011, NOVEMBER, 21)
 			);
 		}
 
@@ -733,16 +810,16 @@ class LocalDateTests {
 			LocalDateArbitrary dates =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2011, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2011, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .monthBetween(Month.JUNE, Month.JULY)
+					 .monthBetween(JUNE, JULY)
 					 .dayOfMonthBetween(21, 21);
 			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-				LocalDate.of(2011, Month.JUNE, 21),
-				LocalDate.of(2012, Month.JULY, 21)
+				LocalDate.of(2011, JUNE, 21),
+				LocalDate.of(2012, JULY, 21)
 			);
 		}
 
@@ -751,16 +828,16 @@ class LocalDateTests {
 			LocalDateArbitrary dates =
 				Dates.dates()
 					 .between(
-						 LocalDate.of(2010, Month.MAY, 19),
-						 LocalDate.of(2012, Month.NOVEMBER, 25)
+						 LocalDate.of(2010, MAY, 19),
+						 LocalDate.of(2012, NOVEMBER, 25)
 					 )
-					 .monthBetween(Month.JANUARY, Month.FEBRUARY)
+					 .monthBetween(JANUARY, FEBRUARY)
 					 .dayOfMonthBetween(20, 20);
 			Set<LocalDate> edgeCases = collectEdgeCaseValues(dates.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
-				LocalDate.of(2011, Month.JANUARY, 20),
-				LocalDate.of(2012, Month.FEBRUARY, 20)
+				LocalDate.of(2011, JANUARY, 20),
+				LocalDate.of(2012, FEBRUARY, 20)
 			);
 		}
 
@@ -915,6 +992,119 @@ class LocalDateTests {
 						   .dayOfMonthBetween(11, 13)
 						   .generator(1)
 			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void monthWithout31DaysButDayOfMonth31(@ForAll("monthWithout31Days") @Size(min = 1) Set<Month> months) {
+			assertThatThrownBy(
+				() -> Dates.dates()
+						   .onlyMonths(months.toArray(new Month[]{}))
+						   .dayOfMonthBetween(31, 31)
+						   .generator(1)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void februaryButDayOfMonth30Or31(@ForAll @IntRange(max = 1) int offset, @ForAll boolean different) {
+			Assume.that(offset == 0 || !different);
+
+			int min = 30 + offset;
+			int max = different ? min + 1 : min;
+
+			assertThatThrownBy(
+				() -> Dates.dates()
+						   .onlyMonths(FEBRUARY)
+						   .dayOfMonthBetween(min, max)
+						   .generator(1)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property(tries = 2_000, maxDiscardRatio = 10)
+		void februaryDayOfMonth29ButNoLeapYear(@ForAll @YearRange Year year, @ForAll @IntRange(max = 2) int offset) {
+			Assume.that(year.getValue() % 4 == 1);
+			LocalDate minDate = LocalDate.of(year.getValue(), JANUARY, 1);
+			LocalDate maxDate = LocalDate.of(year.getValue() + 2, DECEMBER, 31);
+
+			int min = 29;
+			int max = min + offset;
+
+			assertThatThrownBy(
+				() -> Dates.dates()
+						   .between(minDate, maxDate)
+						   .onlyMonths(FEBRUARY)
+						   .dayOfMonthBetween(min, max)
+						   .generator(1)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void betweenAndMonthWithout31DaysButDayOfMonth31(
+			@ForAll LocalDate minDate,
+			@ForAll MonthDay monthDay,
+			@ForAll("monthWithout31Days") @Size(min = 1) Set<Month> months
+		) {
+			Assume.that(!monthDay.equals(MonthDay.of(FEBRUARY, 29)) || new GregorianCalendar().isLeapYear(minDate.getYear() + 1));
+
+			LocalDate maxDate = LocalDate.of(minDate.getYear() + 1, monthDay.getMonth(), monthDay.getDayOfMonth());
+
+			assertThatThrownBy(
+				() -> Dates.dates()
+						   .between(minDate, maxDate)
+						   .onlyMonths(months.toArray(new Month[]{}))
+						   .dayOfMonthBetween(31, 31)
+						   .generator(1)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void betweenAndFebruaryButDayOfMonth30Or31(
+			@ForAll LocalDate minDate,
+			@ForAll MonthDay monthDay,
+			@ForAll @IntRange(max = 1) int offset,
+			@ForAll boolean different
+		) {
+			Assume.that(offset == 0 || !different);
+			Assume.that(!monthDay.equals(MonthDay.of(FEBRUARY, 29)) || new GregorianCalendar().isLeapYear(minDate.getYear() + 1));
+
+			LocalDate maxDate = LocalDate.of(minDate.getYear() + 1, monthDay.getMonth(), monthDay.getDayOfMonth());
+			int min = 30 + offset;
+			int max = different ? min + 1 : min;
+
+			assertThatThrownBy(
+				() -> Dates.dates()
+						   .between(minDate, maxDate)
+						   .onlyMonths(FEBRUARY)
+						   .dayOfMonthBetween(min, max)
+						   .generator(1)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property(tries = 2_000, maxDiscardRatio = 10)
+		void betweenAndFebruaryDayOfMonth29ButNoLeapYear(
+			@ForAll LocalDate minDate,
+			@ForAll MonthDay monthDay,
+			@ForAll @IntRange(max = 2) int offset
+		) {
+			Assume.that(minDate.getYear() % 4 == 1 || minDate.getYear() % 4 == 2);
+			Assume.that(!monthDay.equals(MonthDay.of(FEBRUARY, 29)) || new GregorianCalendar().isLeapYear(minDate.getYear() + 1));
+
+			LocalDate maxDate = LocalDate.of(minDate.getYear() + 1, monthDay.getMonth(), monthDay.getDayOfMonth());
+			int min = 29;
+			int max = min + offset;
+
+			assertThatThrownBy(
+				() -> Dates.dates()
+						   .between(minDate, maxDate)
+						   .onlyMonths(FEBRUARY)
+						   .dayOfMonthBetween(min, max)
+						   .generator(1)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Provide
+		Arbitrary<Set<Month>> monthWithout31Days() {
+			Arbitrary<Month> months = Arbitraries.of(FEBRUARY, APRIL, JUNE, SEPTEMBER, NOVEMBER);
+			return months.set();
 		}
 
 	}
