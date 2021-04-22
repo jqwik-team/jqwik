@@ -15,7 +15,6 @@ import static org.apiguardian.api.API.Status.*;
  * @see net.jqwik.api.ForAll
  * @see DateRange
  * @see DayOfMonthRange
- * @see LeapYears
  * @see MonthDayRange
  * @see MonthRange
  * @see YearMonthRange

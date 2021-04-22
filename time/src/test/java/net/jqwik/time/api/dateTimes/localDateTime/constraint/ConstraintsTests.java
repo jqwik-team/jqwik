@@ -73,6 +73,36 @@ public class ConstraintsTests {
 			assertThat(dateTime.getDayOfWeek()).isLessThanOrEqualTo(DayOfWeek.FRIDAY);
 		}
 
+		@Property
+		void timeRangeMin(@ForAll @TimeRange(min = "01:32:21.113943") LocalDateTime dateTime) {
+			assertThat(dateTime.toLocalTime()).isAfterOrEqualTo(LocalTime.of(1, 32, 21, 113943000));
+		}
+
+		@Property
+		void timeRangeMax(@ForAll @TimeRange(max = "03:49:32") LocalDateTime dateTime) {
+			assertThat(dateTime.toLocalTime()).isBeforeOrEqualTo(LocalTime.of(3, 49, 32));
+		}
+
+		@Property
+		void timeRangeDefaultNotAffectDefaultPrecision(@ForAll @TimeRange LocalDateTime dateTime) {
+			assertThat(dateTime.getNano()).isEqualTo(0);
+		}
+
+		@Property
+		void hourRangeBetween(@ForAll @HourRange(min = 11, max = 13) LocalDateTime dateTime) {
+			assertThat(dateTime.getHour()).isBetween(11, 13);
+		}
+
+		@Property
+		void minuteRangeBetween(@ForAll @MinuteRange(min = 11, max = 13) LocalDateTime dateTime) {
+			assertThat(dateTime.getMinute()).isBetween(11, 13);
+		}
+
+		@Property
+		void secondRangeBetween(@ForAll @SecondRange(min = 11, max = 13) LocalDateTime dateTime) {
+			assertThat(dateTime.getSecond()).isBetween(11, 13);
+		}
+
 	}
 
 	@Group

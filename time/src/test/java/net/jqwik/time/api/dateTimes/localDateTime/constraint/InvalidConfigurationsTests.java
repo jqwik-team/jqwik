@@ -164,4 +164,57 @@ public class InvalidConfigurationsTests {
 
 	}
 
+	@Group
+	class TimeRangeConstraint {
+
+		@Example
+		@ExpectFailure(failureType = DateTimeParseException.class)
+		void minThrowsExceptionWrongFormat(@ForAll @TimeRange(min = "1:3:5") LocalDateTime dateTime) {
+			//do nothing
+		}
+
+		@Example
+		@ExpectFailure(failureType = DateTimeParseException.class)
+		void maxThrowsExceptionWrongFormat(@ForAll @TimeRange(max = "1:3:5") LocalDateTime dateTime) {
+			//do nothing
+		}
+
+		@Example
+		@ExpectFailure(failureType = DateTimeParseException.class)
+		void minThrowsExceptionIllegalString(@ForAll @TimeRange(min = "foo") LocalDateTime dateTime) {
+			//do nothing
+		}
+
+		@Example
+		@ExpectFailure(failureType = DateTimeParseException.class)
+		void maxThrowsExceptionIllegalString(@ForAll @TimeRange(max = "foo") LocalDateTime dateTime) {
+			//do nothing
+		}
+
+		@Example
+		@ExpectFailure(failureType = DateTimeParseException.class)
+		void minThrowsExceptionOnly1Part(@ForAll @TimeRange(min = "09") LocalDateTime dateTime) {
+			//do nothing
+		}
+
+		@Example
+		@ExpectFailure(failureType = DateTimeParseException.class)
+		void maxThrowsExceptionOnly1Part(@ForAll @TimeRange(max = "09") LocalDateTime dateTime) {
+			//do nothing
+		}
+
+		@Example
+		@ExpectFailure(failureType = DateTimeParseException.class)
+		void minThrowsExceptionPicoseconds(@ForAll @TimeRange(min = "09:21:30.9992123437") LocalDateTime dateTime) {
+			//do nothing
+		}
+
+		@Example
+		@ExpectFailure(failureType = DateTimeParseException.class)
+		void maxThrowsExceptionPicoseconds(@ForAll @TimeRange(max = "09:21:30.9992123437") LocalDateTime dateTime) {
+			//do nothing
+		}
+
+	}
+
 }

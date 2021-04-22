@@ -52,20 +52,40 @@ public class ValidTypesWithOwnArbitrariesTests {
 			assertThat(dateTime.getDayOfWeek()).isBetween(DayOfWeek.TUESDAY, DayOfWeek.FRIDAY);
 		}
 
+		@Property
+		void timeRange(@ForAll("dateTimes") @TimeRange(min = "09:29:20.113943", max = "14:34:24.113943") LocalDateTime dateTime) {
+			assertThat(dateTime.toLocalTime()).isBetween(LocalTime.of(9, 29, 20, 113943000), LocalTime.of(14, 34, 24, 113943000));
+		}
+
+		@Property
+		void hourRange(@ForAll("dateTimes") @HourRange(min = 11, max = 13) LocalDateTime dateTime) {
+			assertThat(dateTime.getHour()).isBetween(11, 13);
+		}
+
+		@Property
+		void minuteRange(@ForAll("dateTimes") @MinuteRange(min = 31, max = 33) LocalDateTime dateTime) {
+			assertThat(dateTime.getMinute()).isBetween(31, 33);
+		}
+
+		@Property
+		void secondRange(@ForAll("dateTimes") @SecondRange(min = 22, max = 25) LocalDateTime dateTime) {
+			assertThat(dateTime.getSecond()).isBetween(22, 25);
+		}
+
 		@Provide
 		Arbitrary<LocalDateTime> dateTimes() {
 			return of(
 				LocalDateTime.MIN,
-				LocalDateTime.of(2013, Month.MAY, 24, 1, 32, 21, 113942000),
-				LocalDateTime.of(2014, Month.FEBRUARY, 24, 2, 43, 59),
-				LocalDateTime.of(2014, Month.FEBRUARY, 14, 2, 43, 59),
-				LocalDateTime.of(2014, Month.FEBRUARY, 15, 2, 43, 59),
-				LocalDateTime.of(2019, Month.JULY, 11, 4, 31, 48, 1),
-				LocalDateTime.of(2019, Month.JULY, 20, 4, 31, 48, 1),
-				LocalDateTime.of(2019, Month.JULY, 21, 4, 31, 48, 1),
-				LocalDateTime.of(2020, Month.AUGUST, 23, 1, 32, 21, 113944000),
-				LocalDateTime.of(2021, Month.APRIL, 12, 3, 32, 21, 113944000),
-				LocalDateTime.of(2021, Month.APRIL, 17, 3, 32, 21, 113944000),
+				LocalDateTime.of(2013, Month.MAY, 24, 9, 29, 20, 113942999),
+				LocalDateTime.of(2014, Month.FEBRUARY, 24, 14, 34, 24, 113943001),
+				LocalDateTime.of(2014, Month.FEBRUARY, 14, 14, 34, 24, 113943),
+				LocalDateTime.of(2014, Month.FEBRUARY, 15, 10, 31, 59),
+				LocalDateTime.of(2019, Month.JULY, 11, 11, 31, 21, 1),
+				LocalDateTime.of(2019, Month.JULY, 20, 12, 32, 22, 1),
+				LocalDateTime.of(2019, Month.JULY, 21, 13, 33, 23, 1),
+				LocalDateTime.of(2020, Month.AUGUST, 23, 14, 34, 24, 113943000),
+				LocalDateTime.of(2021, Month.APRIL, 12, 15, 31, 25, 113944000),
+				LocalDateTime.of(2021, Month.APRIL, 17, 16, 30, 26, 113944000),
 				LocalDateTime.MAX
 			);
 		}
