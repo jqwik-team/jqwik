@@ -16,7 +16,6 @@ import static org.apiguardian.api.API.Status.*;
  * @see DateRange
  * @see DayOfMonthRange
  * @see DayOfWeekRange
- * @see LeapYears
  * @see MonthDayRange
  * @see YearMonthRange
  * @see YearRange

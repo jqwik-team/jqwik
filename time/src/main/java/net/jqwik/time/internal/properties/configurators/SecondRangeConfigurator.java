@@ -10,6 +10,26 @@ import net.jqwik.time.api.constraints.*;
 
 public class SecondRangeConfigurator {
 
+	public static class ForLocalDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(LocalDateTime.class);
+		}
+
+		public Arbitrary<LocalDateTime> configure(Arbitrary<LocalDateTime> arbitrary, SecondRange range) {
+			int min = range.min();
+			int max = range.max();
+			if (arbitrary instanceof LocalDateTimeArbitrary) {
+				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
+				return localDateTimeArbitrary.secondBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalTime extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -54,9 +74,12 @@ public class SecondRangeConfigurator {
 		return time.getSecond() >= min && time.getSecond() <= max;
 	}
 
+	private static boolean filter(LocalDateTime dateTime, int min, int max) {
+		return filter(dateTime.toLocalTime(), min, max);
+	}
+
 	private static boolean filter(OffsetTime offsetTime, int min, int max) {
-		LocalTime time = offsetTime.toLocalTime();
-		return filter(time, min, max);
+		return filter(offsetTime.toLocalTime(), min, max);
 	}
 
 }

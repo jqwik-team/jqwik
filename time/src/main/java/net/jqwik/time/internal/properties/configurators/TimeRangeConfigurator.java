@@ -10,6 +10,26 @@ import net.jqwik.time.api.constraints.*;
 
 public class TimeRangeConfigurator {
 
+	public static class ForLocalDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(LocalDateTime.class);
+		}
+
+		public Arbitrary<LocalDateTime> configure(Arbitrary<LocalDateTime> arbitrary, TimeRange range) {
+			LocalTime min = stringToLocalTime(range.min());
+			LocalTime max = stringToLocalTime(range.max());
+			if (arbitrary instanceof LocalDateTimeArbitrary) {
+				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
+				return localDateTimeArbitrary.timeBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalTime extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -58,9 +78,12 @@ public class TimeRangeConfigurator {
 		return !time.isBefore(min) && !time.isAfter(max);
 	}
 
+	private static boolean filter(LocalDateTime dateTime, LocalTime min, LocalTime max) {
+		return filter(dateTime.toLocalTime(), min, max);
+	}
+
 	private static boolean filter(OffsetTime offsetTime, LocalTime min, LocalTime max) {
-		LocalTime time = offsetTime.toLocalTime();
-		return filter(time, min, max);
+		return filter(offsetTime.toLocalTime(), min, max);
 	}
 
 }

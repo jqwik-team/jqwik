@@ -66,4 +66,12 @@ net.jqwik.time.internal.properties.configurators.DayOfMonthRangeConfigurator$For
 
 net.jqwik.time.internal.properties.configurators.DayOfWeekRangeConfigurator$ForLocalDateTime
 
+net.jqwik.time.internal.properties.configurators.TimeRangeConfigurator$ForLocalDateTime
+
+net.jqwik.time.internal.properties.configurators.HourRangeConfigurator$ForLocalDateTime
+
+net.jqwik.time.internal.properties.configurators.MinuteRangeConfigurator$ForLocalDateTime
+
+net.jqwik.time.internal.properties.configurators.SecondRangeConfigurator$ForLocalDateTime
+
 net.jqwik.time.internal.properties.configurators.PrecisionConfigurator$ForLocalDateTime
