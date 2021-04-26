@@ -38,8 +38,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
 			DateTimes.dateTimes()
 					 .between(
-						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_215_325)
+						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_212_000),
+						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_215_000)
 					 )
 					 .ofPrecision(MICROS)
 					 .exhaustive();
@@ -60,8 +60,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
 			DateTimes.dateTimes()
 					 .between(
-						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 396_211_325)
+						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 393_000_000),
+						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 396_000_000)
 					 )
 					 .ofPrecision(MILLIS)
 					 .exhaustive();
@@ -82,8 +82,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
 			DateTimes.dateTimes()
 					 .between(
-						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-						 LocalDateTime.of(2013, 5, 25, 11, 22, 35, 392_211_325)
+						 LocalDateTime.of(2013, 5, 25, 11, 22, 32),
+						 LocalDateTime.of(2013, 5, 25, 11, 22, 35)
 					 )
 					 .ofPrecision(SECONDS)
 					 .exhaustive();
@@ -104,8 +104,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
 			DateTimes.dateTimes()
 					 .between(
-						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-						 LocalDateTime.of(2013, 5, 25, 11, 26, 35, 392_211_325)
+						 LocalDateTime.of(2013, 5, 25, 11, 23, 0),
+						 LocalDateTime.of(2013, 5, 25, 11, 26, 0)
 					 )
 					 .ofPrecision(MINUTES)
 					 .exhaustive();
@@ -126,8 +126,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<LocalDateTime>> optionalGenerator =
 			DateTimes.dateTimes()
 					 .between(
-						 LocalDateTime.of(2013, 5, 25, 11, 22, 31, 392_211_322),
-						 LocalDateTime.of(2013, 5, 25, 15, 26, 35, 392_211_325)
+						 LocalDateTime.of(2013, 5, 25, 12, 0, 0),
+						 LocalDateTime.of(2013, 5, 25, 15, 0, 0)
 					 )
 					 .ofPrecision(HOURS)
 					 .exhaustive();

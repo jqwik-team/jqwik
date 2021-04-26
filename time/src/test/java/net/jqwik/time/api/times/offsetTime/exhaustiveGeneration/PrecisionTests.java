@@ -39,8 +39,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
 			Times.offsetTimes()
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(11, 22, 33, 392_214_325)
+					 LocalTime.of(11, 22, 33, 392_212_000),
+					 LocalTime.of(11, 22, 33, 392_214_000)
 				 )
 				 .ofPrecision(MICROS)
 				 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
@@ -61,8 +61,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
 			Times.offsetTimes()
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(11, 22, 33, 395_214_325)
+					 LocalTime.of(11, 22, 33, 393_000_000),
+					 LocalTime.of(11, 22, 33, 395_000_000)
 				 )
 				 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
 				 .ofPrecision(MILLIS)
@@ -83,8 +83,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
 			Times.offsetTimes()
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(11, 22, 36, 395_214_325)
+					 LocalTime.of(11, 22, 34),
+					 LocalTime.of(11, 22, 36)
 				 )
 				 .ofPrecision(SECONDS)
 				 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
@@ -105,8 +105,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<OffsetTime>> optionalGenerator =
 			Times.offsetTimes()
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(11, 25, 36, 395_214_325)
+					 LocalTime.of(11, 23, 0),
+					 LocalTime.of(11, 25, 0)
 				 )
 				 .ofPrecision(MINUTES)
 				 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
@@ -128,8 +128,8 @@ public class PrecisionTests {
 			Times.offsetTimes()
 				 .ofPrecision(HOURS)
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(14, 25, 36, 395_214_325)
+					 LocalTime.of(12, 0, 0),
+					 LocalTime.of(14, 0, 0)
 				 )
 				 .offsetBetween(ZoneOffset.ofHoursMinutesSeconds(0, 19, 33), ZoneOffset.ofHoursMinutesSeconds(0, 31, 11))
 				 .exhaustive();

@@ -177,22 +177,14 @@ public class DefaultLocalDateArbitrary extends ArbitraryDecorator<LocalDate> imp
 			effective = effective.withDayOfMonth(1).withMonth(earliestMonth);
 		}
 		if (dayOfMonthBetween.getMin() != null && dayOfMonthBetween.getMin() > effective.getDayOfMonth()) {
-			if (isValidDate(effective.getYear(), effective.getMonth(), dayOfMonthBetween.getMin())) {
+			try {
 				effective = effective.withDayOfMonth(dayOfMonthBetween.getMin());
-			} else {
+			} catch (DateTimeException e) {
+				//DateTimeException occurs if the day does not exist (02-30, 04-31, ...)
 				effective = effective.plusMonths(1).withDayOfMonth(dayOfMonthBetween.getMin());
 			}
 		}
 		return effective;
-	}
-
-	private boolean isValidDate(int year, Month month, int dayOfMonth) {
-		return !(
-			(dayOfMonth > 31 || dayOfMonth < 1)
-				|| (dayOfMonth == 31 && (month == FEBRUARY || month == APRIL || month == JUNE || month == SEPTEMBER || month == NOVEMBER))
-				|| (dayOfMonth == 30 && month == FEBRUARY)
-				|| (dayOfMonth == 29 && month == FEBRUARY && !isLeapYear(year))
-		);
 	}
 
 	public static boolean isLeapYear(int year) {
