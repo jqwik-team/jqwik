@@ -1,9 +1,7 @@
 - 1.5.2
 
-    - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
-      to replace Combinators.withBuilder() but target cannot change across
-      build steps (-> much better performance and shrinking)
-          - Add capability to easily generate java beans (if that really makes sense)
+    - Inherit `@Group` annotated inner classes when reusing a test container through "extends."
+      See https://github.com/jlink/jqwik/issues/179
 
     - Domains
         - Deprecate AbstractDomainContextBase
@@ -17,21 +15,23 @@
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
 
+    - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
+      to replace Combinators.withBuilder() but target cannot change across
+      build steps (-> much better performance and shrinking)
+        - Add capability to easily generate java beans (if that really makes sense)
+
     - Time Module:
         - DateTimes. See https://github.com/jlink/jqwik/issues/175
         - Generate Instant, OffsetDateTime, Date, Calendar
         - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
 
+
+- 1.5.x
+
     - Create possibility/annotation to suppress reporting inside of a test/property but not lose
       reporting of property's results. May require a new lifecycle hook.
         - Apply annotation wherever reporting is test collateral
         - Make it configurable, e.g. `jqwik.reporting.statistics.onfailureonly`
-      
-    - Inherit `@Group` annotated inner classes when reusing a test container through "extends."
-      See https://github.com/jlink/jqwik/issues/179
-      
-
-- 1.5.x
 
     - Decimals/Floats Arbitraries:
         - Arbitrary.injectNaN()|injectNegativeInfinity()|injectPositiveInfinity()
