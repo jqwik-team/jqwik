@@ -85,8 +85,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(HOURS)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 12, 0, 0),
+							 LocalDateTime.of(2020, AUGUST, 23, 21, 0, 0)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(6);
@@ -106,8 +106,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(HOURS)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 12, 0, 0),
+							 LocalDateTime.of(2013, MAY, 25, 21, 0, 0)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -143,8 +143,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(MINUTES)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 11, 24, 0),
+							 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 0)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(6);
@@ -164,8 +164,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(MINUTES)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 11, 24, 0),
+							 LocalDateTime.of(2013, MAY, 25, 21, 15, 0)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -201,8 +201,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(SECONDS)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 11, 23, 22),
+							 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(6);
@@ -222,8 +222,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(SECONDS)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 11, 23, 22),
+							 LocalDateTime.of(2013, MAY, 25, 21, 15, 19)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -259,8 +259,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(MILLIS)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 302_000_000),
+							 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_000_000)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(6);
@@ -280,8 +280,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(MILLIS)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 302_000_000),
+							 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_000_000)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -317,8 +317,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(MICROS)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_429_000),
+							 LocalDateTime.of(2020, AUGUST, 23, 21, 15, 19, 199_321_000)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(6);
@@ -338,8 +338,8 @@ public class EdgeCasesTests {
 				DateTimes.dateTimes()
 						 .ofPrecision(MICROS)
 						 .between(
-							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
-							 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+							 LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_429_000),
+							 LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_000)
 						 );
 			Set<LocalDateTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);

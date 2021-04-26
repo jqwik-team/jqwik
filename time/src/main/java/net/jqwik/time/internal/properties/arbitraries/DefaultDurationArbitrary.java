@@ -23,6 +23,8 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	private final DurationBetween durationBetween = new DurationBetween();
 	private final OfPrecision ofPrecision = new OfPrecision();
 
+	//TODO
+
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
 

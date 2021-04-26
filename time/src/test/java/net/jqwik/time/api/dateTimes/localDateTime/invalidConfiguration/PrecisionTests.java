@@ -3,6 +3,8 @@ package net.jqwik.time.api.dateTimes.localDateTime.invalidConfiguration;
 import java.time.*;
 import java.time.temporal.*;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.time.api.*;
@@ -67,6 +69,7 @@ public class PrecisionTests {
 			LocalDateTime min = LocalDateTime.of(LocalDate.MAX, time);
 			LocalDateTime max = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX);
 
+			Assertions.setMaxStackTraceElementsDisplayed(Integer.MAX_VALUE);
 			assertThatThrownBy(
 				() -> DateTimes.dateTimes().between(min, max).ofPrecision(HOURS).generator(1000)
 			).isInstanceOf(IllegalArgumentException.class);

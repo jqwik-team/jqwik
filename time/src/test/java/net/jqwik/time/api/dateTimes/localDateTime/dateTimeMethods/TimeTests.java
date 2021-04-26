@@ -5,7 +5,6 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.time.api.*;
-import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static java.time.temporal.ChronoUnit.*;
 import static org.assertj.core.api.Assertions.*;
@@ -208,247 +207,37 @@ public class TimeTests {
 	@Group
 	class PrecisionMethods {
 
-		@Group
-		class Hours {
-
-			@Property
-			void precision(@ForAll("precisionHours") LocalDateTime dateTime) {
-				assertThat(dateTime.getMinute()).isEqualTo(0);
-				assertThat(dateTime.getSecond()).isEqualTo(0);
-				assertThat(dateTime.getNano()).isEqualTo(0);
-			}
-
-			@Property
-			void precisionMinTimePrecisionMinutes(@ForAll("precisionMinutes") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE) || min.getHour() != 23);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(HOURS);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getMinute()).isEqualTo(0);
-					assertThat(dateTime.getSecond()).isEqualTo(0);
-					assertThat(dateTime.getNano()).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
-			@Property
-			void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE) || min.getHour() != 23);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(HOURS);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getMinute()).isEqualTo(0);
-					assertThat(dateTime.getSecond()).isEqualTo(0);
-					assertThat(dateTime.getNano()).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
+		@Property
+		void hours(@ForAll("precisionHours") LocalDateTime dateTime) {
+			assertThat(dateTime.getMinute()).isEqualTo(0);
+			assertThat(dateTime.getSecond()).isEqualTo(0);
+			assertThat(dateTime.getNano()).isEqualTo(0);
 		}
 
-		@Group
-		class Minutes {
-
-			@Property
-			void precision(@ForAll("precisionMinutes") LocalDateTime dateTime) {
-				assertThat(dateTime.getSecond()).isEqualTo(0);
-				assertThat(dateTime.getNano()).isEqualTo(0);
-			}
-
-			@Property
-			void precisionMinTimePrecisionSeconds(@ForAll("precisionSeconds") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate()
-								.isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE) || min.getHour() != 23 || min.getMinute() != 59);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MINUTES);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getSecond()).isEqualTo(0);
-					assertThat(dateTime.getNano()).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
-			@Property
-			void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate()
-								.isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE) || min.getHour() != 23 || min.getMinute() != 59);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MINUTES);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getSecond()).isEqualTo(0);
-					assertThat(dateTime.getNano()).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
+		@Property
+		void minutes(@ForAll("precisionMinutes") LocalDateTime dateTime) {
+			assertThat(dateTime.getSecond()).isEqualTo(0);
+			assertThat(dateTime.getNano()).isEqualTo(0);
 		}
 
-		@Group
-		class Seconds {
-
-			@Property
-			void precision(@ForAll("precisionSeconds") LocalDateTime dateTime) {
-				assertThat(dateTime.getNano()).isEqualTo(0);
-			}
-
-			@Property
-			void precisionMinTimePrecisionMillis(@ForAll("precisionMilliseconds") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-								|| min.getHour() != 23
-								|| min.getMinute() != 59
-								|| min.getSecond() != 59);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(SECONDS);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getNano()).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
-			@Property
-			void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-								|| min.getHour() != 23
-								|| min.getMinute() != 59
-								|| min.getSecond() != 59);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(SECONDS);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getNano()).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
+		@Property
+		void seconds(@ForAll("precisionSeconds") LocalDateTime dateTime) {
+			assertThat(dateTime.getNano()).isEqualTo(0);
 		}
 
-		@Group
-		class Milliseconds {
-
-			@Property
-			void precision(@ForAll("precisionMilliseconds") LocalDateTime dateTime) {
-				assertThat(dateTime.getNano() % 1_000_000).isEqualTo(0);
-			}
-
-			@Property
-			void precisionMinTimePrecisionMicros(@ForAll("precisionMicroseconds") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-								|| min.getHour() != 23
-								|| min.getMinute() != 59
-								|| min.getSecond() != 59
-								|| min.getNano() < 999_000_001);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MILLIS);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getNano() % 1_000_000).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
-			@Property
-			void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-								|| min.getHour() != 23
-								|| min.getMinute() != 59
-								|| min.getSecond() != 59
-								|| min.getNano() < 999_000_001);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MILLIS);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getNano() % 1_000_000).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
+		@Property
+		void milliseconds(@ForAll("precisionMilliseconds") LocalDateTime dateTime) {
+			assertThat(dateTime.getNano() % 1_000_000).isEqualTo(0);
 		}
 
-		@Group
-		class Microseconds {
-
-			@Property
-			void precision(@ForAll("precisionMicroseconds") LocalDateTime dateTime) {
-				assertThat(dateTime.getNano() % 1_000).isEqualTo(0);
-			}
-
-			@Property
-			void precisionMinTimePrecisionNanos(@ForAll("precisionNanoseconds") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-								|| min.getHour() != 23
-								|| min.getMinute() != 59
-								|| min.getSecond() != 59
-								|| min.getNano() < 999_999_001);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MICROS);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getNano() % 1_000).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
-			@Property
-			void precisionMinTime(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
-
-				Assume.that(!min.toLocalDate().isEqual(DefaultLocalDateArbitrary.DEFAULT_MAX_DATE)
-								|| min.getHour() != 23
-								|| min.getMinute() != 59
-								|| min.getSecond() != 59
-								|| min.getNano() < 999_999_001);
-
-				Arbitrary<LocalDateTime> times = DateTimes.dateTimes().atTheEarliest(min).ofPrecision(MICROS);
-
-				assertAllGenerated(times.generator(1000), random, dateTime -> {
-					assertThat(dateTime.getNano() % 1_000).isEqualTo(0);
-					assertThat(dateTime).isAfterOrEqualTo(min);
-					return true;
-				});
-
-			}
-
+		@Property
+		void microseconds(@ForAll("precisionMicroseconds") LocalDateTime dateTime) {
+			assertThat(dateTime.getNano() % 1_000).isEqualTo(0);
 		}
 
-		@Group
-		class Nanos {
-
-			@Property
-			void precisionNanoseconds(@ForAll("precisionNanoseconds") LocalDateTime dateTime) {
-				assertThat(dateTime).isNotNull();
-			}
-
+		@Property
+		void nanoseconds(@ForAll("precisionNanoseconds") LocalDateTime dateTime) {
+			assertThat(dateTime).isNotNull();
 		}
 
 	}

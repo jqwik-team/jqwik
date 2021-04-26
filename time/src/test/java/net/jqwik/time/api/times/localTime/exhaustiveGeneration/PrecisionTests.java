@@ -38,8 +38,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
 			Times.times()
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(11, 22, 33, 392_214_325)
+					 LocalTime.of(11, 22, 33, 392_212_000),
+					 LocalTime.of(11, 22, 33, 392_214_000)
 				 )
 				 .ofPrecision(MICROS)
 				 .exhaustive();
@@ -60,8 +60,8 @@ public class PrecisionTests {
 			Times.times()
 				 .ofPrecision(MILLIS)
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(11, 22, 33, 395_214_325)
+					 LocalTime.of(11, 22, 33, 393_000_000),
+					 LocalTime.of(11, 22, 33, 395_000_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -81,8 +81,8 @@ public class PrecisionTests {
 			Times.times()
 				 .ofPrecision(SECONDS)
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(11, 22, 36, 395_214_325)
+					 LocalTime.of(11, 22, 34),
+					 LocalTime.of(11, 22, 36)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -101,8 +101,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
 			Times.times()
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(11, 25, 36, 395_214_325)
+					 LocalTime.of(11, 23, 0),
+					 LocalTime.of(11, 25, 0)
 				 )
 				 .ofPrecision(MINUTES)
 				 .exhaustive();
@@ -122,8 +122,8 @@ public class PrecisionTests {
 		Optional<ExhaustiveGenerator<LocalTime>> optionalGenerator =
 			Times.times()
 				 .between(
-					 LocalTime.of(11, 22, 33, 392_211_322),
-					 LocalTime.of(14, 25, 36, 395_214_325)
+					 LocalTime.of(12, 0, 0),
+					 LocalTime.of(14, 0, 0)
 				 )
 				 .ofPrecision(HOURS)
 				 .exhaustive();

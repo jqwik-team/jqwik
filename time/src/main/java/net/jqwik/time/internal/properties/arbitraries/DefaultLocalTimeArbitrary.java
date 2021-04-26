@@ -94,6 +94,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	) {
 		checkMinValuesAndPrecision(minuteBetween, secondBetween, ofPrecision);
 		LocalTime effective = timeBetween.getMin() != null ? timeBetween.getMin() : LocalTime.MIN;
+		checkTimeValueAndPrecision(effective, ofPrecision, true);
 		if (hourBetween.getMin() > effective.getHour()) {
 			effective = effective.withHour(hourBetween.getMin());
 			effective = effective.withMinute(0);
@@ -109,68 +110,45 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 			effective = effective.withSecond(secondBetween.getMin());
 			effective = effective.withNano(0);
 		}
-		effective = calculateEffectiveMinWithPrecision(effective, ofPrecision);
 		return effective;
+	}
+
+	public static void checkTimeValueAndPrecision(LocalTime time, OfPrecision ofPrecision, boolean minimum) {
+		//TODO: TEST
+		boolean throwException = false;
+		switch (ofPrecision.get()) {
+			case HOURS:
+				throwException = time.getMinute() != 0;
+			case MINUTES:
+				throwException = throwException || time.getSecond() != 0;
+			case SECONDS:
+				throwException = throwException || time.getNano() != 0;
+				break;
+			case MILLIS:
+				throwException = (time.getNano() % 1_000_000) != 0;
+				break;
+			case MICROS:
+				throwException = (time.getNano() % 1_000) != 0;
+		}
+		if (throwException) {
+			throwValueAndPrecisionException(time.toString(), minimum, "time", ofPrecision.get());
+		}
 	}
 
 	private static void checkMinValuesAndPrecision(MinuteBetween minuteBetween, SecondBetween secondBetween, OfPrecision ofPrecision) {
 		if (ofPrecision.get().compareTo(SECONDS) > 0) {
 			if (secondBetween.getMin() > 0) {
-				throwMinValueAndPrecisionException(secondBetween.getMin(), "second", ofPrecision.get());
+				throwValueAndPrecisionException(secondBetween.getMin().toString(), true, "second", ofPrecision.get());
 			}
 			if (ofPrecision.get().compareTo(MINUTES) > 0 && minuteBetween.getMin() > 0) {
-				throwMinValueAndPrecisionException(minuteBetween.getMin(), "minute", ofPrecision.get());
+				throwValueAndPrecisionException(minuteBetween.getMin().toString(), true, "minute", ofPrecision.get());
 			}
 		}
 	}
 
-	private static void throwMinValueAndPrecisionException(int val, String unit, ChronoUnit precision) {
-		throw new IllegalArgumentException("Can't use " + val + " as minimum " + unit + " with precision " + precision + ".");
-	}
-
-	private static LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, OfPrecision ofPrecision) {
-		return calculateEffectiveMinWithPrecision(effective, ofPrecision, false);
-	}
-
-	public static LocalTime calculateEffectiveMinWithPrecisionFromOtherClass(LocalTime effective, OfPrecision ofPrecision) {
-		return calculateEffectiveMinWithPrecision(effective, ofPrecision, true);
-	}
-
-	@SuppressWarnings("OverlyComplexMethod")
-	private static LocalTime calculateEffectiveMinWithPrecision(LocalTime effective, OfPrecision ofPrecision, boolean fromOtherClass) {
-		LocalTime startEffective = effective;
-		if (ofPrecision.get().compareTo(NANOS) >= 1) {
-			if (effective.getNano() % 1_000 != 0) {
-				effective = effective.plusNanos(1_000 - (effective.getNano() % 1_000));
-			}
-			if (ofPrecision.get().compareTo(MICROS) >= 1) {
-				if (effective.getNano() % 1_000_000 != 0) {
-					effective = effective.plusNanos(1_000_000 - (effective.getNano() % 1_000_000));
-				}
-				if (ofPrecision.get().compareTo(MILLIS) >= 1) {
-					if (effective.getNano() != 0) {
-						effective = effective.plusNanos(1_000_000_000 - effective.getNano());
-					}
-					if (ofPrecision.get().compareTo(SECONDS) >= 1) {
-						if (effective.getSecond() != 0) {
-							effective = effective.plusSeconds(60 - effective.getSecond());
-						}
-						if (ofPrecision.get().compareTo(MINUTES) >= 1) {
-							if (effective.getMinute() != 0) {
-								effective = effective.plusMinutes(60 - effective.getMinute());
-							}
-						}
-					}
-				}
-			}
-		}
-		if (startEffective.isAfter(effective)) {
-			if (fromOtherClass) {
-				return null;
-			}
-			throw new IllegalArgumentException("Cannot use this min value with precision " + ofPrecision.get());
-		}
-		return effective;
+	private static void throwValueAndPrecisionException(String val, boolean minimum, String unit, ChronoUnit precision) {
+		String minMax = minimum ? "minimum" : "maximum";
+		throw new IllegalArgumentException("Can't use " + val + " as " + minMax + " " + unit + " with precision " + precision + ".");
 	}
 
 	public static LocalTime calculateEffectiveMax(
@@ -180,40 +158,62 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		SecondBetween secondBetween,
 		OfPrecision ofPrecision
 	) {
-		LocalTime effective = timeBetween.getMax() != null ? timeBetween.getMax() : LocalTime.MAX;
+		LocalTime effective = timeBetween.getMax() != null ? timeBetween.getMax() : calculateMaxPossibleValue(ofPrecision);
+		checkTimeValueAndPrecision(effective, ofPrecision, false);
 		if (hourBetween.getMax() < effective.getHour()) {
 			effective = effective.withHour(hourBetween.getMax());
-			effective = effective.withMinute(59);
-			effective = effective.withSecond(59);
-			effective = effective.withNano(999_999_999);
+			effective = setEffectiveMaxValues(effective, ofPrecision, MINUTES);
 		}
 		if (minuteBetween.getMax() < effective.getMinute()) {
 			effective = effective.withMinute(minuteBetween.getMax());
-			effective = effective.withSecond(59);
-			effective = effective.withNano(999_999_999);
+			effective = setEffectiveMaxValues(effective, ofPrecision, SECONDS);
 		}
 		if (secondBetween.getMax() < effective.getSecond()) {
 			effective = effective.withSecond(secondBetween.getMax());
-			effective = effective.withNano(999_999_999);
+			effective = setEffectiveMaxValues(effective, ofPrecision, NANOS);
 		}
-		effective = calculateEffectiveMaxWithPrecision(effective, ofPrecision);
 		return effective;
 	}
 
-	public static LocalTime calculateEffectiveMaxWithPrecision(LocalTime effective, OfPrecision ofPrecision) {
-		switch (ofPrecision.get()) {
-			case HOURS:
-				effective = effective.withMinute(0);
+	private static LocalTime setEffectiveMaxValues(LocalTime effective, OfPrecision ofPrecision, ChronoUnit precision) {
+		switch (precision) {
 			case MINUTES:
-				effective = effective.withSecond(0);
+				effective = ofPrecision.get().compareTo(MINUTES) <= 0 ? effective.withMinute(59) : effective.withMinute(0);
 			case SECONDS:
-				effective = effective.withNano(effective.getNano() % 1_000_000);
-			case MILLIS:
-				effective = effective.withNano((effective.getNano() / 1_000_000) * 1_000_000 + effective.getNano() % 1_000);
-			case MICROS:
-				effective = effective.withNano(effective.getNano() - effective.getNano() % 1_000);
+				effective = ofPrecision.get().compareTo(SECONDS) <= 0 ? effective.withSecond(59) : effective.withSecond(0);
+			default:
+				switch (ofPrecision.get()) {
+					case MILLIS:
+						effective = effective.withNano(999_000_000);
+						break;
+					case MICROS:
+						effective = effective.withNano(999_999_000);
+						break;
+					case NANOS:
+						effective = effective.withNano(999_999_999);
+						break;
+					default:
+						effective = effective.withNano(0);
+				}
 		}
 		return effective;
+	}
+
+	public static LocalTime calculateMaxPossibleValue(OfPrecision ofPrecision) {
+		switch (ofPrecision.get()) {
+			case HOURS:
+				return LocalTime.of(23, 0, 0, 0);
+			case MINUTES:
+				return LocalTime.of(23, 59, 0, 0);
+			case MILLIS:
+				return LocalTime.of(23, 59, 59, 999_000_000);
+			case MICROS:
+				return LocalTime.of(23, 59, 59, 999_999_000);
+			case NANOS:
+				return LocalTime.of(23, 59, 59, 999_999_999);
+			default:
+				return LocalTime.of(23, 59, 59, 0);
+		}
 	}
 
 	public static ChronoUnit calculateOfPrecisionFromNanos(int nanos) {

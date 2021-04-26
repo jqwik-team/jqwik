@@ -86,7 +86,7 @@ public class EdgeCasesTests {
 			OffsetTimeArbitrary times =
 				Times.offsetTimes()
 					 .ofPrecision(HOURS)
-					 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+					 .between(LocalTime.of(12, 0, 0), LocalTime.of(21, 0, 0))
 					 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 			Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -133,7 +133,7 @@ public class EdgeCasesTests {
 			OffsetTimeArbitrary times =
 				Times.offsetTimes()
 					 .ofPrecision(MINUTES)
-					 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+					 .between(LocalTime.of(11, 24, 0), LocalTime.of(21, 15, 0))
 					 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 			Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -181,7 +181,7 @@ public class EdgeCasesTests {
 			OffsetTimeArbitrary times =
 				Times.offsetTimes()
 					 .ofPrecision(SECONDS)
-					 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+					 .between(LocalTime.of(11, 23, 22), LocalTime.of(21, 15, 19))
 					 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 			Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -230,7 +230,7 @@ public class EdgeCasesTests {
 			OffsetTimeArbitrary times =
 				Times.offsetTimes()
 					 .ofPrecision(MILLIS)
-					 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+					 .between(LocalTime.of(11, 23, 21, 302_000_000), LocalTime.of(21, 15, 19, 199_000_000))
 					 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 			Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
@@ -279,7 +279,7 @@ public class EdgeCasesTests {
 			OffsetTimeArbitrary times =
 				Times.offsetTimes()
 					 .ofPrecision(MICROS)
-					 .between(LocalTime.of(11, 23, 21, 301_428_111), LocalTime.of(21, 15, 19, 199_321_789))
+					 .between(LocalTime.of(11, 23, 21, 301_429_000), LocalTime.of(21, 15, 19, 199_321_000))
 					 .offsetBetween(ZoneOffset.of("Z"), ZoneOffset.of("Z"));
 			Set<OffsetTime> edgeCases = collectEdgeCaseValues(times.edgeCases());
 			assertThat(edgeCases).hasSize(2);
