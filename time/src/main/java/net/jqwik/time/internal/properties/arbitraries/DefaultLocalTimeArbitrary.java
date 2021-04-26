@@ -114,7 +114,6 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	public static void checkTimeValueAndPrecision(LocalTime time, OfPrecision ofPrecision, boolean minimum) {
-		//TODO: TEST
 		boolean throwException = false;
 		switch (ofPrecision.get()) {
 			case HOURS:
@@ -131,7 +130,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 				throwException = (time.getNano() % 1_000) != 0;
 		}
 		if (throwException) {
-			throwValueAndPrecisionException(time.toString(), minimum, "time", ofPrecision.get());
+			throwTimeAndPrecisionException(time.toString(), minimum, ofPrecision.get());
 		}
 	}
 
@@ -149,6 +148,11 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	private static void throwValueAndPrecisionException(String val, boolean minimum, String unit, ChronoUnit precision) {
 		String minMax = minimum ? "minimum" : "maximum";
 		throw new IllegalArgumentException("Can't use " + val + " as " + minMax + " " + unit + " with precision " + precision + ".");
+	}
+
+	private static void throwTimeAndPrecisionException(String val, boolean minimum, ChronoUnit precision) {
+		String minMax = minimum ? "minimum" : "maximum";
+		throw new IllegalArgumentException("Can't use " + val + " as " + minMax + " time with precision " + precision + ".\nYou may want to round the time to " + precision + " or change the precision.");
 	}
 
 	public static LocalTime calculateEffectiveMax(
