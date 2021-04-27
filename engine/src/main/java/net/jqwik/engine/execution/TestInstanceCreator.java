@@ -7,6 +7,7 @@ import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
 class TestInstanceCreator {
@@ -55,18 +56,24 @@ class TestInstanceCreator {
 		TestDescriptor descriptor
 	) {
 		if (JqwikReflectionSupport.isInnerClass(instanceClass)) {
-			TestDescriptor parentDescriptor = descriptor.getParent().orElse(descriptor);
-			Object parentInstance = create(instanceClass.getDeclaringClass(), parentDescriptor);
-			return JqwikReflectionSupport.newInstance(
-				constructor,
-				resolveParameters(constructor, parentInstance)
-			);
+			return newInstanceOfInnerContainer(constructor, descriptor);
 		} else {
 			return JqwikReflectionSupport.newInstance(
 				constructor,
 				resolveParameters(constructor, null)
 			);
 		}
+	}
+
+	private Object newInstanceOfInnerContainer(Constructor<?> constructor, TestDescriptor descriptor) {
+		TestDescriptor parentDescriptor = descriptor.getParent().orElse(descriptor);
+		ContainerClassDescriptor parentClassDescriptor = (ContainerClassDescriptor) parentDescriptor;
+		Class<?> parentClass = parentClassDescriptor.getContainerClass();
+		Object parentInstance = create(parentClass, parentDescriptor);
+		return JqwikReflectionSupport.newInstance(
+			constructor,
+			resolveParameters(constructor, parentInstance)
+		);
 	}
 
 	private List<Constructor<?>> allAccessibleConstructors(Class<?> instanceClass) {

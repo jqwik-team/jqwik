@@ -36,7 +36,11 @@ title: jqwik Release Notes
 
 #### Bug Fixes
 
-- Fixed bug in edge case generation: https://github.com/jlink/jqwik/issues/180
+- Fixed bug in edge case generation: 
+  https://github.com/jlink/jqwik/issues/180
+
+- Fixed bug when running inner tests of an extended test container:
+  https://github.com/jlink/jqwik/issues/179
 
 
 ## 1.5.1

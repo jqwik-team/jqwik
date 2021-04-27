@@ -6,6 +6,7 @@ import java.util.*;
 import examples.packageWithDisabledTests.*;
 import examples.packageWithErrors.*;
 import examples.packageWithFailings.*;
+import examples.packageWithInheritance.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
 import org.assertj.core.api.Assertions;
@@ -115,6 +116,31 @@ class JqwikIntegrationTests {
 							.allEvents();
 
 		assertSimpleExampleTests(events);
+	}
+
+	@Example
+	@SuppressLogging
+	void runTestsFromClassWithInheritance() {
+		Events events = EngineTestKit
+							.engine(createTestEngine())
+							.selectors(selectClass(ContainerWithInheritance.class))
+							.execute()
+							.allEvents();
+
+		events.assertEventsMatchLoosely(
+			event(engine(), started()),
+			event(container(ContainerWithInheritance.class), started()),
+			event(test("example"), finishedSuccessfully()),
+			event(test("exampleToInherit"), finishedSuccessfully()),
+			event(test("exampleToOverride"), finishedSuccessfully()),
+			event(test("exampleToOverrideFromInterface"), finishedSuccessfully()),
+			event(test("exampleToInheritFromInterface"), finishedSuccessfully()),
+			event(container(AbstractContainer.ContainerInAbstractClass.class), started()),
+			event(test("innerExampleToInherit"), finishedSuccessfully()),
+			event(container(AbstractContainer.ContainerInAbstractClass.class), finishedSuccessfully()),
+			event(container(ContainerWithInheritance.class), finishedSuccessfully()),
+			event(engine(), finishedSuccessfully())
+		);
 	}
 
 	@Example

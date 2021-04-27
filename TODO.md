@@ -1,8 +1,5 @@
 - 1.5.2
 
-    - Inherit `@Group` annotated inner classes when reusing a test container through "extends."
-      See https://github.com/jlink/jqwik/issues/179
-
     - Domains
         - Deprecate AbstractDomainContextBase
             - Introduce DomainContextBase

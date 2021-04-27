@@ -156,10 +156,11 @@ class DiscoveryTests {
 				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
-		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(5);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(2);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(6);
 
 		assertThat(count(engineDescriptor, isExample(AbstractContainer.class, "exampleToInherit"))).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExample(AbstractContainer.ContainerInAbstractClass.class, "innerExampleToInherit"))).isEqualTo(1);
 		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class, "exampleToOverride"))).isEqualTo(1);
 		assertThat(count(engineDescriptor, isExample(InterfaceTests.class, "exampleToInheritFromInterface"))).isEqualTo(1);
 		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class, "exampleToOverrideFromInterface"))).isEqualTo(1);

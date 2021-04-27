@@ -15,4 +15,12 @@ public abstract class AbstractContainer {
 	@Example
 	void exampleToDisable() {
 	}
+
+	@Group
+	public class ContainerInAbstractClass {
+		@Example
+		void innerExampleToInherit() {
+
+		}
+	}
 }
