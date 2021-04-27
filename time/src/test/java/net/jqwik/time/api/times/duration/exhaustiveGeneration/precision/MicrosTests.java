@@ -17,8 +17,8 @@ public class MicrosTests {
 			Times.durations()
 				 .ofPrecision(MICROS)
 				 .between(
-					 Duration.ofSeconds(183729, 999_997_921),
-					 Duration.ofSeconds(183730, 1_213)
+					 Duration.ofSeconds(183729, 999_998_000),
+					 Duration.ofSeconds(183730, 1_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -39,8 +39,8 @@ public class MicrosTests {
 			Times.durations()
 				 .ofPrecision(MICROS)
 				 .between(
-					 Duration.ofSeconds(-183730, 999_997_998),
-					 Duration.ofSeconds(-183729, 1_999)
+					 Duration.ofSeconds(-183730, 999_998_000),
+					 Duration.ofSeconds(-183729, 1_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -61,8 +61,8 @@ public class MicrosTests {
 			Times.durations()
 				 .ofPrecision(MICROS)
 				 .between(
-					 Duration.ofSeconds(-1, -1_302),
-					 Duration.ofSeconds(0, -999_997_323)
+					 Duration.ofSeconds(-1, -1_000),
+					 Duration.ofSeconds(0, -999_998_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -83,8 +83,8 @@ public class MicrosTests {
 			Times.durations()
 				 .ofPrecision(MICROS)
 				 .between(
-					 Duration.ofSeconds(0, -2_321),
-					 Duration.ofSeconds(0, 1_392)
+					 Duration.ofSeconds(0, -2_000),
+					 Duration.ofSeconds(0, 1_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -105,8 +105,8 @@ public class MicrosTests {
 			Times.durations()
 				 .ofPrecision(MICROS)
 				 .between(
-					 Duration.ofSeconds(0, 999_997_213),
-					 Duration.ofSeconds(1, 1_023)
+					 Duration.ofSeconds(0, 999_998_000),
+					 Duration.ofSeconds(1, 1_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();

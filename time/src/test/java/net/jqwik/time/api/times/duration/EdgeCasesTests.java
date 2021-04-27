@@ -35,8 +35,7 @@ public class EdgeCasesTests {
 		void betweenPositive() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(HOURS)
-											   .between(Duration.ofSeconds(3 * 60 * 60 + 7 * 60 + 43, 321_483_212), Duration
-																														.ofSeconds(7 * 60 * 60 + 19 * 60 + 12, 231_493_202));
+											   .between(Duration.ofSeconds(4 * 60 * 60), Duration.ofSeconds(7 * 60 * 60));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -49,8 +48,7 @@ public class EdgeCasesTests {
 		void betweenNegative() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(HOURS)
-											   .between(Duration.ofSeconds(-7 * 60 * 60 - 19 * 60 - 12, -231_493_202), Duration
-																														   .ofSeconds(-3 * 60 * 60 - 7 * 60 - 43, -321_483_212));
+											   .between(Duration.ofSeconds(-7 * 60 * 60), Duration.ofSeconds(-4 * 60 * 60));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -80,8 +78,8 @@ public class EdgeCasesTests {
 		void betweenPositive() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(MINUTES)
-											   .between(Duration.ofSeconds(3 * 60 * 60 + 7 * 60 + 43, 321_483_212), Duration
-																														.ofSeconds(7 * 60 * 60 + 19 * 60 + 12, 231_493_202));
+											   .between(Duration.ofSeconds(3 * 60 * 60 + 8 * 60), Duration
+																									  .ofSeconds(7 * 60 * 60 + 19 * 60));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -94,8 +92,8 @@ public class EdgeCasesTests {
 		void betweenNegative() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(MINUTES)
-											   .between(Duration.ofSeconds(-7 * 60 * 60 - 19 * 60 - 12, -231_493_202), Duration
-																														   .ofSeconds(-3 * 60 * 60 - 7 * 60 - 43, -321_483_212));
+											   .between(Duration.ofSeconds(-7 * 60 * 60 - 19 * 60), Duration
+																										.ofSeconds(-3 * 60 * 60 - 8 * 60));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -125,8 +123,7 @@ public class EdgeCasesTests {
 		void betweenPositive() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(SECONDS)
-											   .between(Duration.ofSeconds(9402042, 321_483_212), Duration
-																									  .ofSeconds(39402042, 231_493_202));
+											   .between(Duration.ofSeconds(9402043), Duration.ofSeconds(39402042));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -139,8 +136,7 @@ public class EdgeCasesTests {
 		void betweenNegative() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(SECONDS)
-											   .between(Duration.ofSeconds(-39402042, -231_493_202), Duration
-																										 .ofSeconds(-9402042, -321_483_212));
+											   .between(Duration.ofSeconds(-39402042), Duration.ofSeconds(-9402043));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -170,8 +166,8 @@ public class EdgeCasesTests {
 		void betweenPositive() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(MILLIS)
-											   .between(Duration.ofSeconds(9402042, 321_483_212), Duration
-																									  .ofSeconds(39402042, 231_493_202));
+											   .between(Duration.ofSeconds(9402042, 322_000_000), Duration
+																									  .ofSeconds(39402042, 231_000_000));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -184,8 +180,8 @@ public class EdgeCasesTests {
 		void betweenNegative() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(MILLIS)
-											   .between(Duration.ofSeconds(-39402042, -231_493_202), Duration
-																										 .ofSeconds(-9402042, -321_483_212));
+											   .between(Duration.ofSeconds(-39402042, -231_000_000), Duration
+																										 .ofSeconds(-9402042, -322_000_000));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -215,8 +211,8 @@ public class EdgeCasesTests {
 		void betweenPositive() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(MICROS)
-											   .between(Duration.ofSeconds(9402042, 321_483_212), Duration
-																									  .ofSeconds(39402042, 231_493_202));
+											   .between(Duration.ofSeconds(9402042, 321_484_000), Duration
+																									  .ofSeconds(39402042, 231_493_000));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(
@@ -229,8 +225,8 @@ public class EdgeCasesTests {
 		void betweenNegative() {
 			DurationArbitrary durations = Times.durations()
 											   .ofPrecision(MICROS)
-											   .between(Duration.ofSeconds(-39402042, -231_493_202), Duration
-																										 .ofSeconds(-9402042, -321_483_212));
+											   .between(Duration.ofSeconds(-39402042, -231_493_000), Duration
+																										 .ofSeconds(-9402042, -321_484_000));
 			Set<Duration> edgeCases = collectEdgeCaseValues(durations.edgeCases());
 			assertThat(edgeCases).hasSize(2);
 			assertThat(edgeCases).containsExactlyInAnyOrder(

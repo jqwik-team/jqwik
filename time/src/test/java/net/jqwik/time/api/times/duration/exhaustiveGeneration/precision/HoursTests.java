@@ -17,8 +17,8 @@ public class HoursTests {
 			Times.durations()
 				 .ofPrecision(HOURS)
 				 .between(
-					 Duration.ofSeconds(7 * 60 * 60 + 4 * 60 + 55, 997_997_921),
-					 Duration.ofSeconds(11 * 60 * 60 + 8 * 60 + 31, 1_213_999)
+					 Duration.ofSeconds(8 * 60 * 60),
+					 Duration.ofSeconds(11 * 60 * 60)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -39,8 +39,8 @@ public class HoursTests {
 			Times.durations()
 				 .ofPrecision(HOURS)
 				 .between(
-					 Duration.ofSeconds(-11 * 60 * 60 - 8 * 60 - 11, 997_123_998),
-					 Duration.ofSeconds(-7 * 60 * 60 - 4 * 60 - 55, 1_999_999)
+					 Duration.ofSeconds(-11 * 60 * 60),
+					 Duration.ofSeconds(-8 * 60 * 60)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -61,8 +61,8 @@ public class HoursTests {
 			Times.durations()
 				 .ofPrecision(HOURS)
 				 .between(
-					 Duration.ofSeconds(-2 * 60 * 60 - 2 * 60 - 33, -2_321_392),
-					 Duration.ofSeconds(60 * 60 + 60 + 28, 1_392_392)
+					 Duration.ofSeconds(-2 * 60 * 60),
+					 Duration.ofSeconds(60 * 60)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();

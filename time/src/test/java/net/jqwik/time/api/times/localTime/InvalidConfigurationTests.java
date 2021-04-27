@@ -67,7 +67,7 @@ public class InvalidConfigurationTests {
 	}
 
 	@Group
-	class InvalidUseOfPrecisionAndValuesMin {
+	class InvalidUseOfPrecisionAndValues {
 
 		@Property
 		void precisionHoursIllegalMinTime(@ForAll("precisionNanoseconds") LocalTime time) {
