@@ -17,8 +17,8 @@ public class SecondsTests {
 			Times.durations()
 				 .ofPrecision(SECONDS)
 				 .between(
-					 Duration.ofSeconds(183726, 997_997_921),
-					 Duration.ofSeconds(183730, 1_213_999)
+					 Duration.ofSeconds(183727),
+					 Duration.ofSeconds(183730)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -39,8 +39,8 @@ public class SecondsTests {
 			Times.durations()
 				 .ofPrecision(SECONDS)
 				 .between(
-					 Duration.ofSeconds(-183730, 997_123_998),
-					 Duration.ofSeconds(-183726, 1_999_999)
+					 Duration.ofSeconds(-183729),
+					 Duration.ofSeconds(-183726)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -61,8 +61,8 @@ public class SecondsTests {
 			Times.durations()
 				 .ofPrecision(SECONDS)
 				 .between(
-					 Duration.ofSeconds(-2, -2_321_392),
-					 Duration.ofSeconds(1, 1_392_392)
+					 Duration.ofSeconds(-2),
+					 Duration.ofSeconds(1)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();

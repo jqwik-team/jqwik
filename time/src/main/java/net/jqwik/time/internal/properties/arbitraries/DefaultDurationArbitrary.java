@@ -18,25 +18,18 @@ import static org.apiguardian.api.API.Status.*;
 public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> implements DurationArbitrary {
 
 	public static final Duration DEFAULT_MIN = Duration.ofSeconds(Long.MIN_VALUE, 0);
+	public static final Duration DEFAULT_MIN_PRECISION_HOURS = Duration.ofSeconds((Long.MIN_VALUE / (60 * 60)) * (60 * 60), 0);
 	public static final Duration DEFAULT_MAX = Duration.ofSeconds(Long.MAX_VALUE, 999_999_999);
+	public static final Duration DEFAULT_MAX_PRECISION_HOURS = Duration.ofSeconds((Long.MAX_VALUE / (60 * 60)) * (60 * 60), 0);
 
 	private final DurationBetween durationBetween = new DurationBetween();
 	private final OfPrecision ofPrecision = new OfPrecision();
 
-	//TODO
-
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
 
-		Duration min = durationBetween.getMin() != null ? durationBetween.getMin() : DEFAULT_MIN;
-		Duration max = durationBetween.getMax() != null ? durationBetween.getMax() : DEFAULT_MAX;
-
-		Duration effectiveMin = calculateEffectiveMin(min, ofPrecision);
-		Duration effectiveMax = calculateEffectiveMax(max, ofPrecision);
-
-		if (effectiveMin.compareTo(effectiveMax) > 0) {
-			throw new IllegalArgumentException("The maximum duration is to soon after the minimum duration.");
-		}
+		Duration effectiveMin = calculateEffectiveMin(durationBetween, ofPrecision);
+		Duration effectiveMax = calculateEffectiveMax(durationBetween, ofPrecision);
 
 		BigInteger bigIntegerMin = calculateValue(effectiveMin, ofPrecision);
 		BigInteger bigIntegerMax = calculateValue(effectiveMax, ofPrecision);
@@ -51,91 +44,69 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	}
 
-	@SuppressWarnings("OverlyComplexMethod")
-	static private Duration calculateEffectiveMin(Duration min, OfPrecision ofPrecision) {
-		ChronoUnit precision = ofPrecision.get();
-		try {
-			Duration effective = min;
-			if (precision.compareTo(NANOS) >= 1) {
-				if (effective.getNano() % 1_000 != 0) {
-					effective = effective.plusNanos(1_000 - (effective.getNano() % 1_000));
-				}
-				if (precision.compareTo(MICROS) >= 1) {
-					if (effective.getNano() % 1_000_000 != 0) {
-						effective = effective.plusNanos(1_000_000 - (effective.getNano() % 1_000_000));
-					}
-					if (precision.compareTo(MILLIS) >= 1) {
-						if (effective.getNano() != 0) {
-							effective = effective.plusNanos(1_000_000_000 - effective.getNano());
-						}
-						if (precision.compareTo(SECONDS) >= 1) {
-							int seconds = (int) (effective.getSeconds() % 60);
-							if (seconds < 0) {
-								seconds += 60;
-							}
-							if (seconds != 0) {
-								effective = effective.plusSeconds(60 - seconds);
-							}
-							if (precision.compareTo(MINUTES) >= 1) {
-								int minutes = (int) ((effective.getSeconds() % 3600) / 60);
-								if (minutes < 0) {
-									minutes += 60;
-								}
-								if (minutes != 0) {
-									effective = effective.plusMinutes(60 - minutes);
-								}
-							}
-						}
-					}
-				}
-			}
-			return effective;
-		} catch (ArithmeticException e) {
-			throw new IllegalArgumentException("Min value must be increased because of precision " + precision + " but results in a " + e.getMessage());
+	private Duration calculateEffectiveMin(DurationBetween durationBetween, OfPrecision ofPrecision) {
+		Duration effective = durationBetween.getMin() != null ? durationBetween.getMin() : calculateMinPossibleValue(ofPrecision);
+		checkValueAndPrecision(effective, ofPrecision, true);
+		return effective;
+	}
+
+	private Duration calculateMinPossibleValue(OfPrecision ofPrecision) {
+		switch (ofPrecision.get()) {
+			case HOURS:
+				return Duration.ofSeconds((Long.MIN_VALUE / (60 * 60)) * (60 * 60), 0);
+			case MINUTES:
+				return Duration.ofSeconds((Long.MIN_VALUE / 60) * 60, 0);
+			default:
+				return Duration.ofSeconds(Long.MIN_VALUE, 0);
 		}
 	}
 
-	@SuppressWarnings("OverlyComplexMethod")
-	static private Duration calculateEffectiveMax(Duration max, OfPrecision ofPrecision) {
-		ChronoUnit precision = ofPrecision.get();
-		try {
-			Duration effective = max;
-			if (precision.compareTo(NANOS) >= 1) {
-				if (effective.getNano() % 1_000 != 0) {
-					effective = effective.plusNanos(-(effective.getNano() % 1_000));
-				}
-				if (precision.compareTo(MICROS) >= 1) {
-					if (effective.getNano() % 1_000_000 != 0) {
-						effective = effective.plusNanos(-(effective.getNano() % 1_000_000));
-					}
-					if (precision.compareTo(MILLIS) >= 1) {
-						if (effective.getNano() != 0) {
-							effective = effective.plusNanos(-effective.getNano());
-						}
-						if (precision.compareTo(SECONDS) >= 1) {
-							int seconds = (int) (effective.getSeconds() % 60);
-							if (seconds < 0) {
-								seconds += 60;
-							}
-							if (seconds != 0) {
-								effective = effective.plusSeconds(-seconds);
-							}
-							if (precision.compareTo(MINUTES) >= 1) {
-								int minutes = (int) ((effective.getSeconds() % 3600) / 60);
-								if (minutes < 0) {
-									minutes += 60;
-								}
-								if (minutes != 0) {
-									effective = effective.plusMinutes(-minutes);
-								}
-							}
-						}
-					}
-				}
-			}
-			return effective;
-		} catch (ArithmeticException e) {
-			throw new IllegalArgumentException("Max value must be decreased because of precision " + precision + " but results in a " + e.getMessage());
+	private void checkValueAndPrecision(Duration effective, OfPrecision ofPrecision, boolean minimum) {
+		boolean throwException = false;
+		switch (ofPrecision.get()) {
+			case HOURS:
+				throwException = effective.getSeconds() % 3600 != 0;
+			case MINUTES:
+				throwException = throwException || effective.getSeconds() % 60 != 0;
+			case SECONDS:
+				throwException = throwException || effective.getNano() != 0;
+				break;
+			case MILLIS:
+				throwException = (effective.getNano() % 1_000_000) != 0;
+				break;
+			case MICROS:
+				throwException = (effective.getNano() % 1_000) != 0;
+		}
+		if (throwException) {
+			throwDurationAndPrecisionException(effective.toString(), minimum, ofPrecision.get());
+		}
+	}
+
+	private static void throwDurationAndPrecisionException(String val, boolean minimum, ChronoUnit precision) {
+		String minMax = minimum ? "minimum" : "maximum";
+		throw new IllegalArgumentException("Can't use " + val + " as " + minMax + " duration with precision " + precision + ".\nYou may want to round the duration to " + precision + " or change the precision.");
+	}
+
+	private Duration calculateEffectiveMax(DurationBetween durationBetween, OfPrecision ofPrecision) {
+		Duration effective = durationBetween.getMax() != null ? durationBetween.getMax() : calculateMaxPossibleValue(ofPrecision);
+		checkValueAndPrecision(effective, ofPrecision, false);
+		return effective;
+	}
+
+	private Duration calculateMaxPossibleValue(OfPrecision ofPrecision) {
+		switch (ofPrecision.get()) {
+			case HOURS:
+				return Duration.ofSeconds((Long.MAX_VALUE / (60 * 60)) * (60 * 60), 0);
+			case MINUTES:
+				return Duration.ofSeconds((Long.MAX_VALUE / 60) * 60, 0);
+			case MILLIS:
+				return Duration.ofSeconds(Long.MAX_VALUE, 999_000_000);
+			case MICROS:
+				return Duration.ofSeconds(Long.MAX_VALUE, 999_999_000);
+			case NANOS:
+				return Duration.ofSeconds(Long.MAX_VALUE, 999_999_999);
+			default:
+				return Duration.ofSeconds(Long.MAX_VALUE, 0);
 		}
 	}
 

@@ -27,9 +27,6 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 
 		LocalTime effectiveMin = calculateEffectiveMin(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
 		LocalTime effectiveMax = calculateEffectiveMax(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
-		if (effectiveMax.isBefore(effectiveMin)) {
-			throw new IllegalArgumentException("The maximum time is too soon after the minimum time.");
-		}
 
 		long longEnd = calculateLongEnd(effectiveMin, effectiveMax);
 

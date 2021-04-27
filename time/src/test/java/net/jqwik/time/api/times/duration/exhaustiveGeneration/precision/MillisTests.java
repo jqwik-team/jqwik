@@ -17,8 +17,8 @@ public class MillisTests {
 			Times.durations()
 				 .ofPrecision(MILLIS)
 				 .between(
-					 Duration.ofSeconds(183729, 997_997_921),
-					 Duration.ofSeconds(183730, 1_213_999)
+					 Duration.ofSeconds(183729, 998_000_000),
+					 Duration.ofSeconds(183730, 1_000_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -39,8 +39,8 @@ public class MillisTests {
 			Times.durations()
 				 .ofPrecision(MILLIS)
 				 .between(
-					 Duration.ofSeconds(-183730, 997_123_998),
-					 Duration.ofSeconds(-183729, 1_999_999)
+					 Duration.ofSeconds(-183730, 998_000_000),
+					 Duration.ofSeconds(-183729, 1_000_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -61,8 +61,8 @@ public class MillisTests {
 			Times.durations()
 				 .ofPrecision(MILLIS)
 				 .between(
-					 Duration.ofSeconds(-1, -1_999_999),
-					 Duration.ofSeconds(0, -997_382_492)
+					 Duration.ofSeconds(-1, -1_000_000),
+					 Duration.ofSeconds(0, -998_000_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -83,8 +83,8 @@ public class MillisTests {
 			Times.durations()
 				 .ofPrecision(MILLIS)
 				 .between(
-					 Duration.ofSeconds(0, -2_321_392),
-					 Duration.ofSeconds(0, 1_392_392)
+					 Duration.ofSeconds(0, -2_000_000),
+					 Duration.ofSeconds(0, 1_000_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -105,8 +105,8 @@ public class MillisTests {
 			Times.durations()
 				 .ofPrecision(MILLIS)
 				 .between(
-					 Duration.ofSeconds(0, 997_128_492),
-					 Duration.ofSeconds(1, 1_039_392)
+					 Duration.ofSeconds(0, 998_000_000),
+					 Duration.ofSeconds(1, 1_000_000)
 				 )
 				 .exhaustive();
 		assertThat(optionalGenerator).isPresent();

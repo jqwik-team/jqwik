@@ -222,4 +222,118 @@ public class InvalidConfigurationTests {
 		).isInstanceOf(IllegalArgumentException.class);
 	}
 
+	@Property
+	void precisionHoursIllegalMinTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getSeconds() % (60 * 60) != 0 || duration.getNano() != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(HOURS).between(duration, DefaultDurationArbitrary.DEFAULT_MAX_PRECISION_HOURS).generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
+	@Property
+	void precisionHoursIllegalMaxTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getSeconds() % (60 * 60) != 0 || duration.getNano() != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(HOURS).between(DefaultDurationArbitrary.DEFAULT_MIN_PRECISION_HOURS, duration).generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
+	@Property
+	void precisionMinutesIllegalMinTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getSeconds() % 60 != 0 || duration.getNano() != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(MINUTES).between(duration, DefaultDurationArbitrary.DEFAULT_MAX_PRECISION_HOURS)
+					   .generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
+	@Property
+	void precisionMinutesIllegalMaxTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getSeconds() % 60 != 0 || duration.getNano() != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(MINUTES).between(DefaultDurationArbitrary.DEFAULT_MIN_PRECISION_HOURS, duration)
+					   .generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
+	@Property
+	void precisionSecondsIllegalMinTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getNano() != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(SECONDS).between(duration, DefaultDurationArbitrary.DEFAULT_MAX_PRECISION_HOURS)
+					   .generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
+	@Property
+	void precisionSecondsIllegalMaxTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getNano() != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(SECONDS).between(DefaultDurationArbitrary.DEFAULT_MIN_PRECISION_HOURS, duration)
+					   .generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
+	@Property
+	void precisionMillisIllegalMinTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getNano() % 1_000_000 != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(MILLIS).between(duration, DefaultDurationArbitrary.DEFAULT_MAX_PRECISION_HOURS).generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
+	@Property
+	void precisionMillisIllegalMaxTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getNano() % 1_000_000 != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(MILLIS).between(DefaultDurationArbitrary.DEFAULT_MIN_PRECISION_HOURS, duration).generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
+	@Property
+	void precisionMicrosIllegalMinTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getNano() % 1_000 != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(MICROS).between(duration, DefaultDurationArbitrary.DEFAULT_MAX_PRECISION_HOURS).generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
+	@Property
+	void precisionMicrosIllegalMaxTime(@ForAll("precisionNanoseconds") Duration duration) {
+
+		Assume.that(duration.getNano() % 1_000 != 0);
+
+		assertThatThrownBy(
+			() -> Times.durations().ofPrecision(MICROS).between(DefaultDurationArbitrary.DEFAULT_MIN_PRECISION_HOURS, duration).generator(1)
+		).isInstanceOf(IllegalArgumentException.class);
+
+	}
+
 }
