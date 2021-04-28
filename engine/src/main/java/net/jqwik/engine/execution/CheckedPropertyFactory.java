@@ -16,7 +16,7 @@ import net.jqwik.engine.support.*;
 
 public class CheckedPropertyFactory {
 
-	private static List<Class<?>> BOOLEAN_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
+	private static final List<Class<?>> BOOLEAN_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
 
 	public CheckedProperty fromDescriptor(
 		PropertyMethodDescriptor propertyMethodDescriptor,
@@ -33,7 +33,6 @@ public class CheckedPropertyFactory {
 		List<MethodParameter> propertyParameters = extractParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
-			propertyMethodDescriptor.getContainerClass(),
 			propertyLifecycleContext.testInstance(),
 			DomainContextFacadeImpl.getCurrentContext()
 		);
@@ -67,18 +66,18 @@ public class CheckedPropertyFactory {
 			}
 		};
 
-		TryExecutor rawExecutor = createRawExecutor(propertyMethodDescriptor, propertyLifecycleContext.testInstance());
+		TryExecutor rawExecutor = createRawExecutor(propertyLifecycleContext);
 		return new AroundTryLifecycle(rawExecutor, aroundTryWithFinishing);
 	}
 
-	private TryExecutor createRawExecutor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		return createRawFunction(propertyMethodDescriptor, testInstance);
+	private TryExecutor createRawExecutor(PropertyLifecycleContext propertyLifecycleContext) {
+		return createRawFunction(propertyLifecycleContext);
 	}
 
-	private CheckedFunction createRawFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		Method targetMethod = propertyMethodDescriptor.getTargetMethod();
+	private CheckedFunction createRawFunction(PropertyLifecycleContext propertyLifecycleContext) {
+		Method targetMethod = propertyLifecycleContext.targetMethod();
 		Class<?> returnType = targetMethod.getReturnType();
-		Function<List<Object>, Object> function = params -> ReflectionSupport.invokeMethod(targetMethod, testInstance, params.toArray());
+		Function<List<Object>, Object> function = params -> ReflectionSupport.invokeMethod(targetMethod, propertyLifecycleContext.testInstance(), params.toArray());
 
 		if (BOOLEAN_RETURN_TYPES.contains(returnType))
 			return params -> (boolean) function.apply(params);

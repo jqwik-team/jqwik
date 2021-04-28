@@ -125,12 +125,12 @@ class RandomizedShrinkablesGeneratorTests {
 	}
 
 	private List<Object> values(List<Shrinkable<Object>> shrinkables) {
-		return shrinkables.stream().map(objectShrinkable -> objectShrinkable.value()).collect(Collectors.toList());
+		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	private RandomizedShrinkablesGenerator createGenerator(Random random, String methodName) {
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
-			MyProperties.class, new MyProperties(),
+			new MyProperties(),
 			DomainContext.global()
 		);
 		return createGenerator(random, methodName, arbitraryResolver);

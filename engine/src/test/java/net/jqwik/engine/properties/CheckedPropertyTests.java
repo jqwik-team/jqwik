@@ -74,7 +74,7 @@ class CheckedPropertyTests {
 		private PropertyLifecycleContext createPropertyContext(PropertyMethodDescriptor descriptor) {
 			return new DefaultPropertyLifecycleContext(
 				descriptor,
-				new Object(),
+				JqwikReflectionSupport.newInstanceWithDefaultConstructor(descriptor.getContainerClass()),
 				TestHelper.reporter(),
 				ResolveParameterHook.DO_NOT_RESOLVE
 			);

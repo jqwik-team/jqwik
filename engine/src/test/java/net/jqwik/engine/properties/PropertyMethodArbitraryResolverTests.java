@@ -56,7 +56,7 @@ class PropertyMethodArbitraryResolverTests {
 				createProvider(String.class, secondArbitrary)
 			);
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
-				DefaultParams.class, new DefaultParams(),
+				new DefaultParams(),
 				new RegisteredArbitraryResolver(registeredProviders),
 				new RegisteredArbitraryConfigurer(Collections.emptyList())
 			);
@@ -77,7 +77,7 @@ class PropertyMethodArbitraryResolverTests {
 				createProvider(String.class, thirdFit)
 			);
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
-				DefaultParams.class, new DefaultParams(),
+				new DefaultParams(),
 				new RegisteredArbitraryResolver(registeredProviders),
 				new RegisteredArbitraryConfigurer(Collections.emptyList())
 			);
@@ -103,7 +103,7 @@ class PropertyMethodArbitraryResolverTests {
 				createProvider(String.class, secondFit)
 			);
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
-				DefaultParams.class, new DefaultParams(),
+				new DefaultParams(),
 				new RegisteredArbitraryResolver(registeredProviders),
 				configurer
 			);
@@ -137,7 +137,7 @@ class PropertyMethodArbitraryResolverTests {
 			);
 
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
-				DefaultParams.class, new DefaultParams(),
+				new DefaultParams(),
 				new RegisteredArbitraryResolver(registeredProviders),
 				configurer
 			);
@@ -256,7 +256,7 @@ class PropertyMethodArbitraryResolverTests {
 			};
 
 			PropertyMethodArbitraryResolver provider = new PropertyMethodArbitraryResolver(
-				WithNamedProviders.class, new WithNamedProviders(),
+				new WithNamedProviders(),
 				new RegisteredArbitraryResolver(Collections.emptyList()),
 				configurer
 			);
@@ -435,7 +435,6 @@ class PropertyMethodArbitraryResolverTests {
 
 	private static PropertyMethodArbitraryResolver getResolver(Class<?> container) {
 		return new PropertyMethodArbitraryResolver(
-			container,
 			JqwikReflectionSupport.newInstanceWithDefaultConstructor(container),
 			DomainContext.global()
 		);

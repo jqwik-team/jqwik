@@ -17,14 +17,12 @@ import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
-	private final Class<?> containerClass;
 	private final Object testInstance;
 	private final RegisteredArbitraryResolver registeredArbitraryResolver;
 	private final RegisteredArbitraryConfigurer registeredArbitraryConfigurer;
 
-	public PropertyMethodArbitraryResolver(Class<?> containerClass, Object testInstance, DomainContext domainContext) {
+	public PropertyMethodArbitraryResolver(Object testInstance, DomainContext domainContext) {
 		this(
-			containerClass,
 			testInstance,
 			new RegisteredArbitraryResolver(domainContext.getArbitraryProviders()),
 			new RegisteredArbitraryConfigurer(domainContext.getArbitraryConfigurators())
@@ -32,11 +30,10 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	PropertyMethodArbitraryResolver(
-		Class<?> containerClass, Object testInstance,
+		Object testInstance,
 		RegisteredArbitraryResolver registeredArbitraryResolver,
 		RegisteredArbitraryConfigurer registeredArbitraryConfigurer
 	) {
-		this.containerClass = containerClass;
 		this.testInstance = testInstance;
 		this.registeredArbitraryResolver = registeredArbitraryResolver;
 		this.registeredArbitraryConfigurer = registeredArbitraryConfigurer;
@@ -122,7 +119,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		};
 		TypeUsage targetArbitraryType = TypeUsage.of(Arbitrary.class, typeUsage);
 
-		return findGeneratorMethod(generatorToFind, this.containerClass, Provide.class, generatorNameSupplier, targetArbitraryType);
+		return findGeneratorMethod(generatorToFind, this.testInstance.getClass(), Provide.class, generatorNameSupplier, targetArbitraryType);
 	}
 
 	private Set<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
