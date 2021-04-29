@@ -7,7 +7,6 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
-import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
@@ -82,27 +81,8 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Set<Arbitrary<?>> invokeProviderMethod(Method providerMethod, TypeUsage targetType) {
-		Parameter[] parameters = providerMethod.getParameters();
-		if (parameters.length == 0) {
-			return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, testInstance));
-		}
-		if (parameters[0].getType().isAssignableFrom(TypeUsage.class)) {
-			if (parameters.length == 1) {
-				return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, testInstance, targetType));
-			}
-		}
-		if (parameters[1].getType().isAssignableFrom(SubtypeProvider.class)) {
-			if (parameters.length == 2) {
-				SubtypeProvider subtypeProvider = this::createForType;
-				return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, testInstance, targetType, subtypeProvider));
-			}
-		}
-		String message = String.format("Some of the parameters of %s are not allowed in provider methods", providerMethod);
-		throw new JqwikException(message);
-	}
-
-	private Set<Arbitrary<?>> wrapInSet(Object result) {
-		return Collections.singleton((Arbitrary<?>) result);
+		ProviderMethodInvoker invoker = new ProviderMethodInvoker(testInstance, this::createForType);
+		return invoker.invoke(providerMethod, targetType);
 	}
 
 	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage targetType) {
@@ -119,7 +99,8 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		};
 		TypeUsage targetArbitraryType = TypeUsage.of(Arbitrary.class, typeUsage);
 
-		return findGeneratorMethod(generatorToFind, this.testInstance.getClass(), Provide.class, generatorNameSupplier, targetArbitraryType);
+		return findGeneratorMethod(generatorToFind, this.testInstance
+														.getClass(), Provide.class, generatorNameSupplier, targetArbitraryType);
 	}
 
 	private Set<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
