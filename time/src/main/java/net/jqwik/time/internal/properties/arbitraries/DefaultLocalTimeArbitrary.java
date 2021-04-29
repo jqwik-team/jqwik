@@ -144,12 +144,15 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 
 	private static void throwValueAndPrecisionException(String val, boolean minimum, String unit, ChronoUnit precision) {
 		String minMax = minimum ? "minimum" : "maximum";
-		throw new IllegalArgumentException("Can't use " + val + " as " + minMax + " " + unit + " with precision " + precision + ".");
+		throw new IllegalArgumentException(String.format("Can't use %s as %s %s with precision %s.", val, minMax, unit, precision));
 	}
 
 	private static void throwTimeAndPrecisionException(String val, boolean minimum, ChronoUnit precision) {
 		String minMax = minimum ? "minimum" : "maximum";
-		throw new IllegalArgumentException("Can't use " + val + " as " + minMax + " time with precision " + precision + ".\nYou may want to round the time to " + precision + " or change the precision.");
+		throw new IllegalArgumentException(
+			String
+				.format("Can't use %s as %s time with precision %s.%nYou may want to round the time to %s or change the precision.", val, minMax, precision, precision)
+		);
 	}
 
 	public static LocalTime calculateEffectiveMax(
