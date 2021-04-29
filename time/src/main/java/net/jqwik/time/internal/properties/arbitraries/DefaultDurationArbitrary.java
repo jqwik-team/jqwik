@@ -84,7 +84,10 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	private static void throwDurationAndPrecisionException(String val, boolean minimum, ChronoUnit precision) {
 		String minMax = minimum ? "minimum" : "maximum";
-		throw new IllegalArgumentException("Can't use " + val + " as " + minMax + " duration with precision " + precision + ".\nYou may want to round the duration to " + precision + " or change the precision.");
+		throw new IllegalArgumentException(
+			String
+				.format("Can't use %s as %s duration with precision %s.%nYou may want to round the duration to %s or change the precision.", val, minMax, precision, precision)
+		);
 	}
 
 	private Duration calculateEffectiveMax(DurationBetween durationBetween, OfPrecision ofPrecision) {
