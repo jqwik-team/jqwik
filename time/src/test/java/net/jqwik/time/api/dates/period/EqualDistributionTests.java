@@ -31,7 +31,7 @@ public class EqualDistributionTests {
 				  .coverage(this::checkMonthCoverage);
 	}
 
-	@Property(tries = 2000)
+	@Property(edgeCases = EdgeCasesMode.MIXIN)
 		// Zero is rare when edge cases are turned off
 	void periodCanBeZeroAndNotZero(@ForAll Period period) {
 		Statistics.label("Period is zero")
