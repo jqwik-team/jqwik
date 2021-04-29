@@ -1,18 +1,15 @@
-package net.jqwik.api;
+package net.jqwik.api.domains;
 
 import java.lang.annotation.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.domains.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class DomainContextTests extends BaseDomainContexts {
-
-	DomainContextTests() {
-		specificNumbers = new Integer[]{10, 11, 12};
-	}
+@Label("AbstractDomainContextBaseTests (deprecated)")
+class AbstractDomainContextBaseTests {
 
 	@Property(tries = 20)
 	@Domain(NumberStringContext.class)
@@ -107,4 +104,13 @@ class DomainContextTests extends BaseDomainContexts {
 			registerArbitrary(Integer.class, Arbitraries.of(1000000, 2000000, 3000000));
 		}
 	}
+
+	private static class SpecificNumbersContext extends AbstractDomainContextBase {
+		Integer[] specificNumbers = new Integer[]{10, 11, 12};
+
+		private SpecificNumbersContext() {
+			registerArbitrary(Integer.class, Arbitraries.of(specificNumbers));
+		}
+	}
+
 }
