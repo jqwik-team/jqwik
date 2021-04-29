@@ -23,7 +23,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	public static final Duration DEFAULT_MAX_PRECISION_HOURS = Duration.ofSeconds((Long.MAX_VALUE / (60 * 60)) * (60 * 60), 0);
 
 	private final DurationBetween durationBetween = new DurationBetween();
-	private final OfPrecision ofPrecision = new OfPrecision();
+	private OfPrecision ofPrecision = new OfPrecision();
 
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
@@ -180,7 +180,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		}
 		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.calculateOfPrecisionFromNanos(duration.getNano());
 		if (clone.ofPrecision.get().compareTo(ofPrecision) > 0) {
-			clone.ofPrecision.setProgrammatically(ofPrecision);
+			clone.ofPrecision = this.ofPrecision.setProgrammatically(ofPrecision);
 		}
 	}
 
@@ -200,7 +200,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	@Override
 	public DurationArbitrary ofPrecision(ChronoUnit ofPrecision) {
 		DefaultDurationArbitrary clone = typedClone();
-		clone.ofPrecision.set(ofPrecision);
+		clone.ofPrecision = this.ofPrecision.set(ofPrecision);
 		return clone;
 	}
 

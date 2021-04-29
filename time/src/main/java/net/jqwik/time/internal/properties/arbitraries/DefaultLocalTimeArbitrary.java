@@ -20,7 +20,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	private final HourBetween hourBetween = (HourBetween) new HourBetween().set(0, 23);
 	private final MinuteBetween minuteBetween = (MinuteBetween) new MinuteBetween().set(0, 59);
 	private final SecondBetween secondBetween = (SecondBetween) new SecondBetween().set(0, 59);
-	private final OfPrecision ofPrecision = new OfPrecision();
+	private OfPrecision ofPrecision = new OfPrecision();
 
 	@Override
 	protected Arbitrary<LocalTime> arbitrary() {
@@ -243,7 +243,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		}
 		ChronoUnit ofPrecision = calculateOfPrecisionFromTime(time);
 		if (clone.ofPrecision.get().compareTo(ofPrecision) > 0) {
-			clone.ofPrecision.setProgrammatically(ofPrecision);
+			clone.ofPrecision = this.ofPrecision.setProgrammatically(ofPrecision);
 		}
 	}
 
@@ -287,7 +287,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	@Override
 	public LocalTimeArbitrary ofPrecision(ChronoUnit ofPrecision) {
 		DefaultLocalTimeArbitrary clone = typedClone();
-		clone.ofPrecision.set(ofPrecision);
+		clone.ofPrecision = this.ofPrecision.set(ofPrecision);
 		return clone;
 	}
 
