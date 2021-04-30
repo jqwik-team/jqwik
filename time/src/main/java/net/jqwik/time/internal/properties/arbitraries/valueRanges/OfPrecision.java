@@ -11,34 +11,19 @@ public class OfPrecision {
 
 	private final static Set<ChronoUnit> ALLOWED_PRECISIONS = new HashSet<>(Arrays.asList(HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS));
 
-	private ChronoUnit precision;
-	private boolean precisionSet;
+	private ChronoUnit precision = DEFAULT;
+	private boolean precisionSet = false;
 
-	public OfPrecision() {
-		this(DEFAULT, false);
+	public void set(ChronoUnit precision) {
+		setProgrammatically(precision);
+		this.precisionSet = true;
 	}
 
-	private OfPrecision(ChronoUnit precision, boolean precisionSet) {
-		this.precision = precision;
-		this.precisionSet = precisionSet;
-	}
-
-	public OfPrecision set(ChronoUnit precision) {
-		return set(precision, true);
-	}
-
-	public OfPrecision setProgrammatically(ChronoUnit precision) {
-		return set(precision, false);
-	}
-
-	private OfPrecision set(ChronoUnit precision, boolean precisionSet) {
+	public void setProgrammatically(ChronoUnit precision) {
 		if (!ALLOWED_PRECISIONS.contains(precision)) {
 			throw new IllegalArgumentException("Precision value must be one of these ChronoUnit values: HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS");
 		}
-		if (this.precision.equals(precision) && this.precisionSet == precisionSet) {
-			return this;
-		}
-		return new OfPrecision(precision, precisionSet);
+		this.precision = precision;
 	}
 
 	public ChronoUnit get() {
