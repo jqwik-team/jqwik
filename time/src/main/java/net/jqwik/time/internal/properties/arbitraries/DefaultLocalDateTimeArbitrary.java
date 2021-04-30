@@ -110,7 +110,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	private LocalDateTime calculateEffectiveMax(LocalDateTime effectiveMin) {
 		LocalDateTime effective = calculateEffectiveMaxDate(dateTimeBetween.getMax());
 		effective = effective != null ? effective : LocalDateTime.of(
-			DEFAULT_MAX.toLocalDate(), DefaultLocalTimeArbitrary.calculateMaxPossibleValue(ofPrecision)
+			DEFAULT_MAX.toLocalDate(), ofPrecision.calculateMaxPossibleLocalTime()
 		);
 		DefaultLocalTimeArbitrary.checkTimeValueAndPrecision(effective.toLocalTime(), ofPrecision, false);
 		LocalTime effectiveMinTime = DefaultLocalTimeArbitrary
@@ -128,7 +128,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		if (dateBetween.getMax() == null) {
 			return effective;
 		} else if (effective == null || dateBetween.getMax().isBefore(effective.toLocalDate())) {
-			return LocalDateTime.of(dateBetween.getMax(), DefaultLocalTimeArbitrary.calculateMaxPossibleValue(ofPrecision));
+			return LocalDateTime.of(dateBetween.getMax(), ofPrecision.calculateMaxPossibleLocalTime());
 		} else {
 			return effective;
 		}

@@ -111,22 +111,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	public static void checkTimeValueAndPrecision(LocalTime time, OfPrecision ofPrecision, boolean minimum) {
-		boolean throwException = false;
-		switch (ofPrecision.get()) {
-			case HOURS:
-				throwException = time.getMinute() != 0;
-			case MINUTES:
-				throwException = throwException || time.getSecond() != 0;
-			case SECONDS:
-				throwException = throwException || time.getNano() != 0;
-				break;
-			case MILLIS:
-				throwException = (time.getNano() % 1_000_000) != 0;
-				break;
-			case MICROS:
-				throwException = (time.getNano() % 1_000) != 0;
-		}
-		if (throwException) {
+		if (!ofPrecision.valueWithPrecisionIsAllowed(time.getMinute(), time.getSecond(), time.getNano())) {
 			throwTimeAndPrecisionException(time.toString(), minimum, ofPrecision.get());
 		}
 	}
@@ -162,7 +147,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		SecondBetween secondBetween,
 		OfPrecision ofPrecision
 	) {
-		LocalTime effective = timeBetween.getMax() != null ? timeBetween.getMax() : calculateMaxPossibleValue(ofPrecision);
+		LocalTime effective = timeBetween.getMax() != null ? timeBetween.getMax() : ofPrecision.calculateMaxPossibleLocalTime();
 		checkTimeValueAndPrecision(effective, ofPrecision, false);
 		if (hourBetween.getMax() < effective.getHour()) {
 			effective = effective.withHour(hourBetween.getMax());
@@ -201,23 +186,6 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 				}
 		}
 		return effective;
-	}
-
-	public static LocalTime calculateMaxPossibleValue(OfPrecision ofPrecision) {
-		switch (ofPrecision.get()) {
-			case HOURS:
-				return LocalTime.of(23, 0, 0, 0);
-			case MINUTES:
-				return LocalTime.of(23, 59, 0, 0);
-			case MILLIS:
-				return LocalTime.of(23, 59, 59, 999_000_000);
-			case MICROS:
-				return LocalTime.of(23, 59, 59, 999_999_000);
-			case NANOS:
-				return LocalTime.of(23, 59, 59, 999_999_999);
-			default:
-				return LocalTime.of(23, 59, 59, 0);
-		}
 	}
 
 	public static ChronoUnit calculateOfPrecisionFromNanos(int nanos) {
