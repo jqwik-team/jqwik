@@ -62,22 +62,10 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	}
 
 	private void checkValueAndPrecision(Duration effective, OfPrecision ofPrecision, boolean minimum) {
-		boolean throwException = false;
-		switch (ofPrecision.get()) {
-			case HOURS:
-				throwException = effective.getSeconds() % 3600 != 0;
-			case MINUTES:
-				throwException = throwException || effective.getSeconds() % 60 != 0;
-			case SECONDS:
-				throwException = throwException || effective.getNano() != 0;
-				break;
-			case MILLIS:
-				throwException = (effective.getNano() % 1_000_000) != 0;
-				break;
-			case MICROS:
-				throwException = (effective.getNano() % 1_000) != 0;
-		}
-		if (throwException) {
+		int minutes = (int) ((effective.getSeconds() % 3_600) / 60);
+		int seconds = (int) (effective.getSeconds() % 60);
+		int nanos = effective.getNano();
+		if (!ofPrecision.valueWithPrecisionIsAllowed(minutes, seconds, nanos)) {
 			throwDurationAndPrecisionException(effective.toString(), minimum, ofPrecision.get());
 		}
 	}
@@ -91,26 +79,9 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	}
 
 	private Duration calculateEffectiveMax(DurationBetween durationBetween, OfPrecision ofPrecision) {
-		Duration effective = durationBetween.getMax() != null ? durationBetween.getMax() : calculateMaxPossibleValue(ofPrecision);
+		Duration effective = durationBetween.getMax() != null ? durationBetween.getMax() : ofPrecision.calculateMaxPossibleDuration();
 		checkValueAndPrecision(effective, ofPrecision, false);
 		return effective;
-	}
-
-	private Duration calculateMaxPossibleValue(OfPrecision ofPrecision) {
-		switch (ofPrecision.get()) {
-			case HOURS:
-				return Duration.ofSeconds((Long.MAX_VALUE / (60 * 60)) * (60 * 60), 0);
-			case MINUTES:
-				return Duration.ofSeconds((Long.MAX_VALUE / 60) * 60, 0);
-			case MILLIS:
-				return Duration.ofSeconds(Long.MAX_VALUE, 999_000_000);
-			case MICROS:
-				return Duration.ofSeconds(Long.MAX_VALUE, 999_999_000);
-			case NANOS:
-				return Duration.ofSeconds(Long.MAX_VALUE, 999_999_999);
-			default:
-				return Duration.ofSeconds(Long.MAX_VALUE, 0);
-		}
 	}
 
 	private BigInteger calculateValue(Duration effective, OfPrecision ofPrecision) {
