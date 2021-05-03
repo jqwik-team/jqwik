@@ -54,7 +54,7 @@ public class OfPrecision {
 		return retVal;
 	}
 
-	public Duration calculateMaxPossibleDuration() {
+	public Duration maxPossibleDuration() {
 		switch (precision) {
 			case HOURS:
 				return Duration.ofSeconds((Long.MAX_VALUE / (60 * 60)) * (60 * 60), 0);
@@ -71,7 +71,7 @@ public class OfPrecision {
 		}
 	}
 
-	public LocalTime calculateMaxPossibleLocalTime() {
+	public LocalTime maxPossibleLocalTime() {
 		switch (precision) {
 			case HOURS:
 				return LocalTime.of(23, 0, 0, 0);

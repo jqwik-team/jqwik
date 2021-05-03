@@ -25,17 +25,17 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	@Override
 	protected Arbitrary<LocalTime> arbitrary() {
 
-		LocalTime effectiveMin = calculateEffectiveMin(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
-		LocalTime effectiveMax = calculateEffectiveMax(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
+		LocalTime effectiveMin = effectiveMin(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
+		LocalTime effectiveMax = effectiveMax(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
 
-		long longEnd = calculateLongEnd(effectiveMin, effectiveMax);
+		long longEnd = longsBetween(effectiveMin, effectiveMax);
 
 		Arbitrary<Long> longs = Arbitraries.longs()
 										   .withDistribution(RandomDistribution.uniform())
 										   .between(0L, longEnd)
 										   .edgeCases(config -> config.includeOnly(0L, longEnd));
 
-		Arbitrary<LocalTime> localTimes = longs.map(v -> calculateLocalTime(v, effectiveMin, ofPrecision));
+		Arbitrary<LocalTime> localTimes = longs.map(v -> localTimeFromValue(v, effectiveMin, ofPrecision));
 
 		localTimes = localTimes.filter(
 			v -> v.getMinute() >= minuteBetween.getMin()
@@ -48,7 +48,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 
 	}
 
-	static private LocalTime calculateLocalTime(long longAdd, LocalTime effectiveMin, OfPrecision precision) {
+	static private LocalTime localTimeFromValue(long longAdd, LocalTime effectiveMin, OfPrecision precision) {
 		switch (precision.get()) {
 			case HOURS:
 				return effectiveMin.plusHours(longAdd);
@@ -65,7 +65,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		}
 	}
 
-	private long calculateLongEnd(LocalTime effectiveMin, LocalTime effectiveMax) {
+	private long longsBetween(LocalTime effectiveMin, LocalTime effectiveMax) {
 		switch (ofPrecision.get()) {
 			case HOURS:
 				return HOURS.between(effectiveMin, effectiveMax);
@@ -82,7 +82,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		}
 	}
 
-	public static LocalTime calculateEffectiveMin(
+	public static LocalTime effectiveMin(
 		LocalTimeBetween timeBetween,
 		HourBetween hourBetween,
 		MinuteBetween minuteBetween,
@@ -140,14 +140,14 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		);
 	}
 
-	public static LocalTime calculateEffectiveMax(
+	public static LocalTime effectiveMax(
 		LocalTimeBetween timeBetween,
 		HourBetween hourBetween,
 		MinuteBetween minuteBetween,
 		SecondBetween secondBetween,
 		OfPrecision ofPrecision
 	) {
-		LocalTime effective = timeBetween.getMax() != null ? timeBetween.getMax() : ofPrecision.calculateMaxPossibleLocalTime();
+		LocalTime effective = timeBetween.getMax() != null ? timeBetween.getMax() : ofPrecision.maxPossibleLocalTime();
 		checkTimeValueAndPrecision(effective, ofPrecision, false);
 		if (hourBetween.getMax() < effective.getHour()) {
 			effective = effective.withHour(hourBetween.getMax());
@@ -188,7 +188,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		return effective;
 	}
 
-	public static ChronoUnit calculateOfPrecisionFromNanos(int nanos) {
+	public static ChronoUnit ofPrecisionFromNanos(int nanos) {
 		ChronoUnit ofPrecision = OfPrecision.DEFAULT;
 		if (nanos % 1_000 != 0) {
 			ofPrecision = NANOS;
@@ -200,16 +200,16 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		return ofPrecision;
 	}
 
-	public static ChronoUnit calculateOfPrecisionFromTime(LocalTime time) {
+	public static ChronoUnit ofPrecisionFromTime(LocalTime time) {
 		int nanos = time.getNano();
-		return calculateOfPrecisionFromNanos(nanos);
+		return ofPrecisionFromNanos(nanos);
 	}
 
 	private void setOfPrecisionImplicitly(DefaultLocalTimeArbitrary clone, LocalTime time) {
 		if (clone.ofPrecision.isSet()) {
 			return;
 		}
-		ChronoUnit ofPrecision = calculateOfPrecisionFromTime(time);
+		ChronoUnit ofPrecision = ofPrecisionFromTime(time);
 		if (clone.ofPrecision.get().compareTo(ofPrecision) > 0) {
 			clone.ofPrecision.setProgrammatically(ofPrecision);
 		}
