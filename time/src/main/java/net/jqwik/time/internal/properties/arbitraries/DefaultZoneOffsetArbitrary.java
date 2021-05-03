@@ -22,31 +22,31 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 	@Override
 	protected Arbitrary<ZoneOffset> arbitrary() {
 
-		ZoneOffset effectiveMin = calculateEffectiveMin();
-		ZoneOffset effectiveMax = calculateEffectiveMax();
+		ZoneOffset effectiveMin = effectiveMin();
+		ZoneOffset effectiveMax = effectiveMax();
 
 		if (effectiveMin.compareTo(effectiveMax) > 0) {
 			throw new IllegalArgumentException("With this configuration is no value possible.");
 		}
 
-		int maxInt = calculateIndex(effectiveMin);
-		int minInt = calculateIndex(effectiveMax);
+		int maxInt = indexOf(effectiveMin);
+		int minInt = indexOf(effectiveMax);
 
 		Arbitrary<Integer> indexes = Arbitraries.integers()
 												.withDistribution(RandomDistribution.uniform())
 												.between(minInt, maxInt)
 												.edgeCases(edgeCases -> edgeCases.includeOnly(minInt, 0, maxInt));
 
-		return indexes.map(DefaultZoneOffsetArbitrary::calculateOffset);
+		return indexes.map(DefaultZoneOffsetArbitrary::offsetFromValue);
 
 	}
 
-	private ZoneOffset calculateEffectiveMax() {
+	private ZoneOffset effectiveMax() {
 		ZoneOffset offsetMax = zoneOffsetBetween.getMax() != null ? zoneOffsetBetween.getMax() : DEFAULT_MAX;
 		boolean isNegative = offsetMax.getTotalSeconds() < 0;
-		int hour = calculateHourValue(offsetMax);
-		int minute = calculateMinuteValue(offsetMax);
-		int second = calculateSecondValue(offsetMax);
+		int hour = hourValue(offsetMax);
+		int minute = minuteValue(offsetMax);
+		int second = secondValue(offsetMax);
 		if (second != 0) {
 			if (!isNegative) {
 				minute++;
@@ -69,12 +69,12 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 		return ZoneOffset.ofHoursMinutes(hour, minute);
 	}
 
-	private ZoneOffset calculateEffectiveMin() {
+	private ZoneOffset effectiveMin() {
 		ZoneOffset offsetMin = zoneOffsetBetween.getMin() != null ? zoneOffsetBetween.getMin() : DEFAULT_MIN;
 		boolean isNegative = offsetMin.getTotalSeconds() < 0;
-		int hour = calculateHourValue(offsetMin);
-		int minute = calculateMinuteValue(offsetMin);
-		int second = calculateSecondValue(offsetMin);
+		int hour = hourValue(offsetMin);
+		int minute = minuteValue(offsetMin);
+		int second = secondValue(offsetMin);
 		if (second != 0) {
 			if (isNegative) {
 				minute++;
@@ -97,32 +97,32 @@ public class DefaultZoneOffsetArbitrary extends ArbitraryDecorator<ZoneOffset> i
 		return ZoneOffset.ofHoursMinutes(hour, minute);
 	}
 
-	private int calculateIndex(ZoneOffset effective) {
+	private int indexOf(ZoneOffset effective) {
 		boolean isNegative = effective.getTotalSeconds() < 0;
-		int hour = calculateHourValue(effective);
-		int minuteVal = calculateMinuteValue(effective) / 15;
+		int hour = hourValue(effective);
+		int minuteVal = minuteValue(effective) / 15;
 		if (isNegative) {
 			minuteVal = -minuteVal;
 		}
 		return hour * 4 + minuteVal;
 	}
 
-	static private ZoneOffset calculateOffset(int index) {
+	static private ZoneOffset offsetFromValue(int index) {
 		int hour = index / 4;
 		index -= hour * 4;
 		int minute = index * 15;
 		return ZoneOffset.ofHoursMinutes(hour, minute);
 	}
 
-	private int calculateHourValue(ZoneOffset offset) {
+	private int hourValue(ZoneOffset offset) {
 		return offset.getTotalSeconds() / 3600;
 	}
 
-	private int calculateMinuteValue(ZoneOffset offset) {
+	private int minuteValue(ZoneOffset offset) {
 		return Math.abs((offset.getTotalSeconds() % 3600) / 60);
 	}
 
-	private int calculateSecondValue(ZoneOffset offset) {
+	private int secondValue(ZoneOffset offset) {
 		return Math.abs(offset.getTotalSeconds() % 60);
 	}
 

@@ -28,11 +28,11 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 	@Override
 	protected Arbitrary<Duration> arbitrary() {
 
-		Duration effectiveMin = calculateEffectiveMin(durationBetween, ofPrecision);
-		Duration effectiveMax = calculateEffectiveMax(durationBetween, ofPrecision);
+		Duration effectiveMin = effectiveMin(durationBetween, ofPrecision);
+		Duration effectiveMax = effectiveMax(durationBetween, ofPrecision);
 
-		BigInteger bigIntegerMin = calculateValue(effectiveMin, ofPrecision);
-		BigInteger bigIntegerMax = calculateValue(effectiveMax, ofPrecision);
+		BigInteger bigIntegerMin = valueFromDuration(effectiveMin, ofPrecision);
+		BigInteger bigIntegerMax = valueFromDuration(effectiveMax, ofPrecision);
 
 		Arbitrary<BigInteger> bigIntegers = Arbitraries.bigIntegers()
 													   .between(bigIntegerMin, bigIntegerMax)
@@ -40,17 +40,17 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 													   .edgeCases(edgeCases -> edgeCases
 																				   .includeOnly(bigIntegerMin, BigInteger.ZERO, bigIntegerMax));
 
-		return bigIntegers.map(big -> calculateDuration(big, ofPrecision));
+		return bigIntegers.map(big -> durationFromValue(big, ofPrecision));
 
 	}
 
-	private Duration calculateEffectiveMin(DurationBetween durationBetween, OfPrecision ofPrecision) {
-		Duration effective = durationBetween.getMin() != null ? durationBetween.getMin() : calculateMinPossibleValue(ofPrecision);
+	private Duration effectiveMin(DurationBetween durationBetween, OfPrecision ofPrecision) {
+		Duration effective = durationBetween.getMin() != null ? durationBetween.getMin() : minPossibleValue(ofPrecision);
 		checkValueAndPrecision(effective, ofPrecision, true);
 		return effective;
 	}
 
-	private Duration calculateMinPossibleValue(OfPrecision ofPrecision) {
+	private Duration minPossibleValue(OfPrecision ofPrecision) {
 		switch (ofPrecision.get()) {
 			case HOURS:
 				return Duration.ofSeconds((Long.MIN_VALUE / (60 * 60)) * (60 * 60), 0);
@@ -78,13 +78,13 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		);
 	}
 
-	private Duration calculateEffectiveMax(DurationBetween durationBetween, OfPrecision ofPrecision) {
-		Duration effective = durationBetween.getMax() != null ? durationBetween.getMax() : ofPrecision.calculateMaxPossibleDuration();
+	private Duration effectiveMax(DurationBetween durationBetween, OfPrecision ofPrecision) {
+		Duration effective = durationBetween.getMax() != null ? durationBetween.getMax() : ofPrecision.maxPossibleDuration();
 		checkValueAndPrecision(effective, ofPrecision, false);
 		return effective;
 	}
 
-	private BigInteger calculateValue(Duration effective, OfPrecision ofPrecision) {
+	private BigInteger valueFromDuration(Duration effective, OfPrecision ofPrecision) {
 
 		ChronoUnit precision = ofPrecision.get();
 
@@ -116,7 +116,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	}
 
-	static private Duration calculateDuration(BigInteger bigInteger, OfPrecision ofPrecision) {
+	static private Duration durationFromValue(BigInteger bigInteger, OfPrecision ofPrecision) {
 
 		ChronoUnit precision = ofPrecision.get();
 
@@ -149,7 +149,7 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		if (clone.ofPrecision.isSet()) {
 			return;
 		}
-		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.calculateOfPrecisionFromNanos(duration.getNano());
+		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.ofPrecisionFromNanos(duration.getNano());
 		if (clone.ofPrecision.get().compareTo(ofPrecision) > 0) {
 			clone.ofPrecision.setProgrammatically(ofPrecision);
 		}
