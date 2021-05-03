@@ -1,7 +1,7 @@
 package net.jqwik.api.domains;
 
 import net.jqwik.api.*;
-import net.jqwik.api.configurators.*;
+import net.jqwik.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -13,9 +13,10 @@ class DomainContextBaseTests {
 
 		@Property(tries = 20)
 		@Domain(NumberStringContext.class)
-		void onlyUseProvidersFromDeclaredDomain(@ForAll String aString) {
+		void onlyUseProvidersFromDeclaredDomain(@ForAll String aString, @ForAll char aChar) {
 			assertThat(aString).hasSize(2);
 			assertThat(aString).containsOnlyDigits();
+			assertThat(aChar).isBetween('0', '9');
 		}
 
 	}
@@ -26,8 +27,13 @@ class DomainContextBaseTests {
 class NumberStringContext extends DomainContextBase {
 
 	@Provide
-	Arbitrary<String> numberStrings() {
-		return Arbitraries.integers().between(10, 99).map(i -> Integer.toString(i));
+	StringArbitrary numberStrings() {
+		return Arbitraries.strings().numeric().ofLength(2);
+	}
+
+	@Provide
+	Arbitrary<Character> numberChars() {
+		return Arbitraries.integers().between(0, 9).map(i -> Character.forDigit(i, 10));
 	}
 
 	// private NumberStringContext() {

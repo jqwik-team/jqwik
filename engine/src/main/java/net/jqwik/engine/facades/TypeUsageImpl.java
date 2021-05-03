@@ -532,12 +532,16 @@ public class TypeUsageImpl implements TypeUsage {
 		TypeUsageImpl other = (TypeUsageImpl) obj;
 		if (!other.getRawType().equals(getRawType()))
 			return false;
-		if (!other.getType().equals(getType()))
-			return false;
 		if (!other.getTypeArguments().equals(getTypeArguments()))
 			return false;
 		if (!other.getAnnotations().equals(getAnnotations()))
 			return false;
+		if (other.isWildcard() != isWildcard()) {
+			return false;
+		}
+		if (other.isTypeVariable() != isTypeVariable()) {
+			return false;
+		}
 		if (other.isWildcard() && isWildcard()) {
 			if (!(other.lowerBounds.equals(lowerBounds)))
 				return false;
@@ -562,12 +566,12 @@ public class TypeUsageImpl implements TypeUsage {
 		if (rawType.getSuperclass() == null) {
 			return Optional.empty();
 		}
-		return Optional.of(TypeUsage.forType(rawType.getSuperclass()));
+		return Optional.of(TypeUsage.forType(rawType.getGenericSuperclass()));
 	}
 
 	@Override
 	public List<TypeUsage> getInterfaces() {
-		return toTypeUsages(getRawType().getInterfaces());
+		return toTypeUsages(getRawType().getGenericInterfaces());
 	}
 
 	@Override

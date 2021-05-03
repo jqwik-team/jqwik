@@ -59,7 +59,7 @@ class TypeUsageTests {
 			assertThat(stringType.getSuperclass().get()).isEqualTo(TypeUsage.of(Object.class));
 			assertThat(stringType.getInterfaces()).contains(
 				TypeUsage.of(Serializable.class),
-				TypeUsage.of(Comparable.class),
+				TypeUsage.of(Comparable.class, TypeUsage.of(String.class)),
 				TypeUsage.of(CharSequence.class)
 			);
 		}
@@ -294,6 +294,8 @@ class TypeUsageTests {
 				public void withWildcard(Tuple2<? extends CharSequence, ? super String> tuple) {}
 
 				public void withNonEqualWildcard(Tuple2<? extends CharSequence, ? super Number> tuple) {}
+
+				public <T extends CharSequence> void withTypeVariable(Tuple2<T, ? super String> tuple) {}
 			}
 
 			Method method = LocalClass.class.getMethod("withWildcard", Tuple2.class);
@@ -308,6 +310,12 @@ class TypeUsageTests {
 				JqwikReflectionSupport.getMethodParameters(methodWithNonEqualWildcard, LocalClass.class).get(0);
 			TypeUsage nonEqualWildcardType = TypeUsageImpl.forParameter(nonEqualParameter);
 			assertThat(wildcardType.equals(nonEqualWildcardType)).isFalse();
+
+			Method methodWithTypeVariable = LocalClass.class.getMethod("withTypeVariable", Tuple2.class);
+			MethodParameter typeVariableParameter =
+				JqwikReflectionSupport.getMethodParameters(methodWithTypeVariable, LocalClass.class).get(0);
+			TypeUsage typeVariableType = TypeUsageImpl.forParameter(typeVariableParameter);
+			assertThat(wildcardType.equals(typeVariableType)).isFalse();
 		}
 
 		@Example
@@ -398,6 +406,11 @@ class TypeUsageTests {
 				public <T, U extends Serializable & Cloneable> void differentByLowerBounds(
 					Tuple2<T, U> tuple
 				) {}
+
+				@SuppressWarnings("WeakerAccess")
+				public <U extends Serializable & Cloneable> void sameButWildcard(
+					Tuple2<? extends CharSequence, U> tuple
+				) {}
 			}
 
 			Method method = LocalClass.class.getMethod("withTypeVariable", Tuple2.class);
@@ -419,6 +432,13 @@ class TypeUsageTests {
 																  .get(0);
 			TypeUsage differentByLowerBoundsType = TypeUsageImpl.forParameter(differentByLowerBoundsParameter);
 			assertThat(typeVariableType.equals(differentByLowerBoundsType)).isFalse();
+
+			Method sameButWildcard = LocalClass.class.getMethod("sameButWildcard", Tuple2.class);
+			MethodParameter sameButWildcardParameter = JqwikReflectionSupport
+																  .getMethodParameters(sameButWildcard, LocalClass.class)
+																  .get(0);
+			TypeUsage sameButWildcardType = TypeUsageImpl.forParameter(sameButWildcardParameter);
+			assertThat(typeVariableType.equals(sameButWildcardType)).isFalse();
 		}
 
 		@Example

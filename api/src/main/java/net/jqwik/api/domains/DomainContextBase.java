@@ -23,28 +23,14 @@ public abstract class DomainContextBase implements DomainContext {
 
 	private int defaultPriority = DEFAULT_PRIORITY;
 
-	@API(status = INTERNAL)
-	public abstract static class DomainContextBaseFacade {
-		private static DomainContextBaseFacade implementation;
-
-		static {
-			implementation = FacadeLoader.load(DomainContextBaseFacade.class);
-		}
-
-		public abstract List<ArbitraryProvider> getArbitraryProviders(DomainContextBase base, int priority);
-
-		public abstract List<ArbitraryConfigurator> getArbitraryConfigurators(DomainContextBase base);
-
-	}
-
 	@Override
 	public List<ArbitraryProvider> getArbitraryProviders() {
-		return DomainContextBaseFacade.implementation.getArbitraryProviders(this, defaultPriority);
+		return DomainContextFacade.implementation.getArbitraryProviders(this, defaultPriority);
 	}
 
 	@Override
 	public List<ArbitraryConfigurator> getArbitraryConfigurators() {
-		return DomainContextBaseFacade.implementation.getArbitraryConfigurators(this);
+		return DomainContextFacade.implementation.getArbitraryConfigurators(this);
 	}
 
 	@Override

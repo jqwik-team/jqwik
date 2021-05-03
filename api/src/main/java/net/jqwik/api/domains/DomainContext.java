@@ -49,13 +49,17 @@ public interface DomainContext {
 
 	@API(status = INTERNAL)
 	abstract class DomainContextFacade {
-		private static DomainContextFacade implementation;
+		protected static DomainContextFacade implementation;
 
 		static {
 			implementation = FacadeLoader.load(DomainContextFacade.class);
 		}
 
 		public abstract DomainContext global();
+
+		public abstract List<ArbitraryProvider> getArbitraryProviders(DomainContextBase base, int priority);
+
+		public abstract List<ArbitraryConfigurator> getArbitraryConfigurators(DomainContextBase base);
 	}
 
 	List<ArbitraryProvider> getArbitraryProviders();

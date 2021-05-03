@@ -5,6 +5,7 @@ import java.util.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.configurators.*;
 import net.jqwik.engine.providers.*;
 
@@ -46,4 +47,15 @@ public class DomainContextFacadeImpl extends DomainContext.DomainContextFacade {
 			return RegisteredArbitraryConfigurators.getConfigurators();
 		}
 	}
+
+	@Override
+	public List<ArbitraryProvider> getArbitraryProviders(DomainContextBase base, int priority) {
+		return DomainContextBaseProviders.forContextBase(base, priority);
+	}
+
+	@Override
+	public List<ArbitraryConfigurator> getArbitraryConfigurators(DomainContextBase base) {
+		return Collections.emptyList();
+	}
+
 }
