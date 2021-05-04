@@ -184,7 +184,7 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 			return;
 		}
 		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.ofPrecisionFromTime(dateTime.toLocalTime());
-		if (clone.ofPrecision.get().compareTo(ofPrecision) > 0) {
+		if (clone.ofPrecision.isGreatherThan(ofPrecision)) {
 			clone.ofPrecision.setProgrammatically(ofPrecision);
 		}
 	}

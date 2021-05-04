@@ -1,5 +1,6 @@
 package net.jqwik.time.internal.properties.arbitraries.valueRanges;
 
+import java.math.*;
 import java.time.*;
 import java.time.temporal.*;
 import java.util.*;
@@ -33,6 +34,14 @@ public class OfPrecision {
 
 	public boolean isSet() {
 		return precisionSet;
+	}
+
+	public boolean isGreatherThan(ChronoUnit precision) {
+		return this.precision.compareTo(precision) > 0;
+	}
+
+	public boolean isLessOrEqualTo(ChronoUnit precision) {
+		return this.precision.compareTo(precision) <= 0;
 	}
 
 	public boolean valueWithPrecisionIsAllowed(int minutes, int seconds, int nanos) {
@@ -86,6 +95,95 @@ public class OfPrecision {
 			default:
 				return LocalTime.of(23, 59, 59, 0);
 		}
+	}
+
+	public long longsBetween(LocalTime effectiveMin, LocalTime effectiveMax) {
+		switch (precision) {
+			case HOURS:
+				return HOURS.between(effectiveMin, effectiveMax);
+			case MINUTES:
+				return MINUTES.between(effectiveMin, effectiveMax);
+			case SECONDS:
+				return SECONDS.between(effectiveMin, effectiveMax);
+			case MILLIS:
+				return MILLIS.between(effectiveMin, effectiveMax);
+			case MICROS:
+				return MICROS.between(effectiveMin, effectiveMax);
+			default:
+				return NANOS.between(effectiveMin, effectiveMax);
+		}
+	}
+
+	public LocalTime localTimeFromValue(long longAdd, LocalTime effectiveMin) {
+		switch (precision) {
+			case HOURS:
+				return effectiveMin.plusHours(longAdd);
+			case MINUTES:
+				return effectiveMin.plusMinutes(longAdd);
+			case SECONDS:
+				return effectiveMin.plusSeconds(longAdd);
+			case MILLIS:
+				longAdd *= 1_000;
+			case MICROS:
+				longAdd *= 1_000;
+			default:
+				return effectiveMin.plusNanos(longAdd);
+		}
+	}
+
+	public LocalTime effectiveMaxNanos(LocalTime effective) {
+		switch (precision) {
+			case MILLIS:
+				effective = effective.withNano(999_000_000);
+				break;
+			case MICROS:
+				effective = effective.withNano(999_999_000);
+				break;
+			case NANOS:
+				effective = effective.withNano(999_999_999);
+				break;
+			default:
+				effective = effective.withNano(0);
+		}
+		return effective;
+	}
+
+	public Duration minPossibleDuration() {
+		switch (precision) {
+			case HOURS:
+				return Duration.ofSeconds((Long.MIN_VALUE / (60 * 60)) * (60 * 60), 0);
+			case MINUTES:
+				return Duration.ofSeconds((Long.MIN_VALUE / 60) * 60, 0);
+			default:
+				return Duration.ofSeconds(Long.MIN_VALUE, 0);
+		}
+	}
+
+	public Duration durationFromValue(BigInteger bigInteger) {
+
+		BigInteger helperDivide = new BigInteger(1_000_000_000 + "");
+		BigInteger helperMultiply1000 = new BigInteger(1_000 + "");
+		BigInteger helperMultiply60 = new BigInteger("60");
+
+		switch (precision) {
+			case HOURS:
+				bigInteger = bigInteger.multiply(helperMultiply60);
+			case MINUTES:
+				bigInteger = bigInteger.multiply(helperMultiply60);
+			case SECONDS:
+				bigInteger = bigInteger.multiply(helperMultiply1000);
+			case MILLIS:
+				bigInteger = bigInteger.multiply(helperMultiply1000);
+			case MICROS:
+				bigInteger = bigInteger.multiply(helperMultiply1000);
+		}
+
+		BigInteger bigIntegerSeconds = bigInteger.divide(helperDivide);
+		long seconds = bigIntegerSeconds.longValue();
+		int nanos = bigInteger.subtract(bigIntegerSeconds.multiply(helperDivide)).intValue();
+
+		return Duration.ofSeconds(seconds, nanos);
+
 	}
 
 }
