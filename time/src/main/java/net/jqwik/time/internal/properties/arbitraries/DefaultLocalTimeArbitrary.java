@@ -28,14 +28,14 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		LocalTime effectiveMin = effectiveMin(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
 		LocalTime effectiveMax = effectiveMax(timeBetween, hourBetween, minuteBetween, secondBetween, ofPrecision);
 
-		long longEnd = longsBetween(effectiveMin, effectiveMax);
+		long longEnd = ofPrecision.longsBetween(effectiveMin, effectiveMax);
 
 		Arbitrary<Long> longs = Arbitraries.longs()
 										   .withDistribution(RandomDistribution.uniform())
 										   .between(0L, longEnd)
 										   .edgeCases(config -> config.includeOnly(0L, longEnd));
 
-		Arbitrary<LocalTime> localTimes = longs.map(v -> localTimeFromValue(v, effectiveMin, ofPrecision));
+		Arbitrary<LocalTime> localTimes = longs.map(v -> ofPrecision.localTimeFromValue(v, effectiveMin));
 
 		localTimes = localTimes.filter(
 			v -> v.getMinute() >= minuteBetween.getMin()
@@ -46,40 +46,6 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 
 		return localTimes;
 
-	}
-
-	static private LocalTime localTimeFromValue(long longAdd, LocalTime effectiveMin, OfPrecision precision) {
-		switch (precision.get()) {
-			case HOURS:
-				return effectiveMin.plusHours(longAdd);
-			case MINUTES:
-				return effectiveMin.plusMinutes(longAdd);
-			case SECONDS:
-				return effectiveMin.plusSeconds(longAdd);
-			case MILLIS:
-				longAdd *= 1_000;
-			case MICROS:
-				longAdd *= 1_000;
-			default:
-				return effectiveMin.plusNanos(longAdd);
-		}
-	}
-
-	private long longsBetween(LocalTime effectiveMin, LocalTime effectiveMax) {
-		switch (ofPrecision.get()) {
-			case HOURS:
-				return HOURS.between(effectiveMin, effectiveMax);
-			case MINUTES:
-				return MINUTES.between(effectiveMin, effectiveMax);
-			case SECONDS:
-				return SECONDS.between(effectiveMin, effectiveMax);
-			case MILLIS:
-				return MILLIS.between(effectiveMin, effectiveMax);
-			case MICROS:
-				return MICROS.between(effectiveMin, effectiveMax);
-			default:
-				return NANOS.between(effectiveMin, effectiveMax);
-		}
 	}
 
 	public static LocalTime effectiveMin(
@@ -117,11 +83,11 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 	}
 
 	private static void checkMinValuesAndPrecision(MinuteBetween minuteBetween, SecondBetween secondBetween, OfPrecision ofPrecision) {
-		if (ofPrecision.get().compareTo(SECONDS) > 0) {
+		if (ofPrecision.isGreatherThan(SECONDS)) {
 			if (secondBetween.getMin() > 0) {
 				throwValueAndPrecisionException(secondBetween.getMin().toString(), true, "second", ofPrecision.get());
 			}
-			if (ofPrecision.get().compareTo(MINUTES) > 0 && minuteBetween.getMin() > 0) {
+			if (ofPrecision.isGreatherThan(MINUTES) && minuteBetween.getMin() > 0) {
 				throwValueAndPrecisionException(minuteBetween.getMin().toString(), true, "minute", ofPrecision.get());
 			}
 		}
@@ -151,39 +117,27 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		checkTimeValueAndPrecision(effective, ofPrecision, false);
 		if (hourBetween.getMax() < effective.getHour()) {
 			effective = effective.withHour(hourBetween.getMax());
-			effective = setEffectiveMaxValues(effective, ofPrecision, MINUTES);
+			effective = effectiveMaxValues(effective, ofPrecision, MINUTES);
 		}
 		if (minuteBetween.getMax() < effective.getMinute()) {
 			effective = effective.withMinute(minuteBetween.getMax());
-			effective = setEffectiveMaxValues(effective, ofPrecision, SECONDS);
+			effective = effectiveMaxValues(effective, ofPrecision, SECONDS);
 		}
 		if (secondBetween.getMax() < effective.getSecond()) {
 			effective = effective.withSecond(secondBetween.getMax());
-			effective = setEffectiveMaxValues(effective, ofPrecision, NANOS);
+			effective = effectiveMaxValues(effective, ofPrecision, NANOS);
 		}
 		return effective;
 	}
 
-	private static LocalTime setEffectiveMaxValues(LocalTime effective, OfPrecision ofPrecision, ChronoUnit precision) {
+	private static LocalTime effectiveMaxValues(LocalTime effective, OfPrecision ofPrecision, ChronoUnit precision) {
 		switch (precision) {
 			case MINUTES:
-				effective = ofPrecision.get().compareTo(MINUTES) <= 0 ? effective.withMinute(59) : effective.withMinute(0);
+				effective = ofPrecision.isLessOrEqualTo(MINUTES) ? effective.withMinute(59) : effective.withMinute(0);
 			case SECONDS:
-				effective = ofPrecision.get().compareTo(SECONDS) <= 0 ? effective.withSecond(59) : effective.withSecond(0);
+				effective = ofPrecision.isLessOrEqualTo(SECONDS) ? effective.withSecond(59) : effective.withSecond(0);
 			default:
-				switch (ofPrecision.get()) {
-					case MILLIS:
-						effective = effective.withNano(999_000_000);
-						break;
-					case MICROS:
-						effective = effective.withNano(999_999_000);
-						break;
-					case NANOS:
-						effective = effective.withNano(999_999_999);
-						break;
-					default:
-						effective = effective.withNano(0);
-				}
+				effective = ofPrecision.effectiveMaxNanos(effective);
 		}
 		return effective;
 	}
@@ -210,7 +164,7 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 			return;
 		}
 		ChronoUnit ofPrecision = ofPrecisionFromTime(time);
-		if (clone.ofPrecision.get().compareTo(ofPrecision) > 0) {
+		if (clone.ofPrecision.isGreatherThan(ofPrecision)) {
 			clone.ofPrecision.setProgrammatically(ofPrecision);
 		}
 	}

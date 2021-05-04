@@ -40,25 +40,14 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 													   .edgeCases(edgeCases -> edgeCases
 																				   .includeOnly(bigIntegerMin, BigInteger.ZERO, bigIntegerMax));
 
-		return bigIntegers.map(big -> durationFromValue(big, ofPrecision));
+		return bigIntegers.map(ofPrecision::durationFromValue);
 
 	}
 
 	private Duration effectiveMin(DurationBetween durationBetween, OfPrecision ofPrecision) {
-		Duration effective = durationBetween.getMin() != null ? durationBetween.getMin() : minPossibleValue(ofPrecision);
+		Duration effective = durationBetween.getMin() != null ? durationBetween.getMin() : ofPrecision.minPossibleDuration();
 		checkValueAndPrecision(effective, ofPrecision, true);
 		return effective;
-	}
-
-	private Duration minPossibleValue(OfPrecision ofPrecision) {
-		switch (ofPrecision.get()) {
-			case HOURS:
-				return Duration.ofSeconds((Long.MIN_VALUE / (60 * 60)) * (60 * 60), 0);
-			case MINUTES:
-				return Duration.ofSeconds((Long.MIN_VALUE / 60) * 60, 0);
-			default:
-				return Duration.ofSeconds(Long.MIN_VALUE, 0);
-		}
 	}
 
 	private void checkValueAndPrecision(Duration effective, OfPrecision ofPrecision, boolean minimum) {
@@ -86,8 +75,6 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	private BigInteger valueFromDuration(Duration effective, OfPrecision ofPrecision) {
 
-		ChronoUnit precision = ofPrecision.get();
-
 		BigInteger helperMultiply = new BigInteger(1_000_000_000 + "");
 		BigInteger helperDivide1000 = new BigInteger(1_000 + "");
 		BigInteger helperDivide60 = new BigInteger("60");
@@ -96,15 +83,15 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 		bigInteger = bigInteger.multiply(helperMultiply);
 		bigInteger = bigInteger.add(new BigInteger(effective.getNano() + ""));
 
-		if (precision.compareTo(NANOS) >= 1) {
+		if (ofPrecision.isGreatherThan(NANOS)) {
 			bigInteger = bigInteger.divide(helperDivide1000);
-			if (precision.compareTo(MICROS) >= 1) {
+			if (ofPrecision.isGreatherThan(MICROS)) {
 				bigInteger = bigInteger.divide(helperDivide1000);
-				if (precision.compareTo(MILLIS) >= 1) {
+				if (ofPrecision.isGreatherThan(MILLIS)) {
 					bigInteger = bigInteger.divide(helperDivide1000);
-					if (precision.compareTo(SECONDS) >= 1) {
+					if (ofPrecision.isGreatherThan(SECONDS)) {
 						bigInteger = bigInteger.divide(helperDivide60);
-						if (precision.compareTo(MINUTES) >= 1) {
+						if (ofPrecision.isGreatherThan(MINUTES)) {
 							bigInteger = bigInteger.divide(helperDivide60);
 						}
 					}
@@ -116,41 +103,12 @@ public class DefaultDurationArbitrary extends ArbitraryDecorator<Duration> imple
 
 	}
 
-	static private Duration durationFromValue(BigInteger bigInteger, OfPrecision ofPrecision) {
-
-		ChronoUnit precision = ofPrecision.get();
-
-		BigInteger helperDivide = new BigInteger(1_000_000_000 + "");
-		BigInteger helperMultiply1000 = new BigInteger(1_000 + "");
-		BigInteger helperMultiply60 = new BigInteger("60");
-
-		switch (precision) {
-			case HOURS:
-				bigInteger = bigInteger.multiply(helperMultiply60);
-			case MINUTES:
-				bigInteger = bigInteger.multiply(helperMultiply60);
-			case SECONDS:
-				bigInteger = bigInteger.multiply(helperMultiply1000);
-			case MILLIS:
-				bigInteger = bigInteger.multiply(helperMultiply1000);
-			case MICROS:
-				bigInteger = bigInteger.multiply(helperMultiply1000);
-		}
-
-		BigInteger bigIntegerSeconds = bigInteger.divide(helperDivide);
-		long seconds = bigIntegerSeconds.longValue();
-		int nanos = bigInteger.subtract(bigIntegerSeconds.multiply(helperDivide)).intValue();
-
-		return Duration.ofSeconds(seconds, nanos);
-
-	}
-
 	private void setOfPrecisionImplicitly(DefaultDurationArbitrary clone, Duration duration) {
 		if (clone.ofPrecision.isSet()) {
 			return;
 		}
 		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.ofPrecisionFromNanos(duration.getNano());
-		if (clone.ofPrecision.get().compareTo(ofPrecision) > 0) {
+		if (clone.ofPrecision.isGreatherThan(ofPrecision)) {
 			clone.ofPrecision.setProgrammatically(ofPrecision);
 		}
 	}
