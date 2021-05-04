@@ -27,7 +27,7 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
-- More work on 
+- More progress on 
   [generation of DateTimes](/docs/snapshot/user-guide.html#generation-of-datetimes)
 
 #### Breaking Changes
