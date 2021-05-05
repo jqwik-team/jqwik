@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * of type {@linkplain List}
  */
 @API(status = MAINTAINED, since = "1.3.2")
-public interface ListArbitrary<T> extends StreamableArbitrary<T, List<T>> {
+public interface ListArbitrary<T> extends Arbitrary<List<T>>, StreamableArbitrary<T, List<T>> {
 
 	/**
 	 * Fix the size to {@code size}.

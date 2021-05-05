@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * of type {@linkplain Set}
  */
 @API(status = MAINTAINED, since = "1.3.2")
-public interface SetArbitrary<T> extends StreamableArbitrary<T, Set<T>> {
+public interface SetArbitrary<T> extends Arbitrary<Set<T>>, StreamableArbitrary<T, Set<T>> {
 
 	/**
 	 * Fix the size to {@code size}.

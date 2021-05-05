@@ -40,7 +40,7 @@ public class Arbitraries {
 
 		public abstract RandomGenerator<Character> randomChoose(char[] values);
 
-		public abstract <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all);
+		public abstract <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> all);
 
 		public abstract <T> RandomGenerator<T> randomFrequency(List<Tuple2<Integer, T>> frequencies);
 
@@ -249,12 +249,11 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@SuppressWarnings("unchecked")
-	@SafeVarargs
 	public static <T> Arbitrary<T> oneOf(Arbitrary<? extends T> first, Arbitrary<? extends T>... rest) {
-		List<Arbitrary<T>> all = new ArrayList<>();
-		all.add((Arbitrary<T>) first);
+		List<Arbitrary<? extends T>> all = new ArrayList<>();
+		all.add(first);
 		for (Arbitrary<?> arbitrary : rest) {
-			all.add((Arbitrary<T>) arbitrary);
+			all.add((Arbitrary<? extends T>) arbitrary);
 		}
 		return oneOf(all);
 	}
@@ -262,16 +261,21 @@ public class Arbitraries {
 	/**
 	 * Create an arbitrary that will randomly choose between all given arbitraries of the same type T.
 	 *
-	 * @param all A list of arbitraries to choose from
+	 * @param choices A collection of arbitraries to choose from
 	 * @param <T> The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all) {
-		if (all.size() == 1) {
-			return all.get(0);
+	@SuppressWarnings("unchecked")
+	public static <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> choices) {
+		if (choices.isEmpty()) {
+			String message = "oneOf() must not be called with no choices";
+			throw new JqwikException(message);
+		}
+		if (choices.size() == 1) {
+			return (Arbitrary<T>) choices.iterator().next();
 		}
 		// Simple flatMapping is not enough because of configurations
-		return ArbitrariesFacade.implementation.oneOf(all);
+		return ArbitrariesFacade.implementation.oneOf(choices);
 	}
 
 	/**

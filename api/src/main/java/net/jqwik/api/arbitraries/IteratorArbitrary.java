@@ -5,6 +5,8 @@ import java.util.function.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -12,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * of type {@linkplain Iterator}
  */
 @API(status = MAINTAINED, since = "1.3.2")
-public interface IteratorArbitrary<T> extends StreamableArbitrary<T, Iterator<T>> {
+public interface IteratorArbitrary<T> extends Arbitrary<Iterator<T>>, StreamableArbitrary<T, Iterator<T>> {
 
 	/**
 	 * Fix the size to {@code size}.

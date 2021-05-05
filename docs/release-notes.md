@@ -29,10 +29,13 @@ title: jqwik Release Notes
 
 - More progress on 
   [generation of DateTimes](/docs/snapshot/user-guide.html#generation-of-datetimes)
-
+  
 #### Breaking Changes
 
 - Removed `leapYears(boolean withLeapyear)` from all date generating arbitraries.
+
+- Changed `Arbitrary<T> Arbitraries.oneOf(List<T> choices)` to
+  `Arbitrary<T> Arbitraries.oneOf(Collection<? extends T> choices)`
 
 #### Bug Fixes
 

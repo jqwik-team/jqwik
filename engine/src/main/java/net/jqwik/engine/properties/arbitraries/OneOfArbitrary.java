@@ -14,7 +14,12 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 	private final List<Arbitrary<T>> all = new ArrayList<>();
 
-	public OneOfArbitrary(List<Arbitrary<T>> all) {this.all.addAll(all);}
+	@SuppressWarnings("unchecked")
+	public OneOfArbitrary(Collection<Arbitrary<? extends T>> choices) {
+		for (Arbitrary<? extends T> choice : choices) {
+			all.add((Arbitrary<T>) choice);
+		}
+	}
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {

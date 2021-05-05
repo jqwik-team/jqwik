@@ -5,6 +5,8 @@ import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -12,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * of type {@linkplain Stream}
  */
 @API(status = MAINTAINED, since = "1.3.2")
-public interface StreamArbitrary<T> extends StreamableArbitrary<T, Stream<T>> {
+public interface StreamArbitrary<T> extends Arbitrary<Stream<T>>, StreamableArbitrary<T, Stream<T>> {
 
 	/**
 	 * Fix the size to {@code size}.

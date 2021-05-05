@@ -62,8 +62,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all) {
-		return new OneOfArbitrary<>(all);
+	public <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> choices) {
+		return new OneOfArbitrary<>(choices);
 	}
 
 	@Override
@@ -167,7 +167,6 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	 * This is important to have a single instance of LazyOfArbitrary for the same code.
 	 */
 	private static int calculateIdentifier(int numberOfSuppliers) {
-		int hashIdentifier = 0;
 		try {
 			throw new RuntimeException();
 		} catch (RuntimeException rte) {
@@ -182,9 +181,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 								  stackTraceElement.getLineNumber(),
 								  numberOfSuppliers
 						  ));
-			hashIdentifier = optionalHash.orElse(0);
+			return optionalHash.orElse(0);
 		}
-		return hashIdentifier;
 	}
 
 	@Override
@@ -196,6 +194,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return defaultFor(TypeUsage.of(type, genericTypeParameters));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
 		// Lazy evaluation is necessary since defaults only exist in context of a domain
@@ -206,9 +205,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 				throw new CannotFindArbitraryException(typeUsage);
 			}
 
-			List<Arbitrary<T>> arbitrariesList = new ArrayList<>();
-			//noinspection unchecked
-			arbitraries.forEach(arbitrary -> arbitrariesList.add((Arbitrary<T>) arbitrary));
+			List<Arbitrary<? extends T>> arbitrariesList = new ArrayList<>();
+			arbitraries.forEach(arbitrary -> arbitrariesList.add((Arbitrary<? extends T>) arbitrary));
 			return Arbitraries.oneOf(arbitrariesList);
 		});
 	}
