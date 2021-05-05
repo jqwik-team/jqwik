@@ -10,12 +10,30 @@ import static org.apiguardian.api.API.Status.*;
  * Used to annotate methods that can provide values for property method parameters. Those methods must return an
  * instance of {@linkplain Arbitrary}.
  *
- * {@code value} is used as reference name. If it is not specified, the method's name is used instead.
+ * <p>
+ * Methods annotated with {@linkplain Provide} can be present:
+ *     <ul>
+ *         <li>In test container classes to be picked up by {@linkplain ForAll} parameters.</li>
+ *         <li>In subclasses of {@linkplain net.jqwik.api.domains.DomainContextBase} where those methods will be used
+ *         to serve as arbitrary providers for a {@linkplain net.jqwik.api.domains.DomainContext}.
+ *         </li>
+ *     </ul>
+ * </p>
+ *
+ * @see ForAll
+ * @see net.jqwik.api.domains.DomainContextBase
+ * @see net.jqwik.api.domains.DomainContext
  */
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.METHOD })
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = STABLE, since = "1.0")
 public @interface Provide {
+
+	/**
+	 * Used as reference name. If it is not specified, the method's name is used instead.
+	 *
+	 * @return A non-empty string if the method should not be referenced by its name
+	 */
 	String value() default "";
 }

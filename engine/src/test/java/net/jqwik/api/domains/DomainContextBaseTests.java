@@ -34,6 +34,7 @@ class DomainContextBaseTests {
 		void useProviderFromMethodWithTargetTypeAndSubtypeProvider(@ForAll List<String> listOfStrings) {
 			assertThat(listOfStrings).hasSize(3);
 			listOfStrings.forEach(aString -> {
+				assertThat(aString).isInstanceOf(String.class);
 				assertThat(aString).hasSize(2);
 				assertThat(aString).containsOnlyDigits();
 			});
@@ -41,7 +42,6 @@ class DomainContextBaseTests {
 
 		@Property(generation = GenerationMode.RANDOMIZED)
 		@Domain(ContextWithProviderMethods.class)
-		@Report(Reporting.GENERATED)
 		void useProviderFromMethodWithPotentiallyConflictingType(@ForAll List<LocalDate> listOfDates) {
 			assertThat(listOfDates).hasSize(1);
 		}
@@ -58,7 +58,7 @@ class ContextWithProviderMethods extends DomainContextBase {
 		return Arbitraries.strings().numeric().ofLength(2);
 	}
 
-	@Provide
+	@Provide //("numbers") // having a value will produce warning log entry
 	Arbitrary<Character> numberChars() {
 		return Arbitraries.integers().between(0, 9).map(i -> Character.forDigit(i, 10));
 	}
@@ -79,11 +79,17 @@ class ContextWithProviderMethods extends DomainContextBase {
 		return Arbitraries.just(LocalDate.now()).list().ofSize(1);
 	}
 
-	// private NumberStringContext() {
-	// 	registerConfigurator(new ArbitraryConfiguratorBase() {
-	// 		public Arbitrary<String> configure(Arbitrary<String> arbitrary, AbstractDomainContextBaseTests.DoubleString ignore) {
-	// 			return arbitrary.map(s -> s + s);
-	// 		}
-	// 	});
-	// }
+	//@Provide
+	String shouldProduceAWarningLogEntry() {
+		return "hello";
+	}
+
 }
+
+// private NumberStringContext() {
+// 	registerConfigurator(new ArbitraryConfiguratorBase() {
+// 		public Arbitrary<String> configure(Arbitrary<String> arbitrary, AbstractDomainContextBaseTests.DoubleString ignore) {
+// 			return arbitrary.map(s -> s + s);
+// 		}
+// 	});
+// }

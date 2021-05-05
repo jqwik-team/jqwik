@@ -33,7 +33,7 @@ class ProviderMethodInvoker {
 				return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, instance, targetType, subtypeProvider));
 			}
 		}
-		String message = String.format("Some of the parameters of %s are not allowed in provider methods", providerMethod);
+		String message = String.format("Some of the parameters of %s are not allowed in methods annotated with @Provide", providerMethod);
 		throw new JqwikException(message);
 	}
 

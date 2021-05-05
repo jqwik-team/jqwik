@@ -2,6 +2,7 @@ package net.jqwik.engine.properties;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
@@ -12,12 +13,41 @@ import net.jqwik.api.providers.*;
 
 public class DomainContextBaseProviders {
 
+	private static final Logger LOG = Logger.getLogger(DomainContextBaseProviders.class.getName());
+
 	static public List<ArbitraryProvider> forContextBase(DomainContextBase base, int priority) {
 		List<Method> methods = AnnotationSupport.findAnnotatedMethods(base.getClass(), Provide.class, HierarchyTraversalMode.BOTTOM_UP);
+		warnIfMethodsHaveWrongReturnType(methods);
+		warnIfProvideAnnotationHasValue(methods);
 		return methods.stream()
 					  .filter(method -> isArbitrary(method.getReturnType()))
 					  .map(method -> new MethodBaseArbitraryProvider(method, base, priority))
 					  .collect(Collectors.toList());
+	}
+
+	private static void warnIfProvideAnnotationHasValue(List<Method> methods) {
+		methods.stream()
+			   .filter(method -> isArbitrary(method.getReturnType()))
+			   .map(method -> Tuple.of(method, AnnotationSupport.findAnnotation(method, Provide.class)))
+			   .filter(methodAndProvide -> methodAndProvide.get2().map(a -> !a.value().isEmpty()).orElse(false))
+			   .forEach(methodAndProvide -> {
+				   String message = String.format(
+					   "Method %s is annotated with %s but having a value does not make sense in a domain context.",
+					   methodAndProvide.get1(),
+					   methodAndProvide.get2().get()
+				   );
+				   LOG.warning(message);
+			   });
+
+	}
+
+	private static void warnIfMethodsHaveWrongReturnType(List<Method> methods) {
+		methods.stream()
+			   .filter(method -> !isArbitrary(method.getReturnType()))
+			   .forEach(method -> {
+				   String message = String.format("Method %s is annotated with @Provide but does not return an Arbitrary subtype.", method);
+				   LOG.warning(message);
+			   });
 	}
 
 	private static boolean isArbitrary(Class<?> type) {
