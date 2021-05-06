@@ -64,14 +64,13 @@ class ContextWithProviderMethods extends DomainContextBase {
 	}
 
 	@Provide
-	ListArbitrary<?> listsOfSize3(TypeUsage targetType, ArbitraryProvider.SubtypeProvider subtypeProvider) {
+	ListArbitrary<?> listsOfSize3(
+		ArbitraryProvider.SubtypeProvider subtypeProvider,
+		TypeUsage targetType
+	) {
 		TypeUsage innerTarget = targetType.getTypeArgument(0);
-		Set<Arbitrary<?>> apply = subtypeProvider.apply(innerTarget);
-		if (apply.isEmpty()) {
-			return null;
-		}
-		Arbitrary<?> elementArbitrary = Arbitraries.oneOf(apply);
-		return elementArbitrary.list().ofSize(3);
+		Optional<Arbitrary<?>> optionalInner = subtypeProvider.provideOneFor(innerTarget);
+		return optionalInner.map(inner -> inner.list().ofSize(3)).orElse(null);
 	}
 
 	@Provide

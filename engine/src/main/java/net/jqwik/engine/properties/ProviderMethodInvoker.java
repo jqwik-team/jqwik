@@ -4,37 +4,43 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.providers.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 class ProviderMethodInvoker {
 
-	ProviderMethodInvoker(Object instance, ArbitraryProvider.SubtypeProvider subtypeProvider) {
+	ProviderMethodInvoker(Object instance, SubtypeProvider subtypeProvider) {
 		this.instance = instance;
 		this.subtypeProvider = subtypeProvider;
 	}
 
 	private Object instance;
-	private ArbitraryProvider.SubtypeProvider subtypeProvider;
+	private SubtypeProvider subtypeProvider;
 
 	Set<Arbitrary<?>> invoke(Method providerMethod, TypeUsage targetType) {
 		Parameter[] parameters = providerMethod.getParameters();
-		if (parameters.length == 0) {
-			return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, instance));
+		Object[] arguments = new Object[parameters.length];
+		for (int i = 0; i < parameters.length; i++) {
+			arguments[i] = resolveParameter(parameters[i], providerMethod, targetType);
 		}
-		if (parameters[0].getType().isAssignableFrom(TypeUsage.class)) {
-			if (parameters.length == 1) {
-				return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, instance, targetType));
-			}
+		return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, instance, arguments));
+	}
+
+	protected Object resolveParameter(Parameter parameter, Method providerMethod, TypeUsage targetType) {
+		if (parameter.getType().isAssignableFrom(TypeUsage.class)) {
+			return targetType;
+		} else if (parameter.getType().isAssignableFrom(SubtypeProvider.class)) {
+			return subtypeProvider;
+		} else {
+			String message = String.format(
+				"Parameter <%s> is not allowed in @Provide method <%s>.",
+				parameter,
+				providerMethod
+			);
+			throw new JqwikException(message);
 		}
-		if (parameters[1].getType().isAssignableFrom(ArbitraryProvider.SubtypeProvider.class)) {
-			if (parameters.length == 2) {
-				return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, instance, targetType, subtypeProvider));
-			}
-		}
-		String message = String.format("Some of the parameters of %s are not allowed in methods annotated with @Provide", providerMethod);
-		throw new JqwikException(message);
 	}
 
 	private Set<Arbitrary<?>> wrapInSet(Object result) {

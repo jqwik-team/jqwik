@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.engine.TestHelper.*;
 
 @Group
-class PropertyMethodResolverTest {
+class PropertyMethodResolverTests {
 
 	private final TestRunData testRunData = new TestRunData();
 	private final PropertyAttributesDefaults propertyDefaultValues = TestHelper.propertyAttributesDefaults();

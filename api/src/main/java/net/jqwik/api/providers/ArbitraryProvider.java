@@ -60,6 +60,22 @@ public interface ArbitraryProvider {
 
 			return optionalArbitraries.orElse(Stream.empty());
 		}
+
+		/**
+		 * Convenience method to combine set of arbitraries in optional choice-based arbitrary.
+		 *
+		 * @param typeUsage
+		 * @return Optional arbitrary instance
+		 */
+		@API(status = EXPERIMENTAL, since = "1.5.2")
+		default Optional<Arbitrary<?>> provideOneFor(TypeUsage typeUsage) {
+			Set<Arbitrary<?>> choices = this.apply(typeUsage);
+			if (choices.isEmpty()) {
+				return Optional.empty();
+			}
+			return Optional.of(Arbitraries.oneOf(choices));
+		}
+
 	}
 
 	/**

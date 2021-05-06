@@ -1339,11 +1339,11 @@ of the method's `@Provide` annotation.
 
 The providing method has to return an object of type
 [`@Arbitrary<T>`](/docs/1.5.1/javadoc/net/jqwik/api/Arbitrary.html)
-where `T` is the static type of the parameter to be provided. Optionally
-the provider method can take tow optional parameters:
+where `T` is the static type of the parameter to be provided. 
+The provider method can have optional parameters:
 
-- a first parameter of type `TypeUsage` that describes the details of the target parameter to be provided
-- a second parameter of type `ArbitraryProvider.SubtypeProvider`
+- a parameter of type `TypeUsage` that describes the details of the target parameter to be provided
+- a parameter of type `ArbitraryProvider.SubtypeProvider`
 
 These two objects can be used to get detailed information about the parameter,
 like annotations and embedded type parameters, and to resolve other types,
