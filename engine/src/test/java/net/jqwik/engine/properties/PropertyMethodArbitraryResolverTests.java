@@ -450,8 +450,6 @@ class PropertyMethodArbitraryResolverTests {
 				return true;
 			}
 
-
-
 			@Provide
 			Arbitrary<Tuple.Tuple2<Thing, String>> tuple2WithThingAndStringProvider(@ForAll("aThing") Thing aThing, @ForAll String aString) {
 				return Arbitraries.just(Tuple.of(aThing, aString));

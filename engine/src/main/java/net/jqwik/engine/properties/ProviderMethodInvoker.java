@@ -2,10 +2,14 @@ package net.jqwik.engine.properties;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.facades.*;
+import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
@@ -16,35 +20,65 @@ class ProviderMethodInvoker {
 		this.subtypeProvider = subtypeProvider;
 	}
 
-	private Object instance;
-	private SubtypeProvider subtypeProvider;
+	private final Object instance;
+	private final SubtypeProvider subtypeProvider;
 
 	Set<Arbitrary<?>> invoke(Method providerMethod, TypeUsage targetType) {
-		Parameter[] parameters = providerMethod.getParameters();
-		Object[] arguments = new Object[parameters.length];
-		for (int i = 0; i < parameters.length; i++) {
-			arguments[i] = resolveParameter(parameters[i], providerMethod, targetType);
-		}
-		return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, instance, arguments));
+		List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(providerMethod, instance.getClass());
+		Set<Function<List<Object>, Object>> invokeWithArgs = Collections.singleton(
+			argList -> invokeMethodPotentiallyOuter(providerMethod, instance, argList.toArray())
+		);
+		Set<Supplier<Object>> invokers = createInvoker(providerMethod, targetType, invokeWithArgs, parameters, Collections.emptyList());
+		return invokers.stream().map(invoker -> (Arbitrary<?>) invoker.get()).collect(Collectors.toSet());
 	}
 
-	protected Object resolveParameter(Parameter parameter, Method providerMethod, TypeUsage targetType) {
+	private Set<Supplier<Object>> createInvoker(
+		Method providerMethod,
+		TypeUsage targetType,
+		Set<Function<List<Object>, Object>> invokeWithArgs,
+		List<MethodParameter> parameters,
+		List<Object> args
+	) {
+		if (parameters.isEmpty()) {
+			return map(invokeWithArgs, invoke -> () -> invoke.apply(args));
+		}
+		List<MethodParameter> newParameters = new ArrayList<>(parameters);
+		MethodParameter first = newParameters.remove(0);
+		if (isForAllParameter(first)) {
+			TypeUsage parameterType = TypeUsageImpl.forParameter(first);
+			Set<Arbitrary<?>> parameterArbitraries = subtypeProvider.apply(parameterType);
+			if (parameterArbitraries.isEmpty()) {
+				throw new CannotFindArbitraryException(parameterType, first.getAnnotation(ForAll.class), providerMethod);
+			}
+			throw new RuntimeException("NOT YET IMPLEMENTED");
+		} else {
+			List<Object> newArgs = new ArrayList<>(args);
+			newArgs.add(resolvePlainParameter(first.getRawParameter(), providerMethod, targetType));
+			return createInvoker(providerMethod, targetType, invokeWithArgs, newParameters, newArgs);
+		}
+	}
+
+	private <T> Set<T> map(Set<Function<List<Object>, Object>> invokers, Function<Function<List<Object>, Object>, T> mapper) {
+		return invokers.stream().map(mapper).collect(Collectors.toSet());
+	}
+
+	private boolean isForAllParameter(MethodParameter parameter) {
+		return parameter.isAnnotated(ForAll.class);
+	}
+
+	protected Object resolvePlainParameter(Parameter parameter, Method providerMethod, TypeUsage targetType) {
 		if (parameter.getType().isAssignableFrom(TypeUsage.class)) {
 			return targetType;
 		} else if (parameter.getType().isAssignableFrom(SubtypeProvider.class)) {
 			return subtypeProvider;
 		} else {
 			String message = String.format(
-				"Parameter <%s> is not allowed in @Provide method <%s>.",
+				"Parameter [%s] cannot be resolved in @Provide method [%s]." +
+					"%nMaybe you want to add annotation `@ForAll`?",
 				parameter,
 				providerMethod
 			);
 			throw new JqwikException(message);
 		}
 	}
-
-	private Set<Arbitrary<?>> wrapInSet(Object result) {
-		return Collections.singleton((Arbitrary<?>) result);
-	}
-
 }
