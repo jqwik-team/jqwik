@@ -210,6 +210,20 @@ class PropertyMethodArbitraryResolverTests {
 			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
+		@Disabled("not implemented yet")
+		@SuppressWarnings("unchecked")
+		@Example
+		void providerMethodCanHaveForAllParameters() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "tuple2WithThingAndString");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			Arbitrary<?> tupleArbitrary = arbitraries.iterator().next();
+			Tuple.Tuple2<Thing, String> aTuple = (Tuple.Tuple2<Thing, String>) tupleArbitrary.generator(10, true).next(SourceOfRandomness.current()).value();
+			assertThat(aTuple).isInstanceOf(Tuple.Tuple2.class);
+			assertThat(aTuple.get1()).isInstanceOf(Thing.class);
+			assertThat(aTuple.get2()).isInstanceOf(String.class);
+		}
+
 		@Example
 		void findGeneratorByName() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
@@ -430,6 +444,19 @@ class PropertyMethodArbitraryResolverTests {
 				}
 
 			}
+
+			@Property
+			boolean tuple2WithThingAndString(@ForAll("tuple2WithThingAndStringProvider") Tuple.Tuple2<Thing, String> aTuple) {
+				return true;
+			}
+
+
+
+			@Provide
+			Arbitrary<Tuple.Tuple2<Thing, String>> tuple2WithThingAndStringProvider(@ForAll("aThing") Thing aThing, @ForAll String aString) {
+				return Arbitraries.just(Tuple.of(aThing, aString));
+			}
+
 		}
 	}
 
