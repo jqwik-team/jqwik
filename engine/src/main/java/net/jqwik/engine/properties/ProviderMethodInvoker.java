@@ -28,7 +28,7 @@ class ProviderMethodInvoker {
 		Set<Function<List<Object>, Arbitrary<?>>> baseInvoker = Collections.singleton(
 			argList -> invokeProviderMethod(providerMethod, argList)
 		);
-		Set<Supplier<Arbitrary<?>>> suppliers = createInvoker(providerMethod, targetType, baseInvoker, parameters, Collections.emptyList());
+		Set<Supplier<Arbitrary<?>>> suppliers = arbitrarySuppliers(providerMethod, targetType, baseInvoker, parameters, Collections.emptyList());
 		return mapSet(suppliers, Supplier::get);
 	}
 
@@ -36,7 +36,7 @@ class ProviderMethodInvoker {
 		return (Arbitrary<?>) invokeMethodPotentiallyOuter(providerMethod, instance, argList.toArray());
 	}
 
-	private Set<Supplier<Arbitrary<?>>> createInvoker(
+	private Set<Supplier<Arbitrary<?>>> arbitrarySuppliers(
 		Method providerMethod,
 		TypeUsage targetType,
 		Set<Function<List<Object>, Arbitrary<?>>> invokers,
@@ -64,7 +64,7 @@ class ProviderMethodInvoker {
 		} else {
 			List<Object> newArgs = new ArrayList<>(args);
 			newArgs.add(resolvePlainParameter(first.getRawParameter(), providerMethod, targetType));
-			return createInvoker(providerMethod, targetType, invokers, newParameters, newArgs);
+			return arbitrarySuppliers(providerMethod, targetType, invokers, newParameters, newArgs);
 		}
 	}
 
