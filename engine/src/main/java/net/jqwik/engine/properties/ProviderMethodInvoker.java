@@ -25,18 +25,18 @@ class ProviderMethodInvoker {
 
 	Set<Arbitrary<?>> invoke(Method providerMethod, TypeUsage targetType) {
 		List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(providerMethod, instance.getClass());
-		Set<Function<List<Object>, Arbitrary<?>>> invokeWithArgs = Collections.singleton(
+		Set<Function<List<Object>, Arbitrary<?>>> baseInvoker = Collections.singleton(
 			argList -> invokeProviderMethod(providerMethod, argList)
 		);
-		Set<Supplier<Object>> invokers = createInvoker(providerMethod, targetType, invokeWithArgs, parameters, Collections.emptyList());
-		return invokers.stream().map(invoker -> (Arbitrary<?>) invoker.get()).collect(Collectors.toSet());
+		Set<Supplier<Arbitrary<?>>> suppliers = createInvoker(providerMethod, targetType, baseInvoker, parameters, Collections.emptyList());
+		return mapSet(suppliers, Supplier::get);
 	}
 
 	private Arbitrary<?> invokeProviderMethod(Method providerMethod, List<Object> argList) {
 		return (Arbitrary<?>) invokeMethodPotentiallyOuter(providerMethod, instance, argList.toArray());
 	}
 
-	private Set<Supplier<Object>> createInvoker(
+	private Set<Supplier<Arbitrary<?>>> createInvoker(
 		Method providerMethod,
 		TypeUsage targetType,
 		Set<Function<List<Object>, Arbitrary<?>>> invokers,
@@ -44,7 +44,7 @@ class ProviderMethodInvoker {
 		List<Object> args
 	) {
 		if (parameters.isEmpty()) {
-			return mapInvokers(invokers, invoker -> () -> invoker.apply(args));
+			return mapSet(invokers, invoker -> () -> invoker.apply(args));
 		}
 		List<MethodParameter> newParameters = new ArrayList<>(parameters);
 		MethodParameter first = newParameters.remove(0);
@@ -54,6 +54,12 @@ class ProviderMethodInvoker {
 			if (parameterArbitraries.isEmpty()) {
 				throw new CannotFindArbitraryException(parameterType, first.getAnnotation(ForAll.class), providerMethod);
 			}
+			// return parameterArbitraries.stream()
+			// 						   .flatMap(arbitrary -> {
+			// 							   List<Object> newArgs = new ArrayList<>(args);
+			// 							   newArgs.add(null);
+			// 							   return mapInvokers(invokers, invoker -> () -> invoker.apply(args)).stream();
+			// 						   }).collect(Collectors.toSet());
 			throw new RuntimeException("NOT YET IMPLEMENTED");
 		} else {
 			List<Object> newArgs = new ArrayList<>(args);
@@ -62,7 +68,7 @@ class ProviderMethodInvoker {
 		}
 	}
 
-	private <T> Set<T> mapInvokers(Set<Function<List<Object>, Arbitrary<?>>> invokers, Function<Function<List<Object>, Arbitrary<?>>, T> mapper) {
+	private <T, R> Set<R> mapSet(Set<T> invokers, Function<T, R> mapper) {
 		return invokers.stream().map(mapper).collect(Collectors.toSet());
 	}
 
