@@ -135,7 +135,7 @@ class ArbitraryTests {
 		void frequencyOfGeneratorWithEmbeddedEdgeCases(@ForAll("frequencies") List<Integer> aList) {
 			Statistics.label("list contains Integer.MAX_VALUE")
 					  .collect(aList.stream().anyMatch(e -> e == Integer.MAX_VALUE))
-					  .coverage(checker -> checker.check(true).percentage(p -> p > 5));
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 4));
 		}
 
 		@Provide
