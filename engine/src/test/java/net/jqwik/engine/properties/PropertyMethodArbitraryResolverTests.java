@@ -210,7 +210,6 @@ class PropertyMethodArbitraryResolverTests {
 			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
-		@Disabled("not implemented yet")
 		@SuppressWarnings("unchecked")
 		@Example
 		void providerMethodCanHaveForAllParameters() {

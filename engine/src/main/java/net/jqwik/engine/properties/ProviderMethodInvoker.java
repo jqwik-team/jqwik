@@ -25,22 +25,26 @@ class ProviderMethodInvoker {
 
 	Set<Arbitrary<?>> invoke(Method providerMethod, TypeUsage targetType) {
 		List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(providerMethod, instance.getClass());
-		Set<Function<List<Object>, Object>> invokeWithArgs = Collections.singleton(
-			argList -> invokeMethodPotentiallyOuter(providerMethod, instance, argList.toArray())
+		Set<Function<List<Object>, Arbitrary<?>>> invokeWithArgs = Collections.singleton(
+			argList -> invokeProviderMethod(providerMethod, argList)
 		);
 		Set<Supplier<Object>> invokers = createInvoker(providerMethod, targetType, invokeWithArgs, parameters, Collections.emptyList());
 		return invokers.stream().map(invoker -> (Arbitrary<?>) invoker.get()).collect(Collectors.toSet());
 	}
 
+	private Arbitrary<?> invokeProviderMethod(Method providerMethod, List<Object> argList) {
+		return (Arbitrary<?>) invokeMethodPotentiallyOuter(providerMethod, instance, argList.toArray());
+	}
+
 	private Set<Supplier<Object>> createInvoker(
 		Method providerMethod,
 		TypeUsage targetType,
-		Set<Function<List<Object>, Object>> invokeWithArgs,
+		Set<Function<List<Object>, Arbitrary<?>>> invokers,
 		List<MethodParameter> parameters,
 		List<Object> args
 	) {
 		if (parameters.isEmpty()) {
-			return map(invokeWithArgs, invoke -> () -> invoke.apply(args));
+			return mapInvokers(invokers, invoker -> () -> invoker.apply(args));
 		}
 		List<MethodParameter> newParameters = new ArrayList<>(parameters);
 		MethodParameter first = newParameters.remove(0);
@@ -54,11 +58,11 @@ class ProviderMethodInvoker {
 		} else {
 			List<Object> newArgs = new ArrayList<>(args);
 			newArgs.add(resolvePlainParameter(first.getRawParameter(), providerMethod, targetType));
-			return createInvoker(providerMethod, targetType, invokeWithArgs, newParameters, newArgs);
+			return createInvoker(providerMethod, targetType, invokers, newParameters, newArgs);
 		}
 	}
 
-	private <T> Set<T> map(Set<Function<List<Object>, Object>> invokers, Function<Function<List<Object>, Object>, T> mapper) {
+	private <T> Set<T> mapInvokers(Set<Function<List<Object>, Arbitrary<?>>> invokers, Function<Function<List<Object>, Arbitrary<?>>, T> mapper) {
 		return invokers.stream().map(mapper).collect(Collectors.toSet());
 	}
 
