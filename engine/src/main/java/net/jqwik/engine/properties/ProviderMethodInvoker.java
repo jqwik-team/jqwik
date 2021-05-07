@@ -15,30 +15,30 @@ import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 class ProviderMethodInvoker {
 
-	ProviderMethodInvoker(Object instance, SubtypeProvider subtypeProvider) {
+	ProviderMethodInvoker(Method providerMethod, TypeUsage targetType, Object instance, SubtypeProvider subtypeProvider) {
+		this.providerMethod = providerMethod;
+		this.targetType = targetType;
 		this.instance = instance;
 		this.subtypeProvider = subtypeProvider;
 	}
 
+	private final Method providerMethod;
+	private final TypeUsage targetType;
 	private final Object instance;
 	private final SubtypeProvider subtypeProvider;
 
-	Set<Arbitrary<?>> invoke(Method providerMethod, TypeUsage targetType) {
+	Set<Arbitrary<?>> invoke() {
 		List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(providerMethod, instance.getClass());
-		Set<Function<List<Object>, Arbitrary<?>>> baseInvoker = Collections.singleton(
-			argList -> invokeProviderMethod(providerMethod, argList)
-		);
-		Set<Supplier<Arbitrary<?>>> suppliers = arbitrarySuppliers(providerMethod, targetType, baseInvoker, parameters, Collections.emptyList());
+		Set<Function<List<Object>, Arbitrary<?>>> baseInvoker = Collections.singleton(this::invokeProviderMethod);
+		Set<Supplier<Arbitrary<?>>> suppliers = arbitrarySuppliers(baseInvoker, parameters, Collections.emptyList());
 		return mapSet(suppliers, Supplier::get);
 	}
 
-	private Arbitrary<?> invokeProviderMethod(Method providerMethod, List<Object> argList) {
+	private Arbitrary<?> invokeProviderMethod(List<Object> argList) {
 		return (Arbitrary<?>) invokeMethodPotentiallyOuter(providerMethod, instance, argList.toArray());
 	}
 
 	private Set<Supplier<Arbitrary<?>>> arbitrarySuppliers(
-		Method providerMethod,
-		TypeUsage targetType,
 		Set<Function<List<Object>, Arbitrary<?>>> invokers,
 		List<MethodParameter> parameters,
 		List<Object> args
@@ -54,17 +54,11 @@ class ProviderMethodInvoker {
 			if (parameterArbitraries.isEmpty()) {
 				throw new CannotFindArbitraryException(parameterType, first.getAnnotation(ForAll.class), providerMethod);
 			}
-			// return parameterArbitraries.stream()
-			// 						   .flatMap(arbitrary -> {
-			// 							   List<Object> newArgs = new ArrayList<>(args);
-			// 							   newArgs.add(null);
-			// 							   return mapInvokers(invokers, invoker -> () -> invoker.apply(args)).stream();
-			// 						   }).collect(Collectors.toSet());
 			throw new RuntimeException("NOT YET IMPLEMENTED");
 		} else {
 			List<Object> newArgs = new ArrayList<>(args);
-			newArgs.add(resolvePlainParameter(first.getRawParameter(), providerMethod, targetType));
-			return arbitrarySuppliers(providerMethod, targetType, invokers, newParameters, newArgs);
+			newArgs.add(resolvePlainParameter(first.getRawParameter()));
+			return arbitrarySuppliers(invokers, newParameters, newArgs);
 		}
 	}
 
@@ -76,7 +70,7 @@ class ProviderMethodInvoker {
 		return parameter.isAnnotated(ForAll.class);
 	}
 
-	protected Object resolvePlainParameter(Parameter parameter, Method providerMethod, TypeUsage targetType) {
+	protected Object resolvePlainParameter(Parameter parameter) {
 		if (parameter.getType().isAssignableFrom(TypeUsage.class)) {
 			return targetType;
 		} else if (parameter.getType().isAssignableFrom(SubtypeProvider.class)) {

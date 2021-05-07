@@ -73,7 +73,7 @@ public class DomainContextBaseProviders {
 
 		@Override
 		public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-			return new ProviderMethodInvoker(base, subtypeProvider).invoke(method, targetType);
+			return new ProviderMethodInvoker(method, targetType, base, subtypeProvider).invoke();
 		}
 
 		@Override

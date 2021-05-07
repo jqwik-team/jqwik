@@ -81,8 +81,8 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Set<Arbitrary<?>> invokeProviderMethod(Method providerMethod, TypeUsage targetType) {
-		ProviderMethodInvoker invoker = new ProviderMethodInvoker(testInstance, this::createForType);
-		return invoker.invoke(providerMethod, targetType);
+		ProviderMethodInvoker invoker = new ProviderMethodInvoker(providerMethod, targetType, testInstance, this::createForType);
+		return invoker.invoke();
 	}
 
 	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage targetType) {
