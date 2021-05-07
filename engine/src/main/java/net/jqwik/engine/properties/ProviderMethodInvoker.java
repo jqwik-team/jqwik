@@ -40,26 +40,35 @@ class ProviderMethodInvoker {
 
 	private Set<Supplier<Arbitrary<?>>> arbitrarySuppliers(
 		Set<Function<List<Object>, Arbitrary<?>>> invokers,
-		List<MethodParameter> parameters,
+		List<MethodParameter> unresolvedParameters,
 		List<Object> args
 	) {
-		if (parameters.isEmpty()) {
+		if (unresolvedParameters.isEmpty()) {
 			return mapSet(invokers, invoker -> () -> invoker.apply(args));
 		}
-		List<MethodParameter> newParameters = new ArrayList<>(parameters);
-		MethodParameter first = newParameters.remove(0);
-		if (isForAllParameter(first)) {
-			TypeUsage parameterType = TypeUsageImpl.forParameter(first);
-			Set<Arbitrary<?>> parameterArbitraries = subtypeProvider.apply(parameterType);
-			if (parameterArbitraries.isEmpty()) {
-				throw new CannotFindArbitraryException(parameterType, first.getAnnotation(ForAll.class), providerMethod);
-			}
+		List<MethodParameter> newUnresolvedParameters = new ArrayList<>(unresolvedParameters);
+		MethodParameter toResolve = newUnresolvedParameters.remove(0);
+		if (isForAllParameter(toResolve)) {
+			Set<Arbitrary<?>> parameterArbitraries = arbitrariesFor(toResolve);
 			throw new RuntimeException("NOT YET IMPLEMENTED");
 		} else {
 			List<Object> newArgs = new ArrayList<>(args);
-			newArgs.add(resolvePlainParameter(first.getRawParameter()));
-			return arbitrarySuppliers(invokers, newParameters, newArgs);
+			newArgs.add(resolvePlainParameter(toResolve.getRawParameter()));
+			return arbitrarySuppliers(invokers, newUnresolvedParameters, newArgs);
 		}
+	}
+
+	private Set<Arbitrary<?>> arbitrariesFor(MethodParameter toResolve) {
+		TypeUsage parameterType = TypeUsageImpl.forParameter(toResolve);
+		Set<Arbitrary<?>> parameterArbitraries = subtypeProvider.apply(parameterType);
+		if (parameterArbitraries.isEmpty()) {
+			throw new CannotFindArbitraryException(
+				parameterType,
+				parameterType.findAnnotation(ForAll.class).orElse(null),
+				providerMethod
+			);
+		}
+		return parameterArbitraries;
 	}
 
 	private <T, R> Set<R> mapSet(Set<T> invokers, Function<T, R> mapper) {
