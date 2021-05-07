@@ -4,6 +4,7 @@ import java.lang.annotation.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.domains.*;
@@ -12,6 +13,7 @@ import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,7 +21,10 @@ import static org.assertj.core.api.Assertions.*;
 class PropertyMethodArbitraryResolverTests {
 
 	private static class Thing {
-
+		@Override
+		public String toString() {
+			return "a Thing";
+		}
 	}
 
 	@Target({ElementType.METHOD})
@@ -210,18 +215,20 @@ class PropertyMethodArbitraryResolverTests {
 			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
-		@Disabled("not yet implemented")
 		@SuppressWarnings("unchecked")
 		@Example
-		void providerMethodCanHaveForAllParameters() {
+		void providerMethodCanHaveForAllParameters(@ForAll Random random) {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "tuple2WithThingAndString");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			Arbitrary<?> tupleArbitrary = arbitraries.iterator().next();
-			Tuple.Tuple2<Thing, String> aTuple = (Tuple.Tuple2<Thing, String>) tupleArbitrary.generator(10, true).next(SourceOfRandomness.current()).value();
-			assertThat(aTuple).isInstanceOf(Tuple.Tuple2.class);
-			assertThat(aTuple.get1()).isInstanceOf(Thing.class);
-			assertThat(aTuple.get2()).isInstanceOf(String.class);
+			RandomGenerator<Tuple2<Thing, String>> generator =
+				(RandomGenerator<Tuple2<Thing, String>>) arbitraries.iterator().next().generator(100);
+			TestingSupport.assertAllGenerated(generator, random, aTuple -> {
+				assertThat(aTuple).isInstanceOf(Tuple2.class);
+				assertThat(aTuple.get1()).isInstanceOf(Thing.class);
+				assertThat(aTuple.get2()).isInstanceOf(String.class);
+				assertThat(aTuple.get2()).hasSize(2);
+			});
 		}
 
 		@Example
@@ -446,12 +453,19 @@ class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Property
-			boolean tuple2WithThingAndString(@ForAll("tuple2WithThingAndStringProvider") Tuple.Tuple2<Thing, String> aTuple) {
+			boolean tuple2WithThingAndString(@ForAll("tuple2WithThingAndStringProvider") Tuple2<Thing, String> aTuple) {
 				return true;
 			}
 
 			@Provide
-			Arbitrary<Tuple.Tuple2<Thing, String>> tuple2WithThingAndStringProvider(@ForAll("aThing") Thing aThing, @ForAll String aString) {
+			Arbitrary<Tuple2<Thing, String>> tuple2WithThingAndStringProvider(
+				SubtypeProvider subtypeProvider,
+				@ForAll("aThing") Thing aThing,
+				@ForAll @StringLength(2) String aString,
+				TypeUsage targetType
+			) {
+				assertThat(subtypeProvider).isInstanceOf(SubtypeProvider.class);
+				assertThat(targetType.isOfType(Tuple2.class)).isTrue();
 				return Arbitraries.just(Tuple.of(aThing, aString));
 			}
 

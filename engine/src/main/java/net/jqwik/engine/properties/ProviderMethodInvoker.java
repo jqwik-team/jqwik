@@ -49,8 +49,10 @@ class ProviderMethodInvoker {
 		List<MethodParameter> newUnresolvedParameters = new ArrayList<>(unresolvedParameters);
 		MethodParameter toResolve = newUnresolvedParameters.remove(0);
 		if (isForAllParameter(toResolve)) {
-			Set<Arbitrary<?>> parameterArbitraries = arbitrariesFor(toResolve);
-			throw new RuntimeException("NOT YET IMPLEMENTED");
+			List<Object> newArgs = new ArrayList<>(args);
+			newArgs.add(arbitraryFor(toResolve)); // Arbitrary is now in position toResolve.getIndex()
+			Set<Function<List<Object>, Arbitrary<?>>> newInvokers = flatMapArbitraryInInvocations(invokers, toResolve.getIndex());
+			return arbitrarySuppliers(newInvokers, newUnresolvedParameters, newArgs);
 		} else {
 			List<Object> newArgs = new ArrayList<>(args);
 			newArgs.add(resolvePlainParameter(toResolve.getRawParameter()));
@@ -58,17 +60,29 @@ class ProviderMethodInvoker {
 		}
 	}
 
-	private Set<Arbitrary<?>> arbitrariesFor(MethodParameter toResolve) {
+	private Set<Function<List<Object>, Arbitrary<?>>> flatMapArbitraryInInvocations(Set<Function<List<Object>, Arbitrary<?>>> invokers, int position) {
+		Function<Function<List<Object>, Arbitrary<?>>, Function<List<Object>, Arbitrary<?>>> mapper = invoker -> arguments -> {
+			Arbitrary<?> a = (Arbitrary<?>) arguments.get(position);
+			return a.flatMap(argument -> {
+				List<Object> resolved = new ArrayList<>(arguments);
+				resolved.set(position, argument);
+				return invoker.apply(resolved);
+			});
+		};
+		return mapSet(invokers, mapper);
+	}
+
+	private Arbitrary<?> arbitraryFor(MethodParameter toResolve) {
 		TypeUsage parameterType = TypeUsageImpl.forParameter(toResolve);
-		Set<Arbitrary<?>> parameterArbitraries = subtypeProvider.apply(parameterType);
-		if (parameterArbitraries.isEmpty()) {
-			throw new CannotFindArbitraryException(
-				parameterType,
-				parameterType.findAnnotation(ForAll.class).orElse(null),
-				providerMethod
-			);
-		}
-		return parameterArbitraries;
+		Optional<Arbitrary<?>> optionalArbitrary = subtypeProvider.provideOneFor(parameterType);
+		return optionalArbitrary.orElseThrow(
+			() ->
+				new CannotFindArbitraryException(
+					parameterType,
+					parameterType.findAnnotation(ForAll.class).orElse(null),
+					providerMethod
+				)
+		);
 	}
 
 	private <T, R> Set<R> mapSet(Set<T> invokers, Function<T, R> mapper) {
