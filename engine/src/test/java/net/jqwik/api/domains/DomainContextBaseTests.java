@@ -53,7 +53,6 @@ class DomainContextBaseTests {
 			assertThat(listOf5Ints).allMatch(i -> i == first);
 		}
 
-		@Disabled("not yet implemented")
 		@Property
 		@Domain(ContextWithDependentProviders.class)
 		void flatmapOverInjectedForAllParameterWithValue(@ForAll String aString) {

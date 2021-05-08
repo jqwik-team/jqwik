@@ -2,6 +2,8 @@ package net.jqwik.api.domains;
 
 import java.util.*;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.api.*;
 
 class ContextWithDependentProviders extends DomainContextBase {
@@ -28,6 +30,7 @@ class ContextWithDependentProviders extends DomainContextBase {
 
 	@Provide
 	Arbitrary<String> doubleStrings(@ForAll("a") Character base) {
+		Assertions.assertThat(base).isEqualTo('a');
 		return Arbitraries.just(base + "" + base);
 	}
 

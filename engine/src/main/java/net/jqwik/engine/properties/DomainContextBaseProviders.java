@@ -10,6 +10,7 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.providers.ArbitraryProvider.*;
 
 public class DomainContextBaseProviders {
 
@@ -54,6 +55,27 @@ public class DomainContextBaseProviders {
 		return Arbitrary.class.isAssignableFrom(type);
 	}
 
+	private static class DomainContextBaseSubtypeProvider extends InstanceBasedSubtypeProvider {
+
+		private final SubtypeProvider baseProvider;
+
+		protected DomainContextBaseSubtypeProvider(Object base, SubtypeProvider baseProvider) {
+			super(base);
+			this.baseProvider = baseProvider;
+		}
+
+		@Override
+		protected Set<Arbitrary<?>> resolve(TypeUsage parameterType) {
+			return baseProvider.apply(parameterType);
+		}
+
+		@Override
+		protected Arbitrary<?> configure(Arbitrary<?> arbitrary, TypeUsage targetType) {
+			// TODO: Implement configuration
+			return arbitrary;
+		}
+	}
+
 	private static class MethodBaseArbitraryProvider implements ArbitraryProvider {
 
 		private MethodBaseArbitraryProvider(Method method, Object base, int priority) {
@@ -73,7 +95,8 @@ public class DomainContextBaseProviders {
 
 		@Override
 		public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-			return new ProviderMethodInvoker(method, targetType, base, subtypeProvider).invoke();
+			SubtypeProvider domainSubtypeProvider = new net.jqwik.engine.properties.DomainContextBaseProviders.DomainContextBaseSubtypeProvider(base, subtypeProvider);
+			return new ProviderMethodInvoker(method, targetType, base, domainSubtypeProvider).invoke();
 		}
 
 		@Override
