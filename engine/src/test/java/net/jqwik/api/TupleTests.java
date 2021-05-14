@@ -1,8 +1,10 @@
 package net.jqwik.api;
 
 import java.math.*;
+import java.util.*;
 
 import net.jqwik.api.Tuple.*;
+import net.jqwik.api.constraints.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -175,5 +177,21 @@ class TupleTests {
 		assertThat(tuple8.hashCode()).isEqualTo(Tuple.of("hallo", 42, true, RoundingMode.CEILING, 0.5, "six", 7, false).hashCode());
 
 		assertThat(tuple8.toString()).isEqualTo("(hallo, 42, true, CEILING, 0.5, six, 7, false)");
+	}
+
+	@Property(tries = 100)
+	void toStringNeverCrashes(@ForAll @Size(8) List<@WithNull(0.05) ?> objects) {
+		Tuple8<?,?,?,?,?,?,?,?> tuple = Tuple.of(
+			objects.get(0),
+			objects.get(1),
+			objects.get(2),
+			objects.get(3),
+			objects.get(4),
+			objects.get(5),
+			objects.get(6),
+			objects.get(7)
+		);
+
+		assertThat(tuple.toString()).isInstanceOf(String.class);
 	}
 }

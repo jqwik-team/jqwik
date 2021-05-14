@@ -45,6 +45,8 @@ title: jqwik Release Notes
 - Fixed bug when running inner tests of an extended test container:
   https://github.com/jlink/jqwik/issues/179
 
+- Fixed bug in Tuple.toString():
+  https://github.com/jlink/jqwik/issues/187
 
 ## 1.5.1
 

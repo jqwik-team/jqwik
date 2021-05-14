@@ -20,7 +20,7 @@ public interface Tuple extends Serializable, Cloneable {
 	default List<Object> items() {return Collections.emptyList();}
 
 	default String itemsToString() {
-		String items = items().stream().map(Object::toString).collect(Collectors.joining(", "));
+		String items = items().stream().map(Objects::toString).collect(Collectors.joining(", "));
 		return String.format("(%s)", items);
 	}
 
@@ -89,8 +89,7 @@ public interface Tuple extends Serializable, Cloneable {
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			return true;
+			return o != null && getClass() == o.getClass();
 		}
 
 		@Override
