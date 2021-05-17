@@ -29,7 +29,10 @@ title: jqwik Release Notes
 
 - More progress on 
   [generation of DateTimes](/docs/snapshot/user-guide.html#generation-of-datetimes)
-  
+
+- Upgrade to JUnit Platform 1.7.2
+
+
 #### Breaking Changes
 
 - Removed `leapYears(boolean withLeapyear)` from all date generating arbitraries.
