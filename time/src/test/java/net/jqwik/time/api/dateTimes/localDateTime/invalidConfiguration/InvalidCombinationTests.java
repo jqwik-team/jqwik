@@ -72,7 +72,7 @@ public class InvalidCombinationTests {
 	) {
 
 		LocalTime minFromValues = LocalTime.of(minHour, minMinute, minSecond);
-		LocalTime maxFromValues = LocalTime.of(maxHour, maxMinute, maxSecond);
+		LocalTime maxFromValues = LocalTime.of(maxHour, maxMinute, maxSecond, 999_999_999);
 
 		Assume.that(!min.isAfter(max));
 		Assume.that(minHour <= maxHour && minMinute <= maxMinute && minSecond <= maxSecond);
