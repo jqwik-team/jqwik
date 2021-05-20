@@ -2,13 +2,11 @@
 
     - Domains
         - Deprecate AbstractDomainContextBase
-            - Introduce DomainContextBase
-            - Allow @Provide methods in DomainContextBase subclasses
-            - Allow @ForAll parameters in @Provide methods
-            - Allow Arbitrary<T> parameters in @Provide methods
-            - @Configure method for configurators?
-
-        - Hand in property execution context to domains when being created.
+        - DomainContextBase
+            - Allow inner ArbitraryProvider classes
+            - Allow inner ArbitraryConfigurator classes
+        - Arbitrary.fix() to always generate the same value in one try 
+        - Hand in property execution context to provider method
           E.g. to get annotation values from method
           DomainContext.prepare(PropertyExecutionContext context)
 
