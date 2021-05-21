@@ -41,6 +41,7 @@
         - Recursive use
             - forType(Class<T> targetType, int depth)
             - @UseType(depth = 1)
+        - See https://github.com/jlink/jqwik/issues/191
 
     - `@Repeat(42)`: Repeat a property 42 times
 

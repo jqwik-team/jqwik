@@ -180,10 +180,14 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	}
 
 	private void setOfPrecisionImplicitly(DefaultLocalDateTimeArbitrary clone, LocalDateTime dateTime) {
+		setOfPrecisionImplicitly(clone, dateTime.toLocalTime());
+	}
+
+	private void setOfPrecisionImplicitly(DefaultLocalDateTimeArbitrary clone, LocalTime time){
 		if (clone.ofPrecision.isSet()) {
 			return;
 		}
-		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.ofPrecisionFromTime(dateTime.toLocalTime());
+		ChronoUnit ofPrecision = DefaultLocalTimeArbitrary.ofPrecisionFromTime(time);
 		if (clone.ofPrecision.isGreatherThan(ofPrecision)) {
 			clone.ofPrecision.setProgrammatically(ofPrecision);
 		}
@@ -253,6 +257,8 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 	public LocalDateTimeArbitrary timeBetween(LocalTime min, LocalTime max) {
 		DefaultLocalDateTimeArbitrary clone = typedClone();
 		clone.timeBetween.set(min, max);
+		clone.setOfPrecisionImplicitly(clone, min);
+		clone.setOfPrecisionImplicitly(clone, max);
 		return clone;
 	}
 
