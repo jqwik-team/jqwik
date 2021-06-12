@@ -68,6 +68,10 @@ test {
 	include 'net/**/*Test.class'
 	include 'net/**/*Tests.class'
 
+	reports {
+		junitXml.enabled = true
+	}
+
 	// testLogging.showStandardStreams = true
 }
 

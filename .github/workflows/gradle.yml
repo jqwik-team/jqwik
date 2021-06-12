@@ -41,6 +41,7 @@ jobs:
         uses: scacap/action-surefire-report@v1
         if: always() && (github.ref == 'refs/heads/main')
         with:
+          check_name: Test Report for Java ${{ matrix.Java }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
