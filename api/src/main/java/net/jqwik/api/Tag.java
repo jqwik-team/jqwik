@@ -30,6 +30,11 @@ import static org.apiguardian.api.API.Status.*;
  * </li>
  * </ul>
  *
+ * <p>
+ *     Note that using JUnit Jupiter's annotation {@code org.junit.jupiter.api.Tag}
+ *     does not work with jqwik.
+ * </p>
+ *
  */
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

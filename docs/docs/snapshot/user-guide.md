@@ -1015,8 +1015,9 @@ class TaggingExamples {
 ```
 
 Tags must follow certain rules as described
-[here](/docs/snapshot/javadoc/net/jqwik/api/Tag.html). Noted that the `@Tag` you'll
-have to use with jqwik is `net.jqwik.api.Tag` rather than `org.junit.jupiter.api.Tag`
+[here](/docs/snapshot/javadoc/net/jqwik/api/Tag.html). 
+Note that the `@Tag` annotation you'll have to use with jqwik is 
+`net.jqwik.api.Tag` rather than `org.junit.jupiter.api.Tag`
 
 ### Disabling Tests
 
