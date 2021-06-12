@@ -80,6 +80,6 @@ allprojects {
 }
 
 wrapper {
-	gradleVersion = '7.1-rc-2'
+	gradleVersion = '7.0.2'
 }
 
