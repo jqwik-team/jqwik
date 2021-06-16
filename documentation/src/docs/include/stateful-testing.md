@@ -176,7 +176,7 @@ org.opentest4j.AssertionFailedError:
 
 _jqwik_ will vary the number of generated actions according to the number
 of `tries` of your property. For the default of 1000 tries a sequence will
-have up to 32 actions. If need be you can specify the number of actions
+have 32 actions. If need be you can specify the number of actions
 to generate using either the fluent interface or the `@Size` annotation:
 
 ```java

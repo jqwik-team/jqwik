@@ -9,21 +9,23 @@ import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
 
+import static org.assertj.core.api.Assertions.*;
+
 class ActionSequenceProperties {
 
 	@Property
 	void createdSequencesDoTheirWork(@ForAll("xOrY") @Size(min = 2) ActionSequence<String> sequence) {
 		String result = sequence.run("");
 
-		Assertions.assertThat(sequence.runActions().size()).isGreaterThanOrEqualTo(2);
-		Assertions.assertThat(result).hasSize(sequence.runActions().size());
-		Assertions.assertThat(result.contains("x") || result.contains("y")).isTrue();
+		assertThat(sequence.runActions().size()).isGreaterThanOrEqualTo(2);
+		assertThat(result).hasSize(sequence.runActions().size());
+		assertThat(result.contains("x") || result.contains("y")).isTrue();
 	}
 
 	@Property
 	void sequencesCanBeSized(@ForAll("ofSize5") ActionSequence<String> actions) {
 		String result = actions.run("");
-		Assertions.assertThat(actions.runActions()).hasSize(5);
+		assertThat(actions.runActions()).hasSize(5);
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -41,9 +43,9 @@ class ActionSequenceProperties {
 	void preconditionsAreConsidered(@ForAll("xOrZ") ActionSequence<String> actions) {
 		String result = actions.run("");
 
-		Assertions.assertThat(result).hasSize(actions.runActions().size());
-		Assertions.assertThat(result).contains("x");
-		Assertions.assertThat(result).doesNotContain("z");
+		assertThat(result).hasSize(actions.runActions().size());
+		assertThat(result).contains("x");
+		assertThat(result).doesNotContain("z");
 	}
 
 	@Provide
@@ -58,6 +60,29 @@ class ActionSequenceProperties {
 
 		Assertions.assertThatThrownBy(() -> sequence.value().run(""))
 				  .isInstanceOf(AssertionFailedError.class).hasCauseInstanceOf(AssertionError.class);
+	}
+
+	@Example
+	void sequenceExecutionIsStoppedWhenAllActionsFailPrecondition(@ForAll Random random) {
+		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX3times());
+		Shrinkable<ActionSequence<String>> sequence = arbitrary.generator(10, true).next(random);
+
+		String result = sequence.value().run("");
+		assertThat(result).hasSize(3);
+	}
+
+	private Arbitrary<Action<String>> addX3times() {
+		return Arbitraries.just(new Action<String>() {
+			@Override
+			public boolean precondition(String state) {
+				return state.length() <= 2;
+			}
+
+			@Override
+			public String run(String model) {
+				return model + "x";
+			}
+		});
 	}
 
 	private Arbitrary<Action<String>> addX() {
