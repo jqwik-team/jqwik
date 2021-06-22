@@ -2,6 +2,7 @@ package net.jqwik.engine.properties;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
@@ -11,19 +12,26 @@ import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.providers.ArbitraryProvider.*;
+import net.jqwik.engine.support.*;
 
 public class DomainContextBaseProviders {
 
 	private static final Logger LOG = Logger.getLogger(DomainContextBaseProviders.class.getName());
 
 	static public List<ArbitraryProvider> forContextBase(DomainContextBase base, int priority) {
+		return Stream.concat(
+			providerFromProviderMethods(base, priority),
+			providerFromInnerClasses(base, priority)
+		).collect(Collectors.toList());
+	}
+
+	private static Stream<ArbitraryProvider> providerFromProviderMethods(DomainContextBase base, int priority) {
 		List<Method> methods = AnnotationSupport.findAnnotatedMethods(base.getClass(), Provide.class, HierarchyTraversalMode.BOTTOM_UP);
 		warnIfMethodsHaveWrongReturnType(methods);
 		warnIfProvideAnnotationHasValue(methods);
 		return methods.stream()
 					  .filter(method -> isArbitrary(method.getReturnType()))
-					  .map(method -> new MethodBaseArbitraryProvider(method, base, priority))
-					  .collect(Collectors.toList());
+					  .map(method -> new MethodBaseArbitraryProvider(method, base, priority));
 	}
 
 	private static void warnIfProvideAnnotationHasValue(List<Method> methods) {
@@ -51,8 +59,50 @@ public class DomainContextBaseProviders {
 			   });
 	}
 
+	private static Stream<ArbitraryProvider> providerFromInnerClasses(DomainContextBase base, int priority) {
+		Predicate<Class<?>> implementsArbitraryProvider = clazz -> ArbitraryProvider.class.isAssignableFrom(clazz) && !JqwikReflectionSupport.isPrivate(clazz);
+		List<Class<?>> arbitraryProviderClasses = ReflectionSupport.findNestedClasses(base.getClass(), implementsArbitraryProvider);
+		// warnIfClassesAreStatic(arbitraryProviderClasses);
+		// warnIfClassesHaveNoDefaultConstructor(arbitraryProviderClasses);
+		return arbitraryProviderClasses.stream().map(clazz -> createArbitraryProvider(clazz, base, priority));
+	}
+
+	private static ArbitraryProvider createArbitraryProvider(Class<?> clazz, DomainContextBase base, int priority) {
+		ArbitraryProvider arbitraryProviderInstance = (ArbitraryProvider) JqwikReflectionSupport.newInstanceInTestContext(clazz, base);
+		if (JqwikReflectionSupport.implementsMethod(clazz, "priority", new Class[0], ArbitraryProvider.class)) {
+			return arbitraryProviderInstance;
+		}
+		return new ArbitraryProviderWithPriority(arbitraryProviderInstance, priority);
+	}
+
 	private static boolean isArbitrary(Class<?> type) {
 		return Arbitrary.class.isAssignableFrom(type);
+	}
+
+	private static class ArbitraryProviderWithPriority implements ArbitraryProvider {
+
+		private final ArbitraryProvider instance;
+		private final int priority;
+
+		private ArbitraryProviderWithPriority(ArbitraryProvider instance, int priority) {
+			this.instance = instance;
+			this.priority = priority;
+		}
+
+		@Override
+		public boolean canProvideFor(TypeUsage targetType) {
+			return instance.canProvideFor(targetType);
+		}
+
+		@Override
+		public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+			return instance.provideFor(targetType, subtypeProvider);
+		}
+
+		@Override
+		public int priority() {
+			return priority;
+		}
 	}
 
 	private static class DomainContextBaseSubtypeProvider extends InstanceBasedSubtypeProvider {

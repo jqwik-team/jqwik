@@ -12,7 +12,7 @@ class DomainContextBaseTests {
 
 	@Group
 	@PropertyDefaults(tries = 20)
-	class ArbitraryProviders {
+	class ArbitraryProviderMethods {
 
 		@Property
 		@Domain(ContextWithProviderMethods.class)
@@ -57,6 +57,37 @@ class DomainContextBaseTests {
 		@Domain(ContextWithDependentProviders.class)
 		void flatmapOverInjectedForAllParameterWithValue(@ForAll String aString) {
 			assertThat(aString).isEqualTo("aa");
+		}
+	}
+
+	@Group
+	@PropertyDefaults(tries = 20)
+	class InnerArbitraryProviderClasses {
+
+		@Property
+		@Domain(ContextWithInnerProviderClasses.class)
+		void useProviderFromInnerClass(@ForAll String aString) {
+			assertThat(aString).hasSize(2);
+			assertThat(aString).containsOnlyDigits();
+		}
+
+		@Property
+		@Domain(ContextWithInnerProviderClasses.class)
+		void useGenericProviderFromInnerClass(@ForAll List<String> listOfStrings) {
+			assertThat(listOfStrings).hasSize(3);
+			listOfStrings.forEach(aString -> {
+				assertThat(aString).isInstanceOf(String.class);
+				assertThat(aString).hasSize(2);
+				assertThat(aString).containsOnlyDigits();
+			});
+		}
+
+		@Property
+		@Domain(ContextWithInnerProviderClasses.class)
+		@Domain(DomainContext.Global.class)
+		void dontUseProviderWithPriorityLowerThanDefault(@ForAll int anInt) {
+			// Provider class with constant return but priority -1 should not be used
+			assertThat(anInt).isNotEqualTo(414243);
 		}
 	}
 

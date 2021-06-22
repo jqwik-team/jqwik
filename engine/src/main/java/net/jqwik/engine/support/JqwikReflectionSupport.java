@@ -312,6 +312,10 @@ public class JqwikReflectionSupport {
 		return Modifier.isStatic(clazz.getModifiers());
 	}
 
+	public static boolean isPrivate(Class<?> clazz) {
+		return Modifier.isPrivate(clazz.getModifiers());
+	}
+
 	public static boolean isNotStatic(Class<?> clazz) {
 		return !isStatic(clazz);
 	}
@@ -349,4 +353,8 @@ public class JqwikReflectionSupport {
 		return false;
 	}
 
+	public static boolean implementsMethod(Class<?> aClass, String methodName, Class<?>[] parameterTypes, Class<?> ignoreImplementationClass) {
+		Optional<Method> optionalMethod = ReflectionSupport.findMethod(aClass, methodName, parameterTypes);
+		return optionalMethod.map(method -> !method.getDeclaringClass().equals(ignoreImplementationClass)).orElse(false);
+	}
 }
