@@ -14,6 +14,8 @@ import net.jqwik.api.providers.*;
 import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+
 public class DomainContextBaseProviders {
 
 	private static final Logger LOG = Logger.getLogger(DomainContextBaseProviders.class.getName());
@@ -60,11 +62,33 @@ public class DomainContextBaseProviders {
 	}
 
 	private static Stream<ArbitraryProvider> providerFromInnerClasses(DomainContextBase base, int priority) {
-		Predicate<Class<?>> implementsArbitraryProvider = clazz -> ArbitraryProvider.class.isAssignableFrom(clazz) && !JqwikReflectionSupport.isPrivate(clazz);
+		Predicate<Class<?>> implementsArbitraryProvider = clazz -> ArbitraryProvider.class
+																	   .isAssignableFrom(clazz) && !JqwikReflectionSupport.isPrivate(clazz);
 		List<Class<?>> arbitraryProviderClasses = ReflectionSupport.findNestedClasses(base.getClass(), implementsArbitraryProvider);
-		// warnIfClassesAreStatic(arbitraryProviderClasses);
-		// warnIfClassesHaveNoDefaultConstructor(arbitraryProviderClasses);
-		return arbitraryProviderClasses.stream().map(clazz -> createArbitraryProvider(clazz, base, priority));
+		warnIfClassesHaveNoFittingConstructor(arbitraryProviderClasses);
+		return arbitraryProviderClasses.stream()
+									   .filter(clazz -> hasFittingConstructor(clazz))
+									   .map(clazz -> createArbitraryProvider(clazz, base, priority));
+	}
+
+	private static void warnIfClassesHaveNoFittingConstructor(List<Class<?>> classes) {
+		classes.stream()
+			   .filter(aClass -> !hasFittingConstructor(aClass))
+			   .forEach(aClass -> {
+				   String message = String.format(
+					   "Class <%s> does not have a default constructor and cannot be instantiated as arbitrary provider.",
+					   aClass.getName()
+				   );
+				   LOG.warning(message);
+			   });
+
+	}
+
+	private static boolean hasFittingConstructor(Class<?> clazz) {
+		if (JqwikReflectionSupport.isStatic(clazz)) {
+			return hasDefaultConstructor(clazz);
+		}
+		return hasConstructor(clazz, clazz.getDeclaringClass());
 	}
 
 	private static ArbitraryProvider createArbitraryProvider(Class<?> clazz, DomainContextBase base, int priority) {

@@ -73,6 +73,12 @@ class DomainContextBaseTests {
 
 		@Property
 		@Domain(ContextWithInnerProviderClasses.class)
+		void useProviderFromStaticInnerClass(@ForAll boolean aBoolean) {
+			assertThat(aBoolean).isFalse();
+		}
+
+		@Property
+		@Domain(ContextWithInnerProviderClasses.class)
 		void useGenericProviderFromInnerClass(@ForAll List<String> listOfStrings) {
 			assertThat(listOfStrings).hasSize(3);
 			listOfStrings.forEach(aString -> {

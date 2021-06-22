@@ -3,7 +3,6 @@
     - Domains
         - Deprecate AbstractDomainContextBase
         - DomainContextBase
-            - Allow inner ArbitraryProvider classes
             - Allow inner ArbitraryConfigurator classes
         - Arbitrary.fix() to always generate the same value in one try 
         - Hand in property execution context to provider method

@@ -34,6 +34,18 @@ class ContextWithInnerProviderClasses extends DomainContextBase {
 		}
 	}
 
+	static class StaticArbitraryProvider implements ArbitraryProvider {
+		@Override
+		public boolean canProvideFor(TypeUsage targetType) {
+			return targetType.isAssignableFrom(Boolean.class);
+		}
+
+		@Override
+		public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+			return Collections.singleton(Arbitraries.just(false));
+		}
+	}
+
 	private class ShouldNotBeUsedBecausePrivate implements ArbitraryProvider {
 		@Override
 		public boolean canProvideFor(TypeUsage targetType) {
@@ -62,5 +74,24 @@ class ContextWithInnerProviderClasses extends DomainContextBase {
 			return -1000;
 		}
 	}
+
+/*
+	// Will lead to a warning log message
+	class ShouldNotBeUsedBecauseNoDefaultConstructor implements ArbitraryProvider {
+
+		ShouldNotBeUsedBecauseNoDefaultConstructor(int ignore) {
+		}
+
+		@Override
+		public boolean canProvideFor(TypeUsage targetType) {
+			return targetType.isAssignableFrom(Integer.class);
+		}
+
+		@Override
+		public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+			return Collections.singleton(Arbitraries.just(414243));
+		}
+	}
+*/
 
 }

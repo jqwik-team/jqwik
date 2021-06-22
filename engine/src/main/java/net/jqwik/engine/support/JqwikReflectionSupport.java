@@ -290,8 +290,12 @@ public class JqwikReflectionSupport {
 	}
 
 	public static boolean hasDefaultConstructor(Class<?> aClass) {
+		return hasConstructor(aClass);
+	}
+
+	public static boolean hasConstructor(Class<?> aClass, Class<?> ... parameterTypes) {
 		try {
-			aClass.getDeclaredConstructor();
+			aClass.getDeclaredConstructor(parameterTypes);
 			return true;
 		} catch (NoSuchMethodException e) {
 			return false;
