@@ -37,15 +37,7 @@ of the method's `@Provide` annotation.
 
 The providing method has to return an object of type
 [`@Arbitrary<T>`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html)
-where `T` is the static type of the parameter to be provided. Optionally
-the provider method can take tow optional parameters:
-
-- a first parameter of type `TypeUsage` that describes the details of the target parameter to be provided
-- a second parameter of type `ArbitraryProvider.SubtypeProvider`
-
-These two objects can be used to get detailed information about the parameter,
-like annotations and embedded type parameters, and to resolve other types,
-usually from type parameters embedded in the original parameter. Use with care!
+where `T` is the static type of the parameter to be provided.
 
 Parameter provision usually starts with a
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
@@ -58,6 +50,20 @@ The examples of [provider methods](#parameter-provider-methods) you've seen so f
 had no parameters. In more complicated scenarios, however, you may want to tune
 an arbitrary depending on the concrete parameter to be generated.
 
+The provider method can take a few optional parameters:
+
+- a parameter of type `TypeUsage`
+  that describes the details of the target parameter to be provided,
+  like annotations and type variables.
+
+- a parameter of type `ArbitraryProvider.SubtypeProvider`
+  which is needed in case of variable subtypes that require their own dynamic resolution.
+
+- any parameter annotated with `@ForAll`: This parameter will be generated using
+  the current context and then be used to create or configure the arbitrary to return.
+  We call this [implicit flat mapping](#implicit-flat-mapping).
+
+The following example uses a `TypeUsage` parameter to unify two provider methods.  
 Imagine you want to randomly choose one of your favourite primes; that's easy:
 
 ```java
@@ -91,9 +97,7 @@ Arbitrary<?> favouritePrimes(TypeUsage targetType) {
 }
 ```
 
-Mind the parameters and return type of `favouritePrimes()`. 
-The second parameter `ArbitraryProvider.SubtypeProvider subtypeProvider` is optional and can be left out;
-it would be needed in case of variable subtypes that require their own dynamic resolution.
+Mind that Java's type system now forces you to use a wildcard in the return type.
 
 
 ### Providing Arbitraries for Embedded Types
@@ -674,8 +678,8 @@ boolean fixedSizedStrings(@ForAll("listsOfEqualSizedStrings")List<String> lists)
 Arbitrary<List<String>> listsOfEqualSizedStrings() {
     Arbitrary<Integer> integers2to5 = Arbitraries.integers().between(2, 5);
     return integers2to5.flatMap(stringSize -> {
-        Arbitrary<String> strings = Arbitraries.strings() //
-                .withCharRange('a', 'z') //
+        Arbitrary<String> strings = Arbitraries.strings() 
+                .withCharRange('a', 'z') 
                 .ofMinLength(stringSize).ofMaxLength(stringSize);
         return strings.list();
     });
@@ -684,7 +688,7 @@ Arbitrary<List<String>> listsOfEqualSizedStrings() {
 The provider method will create random lists of strings, but in each list the size of the contained strings
 will always be the same - between 2 and 5.
 
-### Flat Mapping with Tuple Types
+#### Flat Mapping with Tuple Types
 
 In the example above you used a generated value in order to create another arbitrary.
 In those situations you often want to also provide the original values to your property test.
@@ -706,18 +710,17 @@ void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integ
     String aString = stringBeginEnd.get1();
     int begin = stringBeginEnd.get2();
     int end = stringBeginEnd.get3();
-    Assertions.assertThat(aString.substring(begin, end).length())
-        .isEqualTo(end - begin);
+    assertThat(aString.substring(begin, end).length()).isEqualTo(end - begin);
 }
 
 @Provide
 Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
-    Arbitrary<String> stringArbitrary = Arbitraries.strings() //
-            .withCharRange('a', 'z') //
+    Arbitrary<String> stringArbitrary = Arbitraries.strings() 
+            .withCharRange('a', 'z') 
             .ofMinLength(2).ofMaxLength(20);
-    return stringArbitrary //
-            .flatMap(aString -> Arbitraries.integers().between(0, aString.length()) //
-                    .flatMap(end -> Arbitraries.integers().between(0, end) //
+    return stringArbitrary 
+            .flatMap(aString -> Arbitraries.integers().between(0, aString.length()) 
+                    .flatMap(end -> Arbitraries.integers().between(0, end) 
                             .map(begin -> Tuple.of(aString, begin, end))));
 }
 ```
@@ -725,6 +728,47 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
 Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
 very useful.
 
+#### Implicit Flat Mapping
+
+Flat mapping syntax - especially when it's nested - is a bit cumbersome to read.
+Starting with version `1.5.2` _jqwik_ allows to use flat mapping implicitly.
+You simply add a `@ForAll` parameter to your provider method, 
+the value of which will be generated using standard parameter generation.
+Under the hood this uses this parameter's arbitrary and call `flatMap` on it.
+
+Here's the example from above with no explicit flat mapping:
+
+```java
+@Property
+@Report(Reporting.GENERATED)
+void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integer> stringBeginEnd) {
+	String aString = stringBeginEnd.get1();
+	int begin = stringBeginEnd.get2();
+	int end = stringBeginEnd.get3();
+	assertThat(aString.substring(begin, end).length()).isEqualTo(end - begin);
+}
+
+@Provide
+Arbitrary<String> simpleStrings() {
+	return Arbitraries.strings()
+					  .withCharRange('a', 'z')
+					  .ofMinLength(2).ofMaxLength(20);
+}
+
+@Provide
+Arbitrary<Tuple2<String, Integer>> stringWithEnd(@ForAll("simpleStrings") String aString) {
+	return Arbitraries.integers().between(0, aString.length())
+					  .map(end -> Tuple.of(aString, end));
+}
+
+@Provide
+Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd(@ForAll("stringWithEnd") Tuple2<String, Integer> stringWithEnd) {
+	String aString = stringWithEnd.get1();
+	int end = stringWithEnd.get2();
+	return Arbitraries.integers().between(0, end)
+					  .map(begin -> Tuple.of(aString, begin, end));
+}
+```
 
 ### Randomly Choosing among Arbitraries
 
