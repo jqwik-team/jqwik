@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
-import net.jqwik.api.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -34,15 +33,20 @@ class UseTypeProperties {
 		assertThat(random).isNotNull();
 	}
 
-	class SmallNumbers extends AbstractDomainContextBase {
-		public SmallNumbers() {
-			registerArbitrary(int.class, Arbitraries.integers().between(1, 99));
-			registerArbitrary(long.class, Arbitraries.longs());
+	class SmallNumbers extends DomainContextBase {
+		@Provide
+		Arbitrary<Integer> ints() {
+			return Arbitraries.integers().between(1, 99);
+		}
+
+		@Provide
+		Arbitrary<Long> longs() {
+			return Arbitraries.longs();
 		}
 	}
 
 	private static class Person {
-		private String name;
+		private final String name;
 
 		public static Person create(String name) {
 			return new Person("factory: " + name);
@@ -65,6 +69,5 @@ class UseTypeProperties {
 			return name;
 		}
 	}
-
 
 }

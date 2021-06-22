@@ -37,10 +37,15 @@ class TypeArbitraryExamples {
 		Assertions.assertThat(aPerson.name.length()).isBetween(5, 21);
 	}
 
-	static class People extends AbstractDomainContextBase {
-		public People() {
-			registerArbitrary(String.class, Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10));
-			registerArbitrary(int.class, Arbitraries.integers().between(0, 100));
+	static class People extends DomainContextBase {
+		@Provide
+		Arbitrary<String> strings() {
+			return Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10);
+		}
+
+		@Provide
+		Arbitrary<Integer> ints() {
+			return Arbitraries.integers().between(0, 100);
 		}
 	}
 

@@ -96,9 +96,10 @@ class RateProviderContractProperties {
 			return Arbitraries.just(new SimpleRateProvider());
 		}
 
-		class SimpleRateProviderDomain extends AbstractDomainContextBase {
-			public SimpleRateProviderDomain() {
-				registerArbitrary(SimpleRateProvider.class, Arbitraries.just(new SimpleRateProvider()));
+		class SimpleRateProviderDomain extends DomainContextBase {
+			@Provide
+			Arbitrary<SimpleRateProvider> simpleRateProviders() {
+				return Arbitraries.just(new SimpleRateProvider());
 			}
 		}
 

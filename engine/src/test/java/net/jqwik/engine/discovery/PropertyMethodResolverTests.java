@@ -335,7 +335,7 @@ class PropertyMethodResolverTests {
 		}
 	}
 
-	private static class Domain1 extends AbstractDomainContextBase {}
+	private static class Domain1 extends DomainContextBase {}
 
-	private static class Domain2 extends AbstractDomainContextBase {}
+	private static class Domain2 extends DomainContextBase {}
 }

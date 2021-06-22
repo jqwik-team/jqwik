@@ -1,13 +1,15 @@
 - 1.5.2
 
     - Domains
-        - Deprecate AbstractDomainContextBase and document new DomainContextBase.
-            - User guide entry for DomainContextBase
+        - User guide entry for DomainContextBase
+        - release notes
 
     - Release
 
 
 - 1.5.x
+
+    - SizableCollections.withSizeDistribution(...)
 
     - Domains
         - Hand in property execution context to provider method

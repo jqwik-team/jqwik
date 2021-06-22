@@ -14,8 +14,11 @@ import static org.apiguardian.api.API.Status.*;
  * Subclass for easier implementation of {@linkplain DomainContext}
  *
  * @see DomainContext
+ *
+ * @deprecated Use {@linkplain DomainContextBase} instead. Will be removed in version 1.6.0.
  */
-@API(status = EXPERIMENTAL, since = "1.1")
+@Deprecated
+@API(status = DEPRECATED, since = "1.5.2")
 public abstract class AbstractDomainContextBase implements DomainContext {
 
 	// Have same priority as jqwik default providers
