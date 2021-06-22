@@ -1,18 +1,17 @@
 - 1.5.2
 
     - Domains
-        - Deprecate AbstractDomainContextBase
-        - DomainContextBase
-            - Allow inner ArbitraryConfigurator classes
-        - Arbitrary.fix() to always generate the same value in one try 
+        - Deprecate AbstractDomainContextBase and document new DomainContextBase.
+            - User guide entry for DomainContextBase
         - Hand in property execution context to provider method
-          E.g. to get annotation values from method
-          DomainContext.prepare(PropertyExecutionContext context)
+          E.g. to get annotation values from method DomainContext.prepare(
+          PropertyExecutionContext context)
 
     - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
-      to replace Combinators.withBuilder() but target cannot change across
-      build steps (-> much better performance and shrinking)
-        - Add capability to easily generate java beans (if that really makes sense)
+      to replace Combinators.withBuilder() but target cannot change across build
+      steps (-> much better performance and shrinking)
+        - Add capability to easily generate java beans (if that really makes
+          sense)
 
     - Time Module:
         - DateTimes. See https://github.com/jlink/jqwik/issues/175
@@ -22,15 +21,17 @@
 
 - 1.5.x
 
-    - Create possibility/annotation to suppress reporting inside of a test/property but not lose
-      reporting of property's results. May require a new lifecycle hook.
+    - Create possibility/annotation to suppress reporting inside of a
+      test/property but not lose reporting of property's results. May require a
+      new lifecycle hook.
         - Apply annotation wherever reporting is test collateral
         - Make it configurable, e.g. `jqwik.reporting.statistics.onfailureonly`
 
     - Decimals/Floats Arbitraries:
-        - Arbitrary.injectNaN()|injectNegativeInfinity()|injectPositiveInfinity()
+        - Arbitrary.injectNaN()|injectNegativeInfinity()
+          |injectPositiveInfinity()
           |injectMinValue()|injectMinNormal()|injectSpecialValues()
-        
+
     - Web Module:
         - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
 
@@ -51,18 +52,19 @@
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
-    - Use derived Random object for generation of each parameter.
-      Will that somehow break a random byte provider in guided generation?
-      - Remember the random seed in Shrinkable
+    - Use derived Random object for generation of each parameter. Will that
+      somehow break a random byte provider in guided generation?
+        - Remember the random seed in Shrinkable
 
     - Guided Generation
       https://github.com/jlink/jqwik/issues/84
-      - Maybe change AroundTryHook to allow replacement of `Random` source
-      - Or: Introduce ProvideGenerationSourceHook
-      
-    - Allow to add frequency to chars for String and Character arbitraries
-      eg. StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
+        - Maybe change AroundTryHook to allow replacement of `Random` source
+        - Or: Introduce ProvideGenerationSourceHook
 
-    - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
+    - Allow to add frequency to chars for String and Character arbitraries eg.
+      StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
+
+    - Mixin edge cases in random
+      order (https://github.com/jlink/jqwik/issues/101)
     
 

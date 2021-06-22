@@ -22,12 +22,12 @@ public class DomainContextBaseProviders {
 
 	static public List<ArbitraryProvider> forContextBase(DomainContextBase base, int priority) {
 		return Stream.concat(
-			providerFromProviderMethods(base, priority),
-			providerFromInnerClasses(base, priority)
+			providersFromProviderMethods(base, priority),
+			providersFromInnerClasses(base, priority)
 		).collect(Collectors.toList());
 	}
 
-	private static Stream<ArbitraryProvider> providerFromProviderMethods(DomainContextBase base, int priority) {
+	private static Stream<ArbitraryProvider> providersFromProviderMethods(DomainContextBase base, int priority) {
 		List<Method> methods = AnnotationSupport.findAnnotatedMethods(base.getClass(), Provide.class, HierarchyTraversalMode.BOTTOM_UP);
 		warnIfMethodsHaveWrongReturnType(methods);
 		warnIfProvideAnnotationHasValue(methods);
@@ -61,13 +61,13 @@ public class DomainContextBaseProviders {
 			   });
 	}
 
-	private static Stream<ArbitraryProvider> providerFromInnerClasses(DomainContextBase base, int priority) {
-		Predicate<Class<?>> implementsArbitraryProvider = clazz -> ArbitraryProvider.class
-																	   .isAssignableFrom(clazz) && !JqwikReflectionSupport.isPrivate(clazz);
+	private static Stream<ArbitraryProvider> providersFromInnerClasses(DomainContextBase base, int priority) {
+		Predicate<Class<?>> implementsArbitraryProvider =
+			clazz -> ArbitraryProvider.class.isAssignableFrom(clazz) && !JqwikReflectionSupport.isPrivate(clazz);
 		List<Class<?>> arbitraryProviderClasses = ReflectionSupport.findNestedClasses(base.getClass(), implementsArbitraryProvider);
 		warnIfClassesHaveNoFittingConstructor(arbitraryProviderClasses);
 		return arbitraryProviderClasses.stream()
-									   .filter(clazz -> hasFittingConstructor(clazz))
+									   .filter(DomainContextBaseProviders::hasFittingConstructor)
 									   .map(clazz -> createArbitraryProvider(clazz, base, priority));
 	}
 

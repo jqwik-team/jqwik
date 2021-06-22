@@ -97,12 +97,25 @@ class DomainContextBaseTests {
 		}
 	}
 
+	@Group
+	@PropertyDefaults(tries = 20)
+	class InnerArbitraryConfiguratorClasses {
+
+		@Property
+		@Domain(ContextWithInnerConfiguratorClasses.class)
+		@Domain(DomainContext.Global.class)
+		void useConfiguratorFromInnerClass(@ForAll @Doubled String aString) {
+			assertThat(aString.length()).isEven();
+		}
+
+		@Property
+		@Domain(ContextWithInnerConfiguratorClasses.class)
+		@Domain(DomainContext.Global.class)
+		void useConfiguratorFromInnerStaticClass(@ForAll @MakeNegative int aNumber) {
+			assertThat(aNumber).isNotPositive();
+		}
+
+	}
+
 }
 
-// private NumberStringContext() {
-// 	registerConfigurator(new ArbitraryConfiguratorBase() {
-// 		public Arbitrary<String> configure(Arbitrary<String> arbitrary, AbstractDomainContextBaseTests.DoubleString ignore) {
-// 			return arbitrary.map(s -> s + s);
-// 		}
-// 	});
-// }

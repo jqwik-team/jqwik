@@ -13,6 +13,31 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Base class for convention based implementations of {@linkplain DomainContext}
  *
+ * <p>
+ * In subclasses you can:
+ *     <ul>
+ *         <li>
+ *          	Add methods annotated with {@linkplain Provide} and a return type of {@linkplain Arbitrary Arbitrary&lt;T&gt;}.
+ *         		The result of an annotated method will then be used as an {@linkplain ArbitraryProvider arbitrary provider} for type {@code T}.
+ *         		<br/>Those methods follow the same rules as provider methods in container classes,
+ *         		i.e. they have optional parameters of type {@linkplain TypeUsage}, of type {@linkplain net.jqwik.api.providers.ArbitraryProvider.SubtypeProvider}
+ *         	    or with annotation {@linkplain ForAll}.
+ *         	</li>
+ *         <li>
+ *          	Add inner classes (static or not static, but not private) that implement {@linkplain ArbitraryProvider}.
+ *         		An instance of this class will then be used as {@linkplain ArbitraryProvider providers}.
+ *         	</li>
+ *         <li>
+ *          	Add inner classes (static or not static, but not private) that implement {@linkplain ArbitraryConfigurator}.
+ *         		An instance of this class will then be used as {@linkplain ArbitraryConfigurator configurators}.
+ *         	</li>
+ *     </ul>
+ * </p>
+ *
+ * <p>
+ *     This class is supposed to replace the deprecated class {@linkplain AbstractDomainContextBase}.
+ * </p>
+ *
  * @see DomainContext
  */
 @API(status = EXPERIMENTAL, since = "1.5.2")

@@ -20,7 +20,7 @@ class AbstractDomainContextBaseTests {
 
 	@Property(tries = 20)
 	@Domain(NumberStringContext.class)
-	void applyConfiguratorsFromDeclaredDomain(@ForAll @DoubleString String aString) {
+	void applyConfiguratorsFromDeclaredDomain(@ForAll @Doubled String aString) {
 		assertThat(aString).hasSize(4);
 		assertThat(aString).containsOnlyDigits();
 	}
@@ -29,7 +29,7 @@ class AbstractDomainContextBaseTests {
 	@Domain(NumberStringContext.class)
 	@Domain(SmallNumbersContext.class)
 	void severalDomainsAreConcatenated(
-		@ForAll @DoubleString String aString,
+		@ForAll @Doubled String aString,
 		@ForAll int smallNumber,
 		@ForAll @DoubleNumber int doubledNumber
 	) {
@@ -68,15 +68,11 @@ class AbstractDomainContextBaseTests {
 		assertThat(aNumber).isBetween(10, 12);
 	}
 
-	@Target({ElementType.PARAMETER})
-	@Retention(RetentionPolicy.RUNTIME)
-	@interface DoubleString {}
-
 	private static class NumberStringContext extends AbstractDomainContextBase {
 		private NumberStringContext() {
 			registerArbitrary(String.class, Arbitraries.integers().between(10, 99).map(i -> Integer.toString(i)));
 			registerConfigurator(new ArbitraryConfiguratorBase() {
-				public Arbitrary<String> configure(Arbitrary<String> arbitrary, DoubleString ignore) {
+				public Arbitrary<String> configure(Arbitrary<String> arbitrary, Doubled ignore) {
 					return arbitrary.map(s -> s + s);
 				}
 			});

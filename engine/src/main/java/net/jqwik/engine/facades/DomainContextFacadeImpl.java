@@ -55,7 +55,7 @@ public class DomainContextFacadeImpl extends DomainContext.DomainContextFacade {
 
 	@Override
 	public List<ArbitraryConfigurator> getArbitraryConfigurators(DomainContextBase base) {
-		return Collections.emptyList();
+		return DomainContextBaseConfigurators.forContextBase(base);
 	}
 
 }
