@@ -3,6 +3,13 @@
     - Domains
         - Deprecate AbstractDomainContextBase and document new DomainContextBase.
             - User guide entry for DomainContextBase
+
+    - Release
+
+
+- 1.5.x
+
+    - Domains
         - Hand in property execution context to provider method
           E.g. to get annotation values from method DomainContext.prepare(
           PropertyExecutionContext context)
@@ -17,9 +24,6 @@
         - DateTimes. See https://github.com/jlink/jqwik/issues/175
         - Generate Instant, OffsetDateTime, Date, Calendar
         - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
-
-
-- 1.5.x
 
     - Create possibility/annotation to suppress reporting inside of a
       test/property but not lose reporting of property's results. May require a
