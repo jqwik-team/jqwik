@@ -11,8 +11,8 @@
 <script type="text/javascript" src="../../../../../jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="../../../../../jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="../../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="../../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="../../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../../jquery/jquery-ui.js"></script>
 </head>
@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":18,"i3":6,"i4":6,"i5":18,"i6":6,"i7":6,"i8":6,"i9":18,"i10":6};
+var data = {"i0":6,"i1":6,"i2":18,"i3":6,"i4":18,"i5":6,"i6":6,"i7":6,"i8":18,"i9":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -201,13 +201,6 @@ extends <a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api"
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code><a href="LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#leapYears(boolean)">leapYears</a></span>&#8203;(boolean&nbsp;withLeapYears)</code></th>
-<td class="colLast">
-<div class="block">Decide whether leap years are generated or not</div>
-</td>
-</tr>
-<tr id="i5" class="rowColor">
 <td class="colFirst"><code>default <a href="LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#monthBetween(int,int)">monthBetween</a></span>&#8203;(int&nbsp;min,
             int&nbsp;max)</code></th>
@@ -215,7 +208,7 @@ extends <a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api"
 <div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated month values.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#monthBetween(java.time.Month,java.time.Month)">monthBetween</a></span>&#8203;(java.time.Month&nbsp;min,
             java.time.Month&nbsp;max)</code></th>
@@ -223,21 +216,21 @@ extends <a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api"
 <div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated month values.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#onlyDaysOfWeek(java.time.DayOfWeek...)">onlyDaysOfWeek</a></span>&#8203;(java.time.DayOfWeek...&nbsp;daysOfWeek)</code></th>
 <td class="colLast">
 <div class="block">Set an array of allowed <code>daysOfWeek</code>.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#onlyMonths(java.time.Month...)">onlyMonths</a></span>&#8203;(java.time.Month...&nbsp;months)</code></th>
 <td class="colLast">
 <div class="block">Set an array of allowed <code>months</code>.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>default <a href="LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#yearBetween(int,int)">yearBetween</a></span>&#8203;(int&nbsp;min,
            int&nbsp;max)</code></th>
@@ -245,7 +238,7 @@ extends <a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api"
 <div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated year values.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#yearBetween(java.time.Year,java.time.Year)">yearBetween</a></span>&#8203;(java.time.Year&nbsp;min,
            java.time.Year&nbsp;max)</code></th>
@@ -386,21 +379,11 @@ extends <a href="../../../api/Arbitrary.html" title="interface in net.jqwik.api"
 <a id="onlyDaysOfWeek(java.time.DayOfWeek...)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>onlyDaysOfWeek</h4>
 <pre class="methodSignature"><a href="LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a>&nbsp;onlyDaysOfWeek&#8203;(java.time.DayOfWeek...&nbsp;daysOfWeek)</pre>
 <div class="block">Set an array of allowed <code>daysOfWeek</code>.</div>
-</li>
-</ul>
-<a id="leapYears(boolean)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>leapYears</h4>
-<pre class="methodSignature"><a href="LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a>&nbsp;leapYears&#8203;(boolean&nbsp;withLeapYears)</pre>
-<div class="block">Decide whether leap years are generated or not</div>
 </li>
 </ul>
 </li>

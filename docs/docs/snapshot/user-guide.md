@@ -107,7 +107,8 @@ title: jqwik User Guide - 1.5.2-SNAPSHOT
   - [Filtering](#filtering)
   - [Mapping](#mapping)
   - [Flat Mapping](#flat-mapping)
-  - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
+    - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
+    - [Implicit Flat Mapping](#implicit-flat-mapping)
   - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
   - [Combining Arbitraries](#combining-arbitraries)
     - [Combining Arbitraries with Builder](#combining-arbitraries-with-builder)
@@ -200,7 +201,7 @@ Snapshot releases are created on a regular basis and can be fetched from
 
 ### Required Version of JUnit Platform
 
-The minimum required version of the JUnit platform is `1.7.1`.
+The minimum required version of the JUnit platform is `1.7.2`.
 
 ### Gradle
 
@@ -219,8 +220,8 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.7.1'
-ext.junitJupiterVersion = '5.7.1'
+ext.junitPlatformVersion = '1.7.2'
+ext.junitJupiterVersion = '5.7.2'
 
 ext.jqwikVersion = '1.5.2-SNAPSHOT'
 
@@ -252,7 +253,7 @@ dependencies {
     testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testImplementation "org.junit.jupiter:junit-jupiter:5.7.1"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
 
     // Add any other test library you need...
     testImplementation "org.assertj:assertj-core:3.12.2"
@@ -351,8 +352,8 @@ You will have to add _at least_ the following jars to your classpath:
 
 - `jqwik-api-1.5.2-SNAPSHOT.jar`
 - `jqwik-engine-1.5.2-SNAPSHOT.jar`
-- `junit-platform-engine-1.7.1.jar`
-- `junit-platform-commons-1.7.1.jar`
+- `junit-platform-engine-1.7.2.jar`
+- `junit-platform-commons-1.7.2.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
@@ -1015,9 +1016,9 @@ class TaggingExamples {
 ```
 
 Tags must follow certain rules as described
-[here](/docs/snapshot/javadoc/net/jqwik/api/Tag.html). 
-Note that the `@Tag` annotation you'll have to use with jqwik is 
-`net.jqwik.api.Tag` rather than `org.junit.jupiter.api.Tag`
+[here](/docs/snapshot/javadoc/net/jqwik/api/Tag.html).
+Note that the `@Tag` annotation you'll have to use with jqwik is
+`net.jqwik.api.Tag` rather than `org.junit.jupiter.api.Tag`.
 
 ### Disabling Tests
 
@@ -1341,15 +1342,7 @@ of the method's `@Provide` annotation.
 
 The providing method has to return an object of type
 [`@Arbitrary<T>`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html)
-where `T` is the static type of the parameter to be provided. Optionally
-the provider method can take tow optional parameters:
-
-- a first parameter of type `TypeUsage` that describes the details of the target parameter to be provided
-- a second parameter of type `ArbitraryProvider.SubtypeProvider`
-
-These two objects can be used to get detailed information about the parameter,
-like annotations and embedded type parameters, and to resolve other types,
-usually from type parameters embedded in the original parameter. Use with care!
+where `T` is the static type of the parameter to be provided.
 
 Parameter provision usually starts with a
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
@@ -1362,6 +1355,20 @@ The examples of [provider methods](#parameter-provider-methods) you've seen so f
 had no parameters. In more complicated scenarios, however, you may want to tune
 an arbitrary depending on the concrete parameter to be generated.
 
+The provider method can take a few optional parameters:
+
+- a parameter of type `TypeUsage`
+  that describes the details of the target parameter to be provided,
+  like annotations and type variables.
+
+- a parameter of type `ArbitraryProvider.SubtypeProvider`
+  which is needed in case of variable subtypes that require their own dynamic resolution.
+
+- any parameter annotated with `@ForAll`: This parameter will be generated using
+  the current context and then be used to create or configure the arbitrary to return.
+  We call this [implicit flat mapping](#implicit-flat-mapping).
+
+The following example uses a `TypeUsage` parameter to unify two provider methods.  
 Imagine you want to randomly choose one of your favourite primes; that's easy:
 
 ```java
@@ -1395,9 +1402,7 @@ Arbitrary<?> favouritePrimes(TypeUsage targetType) {
 }
 ```
 
-Mind the parameters and return type of `favouritePrimes()`. 
-The second parameter `ArbitraryProvider.SubtypeProvider subtypeProvider` is optional and can be left out;
-it would be needed in case of variable subtypes that require their own dynamic resolution.
+Mind that Java's type system now forces you to use a wildcard in the return type.
 
 
 ### Providing Arbitraries for Embedded Types
@@ -1978,8 +1983,8 @@ boolean fixedSizedStrings(@ForAll("listsOfEqualSizedStrings")List<String> lists)
 Arbitrary<List<String>> listsOfEqualSizedStrings() {
     Arbitrary<Integer> integers2to5 = Arbitraries.integers().between(2, 5);
     return integers2to5.flatMap(stringSize -> {
-        Arbitrary<String> strings = Arbitraries.strings() //
-                .withCharRange('a', 'z') //
+        Arbitrary<String> strings = Arbitraries.strings() 
+                .withCharRange('a', 'z') 
                 .ofMinLength(stringSize).ofMaxLength(stringSize);
         return strings.list();
     });
@@ -1988,7 +1993,7 @@ Arbitrary<List<String>> listsOfEqualSizedStrings() {
 The provider method will create random lists of strings, but in each list the size of the contained strings
 will always be the same - between 2 and 5.
 
-### Flat Mapping with Tuple Types
+#### Flat Mapping with Tuple Types
 
 In the example above you used a generated value in order to create another arbitrary.
 In those situations you often want to also provide the original values to your property test.
@@ -2010,18 +2015,17 @@ void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integ
     String aString = stringBeginEnd.get1();
     int begin = stringBeginEnd.get2();
     int end = stringBeginEnd.get3();
-    Assertions.assertThat(aString.substring(begin, end).length())
-        .isEqualTo(end - begin);
+    assertThat(aString.substring(begin, end).length()).isEqualTo(end - begin);
 }
 
 @Provide
 Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
-    Arbitrary<String> stringArbitrary = Arbitraries.strings() //
-            .withCharRange('a', 'z') //
+    Arbitrary<String> stringArbitrary = Arbitraries.strings() 
+            .withCharRange('a', 'z') 
             .ofMinLength(2).ofMaxLength(20);
-    return stringArbitrary //
-            .flatMap(aString -> Arbitraries.integers().between(0, aString.length()) //
-                    .flatMap(end -> Arbitraries.integers().between(0, end) //
+    return stringArbitrary 
+            .flatMap(aString -> Arbitraries.integers().between(0, aString.length()) 
+                    .flatMap(end -> Arbitraries.integers().between(0, end) 
                             .map(begin -> Tuple.of(aString, begin, end))));
 }
 ```
@@ -2029,6 +2033,47 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
 Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
 very useful.
 
+#### Implicit Flat Mapping
+
+Flat mapping syntax - especially when it's nested - is a bit cumbersome to read.
+Starting with version `1.5.2` _jqwik_ allows to use flat mapping implicitly.
+You simply add a `@ForAll` parameter to your provider method, 
+the value of which will be generated using standard parameter generation.
+Under the hood this uses this parameter's arbitrary and call `flatMap` on it.
+
+Here's the example from above with no explicit flat mapping:
+
+```java
+@Property
+@Report(Reporting.GENERATED)
+void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integer> stringBeginEnd) {
+	String aString = stringBeginEnd.get1();
+	int begin = stringBeginEnd.get2();
+	int end = stringBeginEnd.get3();
+	assertThat(aString.substring(begin, end).length()).isEqualTo(end - begin);
+}
+
+@Provide
+Arbitrary<String> simpleStrings() {
+	return Arbitraries.strings()
+					  .withCharRange('a', 'z')
+					  .ofMinLength(2).ofMaxLength(20);
+}
+
+@Provide
+Arbitrary<Tuple2<String, Integer>> stringWithEnd(@ForAll("simpleStrings") String aString) {
+	return Arbitraries.integers().between(0, aString.length())
+					  .map(end -> Tuple.of(aString, end));
+}
+
+@Provide
+Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd(@ForAll("stringWithEnd") Tuple2<String, Integer> stringWithEnd) {
+	String aString = stringWithEnd.get1();
+	int end = stringWithEnd.get2();
+	return Arbitraries.integers().between(0, end)
+					  .map(begin -> Tuple.of(aString, begin, end));
+}
+```
 
 ### Randomly Choosing among Arbitraries
 
@@ -3690,7 +3735,28 @@ that are explicitly stated in a `@Domain(Class<? extends DomainContext>)` annota
 
 As for ways to implement domain context classes have a look at
 [DomainContext](/docs/snapshot/javadoc/net/jqwik/api/domains/DomainContext.html)
-and [AbstractDomainContextBase](/docs/snapshot/javadoc/net/jqwik/api/domains/AbstractDomainContextBase.html).
+and [DomainContextBase](/docs/snapshot/javadoc/net/jqwik/api/domains/DomainContextBase.html).
+
+In subclasses of `DomainContextBase` you have several options to specify 
+arbitrary providers and configurators:
+
+- Add methods annotated with `Provide` and a return type of `Arbitrary<T>`.
+  The result of an annotated method will then be used as an arbitrary provider for type `T`.
+  
+  Those methods follow the same rules as 
+  [provider methods in container classes](#parameter-provider-methods),
+  i.e. they have [_optional_ parameters](#provider-methods-with-parameters) 
+  of type `TypeUsage` or `ArbitraryProvider.SubtypeProvider` 
+  and can do [implicit flat-mapping](#implicit-flat-mapping) over `@ForAll` arguments. 
+
+- Add inner classes (static or not static, but not private) that implement `ArbitraryProvider`.
+  An instance of this class will then be created and used as arbitrary provider.
+
+- Add inner classes (static or not static, but not private) that implement `ArbitraryConfigurator`.
+  An instance of this class will then be created and used as configurator.
+
+As of this version the lifecycle of `DomainContext` instances is not properly defined,
+therefore do not rely on storing or caching any information in member variables.
 
 
 ### Domain example: American Addresses
@@ -3698,10 +3764,53 @@ and [AbstractDomainContextBase](/docs/snapshot/javadoc/net/jqwik/api/domains/Abs
 Let's say that US postal addresses play a crucial role in the software that we're developing.
 That's why there are a couple of classes that represent important domain concepts:
 `Street`, `State`, `City` and `Address`. Since we have to generate instances of those classes
-for our properties, we collect all arbitrary provision code in
-[AmericanAddresses](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/domains/AmericanAddresses.java).
-Now look at
-[this example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/domains/AddressProperties.java):
+for our properties, we collect all arbitrary provision code 
+[in one place](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/domains/AmericanAddresses.java):
+
+```java
+public class AmericanAddresses extends DomainContextBase {
+
+	@Provide
+	Arbitrary<Street> streets() {
+		Arbitrary<String> streetName = capitalizedWord(30);
+		Arbitrary<String> streetType = Arbitraries.of("Street", "Avenue", "Road", "Boulevard");
+		return Combinators.combine(streetName, streetType).as((n, t) -> n + " " + t).map(Street::new);
+	}
+
+	@Provide
+	Arbitrary<Integer> streetNumbers() {
+		return Arbitraries.integers().between(1, 999);
+	}
+
+	@Provide
+	Arbitrary<State> states() {
+		return Arbitraries.of(State.class);
+	}
+
+	@Provide
+	Arbitrary<City> cities() {
+		Arbitrary<String> name = capitalizedWord(25);
+		Arbitrary<State> state = Arbitraries.defaultFor(State.class);
+		Arbitrary<String> zip = Arbitraries.strings().numeric().ofLength(5);
+		return Combinators.combine(name, state, zip).as(City::new);
+	}
+
+	@Provide
+	Arbitrary<Address> addresses() {
+		Arbitrary<Street> streets = Arbitraries.defaultFor(Street.class);
+		Arbitrary<City> cities = Arbitraries.defaultFor(City.class);
+		return Combinators.combine(streets, streetNumbers(), cities).as(Address::new);
+	}
+
+	private Arbitrary<String> capitalizedWord(int maxLength) {
+		Arbitrary<Character> capital = Arbitraries.chars().range('A', 'Z');
+		Arbitrary<String> rest = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1).ofMaxLength(maxLength - 1);
+		return Combinators.combine(capital, rest).as((c, r) -> c + r);
+	}
+}
+```
+
+Now it's rather easy to use the arbitraries provided therein for your properties:
 
 ```java
 class AddressProperties {
@@ -3713,7 +3822,7 @@ class AddressProperties {
 
 	@Property
 	@Domain(AmericanAddresses.class)
-	void globalDomainNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
+	void willFailBecauseGlobalDomainIsNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
 	}
 
 	@Property
@@ -4223,7 +4332,6 @@ The following annotations can be used to constrain default generation of the enu
 - [`@MonthDayRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/MonthDayRange.html)
 - [`@DayOfMonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DayOfMonthRange.html)
 - [`@DayOfWeekRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DayOfWeekRange.html)
-- [`@LeapYears`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/LeapYears.html)
 - [`@PeriodRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/PeriodRange.html)
 
 `@DateRange`, `@MonthDayRange`, `@YearMonthRange` and `@PeriodRange` 
@@ -4271,7 +4379,6 @@ Here's the list of available methods:
 - You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
-- You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
 ###### CalendarArbitrary
 
@@ -4283,7 +4390,6 @@ Here's the list of available methods:
 - You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
-- You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
 ###### DateArbitrary
 
@@ -4295,7 +4401,6 @@ Here's the list of available methods:
 - You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
 - You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
-- You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
 ###### YearArbitrary
 
@@ -4309,7 +4414,6 @@ Here's the list of available methods:
 - You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
 - You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
 - You can limit the generation of months to only a few months using `onlyMonths(months)`.
-- You can decide whether leap years to generate or not using `leapYears(withLeapYears)`.
 
 ###### MonthDayArbitrary
 
@@ -4444,10 +4548,15 @@ The following annotations can be used to constrain default generation of the enu
 - [`@YearRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/YearRange.html)
 - [`@MonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/MonthRange.html)
 - [`@DayOfMonthRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DayOfMonthRange.html)
+- [`@DayOfWeekRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/DayOfWeekRange.html)
+- [`@TimeRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/TimeRange.html)
+- [`@HourRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/HourRange.html)
+- [`@MinuteRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/MinuteRange.html)
+- [`@SecondRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/SecondRange.html)
 - [`@Precision`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/Precision.html)
 
-`@DateTimeRange` and `@DateRange` use the standard format of their classes. 
-Examples: `2013-05-25T01:34:22.231` and `2013-05-25`.
+`@DateTimeRange`, `@DateRange` and `@TimeRange` use the standard format of their classes. 
+Examples: `2013-05-25T01:34:22.231`, `2013-05-25` and `11:53`.
 
 ##### Programmatic Generation of DateTimes
 
@@ -4481,7 +4590,13 @@ Here's the list of available methods:
 - You can constrain its minimum and maximum value for dates using `dateBetween(min, max)`.
 - You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
 - You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
 - You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
+- You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
+- You can constrain the minimum and maximum time value using `timeBetween(min, max)`.
+- You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
+- You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
+- You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
 
 

@@ -11,8 +11,8 @@
 <script type="text/javascript" src="../../../../jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../jquery/jquery-ui.js"></script>
 </head>
@@ -26,8 +26,8 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var data = {"i0":42,"i1":42,"i2":42,"i3":42,"i4":42,"i5":42,"i6":42};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -134,11 +134,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd><code><a href="DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></code></dd>
 </dl>
 <hr>
-<pre>@API(status=EXPERIMENTAL,
-     since="1.1")
+<pre>@Deprecated
+@API(status=DEPRECATED,
+     since="1.5.2")
 public abstract class <span class="typeNameLabel">AbstractDomainContextBase</span>
 extends java.lang.Object
 implements <a href="DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a> instead. Will be removed in version 1.6.0.</div>
+</div>
 <div class="block">Subclass for easier implementation of <a href="DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -182,7 +186,9 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 </tr>
 <tr class="altColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">AbstractDomainContextBase</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -196,7 +202,7 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
@@ -205,39 +211,53 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../configurators/ArbitraryConfigurator.html" title="interface in net.jqwik.api.configurators">ArbitraryConfigurator</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getArbitraryConfigurators()">getArbitraryConfigurators</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../providers/ArbitraryProvider.html" title="interface in net.jqwik.api.providers">ArbitraryProvider</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getArbitraryProviders()">getArbitraryProviders</a></span>()</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>protected &lt;T&gt;&nbsp;void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#registerArbitrary(java.lang.Class,net.jqwik.api.Arbitrary)">registerArbitrary</a></span>&#8203;(java.lang.Class&lt;T&gt;&nbsp;registeredType,
                  <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;arbitrary)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#registerArbitrary(net.jqwik.api.providers.TypeUsage,net.jqwik.api.Arbitrary)">registerArbitrary</a></span>&#8203;(<a href="../providers/TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&nbsp;registeredType,
                  <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;?&gt;&nbsp;arbitrary)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#registerConfigurator(net.jqwik.api.configurators.ArbitraryConfigurator)">registerConfigurator</a></span>&#8203;(<a href="../configurators/ArbitraryConfigurator.html" title="interface in net.jqwik.api.configurators">ArbitraryConfigurator</a>&nbsp;configurator)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#registerProvider(net.jqwik.api.providers.ArbitraryProvider)">registerProvider</a></span>&#8203;(<a href="../providers/ArbitraryProvider.html" title="interface in net.jqwik.api.providers">ArbitraryProvider</a>&nbsp;provider)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setDefaultPriority(int)">setDefaultPriority</a></span>&#8203;(int&nbsp;priority)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -270,6 +290,7 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 <li class="blockList">
 <h4>AbstractDomainContextBase</h4>
 <pre>public&nbsp;AbstractDomainContextBase()</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 </li>
 </ul>
 </li>
@@ -289,6 +310,7 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 <li class="blockList">
 <h4>getArbitraryProviders</h4>
 <pre class="methodSignature">public&nbsp;java.util.List&lt;<a href="../providers/ArbitraryProvider.html" title="interface in net.jqwik.api.providers">ArbitraryProvider</a>&gt;&nbsp;getArbitraryProviders()</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="DomainContext.html#getArbitraryProviders()">getArbitraryProviders</a></code>&nbsp;in interface&nbsp;<code><a href="DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></code></dd>
@@ -302,6 +324,7 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 <li class="blockList">
 <h4>getArbitraryConfigurators</h4>
 <pre class="methodSignature">public&nbsp;java.util.List&lt;<a href="../configurators/ArbitraryConfigurator.html" title="interface in net.jqwik.api.configurators">ArbitraryConfigurator</a>&gt;&nbsp;getArbitraryConfigurators()</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="DomainContext.html#getArbitraryConfigurators()">getArbitraryConfigurators</a></code>&nbsp;in interface&nbsp;<code><a href="DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></code></dd>
@@ -315,6 +338,7 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 <li class="blockList">
 <h4>setDefaultPriority</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;setDefaultPriority&#8203;(int&nbsp;priority)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="DomainContext.html#setDefaultPriority(int)">setDefaultPriority</a></code>&nbsp;in interface&nbsp;<code><a href="DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></code></dd>
@@ -328,6 +352,7 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 <li class="blockList">
 <h4>registerProvider</h4>
 <pre class="methodSignature">protected&nbsp;void&nbsp;registerProvider&#8203;(<a href="../providers/ArbitraryProvider.html" title="interface in net.jqwik.api.providers">ArbitraryProvider</a>&nbsp;provider)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 </li>
 </ul>
 <a id="registerArbitrary(net.jqwik.api.providers.TypeUsage,net.jqwik.api.Arbitrary)">
@@ -338,6 +363,7 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 <h4>registerArbitrary</h4>
 <pre class="methodSignature">protected&nbsp;void&nbsp;registerArbitrary&#8203;(<a href="../providers/TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&nbsp;registeredType,
                                  <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;?&gt;&nbsp;arbitrary)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 </li>
 </ul>
 <a id="registerArbitrary(java.lang.Class,net.jqwik.api.Arbitrary)">
@@ -348,6 +374,7 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 <h4>registerArbitrary</h4>
 <pre class="methodSignature">protected&nbsp;&lt;T&gt;&nbsp;void&nbsp;registerArbitrary&#8203;(java.lang.Class&lt;T&gt;&nbsp;registeredType,
                                      <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;arbitrary)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 </li>
 </ul>
 <a id="registerConfigurator(net.jqwik.api.configurators.ArbitraryConfigurator)">
@@ -357,6 +384,7 @@ implements <a href="DomainContext.html" title="interface in net.jqwik.api.domain
 <li class="blockList">
 <h4>registerConfigurator</h4>
 <pre class="methodSignature">protected&nbsp;void&nbsp;registerConfigurator&#8203;(<a href="../configurators/ArbitraryConfigurator.html" title="interface in net.jqwik.api.configurators">ArbitraryConfigurator</a>&nbsp;configurator)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
 </li>
 </ul>
 </li>

@@ -29,16 +29,13 @@ import static org.apiguardian.api.API.Status.*;
  *         	</li>
  *         <li>
  *          	Add inner classes (static or not static, but not private) that implement {@linkplain ArbitraryConfigurator}.
- *         		An instance of this class will then be used as {@linkplain ArbitraryConfigurator configurators}.
+ *         		An instance of this class will then be used as {@linkplain ArbitraryConfigurator configurator}.
  *         	</li>
  *     </ul>
  * </p>
  *
- * <p>
- *     This class is supposed to replace the deprecated class {@linkplain AbstractDomainContextBase}.
- * </p>
- *
  * @see DomainContext
+ * @see Provide
  */
 @API(status = EXPERIMENTAL, since = "1.5.2")
 public abstract class DomainContextBase implements DomainContext {

@@ -12,7 +12,28 @@ that are explicitly stated in a `@Domain(Class<? extends DomainContext>)` annota
 
 As for ways to implement domain context classes have a look at
 [DomainContext](/docs/${docsVersion}/javadoc/net/jqwik/api/domains/DomainContext.html)
-and [AbstractDomainContextBase](/docs/${docsVersion}/javadoc/net/jqwik/api/domains/AbstractDomainContextBase.html).
+and [DomainContextBase](/docs/${docsVersion}/javadoc/net/jqwik/api/domains/DomainContextBase.html).
+
+In subclasses of `DomainContextBase` you have several options to specify 
+arbitrary providers and configurators:
+
+- Add methods annotated with `Provide` and a return type of `Arbitrary<T>`.
+  The result of an annotated method will then be used as an arbitrary provider for type `T`.
+  
+  Those methods follow the same rules as 
+  [provider methods in container classes](#parameter-provider-methods),
+  i.e. they have [_optional_ parameters](#provider-methods-with-parameters) 
+  of type `TypeUsage` or `ArbitraryProvider.SubtypeProvider` 
+  and can do [implicit flat-mapping](#implicit-flat-mapping) over `@ForAll` arguments. 
+
+- Add inner classes (static or not static, but not private) that implement `ArbitraryProvider`.
+  An instance of this class will then be created and used as arbitrary provider.
+
+- Add inner classes (static or not static, but not private) that implement `ArbitraryConfigurator`.
+  An instance of this class will then be created and used as configurator.
+
+As of this version the lifecycle of `DomainContext` instances is not properly defined,
+therefore do not rely on storing or caching any information in member variables.
 
 
 ### Domain example: American Addresses
@@ -20,10 +41,53 @@ and [AbstractDomainContextBase](/docs/${docsVersion}/javadoc/net/jqwik/api/domai
 Let's say that US postal addresses play a crucial role in the software that we're developing.
 That's why there are a couple of classes that represent important domain concepts:
 `Street`, `State`, `City` and `Address`. Since we have to generate instances of those classes
-for our properties, we collect all arbitrary provision code in
-[AmericanAddresses](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/domains/AmericanAddresses.java).
-Now look at
-[this example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/domains/AddressProperties.java):
+for our properties, we collect all arbitrary provision code 
+[in one place](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/domains/AmericanAddresses.java):
+
+```java
+public class AmericanAddresses extends DomainContextBase {
+
+	@Provide
+	Arbitrary<Street> streets() {
+		Arbitrary<String> streetName = capitalizedWord(30);
+		Arbitrary<String> streetType = Arbitraries.of("Street", "Avenue", "Road", "Boulevard");
+		return Combinators.combine(streetName, streetType).as((n, t) -> n + " " + t).map(Street::new);
+	}
+
+	@Provide
+	Arbitrary<Integer> streetNumbers() {
+		return Arbitraries.integers().between(1, 999);
+	}
+
+	@Provide
+	Arbitrary<State> states() {
+		return Arbitraries.of(State.class);
+	}
+
+	@Provide
+	Arbitrary<City> cities() {
+		Arbitrary<String> name = capitalizedWord(25);
+		Arbitrary<State> state = Arbitraries.defaultFor(State.class);
+		Arbitrary<String> zip = Arbitraries.strings().numeric().ofLength(5);
+		return Combinators.combine(name, state, zip).as(City::new);
+	}
+
+	@Provide
+	Arbitrary<Address> addresses() {
+		Arbitrary<Street> streets = Arbitraries.defaultFor(Street.class);
+		Arbitrary<City> cities = Arbitraries.defaultFor(City.class);
+		return Combinators.combine(streets, streetNumbers(), cities).as(Address::new);
+	}
+
+	private Arbitrary<String> capitalizedWord(int maxLength) {
+		Arbitrary<Character> capital = Arbitraries.chars().range('A', 'Z');
+		Arbitrary<String> rest = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1).ofMaxLength(maxLength - 1);
+		return Combinators.combine(capital, rest).as((c, r) -> c + r);
+	}
+}
+```
+
+Now it's rather easy to use the arbitraries provided therein for your properties:
 
 ```java
 class AddressProperties {
@@ -35,7 +99,7 @@ class AddressProperties {
 
 	@Property
 	@Domain(AmericanAddresses.class)
-	void globalDomainNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
+	void willFailBecauseGlobalDomainIsNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
 	}
 
 	@Property

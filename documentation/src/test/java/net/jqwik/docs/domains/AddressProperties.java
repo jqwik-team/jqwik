@@ -13,7 +13,7 @@ class AddressProperties {
 
 	@Property
 	@Domain(AmericanAddresses.class)
-	void globalDomainNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
+	void willFailBecauseGlobalDomainIsNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
 	}
 
 	@Property

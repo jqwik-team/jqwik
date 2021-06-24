@@ -11,8 +11,8 @@
 <script type="text/javascript" src="../../../../jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../jquery/jquery-ui.js"></script>
 </head>
@@ -244,7 +244,12 @@ public interface <span class="typeNameLabel">ArbitraryProvider</span></pre>
  <p>
  Only <code>targetType</code>s that have been allowed by <a href="#canProvideFor(net.jqwik.api.providers.TypeUsage)">canProvideFor(TypeUsage)</a>
  will be given to this method.
+ </p>
  <p>
+ For each try a single, randomly chosen element of the set will be used to generate
+ all objects represented by this arbitrary. This is necessary in order to make
+ generation of parameterized types stable.
+ </p>
  <code>subtypeProvider</code> can be used to get the arbitraries for any type argument of <code>targetType</code>.</div>
 </li>
 </ul>

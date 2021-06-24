@@ -11,8 +11,8 @@
 <script type="text/javascript" src="../../../jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="../../../jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../jquery/jquery-ui.js"></script>
 </head>
@@ -123,7 +123,27 @@ public @interface <span class="memberNameLabel">Provide</span></pre>
 <div class="block">Used to annotate methods that can provide values for property method parameters. Those methods must return an
  instance of <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>.
 
- <code>value</code> is used as reference name. If it is not specified, the method's name is used instead.</div>
+ <p>
+ Methods annotated with <a href="Provide.html" title="annotation in net.jqwik.api">Provide</a> can be present:
+     <ul>
+         <li>In test container classes to be picked up by <a href="ForAll.html" title="annotation in net.jqwik.api">ForAll</a> parameters.</li>
+         <li>In subclasses of <a href="domains/DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a> where those methods will be used
+         to serve as arbitrary providers for a <a href="domains/DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a>.
+         </li>
+     </ul>
+ </p>
+
+ <p>
+     Those methods can have optional parameters of type <a href="providers/TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>,
+     of type <a href="providers/ArbitraryProvider.SubtypeProvider.html" title="interface in net.jqwik.api.providers">ArbitraryProvider.SubtypeProvider</a> or with annotation <a href="ForAll.html" title="annotation in net.jqwik.api">ForAll</a>.
+     The latter will be used to <a href="Arbitrary.html#flatMap(java.util.function.Function)">flatMap</a> over them.
+ </p></div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="ForAll.html" title="annotation in net.jqwik.api"><code>ForAll</code></a>, 
+<a href="domains/DomainContextBase.html" title="class in net.jqwik.api.domains"><code>DomainContextBase</code></a>, 
+<a href="domains/DomainContext.html" title="interface in net.jqwik.api.domains"><code>DomainContext</code></a></dd>
+</dl>
 </li>
 </ul>
 </div>
@@ -147,7 +167,9 @@ public @interface <span class="memberNameLabel">Provide</span></pre>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#value()">value</a></span></code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Used as reference name.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -173,6 +195,11 @@ public @interface <span class="memberNameLabel">Provide</span></pre>
 <li class="blockList">
 <h4>value</h4>
 <pre>java.lang.String&nbsp;value</pre>
+<div class="block">Used as reference name. If it is not specified, the method's name is used instead.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>A non-empty string if the method should not be referenced by its name</dd>
+</dl>
 <dl>
 <dt>Default:</dt>
 <dd>""</dd>

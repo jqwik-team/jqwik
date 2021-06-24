@@ -11,8 +11,8 @@
 <script type="text/javascript" src="../../../../jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../jquery/jquery-ui.js"></script>
 </head>
@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":18};
+var data = {"i0":18,"i1":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -158,6 +158,13 @@ extends java.util.function.Function&lt;<a href="TypeUsage.html" title="interface
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>default java.util.Optional&lt;<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;?&gt;&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#provideOneFor(net.jqwik.api.providers.TypeUsage)">provideOneFor</a></span>&#8203;(<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&nbsp;typeUsage)</code></th>
+<td class="colLast">
+<div class="block">Convenience method to combine set of arbitraries in optional choice-based arbitrary.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>default java.util.stream.Stream&lt;java.util.List&lt;<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;?&gt;&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#resolveAndCombine(net.jqwik.api.providers.TypeUsage...)">resolveAndCombine</a></span>&#8203;(<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>...&nbsp;typeUsages)</code></th>
 <td class="colLast">
@@ -192,7 +199,7 @@ extends java.util.function.Function&lt;<a href="TypeUsage.html" title="interface
 <a id="resolveAndCombine(net.jqwik.api.providers.TypeUsage...)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>resolveAndCombine</h4>
 <pre class="methodSignature">@API(status=EXPERIMENTAL,
@@ -206,6 +213,24 @@ default&nbsp;java.util.stream.Stream&lt;java.util.List&lt;<a href="../Arbitrary.
 <dd><code>typeUsages</code> - </dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>stream of list of arbitraries</dd>
+</dl>
+</li>
+</ul>
+<a id="provideOneFor(net.jqwik.api.providers.TypeUsage)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>provideOneFor</h4>
+<pre class="methodSignature">@API(status=EXPERIMENTAL,
+     since="1.5.2")
+default&nbsp;java.util.Optional&lt;<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;?&gt;&gt;&nbsp;provideOneFor&#8203;(<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&nbsp;typeUsage)</pre>
+<div class="block">Convenience method to combine set of arbitraries in optional choice-based arbitrary.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>typeUsage</code> - </dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>Optional arbitrary instance</dd>
 </dl>
 </li>
 </ul>

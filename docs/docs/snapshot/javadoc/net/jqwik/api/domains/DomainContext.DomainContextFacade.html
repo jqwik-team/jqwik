@@ -11,8 +11,8 @@
 <script type="text/javascript" src="../../../../jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../jquery/jquery-ui.js"></script>
 </head>
@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6};
+var data = {"i0":6,"i1":6,"i2":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -88,13 +88,13 @@ loadScripts(document, 'script');</script>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -143,6 +143,29 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Field</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected static <a href="DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains">DomainContext.DomainContextFacade</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#implementation">implementation</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+</section>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <section role="region">
 <ul class="blockList">
@@ -179,6 +202,17 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>abstract java.util.List&lt;<a href="../configurators/ArbitraryConfigurator.html" title="interface in net.jqwik.api.configurators">ArbitraryConfigurator</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getArbitraryConfigurators(net.jqwik.api.domains.DomainContextBase)">getArbitraryConfigurators</a></span>&#8203;(<a href="DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a>&nbsp;base)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>abstract java.util.List&lt;<a href="../providers/ArbitraryProvider.html" title="interface in net.jqwik.api.providers">ArbitraryProvider</a>&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getArbitraryProviders(net.jqwik.api.domains.DomainContextBase,int)">getArbitraryProviders</a></span>&#8203;(<a href="DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a>&nbsp;base,
+                     int&nbsp;priority)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>abstract <a href="DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#global()">global</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
@@ -200,6 +234,25 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<section role="region">
+<ul class="blockList">
+<li class="blockList"><a id="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a id="implementation">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>implementation</h4>
+<pre>protected static&nbsp;<a href="DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains">DomainContext.DomainContextFacade</a> implementation</pre>
+</li>
+</ul>
+</li>
+</ul>
+</section>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <section role="region">
 <ul class="blockList">
@@ -229,10 +282,29 @@ extends java.lang.Object</pre>
 <a id="global()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>global</h4>
 <pre class="methodSignature">public abstract&nbsp;<a href="DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a>&nbsp;global()</pre>
+</li>
+</ul>
+<a id="getArbitraryProviders(net.jqwik.api.domains.DomainContextBase,int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getArbitraryProviders</h4>
+<pre class="methodSignature">public abstract&nbsp;java.util.List&lt;<a href="../providers/ArbitraryProvider.html" title="interface in net.jqwik.api.providers">ArbitraryProvider</a>&gt;&nbsp;getArbitraryProviders&#8203;(<a href="DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a>&nbsp;base,
+                                                                        int&nbsp;priority)</pre>
+</li>
+</ul>
+<a id="getArbitraryConfigurators(net.jqwik.api.domains.DomainContextBase)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getArbitraryConfigurators</h4>
+<pre class="methodSignature">public abstract&nbsp;java.util.List&lt;<a href="../configurators/ArbitraryConfigurator.html" title="interface in net.jqwik.api.configurators">ArbitraryConfigurator</a>&gt;&nbsp;getArbitraryConfigurators&#8203;(<a href="DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a>&nbsp;base)</pre>
 </li>
 </ul>
 </li>
@@ -287,13 +359,13 @@ extends java.lang.Object</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

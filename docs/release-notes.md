@@ -25,7 +25,20 @@ title: jqwik Release Notes
 
 ## 1.5.2-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
+
 #### New and Enhanced Features
+
+- New base class `DomainContextBase` for [providing domain contexts](#domain-and-domain-context).
+  That's why `AbstractDomainContextBase` is now _deprecated_.
+
+- Provider Methods annotated with `@Provide` now support
+  [implicit flat mapping](/docs/snapshot/user-guide.html#implicit-flat-mapping).
 
 - More progress on 
   [generation of DateTimes](/docs/snapshot/user-guide.html#generation-of-datetimes)

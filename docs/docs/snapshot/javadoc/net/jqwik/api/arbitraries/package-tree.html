@@ -11,8 +11,8 @@
 <script type="text/javascript" src="../../../../jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="../../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="../../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../../jquery/jquery-ui.js"></script>
 </head>
@@ -116,6 +116,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <ul>
 <li class="circle">net.jqwik.api.arbitraries.<a href="CharacterArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">CharacterArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="FunctionArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">FunctionArbitrary</span></a>&lt;F,&#8203;R&gt;</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">IteratorArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.arbitraries.<a href="StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamableArbitrary</a>&lt;T,&#8203;U&gt;)</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="ListArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ListArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.arbitraries.<a href="StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamableArbitrary</a>&lt;T,&#8203;U&gt;)</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">MapArbitrary</span></a>&lt;K,&#8203;V&gt; (also extends net.jqwik.api.arbitraries.<a href="SizableArbitrary.html" title="interface in net.jqwik.api.arbitraries">SizableArbitrary</a>&lt;U&gt;)</li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="NumericalArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">NumericalArbitrary</span></a>&lt;T,&#8203;A&gt;
 <ul>
 <li class="circle">net.jqwik.api.arbitraries.<a href="BigDecimalArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">BigDecimalArbitrary</span></a></li>
@@ -128,20 +131,22 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">net.jqwik.api.arbitraries.<a href="ShortArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ShortArbitrary</span></a></li>
 </ul>
 </li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="SetArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">SetArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.arbitraries.<a href="StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamableArbitrary</a>&lt;T,&#8203;U&gt;)</li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="SizableArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">SizableArbitrary</span></a>&lt;U&gt;
 <ul>
-<li class="circle">net.jqwik.api.arbitraries.<a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">MapArbitrary</span></a>&lt;K,&#8203;V&gt;</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="MapArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">MapArbitrary</span></a>&lt;K,&#8203;V&gt; (also extends net.jqwik.api.<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StreamableArbitrary</span></a>&lt;T,&#8203;U&gt;
 <ul>
 <li class="circle">net.jqwik.api.arbitraries.<a href="ArrayArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ArrayArbitrary</span></a>&lt;T,&#8203;A&gt;</li>
-<li class="circle">net.jqwik.api.arbitraries.<a href="IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">IteratorArbitrary</span></a>&lt;T&gt;</li>
-<li class="circle">net.jqwik.api.arbitraries.<a href="ListArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ListArbitrary</span></a>&lt;T&gt;</li>
-<li class="circle">net.jqwik.api.arbitraries.<a href="SetArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">SetArbitrary</span></a>&lt;T&gt;</li>
-<li class="circle">net.jqwik.api.arbitraries.<a href="StreamArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StreamArbitrary</span></a>&lt;T&gt;</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">IteratorArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="ListArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ListArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="SetArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">SetArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="StreamArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StreamArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.<a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="StreamArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StreamArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.arbitraries.<a href="StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamableArbitrary</a>&lt;T,&#8203;U&gt;)</li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="StringArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StringArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">TypeArbitrary</span></a>&lt;T&gt;</li>
 </ul>

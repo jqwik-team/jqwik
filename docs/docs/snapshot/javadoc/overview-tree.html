@@ -11,8 +11,8 @@
 <script type="text/javascript" src="jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="jquery/jquery-ui.js"></script>
 </head>
@@ -140,6 +140,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">net.jqwik.time.api.<a href="net/jqwik/time/api/DateTimes.html" title="class in net.jqwik.time.api"><span class="typeNameLink">DateTimes</span></a></li>
 <li class="circle">net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains"><span class="typeNameLink">DomainContext.DomainContextFacade</span></a></li>
 <li class="circle">net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.Global.html" title="class in net.jqwik.api.domains"><span class="typeNameLink">DomainContext.Global</span></a> (implements net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a>)</li>
+<li class="circle">net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContextBase.html" title="class in net.jqwik.api.domains"><span class="typeNameLink">DomainContextBase</span></a> (implements net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a>)</li>
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/EdgeCases.EdgeCasesFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">EdgeCases.EdgeCasesFacade</span></a></li>
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.ExhaustiveGeneratorFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">ExhaustiveGenerator.ExhaustiveGeneratorFacade</span></a></li>
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/FacadeLoader.html" title="class in net.jqwik.api"><span class="typeNameLink">FacadeLoader</span></a></li>
@@ -244,9 +245,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/DurationArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">DurationArbitrary</span></a></li>
 <li class="circle">net.jqwik.web.api.<a href="net/jqwik/web/api/EmailArbitrary.html" title="interface in net.jqwik.web.api"><span class="typeNameLink">EmailArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/FunctionArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">FunctionArbitrary</span></a>&lt;F,&#8203;R&gt;</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">IteratorArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamableArbitrary</a>&lt;T,&#8203;U&gt;)</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ListArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ListArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamableArbitrary</a>&lt;T,&#8203;U&gt;)</li>
 <li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">LocalDateArbitrary</span></a></li>
 <li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">LocalDateTimeArbitrary</span></a></li>
 <li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">LocalTimeArbitrary</span></a></li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/MapArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">MapArbitrary</span></a>&lt;K,&#8203;V&gt; (also extends net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/SizableArbitrary.html" title="interface in net.jqwik.api.arbitraries">SizableArbitrary</a>&lt;U&gt;)</li>
 <li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/MonthDayArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">MonthDayArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/NumericalArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">NumericalArbitrary</span></a>&lt;T,&#8203;A&gt;
 <ul>
@@ -262,21 +266,23 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </li>
 <li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/OffsetTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">OffsetTimeArbitrary</span></a></li>
 <li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/PeriodArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">PeriodArbitrary</span></a></li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/SetArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">SetArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamableArbitrary</a>&lt;T,&#8203;U&gt;)</li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/SizableArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">SizableArbitrary</span></a>&lt;U&gt;
 <ul>
 <li class="circle">net.jqwik.api.stateful.<a href="net/jqwik/api/stateful/ActionSequenceArbitrary.html" title="interface in net.jqwik.api.stateful"><span class="typeNameLink">ActionSequenceArbitrary</span></a>&lt;M&gt;</li>
-<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/MapArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">MapArbitrary</span></a>&lt;K,&#8203;V&gt;</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/MapArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">MapArbitrary</span></a>&lt;K,&#8203;V&gt; (also extends net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StreamableArbitrary</span></a>&lt;T,&#8203;U&gt;
 <ul>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArrayArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ArrayArbitrary</span></a>&lt;T,&#8203;A&gt;</li>
-<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">IteratorArbitrary</span></a>&lt;T&gt;</li>
-<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ListArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ListArbitrary</span></a>&lt;T&gt;</li>
-<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/SetArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">SetArbitrary</span></a>&lt;T&gt;</li>
-<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StreamArbitrary</span></a>&lt;T&gt;</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/IteratorArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">IteratorArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ListArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ListArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/SetArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">SetArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StreamArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;)</li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StreamArbitrary</span></a>&lt;T&gt; (also extends net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries">StreamableArbitrary</a>&lt;T,&#8203;U&gt;)</li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StringArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">StringArbitrary</span></a></li>
 <li class="circle">net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">TypeArbitrary</span></a>&lt;T&gt;</li>
 <li class="circle">net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/YearArbitrary.html" title="interface in net.jqwik.time.api.arbitraries"><span class="typeNameLink">YearArbitrary</span></a></li>
@@ -417,7 +423,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/HourRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">HourRange</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/IntRange.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">IntRange</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.<a href="net/jqwik/api/Label.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Label</span></a> (implements java.lang.annotation.Annotation)</li>
-<li class="circle">net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/LeapYears.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">LeapYears</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleHooks.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">LifecycleHooks</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/LongRange.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">LongRange</span></a> (implements java.lang.annotation.Annotation)</li>
 <li class="circle">net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/LowerChars.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">LowerChars</span></a> (implements java.lang.annotation.Annotation)</li>

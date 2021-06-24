@@ -11,8 +11,8 @@
 <script type="text/javascript" src="../../../jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="../../../jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="../../../jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="../../../jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="../../../jquery/jquery-ui.js"></script>
 </head>
@@ -389,7 +389,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i29" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#oneOf(java.util.List)">oneOf</a></span>&#8203;(java.util.List&lt;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&gt;&nbsp;all)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#oneOf(java.util.Collection)">oneOf</a></span>&#8203;(java.util.Collection&lt;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&gt;&nbsp;choices)</code></th>
 <td class="colLast">
 <div class="block">Create an arbitrary that will randomly choose between all given arbitraries of the same type T.</div>
 </td>
@@ -685,8 +685,7 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in n
 <ul class="blockList">
 <li class="blockList">
 <h4>oneOf</h4>
-<pre class="methodSignature">@SafeVarargs
-public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;oneOf&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&nbsp;first,
+<pre class="methodSignature">public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;oneOf&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&nbsp;first,
                                      <a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;...&nbsp;rest)</pre>
 <div class="block">Create an arbitrary that will randomly choose between all given arbitraries of the same type T.</div>
 <dl>
@@ -700,19 +699,19 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in n
 </dl>
 </li>
 </ul>
-<a id="oneOf(java.util.List)">
+<a id="oneOf(java.util.Collection)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>oneOf</h4>
-<pre class="methodSignature">public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;oneOf&#8203;(java.util.List&lt;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&gt;&nbsp;all)</pre>
+<pre class="methodSignature">public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;oneOf&#8203;(java.util.Collection&lt;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&gt;&nbsp;choices)</pre>
 <div class="block">Create an arbitrary that will randomly choose between all given arbitraries of the same type T.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>T</code> - The type of values to generate</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>all</code> - A list of arbitraries to choose from</dd>
+<dd><code>choices</code> - A collection of arbitraries to choose from</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new arbitrary instance</dd>
 </dl>

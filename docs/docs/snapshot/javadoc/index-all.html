@@ -11,8 +11,8 @@
 <script type="text/javascript" src="jquery/jszip/dist/jszip.min.js"></script>
 <script type="text/javascript" src="jquery/jszip-utils/dist/jszip-utils.min.js"></script>
 <!--[if IE]>
-    <script type="text/javascript" src="jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
-    <![endif]-->
+<script type="text/javascript" src="jquery/jszip-utils/dist/jszip-utils-ie.min.js"></script>
+<![endif]-->
 <script type="text/javascript" src="jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="jquery/jquery-ui.js"></script>
 </head>
@@ -103,10 +103,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains"><span class="typeNameLink">AbstractDomainContextBase</span></a> - Class in <a href="net/jqwik/api/domains/package-summary.html">net.jqwik.api.domains</a></dt>
 <dd>
-<div class="block">Subclass for easier implementation of <a href="net/jqwik/api/domains/DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></div>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="net/jqwik/api/domains/DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a> instead. Will be removed in version 1.6.0.</div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#%3Cinit%3E()">AbstractDomainContextBase()</a></span> - Constructor for class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/configurators/ArbitraryConfiguratorBase.html#acceptTargetType(net.jqwik.api.providers.TypeUsage)">acceptTargetType(TypeUsage)</a></span> - Method in class net.jqwik.api.configurators.<a href="net/jqwik/api/configurators/ArbitraryConfiguratorBase.html" title="class in net.jqwik.api.configurators">ArbitraryConfiguratorBase</a></dt>
 <dd>
 <div class="block">Override if configurator only works for certain types of domain objects</div>
@@ -724,6 +728,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/CannotFindArbitraryException.html#%3Cinit%3E(net.jqwik.api.providers.TypeUsage,net.jqwik.api.ForAll)">CannotFindArbitraryException(TypeUsage, ForAll)</a></span> - Constructor for exception net.jqwik.api.<a href="net/jqwik/api/CannotFindArbitraryException.html" title="class in net.jqwik.api">CannotFindArbitraryException</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/CannotFindArbitraryException.html#%3Cinit%3E(net.jqwik.api.providers.TypeUsage,net.jqwik.api.ForAll,java.lang.reflect.Method)">CannotFindArbitraryException(TypeUsage, ForAll, Method)</a></span> - Constructor for exception net.jqwik.api.<a href="net/jqwik/api/CannotFindArbitraryException.html" title="class in net.jqwik.api">CannotFindArbitraryException</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/lifecycle/CannotFindStoreException.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">CannotFindStoreException</span></a> - Exception in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>
 <div class="block">Experimental feature.</div>
@@ -1155,6 +1161,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains"><span class="typeNameLink">DomainContext.DomainContextFacade</span></a> - Class in <a href="net/jqwik/api/domains/package-summary.html">net.jqwik.api.domains</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/domains/DomainContext.Global.html" title="class in net.jqwik.api.domains"><span class="typeNameLink">DomainContext.Global</span></a> - Class in <a href="net/jqwik/api/domains/package-summary.html">net.jqwik.api.domains</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/jqwik/api/domains/DomainContextBase.html" title="class in net.jqwik.api.domains"><span class="typeNameLink">DomainContextBase</span></a> - Class in <a href="net/jqwik/api/domains/package-summary.html">net.jqwik.api.domains</a></dt>
+<dd>
+<div class="block">Base class for convention based implementations of <a href="net/jqwik/api/domains/DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContextBase.html#%3Cinit%3E()">DomainContextBase()</a></span> - Constructor for class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html#%3Cinit%3E()">DomainContextFacade()</a></span> - Constructor for class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains">DomainContext.DomainContextFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -1698,16 +1710,28 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Return all annotations of a parameter (or an annotated type argument).</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#getArbitraryConfigurators()">getArbitraryConfigurators()</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.html#getArbitraryConfigurators()">getArbitraryConfigurators()</a></span> - Method in interface net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.Global.html#getArbitraryConfigurators()">getArbitraryConfigurators()</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.Global.html" title="class in net.jqwik.api.domains">DomainContext.Global</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#getArbitraryProviders()">getArbitraryProviders()</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContextBase.html#getArbitraryConfigurators()">getArbitraryConfigurators()</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html#getArbitraryConfigurators(net.jqwik.api.domains.DomainContextBase)">getArbitraryConfigurators(DomainContextBase)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains">DomainContext.DomainContextFacade</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#getArbitraryProviders()">getArbitraryProviders()</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.html#getArbitraryProviders()">getArbitraryProviders()</a></span> - Method in interface net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.Global.html#getArbitraryProviders()">getArbitraryProviders()</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.Global.html" title="class in net.jqwik.api.domains">DomainContext.Global</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContextBase.html#getArbitraryProviders()">getArbitraryProviders()</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html#getArbitraryProviders(net.jqwik.api.domains.DomainContextBase,int)">getArbitraryProviders(DomainContextBase, int)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains">DomainContext.DomainContextFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/providers/TypeUsage.html#getComponentType()">getComponentType()</a></span> - Method in interface net.jqwik.api.providers.<a href="net/jqwik/api/providers/TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></dt>
 <dd>
@@ -1843,6 +1867,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/statistics/Histogram.Bucket.html" title="class in net.jqwik.api.statistics"><span class="typeNameLink">Histogram.Bucket</span></a> - Class in <a href="net/jqwik/api/statistics/package-summary.html">net.jqwik.api.statistics</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html#hourBetween(int,int)">hourBetween(int, int)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateTimeArbitrary</a></dt>
+<dd>
+<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated hour values.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalTimeArbitrary.html#hourBetween(int,int)">hourBetween(int, int)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalTimeArbitrary</a></dt>
 <dd>
 <div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated hour values.</div>
@@ -1876,6 +1904,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.ExhaustiveGeneratorFacade.html#ignoreException(net.jqwik.api.ExhaustiveGenerator,java.lang.Class)">ignoreException(ExhaustiveGenerator&lt;T&gt;, Class&lt;? extends Throwable&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.ExhaustiveGeneratorFacade.html" title="class in net.jqwik.api">ExhaustiveGenerator.ExhaustiveGeneratorFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html#ignoreException(net.jqwik.api.RandomGenerator,java.lang.Class)">ignoreException(RandomGenerator&lt;T&gt;, Class&lt;? extends Throwable&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html" title="class in net.jqwik.api">RandomGenerator.RandomGeneratorFacade</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html#implementation">implementation</a></span> - Static variable in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.DomainContextFacade.html" title="class in net.jqwik.api.domains">DomainContext.DomainContextFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ReflectionSupportFacade.html#implementation">implementation</a></span> - Static variable in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ReflectionSupportFacade.html" title="class in net.jqwik.api.facades">ReflectionSupportFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -2118,26 +2148,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#lazyOf(java.util.List)">lazyOf(List&lt;Supplier&lt;Arbitrary&lt;T&gt;&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/CalendarArbitrary.html#leapYears(boolean)">leapYears(boolean)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/CalendarArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">CalendarArbitrary</a></dt>
-<dd>
-<div class="block">Decide whether leap years are generated or not</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/DateArbitrary.html#leapYears(boolean)">leapYears(boolean)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/DateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">DateArbitrary</a></dt>
-<dd>
-<div class="block">Decide whether leap years are generated or not</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalDateArbitrary.html#leapYears(boolean)">leapYears(boolean)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></dt>
-<dd>
-<div class="block">Decide whether leap years are generated or not</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/YearMonthArbitrary.html#leapYears(boolean)">leapYears(boolean)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/YearMonthArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">YearMonthArbitrary</a></dt>
-<dd>
-<div class="block">Decide whether leap years are generated or not</div>
-</dd>
-<dt><a href="net/jqwik/time/api/constraints/LeapYears.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">LeapYears</span></a> - Annotation Type in <a href="net/jqwik/time/api/constraints/package-summary.html">net.jqwik.time.api.constraints</a></dt>
-<dd>
-<div class="block">Decide whether leap years are generated or not</div>
-</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ByteArbitrary.html#lessOrEqual(byte)">lessOrEqual(byte)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ByteArbitrary.html" title="interface in net.jqwik.api.arbitraries">ByteArbitrary</a></dt>
 <dd>
 <div class="block">Set the allowed upper <code>max</code> (included) bound of generated numbers.</div>
@@ -2459,6 +2469,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/FloatRange.html#minIncluded()">minIncluded()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/FloatRange.html" title="annotation in net.jqwik.api.constraints">FloatRange</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html#minuteBetween(int,int)">minuteBetween(int, int)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateTimeArbitrary</a></dt>
+<dd>
+<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated minute values.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalTimeArbitrary.html#minuteBetween(int,int)">minuteBetween(int, int)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalTimeArbitrary</a></dt>
 <dd>
 <div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated minute values.</div>
@@ -2917,9 +2931,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.html#onClose(java.util.function.Consumer)">onClose(Consumer&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#oneOf(java.util.List)">oneOf(List&lt;Arbitrary&lt;T&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#oneOf(java.util.Collection)">oneOf(Collection&lt;Arbitrary&lt;? extends T&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.html#oneOf(java.util.List)">oneOf(List&lt;Arbitrary&lt;T&gt;&gt;)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.html" title="class in net.jqwik.api">Arbitraries</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.html#oneOf(java.util.Collection)">oneOf(Collection&lt;Arbitrary&lt;? extends T&gt;&gt;)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.html" title="class in net.jqwik.api">Arbitraries</a></dt>
 <dd>
 <div class="block">Create an arbitrary that will randomly choose between all given arbitraries of the same type T.</div>
 </dd>
@@ -2943,6 +2957,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Set an array of allowed <code>daysOfWeek</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html#onlyDaysOfWeek(java.time.DayOfWeek...)">onlyDaysOfWeek(DayOfWeek...)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateTimeArbitrary</a></dt>
+<dd>
+<div class="block">Set an array of allowed <code>daysOfWeek</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/CalendarArbitrary.html#onlyMonths(java.time.Month...)">onlyMonths(Month...)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/CalendarArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">CalendarArbitrary</a></dt>
 <dd>
 <div class="block">Set an array of allowed <code>months</code>.</div>
@@ -2952,6 +2970,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Set an array of allowed <code>months</code>.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalDateArbitrary.html#onlyMonths(java.time.Month...)">onlyMonths(Month...)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateArbitrary</a></dt>
+<dd>
+<div class="block">Set an array of allowed <code>months</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html#onlyMonths(java.time.Month...)">onlyMonths(Month...)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateTimeArbitrary</a></dt>
 <dd>
 <div class="block">Set an array of allowed <code>months</code>.</div>
 </dd>
@@ -3144,6 +3166,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">This is the method you must override in your own implementations of <code>ArbitraryProvider</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/providers/ArbitraryProvider.SubtypeProvider.html#provideOneFor(net.jqwik.api.providers.TypeUsage)">provideOneFor(TypeUsage)</a></span> - Method in interface net.jqwik.api.providers.<a href="net/jqwik/api/providers/ArbitraryProvider.SubtypeProvider.html" title="interface in net.jqwik.api.providers">ArbitraryProvider.SubtypeProvider</a></dt>
+<dd>
+<div class="block">Convenience method to combine set of arbitraries in optional choice-based arbitrary.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/AroundContainerHook.html#proximity()">proximity()</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle">AroundContainerHook</a></dt>
 <dd>
 <div class="block">Determine both <a href="net/jqwik/api/lifecycle/AroundContainerHook.html#beforeContainerProximity()">AroundContainerHook.beforeContainerProximity()</a> and <a href="net/jqwik/api/lifecycle/AroundContainerHook.html#afterContainerProximity()">AroundContainerHook.afterContainerProximity()</a>
@@ -3263,17 +3289,25 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Register a concrete hook implementation.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#registerArbitrary(java.lang.Class,net.jqwik.api.Arbitrary)">registerArbitrary(Class&lt;T&gt;, Arbitrary&lt;T&gt;)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#registerArbitrary(net.jqwik.api.providers.TypeUsage,net.jqwik.api.Arbitrary)">registerArbitrary(TypeUsage, Arbitrary&lt;?&gt;)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#registerConfigurator(net.jqwik.api.configurators.ArbitraryConfigurator)">registerConfigurator(ArbitraryConfigurator)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/RegistrarHook.html#registerHooks(net.jqwik.api.lifecycle.RegistrarHook.Registrar)">registerHooks(RegistrarHook.Registrar)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/RegistrarHook.html" title="interface in net.jqwik.api.lifecycle">RegistrarHook</a></dt>
 <dd>
 <div class="block">This method will be called during hook registration, i.e. before any test has been started.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#registerProvider(net.jqwik.api.providers.ArbitraryProvider)">registerProvider(ArbitraryProvider)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><a href="net/jqwik/api/lifecycle/RegistrarHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">RegistrarHook</span></a> - Interface in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>
 <div class="block">Use this hook if you want to apply several hook implementations that belong
@@ -3410,6 +3444,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Use to constrain the maximum number of decimal places when generating decimal numbers.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html#secondBetween(int,int)">secondBetween(int, int)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateTimeArbitrary</a></dt>
+<dd>
+<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated second values.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalTimeArbitrary.html#secondBetween(int,int)">secondBetween(int, int)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalTimeArbitrary</a></dt>
 <dd>
 <div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated second values.</div>
@@ -3460,8 +3498,12 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
  of type Set</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#setDefaultPriority(int)">setDefaultPriority(int)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span></div>
+&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContext.html#setDefaultPriority(int)">setDefaultPriority(int)</a></span> - Method in interface net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.html" title="interface in net.jqwik.api.domains">DomainContext</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/domains/DomainContextBase.html#setDefaultPriority(int)">setDefaultPriority(int)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContextBase.html" title="class in net.jqwik.api.domains">DomainContextBase</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/PropertyAttributes.html#setEdgeCases(net.jqwik.api.EdgeCasesMode)">setEdgeCases(EdgeCasesMode)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyAttributes.html" title="interface in net.jqwik.api.lifecycle">PropertyAttributes</a></dt>
 <dd>&nbsp;</dd>
@@ -3800,6 +3842,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Will return <code>Optional.empty()</code> if status is anything but <a href="net/jqwik/api/lifecycle/TryExecutionResult.Status.html#FALSIFIED">TryExecutionResult.Status.FALSIFIED</a>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html#timeBetween(java.time.LocalTime,java.time.LocalTime)">timeBetween(LocalTime, LocalTime)</a></span> - Method in interface net.jqwik.time.api.arbitraries.<a href="net/jqwik/time/api/arbitraries/LocalDateTimeArbitrary.html" title="interface in net.jqwik.time.api.arbitraries">LocalDateTimeArbitrary</a></dt>
+<dd>
+<div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated local time values.</div>
+</dd>
 <dt><a href="net/jqwik/time/api/constraints/TimeRange.html" title="annotation in net.jqwik.time.api.constraints"><span class="typeNameLink">TimeRange</span></a> - Annotation Type in <a href="net/jqwik/time/api/constraints/package-summary.html">net.jqwik.time.api.constraints</a></dt>
 <dd>
 <div class="block">Constrain the range of generated time parameters.</div>
@@ -4135,7 +4181,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Return a class that implements <a href="net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle">PerProperty.Lifecycle</a></div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Provide.html#value()">value()</a></span> - Method in annotation type net.jqwik.api.<a href="net/jqwik/api/Provide.html" title="annotation in net.jqwik.api">Provide</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Used as reference name.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Report.html#value()">value()</a></span> - Method in annotation type net.jqwik.api.<a href="net/jqwik/api/Report.html" title="annotation in net.jqwik.api">Report</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Shrinkable.html#value()">value()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a></dt>
@@ -4363,8 +4411,6 @@ the order they are declared.</div>
 <dd>
 <div class="block">Add an unlabelled invariant to a sequence.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/time/api/constraints/LeapYears.html#withLeapYears()">withLeapYears()</a></span> - Method in annotation type net.jqwik.time.api.constraints.<a href="net/jqwik/time/api/constraints/LeapYears.html" title="annotation in net.jqwik.time.api.constraints">LeapYears</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/constraints/WithNull.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">WithNull</span></a> - Annotation Type in <a href="net/jqwik/api/constraints/package-summary.html">net.jqwik.api.constraints</a></dt>
 <dd>
 <div class="block">Allows jqwik to inject null parameters into generated values.</div>
