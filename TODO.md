@@ -1,9 +1,5 @@
 - 1.5.2
 
-    - Domains
-        - User guide entry for DomainContextBase
-        - release notes
-
     - Release
 
 

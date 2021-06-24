@@ -113,4 +113,4 @@ class AddressProperties {
 The first two properties above will resolve their arbitraries solely through providers
 specified in `AmericanAddresses`, whereas the last one also uses the default (global) context.
 Since `AmericanAddresses` does not configure any arbitrary provider for `String` parameters,
-property method `globalDomainNotPresent` will fail with a `CannotFindArbitraryException`.
+the second property will fail with `CannotFindArbitraryException`.

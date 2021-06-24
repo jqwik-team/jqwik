@@ -26,6 +26,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = MAINTAINED, since = "1.2.0")
 public interface DomainContext {
 
+	@API(status = INTERNAL)
 	static DomainContext global() {
 		return DomainContextFacade.implementation.global();
 	}

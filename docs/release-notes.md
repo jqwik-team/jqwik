@@ -34,8 +34,12 @@ and
 
 #### New and Enhanced Features
 
-- New base class `DomainContextBase` for [providing domain contexts](#domain-and-domain-context).
-  That's why `AbstractDomainContextBase` is now _deprecated_.
+- Added new base class 
+  [`DomainContextBase`](/docs/snapshot/javadoc/net/jqwik/api/domains/DomainContextBase.html) for 
+  [providing domain contexts](/docs/snapshot/user-guide.html#domain-and-domain-context).
+  That's why 
+  [`AbstractDomainContextBase`](/docs/snapshot/javadoc/net/jqwik/api/domains/AbstractDomainContextBase.html) 
+  is now _deprecated_.
 
 - Provider Methods annotated with `@Provide` now support
   [implicit flat mapping](/docs/snapshot/user-guide.html#implicit-flat-mapping).
