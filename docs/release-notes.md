@@ -36,7 +36,7 @@ and
 
 - Added new base class 
   [`DomainContextBase`](/docs/1.5.2/javadoc/net/jqwik/api/domains/DomainContextBase.html), which changes the way 
-  how you typically [provide domain contexts](/docs/snapshot/user-guide.html#domain-and-domain-context).
+  how you typically [provide domain contexts](/docs/1.5.2/user-guide.html#domain-and-domain-context).
   
   That's the reason why 
   [`AbstractDomainContextBase`](/docs/1.5.2/javadoc/net/jqwik/api/domains/AbstractDomainContextBase.html) 
