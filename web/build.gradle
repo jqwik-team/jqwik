@@ -70,7 +70,7 @@ test {
 	include 'net/**/*Tests.class'
 
 	reports {
-		junitXml.enabled = true
+		junitXml.required = true
 	}
 
 	// testLogging.showStandardStreams = true
