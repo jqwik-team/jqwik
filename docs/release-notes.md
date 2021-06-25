@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.5.2-SNAPSHOT](#152-snapshot)
+- [1.5.2](#152)
 - [1.5.1](#151)
 - [1.5.0](#150)
 - [1.4.0](#140)
@@ -23,29 +23,29 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.5.2-SNAPSHOT
+## 1.5.2
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.5.2/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.5.2/javadoc/index.html">javadoc</a>
 </p>
 
 
 #### New and Enhanced Features
 
 - Added new base class 
-  [`DomainContextBase`](/docs/snapshot/javadoc/net/jqwik/api/domains/DomainContextBase.html) for 
+  [`DomainContextBase`](/docs/1.5.2/javadoc/net/jqwik/api/domains/DomainContextBase.html) for 
   [providing domain contexts](/docs/snapshot/user-guide.html#domain-and-domain-context).
   That's why 
-  [`AbstractDomainContextBase`](/docs/snapshot/javadoc/net/jqwik/api/domains/AbstractDomainContextBase.html) 
+  [`AbstractDomainContextBase`](/docs/1.5.2/javadoc/net/jqwik/api/domains/AbstractDomainContextBase.html) 
   is now _deprecated_.
 
 - Provider Methods annotated with `@Provide` now support
-  [implicit flat mapping](/docs/snapshot/user-guide.html#implicit-flat-mapping).
+  [implicit flat mapping](/docs/1.5.2/user-guide.html#implicit-flat-mapping).
 
 - More progress on 
-  [generation of DateTimes](/docs/snapshot/user-guide.html#generation-of-datetimes)
+  [generation of DateTimes](/docs/1.5.2/user-guide.html#generation-of-datetimes)
 
 - Upgrade to JUnit Platform 1.7.2
 
