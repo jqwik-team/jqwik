@@ -1,4 +1,4 @@
-- 1.5.x
+- 1.5.3
 
     - SizableCollections.withSizeDistribution(...)
 
@@ -17,6 +17,8 @@
         - DateTimes. See https://github.com/jlink/jqwik/issues/175
         - Generate Instant, OffsetDateTime, Date, Calendar
         - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
+
+- 1.5.x
 
     - Create possibility/annotation to suppress reporting inside of a
       test/property but not lose reporting of property's results. May require a
