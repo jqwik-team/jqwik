@@ -1,5 +1,7 @@
 - 1.5.3
 
+    - String generation: Raise probability of repeated chars
+
     - SizableCollections.withSizeDistribution(...)
 
     - Domains
