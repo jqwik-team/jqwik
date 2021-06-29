@@ -32,36 +32,41 @@ class ArbitraryTests {
 		int[] injectedGenSize = {0};
 
 		Arbitrary<Integer> arbitrary =
-				new Arbitrary<Integer>() {
+			new Arbitrary<Integer>() {
 
-					@Override
-					public RandomGenerator<Integer> generator(final int genSize) {
-						injectedGenSize[0] = genSize;
-						return ignore -> Shrinkable.unshrinkable(0);
-					}
+				@Override
+				public RandomGenerator<Integer> generator(final int genSize) {
+					injectedGenSize[0] = genSize;
+					return ignore -> Shrinkable.unshrinkable(0);
+				}
 
-					@Override
-					public EdgeCases<Integer> edgeCases(int maxEdgeCases) {
-						return EdgeCases.none();
-					}
-				};
+				@Override
+				public EdgeCases<Integer> edgeCases(int maxEdgeCases) {
+					return EdgeCases.none();
+				}
+			};
 
 		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000, true);
 		assertThat(injectedGenSize[0]).isEqualTo(42);
 	}
 
-	@Example
-	void nullsWithProbability50Percent() {
+	@Property(tries = 100)
+	void nullsWithProbability50Percent(@ForAll Random random) {
 		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 		Arbitrary<Integer> intsWithNulls = ints.injectNull(0.5);
 
 		List<Integer> listWithNulls = intsWithNulls.list()
-												   .ofMinSize(99) // Fixed size lists create edge case
-												   .ofMaxSize(100).sample();
-		listWithNulls.removeIf(Objects::isNull);
+												   .ofSize(100)
+												   .generator(1000)
+												   .next(random)
+												   .value();
 
-		// Might very rarely fail
-		assertThat(listWithNulls).hasSizeLessThanOrEqualTo(75);
+		List<Integer> listWithoutNulls = new ArrayList<>(listWithNulls);
+		listWithoutNulls.removeIf(Objects::isNull);
+
+		Statistics.label("at least 25 nulls")
+				  .collect(listWithoutNulls.size() <= 75)
+				  .coverage(checker -> checker.check(true).percentage(p -> p > 80));
 	}
 
 	@Property
@@ -143,8 +148,8 @@ class ArbitraryTests {
 			Arbitrary<List<Integer>> int1 = Arbitraries.integers().list();
 			Arbitrary<List<Integer>> int2 = Arbitraries.integers().list();
 			return Arbitraries.frequencyOf(
-					Tuple.of(1, int1),
-					Tuple.of(5, int2)
+				Tuple.of(1, int1),
+				Tuple.of(5, int2)
 			);
 		}
 
@@ -213,13 +218,13 @@ class ArbitraryTests {
 		@Example
 		void ignoreIllegalArgumentException(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary =
-					new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
-							.map(anInt -> {
-								if (anInt % 2 == 0) {
-									throw new IllegalArgumentException("No even numbers");
-								}
-								return anInt;
-							});
+				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
+					.map(anInt -> {
+						if (anInt % 2 == 0) {
+							throw new IllegalArgumentException("No even numbers");
+						}
+						return anInt;
+					});
 			Arbitrary<Integer> filtered = arbitrary.ignoreException(IllegalArgumentException.class);
 			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
@@ -232,13 +237,13 @@ class ArbitraryTests {
 		@Example
 		void ignoreSubtypeOfException(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary =
-					new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
-							.map(anInt -> {
-								if (anInt % 2 == 0) {
-									throw new IllegalArgumentException("No even numbers");
-								}
-								return anInt;
-							});
+				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
+					.map(anInt -> {
+						if (anInt % 2 == 0) {
+							throw new IllegalArgumentException("No even numbers");
+						}
+						return anInt;
+					});
 			Arbitrary<Integer> filtered = arbitrary.ignoreException(RuntimeException.class);
 			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
@@ -251,10 +256,10 @@ class ArbitraryTests {
 		@Example
 		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary =
-					new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
-							.map(anInt -> {
-								throw new IllegalArgumentException("No even numbers");
-							});
+				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
+					.map(anInt -> {
+						throw new IllegalArgumentException("No even numbers");
+					});
 			Arbitrary<Integer> filtered = arbitrary.ignoreException(RuntimeException.class);
 			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
@@ -387,7 +392,7 @@ class ArbitraryTests {
 			RandomGenerator<List<Integer>> generator = collected.generator(10, true);
 
 			assertThatThrownBy(() -> generator.next(random))
-					.isInstanceOf(JqwikException.class);
+				.isInstanceOf(JqwikException.class);
 		}
 
 		private int sum(List<Integer> list) {
@@ -466,7 +471,7 @@ class ArbitraryTests {
 				for (int i = -1000; i <= 1000; i++) {
 					int finalI = i;
 					checker.check(i).percentage(
-							(Consumer<Double>) p -> assertThat(p).describedAs("Value: %s", finalI).isLessThan(1)
+						(Consumer<Double>) p -> assertThat(p).describedAs("Value: %s", finalI).isLessThan(1)
 					);
 				}
 			});

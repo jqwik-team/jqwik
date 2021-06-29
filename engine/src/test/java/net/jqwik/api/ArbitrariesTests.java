@@ -575,7 +575,7 @@ class ArbitrariesTests {
 			assertGeneratedString(generator, random, 0, 5);
 		}
 
-		@Property
+		@Property(tries = 20)
 		void stringWithFixedLength(@ForAll @IntRange(min = 1, max = 10) int size, @ForAll Random random) {
 			Arbitrary<String> stringArbitrary = Arbitraries.strings()
 														   .withCharRange('a', 'a')

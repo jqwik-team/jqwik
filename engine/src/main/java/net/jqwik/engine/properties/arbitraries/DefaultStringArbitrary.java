@@ -21,16 +21,16 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	@Override
 	public RandomGenerator<String> generator(int genSize) {
 		final int cutoffLength = RandomGenerators.defaultCutoffSize(minLength, maxLength, genSize);
-		return RandomGenerators.strings(randomCharacterGenerator(false), minLength, maxLength, cutoffLength);
+		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, cutoffLength);
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<String>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.strings(
-				effectiveCharacterArbitrary(),
-				minLength,
-				maxLength,
-				maxNumberOfSamples
+			effectiveCharacterArbitrary(),
+			minLength,
+			maxLength,
+			maxNumberOfSamples
 		);
 	}
 
@@ -42,15 +42,15 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 		}
 
 		EdgeCases<String> emptyStringEdgeCases =
-				hasEmptyStringEdgeCase() ? emptyStringEdgeCase() : EdgeCases.none();
+			hasEmptyStringEdgeCase() ? emptyStringEdgeCase() : EdgeCases.none();
 
 		int effectiveMaxEdgeCases = maxEdgeCases - emptyStringEdgeCases.size();
 		EdgeCases<String> singleCharEdgeCases =
-				hasSingleCharEdgeCases() ? fixedSizedEdgeCases(1, effectiveMaxEdgeCases) : EdgeCases.none();
+			hasSingleCharEdgeCases() ? fixedSizedEdgeCases(1, effectiveMaxEdgeCases) : EdgeCases.none();
 
 		effectiveMaxEdgeCases = effectiveMaxEdgeCases - singleCharEdgeCases.size();
 		EdgeCases<String> fixedSizeEdgeCases =
-				hasMultiCharEdgeCases() ? fixedSizedEdgeCases(minLength, effectiveMaxEdgeCases) : EdgeCases.none();
+			hasMultiCharEdgeCases() ? fixedSizedEdgeCases(minLength, effectiveMaxEdgeCases) : EdgeCases.none();
 
 		return EdgeCasesSupport.concat(asList(singleCharEdgeCases, emptyStringEdgeCases, fixedSizeEdgeCases), maxEdgeCases);
 	}
@@ -73,11 +73,11 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 
 	private EdgeCases<String> fixedSizedEdgeCases(int fixedSize, int maxEdgeCases) {
 		return EdgeCasesSupport.mapShrinkable(
-				effectiveCharacterArbitrary().edgeCases(maxEdgeCases),
-				shrinkableChar -> {
-					List<Shrinkable<Character>> shrinkableChars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
-					return new ShrinkableString(shrinkableChars, minLength, maxLength);
-				}
+			effectiveCharacterArbitrary().edgeCases(maxEdgeCases),
+			shrinkableChar -> {
+				List<Shrinkable<Character>> shrinkableChars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
+				return new ShrinkableString(shrinkableChars, minLength, maxLength);
+			}
 		);
 	}
 
@@ -127,8 +127,8 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	public StringArbitrary alpha() {
 		DefaultStringArbitrary clone = typedClone();
 		clone.characterArbitrary = clone.characterArbitrary
-										   .range('A', 'Z')
-										   .range('a', 'z');
+									   .range('A', 'Z')
+									   .range('a', 'z');
 		return clone;
 	}
 
@@ -162,8 +162,10 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 		return clone;
 	}
 
-	private RandomGenerator<Character> randomCharacterGenerator(boolean withEmbeddedEdgeCases) {
-		return effectiveCharacterArbitrary().generator(1, withEmbeddedEdgeCases);
+	private RandomGenerator<Character> randomCharacterGenerator() {
+		return effectiveCharacterArbitrary()
+				   .generator(1, false)
+				   .injectDuplicates(0.01);
 	}
 
 	private Arbitrary<Character> effectiveCharacterArbitrary() {

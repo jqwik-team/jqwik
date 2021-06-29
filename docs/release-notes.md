@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.5.3-SNAPSHOT](#153-snapshot)
 - [1.5.2](#152)
 - [1.5.1](#151)
 - [1.5.0](#150)
@@ -21,6 +22,25 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+## 1.5.3-SNAPSHOT
+
+#### New and Enhanced Features
+
+- All container-based arbitraries (e.g. List, Sets, Strings) now generate containers 
+  without duplicated elements with a higher probability even when they have many elements. 
+
+- String arbitraries now generate duplicate chars and series of chars with a higher probability. 
+
+
+#### Breaking Changes
+
+No known breaking changes.
+
+#### Bug Fixes
+
+No known bugs.
 
 
 ## 1.5.2
