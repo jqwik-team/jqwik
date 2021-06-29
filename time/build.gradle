@@ -4,7 +4,7 @@ jar {
 	archiveBaseName.set('jqwik-time')
 	archiveVersion.set("${jqwikVersion}")
 	manifest {
-		attributes('Automatic-Module-Name': "${moduleName}.engine")
+		attributes('Automatic-Module-Name': "${moduleName}.time")
 	}
 }
 
