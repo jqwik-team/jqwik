@@ -40,8 +40,8 @@ No known breaking changes.
 
 #### Bug Fixes
 
-No known bugs.
-
+- Module name now correctly set for testing, web and time modules.
+  See https://github.com/jlink/jqwik/issues/201.
 
 ## 1.5.2
 
