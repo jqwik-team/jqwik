@@ -7,7 +7,6 @@ import org.junit.jupiter.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -71,11 +70,22 @@ class UseArbitrariesOutsideJqwikTests {
 		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 		Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.5);
 
-		List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
-		Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+		Random random = new Random();
+		// Try 5 times because it can fail rarely
+		for (int i = 0; i < 20; i++) {
 
-		// Might very rarely fail
-		assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(65);
+			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
+			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+
+			if (i < 19) {
+				// Can fail because collections with no duplicates have probability of approx. 5%
+				if (noMoreDuplicates.size() < 80) {
+					return;
+				}
+			} else {
+				assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(65);
+			}
+		}
 	}
 
 	@Test
