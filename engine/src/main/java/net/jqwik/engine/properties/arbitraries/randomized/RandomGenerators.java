@@ -74,14 +74,6 @@ public class RandomGenerators {
 		return RandomDecimalGenerators.bigDecimals(1000, range, scale, distribution, shrinkingTarget);
 	}
 
-	public static <T> RandomGenerator<List<T>> list(
-			RandomGenerator<T> elementGenerator, int minSize, int maxSize, Set<FeatureExtractor<T>> uniquenessExtractors, int cutoffSize
-	) {
-		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable =
-				elements -> new ShrinkableList<>(elements, minSize, maxSize, uniquenessExtractors);
-		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize, uniquenessExtractors);
-	}
-
 	public static <T> RandomGenerator<T> oneOf(List<RandomGenerator<T>> all) {
 		return choose(all).flatMap(Function.identity());
 	}
@@ -123,6 +115,16 @@ public class RandomGenerators {
 			Set<FeatureExtractor<T>> uniquenessExtractors
 	) {
 		return new ContainerGenerator<>(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize, uniquenessExtractors);
+	}
+
+	public static <T> RandomGenerator<List<T>> list(
+		RandomGenerator<T> elementGenerator,
+		int minSize, int maxSize, int cutoffSize,
+		Set<FeatureExtractor<T>> uniquenessExtractors
+	) {
+		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable =
+			elements -> new ShrinkableList<>(elements, minSize, maxSize, uniquenessExtractors);
+		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize, uniquenessExtractors);
 	}
 
 	public static <T> RandomGenerator<Set<T>> set(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
