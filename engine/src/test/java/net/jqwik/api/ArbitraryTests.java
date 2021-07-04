@@ -427,28 +427,48 @@ class ArbitraryTests {
 	@Group
 	class Duplicates {
 
-		@Example
-		void duplicatesWithProbability20Percent() {
+		@Property(tries = 100)
+		void duplicatesWith20Percent(@ForAll Random random) {
 			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.2);
+			ListArbitrary<Integer> arbitrary = intsWithDuplicates.list().ofSize(100);
 
-			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
+			RandomGenerator<List<Integer>> generator = arbitrary.generator(1000, false);
+			List<Integer> listWithDuplicates = generator.next(random).value();
 			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
 
-			// Might very rarely fail
-			assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(90);
+			Statistics
+				.label("duplicates > 10%")
+				.collect(noMoreDuplicates.size() <= 90)
+				.coverage(checker -> checker.check(true).percentage(p -> p > 80));
 		}
 
-		@Example
-		void duplicatesWith50Percent() {
+		@Property(tries = 100)
+		void duplicatesWith50Percent(@ForAll Random random) {
 			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.5);
+			ListArbitrary<Integer> arbitrary = intsWithDuplicates.list().ofSize(100);
 
-			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
+			RandomGenerator<List<Integer>> generator = arbitrary.generator(1000, false);
+			List<Integer> listWithDuplicates = generator.next(random).value();
 			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
 
-			// Might very rarely fail
-			assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(65);
+			Statistics
+				.label("duplicates > 40%")
+				.collect(noMoreDuplicates.size() <= 60)
+				.coverage(checker -> checker.check(true).percentage(p -> p > 80));
+		}
+
+		@Property(tries = 100)
+		void duplicatesWith100Percent(@ForAll Random random) {
+			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
+			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(1.0);
+			ListArbitrary<Integer> arbitrary = intsWithDuplicates.list().ofSize(100);
+
+			RandomGenerator<List<Integer>> generator = arbitrary.generator(1000, false);
+			List<Integer> listWithDuplicates = generator.next(random).value();
+			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+			assertThat(noMoreDuplicates).hasSize(1);
 		}
 
 		@Example
