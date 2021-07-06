@@ -35,7 +35,10 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
-No known breaking changes.
+- `ActionSequenceArbitrary` no longer extends `SizableArbitrary`.
+
+- `ActionSequenceArbitrary.ofMinSize()` and `ActionSequenceArbitrary.ofMaxSize()`
+  is now deprecated.
 
 #### Bug Fixes
 

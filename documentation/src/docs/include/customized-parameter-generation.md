@@ -516,6 +516,7 @@ which are organized in a flat hierarchy:
 - [StringArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
 - [FunctionArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/FunctionArbitrary.html)
 - [TypeArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/TypeArbitrary.html)
+- [ActionSequenceArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/stateful/ActionSequenceArbitrary.html)
 
 
 Here are a

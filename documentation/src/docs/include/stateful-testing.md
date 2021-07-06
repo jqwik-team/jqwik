@@ -182,7 +182,7 @@ to generate using either the fluent interface or the `@Size` annotation:
 ```java
 @Property
 // check stack with sequences of 7 actions:
-void checkMyStack(@ForAll("sequences") @Size(max = 7) ActionSequence<MyStringStack> actions) {
+void checkMyStack(@ForAll("sequences") @Size(7) ActionSequence<MyStringStack> actions) {
     actions.run(new MyStringStack());
 }
 ```

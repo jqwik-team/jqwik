@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 class ActionSequenceProperties {
 
 	@Property
-	void createdSequencesDoTheirWork(@ForAll("xOrY") @Size(min = 2) ActionSequence<String> sequence) {
+	void createdSequencesDoTheirWork(@ForAll("xOrY") ActionSequence<String> sequence) {
 		String result = sequence.run("");
 
 		assertThat(sequence.runActions().size()).isGreaterThanOrEqualTo(2);
@@ -24,6 +24,12 @@ class ActionSequenceProperties {
 
 	@Property
 	void sequencesCanBeSized(@ForAll("ofSize5") ActionSequence<String> actions) {
+		String result = actions.run("");
+		assertThat(actions.runActions()).hasSize(5);
+	}
+
+	@Property(tries = 100)
+	void sequencesCanBeSizedWithAnnotation(@ForAll("xOrY") @Size(5) ActionSequence<String> actions) {
 		String result = actions.run("");
 		assertThat(actions.runActions()).hasSize(5);
 	}

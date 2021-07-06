@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.stateful;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
@@ -9,8 +8,7 @@ public class DefaultActionSequenceArbitrary<M> extends TypedCloneable implements
 
 	private final Arbitrary<Action<M>> actionArbitrary;
 
-	private int minSize = 1;
-	private int maxSize = 0;
+	private int size = 0;
 
 	public DefaultActionSequenceArbitrary(Arbitrary<? extends Action<M>> actionArbitrary) {
 		//noinspection unchecked
@@ -19,29 +17,21 @@ public class DefaultActionSequenceArbitrary<M> extends TypedCloneable implements
 
 	@Override
 	public ActionSequenceArbitrary<M> ofMinSize(int minSize) {
-		DefaultActionSequenceArbitrary<M> clone = typedClone();
-		clone.minSize = Math.max(1, minSize);
-		return clone;
+		return this;
 	}
 
 	@Override
-	public ActionSequenceArbitrary<M> ofMaxSize(int maxSize) {
+	public ActionSequenceArbitrary<M> ofSize(int size) {
 		DefaultActionSequenceArbitrary<M> clone = typedClone();
-		clone.maxSize = Math.max(Math.max(1, maxSize), minSize);
+		clone.size = size;
 		return clone;
-	}
-
-	@Override
-	public SizableArbitrary<ActionSequence<M>> withSizeDistribution(RandomDistribution distribution) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public RandomGenerator<ActionSequence<M>> generator(int genSize) {
 		final int effectiveMaxSize =
-			maxSize != 0 ? maxSize
-				: (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-		return new ActionSequenceGenerator<>(actionArbitrary, genSize, minSize, effectiveMaxSize);
+			size != 0 ? size : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
+		return new ActionSequenceGenerator<>(actionArbitrary, genSize, effectiveMaxSize);
 	}
 
 	@Override

@@ -11,15 +11,13 @@ import net.jqwik.engine.support.*;
 class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 
 	private final ActionGenerator<T> actionGenerator;
-	private final int minSize;
 	private final int maxSize;
 	private final ShrinkingDistance distance;
 
 	private SequentialActionSequence<T> generatedSequence = null;
 
-	ShrinkableActionSequence(ActionGenerator<T> actionGenerator, int minSize, int maxSize, ShrinkingDistance distance) {
+	ShrinkableActionSequence(ActionGenerator<T> actionGenerator, int maxSize, ShrinkingDistance distance) {
 		this.actionGenerator = actionGenerator;
-		this.minSize = minSize;
 		this.maxSize = maxSize;
 		this.distance = distance;
 	}
@@ -46,7 +44,7 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 
 	private Stream<Shrinkable<ActionSequence<T>>> shrinkSequenceOfActions() {
 		return new ComprehensiveSizeOfListShrinker()
-				   .shrink(actionGenerator.generated(), minSize)
+				   .shrink(actionGenerator.generated(), 1)
 				   .map(this::createShrinkableActionSequence);
 	}
 
@@ -69,7 +67,7 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 	private ShrinkableActionSequence<T> createShrinkableActionSequence(List<Shrinkable<Action<T>>> list) {
 		ActionGenerator<T> newGenerator = new ShrinkablesActionGenerator<>(list);
 		ShrinkingDistance newDistance = ShrinkingDistance.forCollection(list);
-		return new ShrinkableActionSequence<>(newGenerator, minSize, list.size(), newDistance);
+		return new ShrinkableActionSequence<>(newGenerator, list.size(), newDistance);
 	}
 
 	@Override

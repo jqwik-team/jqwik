@@ -51,7 +51,7 @@ class SizeProperties {
 	}
 
 	@Property
-	boolean worksForActionSequences(@ForAll("actions") @Size(max = 7) ActionSequence<Integer> sequence) {
+	boolean worksForActionSequences(@ForAll("actions") @Size(7) ActionSequence<Integer> sequence) {
 		Integer result = sequence.run(0);
 		return result >= 1 && result <= 7;
 	}

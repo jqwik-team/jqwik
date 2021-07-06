@@ -18,7 +18,7 @@ class ActionSequenceShrinkingTests {
 
 	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
 	@ExpectFailure(checkResult = FailedAndShrunkToAddX.class, failureType = AssertionError.class)
-	void dontShrinkToActionsWithOnlyFailingPreconditions(@ForAll("addXorY") @Size(max = 3) ActionSequence<String> sequence) {
+	void dontShrinkToActionsWithOnlyFailingPreconditions(@ForAll("addXorY") @Size(3) ActionSequence<String> sequence) {
 		String model = sequence.run("");
 		assertThat(model).isEmpty();
 	}
@@ -65,8 +65,8 @@ class ActionSequenceShrinkingTests {
 	}
 
 	@Example
-	void dontShrinkUnderMinSize(@ForAll Random random) {
-		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX()).ofMinSize(3);
+	void dontShrinkBelow1Action(@ForAll Random random) {
+		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX());
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000, true).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
@@ -77,7 +77,7 @@ class ActionSequenceShrinkingTests {
 
 		ActionSequence<String> shrunkValue = shrink(shrinkable, falsifier, failAndCatch(null));
 
-		assertThat(shrunkValue.runActions()).hasSize(3);
+		assertThat(shrunkValue.runActions()).hasSize(1);
 	}
 
 	@Example

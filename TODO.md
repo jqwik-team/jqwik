@@ -3,7 +3,6 @@
     - SizableCollections.withSizeDistribution(...)
         - Array
         - String  
-        - ActionSequence
         - User guide entry
 
     - Domains

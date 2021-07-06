@@ -1,11 +1,16 @@
 package net.jqwik.engine.properties.configurators;
 
+import java.util.logging.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.stateful.*;
 
 public class SizeConfigurator extends ArbitraryConfiguratorBase {
+
+	private static final Logger LOG = Logger.getLogger(SizeConfigurator.class.getName());
 
 	public SizableArbitrary<?> configure(SizableArbitrary<?> arbitrary, Size size) {
 		checkSize(size);
@@ -21,6 +26,23 @@ public class SizeConfigurator extends ArbitraryConfiguratorBase {
 			}
 			return newArbitrary;
 		}
+	}
+
+	public ActionSequenceArbitrary<?> configure(ActionSequenceArbitrary<?> arbitrary, Size size) {
+		int effectiveSize = Math.max(size.value(), Math.max(size.max(), size.min()));
+		if (size.value() <= 0 || size.min() != 0 || size.max() != 0) {
+			String message = String.format(
+				"%s:" +
+					"%n    You have to choose just a fixed positive value for size of action sequence." +
+					"%n    Use @Size(%s) instead." +
+					"%n    This usage will throw exception starting with version 1.7.0.",
+				size, effectiveSize
+			);
+			LOG.warning(message);
+			// TODO: Throw exception as soon as release 1.7.0
+			// throw new JqwikException(message);
+		}
+		return arbitrary.ofSize(effectiveSize);
 	}
 
 	private void checkSize(Size size) {
