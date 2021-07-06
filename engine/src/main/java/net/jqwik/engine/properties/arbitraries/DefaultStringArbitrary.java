@@ -20,8 +20,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 
 	@Override
 	public RandomGenerator<String> generator(int genSize) {
-		final int cutoffLength = RandomGenerators.defaultCutoffSize(minLength, maxLength, genSize);
-		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, cutoffLength);
+		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, genSize);
 	}
 
 	@Override

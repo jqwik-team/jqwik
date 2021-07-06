@@ -1,6 +1,5 @@
 package net.jqwik.engine.properties.arbitraries.randomized;
 
-import java.math.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -13,7 +12,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	private final RandomGenerator<T> elementGenerator;
 	private final Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable;
 	private final int minSize;
-	private final int cutoffSize;
+	private final int genSize;
 	private final RandomDistribution sizeDistribution;
 	private final Collection<FeatureExtractor<T>> uniquenessExtractors;
 
@@ -24,40 +23,10 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	private static Function<Random, Integer> sizeGenerator(
 		int minSize,
 		int maxSize,
-		int cutoffSize,
+		int genSize,
 		RandomDistribution sizeDistribution
 	) {
-		if (sizeDistribution != null) {
-			return sizeGeneratorWithDistribution(minSize, maxSize, sizeDistribution);
-		}
-		return sizeGeneratorWithCutoff(minSize, maxSize, cutoffSize);
-	}
-
-	private static Function<Random, Integer> sizeGeneratorWithCutoff(int minSize, int maxSize, int cutoffSize) {
-		if (cutoffSize >= maxSize)
-			return random -> randomSize(random, minSize, maxSize);
-		// Choose size below cutoffSize with probability of 0.9
-		return random -> {
-			if (random.nextDouble() > 0.1)
-				return randomSize(random, minSize, cutoffSize);
-			else
-				return randomSize(random, cutoffSize + 1, maxSize);
-		};
-	}
-
-	private static Function<Random, Integer> sizeGeneratorWithDistribution(int minSize, int maxSize, RandomDistribution distribution) {
-		RandomDistribution.RandomNumericGenerator generator =
-			distribution.createGenerator(
-				1000, // ignored for everything except biased distribution
-				BigInteger.valueOf(minSize), BigInteger.valueOf(maxSize),
-				BigInteger.valueOf(minSize)
-			);
-		return random -> generator.next(random).intValueExact();
-	}
-
-	private static int randomSize(Random random, int minSize, int maxSize) {
-		int range = maxSize - minSize;
-		return random.nextInt(range + 1) + minSize;
+		return SizeGenerator.create(minSize, maxSize, genSize, sizeDistribution);
 	}
 
 	ContainerGenerator(
@@ -65,17 +34,17 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,
 		int minSize,
 		int maxSize,
-		int cutoffSize,
+		int genSize,
 		RandomDistribution sizeDistribution,
 		Collection<FeatureExtractor<T>> uniquenessExtractors
 	) {
 		this.elementGenerator = elementGenerator;
 		this.createShrinkable = createShrinkable;
 		this.minSize = minSize;
-		this.cutoffSize = cutoffSize;
+		this.genSize = genSize;
 		this.sizeDistribution = sizeDistribution;
 		this.uniquenessExtractors = uniquenessExtractors;
-		this.sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize, sizeDistribution);
+		this.sizeGenerator = sizeGenerator(minSize, maxSize, genSize, sizeDistribution);
 	}
 
 	@Override
@@ -104,7 +73,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 						throw tooManyFilterMissesException;
 					} else {
 						listSize = listOfShrinkables.size();
-						sizeGenerator = sizeGenerator(minSize, listSize, cutoffSize, sizeDistribution);
+						sizeGenerator = sizeGenerator(minSize, listSize, genSize, sizeDistribution);
 					}
 				}
 			}
