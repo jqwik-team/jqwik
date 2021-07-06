@@ -58,8 +58,8 @@ class UseArbitrariesOutsideJqwikTests {
 		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 
 		Arbitrary<Integer> sum = Arbitraries.lazyOf(
-				() -> Arbitraries.just(0),
-				() -> ints
+			() -> Arbitraries.just(0),
+			() -> ints
 		);
 
 		assertThat(sum.sample()).isBetween(-1000, 1000);
@@ -113,6 +113,19 @@ class UseArbitrariesOutsideJqwikTests {
 		public static Person create(String firstName) {
 			return new Person(firstName, "Stranger");
 		}
+	}
+
+	/**
+	 * Has been brought up in https://github.com/jlink/jqwik/issues/205.
+	 * Could not reproduce problem so far.
+	 */
+	@Test
+	void useSampleInArbitrary() {
+		// BTW: You should never do this. Using sample() within another generator calls for flatMap or combine
+		Arbitraries.strings()
+				   .map(it -> it + Arbitraries.strings().alpha().sample())
+				   .filter(it -> it != null && !it.trim().isEmpty())
+				   .sample();
 	}
 
 	private static class PersonProvider implements ArbitraryProvider {
