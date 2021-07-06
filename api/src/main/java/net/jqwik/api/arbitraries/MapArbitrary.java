@@ -44,6 +44,13 @@ public interface MapArbitrary<K, V> extends Arbitrary<Map<K, V>>, SizableArbitra
 	MapArbitrary<K, V> ofMaxSize(int maxSize);
 
 	/**
+	 * Set random distribution {@code distribution} of size of generated map.
+	 * The distribution's center is the minimum size of the generated map.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.3")
+	MapArbitrary<K, V> withSizeDistribution(RandomDistribution uniform);
+
+	/**
 	 * Add the constraint that keys of the generated map must be unique
 	 * relating to an element's "feature" being extracted by applying the
 	 * {@code by} function on a map entry's key.

@@ -1,7 +1,6 @@
 - 1.5.3
 
     - SizableCollections.withSizeDistribution(...)
-        - Map
         - Array
         - String  
         - ActionSequence

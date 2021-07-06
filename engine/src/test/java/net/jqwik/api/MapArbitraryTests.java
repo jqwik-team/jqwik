@@ -5,12 +5,15 @@ import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.edgeCases.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.api.ArbitraryTestHelper.assertAllGenerated;
+import static net.jqwik.api.ArbitraryTestHelper.assertAtLeastOneGenerated;
 import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingSupport.assertAllGenerated;
 import static net.jqwik.testing.TestingSupport.*;
 
 class MapArbitraryTests {
@@ -59,12 +62,36 @@ class MapArbitraryTests {
 	}
 
 	@Example
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	void withSizeDistribution(@ForAll Random random) {
+		Arbitrary<Integer> keys = Arbitraries.integers();
+		Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
+
+		MapArbitrary<Integer, String> arbitrary =
+			Arbitraries.maps(keys, values).ofMaxSize(50)
+					   .withSizeDistribution(RandomDistribution.uniform());
+
+		RandomGenerator<Map<Integer, String>> generator = arbitrary.generator(1, false);
+
+		for (int i = 0; i < 1000; i++) {
+			Map<Integer, String> map = generator.next(random).value();
+			Statistics.collect(map.size());
+		}
+
+		Statistics.coverage(checker -> {
+			for (int size = 0; size <= 50; size++) {
+				checker.check(size).percentage(p -> p >= 0.4);
+			}
+		});
+	}
+
+	@Example
 	void keyUniqueness(@ForAll Random random) {
 		MapArbitrary<Integer, String> mapArbitrary =
-				Arbitraries.maps(
-						Arbitraries.integers().between(1, 1000),
-						Arbitraries.strings().alpha().ofMaxLength(10)
-				).ofMinSize(2).ofMaxSize(10).uniqueKeys(i -> i % 100);
+			Arbitraries.maps(
+				Arbitraries.integers().between(1, 1000),
+				Arbitraries.strings().alpha().ofMaxLength(10)
+			).ofMinSize(2).ofMaxSize(10).uniqueKeys(i -> i % 100);
 
 		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1000, true);
 
@@ -76,10 +103,10 @@ class MapArbitraryTests {
 	@Example
 	void valueUniqueness(@ForAll Random random) {
 		MapArbitrary<String, Integer> mapArbitrary =
-				Arbitraries.maps(
-						Arbitraries.strings().alpha().ofMaxLength(10),
-						Arbitraries.integers().between(1, 1000)
-				).ofMinSize(2).ofMaxSize(10).uniqueValues(i -> i % 100);
+			Arbitraries.maps(
+				Arbitraries.strings().alpha().ofMaxLength(10),
+				Arbitraries.integers().between(1, 1000)
+			).ofMinSize(2).ofMaxSize(10).uniqueValues(i -> i % 100);
 
 		RandomGenerator<Map<String, Integer>> generator = mapArbitrary.generator(1000, true);
 
@@ -91,10 +118,10 @@ class MapArbitraryTests {
 	@Example
 	void uniqueValues(@ForAll Random random) {
 		MapArbitrary<String, Integer> mapArbitrary =
-				Arbitraries.maps(
-						Arbitraries.strings().alpha().ofMaxLength(10),
-						Arbitraries.integers().between(1, 10)
-				).ofMinSize(2).ofMaxSize(10).uniqueValues();
+			Arbitraries.maps(
+				Arbitraries.strings().alpha().ofMaxLength(10),
+				Arbitraries.integers().between(1, 10)
+			).ofMinSize(2).ofMaxSize(10).uniqueValues();
 
 		RandomGenerator<Map<String, Integer>> generator = mapArbitrary.generator(1000, true);
 
@@ -131,11 +158,11 @@ class MapArbitraryTests {
 			Arbitrary<Map<String, Integer>> arbitrary = Arbitraries.maps(keys, values);
 			EdgeCases<Map<String, Integer>> edgeCases = arbitrary.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
-					Collections.emptyMap(),
-					Collections.singletonMap("a", 10),
-					Collections.singletonMap("a", 100),
-					Collections.singletonMap("z", 10),
-					Collections.singletonMap("z", 100)
+				Collections.emptyMap(),
+				Collections.singletonMap("a", 10),
+				Collections.singletonMap("a", 100),
+				Collections.singletonMap("z", 10),
+				Collections.singletonMap("z", 100)
 			);
 			// make sure edge cases can be repeatedly generated
 			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(5);
@@ -165,25 +192,25 @@ class MapArbitraryTests {
 			IntegerArbitrary keys = Arbitraries.integers().between(1, 3);
 			IntegerArbitrary values = Arbitraries.integers().between(4, 5);
 			Optional<ExhaustiveGenerator<Map<Integer, Integer>>> mapGenerator =
-					Arbitraries.maps(keys, values).ofSize(2).exhaustive();
+				Arbitraries.maps(keys, values).ofSize(2).exhaustive();
 			assertThat(mapGenerator).isPresent();
 
 			ExhaustiveGenerator<Map<Integer, Integer>> generator = mapGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(12);
 
 			assertThat(generator).containsExactlyInAnyOrder(
-					createMap(Tuple.of(1, 5), Tuple.of(2, 5)),
-					createMap(Tuple.of(1, 4), Tuple.of(2, 4)),
-					createMap(Tuple.of(1, 5), Tuple.of(2, 4)),
-					createMap(Tuple.of(1, 4), Tuple.of(2, 5)),
-					createMap(Tuple.of(1, 5), Tuple.of(3, 5)),
-					createMap(Tuple.of(1, 4), Tuple.of(3, 4)),
-					createMap(Tuple.of(1, 5), Tuple.of(3, 4)),
-					createMap(Tuple.of(1, 4), Tuple.of(3, 5)),
-					createMap(Tuple.of(2, 5), Tuple.of(3, 5)),
-					createMap(Tuple.of(2, 4), Tuple.of(3, 4)),
-					createMap(Tuple.of(2, 5), Tuple.of(3, 4)),
-					createMap(Tuple.of(2, 4), Tuple.of(3, 5))
+				createMap(Tuple.of(1, 5), Tuple.of(2, 5)),
+				createMap(Tuple.of(1, 4), Tuple.of(2, 4)),
+				createMap(Tuple.of(1, 5), Tuple.of(2, 4)),
+				createMap(Tuple.of(1, 4), Tuple.of(2, 5)),
+				createMap(Tuple.of(1, 5), Tuple.of(3, 5)),
+				createMap(Tuple.of(1, 4), Tuple.of(3, 4)),
+				createMap(Tuple.of(1, 5), Tuple.of(3, 4)),
+				createMap(Tuple.of(1, 4), Tuple.of(3, 5)),
+				createMap(Tuple.of(2, 5), Tuple.of(3, 5)),
+				createMap(Tuple.of(2, 4), Tuple.of(3, 4)),
+				createMap(Tuple.of(2, 5), Tuple.of(3, 4)),
+				createMap(Tuple.of(2, 4), Tuple.of(3, 5))
 			);
 		}
 
@@ -202,22 +229,22 @@ class MapArbitraryTests {
 			IntegerArbitrary keys = Arbitraries.integers().between(1, 3);
 			IntegerArbitrary values = Arbitraries.integers().between(4, 5);
 			Optional<ExhaustiveGenerator<Map<Integer, Integer>>> mapGenerator =
-					Arbitraries.maps(keys, values).ofSize(2).uniqueKeys(i -> i % 2)
-							   .exhaustive();
+				Arbitraries.maps(keys, values).ofSize(2).uniqueKeys(i -> i % 2)
+						   .exhaustive();
 			assertThat(mapGenerator).isPresent();
 
 			ExhaustiveGenerator<Map<Integer, Integer>> generator = mapGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(8);
 
 			assertThat(generator).containsExactlyInAnyOrder(
-					createMap(Tuple.of(1, 5), Tuple.of(2, 5)),
-					createMap(Tuple.of(1, 4), Tuple.of(2, 4)),
-					createMap(Tuple.of(1, 5), Tuple.of(2, 4)),
-					createMap(Tuple.of(1, 4), Tuple.of(2, 5)),
-					createMap(Tuple.of(2, 5), Tuple.of(3, 5)),
-					createMap(Tuple.of(2, 4), Tuple.of(3, 4)),
-					createMap(Tuple.of(2, 5), Tuple.of(3, 4)),
-					createMap(Tuple.of(2, 4), Tuple.of(3, 5))
+				createMap(Tuple.of(1, 5), Tuple.of(2, 5)),
+				createMap(Tuple.of(1, 4), Tuple.of(2, 4)),
+				createMap(Tuple.of(1, 5), Tuple.of(2, 4)),
+				createMap(Tuple.of(1, 4), Tuple.of(2, 5)),
+				createMap(Tuple.of(2, 5), Tuple.of(3, 5)),
+				createMap(Tuple.of(2, 4), Tuple.of(3, 4)),
+				createMap(Tuple.of(2, 5), Tuple.of(3, 4)),
+				createMap(Tuple.of(2, 4), Tuple.of(3, 5))
 			);
 		}
 
@@ -227,18 +254,18 @@ class MapArbitraryTests {
 			IntegerArbitrary keys = Arbitraries.integers().between(4, 5);
 			IntegerArbitrary values = Arbitraries.integers().between(1, 3);
 			Optional<ExhaustiveGenerator<Map<Integer, Integer>>> mapGenerator =
-					Arbitraries.maps(keys, values).ofSize(2).uniqueValues(i -> i % 2)
-							   .exhaustive();
+				Arbitraries.maps(keys, values).ofSize(2).uniqueValues(i -> i % 2)
+						   .exhaustive();
 			assertThat(mapGenerator).isPresent();
 
 			ExhaustiveGenerator<Map<Integer, Integer>> generator = mapGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(9);
 
 			assertThat(generator).containsExactlyInAnyOrder(
-					createMap(Tuple.of(4, 1), Tuple.of(5, 2)),
-					createMap(Tuple.of(4, 2), Tuple.of(5, 1)),
-					createMap(Tuple.of(4, 2), Tuple.of(5, 3)),
-					createMap(Tuple.of(4, 3), Tuple.of(5, 2))
+				createMap(Tuple.of(4, 1), Tuple.of(5, 2)),
+				createMap(Tuple.of(4, 2), Tuple.of(5, 1)),
+				createMap(Tuple.of(4, 2), Tuple.of(5, 3)),
+				createMap(Tuple.of(4, 3), Tuple.of(5, 2))
 			);
 		}
 
@@ -247,7 +274,7 @@ class MapArbitraryTests {
 			IntegerArbitrary keys = Arbitraries.integers().between(1, 1000);
 			IntegerArbitrary values = Arbitraries.integers().between(1000, 2000);
 			Optional<ExhaustiveGenerator<Optional<Map<Integer, Integer>>>> optionalGenerator =
-					Arbitraries.maps(keys, values).ofMaxSize(10).optional().exhaustive();
+				Arbitraries.maps(keys, values).ofMaxSize(10).optional().exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}

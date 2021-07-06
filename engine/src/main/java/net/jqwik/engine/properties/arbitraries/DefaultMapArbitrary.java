@@ -15,6 +15,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 
 	private int minSize = 0;
 	private int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
+	private RandomDistribution sizeDistribution = null;
 
 	private Set<FeatureExtractor<K>> keyUniquenessExtractors = new HashSet<>();
 	private Set<FeatureExtractor<V>> valueUniquenessExtractors = new HashSet<>();
@@ -39,8 +40,10 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	}
 
 	@Override
-	public SizableArbitrary<Map<K, V>> withSizeDistribution(RandomDistribution distribution) {
-		throw new UnsupportedOperationException();
+	public MapArbitrary<K, V> withSizeDistribution(RandomDistribution distribution) {
+		DefaultMapArbitrary<K, V> clone = typedClone();
+		clone.sizeDistribution = distribution;
+		return clone;
 	}
 
 	@Override
@@ -73,7 +76,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	}
 
 	private SetArbitrary<K> createKeySetArbitrary() {
-		SetArbitrary<K> keySetArbitrary = keysArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize);
+		SetArbitrary<K> keySetArbitrary = keysArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize).withSizeDistribution(sizeDistribution);
 		for (FeatureExtractor<K> extractor : keyUniquenessExtractors) {
 			keySetArbitrary = keySetArbitrary.uniqueElements(extractor);
 		}
