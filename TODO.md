@@ -58,6 +58,9 @@
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
+    - Allow state machine / model specification with temporal logic.
+      See https://wickstrom.tech/programming/2021/05/03/specifying-state-machines-with-temporal-logic.html
+
     - Use derived Random object for generation of each parameter. Will that
       somehow break a random byte provider in guided generation?
         - Remember the random seed in Shrinkable
