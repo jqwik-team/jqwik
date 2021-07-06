@@ -1,8 +1,7 @@
 - 1.5.3
 
     - SizableCollections.withSizeDistribution(...)
-        - Array
-        - String  
+        - StringArbitrary.withLengthDistribution(..)  
         - User guide entry
 
     - Domains

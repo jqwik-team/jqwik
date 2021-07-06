@@ -4,6 +4,8 @@ import java.util.function.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -41,11 +43,18 @@ public interface ArrayArbitrary<T, A> extends StreamableArbitrary<T, A> {
 	ArrayArbitrary<T, A> ofMaxSize(int maxSize);
 
 	/**
+	 * Set random distribution {@code distribution} of size of generated array.
+	 * The distribution's center is the minimum size of the generated array.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.3")
+	ArrayArbitrary<T, A> withSizeDistribution(RandomDistribution uniform);
+
+	/**
 	 * Add the constraint that elements of the generated array must be unique,
 	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
+	 * The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance
@@ -60,7 +69,7 @@ public interface ArrayArbitrary<T, A> extends StreamableArbitrary<T, A> {
 	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
 	 *
 	 * <p>
-	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
+	 * The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
 	 * </p>
 	 *
 	 * @return new arbitrary instance

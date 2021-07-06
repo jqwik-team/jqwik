@@ -6,6 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
+import net.jqwik.api.statistics.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -29,9 +30,31 @@ class ArrayArbitraryTests {
 	}
 
 	@Example
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	void withSizeDistribution(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
+		ArrayArbitrary<Integer, Integer[]> arbitrary =
+			integerArbitrary.array(Integer[].class).ofMaxSize(100)
+							.withSizeDistribution(RandomDistribution.uniform());
+
+		RandomGenerator<Integer[]> generator = arbitrary.generator(1, false);
+
+		for (int i = 0; i < 5000; i++) {
+			Integer[] array = generator.next(random).value();
+			Statistics.collect(array.length);
+		}
+
+		Statistics.coverage(checker -> {
+			for (int size = 0; size <= 100; size++) {
+				checker.check(size).percentage(p -> p >= 0.4);
+			}
+		});
+	}
+
+	@Example
 	void reduceArray(@ForAll Random random) {
 		ArrayArbitrary<Integer, Integer[]> arrayArbitrary =
-				Arbitraries.integers().between(1, 5).array(Integer[].class).ofMinSize(1).ofMaxSize(10);
+			Arbitraries.integers().between(1, 5).array(Integer[].class).ofMinSize(1).ofMaxSize(10);
 
 		Arbitrary<Integer> integerArbitrary = arrayArbitrary.reduce(0, Integer::sum);
 
@@ -61,8 +84,8 @@ class ArrayArbitraryTests {
 	@Example
 	void uniquenessConstraint(@ForAll Random random) {
 		ArrayArbitrary<Integer, Integer[]> listArbitrary =
-				Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
-						   .uniqueElements(i -> i % 100);
+			Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
+					   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<Integer[]> generator = listArbitrary.generator(1000, true);
 
@@ -74,8 +97,8 @@ class ArrayArbitraryTests {
 	@Example
 	void uniqueElements(@ForAll Random random) {
 		ArrayArbitrary<Integer, Integer[]> listArbitrary =
-				Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
-						   .uniqueElements();
+			Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
+					   .uniqueElements();
 
 		RandomGenerator<Integer[]> generator = listArbitrary.generator(1000, true);
 
@@ -131,52 +154,52 @@ class ArrayArbitraryTests {
 		@Example
 		void arraysAreCombinationsOfElementsUpToMaxLength() {
 			Optional<ExhaustiveGenerator<Integer[]>> optionalGenerator =
-					Arbitraries.integers().between(1, 2).array(Integer[].class)
-							   .ofMaxSize(2).exhaustive();
+				Arbitraries.integers().between(1, 2).array(Integer[].class)
+						   .ofMaxSize(2).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Integer[]> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(7);
 			assertThat(generator).containsExactly(
-					new Integer[]{},
-					new Integer[]{1},
-					new Integer[]{2},
-					new Integer[]{1, 1},
-					new Integer[]{1, 2},
-					new Integer[]{2, 1},
-					new Integer[]{2, 2}
+				new Integer[]{},
+				new Integer[]{1},
+				new Integer[]{2},
+				new Integer[]{1, 1},
+				new Integer[]{1, 2},
+				new Integer[]{2, 1},
+				new Integer[]{2, 2}
 			);
 		}
 
 		@Example
 		void combinationsAreFilteredByUniquenessConstraints() {
 			Optional<ExhaustiveGenerator<Integer[]>> optionalGenerator =
-					Arbitraries.integers().between(1, 2).array(Integer[].class)
-							   .ofMaxSize(2).uniqueElements(i -> i).exhaustive();
+				Arbitraries.integers().between(1, 2).array(Integer[].class)
+						   .ofMaxSize(2).uniqueElements(i -> i).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Integer[]> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(7);
 			assertThat(generator).containsExactly(
-					new Integer[]{},
-					new Integer[]{1},
-					new Integer[]{2},
-					new Integer[]{1, 2},
-					new Integer[]{2, 1}
+				new Integer[]{},
+				new Integer[]{1},
+				new Integer[]{2},
+				new Integer[]{1, 2},
+				new Integer[]{2, 1}
 			);
 		}
 
 		@Example
 		void elementArbitraryNotExhaustive() {
 			Optional<ExhaustiveGenerator<Double[]>> optionalGenerator =
-					Arbitraries.doubles().between(1, 10).array(Double[].class).ofMaxSize(1).exhaustive();
+				Arbitraries.doubles().between(1, 10).array(Double[].class).ofMaxSize(1).exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 
 		@Example
 		void tooManyCombinations() {
 			Optional<ExhaustiveGenerator<Integer[]>> optionalGenerator =
-					Arbitraries.integers().between(1, 10).array(Integer[].class).ofMaxSize(10).exhaustive();
+				Arbitraries.integers().between(1, 10).array(Integer[].class).ofMaxSize(10).exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}
@@ -203,13 +226,13 @@ class ArrayArbitraryTests {
 		@Property
 		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
 			ArrayArbitrary<Integer, Integer[]> lists =
-					Arbitraries.integers().between(1, 100).array(Integer[].class).ofMinSize(min).ofMaxSize(10)
-							   .uniqueElements(i -> i);
+				Arbitraries.integers().between(1, 100).array(Integer[].class).ofMinSize(min).ofMaxSize(10)
+						   .uniqueElements(i -> i);
 			Integer[] value = falsifyThenShrink(lists, random);
 			assertThat(value).hasSize(min);
 			assertThat(isUniqueModulo(value, 100))
-					.describedAs("%s is not unique mod 100", Arrays.toString(value))
-					.isTrue();
+				.describedAs("%s is not unique mod 100", Arrays.toString(value))
+				.isTrue();
 			assertThat(value).allMatch(i -> i <= min);
 		}
 

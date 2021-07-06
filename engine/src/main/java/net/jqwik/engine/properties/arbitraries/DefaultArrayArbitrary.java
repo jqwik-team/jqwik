@@ -32,6 +32,11 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 	}
 
 	@Override
+	public ArrayArbitrary<T, A> withSizeDistribution(RandomDistribution distribution) {
+		return (ArrayArbitrary<T, A>) super.withSizeDistribution(distribution);
+	}
+
+	@Override
 	public RandomGenerator<A> generator(int genSize) {
 		return createListGenerator(genSize, false).map(this::toArray);
 	}
