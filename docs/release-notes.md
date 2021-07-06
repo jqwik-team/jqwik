@@ -33,7 +33,6 @@ title: jqwik Release Notes
 
 - String arbitraries now generate duplicate chars and series of chars with a higher probability. 
 
-
 #### Breaking Changes
 
 No known breaking changes.
@@ -42,6 +41,11 @@ No known breaking changes.
 
 - Module name now correctly set for testing, web and time modules.
   See https://github.com/jlink/jqwik/issues/201.
+
+- No longer throwing ConcurrentModificationException when using `sample()` within another generator.
+  This happened in Java >= 11 only.
+  See https://github.com/jlink/jqwik/issues/205
+
 
 ## 1.5.2
 

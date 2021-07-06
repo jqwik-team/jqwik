@@ -116,11 +116,10 @@ class UseArbitrariesOutsideJqwikTests {
 	}
 
 	/**
-	 * Has been brought up in https://github.com/jlink/jqwik/issues/205.
-	 * Could not reproduce problem so far.
+	 * Has been brought up in https://github.com/jlink/jqwik/issues/205
 	 */
 	@Test
-	void useSampleInArbitrary() {
+	void useSampleInArbitraryDefinition() {
 		// BTW: You should never do this. Using sample() within another generator calls for flatMap or combine
 		Arbitraries.strings()
 				   .map(it -> it + Arbitraries.strings().alpha().sample())

@@ -34,10 +34,20 @@ class SampleStreamFacade {
 
 	@SuppressWarnings("unchecked")
 	private static <T> RandomGenerator<T> getGenerator(Arbitrary<Object> arbitrary) {
-		return (RandomGenerator<T>) generators.computeIfAbsent(
-				arbitrary,
-				a -> a.generator(JqwikProperties.DEFAULT_TRIES, true)
-		);
+		RandomGenerator<Object> generator = generators.get(arbitrary);
+		if (generator == null) {
+			generator = arbitrary.generator(JqwikProperties.DEFAULT_TRIES, true);
+			generators.put(arbitrary, generator);
+		}
+		return (RandomGenerator<T>) generator;
+
+		// Using computeIfAbsent will throw CurrentModificationException when getting
+		// the generator from the arbitrary will itself add another generator
+		// to the map of generators:
+		// return (RandomGenerator<T>) generators.computeIfAbsent(
+		// 		arbitrary,
+		// 		a -> a.generator(JqwikProperties.DEFAULT_TRIES, true)
+		// );
 	}
 
 	private static <T> Supplier<T> wrapInDescriptor(Supplier<T> code) {
