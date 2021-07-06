@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.statistics.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -26,6 +27,29 @@ class IteratorArbitraryTests {
 		assertGeneratedIterator(generator.next(random));
 		assertGeneratedIterator(generator.next(random));
 		assertGeneratedIterator(generator.next(random));
+	}
+
+	@Example
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	void withSizeDistribution(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
+		IteratorArbitrary<Integer> arbitrary =
+			integerArbitrary.iterator().ofMaxSize(100)
+							.withSizeDistribution(RandomDistribution.uniform());
+
+		RandomGenerator<Iterator<Integer>> generator = arbitrary.generator(1, false);
+
+		for (int i = 0; i < 5000; i++) {
+			Iterator<Integer> stream = generator.next(random).value();
+			List<Integer> list = toList(stream);
+			Statistics.collect(list.size());
+		}
+
+		Statistics.coverage(checker -> {
+			for (int size = 0; size <= 100; size++) {
+				checker.check(size).percentage(p -> p >= 0.4);
+			}
+		});
 	}
 
 	@Example

@@ -44,6 +44,13 @@ public interface StreamArbitrary<T> extends Arbitrary<Stream<T>>, StreamableArbi
 	StreamArbitrary<T> ofMaxSize(int maxSize);
 
 	/**
+	 * Set random distribution {@code distribution} of size of generated stream.
+	 * The distribution's center is the minimum size of the generated stream.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.3")
+	StreamArbitrary<T> withSizeDistribution(RandomDistribution uniform);
+
+	/**
 	 * Add the constraint that elements of the generated stream must be unique,
 	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
 	 *

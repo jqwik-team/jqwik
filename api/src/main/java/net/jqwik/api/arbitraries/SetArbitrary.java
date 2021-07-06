@@ -44,8 +44,8 @@ public interface SetArbitrary<T> extends Arbitrary<Set<T>>, StreamableArbitrary<
 	SetArbitrary<T> ofMaxSize(int maxSize);
 
 	/**
-	 * Set random distribution {@code distribution} of size of generated collection.
-	 * The distribution's center is the minimum size of the collection.
+	 * Set random distribution {@code distribution} of size of generated set.
+	 * The distribution's center is the minimum size of the generated set.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.3")
 	SetArbitrary<T> withSizeDistribution(RandomDistribution uniform);

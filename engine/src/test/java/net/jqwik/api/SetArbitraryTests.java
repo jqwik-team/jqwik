@@ -122,7 +122,6 @@ class SetArbitraryTests {
 				checker.check(size).percentage(p -> p >= 0.4);
 			}
 		});
-
 	}
 
 	private boolean isUniqueModulo(Set<Integer> list, int modulo) {

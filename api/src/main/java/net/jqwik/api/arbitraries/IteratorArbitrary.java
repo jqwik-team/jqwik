@@ -44,6 +44,13 @@ public interface IteratorArbitrary<T> extends Arbitrary<Iterator<T>>, Streamable
 	IteratorArbitrary<T> ofMaxSize(int maxSize);
 
 	/**
+	 * Set random distribution {@code distribution} of size of generated iterator.
+	 * The distribution's center is the minimum size of the generated iterator.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.3")
+	IteratorArbitrary<T> withSizeDistribution(RandomDistribution uniform);
+
+	/**
 	 * Add the constraint that elements of the generated iterator must be unique,
 	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
 	 *

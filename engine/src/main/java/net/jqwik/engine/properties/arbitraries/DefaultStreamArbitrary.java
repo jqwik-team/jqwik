@@ -57,6 +57,11 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 	}
 
 	@Override
+	public StreamArbitrary<T> withSizeDistribution(RandomDistribution distribution) {
+		return (StreamArbitrary<T>) super.withSizeDistribution(distribution);
+	}
+
+	@Override
 	public StreamArbitrary<T> uniqueElements(Function<T, Object> by) {
 		FeatureExtractor<T> featureExtractor = by::apply;
 		return (StreamArbitrary<T>) super.uniqueElements(featureExtractor);

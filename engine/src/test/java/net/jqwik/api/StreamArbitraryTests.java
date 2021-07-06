@@ -6,6 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
 import static java.util.Arrays.*;
@@ -66,6 +67,29 @@ class StreamArbitraryTests {
 
 		assertAllGenerated(generator, random, list -> {
 			assertThat(isUniqueModulo(list, 1000)).isTrue();
+		});
+	}
+
+	@Example
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	void withSizeDistribution(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
+		StreamArbitrary<Integer> arbitrary =
+			integerArbitrary.stream().ofMaxSize(100)
+							.withSizeDistribution(RandomDistribution.uniform());
+
+		RandomGenerator<Stream<Integer>> generator = arbitrary.generator(1, false);
+
+		for (int i = 0; i < 5000; i++) {
+			Stream<Integer> stream = generator.next(random).value();
+			List<Integer> list = stream.collect(Collectors.toList());
+			Statistics.collect(list.size());
+		}
+
+		Statistics.coverage(checker -> {
+			for (int size = 0; size <= 100; size++) {
+				checker.check(size).percentage(p -> p >= 0.4);
+			}
 		});
 	}
 

@@ -1,8 +1,6 @@
 - 1.5.3
 
     - SizableCollections.withSizeDistribution(...)
-        - Stream
-        - Iterator
         - Map
         - Array
         - String  
