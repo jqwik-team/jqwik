@@ -45,4 +45,9 @@ public interface StreamableArbitrary<T, U> extends SizableArbitrary<U> {
 	 */
 	StreamableArbitrary<T, U> ofMaxSize(int maxSize);
 
+	/**
+	 * Set distribution {@code distribution} of size of generated arbitrary
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.3")
+	StreamableArbitrary<T, U> withSizeDistribution(RandomDistribution distribution);
 }

@@ -51,6 +51,11 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 		return (ListArbitrary<T>) super.ofMinSize(minSize);
 	}
 
+	@Override
+	public ListArbitrary<T> withSizeDistribution(RandomDistribution distribution) {
+		return (ListArbitrary<T>) super.withSizeDistribution(distribution);
+	}
+
 	// TODO: Remove duplication with DefaultSetArbitrary.mapEach()
 	@Override
 	public <U> Arbitrary<List<U>> mapEach(BiFunction<List<T>, T, U> mapper) {
@@ -64,9 +69,9 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 	public <U> Arbitrary<List<U>> flatMapEach(BiFunction<List<T>, T, Arbitrary<U>> flatMapper) {
 		return this.flatMap(elements -> {
 			List<Arbitrary<U>> arbitraries =
-					elements.stream()
-							.map(e -> flatMapper.apply(elements, e))
-							.collect(Collectors.toList());
+				elements.stream()
+						.map(e -> flatMapper.apply(elements, e))
+						.collect(Collectors.toList());
 			return Combinators.combine(arbitraries).as(ArrayList::new);
 		});
 	}

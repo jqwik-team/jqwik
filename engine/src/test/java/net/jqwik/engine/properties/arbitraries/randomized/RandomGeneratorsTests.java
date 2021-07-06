@@ -18,14 +18,14 @@ class RandomGeneratorsTests {
 	@Example
 	void setsAreGeneratedWithCorrectMinAndMaxSize() {
 		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
-		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 2, 5);
+		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 2, 5, 1000);
 		assertAllGenerated(generator, set -> set.size() >= 2 && set.size() <= 5);
 	}
 
 	@Example
 	void setGenerationShouldStopWithTooManyMisses(@ForAll Random random) {
 		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
-		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 11, 11);
+		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 11, 11, 1000);
 
 		Assertions.assertThatThrownBy(() -> generator.next(random))
 				  .isInstanceOf(JqwikException.class);

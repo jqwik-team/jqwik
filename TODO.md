@@ -1,6 +1,13 @@
 - 1.5.3
 
     - SizableCollections.withSizeDistribution(...)
+        - Set
+        - Stream
+        - Iterator
+        - Map
+        - Array
+        - String  
+        - SequenceArray
 
     - Domains
         - Hand in property execution context to provider method

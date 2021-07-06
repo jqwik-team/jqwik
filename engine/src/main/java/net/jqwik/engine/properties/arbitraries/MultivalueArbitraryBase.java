@@ -20,6 +20,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	protected int minSize = 0;
 	protected int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	protected Set<FeatureExtractor<T>> uniquenessExtractors = new HashSet<>();
+	protected RandomDistribution sizeDistribution = null;
 
 	protected MultivalueArbitraryBase(Arbitrary<T> elementArbitrary) {
 		this.elementArbitrary = elementArbitrary;
@@ -36,6 +37,13 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	public StreamableArbitrary<T, U> ofMaxSize(int maxSize) {
 		MultivalueArbitraryBase<T, U> clone = typedClone();
 		clone.maxSize = maxSize;
+		return clone;
+	}
+
+	@Override
+	public StreamableArbitrary<T, U> withSizeDistribution(RandomDistribution distribution) {
+		MultivalueArbitraryBase<T, U> clone = typedClone();
+		clone.sizeDistribution = distribution;
 		return clone;
 	}
 
@@ -64,7 +72,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize, boolean withEmbeddedEdgeCases) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize, withEmbeddedEdgeCases);
-		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffSize(genSize), uniquenessExtractors);
+		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffSize(genSize), sizeDistribution, uniquenessExtractors);
 	}
 
 	protected int cutoffSize(int genSize) {

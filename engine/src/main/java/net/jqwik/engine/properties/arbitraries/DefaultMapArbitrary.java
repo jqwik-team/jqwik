@@ -39,6 +39,11 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	}
 
 	@Override
+	public SizableArbitrary<Map<K, V>> withSizeDistribution(RandomDistribution distribution) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	protected Arbitrary<Map<K, V>> arbitrary() {
 		// Using list of generated Map.Entry does not work because of potential duplicate keys
 		SetArbitrary<K> keySetArbitrary = createKeySetArbitrary();

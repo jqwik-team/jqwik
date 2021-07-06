@@ -44,6 +44,12 @@ public interface ListArbitrary<T> extends Arbitrary<List<T>>, StreamableArbitrar
 	ListArbitrary<T> ofMaxSize(int maxSize);
 
 	/**
+	 * Set distribution {@code distribution} of size of generated arbitrary
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.3")
+	ListArbitrary<T> withSizeDistribution(RandomDistribution uniform);
+
+	/**
 	 * Map over each element of the generated streamable giving access to the
 	 * all elements when streaming.
 	 *

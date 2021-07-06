@@ -8,6 +8,7 @@ import org.junit.jupiter.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.engine.*;
 
 import static java.util.Arrays.*;
@@ -48,7 +49,7 @@ class ListArbitraryTests {
 	@Example
 	void reduceList(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
-				Arbitraries.integers().between(1, 5).list().ofMinSize(1).ofMaxSize(10);
+			Arbitraries.integers().between(1, 5).list().ofMinSize(1).ofMaxSize(10);
 
 		Arbitrary<Integer> integerArbitrary = listArbitrary.reduce(0, Integer::sum);
 
@@ -65,8 +66,8 @@ class ListArbitraryTests {
 	@Example
 	void uniqueElements(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
-				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
-						   .uniqueElements(i -> i % 100);
+			Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
+					   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
@@ -78,8 +79,8 @@ class ListArbitraryTests {
 	@Property(tries = 10)
 	void uniqueElementsWithoutMaxSize(@ForAll Random random, @ForAll @IntRange(max = 10) int minSize) {
 		ListArbitrary<Integer> listArbitrary =
-				Arbitraries.integers().between(1, 1000).list().ofMinSize(minSize)
-						   .uniqueElements(i -> i % 10);
+			Arbitraries.integers().between(1, 1000).list().ofMinSize(minSize)
+					   .uniqueElements(i -> i % 10);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
@@ -91,9 +92,9 @@ class ListArbitraryTests {
 	@Example
 	void uniqueElementsWithNull(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
-				Arbitraries.integers().between(1, 1000).injectNull(0.5)
-						   .list().ofMaxSize(20)
-						   .uniqueElements(i -> i % 100);
+			Arbitraries.integers().between(1, 1000).injectNull(0.5)
+					   .list().ofMaxSize(20)
+					   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
@@ -105,9 +106,9 @@ class ListArbitraryTests {
 	@Example
 	void multipleUniquenessConstraints(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
-				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
-						   .uniqueElements(i -> i % 99)
-						   .uniqueElements(i -> i % 100);
+			Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
+					   .uniqueElements(i -> i % 99)
+					   .uniqueElements(i -> i % 100);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
@@ -120,8 +121,8 @@ class ListArbitraryTests {
 	@Example
 	void uniquenessConstraintCannotBeFulfilled(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
-				Arbitraries.integers().between(1, 1000).list().ofSize(10)
-						   .uniqueElements(i -> i % 5);
+			Arbitraries.integers().between(1, 1000).list().ofSize(10)
+					   .uniqueElements(i -> i % 5);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
@@ -131,13 +132,57 @@ class ListArbitraryTests {
 	@Example
 	void uniquenessElements(@ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary =
-				Arbitraries.integers().between(1, 1000).list().ofMaxSize(20).uniqueElements();
+			Arbitraries.integers().between(1, 1000).list().ofMaxSize(20).uniqueElements();
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
 		assertAllGenerated(generator, random, list -> {
 			assertThat(isUniqueModulo(list, 1000)).isTrue();
 		});
+	}
+
+	@Example
+	@StatisticsReport(format = NumberRangeHistogram.class)
+	void withSizeDistribution(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
+		ListArbitrary<Integer> listArbitrary =
+			integerArbitrary.list().ofMaxSize(100)
+							.withSizeDistribution(RandomDistribution.uniform());
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1, false);
+
+		for (int i = 0; i < 5000; i++) {
+			List<Integer> list = generator.next(random).value();
+			Statistics.collect(list.size());
+		}
+
+		Statistics.coverage(checker -> {
+			for (int size = 0; size <= 100; size++) {
+				checker.check(size).percentage(p -> p >= 0.4);
+			}
+		});
+
+	}
+
+	@Example
+	@StatisticsReport(format = NumberRangeHistogram.class)
+	void withoutSizeDistribution(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
+		ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(50);
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1, false);
+
+		for (int i = 0; i < 5000; i++) {
+			List<Integer> list = generator.next(random).value();
+			Statistics.collect(list.size());
+		}
+
+		Statistics.coverage(checker -> {
+			for (int size = 0; size <= 50; size++) {
+				checker.check(size).count(p -> p >= 1);
+			}
+		});
+
 	}
 
 	private boolean isUniqueModulo(List<Integer> list, int modulo) {
@@ -154,9 +199,9 @@ class ListArbitraryTests {
 	void mapEach(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		Arbitrary<List<Tuple.Tuple2<Integer, List<Integer>>>> setArbitrary =
-				integerArbitrary
-						.list().ofSize(5)
-						.mapEach((all, each) -> Tuple.of(each, all));
+			integerArbitrary
+				.list().ofSize(5)
+				.mapEach((all, each) -> Tuple.of(each, all));
 
 		RandomGenerator<List<Tuple.Tuple2<Integer, List<Integer>>>> generator = setArbitrary.generator(1, true);
 
@@ -170,11 +215,11 @@ class ListArbitraryTests {
 	void flatMapEach(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		Arbitrary<List<Tuple.Tuple2<Integer, Integer>>> setArbitrary =
-				integerArbitrary
-						.list().ofSize(5)
-						.flatMapEach((all, each) ->
-											 Arbitraries.of(all).map(friend -> Tuple.of(each, friend))
-						);
+			integerArbitrary
+				.list().ofSize(5)
+				.flatMapEach((all, each) ->
+								 Arbitraries.of(all).map(friend -> Tuple.of(each, friend))
+				);
 
 		RandomGenerator<List<Tuple.Tuple2<Integer, Integer>>> generator = setArbitrary.generator(1, true);
 
@@ -190,61 +235,61 @@ class ListArbitraryTests {
 		@Example
 		void listsAreCombinationsOfElementsUpToMaxLength() {
 			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
-					Arbitraries.integers().between(1, 3).list().ofMaxSize(2).exhaustive();
+				Arbitraries.integers().between(1, 3).list().ofMaxSize(2).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(13);
 			assertThat(generator).containsExactly(
-					asList(),
-					asList(1),
-					asList(2),
-					asList(3),
-					asList(1, 1),
-					asList(1, 2),
-					asList(1, 3),
-					asList(2, 1),
-					asList(2, 2),
-					asList(2, 3),
-					asList(3, 1),
-					asList(3, 2),
-					asList(3, 3)
+				asList(),
+				asList(1),
+				asList(2),
+				asList(3),
+				asList(1, 1),
+				asList(1, 2),
+				asList(1, 3),
+				asList(2, 1),
+				asList(2, 2),
+				asList(2, 3),
+				asList(3, 1),
+				asList(3, 2),
+				asList(3, 3)
 			);
 		}
 
 		@Example
 		void combinationsAreFilteredByUniquenessConstraints() {
 			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
-					Arbitraries.integers().between(1, 3).list().ofMaxSize(2).uniqueElements(i -> i).exhaustive();
+				Arbitraries.integers().between(1, 3).list().ofMaxSize(2).uniqueElements(i -> i).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(13);
 			assertThat(generator).containsExactlyInAnyOrder(
-					asList(),
-					asList(1),
-					asList(2),
-					asList(3),
-					asList(1, 2),
-					asList(1, 3),
-					asList(2, 1),
-					asList(2, 3),
-					asList(3, 1),
-					asList(3, 2)
+				asList(),
+				asList(1),
+				asList(2),
+				asList(3),
+				asList(1, 2),
+				asList(1, 3),
+				asList(2, 1),
+				asList(2, 3),
+				asList(3, 1),
+				asList(3, 2)
 			);
 		}
 
 		@Example
 		void elementArbitraryNotExhaustive() {
 			Optional<ExhaustiveGenerator<List<Double>>> optionalGenerator =
-					Arbitraries.doubles().between(1, 10).list().ofMaxSize(1).exhaustive();
+				Arbitraries.doubles().between(1, 10).list().ofMaxSize(1).exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 
 		@Example
 		void tooManyCombinations() {
 			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
-					Arbitraries.integers().between(1, 10).list().ofMaxSize(10).exhaustive();
+				Arbitraries.integers().between(1, 10).list().ofMaxSize(10).exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}
@@ -264,9 +309,9 @@ class ListArbitraryTests {
 			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list();
 			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-					Collections.emptyList(),
-					Collections.singletonList(-10),
-					Collections.singletonList(10)
+				Collections.emptyList(),
+				Collections.singletonList(-10),
+				Collections.singletonList(10)
 			);
 			// make sure edge cases can be repeatedly generated
 			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).hasSize(3);
@@ -277,15 +322,15 @@ class ListArbitraryTests {
 			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(1);
 			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-					Collections.singletonList(-10),
-					Collections.singletonList(-9),
-					Collections.singletonList(-2),
-					Collections.singletonList(-1),
-					Collections.singletonList(0),
-					Collections.singletonList(1),
-					Collections.singletonList(2),
-					Collections.singletonList(9),
-					Collections.singletonList(10)
+				Collections.singletonList(-10),
+				Collections.singletonList(-9),
+				Collections.singletonList(-2),
+				Collections.singletonList(-1),
+				Collections.singletonList(0),
+				Collections.singletonList(1),
+				Collections.singletonList(2),
+				Collections.singletonList(9),
+				Collections.singletonList(10)
 			);
 		}
 
@@ -301,8 +346,8 @@ class ListArbitraryTests {
 			Arbitrary<Integer> ints = Arbitraries.of(10, 100);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofSize(3);
 			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-					asList(10, 10, 10),
-					asList(100, 100, 100)
+				asList(10, 10, 10),
+				asList(100, 100, 100)
 			);
 		}
 
@@ -318,10 +363,10 @@ class ListArbitraryTests {
 
 			Set<List<Integer>> values = collectEdgeCaseValues(edgeCases);
 			assertThat(values).containsExactlyInAnyOrder(
-					Collections.emptyList(),
-					Collections.singletonList(-1),
-					Collections.singletonList(0),
-					Collections.singletonList(1)
+				Collections.emptyList(),
+				Collections.singletonList(-1),
+				Collections.singletonList(0),
+				Collections.singletonList(1)
 			);
 		}
 
@@ -356,22 +401,22 @@ class ListArbitraryTests {
 		@Property
 		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
 			ListArbitrary<Integer> lists =
-					Arbitraries.integers().between(1, 100).list().ofMinSize(min).ofMaxSize(10)
-							   .uniqueElements(i -> i);
+				Arbitraries.integers().between(1, 100).list().ofMinSize(min).ofMaxSize(10)
+						   .uniqueElements(i -> i);
 			List<Integer> value = falsifyThenShrink(lists, random);
 			assertThat(value).hasSize(min);
 			assertThat(isUniqueModulo(value, 100))
-					.describedAs("%s is not unique mod 100", value)
-					.isTrue();
+				.describedAs("%s is not unique mod 100", value)
+				.isTrue();
 			assertThat(value).allMatch(i -> i <= min);
 		}
 
 		@Property
 		void shrinkWithUniquenessAndNulls(@ForAll Random random) {
 			ListArbitrary<Integer> lists =
-					Arbitraries.integers().between(1, 100).injectNull(0.5)
-							   .list().ofMinSize(3).ofMaxSize(10)
-							   .uniqueElements(i -> i);
+				Arbitraries.integers().between(1, 100).injectNull(0.5)
+						   .list().ofMinSize(3).ofMaxSize(10)
+						   .uniqueElements(i -> i);
 			List<Integer> value = falsifyThenShrink(lists, random);
 			assertThat(value).containsExactly(null, 1, 2);
 		}

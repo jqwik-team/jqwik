@@ -28,4 +28,10 @@ public interface SizableArbitrary<U> extends Arbitrary<U> {
 	 * Set upper size boundary {@code maxSize} (included).
 	 */
 	SizableArbitrary<U> ofMaxSize(int maxSize);
+
+	/**
+	 * Set distribution {@code distribution} of size of generated arbitrary
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.3")
+	SizableArbitrary<U> withSizeDistribution(RandomDistribution distribution);
 }

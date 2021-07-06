@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.stateful;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
@@ -28,6 +29,11 @@ public class DefaultActionSequenceArbitrary<M> extends TypedCloneable implements
 		DefaultActionSequenceArbitrary<M> clone = typedClone();
 		clone.maxSize = Math.max(Math.max(1, maxSize), minSize);
 		return clone;
+	}
+
+	@Override
+	public SizableArbitrary<ActionSequence<M>> withSizeDistribution(RandomDistribution distribution) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
