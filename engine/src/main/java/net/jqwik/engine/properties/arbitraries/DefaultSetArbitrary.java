@@ -35,7 +35,7 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 
 	private RandomGenerator<Set<T>> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize, withEmbeddedEdgeCases);
-		return RandomGenerators.set(elementGenerator, minSize, maxSize, genSize, uniquenessExtractors);
+		return RandomGenerators.set(elementGenerator, minSize, maxSize, genSize, sizeDistribution, uniquenessExtractors);
 	}
 
 	@Override
@@ -59,6 +59,11 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 	@Override
 	public SetArbitrary<T> ofMinSize(int minSize) {
 		return (SetArbitrary<T>) super.ofMinSize(minSize);
+	}
+
+	@Override
+	public SetArbitrary<T> withSizeDistribution(RandomDistribution distribution) {
+		return (SetArbitrary<T>) super.withSizeDistribution(distribution);
 	}
 
 	// TODO: Remove duplication with DefaultListArbitrary.mapEach()

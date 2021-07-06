@@ -113,19 +113,19 @@ public class RandomGenerators {
 	}
 
 	public static <T> RandomGenerator<Set<T>> set(RandomGenerator<T> elementGenerator, int minSize, int maxSize, int genSize) {
-		return set(elementGenerator, minSize, maxSize, genSize, Collections.emptySet());
+		return set(elementGenerator, minSize, maxSize, genSize, null, Collections.emptySet());
 	}
 
 	public static <T> RandomGenerator<Set<T>> set(
 			RandomGenerator<T> elementGenerator,
-			int minSize, int maxSize, int genSize,
+			int minSize, int maxSize, int genSize, RandomDistribution sizeDistribution,
 			Set<FeatureExtractor<T>> uniquenessExtractors
 	) {
 		Set<FeatureExtractor<T>> extractors = new HashSet<>(uniquenessExtractors);
 		extractors.add(FeatureExtractor.identity());
 		Function<List<Shrinkable<T>>, Shrinkable<Set<T>>> createShrinkable =
 				elements -> new ShrinkableSet<T>(elements, minSize, maxSize, uniquenessExtractors);
-		return container(elementGenerator, createShrinkable, minSize, maxSize, genSize, null, extractors);
+		return container(elementGenerator, createShrinkable, minSize, maxSize, genSize, sizeDistribution, extractors);
 	}
 
 	public static <T> RandomGenerator<T> samplesFromShrinkables(List<Shrinkable<T>> samples) {

@@ -142,14 +142,14 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	@StatisticsReport(format = NumberRangeHistogram.class)
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 	void withSizeDistribution(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
-		ListArbitrary<Integer> listArbitrary =
+		ListArbitrary<Integer> arbitrary =
 			integerArbitrary.list().ofMaxSize(100)
 							.withSizeDistribution(RandomDistribution.uniform());
 
-		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1, false);
+		RandomGenerator<List<Integer>> generator = arbitrary.generator(1, false);
 
 		for (int i = 0; i < 5000; i++) {
 			List<Integer> list = generator.next(random).value();
@@ -165,7 +165,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	@StatisticsReport(format = NumberRangeHistogram.class)
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 	void withoutSizeDistribution(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(50);

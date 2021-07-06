@@ -6,6 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
+import net.jqwik.api.statistics.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -99,6 +100,29 @@ class SetArbitraryTests {
 			assertThat(isUniqueModulo(set, 100)).isTrue();
 			assertThat(isUniqueModulo(set, 99)).isTrue();
 		});
+	}
+
+	@Example
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	void withSizeDistribution(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
+		SetArbitrary<Integer> arbitrary =
+			integerArbitrary.set().ofMaxSize(100)
+							.withSizeDistribution(RandomDistribution.uniform());
+
+		RandomGenerator<Set<Integer>> generator = arbitrary.generator(1, false);
+
+		for (int i = 0; i < 5000; i++) {
+			Set<Integer> list = generator.next(random).value();
+			Statistics.collect(list.size());
+		}
+
+		Statistics.coverage(checker -> {
+			for (int size = 0; size <= 100; size++) {
+				checker.check(size).percentage(p -> p >= 0.4);
+			}
+		});
+
 	}
 
 	private boolean isUniqueModulo(Set<Integer> list, int modulo) {
