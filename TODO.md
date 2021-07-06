@@ -7,7 +7,7 @@
         - Map
         - Array
         - String  
-        - SequenceArray
+        - ActionSequence
 
     - Domains
         - Hand in property execution context to provider method
