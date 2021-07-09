@@ -1,8 +1,3 @@
-- 1.5.3
-
-    - Release
-        - Documentation
-
 - 1.5.4
 
     - Domains
