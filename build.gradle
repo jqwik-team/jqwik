@@ -12,7 +12,7 @@ ext {
 	mockitoVersion = '3.11.2'
 	systemLambdaVersion = '1.2.0'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.5.3'
+	jqwikVersion = '1.5.4-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
 
@@ -80,6 +80,6 @@ allprojects {
 }
 
 wrapper {
-	gradleVersion = '7.1'
+	gradleVersion = '7.1.1'
 }
 
