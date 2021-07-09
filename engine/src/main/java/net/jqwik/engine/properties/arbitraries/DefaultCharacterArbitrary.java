@@ -106,13 +106,18 @@ public class DefaultCharacterArbitrary extends TypedCloneable implements Charact
 	}
 
 	@Override
-	public CharacterArbitrary digit() {
+	public CharacterArbitrary numeric() {
 		return range('0', '9');
 	}
 
 	@Override
 	public CharacterArbitrary whitespace() {
 		return with(DefaultCharacterArbitrary.WHITESPACE_CHARS);
+	}
+
+	@Override
+	public CharacterArbitrary alpha() {
+		return this.range('A', 'Z').range('a', 'z');
 	}
 
 	private CharacterArbitrary cloneWith(Arbitrary<Character> part, int size) {

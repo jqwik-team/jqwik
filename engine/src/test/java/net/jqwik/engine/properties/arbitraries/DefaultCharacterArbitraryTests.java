@@ -6,8 +6,6 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-import static org.assertj.core.api.Assertions.*;
-
 import static net.jqwik.api.ArbitraryTestHelper.*;
 
 class DefaultCharacterArbitraryTests {
@@ -66,7 +64,7 @@ class DefaultCharacterArbitraryTests {
 
 	@Example
 	void digit() {
-		CharacterArbitrary all = this.arbitrary.digit();
+		CharacterArbitrary all = this.arbitrary.numeric();
 		assertAllGenerated(all.generator(1000, true), c -> c >= '0' && c <= '9');
 		assertAtLeastOneGeneratedOf(all.generator(1000, true), '0', '9');
 	}
@@ -76,6 +74,17 @@ class DefaultCharacterArbitraryTests {
 		CharacterArbitrary all = this.arbitrary.ascii();
 		assertAllGenerated(all.generator(1000, true), c -> c >= 0 && c <= 127);
 		assertAtLeastOneGeneratedOf(all.generator(1000, true), (char) 10, (char) 126);
+	}
+
+	@Example
+	void alpha() {
+		CharacterArbitrary all = this.arbitrary.alpha();
+		assertAllGenerated(all.generator(1000, true), this::isAlpha);
+	}
+
+	private boolean isAlpha(char c) {
+		if (c >= 'a' && c <= 'z') return true;
+		return c >= 'A' && c <= 'Z';
 	}
 
 	@Example
@@ -90,17 +99,17 @@ class DefaultCharacterArbitraryTests {
 		final List<Character> chars = Arrays.asList('a', 'b', 'c', '1', '2', '.');
 
 		CharacterArbitrary all = this.arbitrary
-										 .range(min1, max1)
-										 .range(min2, max2)
-										 .range(min3, max3)
-										 .with('a', 'b', 'c', '1', '2', '.');
+									 .range(min1, max1)
+									 .range(min2, max2)
+									 .range(min3, max3)
+									 .with('a', 'b', 'c', '1', '2', '.');
 
 		assertAllGenerated(
-				all.generator(1000, true),
-				c -> (c >= min1 && c <= max1) ||
-							 (c >= min2 && c <= max2) ||
-							 (c >= min3 && c <= max3) ||
-							 chars.contains(c)
+			all.generator(1000, true),
+			c -> (c >= min1 && c <= max1) ||
+					 (c >= min2 && c <= max2) ||
+					 (c >= min3 && c <= max3) ||
+					 chars.contains(c)
 		);
 
 		assertAtLeastOneGeneratedOf(all.generator(1000, true),

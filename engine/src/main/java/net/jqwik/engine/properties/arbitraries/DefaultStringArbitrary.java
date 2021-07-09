@@ -133,16 +133,14 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	@Override
 	public StringArbitrary alpha() {
 		DefaultStringArbitrary clone = typedClone();
-		clone.characterArbitrary = clone.characterArbitrary
-									   .range('A', 'Z')
-									   .range('a', 'z');
+		clone.characterArbitrary = clone.characterArbitrary.alpha();
 		return clone;
 	}
 
 	@Override
 	public StringArbitrary numeric() {
 		DefaultStringArbitrary clone = typedClone();
-		clone.characterArbitrary = clone.characterArbitrary.range('0', '9');
+		clone.characterArbitrary = clone.characterArbitrary.numeric();
 		return clone;
 	}
 

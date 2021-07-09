@@ -33,12 +33,16 @@ title: jqwik Release Notes
 
 - String arbitraries now generate duplicate chars and series of chars with a higher probability. 
 
+- Added `CharacterArbitrary.numeric()` and `CharacterArbitrary.alpha()`.
+
 #### Breaking Changes
 
 - `ActionSequenceArbitrary` no longer extends `SizableArbitrary`.
 
 - `ActionSequenceArbitrary.ofMinSize()` and `ActionSequenceArbitrary.ofMaxSize()`
   is now deprecated.
+
+- `CharacterArbitrary.digit()` is now deprecated.
 
 #### Bug Fixes
 

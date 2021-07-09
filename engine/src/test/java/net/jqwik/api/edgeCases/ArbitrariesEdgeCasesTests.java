@@ -307,7 +307,7 @@ class ArbitrariesEdgeCasesTests implements GenericEdgeCasesProperties {
 
 		@Example
 		void multiRangeChars() {
-			CharacterArbitrary arbitrary = Arbitraries.chars().range('a', 'z').digit();
+			CharacterArbitrary arbitrary = Arbitraries.chars().range('a', 'z').numeric();
 			EdgeCases<Character> edgeCases = arbitrary.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
 					'a', 'z', '0', '9'

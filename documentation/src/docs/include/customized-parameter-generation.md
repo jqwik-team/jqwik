@@ -209,8 +209,42 @@ Shrinking moves towards the start of the frequency list.
 
 #### Characters and Strings
 
-- [`StringArbitrary strings()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#strings())
+You can browse the API for generating strings and chars here:
+
 - [`CharacterArbitrary chars()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#chars())
+- [`StringArbitrary strings()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#strings())
+
+
+When it comes to defining the base set of possible chars to choose from 
+Character and String arbitraries work very similarly, e.g.
+
+```java
+CharacterArbitrary chars = Arbitraries.chars()
+                              .numeric()
+                              .alpha()
+                              .with('.', ',', ';', '!', '?');
+```
+
+creates a generator for alphanumeric chars plus the most common punctuation
+(but no spaces!). For strings combined of this letters, the code is:
+
+```java
+StringArbitrary strings = Arbitraries.strings()
+                            .numeric()
+                            .alpha()
+                            .withChars('.', ',', ';', '!', '?');
+```
+
+`StringArbitrary` comes with additional capabilities to influence the minimal
+and maximal length of a string, as well as the 
+[random distribution](#random-numeric-distribution) of the length.
+If you want, for example, a uniform distribution of string length between
+5 and 25 characters, this is how you do it:
+
+```java
+Arbitraries.strings().ofMinLength(5).ofMaxLength(25)
+		   .withLengthDistribution(RandomDistribution.uniform());
+```
 
 #### java.util.Random
 

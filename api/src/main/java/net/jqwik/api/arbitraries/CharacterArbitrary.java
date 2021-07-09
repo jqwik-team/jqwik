@@ -82,8 +82,25 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	 * </p>
 	 *
 	 * @return new instance of arbitrary
+	 *
+	 * @deprecated Use {@linkplain #numeric()} instead. Will be removed in 1.7.0.
 	 */
-	CharacterArbitrary digit();
+	@Deprecated
+	default CharacterArbitrary digit() {
+		return numeric();
+	}
+
+	/**
+	 * Allow all numeric chars to show up in generated values.
+	 *
+	 * <p>
+	 * Adds to all already allowed chars.
+	 * </p>
+	 *
+	 * @return new instance of arbitrary
+	 */
+	@API(status = MAINTAINED, since = "1.5.3")
+	CharacterArbitrary numeric();
 
 	/**
 	 * Allow all whitespace chars to show up in generated values.
@@ -96,4 +113,16 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	 */
 	@API(status = MAINTAINED, since = "1.1.3")
 	CharacterArbitrary whitespace();
+
+	/**
+	 * Allow all alpha chars to show up in generated strings.
+	 *
+	 * <p>
+	 * Adds to all already allowed chars.
+	 * </p>
+	 *
+	 * @return new instance of arbitrary
+	 */
+	@API(status = MAINTAINED, since = "1.5.3")
+	CharacterArbitrary alpha();
 }
