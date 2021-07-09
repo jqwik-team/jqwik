@@ -1,9 +1,9 @@
 - 1.5.4
 
     - Domains
-        - Hand in property execution context to provider method
-          E.g. to get annotation values from method DomainContext.prepare(
-          PropertyExecutionContext context)
+        - Hand in PropertyLifecycleContext object to provider method
+          E.g. to get annotation values from method 
+        - Oder DomainContext.prepare(PropertyLifecycleContext context)
 
     - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
       to replace Combinators.withBuilder() but target cannot change across build
@@ -11,10 +11,22 @@
         - Add capability to easily generate java beans (if that really makes
           sense)
 
-    - Time Module:
+    - Time Module (zinki97):
         - DateTimes. See https://github.com/jlink/jqwik/issues/175
         - Generate Instant, OffsetDateTime, Date, Calendar
         - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
+
+    - Arbitraries.forType(Class<T> targetType)
+        - Recursive use
+          - forType(Class<T> targetType, int depth)
+          - @UseType(depth = 1)
+        - See https://github.com/jlink/jqwik/issues/191
+
+    - Decimals/Floats Arbitraries:
+        - Arbitrary.injectNaN()|injectNegativeInfinity()
+          |injectPositiveInfinity()
+          |injectMinValue()|injectMinNormal()|injectSpecialValues()
+
 
 - 1.5.x
 
@@ -24,21 +36,10 @@
         - Apply annotation wherever reporting is test collateral
         - Make it configurable, e.g. `jqwik.reporting.statistics.onfailureonly`
 
-    - Decimals/Floats Arbitraries:
-        - Arbitrary.injectNaN()|injectNegativeInfinity()
-          |injectPositiveInfinity()
-          |injectMinValue()|injectMinNormal()|injectSpecialValues()
-
     - Web Module:
         - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
 
     - EdgeCases.Configuration.withProbability(double injectProbability)
-
-    - Arbitraries.forType(Class<T> targetType)
-        - Recursive use
-            - forType(Class<T> targetType, int depth)
-            - @UseType(depth = 1)
-        - See https://github.com/jlink/jqwik/issues/191
 
     - `@Repeat(42)`: Repeat a property 42 times
 
