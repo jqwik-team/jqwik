@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.time.api.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -49,7 +50,7 @@ public class DateTests {
 
 		}
 
-		@Property(tries = 2000)
+		@Property(tries = 2000, maxDiscardRatio = 10)
 		void betweenDateSetWhenBetweenSet(
 			@ForAll LocalDate minDate,
 			@ForAll LocalDate maxDate,
