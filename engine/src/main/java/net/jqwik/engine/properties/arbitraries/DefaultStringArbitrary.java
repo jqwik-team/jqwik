@@ -17,10 +17,11 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	private int minLength = 0;
 	private int maxLength = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	private Set<Character> excludedChars = new HashSet<>();
+	private RandomDistribution lengthDistribution = null;
 
 	@Override
 	public RandomGenerator<String> generator(int genSize) {
-		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, genSize);
+		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, genSize, lengthDistribution);
 	}
 
 	@Override
@@ -91,6 +92,13 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	public StringArbitrary ofMaxLength(int maxLength) {
 		DefaultStringArbitrary clone = typedClone();
 		clone.maxLength = maxLength;
+		return clone;
+	}
+
+	@Override
+	public StringArbitrary withLengthDistribution(RandomDistribution distribution) {
+		DefaultStringArbitrary clone = typedClone();
+		clone.lengthDistribution = distribution;
 		return clone;
 	}
 

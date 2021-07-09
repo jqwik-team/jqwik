@@ -94,4 +94,11 @@ public interface StringArbitrary extends Arbitrary<String> {
 	 */
 	@API(status = MAINTAINED, since = "1.5.1")
 	StringArbitrary excludeChars(char ... charsToExclude);
+
+	/**
+	 * Set random distribution {@code distribution} of length of generated string.
+	 * The distribution's center is the minimum length of the generated list.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.3")
+	StringArbitrary withLengthDistribution(RandomDistribution lengthDistribution);
 }

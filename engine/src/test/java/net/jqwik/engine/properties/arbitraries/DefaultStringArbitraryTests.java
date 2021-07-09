@@ -164,6 +164,27 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	}
 
 	@Example
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	void withLengthDistribution(@ForAll Random random) {
+		StringArbitrary arbitrary = this.arbitrary.ofMaxLength(100)
+												  .withLengthDistribution(RandomDistribution.uniform());
+
+		RandomGenerator<String> generator = arbitrary.generator(1, false);
+
+		for (int i = 0; i < 5000; i++) {
+			String string = generator.next(random).value();
+			Statistics.collect(string.length());
+		}
+
+		Statistics.coverage(checker -> {
+			for (int length = 0; length <= 100; length++) {
+				checker.check(length).percentage(p -> p >= 0.4);
+			}
+		});
+
+	}
+
+	@Example
 	void ascii(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.ascii();
 		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {

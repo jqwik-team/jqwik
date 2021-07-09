@@ -87,10 +87,11 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<String> strings(
-			RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int genSize
+		RandomGenerator<Character> elementGenerator,
+		int minLength, int maxLength, int genSize, RandomDistribution lengthDistribution
 	) {
 		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength, maxLength);
-		return container(elementGenerator, createShrinkable, minLength, maxLength, genSize, null, Collections.emptySet());
+		return container(elementGenerator, createShrinkable, minLength, maxLength, genSize, lengthDistribution, Collections.emptySet());
 	}
 
 	private static <T, C> RandomGenerator<C> container(

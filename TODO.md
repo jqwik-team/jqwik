@@ -1,8 +1,12 @@
 - 1.5.3
 
     - SizableCollections.withSizeDistribution(...)
-        - StringArbitrary.withLengthDistribution(..)  
         - User guide entry
+    
+    - Release
+        - Documentation
+
+- 1.5.4
 
     - Domains
         - Hand in property execution context to provider method
