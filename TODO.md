@@ -1,8 +1,5 @@
 - 1.5.3
 
-    - SizableCollections.withSizeDistribution(...)
-        - User guide entry
-    
     - Release
         - Documentation
 

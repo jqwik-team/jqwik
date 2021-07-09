@@ -235,8 +235,18 @@ StringArbitrary strings = Arbitraries.strings()
                             .withChars('.', ',', ';', '!', '?');
 ```
 
-`StringArbitrary` comes with additional capabilities to influence the minimal
-and maximal length of a string, as well as the 
+#### String Size
+
+Without any additional configuration, the size of generated strings
+is between 0 and 255. 
+To change this `StringArbitrary` comes with additional capabilities to set the minimal
+and maximal length of a string:
+
+- `ofLength(int)`: To fix the length of a generated string
+- `ofMinLength(int)`: To set the lower bound for string length
+- `ofMaxLength(int)`: To set the upper bound for string length
+
+You can also influence the
 [random distribution](#random-numeric-distribution) of the length.
 If you want, for example, a uniform distribution of string length between
 5 and 25 characters, this is how you do it:
@@ -408,6 +418,28 @@ You can then create the corresponding multi value arbitrary from there:
 - [`ArrayArbitrary<T, A> Arbitrary.array(Class<A> arrayClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#array(java.lang.Class))
 
 
+#### Size of Multi-value Containers
+
+Without any additional configuration, the size of generated containers (lists, sets, arrays etc.)
+is between 0 and 255. To change this all the arbitraries from above support
+- `ofSize(int)`: To fix the size of a generated container
+- `ofMinSize(int)`: To set the lower bound for container size
+- `ofMaxSize(int)`: To set the upper bound for container size
+
+Usually the distribution of generated container size is heavily distorted 
+towards the allowed minimum. 
+If you want to influence the random distribution you can use
+`withSizeDistribution(RandomDistribution)`. For example:
+
+```java
+Arbitraries.integers().list().ofMaxSize(100)
+    .withSizeDistribution(RandomDistribution.uniform());
+```
+
+See the section on [random numeric distribution](#random-numeric-distribution)
+to check out the available distribution implementations.
+
+
 ### Collecting Values in a List
 
 If you do not want any random combination of values in your list - as
@@ -466,6 +498,13 @@ Arbitrary<Map<Integer, String>> numberMaps() {
     return Arbitraries.maps(keys, values);
 }
 ```
+
+#### Map Size
+
+Influencing the size of a generated map works exactly like 
+[in other multi-value containers](#size-of-multi-value-containers).
+
+#### Map Entries
 
 For generating individual `Map.Entry` instances there is
 [`Arbitraries.entries(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary)).

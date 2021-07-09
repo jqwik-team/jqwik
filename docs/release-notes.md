@@ -28,6 +28,13 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- You can now influence the random distribution of 
+  [the size of generated multi-value containers](/docs/1.5.3/user-guide.html#size-of-multi-value-containers) 
+  (sets, lists, arrays, streams, iterators and maps).
+
+- You can now influence the random distribution of 
+  [the size of generated strings](/docs/1.5.3/user-guide.html#string-size).
+
 - All container-based arbitraries (e.g. List, Sets, Strings) now generate containers 
   without duplicated elements with a higher probability even when they have many elements. 
 
