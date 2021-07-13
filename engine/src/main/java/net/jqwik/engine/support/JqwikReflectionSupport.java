@@ -22,6 +22,12 @@ public class JqwikReflectionSupport {
 		return addInstances(inner, new ArrayList<>()).stream();
 	}
 
+	public static List<Object> getInstancesFromInside(Object inner) {
+		List<Object> instances = streamInstancesFromInside(inner).collect(toList());
+		Collections.reverse(instances);
+		return instances;
+	}
+
 	private static List<Object> addInstances(Object inner, List<Object> instances) {
 		instances.add(inner);
 		Optional<Object> outer = getOuterInstance(inner);

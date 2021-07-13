@@ -53,6 +53,11 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 	}
 
 	@Override
+	public List<Object> testInstances() {
+		return JqwikReflectionSupport.getInstancesFromInside(testInstance);
+	}
+
+	@Override
 	public String extendedLabel() {
 		return methodDescriptor.extendedLabel();
 	}

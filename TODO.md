@@ -1,8 +1,5 @@
 - 1.5.4
 
-    - PrepareTestInstanceHook or a different way to execute code on all inner instances.
-      See JqwikSpringExtension for context.
-
     - Domains
         - Hand in PropertyLifecycleContext object to provider method
           E.g. to get annotation values from method 

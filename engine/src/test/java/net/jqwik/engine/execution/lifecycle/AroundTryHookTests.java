@@ -128,6 +128,13 @@ class AroundTryHookTests {
 			assertThat(result.countChecks()).isEqualTo(5);
 		}
 	}
+
+	@Property(tries = 2)
+	@AddLifecycleHook(CheckTryLifecycleContext.class)
+	void checkTryLifecycleContextAttributes() {
+		// All checking is done in the hook
+	}
+
 }
 
 class IncrementCount1 implements AroundTryHook {
@@ -213,5 +220,18 @@ class InvalidateEverySecondTryWithAssumption implements AroundTryHook {
 			Assume.that(false);
 		}
 		return result;
+	}
+}
+
+class CheckTryLifecycleContext implements AroundTryHook {
+
+	@Override
+	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
+		assertThat(context.label()).isEqualTo("checkTryLifecycleContextAttributes");
+		assertThat(context.containerClass()).isEqualTo(AroundTryHookTests.class);
+		assertThat(context.targetMethod().getName()).isEqualTo("checkTryLifecycleContextAttributes");
+		assertThat(context.testInstance()).isInstanceOf(AroundTryHookTests.class);
+		;
+		return aTry.execute(parameters);
 	}
 }

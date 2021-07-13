@@ -2,11 +2,12 @@ package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.support.*;
 import net.jqwik.testing.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 @SuppressLogging
 class AroundPropertyHookTests {
@@ -76,7 +77,7 @@ class AroundPropertyHookTests {
 			try {
 				return property.execute();
 			} finally {
-				Assertions.assertThat(calls.get()).containsExactly(
+				assertThat(calls.get()).containsExactly(
 					"before outer", "before inner", "example", "after inner", "after outer"
 				);
 			}
@@ -90,12 +91,12 @@ class AroundPropertyHookTests {
 
 		@Property(tries = 10)
 		void withPropagation() {
-			Assertions.assertThat(AroundPropertyWithPropagation.calls).isEqualTo(2);
+			assertThat(AroundPropertyWithPropagation.calls).isEqualTo(2);
 		}
 
 		@Property(tries = 10)
 		void withoutPropagation() {
-			Assertions.assertThat(AroundPropertyWithoutPropagation.calls).isEqualTo(0);
+			assertThat(AroundPropertyWithoutPropagation.calls).isEqualTo(0);
 		}
 
 	}
@@ -105,9 +106,18 @@ class AroundPropertyHookTests {
 	@Property(tries = 10)
 	@AddLifecycleHook(AroundSingleProperty.class)
 	void methodLevelLifecycle() {
-		Assertions.assertThat(countSingle).isEqualTo(1);
+		assertThat(countSingle).isEqualTo(1);
 	}
 
+	@Group
+	class LifecycleContextTests {
+
+		@Property(tries = 2)
+		@AddLifecycleHook(CheckPropertyLifecycleContext.class)
+		void checkPropertyLifecycleContextAttributes() {
+			// All checking is done in the hook
+		}
+	}
 }
 
 class AroundPropertyWithPropagation implements AroundPropertyHook {
@@ -143,6 +153,23 @@ class AroundSingleProperty implements AroundPropertyHook {
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
 		AroundPropertyHookTests.countSingle++;
+		return property.execute();
+	}
+}
+
+class CheckPropertyLifecycleContext implements AroundPropertyHook {
+
+	@Override
+	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
+		assertThat(context.label()).isEqualTo("checkPropertyLifecycleContextAttributes");
+		assertThat(context.extendedLabel()).isEqualTo("LifecycleContextTests:checkPropertyLifecycleContextAttributes");
+		assertThat(context.containerClass()).isEqualTo(AroundPropertyHookTests.LifecycleContextTests.class);
+		assertThat(context.targetMethod().getName()).isEqualTo("checkPropertyLifecycleContextAttributes");
+		assertThat(context.attributes()).isInstanceOf(PropertyAttributes.class);
+		assertThat(context.testInstance()).isInstanceOf(AroundPropertyHookTests.LifecycleContextTests.class);
+
+		List<Object> instances = JqwikReflectionSupport.getInstancesFromInside(context.testInstance());
+		assertThat(context.testInstances()).isEqualTo(instances);
 		return property.execute();
 	}
 }

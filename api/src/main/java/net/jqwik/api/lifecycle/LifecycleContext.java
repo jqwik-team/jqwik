@@ -81,7 +81,7 @@ public interface LifecycleContext {
 
 	/**
 	 * Create a new instance of a {@code clazz} in the context of the property in which it
-	 * is running. Use this method for instance when trying to instantiate a class
+	 * is running. Use this method, for example, when trying to instantiate a class
 	 * retrieved from an annotation's attribute.
 	 *
 	 * <p>

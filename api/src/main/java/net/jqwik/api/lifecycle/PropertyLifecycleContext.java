@@ -1,6 +1,7 @@
 package net.jqwik.api.lifecycle;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 import org.apiguardian.api.*;
 
@@ -38,6 +39,15 @@ public interface PropertyLifecycleContext extends LifecycleContext {
 	 * @return an instance of the container class in which the current property method is running
 	 */
 	Object testInstance();
+
+	/**
+	 * The list of the current instance of the property's container class and all its outer objects if it has any.
+	 * The result of {@linkplain #testInstance()} is the last in the list.
+	 *
+	 * @return List of instances starting from outer-most to inner-most class
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.4")
+	List<Object> testInstances();
 
 	/**
 	 * The extended label contains additional information about the current container class.
