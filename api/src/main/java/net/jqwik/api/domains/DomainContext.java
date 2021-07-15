@@ -6,6 +6,7 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.providers.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -13,14 +14,19 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Class that implement this interface are used to annotate property methods or containers like this:
  * {@code Domain(MyDomainContext.class)}. They must have a constructor without parameters
- * to be usable this way.
+ * to be usable in this way.
  *
  * <p>
- *     Most implementing class will subclass {@linkplain AbstractDomainContextBase}.
+ *     Lifecycle: Instantiate exactly once per property, then {@linkplain #initialize(PropertyLifecycleContext)}
+ *     will be called before providers and configurators will be retrieved.
+ * </p>
+ *
+ * <p>
+ *     Most implementing class will subclass {@linkplain DomainContextBase}.
  * </p>
  *
  * @see Domain
- * @see AbstractDomainContextBase
+ * @see DomainContextBase
  */
 
 @API(status = MAINTAINED, since = "1.2.0")
@@ -66,4 +72,18 @@ public interface DomainContext {
 	List<ArbitraryProvider> getArbitraryProviders();
 
 	List<ArbitraryConfigurator> getArbitraryConfigurators();
+
+	/**
+	 * This method will be called exactly once after instantiation of a given domain context class.
+	 * The call will happen before any calls to {@linkplain #getArbitraryProviders()} and {@linkplain #getArbitraryConfigurators()}.
+	 *
+	 * <p>
+	 * Override this message if your domain context needs access to the
+	 * {@linkplain PropertyLifecycleContext context of a property}.
+	 * </p>
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.4")
+	default void initialize(PropertyLifecycleContext context) {
+	}
+
 }

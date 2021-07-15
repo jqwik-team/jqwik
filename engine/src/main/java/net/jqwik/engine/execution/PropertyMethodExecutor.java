@@ -53,6 +53,9 @@ public class PropertyMethodExecutor {
 			domainAnnotations
 				.stream()
 				.map(this::createDomainContext)
+				.peek(domainContext -> {
+					domainContext.initialize(propertyLifecycleContext);
+				})
 				.collect(Collectors.toSet());
 		return new CombinedDomainContext(domainContexts);
 	}

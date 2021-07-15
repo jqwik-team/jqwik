@@ -1,10 +1,5 @@
 - 1.5.4
 
-    - Domains
-        - Hand in PropertyLifecycleContext object to provider method
-          E.g. to get annotation values from method 
-        - Oder DomainContext.prepare(PropertyLifecycleContext context)
-
     - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
       to replace Combinators.withBuilder() but target cannot change across build
       steps (-> much better performance and shrinking)

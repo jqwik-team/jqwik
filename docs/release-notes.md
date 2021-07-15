@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.5.4-SNAPSHOT](#154-snapshot)
 - [1.5.3](#153)
 - [1.5.2](#152)
 - [1.5.1](#151)
@@ -22,6 +23,22 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+## 1.5.4-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Added default method `DomainContext.initialize(PropertyLifecycleContext)` which
+  can be overridden if domain context implementations need access to the property context.
+
+#### Breaking Changes
+
+_No breaking changes yet_
+
+#### Bug Fixes
+
+_No bugfixes yet_
 
 
 ## 1.5.3
