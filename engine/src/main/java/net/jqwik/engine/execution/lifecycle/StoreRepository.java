@@ -25,7 +25,9 @@ public class StoreRepository {
 		return current;
 	}
 
-	private final Set<ScopedStore<?>> stores = new HashSet<>();
+	private static class IdentifiedStores extends HashMap<TestDescriptor, ScopedStore<?>> {}
+
+	private final Map<Object, IdentifiedStores> stores = new HashMap<>();
 
 	public <T> ScopedStore<T> create(
 		TestDescriptor scope,
@@ -51,11 +53,17 @@ public class StoreRepository {
 	}
 
 	private <T> void addStore(Object identifier, ScopedStore<T> newStore) {
+		IdentifiedStores identifiedStores = stores.get(newStore.getIdentifier());
+		if (identifiedStores == null) {
+			identifiedStores = new IdentifiedStores();
+		}
+
 		Optional<ScopedStore<?>> conflictingStore =
-			stores.stream()
-				  .filter(store -> store.getIdentifier().equals(newStore.getIdentifier()))
-				  .filter(store -> isVisibleInAncestorOrDescendant(newStore, store))
-				  .findFirst();
+			identifiedStores
+				.values()
+				.stream()
+				.filter(store -> isVisibleInAncestorOrDescendant(newStore, store))
+				.findFirst();
 
 		conflictingStore.ifPresent(existingStore -> {
 			String message = String.format(
@@ -67,7 +75,8 @@ public class StoreRepository {
 			throw new JqwikException(message);
 		});
 
-		stores.add(newStore);
+		identifiedStores.put(newStore.getScope(), newStore);
+		stores.put(identifier, identifiedStores);
 	}
 
 	private <T> boolean isVisibleInAncestorOrDescendant(ScopedStore<T> newStore, ScopedStore<?> store) {
@@ -79,24 +88,31 @@ public class StoreRepository {
 			throw new IllegalArgumentException("identifier must not be null");
 		}
 
-		//noinspection unchecked
-		return stores.stream()
-					 .filter(store -> store.getIdentifier().equals(identifier))
-					 .filter(store -> store.isVisibleFor(retriever))
-					 .map(store -> (ScopedStore<T>) store)
-					 .findFirst();
+		IdentifiedStores identifiedStores = stores.get(identifier);
+		if (identifiedStores == null) {
+			return Optional.empty();
+		} else {
+			//noinspection unchecked
+			return identifiedStores.values()
+								   .stream()
+								   .filter(store -> store.isVisibleFor(retriever))
+								   .map(store -> (ScopedStore<T>) store)
+								   .findFirst();
+		}
 	}
 
 	public void finishScope(TestDescriptor scope) {
 		List<ScopedStore<?>> storesToRemove =
 			stores
+				.values()
 				.stream()
+				.flatMap(identifiedStores -> identifiedStores.values().stream())
 				.filter(store -> isStoreIn(store, scope))
 				.collect(Collectors.toList());
 
 		for (ScopedStore<?> store : storesToRemove) {
 			store.close();
-			stores.remove(store);
+			stores.get(store.getIdentifier()).remove(store.getScope());
 		}
 	}
 
@@ -106,7 +122,9 @@ public class StoreRepository {
 
 	public void finishProperty(TestDescriptor scope) {
 		stores
+			.values()
 			.stream()
+			.flatMap(identifiedStores -> identifiedStores.values().stream())
 			.filter(store -> store.lifespan() == Lifespan.PROPERTY)
 			.filter(store -> store.isVisibleFor(scope))
 			.forEach(Store::reset);
@@ -114,7 +132,9 @@ public class StoreRepository {
 
 	public void finishTry(TestDescriptor scope) {
 		stores
+			.values()
 			.stream()
+			.flatMap(identifiedStores -> identifiedStores.values().stream())
 			.filter(store -> store.lifespan() == Lifespan.TRY)
 			.filter(store -> store.isVisibleFor(scope))
 			.forEach(Store::reset);
