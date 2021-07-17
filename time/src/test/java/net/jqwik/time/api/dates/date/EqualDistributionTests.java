@@ -10,7 +10,7 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 
 import static net.jqwik.time.api.testingSupport.ForDate.*;
 
-@PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
+@PropertyDefaults(tries = 2000, edgeCases = EdgeCasesMode.NONE)
 public class EqualDistributionTests {
 
 	@Provide
