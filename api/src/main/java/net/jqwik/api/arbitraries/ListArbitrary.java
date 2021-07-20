@@ -51,8 +51,8 @@ public interface ListArbitrary<T> extends Arbitrary<List<T>>, StreamableArbitrar
 	ListArbitrary<T> withSizeDistribution(RandomDistribution uniform);
 
 	/**
-	 * Map over each element of the generated streamable giving access to the
-	 * all elements when streaming.
+	 * Map over each element of the generated list giving access to all elements of the list.
+	 * The number and position of the mapped elements within the list will stay the same.
 	 *
 	 * @param <U> The target type of a list to generate
 	 * @param mapper Mapper function to element type U
@@ -62,8 +62,8 @@ public interface ListArbitrary<T> extends Arbitrary<List<T>>, StreamableArbitrar
 	<U> Arbitrary<List<U>> mapEach(BiFunction<List<T>, T, U> mapper);
 
 	/**
-	 * Flat-map over each element of the generated streamable giving access to the
-	 * all elements when streaming.
+	 * Flat-map over each element of the generated list giving access to all elements of the list.
+	 * The number and position of the mapped elements within the list will stay the same.
 	 *
 	 * @param <U> The target type of a list to generate
 	 * @param flatMapper Mapper function to arbitrary of element type U

@@ -734,6 +734,36 @@ You could generate the same kind of values by constraining and filtering a gener
 However, the [shrinking](#result-shrinking) target would probably be different. In the example above, shrinking
 will move towards the lowest allowed number, that is `10000`.
 
+#### Mapping over Elements of Collection
+
+`ListArbitrary` and `SetArbitrary` provide you with a convenient way to map over each element 
+of a collection and still keep the generated collection. 
+This is useful when the mapping function needs access to all elements of the list to do its job:
+
+- [`ListArbitrary.mapEach`](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/ListArbitrary.html#mapEach(java.util.function.BiFunction))
+
+- [`SetArbitrary.mapEach`](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/SetArbitrary.html#mapEach(java.util.function.BiFunction))
+
+
+The following example will generate a list of integers and enrich the elements with
+the number of occurrences of the element within the list:
+
+```java
+@Property
+void elementsAreCorrectlyCounted(@ForAll("elementsWithOccurrence") List<Tuple2<Integer, Long>> list) {
+	Assertions.assertThat(list).allMatch(t -> t.get2() <= list.size());
+}
+
+@Provide
+Arbitrary<List<Tuple2<Integer, Long>>> elementsWithOccurrence() {
+	return Arbitraries.integers().between(10000, 99999).list()
+					  .mapEach((all, i) -> {
+						  long count = all.stream().filter(e -> e.equals(i)).count();
+						  return Tuple.of(i, count);
+					  });
+}
+```
+
 
 ### Flat Mapping
 
@@ -801,6 +831,17 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
 
 Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
 very useful.
+
+#### Flat Mapping over Elements of Collection
+
+Just like [mapping over elements of a collection](#mapping-over-elements-of-collection) 
+`ListArbitrary` and `SetArbitrary` provide you with a mechanism to flat-map over each element
+of a collection and still keep the generated collection:
+
+- [`ListArbitrary.flatMapEach`](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/ListArbitrary.html#flatMapEach(java.util.function.BiFunction))
+
+- [`SetArbitrary.flatMapEach`](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/SetArbitrary.html#flatMapEach(java.util.function.BiFunction))
+
 
 #### Implicit Flat Mapping
 

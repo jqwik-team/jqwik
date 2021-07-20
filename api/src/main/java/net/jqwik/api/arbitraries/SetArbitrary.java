@@ -51,8 +51,8 @@ public interface SetArbitrary<T> extends Arbitrary<Set<T>>, StreamableArbitrary<
 	SetArbitrary<T> withSizeDistribution(RandomDistribution uniform);
 
 	/**
-	 * Map over each element of the generated streamable giving access to the
-	 * all elements when streaming.
+	 * Map over each element of the generated set giving access to all elements of the set.
+	 * The number of the mapped elements within the set will stay the same.
 	 *
 	 * @param <U> The target type of a set to generate
 	 * @param mapper Mapper function to element type U
@@ -62,8 +62,8 @@ public interface SetArbitrary<T> extends Arbitrary<Set<T>>, StreamableArbitrary<
 	<U> Arbitrary<Set<U>> mapEach(BiFunction<Set<T>, T, U> mapper);
 
 	/**
-	 * Flat-map over each element of the generated streamable giving access to the
-	 * all elements when streaming.
+	 * Flat-map over each element of the generated set giving access to all elements of the set.
+	 * The number of the mapped elements within the set will stay the same.
 	 *
 	 * @param <U> The target type of a set to generate
 	 * @param flatMapper Mapper function to arbitrary of element type U
