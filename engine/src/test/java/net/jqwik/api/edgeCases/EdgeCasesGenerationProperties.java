@@ -161,6 +161,7 @@ class EdgeCasesGenerationProperties {
 	}
 
 	@Property(tries = 10000, edgeCases = EdgeCasesMode.NONE)
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 	void edgeCasesShouldNotBeOverrepresentedWithEdgeCasesSetToNone(@ForAll String aString, @ForAll int anInt) {
 
 		Statistics.label("empty string")

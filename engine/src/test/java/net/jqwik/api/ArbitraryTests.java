@@ -18,6 +18,7 @@ import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 @Label("Arbitrary")
+@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 class ArbitraryTests {
 
 	@Example
@@ -89,6 +90,7 @@ class ArbitraryTests {
 
 	@Group
 	@PropertyDefaults(edgeCases = EdgeCasesMode.MIXIN, tries = 5000)
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 	class GeneratorWithEmbeddedEdgeCases {
 
 		@Example

@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.api.statistics.StatisticsReport.StatisticsReportMode.*;
 
 @Group
+@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 class StatisticsCoverageTests {
 
 	@Property(tries = 50)

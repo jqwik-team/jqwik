@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
+@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 class ListArbitraryTests {
 
 	@Example
@@ -142,7 +143,23 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	void uniqueListsAreSometimesGeneratedByDefault(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(0, 1_000);
+		ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofSize(50);
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1, false);
+
+		for (int i = 0; i < 2000; i++) {
+			List<Integer> list = generator.next(random).value();
+			Statistics.collect(isUniqueModulo(list, 1_000));
+		}
+
+		Statistics.coverage(checker -> {
+			checker.check(true).percentage(p -> p >= 1.5);
+		});
+	}
+
+	@Example
 	void withSizeDistribution(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		ListArbitrary<Integer> arbitrary =
@@ -161,11 +178,9 @@ class ListArbitraryTests {
 				checker.check(size).percentage(p -> p >= 0.4);
 			}
 		});
-
 	}
 
 	@Example
-	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 	void withoutSizeDistribution(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(50);
@@ -182,7 +197,6 @@ class ListArbitraryTests {
 				checker.check(size).count(p -> p >= 1);
 			}
 		});
-
 	}
 
 	private boolean isUniqueModulo(List<Integer> list, int modulo) {

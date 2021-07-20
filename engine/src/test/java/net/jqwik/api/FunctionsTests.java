@@ -67,6 +67,7 @@ class FunctionsTests {
 	}
 
 	@Example
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 	void hashCode_of_functions_can_be_called(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10000);
 		Arbitrary<Function<String, Integer>> functions =

@@ -254,6 +254,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Group
 	class Coverage {
 		@Property
+		@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 		void randomStringsShouldContainZeroChar(@ForAll @StringLength(min = 1, max = 20) String aString) {
 			Statistics.label("contains 0")
 					  .collect(aString.contains("\u0000"))
@@ -264,6 +265,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 		}
 
 		@Property(edgeCases = EdgeCasesMode.NONE)
+		@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 		void evenLongStringsShouldSometimesGenerateNoDuplicates(@ForAll @StringLength(500) String aString) {
 			Statistics.label("duplicates")
 					  .collect(hasDuplicate(aString))
@@ -291,6 +293,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 		}
 
 		@Property(generation = GenerationMode.RANDOMIZED, edgeCases = EdgeCasesMode.NONE)
+		@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 		void stringFromSeveralCharacterGroups_HaveRandomDistributionBySize(@ForAll("a to z, 1 to 3") String aString) {
 			char onlyChar = aString.charAt(0);
 
@@ -314,6 +317,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 		}
 
 		@Property(tries = 2000, edgeCases = EdgeCasesMode.NONE)
+		@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 		void randomStringsWithRepeatedCharsShouldGenerateDuplicatesAndRepetitions(
 			@ForAll("withRepeatedChars") @StringLength(min = 10, max = 20) String aString
 		) {
