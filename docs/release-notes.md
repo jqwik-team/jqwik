@@ -31,14 +31,19 @@ title: jqwik Release Notes
 
 - Added default method `DomainContext.initialize(PropertyLifecycleContext)` which
   can be overridden if domain context implementations need access to the property context.
+  
+- Added `StringArbitrary.repeatChars(double repeatProbability)`
+
 
 #### Breaking Changes
 
-_No breaking changes yet_
+- Generated strings will no longer intentionally generate duplicate characters
+  by default. You now have to tell it to do so.
+  
 
 #### Bug Fixes
 
-_No bugfixes yet_
+- Addressed performance issues raised in https://github.com/jlink/jqwik/issues/206
 
 
 ## 1.5.3

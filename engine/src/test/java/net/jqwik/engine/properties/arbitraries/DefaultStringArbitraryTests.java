@@ -263,16 +263,6 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 					  .coverage(checker -> checker.check(true).count(c -> c > 10));
 		}
 
-		@Property(tries = 2000, edgeCases = EdgeCasesMode.NONE)
-		void randomStringsShouldSometimesGenerateDuplicatesAndRepetitions(@ForAll @StringLength(min = 10, max = 20) String aString) {
-			Statistics.label("duplicates")
-					  .collect(hasDuplicate(aString))
-					  .coverage(checker -> checker.check(true).percentage(p -> p > 10));
-			Statistics.label("repetition")
-					  .collect(hasRepetition(aString))
-					  .coverage(checker -> checker.check(true).count(p -> p > 5));
-		}
-
 		@Property(edgeCases = EdgeCasesMode.NONE)
 		void evenLongStringsShouldSometimesGenerateNoDuplicates(@ForAll @StringLength(500) String aString) {
 			Statistics.label("duplicates")
@@ -321,6 +311,23 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 					   .withCharRange('a', 'z')
 					   .withCharRange('1', '3')
 					   .ofLength(1);
+		}
+
+		@Property(tries = 2000, edgeCases = EdgeCasesMode.NONE)
+		void randomStringsWithRepeatedCharsShouldGenerateDuplicatesAndRepetitions(
+			@ForAll("withRepeatedChars") @StringLength(min = 10, max = 20) String aString
+		) {
+			Statistics.label("duplicates")
+					  .collect(hasDuplicate(aString))
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 10));
+			Statistics.label("repetition")
+					  .collect(hasRepetition(aString))
+					  .coverage(checker -> checker.check(true).percentage(p -> p > 1));
+		}
+
+		@Provide
+		Arbitrary<String> withRepeatedChars() {
+			return Arbitraries.strings().repeatChars(0.01);
 		}
 
 	}

@@ -18,6 +18,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	private int maxLength = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	private Set<Character> excludedChars = new HashSet<>();
 	private RandomDistribution lengthDistribution = null;
+	private double repeatChars = 0.0;
 
 	@Override
 	public RandomGenerator<String> generator(int genSize) {
@@ -103,6 +104,16 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	}
 
 	@Override
+	public Arbitrary<String> repeatChars(double repeatProbability) {
+		if (repeatProbability < 0 || repeatProbability >= 1) {
+			throw new IllegalArgumentException("repeatProbability must be between 0 (included) and 1 (excluded)");
+		}
+		DefaultStringArbitrary clone = typedClone();
+		clone.repeatChars = repeatProbability;
+		return clone;
+	}
+
+	@Override
 	public StringArbitrary withChars(char... chars) {
 		DefaultStringArbitrary clone = typedClone();
 		clone.characterArbitrary = clone.characterArbitrary.with(chars);
@@ -168,9 +179,12 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	}
 
 	private RandomGenerator<Character> randomCharacterGenerator() {
-		return effectiveCharacterArbitrary()
-				   .generator(1, false)
-				   .injectDuplicates(0.01);
+		RandomGenerator<Character> characterGenerator = effectiveCharacterArbitrary().generator(1, false);
+		if (repeatChars > 0) {
+			return characterGenerator.injectDuplicates(repeatChars);
+		} else {
+			return characterGenerator;
+		}
 	}
 
 	private Arbitrary<Character> effectiveCharacterArbitrary() {
