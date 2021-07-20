@@ -66,7 +66,7 @@ class StoreRepositoryTests {
 			assertThat(optionalStore1).isPresent();
 
 			Optional<ScopedStore<String>> optionalStore2 = repository.get(container2, "aString");
-			assertThat(optionalStore1).isPresent();
+			assertThat(optionalStore2).isPresent();
 
 			assertThat(optionalStore1).isNotEqualTo(optionalStore2);
 		}
