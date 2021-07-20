@@ -53,10 +53,12 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		List<Shrinkable<T>> listOfShrinkables = new ArrayList<>();
 		List<T> existingValues = new ArrayList<>();
 
-		// Raise probability for no duplicates even in large containers to above 5 percent
+		// Raise probability for no duplicates even in large containers to approx 2 percent
+		// boolean noDuplicates = false;
 		boolean noDuplicates = !noDuplicatesHadToBeSwitchedOff
+								   && listSize >= 2
 								   && uniquenessExtractors.isEmpty()
-								   && random.nextInt(100) <= 5;
+								   && random.nextInt(100) <= 2;
 
 		while (listOfShrinkables.size() < listSize) {
 			try {
@@ -88,7 +90,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		Function<Random, Shrinkable<T>> fetchShrinkable,
 		boolean noDuplicates
 	) {
-		Shrinkable<T> accepted = MaxTriesLoop.loop(
+		return MaxTriesLoop.loop(
 			() -> true,
 			next -> {
 				next = fetchShrinkable.apply(random);
@@ -107,7 +109,6 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 				return new TooManyFilterMissesException(message);
 			}
 		);
-		return accepted;
 	}
 
 	private boolean checkSpecifiedUniqueness(List<T> elements, T value) {
