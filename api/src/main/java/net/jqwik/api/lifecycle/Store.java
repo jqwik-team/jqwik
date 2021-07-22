@@ -45,7 +45,7 @@ public interface Store<T> {
 	 * hooks and lifecycle-dependent methods.
 	 *
 	 * @param <T>         The type of object to store
-	 * @param identifier  Any object to identify a store. Must be globally unique.
+	 * @param identifier  Any object to identify a store. Must be globally unique and stable, i.e. hashCode and equals must not change.
 	 * @param lifespan    A stored object's lifespan
 	 * @param initializer Supplies the value to be used for initializing the store depending on its lifespan
 	 * @return New store instance
@@ -58,7 +58,7 @@ public interface Store<T> {
 	 * Find an existing store or create a new one if it doesn't exist
 	 *
 	 * @param <T>         The type of object to store
-	 * @param identifier  Any object to identify a store. Must be globally unique.
+	 * @param identifier  Any object to identify a store. Must be globally unique and stable, i.e. hashCode and equals must not change.
 	 * @param lifespan
 	 * @param initializer Supplies the value to be used for initializing the store depending on its lifespan
 	 * @return New or existing store instance
@@ -83,7 +83,7 @@ public interface Store<T> {
 	/**
 	 * Retrieve a store that must be created somewhere else.
 	 *
-	 * @param identifier Any object to identify a store. Must be globally unique.
+	 * @param identifier Any object to identify a store. Must be globally unique and stable, i.e. hashCode and equals must not change.
 	 * @param <T>        The type of object to store
 	 * @return Existing store instance
 	 * @throws CannotFindStoreException
