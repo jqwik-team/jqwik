@@ -44,6 +44,12 @@ public interface Store<T> {
 	 * Create a new store for storing and retrieving values and objects in lifecycle
 	 * hooks and lifecycle-dependent methods.
 	 *
+	 * <p>
+	 *     Stores are created with respect to the current test / property.
+	 *     Therefore you _must not save created stores in member variables_,
+	 *     unless the containing object is unique per test / property.
+	 * </p>
+	 *
 	 * @param <T>         The type of object to store
 	 * @param identifier  Any object to identify a store. Must be globally unique and stable, i.e. hashCode and equals must not change.
 	 * @param lifespan    A stored object's lifespan
@@ -55,7 +61,13 @@ public interface Store<T> {
 	}
 
 	/**
-	 * Find an existing store or create a new one if it doesn't exist
+	 * Find an existing store or create a new one if it doesn't exist.
+	 *
+	 * <p>
+	 *     Stores are created with respect to the current test / property.
+	 *     Therefore you _must not save created stores in member variables_,
+	 *     unless the containing object is unique per test / property.
+	 * </p>
 	 *
 	 * @param <T>         The type of object to store
 	 * @param identifier  Any object to identify a store. Must be globally unique and stable, i.e. hashCode and equals must not change.
