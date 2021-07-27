@@ -70,8 +70,7 @@ public class Builders {
 		 * @return arbitrary of target object
 		 */
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
-			return null;
-			// return builder.map(buildFunction);
+			return starter.map(buildFunction);
 		}
 
 		/**

@@ -8,9 +8,10 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
+@PropertyDefaults(tries = 10)
 class BuildersTests {
 
-	@Example
+	@Property
 	void plainBuilder(@ForAll Random random) {
 		Arbitrary<Person> personArbitrary =
 				Builders
@@ -22,8 +23,19 @@ class BuildersTests {
 		assertThat(value.name).isEqualTo(PersonBuilder.DEFAULT_NAME);
 	}
 
-	@Disabled
-	@Example
+	@Property
+	void plainBuilderWithArbitrary(@ForAll Random random) {
+		Arbitrary<Person> personArbitrary =
+				Builders
+						.withBuilder(Arbitraries.create(PersonBuilder::new))
+						.build(PersonBuilder::build);
+
+		Person value = generateFirst(personArbitrary, random);
+		assertThat(value.age).isEqualTo(PersonBuilder.DEFAULT_AGE);
+		assertThat(value.name).isEqualTo(PersonBuilder.DEFAULT_NAME);
+	}
+
+	@Property
 	void useBuilderMethods(@ForAll Random random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
