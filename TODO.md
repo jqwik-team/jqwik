@@ -1,6 +1,6 @@
 - 1.5.4
 
-    - Builders.startWith(..).use()|maybe(0.5).use().in()|inSetter()
+    - Builders.startWith(..).use()|maybeUse(0.5).in()|inSetter()
       to replace Combinators.withBuilder() but target cannot change across build
       steps (-> much better performance and shrinking)
         - Add capability to easily generate java beans (if that really makes
