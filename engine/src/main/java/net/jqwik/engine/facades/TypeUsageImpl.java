@@ -159,8 +159,9 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	private static List<TypeUsage> toTypeUsages(AnnotatedType[] annotatedActualTypeArguments) {
-		return Arrays.stream(annotatedActualTypeArguments) //
-					 .map(TypeUsageImpl::forAnnotatedType) //
+		return Arrays.stream(annotatedActualTypeArguments)
+					 .filter(Objects::nonNull) // for some strange reason there can be null entries
+					 .map(TypeUsageImpl::forAnnotatedType)
 					 .collect(Collectors.toList());
 	}
 
@@ -218,6 +219,7 @@ public class TypeUsageImpl implements TypeUsage {
 
 	private static List<TypeUsage> toTypeUsages(Type[] upperBounds) {
 		return Arrays.stream(upperBounds)
+					 .filter(Objects::nonNull) // for some strange reason there can be null entries
 					 .map(TypeUsage::forType)
 					 .collect(Collectors.toList());
 	}
@@ -532,7 +534,7 @@ public class TypeUsageImpl implements TypeUsage {
 		TypeUsageImpl other = (TypeUsageImpl) obj;
 		if (!other.getRawType().equals(getRawType()))
 			return false;
-		if (!other.getTypeArguments().equals(getTypeArguments()))
+		if (!other.typeArguments.equals(typeArguments))
 			return false;
 		if (!other.getAnnotations().equals(getAnnotations()))
 			return false;

@@ -22,6 +22,8 @@ import static net.jqwik.api.providers.TypeUsage.of;
 @Label("TypeUsage")
 class TypeUsageTests {
 
+	interface Recursive<E extends Recursive<E>> {}
+
 	@Example
 	void isAssignable() {
 		assertThat(TypeUsage.of(CharSequence.class).isAssignableFrom(String.class)).isTrue();
@@ -85,6 +87,7 @@ class TypeUsageTests {
 
 			TypeUsage equalType = TypeUsage.of(Tuple2.class, of(String.class), of(Integer.class));
 			assertThat(tupleType.equals(equalType)).isTrue();
+			assertThat(equalType.equals(tupleType)).isTrue();
 
 			TypeUsage nonEqualType = TypeUsage.of(Tuple2.class, of(String.class), of(Number.class));
 			assertThat(tupleType.equals(nonEqualType)).isFalse();
@@ -453,6 +456,8 @@ class TypeUsageTests {
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
+			assertThat(typeVariableType.equals(typeVariableType)).isTrue();
+
 			assertThat(typeVariableType.isTypeVariableOrWildcard()).isTrue();
 			assertThat(typeVariableType.isTypeVariable()).isTrue();
 			assertThat(typeVariableType.getLowerBounds()).isEmpty();
@@ -555,6 +560,31 @@ class TypeUsageTests {
 			assertThat(arrayType.getAnnotations().get(0)).isInstanceOf(Size.class);
 			assertThat(arrayType.getAnnotations().get(1)).isInstanceOf(StringLength.class);
 		}
+
+		@Example
+		void recursiveTypes() throws NoSuchMethodException {
+
+			class RecursiveOne<X> implements Recursive<RecursiveOne<X>> {}
+
+			class RecursiveTwo<Y> implements Recursive<RecursiveTwo<Y>> {}
+
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withRecursiveTypes(
+					RecursiveOne one, RecursiveTwo two
+				) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withRecursiveTypes", RecursiveOne.class, RecursiveTwo.class);
+			MethodParameter parameter1 = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage recursiveType1 = TypeUsageImpl.forParameter(parameter1);
+			MethodParameter parameter2 = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(1);
+			TypeUsage recursiveType2 = TypeUsageImpl.forParameter(parameter2);
+
+			assertThat(recursiveType1.equals(recursiveType1)).isTrue();
+			assertThat(recursiveType1.equals(recursiveType2)).isFalse();
+		}
+
 	}
 
 	@Group

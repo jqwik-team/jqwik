@@ -216,6 +216,20 @@ class GenericsSupportTests {
 		}
 
 		@Example
+		void parameterWithRecursiveType() throws NoSuchMethodException {
+
+			class AnotherClass {
+				public <T extends Comparable<T>> void method(Comparable<T> aT) {}
+			}
+
+			GenericsClassContext context = GenericsSupport.contextFor(AnotherClass.class);
+			Method methodWithComparable = AnotherClass.class.getMethod("method", Comparable.class);
+			TypeResolution resolution = context.resolveParameter(methodWithComparable.getParameters()[0]);
+			assertThat(resolution.type().getTypeName()).isEqualTo("java.lang.Comparable<T>");
+			assertThat(resolution.annotatedType()).isNotNull();
+		}
+
+		@Example
 		@Label("unresolved variable keeps annotation")
 		void resolveUnresolvedGeneric() throws NoSuchMethodException {
 

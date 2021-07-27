@@ -67,10 +67,14 @@ public class GenericsClassContext {
 		Type[] actualTypeArguments = type.getActualTypeArguments();
 
 		AnnotatedParameterizedType annotatedType = (AnnotatedParameterizedType) parameterizedTypeResolution.annotatedType();
-		AnnotatedType[] annotatedActualTypeArguments = annotatedType.getAnnotatedActualTypeArguments();
+		// Sometimes a type resolution does not have an annotated type
+		AnnotatedType[] annotatedActualTypeArguments = annotatedType == null
+														   ? new AnnotatedType[0]
+														   : annotatedType.getAnnotatedActualTypeArguments();
 
+		int numberOfArguments = Math.min(annotatedActualTypeArguments.length, actualTypeArguments.length);
 		List<TypeResolution> resolvedTypeArguments = new ArrayList<>();
-		for (int i = 0; i < actualTypeArguments.length; i++) {
+		for (int i = 0; i < numberOfArguments; i++) {
 			Type typeArgument = actualTypeArguments[i];
 			AnnotatedType annotatedTypeArgument = annotatedActualTypeArguments[i];
 			TypeResolution typeResolution = resolveType(new TypeResolution(typeArgument, annotatedTypeArgument, false));

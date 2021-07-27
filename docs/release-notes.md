@@ -45,6 +45,8 @@ title: jqwik Release Notes
 
 - Addressed performance issues raised in https://github.com/jlink/jqwik/issues/206
 
+- Fixed some type resolution and type usage bug found in
+  https://github.com/mihxil/math.
 
 ## 1.5.3
 
