@@ -52,6 +52,20 @@ class BuildersTests {
 		assertThat(value.name).hasSize(10);
 	}
 
+	@Property
+	void buildWithoutFunctionUsesIdentityAsDefault(@ForAll Random random) {
+		Arbitrary<Person> personArbitrary =
+			Builders
+				.withBuilder(() -> new Person("john", 42))
+				.build();
+
+		assertAllGenerated(
+			personArbitrary.generator(1, true),
+			random,
+			person -> person.age == 42 && person.name.equals("john")
+		);
+	}
+
 	@Disabled
 	@Example
 	void startWithArbitrary() {
@@ -87,21 +101,6 @@ class BuildersTests {
 				personArbitrary.generator(1, true),
 				SourceOfRandomness.current(),
 				person -> person.age == PersonBuilder.DEFAULT_AGE
-		);
-	}
-
-	@Disabled
-	@Example
-	void buildWithoutFunctionUsesIdentityAsDefault() {
-		Arbitrary<Person> personArbitrary =
-				Builders
-						.withBuilder(() -> new Person("john", 42))
-						.build();
-
-		assertAllGenerated(
-				personArbitrary.generator(1, true),
-				SourceOfRandomness.current(),
-				person -> person.age == 42 && person.name.equals("john")
 		);
 	}
 

@@ -1,8 +1,11 @@
 package net.jqwik.api;
 
+import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+
+import net.jqwik.api.Tuple.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -21,7 +24,7 @@ public class Builders {
 	 * @return BuilderCombinator instance
 	 */
 	public static <B> BuilderCombinator<B> withBuilder(Supplier<B> builderSupplier) {
-		return new BuilderCombinator<>(Arbitraries.create(builderSupplier));
+		return withBuilder(Arbitraries.create(builderSupplier));
 	}
 
 	/**
@@ -32,12 +35,12 @@ public class Builders {
 	 * @return BuilderCombinator instance
 	 */
 	public static <B> BuilderCombinator<B> withBuilder(Arbitrary<B> builderArbitrary) {
-		return new BuilderCombinator<>(builderArbitrary);
+		return new BuilderCombinator<>(builderArbitrary, Collections.emptyList());
 	}
 
 	/**
 	 * Provide access to combinators through builder functionality.
-	 *
+	 * <p>
 	 * A builder is created through either {@linkplain #withBuilder(Supplier)}
 	 * or {@linkplain #withBuilder(Arbitrary)}.
 	 *
@@ -45,21 +48,23 @@ public class Builders {
 	 */
 	public static class BuilderCombinator<B> {
 		private final Arbitrary<B> starter;
+		private final List<Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>>> mutators;
 
-		private BuilderCombinator(Arbitrary<B> delegate) {
-			this.starter = delegate;
+		private BuilderCombinator(Arbitrary<B> starter, List<Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>>> mutators) {
+			this.starter = starter;
+			this.mutators = mutators;
 		}
 
 		public <T> CombinableBuilder<B, T> use(Arbitrary<T> arbitrary) {
 			return maybeUse(arbitrary, 1.0);
 		}
 
-		public <T> CombinableBuilder<B, T> maybeUse(Arbitrary<T> arbitrary, double probabilityOfUsage) {
-			if (probabilityOfUsage < 0.0 || probabilityOfUsage > 1.0) {
-				String message = String.format("Usage probability of [%s] is outside allowed range (0;1)", probabilityOfUsage);
+		public <T> CombinableBuilder<B, T> maybeUse(Arbitrary<T> arbitrary, double probabilityOfUse) {
+			if (probabilityOfUse < 0.0 || probabilityOfUse > 1.0) {
+				String message = String.format("Usage probability of [%s] is outside allowed range (0;1)", probabilityOfUse);
 				throw new IllegalArgumentException(message);
 			}
-			return new CombinableBuilder<>(this, arbitrary);
+			return new CombinableBuilder<>(this, probabilityOfUse, arbitrary);
 		}
 
 		/**
@@ -70,6 +75,7 @@ public class Builders {
 		 * @return arbitrary of target object
 		 */
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
+			// TODO: Use mutators to work on starter
 			return starter.map(buildFunction);
 		}
 
@@ -81,6 +87,12 @@ public class Builders {
 		public Arbitrary<B> build() {
 			return build(Function.identity());
 		}
+
+		BuilderCombinator<B> withMutator(double probabilityOfUse, Arbitrary<Object> arbitrary, BiFunction<B, Object, B> mutate) {
+			List<Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>>> newMutators = new ArrayList<>(mutators);
+			newMutators.add(Tuple.of(probabilityOfUse, arbitrary, mutate));
+			return new BuilderCombinator<>(starter, newMutators);
+		}
 	}
 
 	/**
@@ -91,10 +103,12 @@ public class Builders {
 	 */
 	public static class CombinableBuilder<B, T> {
 		private final BuilderCombinator<B> combinator;
+		private final double probabilityOfUse;
 		private final Arbitrary<T> arbitrary;
 
-		private CombinableBuilder(BuilderCombinator<B> combinator, Arbitrary<T> arbitrary) {
+		private CombinableBuilder(BuilderCombinator<B> combinator, double probabilityOfUse, Arbitrary<T> arbitrary) {
 			this.combinator = combinator;
+			this.probabilityOfUse = probabilityOfUse;
 			this.arbitrary = arbitrary;
 		}
 
@@ -107,8 +121,11 @@ public class Builders {
 		 * @return new {@linkplain BuilderCombinator} instance
 		 */
 		public BuilderCombinator<B> in(BiFunction<B, T, B> toFunction) {
-			// TODO: Add something to the combinator
-			return combinator;
+			if (probabilityOfUse == 0.0) {
+				return combinator;
+			}
+			BiFunction<B, Object, B> mutate = (B builder, Object object) -> toFunction.apply(builder, (T) object);
+			return combinator.withMutator(probabilityOfUse, arbitrary.asGeneric(), mutate);
 		}
 
 		/**
