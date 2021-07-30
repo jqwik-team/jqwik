@@ -66,9 +66,8 @@ class BuildersTests {
 		);
 	}
 
-	@Disabled
-	@Example
-	void startWithArbitrary() {
+	@Property
+	void startWithArbitrary(@ForAll Random random) {
 		Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
 		Arbitrary<StringBuilder> stringBuilders = Arbitraries.of("a", "b", "c").map(StringBuilder::new);
 
@@ -80,15 +79,14 @@ class BuildersTests {
 
 		assertAllGenerated(
 				personArbitrary.generator(1, true),
-				SourceOfRandomness.current(),
+				random,
 				(String value) -> assertThat(value).matches("(a|b|c)(1|2|3)")
 		);
 
 	}
 
-	@Disabled
-	@Example
-	void builderIsFreshlyCreatedForEachTry() {
+	@Property
+	void builderIsFreshlyCreatedForEachTry(@ForAll Random random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 
 		Arbitrary<Person> personArbitrary =
@@ -99,13 +97,12 @@ class BuildersTests {
 
 		assertAllGenerated(
 				personArbitrary.generator(1, true),
-				SourceOfRandomness.current(),
+				random,
 				person -> person.age == PersonBuilder.DEFAULT_AGE
 		);
 	}
 
-	@Disabled
-	@Example
+	@Property
 	void useInSetter(@ForAll Random random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);

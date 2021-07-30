@@ -2,6 +2,7 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
@@ -75,8 +76,24 @@ public class Builders {
 		 * @return arbitrary of target object
 		 */
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
-			// TODO: Use mutators to work on starter
-			return starter.map(buildFunction);
+			List<Arbitrary<Optional<Object>>> arbitraries =
+				mutators.stream()
+						.map(m -> m.get2().map(Optional::of)) // TODO: Optional with given probability
+						.collect(Collectors.toList());
+
+			Arbitrary<B> aBuilder = starter.flatMap(b -> Combinators.combine(arbitraries).as(optionals -> {
+				B builder = b;
+				for (int i = 0; i < optionals.size(); i++) {
+					Optional<Object> optional = optionals.get(i);
+					if (optional.isPresent()) {
+						Object value = optional.get();
+						BiFunction<B, Object, B> mutator = mutators.get(i).get3();
+						builder = mutator.apply(builder, value);
+					}
+				}
+				return builder;
+			}));
+			return aBuilder.map(buildFunction);
 		}
 
 		/**
