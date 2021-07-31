@@ -31,7 +31,7 @@ public class SimpleArbitrariesTests {
 
 	@Property
 	void defaultDaysBetweenMinus30And30(@ForAll("periods") Period period) {
-		assertThat(period.getMonths()).isBetween(-30, 30);
+		assertThat(period.getDays()).isBetween(-30, 30);
 	}
 
 }
