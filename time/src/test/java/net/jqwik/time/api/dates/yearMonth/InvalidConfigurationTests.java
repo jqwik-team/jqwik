@@ -32,14 +32,14 @@ public class InvalidConfigurationTests {
 		).isInstanceOf(IllegalArgumentException.class);
 	}
 
-	@Example
+	@Property
 	void atTheEarliestYearMustNotBeBelow1(@ForAll @IntRange(min = -999_999_999, max = 0) int year, @ForAll Month month) {
 		assertThatThrownBy(
 			() -> Dates.yearMonths().atTheEarliest(YearMonth.of(year, month))
 		).isInstanceOf(IllegalArgumentException.class);
 	}
 
-	@Example
+	@Property
 	void atTheLatestYearMustNotBeBelow1(@ForAll @IntRange(min = -999_999_999, max = 0) int year, @ForAll Month month) {
 		assertThatThrownBy(
 			() -> Dates.yearMonths().atTheLatest(YearMonth.of(year, month))
