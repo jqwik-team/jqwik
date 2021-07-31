@@ -63,11 +63,13 @@ public class DateTimes {
 
 	/*
 	 * Create an arbitrary that generates instances of {@linkplain java.time.Instant}.
+	 * All generated instances use the Gregorian Calendar, even if they are before October 15, 1582.
+	 * By default, instances with years between 1900 and 2500 are generated.
 	 *
 	 * @return a new arbitrary instance
 	 */
-	/*public static InstantArbitrary instants() {
-		return null; TODO
-	}*/
+	public static InstantArbitrary instants() {
+		return new DefaultInstantArbitrary();
+	}
 
 }
