@@ -57,15 +57,66 @@ class BuildersTests {
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
 		Arbitrary<Person> personArbitrary =
-				Builders
-						.withBuilder(PersonBuilder::new)
-						.use(name).in((b, n) -> b.withName(n))
-						.use(age).in((b, a) -> b.withAge(a))
-						.build(PersonBuilder::build);
+			Builders
+				.withBuilder(PersonBuilder::new)
+				.use(name).in(PersonBuilder::withName)
+				.use(age).in(PersonBuilder::withAge)
+				.build(PersonBuilder::build);
 
 		Person value = generateFirst(personArbitrary, random);
-		assertThat(value.age).isBetween(0, 15);
 		assertThat(value.name).hasSize(10);
+		assertThat(value.age).isBetween(0, 15);
+	}
+
+	@Property
+	void useBuilderMethodsWithProbability0and1(@ForAll Random random) {
+		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
+		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
+
+		Arbitrary<Person> personArbitrary =
+			Builders
+				.withBuilder(PersonBuilder::new)
+				.maybeUse(name, 0).in(PersonBuilder::withName)
+				.maybeUse(age, 1).in(PersonBuilder::withAge)
+				.build(PersonBuilder::build);
+
+		Person value = generateFirst(personArbitrary, random);
+		assertThat(value.name).isEqualTo(PersonBuilder.DEFAULT_NAME);
+		assertThat(value.age).isBetween(0, 15);
+	}
+
+	//@Example
+	void useBuilderMethodsWithProbabilities(@ForAll Random random) {
+		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
+		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
+
+		Arbitrary<Person> personArbitrary =
+			Builders
+				.withBuilder(PersonBuilder::new)
+				.maybeUse(name, 0.5).in(PersonBuilder::withName)
+				.maybeUse(age, 0.5).in(PersonBuilder::withAge)
+				.build(PersonBuilder::build);
+
+		assertAtLeastOneGenerated(
+			personArbitrary.generator(1000),
+			random,
+			(Person person) -> person.name.equals(PersonBuilder.DEFAULT_NAME)
+		);
+		assertAtLeastOneGenerated(
+			personArbitrary.generator(1000),
+			random,
+			(Person person) -> !person.name.equals(PersonBuilder.DEFAULT_NAME)
+		);
+		assertAtLeastOneGenerated(
+			personArbitrary.generator(1000),
+			random,
+			(Person person) -> person.age == 42
+		);
+		assertAtLeastOneGenerated(
+			personArbitrary.generator(1000),
+			random,
+			(Person person) -> person.age != 42
+		);
 	}
 
 	@Property
