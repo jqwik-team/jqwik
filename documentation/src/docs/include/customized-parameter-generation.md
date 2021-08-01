@@ -458,9 +458,12 @@ Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000)
 
 ### Optional
 
-Using [`Arbitrary.optional()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#optional())
+Using [`Arbitrary.optional(double presenceProbability)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#optional(double))
 allows to generate an optional of any type.
-`Optional.empty()` values are injected with a probability of `0.05`, i.e. 1 in 20.
+`Optional.empty()` values are injected with a probability of `1 - presenceProbability`.
+
+Just using [`Arbitrary.optional()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#optional())
+uses a `presenceProbability` of `0.95`, i.e. 1 in 20 generates is empty.
 
 ### Tuples of same base type
 

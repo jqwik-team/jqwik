@@ -315,13 +315,30 @@ public interface Arbitrary<T> {
 	 * stream.
 	 *
 	 * <p>
-	 * The new arbitrary also generates {@code Optional.empty()} values with a probability of {@code 0.05} (i.e. 1 in 20).
+	 * The new arbitrary generates {@code Optional.empty()} values with a probability of {@code 0.05} (i.e. 1 in 20).
 	 * </p>
 	 *
 	 * @return a new arbitrary instance
 	 */
 	default Arbitrary<Optional<T>> optional() {
-		return this.injectNull(0.05).map(Optional::ofNullable);
+		return optional(0.95);
+	}
+
+	/**
+	 * Create a new arbitrary of type {@code Optional<T>} using the existing arbitrary for generating the elements of the
+	 * stream.
+	 *
+	 * <p>
+	 * The new arbitrary generates {@code Optional.empty()} values with a probability of {@code 1 - presenceProbability}.
+	 * </p>
+	 *
+	 * @param presenceProbability The probability with which a value is present, i.e. not empty
+	 * @return a new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.5.4")
+	default Arbitrary<Optional<T>> optional(double presenceProbability) {
+		double emptyProbability = 1.0 - presenceProbability;
+		return this.injectNull(emptyProbability).map(Optional::ofNullable);
 	}
 
 	/**

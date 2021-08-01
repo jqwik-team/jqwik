@@ -1012,6 +1012,18 @@ class ArbitrariesTests {
 		}
 
 		@Example
+		void optionalWithProbability(@ForAll Random random) {
+			Arbitrary<String> stringArbitrary = Arbitraries.of("one", "two");
+			Arbitrary<Optional<String>> optionalArbitrary = stringArbitrary.optional(0.9);
+
+			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
+
+			assertAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("one"));
+			assertAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("two"));
+			assertAtLeastOneGenerated(generator, random, optional -> !optional.isPresent());
+		}
+
+		@Example
 		void entry(@ForAll Random random) {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(1, 10);
 			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);

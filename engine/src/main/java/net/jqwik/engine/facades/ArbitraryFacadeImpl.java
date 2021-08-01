@@ -130,12 +130,12 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> Arbitrary<T> injectNull(Arbitrary<T> self, double nullProbability) {
-		int frequencyNull = (int) Math.round(nullProbability * 100);
-		int frequencyNotNull = 100 - frequencyNull;
+		int frequencyNull = (int) Math.round(nullProbability * 1000);
+		int frequencyNotNull = 1000 - frequencyNull;
 		if (frequencyNull <= 0) {
 			return self;
 		}
-		if (frequencyNull >= 100) {
+		if (frequencyNull >= 1000) {
 			return Arbitraries.just(null);
 		}
 		return Arbitraries.frequencyOf(

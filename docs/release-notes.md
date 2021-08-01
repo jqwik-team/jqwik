@@ -34,6 +34,7 @@ title: jqwik Release Notes
   
 - Added `StringArbitrary.repeatChars(double repeatProbability)`
 
+- Added `Arbitrary.optional(double presenceProbability)`
 
 #### Breaking Changes
 
