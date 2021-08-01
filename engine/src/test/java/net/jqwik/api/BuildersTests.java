@@ -36,15 +36,15 @@ class BuildersTests {
 	}
 
 	@Property
-	void statefulBuilder(@ForAll Random random) {
+	void appendingBuilder(@ForAll Random random) {
 		Arbitrary<String> digits = Arbitraries.of("0", "1", "2");
 
 		Arbitrary<String> arbitrary =
-				Builders
-						.withBuilder(StringBuilder::new)
-						.use(digits).in(StringBuilder::append)
-						.use(digits).in(StringBuilder::append)
-						.build(StringBuilder::toString);
+			Builders
+				.withBuilder(StringBuilder::new)
+				.use(digits).in(StringBuilder::append)
+				.use(digits).in(StringBuilder::append)
+				.build(StringBuilder::toString);
 
 		String value = generateFirst(arbitrary, random);
 		assertThat(value).hasSize(2);
@@ -150,17 +150,17 @@ class BuildersTests {
 		);
 	}
 
-	// @Property
+	//@Property
 	// TODO: Fixing this probably requires major changes in edge case generation for flat mapped arbitraries
-	void startWithArbitrary_failingDueToUnsolvedProblemWithFlatMappingEdgeCases(@ForAll Random random) {
+	void startWithAppendingBuilderInArbitrary_failingDueToUnsolvedProblemWithFlatMappingEdgeCases(@ForAll Random random) {
 		Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
 		Arbitrary<StringBuilder> stringBuilders = Arbitraries.of("a", "b", "c").map(StringBuilder::new);
 
 		Arbitrary<String> personArbitrary =
-				Builders
-						.withBuilder(stringBuilders)
-						.use(digit).in((b, d) -> b.append(d))
-						.build(b -> b.toString());
+			Builders
+				.withBuilder(stringBuilders)
+				.use(digit).in((b, d) -> b.append(d))
+				.build(b -> b.toString());
 
 		assertAllGenerated(
 				personArbitrary.generator(1, true),
@@ -192,20 +192,95 @@ class BuildersTests {
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
 		Arbitrary<Person> personArbitrary =
-				Builders
-						.withBuilder(() -> new Person("", 0))
-						.use(name).inSetter(Person::setName)
-						.use(age).inSetter(Person::setAge)
-						.build();
+			Builders
+				.withBuilder(() -> new Person("", 0))
+				.use(name).inSetter(Person::setName)
+				.use(age).inSetter(Person::setAge)
+				.build();
 
 		Person value = generateFirst(personArbitrary, random);
 		assertThat(value.age).isBetween(0, 15);
 		assertThat(value.name).hasSize(10);
 	}
 
-	// Test maybeUse
-
 	// Test shrinking
+
+	@Group
+	class ExhaustiveGeneration {
+
+		@Example
+		void combineUsingValues() {
+			Arbitrary<String> name = Arbitraries.of("John", "Lisa", "Kay");
+			Arbitrary<Integer> age = Arbitraries.of(3, 5, 13);
+			Arbitrary<Person> arbitrary =
+				Builders
+					.withBuilder(PersonBuilder::new)
+					.use(name).in(PersonBuilder::withName)
+					.use(age).in(PersonBuilder::withAge)
+					.build(PersonBuilder::build);
+
+			Optional<ExhaustiveGenerator<Person>> optionalGenerator = arbitrary.exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Person> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(9);
+
+			assertThat(generator).containsExactly(
+				new Person("John", 3), new Person("John", 5), new Person("John", 13),
+				new Person("Lisa", 3), new Person("Lisa", 5), new Person("Lisa", 13),
+				new Person("Kay", 3), new Person("Kay", 5), new Person("Kay", 13)
+			);
+		}
+
+		//@Example
+		void combineUsingValuesWithProbability_failingDueToWrongGenerationInCombinators() {
+			Arbitrary<String> name = Arbitraries.of("John", "Lisa", "Kay");
+			Arbitrary<Integer> age = Arbitraries.of(3, 5, 13);
+			Arbitrary<Person> arbitrary =
+				Builders
+					.withBuilder(PersonBuilder::new)
+					.use(name).in(PersonBuilder::withName)
+					.maybeUse(age, 0.5).in(PersonBuilder::withAge)
+					.build(PersonBuilder::build);
+
+			Optional<ExhaustiveGenerator<Person>> optionalGenerator = arbitrary.exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Person> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(12);
+
+			assertThat(generator).containsExactly(
+				new Person("John", 3), new Person("John", 5), new Person("John", 13), new Person("John", 42),
+				new Person("Lisa", 3), new Person("Lisa", 5), new Person("Lisa", 13),new Person("Lisa", 42),
+				new Person("Kay", 3), new Person("Kay", 5), new Person("Kay", 13), new Person("Kay", 42)
+			);
+		}
+
+		//@Example
+		void withAppendingBuilder_failingDueToWrongGenerationInCombinators() {
+			Arbitrary<String> string = Arbitraries.of("a", "b", "c");
+			Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
+			Arbitrary<String> arbitrary =
+				Builders
+					.withBuilder(StringBuilder::new)
+					.use(string).in(StringBuilder::append)
+					.use(digit).in(StringBuilder::append)
+					.build(StringBuilder::toString);
+
+			Optional<ExhaustiveGenerator<String>> optionalGenerator = arbitrary.exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(9);
+
+			assertThat(generator).containsExactly(
+				"a1", "a2", "a3",
+				"b1", "b2", "b3",
+				"c1", "c2", "c3"
+			);
+		}
+
+	}
 
 	@Group
 	@PropertyDefaults(tries = 1000)
@@ -285,7 +360,7 @@ class BuildersTests {
 		}
 
 		//@Example
-		void edgeCasesFromStatefulBuilder_failingDueToUnsolvedProblemWithFlatMappingEdgeCases() {
+		void edgeCasesFromAppendingBuilder_failingDueToUnsolvedProblemWithFlatMappingEdgeCases() {
 			Arbitrary<String> digits = Arbitraries.of("0", "1", "2");
 
 			Arbitrary<String> arbitrary =
