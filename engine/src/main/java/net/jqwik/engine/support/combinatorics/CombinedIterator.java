@@ -7,11 +7,11 @@ import static java.util.Arrays.*;
 
 public class CombinedIterator<T> implements Iterator<List<T>> {
 
-	private final Iterator first;
+	private final Iterator<T> first;
 	private final ArrayList<Iterable<T>> rest;
 	private Iterator<List<T>> next;
 
-	private Object current = null;
+	private T current = null;
 
 	// This must be tracked because there can be null values
 	private boolean currentIsSet = false;
@@ -29,7 +29,7 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 	}
 
 	private Iterator<List<T>> emptyListIterator() {
-		return asList((List<T>) new ArrayList()).iterator();
+		return asList(Collections.<T>emptyList()).iterator();
 	}
 
 	@Override
@@ -55,9 +55,8 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 		return prepend(current, next.next());
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<T> prepend(Object head, List tail) {
-		List rest = new ArrayList(tail);
+	private List<T> prepend(T head, List<T> tail) {
+		List<T> rest = new ArrayList<>(tail);
 		rest.add(0, head);
 		return rest;
 	}
