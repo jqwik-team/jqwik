@@ -3,13 +3,12 @@ package net.jqwik.api;
 import java.util.*;
 
 import net.jqwik.api.edgeCases.*;
-import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
-@PropertyDefaults(tries = 10)
+@PropertyDefaults(tries = 50)
 class BuildersTests {
 
 	@Property
@@ -34,6 +33,22 @@ class BuildersTests {
 		Person value = generateFirst(personArbitrary, random);
 		assertThat(value.age).isEqualTo(PersonBuilder.DEFAULT_AGE);
 		assertThat(value.name).isEqualTo(PersonBuilder.DEFAULT_NAME);
+	}
+
+	@Property
+	void statefulBuilder(@ForAll Random random) {
+		Arbitrary<String> digits = Arbitraries.of("0", "1", "2");
+
+		Arbitrary<String> arbitrary =
+				Builders
+						.withBuilder(StringBuilder::new)
+						.use(digits).in(StringBuilder::append)
+						.use(digits).in(StringBuilder::append)
+						.build(StringBuilder::toString);
+
+		String value = generateFirst(arbitrary, random);
+		assertThat(value).hasSize(2);
+		assertThat(value).isIn("00", "01", "02", "10", "11", "12", "20", "21", "22");
 	}
 
 	@Property
@@ -219,20 +234,18 @@ class BuildersTests {
 		}
 
 		//@Example
-		void edgeCasesFromBuilderWithArbitrary_failingDueToUnsolvedProblemWithFlatMappingEdgeCases() {
-			Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
-			Arbitrary<StringBuilder> stringBuilders = Arbitraries.of("a", "b", "c").map(StringBuilder::new);
+		void edgeCasesFromStatefulBuilder_failingDueToUnsolvedProblemWithFlatMappingEdgeCases() {
+			Arbitrary<String> digits = Arbitraries.of("0", "1", "2");
+
 			Arbitrary<String> arbitrary =
 				Builders
-					.withBuilder(stringBuilders)
-					.use(digit).in(StringBuilder::append)
+					.withBuilder(StringBuilder::new)
+					.use(digits).in(StringBuilder::append)
+					.use(digits).in(StringBuilder::append)
 					.build(StringBuilder::toString);
 
 			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				"a1", "a3", "c1", "c3"
-			);
-			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				"a1", "a3", "c1", "c3"
+				"00", "02", "20", "22"
 			);
 		}
 	}

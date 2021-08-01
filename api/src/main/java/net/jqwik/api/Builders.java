@@ -2,7 +2,6 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
@@ -76,23 +75,27 @@ public class Builders {
 		 * @return arbitrary of target object
 		 */
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
-			List<Arbitrary<Optional<Object>>> arbitraries =
-				mutators.stream()
-						.map(m -> m.get2().map(Optional::of)) // TODO: Optional with given probability
-						.collect(Collectors.toList());
+			// Doing it in a single combine instead of flatMapping over all arbitraries
+			// leads to better performance and forgoes some problems with stateful builders
+			List<Arbitrary<Object>> arbitraries = new ArrayList<>();
+			arbitraries.add(starter.asGeneric());
+			for (Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>> mutator : mutators) {
+				Arbitrary<Object> a = mutator.get2().map(Optional::of); // TODO: Optional with given probability
+				arbitraries.add(a);
+			}
 
-			Arbitrary<B> aBuilder = starter.flatMap(b -> Combinators.combine(arbitraries).as(optionals -> {
-				B builder = b;
-				for (int i = 0; i < optionals.size(); i++) {
-					Optional<Object> optional = optionals.get(i);
+			Arbitrary<B> aBuilder = Combinators.combine(arbitraries).as(values -> {
+				B builder = (B) values.get(0);
+				for (int i = 1; i < values.size(); i++) {
+					Optional<Object> optional = (Optional<Object>) values.get(i);
 					if (optional.isPresent()) {
 						Object value = optional.get();
-						BiFunction<B, Object, B> mutator = mutators.get(i).get3();
+						BiFunction<B, Object, B> mutator = mutators.get(i-1).get3();
 						builder = mutator.apply(builder, value);
 					}
 				}
 				return builder;
-			}));
+			});
 			return aBuilder.map(buildFunction);
 		}
 
