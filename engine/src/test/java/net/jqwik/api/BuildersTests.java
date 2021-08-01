@@ -85,7 +85,7 @@ class BuildersTests {
 		assertThat(value.age).isBetween(0, 15);
 	}
 
-	//@Example
+	@Example
 	void useBuilderMethodsWithProbabilities(@ForAll Random random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);

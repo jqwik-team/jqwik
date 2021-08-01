@@ -74,13 +74,15 @@ public class Builders {
 		 * @param <T>           the target object's type
 		 * @return arbitrary of target object
 		 */
+		@SuppressWarnings("unchecked")
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
 			// Doing it in a single combine instead of flatMapping over all arbitraries
 			// leads to better performance and forgoes some problems with stateful builders
 			List<Arbitrary<Object>> arbitraries = new ArrayList<>();
 			arbitraries.add(starter.asGeneric());
 			for (Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>> mutator : mutators) {
-				Arbitrary<Object> a = mutator.get2().map(Optional::of); // TODO: Optional with given probability
+				double presenceProbability = mutator.get1();
+				Arbitrary<Object> a = mutator.get2().optional(presenceProbability).asGeneric();
 				arbitraries.add(a);
 			}
 
