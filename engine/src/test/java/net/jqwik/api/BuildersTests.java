@@ -3,9 +3,11 @@ package net.jqwik.api;
 import java.util.*;
 
 import net.jqwik.api.edgeCases.*;
+import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @PropertyDefaults(tries = 50)
@@ -155,7 +157,83 @@ class BuildersTests {
 		assertThat(value.name).hasSize(10);
 	}
 
-	// Test shrinking
+	@Group
+	@PropertyDefaults(tries = 100)
+	class Shrinking {
+
+		@Property
+		void shrinkToSmallestValues(@ForAll Random random) {
+			Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
+			Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
+
+			Arbitrary<Person> personArbitrary =
+				Builders
+					.withBuilder(PersonBuilder::new)
+					.use(name).in(PersonBuilder::withName)
+					.use(age).in(PersonBuilder::withAge)
+					.build(PersonBuilder::build);
+
+			Person person = falsifyThenShrink(personArbitrary, random);
+			assertThat(person).isEqualTo(new Person("AAAAAAAAAA", 0));
+		}
+
+		@Property
+		void shrinkMaybeUsesToNotUsed(@ForAll Random random) {
+			Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
+			Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
+
+			Arbitrary<Person> personArbitrary =
+				Builders
+					.withBuilder(PersonBuilder::new)
+					.use(name).in(PersonBuilder::withName)
+					.maybeUse(age, 0.5).in(PersonBuilder::withAge)
+					.build(PersonBuilder::build);
+
+			Person person = falsifyThenShrink(personArbitrary, random);
+			assertThat(person).isEqualTo(new Person("AAAAAAAAAA", 42));
+		}
+
+		@Property
+		void shrinkAllUses(@ForAll Random random) {
+			Arbitrary<Integer> digits = Arbitraries.integers().between(0, 9);
+
+			Arbitrary<String> arbitrary =
+				Builders
+					.withBuilder(StringBuilder::new)
+					.use(digits).in(StringBuilder::append)
+					.use(digits).in(StringBuilder::append)
+					.use(digits).in(StringBuilder::append)
+					.build(StringBuilder::toString);
+
+			Falsifier<String> falsifier = aString -> {
+				if (aString.charAt(0) > '4' && aString.charAt(2) > '5') {
+					return TryExecutionResult.falsified(null);
+				}
+				return TryExecutionResult.satisfied();
+			};
+			String string = falsifyThenShrink(arbitrary, random, falsifier);
+			assertThat(string).isEqualTo("506");
+		}
+
+		@Property(tries = 10)
+		void shrinkingBigBuilder(@ForAll Random random) {
+			Arbitrary<Integer> digits = Arbitraries.integers().between(1, 1000);
+
+			int size = 5;
+			// TODO: Combinators.withBuilder has better shrinking performance :-(
+			// Combinators.BuilderCombinator<Integer[]> combinator = Combinators.withBuilder(() -> new Integer[size]);
+			Builders.BuilderCombinator<Integer[]> combinator = Builders.withBuilder(() -> new Integer[size]);
+			for (int i = 0; i < size; i++) {
+				int index = i;
+				combinator = combinator.use(digits).inSetter((a, v) -> a[index] = v);
+			}
+
+			Arbitrary<Integer[]> arbitrary = combinator.build();
+			Integer[] array = falsifyThenShrink(arbitrary, random);
+			assertThat(array).containsOnly(1);
+		}
+
+	}
 
 	@Group
 	class ExhaustiveGeneration {
