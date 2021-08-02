@@ -72,11 +72,6 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> RandomGenerator<T> randomSamples(T[] samples) {
-		return RandomGenerators.samples(samples);
-	}
-
-	@Override
 	public <T> RandomGenerator<List<T>> randomShuffle(List<T> values) {
 		return RandomGenerators.shuffle(values);
 	}

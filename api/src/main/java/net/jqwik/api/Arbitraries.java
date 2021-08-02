@@ -44,8 +44,6 @@ public class Arbitraries {
 
 		public abstract <T> RandomGenerator<T> randomFrequency(List<Tuple2<Integer, T>> frequencies);
 
-		public abstract <T> RandomGenerator<T> randomSamples(T[] samples);
-
 		public abstract <T> RandomGenerator<List<T>> randomShuffle(List<T> values);
 
 		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary);

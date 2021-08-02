@@ -24,18 +24,6 @@ class BuildersTests {
 	}
 
 	@Property
-	void plainBuilderWithArbitrary(@ForAll Random random) {
-		Arbitrary<Person> personArbitrary =
-				Builders
-						.withBuilder(Arbitraries.create(PersonBuilder::new))
-						.build(PersonBuilder::build);
-
-		Person value = generateFirst(personArbitrary, random);
-		assertThat(value.age).isEqualTo(PersonBuilder.DEFAULT_AGE);
-		assertThat(value.name).isEqualTo(PersonBuilder.DEFAULT_NAME);
-	}
-
-	@Property
 	void appendingBuilder(@ForAll Random random) {
 		Arbitrary<String> digits = Arbitraries.of("0", "1", "2");
 
@@ -134,49 +122,13 @@ class BuildersTests {
 	}
 
 	@Property
-	void startWithArbitrary(@ForAll Random random) {
-		Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
-		Arbitrary<String> stringBuilders = Arbitraries.of("a", "b", "c");
-		Arbitrary<String> arbitrary =
-			Builders
-				.withBuilder(stringBuilders)
-				.use(digit).in((s, d) -> s + d)
-				.build();
-
-		assertAllGenerated(
-			arbitrary.generator(1, true),
-				random,
-				(String value) -> assertThat(value).matches("(a|b|c)(1|2|3)")
-		);
-	}
-
-	//@Property
-	// TODO: Fixing this probably requires major changes in edge case generation for flat mapped arbitraries
-	void startWithAppendingBuilderInArbitrary_failingDueToUnsolvedProblemWithFlatMappingEdgeCases(@ForAll Random random) {
-		Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
-		Arbitrary<StringBuilder> stringBuilders = Arbitraries.of("a", "b", "c").map(StringBuilder::new);
-
-		Arbitrary<String> personArbitrary =
-			Builders
-				.withBuilder(stringBuilders)
-				.use(digit).in((b, d) -> b.append(d))
-				.build(b -> b.toString());
-
-		assertAllGenerated(
-				personArbitrary.generator(1, true),
-				random,
-				(String value) -> assertThat(value).matches("(a|b|c)(1|2|3)")
-		);
-	}
-
-	@Property
 	void builderIsFreshlyCreatedForEachTry(@ForAll Random random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 
 		Arbitrary<Person> personArbitrary =
 				Builders
 						.withBuilder(PersonBuilder::new)
-						.use(name).in((b, n) -> b.withName(n))
+						.use(name).in(PersonBuilder::withName)
 						.build(PersonBuilder::build);
 
 		assertAllGenerated(
@@ -232,7 +184,7 @@ class BuildersTests {
 			);
 		}
 
-		//@Example
+		@Example
 		void combineUsingValuesWithProbability_failingDueToWrongGenerationInCombinators() {
 			Arbitrary<String> name = Arbitraries.of("John", "Lisa", "Kay");
 			Arbitrary<Integer> age = Arbitraries.of(3, 5, 13);
@@ -249,14 +201,14 @@ class BuildersTests {
 			ExhaustiveGenerator<Person> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(12);
 
-			assertThat(generator).containsExactly(
+			assertThat(generator).containsExactlyInAnyOrder(
 				new Person("John", 3), new Person("John", 5), new Person("John", 13), new Person("John", 42),
 				new Person("Lisa", 3), new Person("Lisa", 5), new Person("Lisa", 13),new Person("Lisa", 42),
 				new Person("Kay", 3), new Person("Kay", 5), new Person("Kay", 13), new Person("Kay", 42)
 			);
 		}
 
-		//@Example
+		@Example
 		void withAppendingBuilder_failingDueToWrongGenerationInCombinators() {
 			Arbitrary<String> string = Arbitraries.of("a", "b", "c");
 			Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
@@ -290,7 +242,7 @@ class BuildersTests {
 		public Arbitrary<Arbitrary<?>> arbitraries() {
 			Arbitrary<Person> simpleBuilder =
 				Builders
-					.withBuilder(Arbitraries.create(PersonBuilder::new))
+					.withBuilder(PersonBuilder::new)
 					.build(PersonBuilder::build);
 
 			Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
@@ -298,19 +250,19 @@ class BuildersTests {
 			Arbitrary<Person> builder =
 				Builders
 					.withBuilder(PersonBuilder::new)
-					.use(name).in((b, n) -> b.withName(n))
-					.use(age).in((b, a) -> b.withAge(a))
+					.use(name).in(PersonBuilder::withName)
+					.use(age).in(PersonBuilder::withAge)
 					.build(PersonBuilder::build);
 
 			Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
-			Arbitrary<StringBuilder> stringBuilders = Arbitraries.of("a", "b", "c").map(StringBuilder::new);
-			Arbitrary<String> fromArbitraryBuilder =
+			Arbitrary<String> appendingBuilder =
 				Builders
-					.withBuilder(stringBuilders)
-					.use(digit).in((b, d) -> b.append(d))
-					.build(b -> b.toString());
+					.withBuilder(StringBuilder::new)
+					.use(digit).in(StringBuilder::append)
+					.use(digit).in(StringBuilder::append)
+					.build(StringBuilder::toString);
 
-			return Arbitraries.of(simpleBuilder, builder, fromArbitraryBuilder);
+			return Arbitraries.of(simpleBuilder, builder, appendingBuilder);
 		}
 
 		@Example
@@ -320,8 +272,8 @@ class BuildersTests {
 			Arbitrary<Person> arbitrary =
 				Builders
 					.withBuilder(PersonBuilder::new)
-					.use(name).in((b, n) -> b.withName(n))
-					.use(age).in((b, a) -> b.withAge(a))
+					.use(name).in(PersonBuilder::withName)
+					.use(age).in(PersonBuilder::withAge)
 					.build(PersonBuilder::build);
 
 			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
@@ -342,25 +294,7 @@ class BuildersTests {
 		}
 
 		@Example
-		void edgeCasesFromBuilderWithArbitrary() {
-			Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
-			Arbitrary<String> stringBuilders = Arbitraries.of("a", "b", "c");
-			Arbitrary<String> arbitrary =
-				Builders
-					.withBuilder(stringBuilders)
-					.use(digit).in((s, d) -> s + d)
-					.build();
-
-			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				"a1", "a3", "c1", "c3"
-			);
-			assertThat(collectEdgeCaseValues(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				"a1", "a3", "c1", "c3"
-			);
-		}
-
-		//@Example
-		void edgeCasesFromAppendingBuilder_failingDueToUnsolvedProblemWithFlatMappingEdgeCases() {
+		void edgeCasesFromAppendingBuilder() {
 			Arbitrary<String> digits = Arbitraries.of("0", "1", "2");
 
 			Arbitrary<String> arbitrary =

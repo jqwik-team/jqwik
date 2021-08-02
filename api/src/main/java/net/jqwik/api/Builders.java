@@ -2,6 +2,7 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
@@ -24,33 +25,21 @@ public class Builders {
 	 * @return BuilderCombinator instance
 	 */
 	public static <B> BuilderCombinator<B> withBuilder(Supplier<B> builderSupplier) {
-		return withBuilder(Arbitraries.create(builderSupplier));
-	}
-
-	/**
-	 * Combine Arbitraries by means of a builder.
-	 *
-	 * @param builderArbitrary The arbitrary is used to generate a builder object
-	 *                         as starting point for building on each value generation.
-	 * @return BuilderCombinator instance
-	 */
-	public static <B> BuilderCombinator<B> withBuilder(Arbitrary<B> builderArbitrary) {
-		return new BuilderCombinator<>(builderArbitrary, Collections.emptyList());
+		return new BuilderCombinator<>(builderSupplier, Collections.emptyList());
 	}
 
 	/**
 	 * Provide access to combinators through builder functionality.
 	 * <p>
-	 * A builder is created through either {@linkplain #withBuilder(Supplier)}
-	 * or {@linkplain #withBuilder(Arbitrary)}.
+	 * A builder is created through {@linkplain #withBuilder(Supplier)}.
 	 *
 	 * @param <B> The builder's type
 	 */
 	public static class BuilderCombinator<B> {
-		private final Arbitrary<B> starter;
+		private final Supplier<B> starter;
 		private final List<Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>>> mutators;
 
-		private BuilderCombinator(Arbitrary<B> starter, List<Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>>> mutators) {
+		private BuilderCombinator(Supplier<B> starter, List<Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>>> mutators) {
 			this.starter = starter;
 			this.mutators = mutators;
 		}
@@ -74,25 +63,24 @@ public class Builders {
 		 * @param <T>           the target object's type
 		 * @return arbitrary of target object
 		 */
-		@SuppressWarnings("unchecked")
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
 			// Doing it in a single combine instead of flatMapping over all arbitraries
 			// leads to better performance and forgoes some problems with stateful builders
-			List<Arbitrary<Object>> arbitraries = new ArrayList<>();
-			arbitraries.add(starter.asGeneric());
-			for (Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>> mutator : mutators) {
-				double presenceProbability = mutator.get1();
-				Arbitrary<Object> a = mutator.get2().optional(presenceProbability).asGeneric();
-				arbitraries.add(a);
-			}
+			List<Arbitrary<Optional<Object>>> arbitraries =
+				mutators.stream()
+					.map(mutator -> {
+						double presenceProbability = mutator.get1();
+						return mutator.get2().asGeneric().optional(presenceProbability);
+					})
+					.collect(Collectors.toList());
 
 			Arbitrary<B> aBuilder = Combinators.combine(arbitraries).as(values -> {
-				B builder = (B) values.get(0);
-				for (int i = 1; i < values.size(); i++) {
-					Optional<Object> optional = (Optional<Object>) values.get(i);
+				B builder = starter.get();
+				for (int i = 0; i < values.size(); i++) {
+					Optional<Object> optional = values.get(i);
 					if (optional.isPresent()) {
 						Object value = optional.get();
-						BiFunction<B, Object, B> mutator = mutators.get(i-1).get3();
+						BiFunction<B, Object, B> mutator = mutators.get(i).get3();
 						builder = mutator.apply(builder, value);
 					}
 				}
@@ -142,6 +130,7 @@ public class Builders {
 		 *                   and return builder of same type.
 		 * @return new {@linkplain BuilderCombinator} instance
 		 */
+		@SuppressWarnings("unchecked")
 		public BuilderCombinator<B> in(BiFunction<B, T, B> toFunction) {
 			if (probabilityOfUse == 0.0) {
 				return combinator;
