@@ -28,7 +28,7 @@ public class DefaultInstantArbitrary extends ArbitraryDecorator<Instant> impleme
 
 	}
 
-	private LocalDateTime instantToLocalDateTime(Instant instant) {
+	public static LocalDateTime instantToLocalDateTime(Instant instant) {
 		if (instant.isAfter(LocalDateTime.MAX.toInstant(ZoneOffset.UTC))) {
 			throw new IllegalArgumentException("Maximum supported year is 999999999 (Year.MAX_VALUE).");
 		}
