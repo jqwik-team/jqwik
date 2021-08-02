@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
-public class SimpleArbitraries {
+public class SimpleArbitrariesTests {
 
 	@Provide
 	Arbitrary<LocalDateTime> dateTimes() {
@@ -21,7 +21,7 @@ public class SimpleArbitraries {
 	}
 
 	@Property
-	void validLocalDateTimeTimeIsGenerated(@ForAll("dateTimes") LocalDateTime dateTime) {
+	void validLocalDateTimeIsGenerated(@ForAll("dateTimes") LocalDateTime dateTime) {
 		assertThat(dateTime).isNotNull();
 	}
 

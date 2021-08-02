@@ -7,7 +7,7 @@ import net.jqwik.time.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class SimpleArbitraries {
+public class SimpleArbitrariesTests {
 
 	@Provide
 	Arbitrary<Instant> instants() {
