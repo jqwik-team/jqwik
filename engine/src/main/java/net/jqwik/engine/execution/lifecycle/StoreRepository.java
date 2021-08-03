@@ -112,10 +112,18 @@ public class StoreRepository {
 	}
 
 	private Stream<ScopedStore<?>> streamAllStores() {
-		return storesByIdentifier
-				   .values()
-				   .stream()
-				   .flatMap(identifiedStores -> identifiedStores.values().stream());
+		Collection<IdentifiedStores> values = new ArrayList<>(storesByIdentifier.values());
+		return values
+			.stream()
+			.flatMap(identifiedStores -> new ArrayList<>(identifiedStores.values()).stream());
+
+		// TODO: Above implementation tries to get rid of ConcurrentModificationException
+		//       reported in https://github.com/jlink/jqwik/issues/210.
+		//       Evaluate if it really does.
+		// return storesByIdentifier
+		// 		   .values()
+		// 		   .stream()
+		// 		   .flatMap(identifiedStores -> identifiedStores.values().stream());
 	}
 
 	private boolean isStoreIn(ScopedStore<?> store, TestDescriptor scope) {
