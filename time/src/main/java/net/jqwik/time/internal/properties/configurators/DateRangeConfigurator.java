@@ -32,6 +32,26 @@ public class DateRangeConfigurator {
 
 	}
 
+	public static class ForInstant extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(Instant.class);
+		}
+
+		public Arbitrary<Instant> configure(Arbitrary<Instant> arbitrary, DateRange range) {
+			LocalDate min = isoDateToLocalDate(range.min());
+			LocalDate max = isoDateToLocalDate(range.max());
+			if (arbitrary instanceof InstantArbitrary) {
+				InstantArbitrary instantArbitrary = (InstantArbitrary) arbitrary;
+				return instantArbitrary.dateBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -94,6 +114,13 @@ public class DateRangeConfigurator {
 
 	private static boolean filter(LocalDateTime date, LocalDate min, LocalDate max) {
 		return filter(date.toLocalDate(), min, max);
+	}
+
+	private static boolean filter(Instant instant, LocalDate min, LocalDate max) {
+		if (LocalDateTime.MIN.toInstant(ZoneOffset.UTC).isAfter(instant) || LocalDateTime.MAX.toInstant(ZoneOffset.UTC).isBefore(instant)) {
+			return false;
+		}
+		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant), min, max);
 	}
 
 	private static boolean filter(LocalDate date, LocalDate min, LocalDate max) {

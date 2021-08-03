@@ -8,6 +8,7 @@ import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
 public class PrecisionConfigurator {
 
@@ -23,6 +24,25 @@ public class PrecisionConfigurator {
 			if (arbitrary instanceof LocalDateTimeArbitrary) {
 				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
 				return localDateTimeArbitrary.ofPrecision(ofPrecision);
+			} else {
+				return arbitrary.filter(v -> filter(v, ofPrecision));
+			}
+		}
+
+	}
+
+	public static class ForInstant extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(Instant.class);
+		}
+
+		public Arbitrary<Instant> configure(Arbitrary<Instant> arbitrary, Precision range) {
+			ChronoUnit ofPrecision = range.value();
+			if (arbitrary instanceof InstantArbitrary) {
+				InstantArbitrary instantArbitrary = (InstantArbitrary) arbitrary;
+				return instantArbitrary.ofPrecision(ofPrecision);
 			} else {
 				return arbitrary.filter(v -> filter(v, ofPrecision));
 			}
@@ -107,6 +127,13 @@ public class PrecisionConfigurator {
 
 	private static boolean filter(LocalDateTime dateTime, ChronoUnit ofPrecision) {
 		return filter(dateTime.toLocalTime(), ofPrecision);
+	}
+
+	private static boolean filter(Instant instant, ChronoUnit ofPrecision) {
+		if (LocalDateTime.MIN.toInstant(ZoneOffset.UTC).isAfter(instant) || LocalDateTime.MAX.toInstant(ZoneOffset.UTC).isBefore(instant)) {
+			return false;
+		}
+		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant).toLocalTime(), ofPrecision);
 	}
 
 	private static boolean filter(LocalTime time, ChronoUnit ofPrecision) {

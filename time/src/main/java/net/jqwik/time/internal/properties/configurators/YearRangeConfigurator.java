@@ -8,6 +8,7 @@ import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
 public class YearRangeConfigurator {
 
@@ -24,6 +25,26 @@ public class YearRangeConfigurator {
 			if (arbitrary instanceof LocalDateTimeArbitrary) {
 				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
 				return localDateTimeArbitrary.yearBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
+	public static class ForInstant extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(Instant.class);
+		}
+
+		public Arbitrary<Instant> configure(Arbitrary<Instant> arbitrary, YearRange range) {
+			int min = range.min();
+			int max = range.max();
+			if (arbitrary instanceof InstantArbitrary) {
+				InstantArbitrary instantArbitrary = (InstantArbitrary) arbitrary;
+				return instantArbitrary.yearBetween(min, max);
 			} else {
 				return arbitrary.filter(v -> filter(v, min, max));
 			}
@@ -137,6 +158,13 @@ public class YearRangeConfigurator {
 
 	private static boolean filter(LocalDateTime date, int min, int max) {
 		return filter(date.getYear(), min, max);
+	}
+
+	private static boolean filter(Instant instant, int min, int max) {
+		if (LocalDateTime.MIN.toInstant(ZoneOffset.UTC).isAfter(instant) || LocalDateTime.MAX.toInstant(ZoneOffset.UTC).isBefore(instant)) {
+			return false;
+		}
+		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant).getYear(), min, max);
 	}
 
 	private static boolean filter(LocalDate date, int min, int max) {

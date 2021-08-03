@@ -11,7 +11,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Constrain the precision of generated times.
  * <p>
- * Applies to LocalDateTime, LocalTime, OffsetTime and Duration parameters which are also annotated with {@code @ForAll}.
+ * Applies to LocalDateTime, Instant, LocalTime, OffsetTime and Duration parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  * @see TimeRange

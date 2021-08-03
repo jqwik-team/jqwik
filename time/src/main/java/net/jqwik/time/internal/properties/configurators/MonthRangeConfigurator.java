@@ -32,6 +32,26 @@ public class MonthRangeConfigurator {
 
 	}
 
+	public static class ForInstant extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(Instant.class);
+		}
+
+		public Arbitrary<Instant> configure(Arbitrary<Instant> arbitrary, MonthRange range) {
+			Month min = range.min();
+			Month max = range.max();
+			if (arbitrary instanceof InstantArbitrary) {
+				InstantArbitrary instantArbitrary = (InstantArbitrary) arbitrary;
+				return instantArbitrary.monthBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -138,6 +158,13 @@ public class MonthRangeConfigurator {
 
 	private static boolean filter(LocalDateTime date, Month min, Month max) {
 		return filter(date.getMonth(), min, max);
+	}
+
+	private static boolean filter(Instant instant, Month min, Month max) {
+		if (LocalDateTime.MIN.toInstant(ZoneOffset.UTC).isAfter(instant) || LocalDateTime.MAX.toInstant(ZoneOffset.UTC).isBefore(instant)) {
+			return false;
+		}
+		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant), min, max);
 	}
 
 	private static boolean filter(LocalDate date, Month min, Month max) {

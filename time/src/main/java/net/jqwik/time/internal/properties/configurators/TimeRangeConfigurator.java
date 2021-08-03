@@ -7,6 +7,7 @@ import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.api.constraints.*;
+import net.jqwik.time.internal.properties.arbitraries.*;
 
 public class TimeRangeConfigurator {
 
@@ -23,6 +24,26 @@ public class TimeRangeConfigurator {
 			if (arbitrary instanceof LocalDateTimeArbitrary) {
 				LocalDateTimeArbitrary localDateTimeArbitrary = (LocalDateTimeArbitrary) arbitrary;
 				return localDateTimeArbitrary.timeBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
+	public static class ForInstant extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(Instant.class);
+		}
+
+		public Arbitrary<Instant> configure(Arbitrary<Instant> arbitrary, TimeRange range) {
+			LocalTime min = stringToLocalTime(range.min());
+			LocalTime max = stringToLocalTime(range.max());
+			if (arbitrary instanceof InstantArbitrary) {
+				InstantArbitrary instantArbitrary = (InstantArbitrary) arbitrary;
+				return instantArbitrary.timeBetween(min, max);
 			} else {
 				return arbitrary.filter(v -> filter(v, min, max));
 			}
@@ -80,6 +101,13 @@ public class TimeRangeConfigurator {
 
 	private static boolean filter(LocalDateTime dateTime, LocalTime min, LocalTime max) {
 		return filter(dateTime.toLocalTime(), min, max);
+	}
+
+	private static boolean filter(Instant instant, LocalTime min, LocalTime max) {
+		if (LocalDateTime.MIN.toInstant(ZoneOffset.UTC).isAfter(instant) || LocalDateTime.MAX.toInstant(ZoneOffset.UTC).isBefore(instant)) {
+			return false;
+		}
+		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant).toLocalTime(), min, max);
 	}
 
 	private static boolean filter(OffsetTime offsetTime, LocalTime min, LocalTime max) {
