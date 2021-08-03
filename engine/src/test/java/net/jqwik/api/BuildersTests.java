@@ -215,13 +215,11 @@ class BuildersTests {
 			assertThat(string).isEqualTo("506");
 		}
 
-		@Property(tries = 10)
+		@Property(tries = 5)
 		void shrinkingBigBuilder(@ForAll Random random) {
 			Arbitrary<Integer> digits = Arbitraries.integers().between(1, 1000);
 
-			int size = 5;
-			// TODO: Combinators.withBuilder has better shrinking performance :-(
-			// Combinators.BuilderCombinator<Integer[]> combinator = Combinators.withBuilder(() -> new Integer[size]);
+			int size = 200;
 			Builders.BuilderCombinator<Integer[]> combinator = Builders.withBuilder(() -> new Integer[size]);
 			for (int i = 0; i < size; i++) {
 				int index = i;
