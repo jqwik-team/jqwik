@@ -44,16 +44,15 @@ public class Builders {
 			this.mutators = mutators;
 		}
 
+		/**
+		 * Use an arbitrary of type {@code T} in this builder
+		 *
+		 * @param arbitrary
+		 * @param <T>
+		 * @return new {@linkplain CombinableBuilder} instance
+		 */
 		public <T> CombinableBuilder<B, T> use(Arbitrary<T> arbitrary) {
-			return maybeUse(arbitrary, 1.0);
-		}
-
-		public <T> CombinableBuilder<B, T> maybeUse(Arbitrary<T> arbitrary, double probabilityOfUse) {
-			if (probabilityOfUse < 0.0 || probabilityOfUse > 1.0) {
-				String message = String.format("Usage probability of [%s] is outside allowed range (0;1)", probabilityOfUse);
-				throw new IllegalArgumentException(message);
-			}
-			return new CombinableBuilder<>(this, probabilityOfUse, arbitrary);
+			return new CombinableBuilder<>(this, 1.0, arbitrary);
 		}
 
 		/**
@@ -120,6 +119,20 @@ public class Builders {
 			this.combinator = combinator;
 			this.probabilityOfUse = probabilityOfUse;
 			this.arbitrary = arbitrary;
+		}
+
+		/**
+		 * Set probability for using this arbitrary
+		 *
+		 * @param probabilityOfUse Must be between 0.0 and 1.0
+		 * @return {@linkplain BuilderCombinator} instance
+		 */
+		public CombinableBuilder<B, T> withProbability(double probabilityOfUse) {
+			if (probabilityOfUse < 0.0 || probabilityOfUse > 1.0) {
+				String message = String.format("Usage probability of [%s] is outside allowed range (0;1)", probabilityOfUse);
+				throw new IllegalArgumentException(message);
+			}
+			return new CombinableBuilder<>(combinator, probabilityOfUse, arbitrary);
 		}
 
 		/**

@@ -1,6 +1,6 @@
 - 1.5.4
 
-    - Builders.startWith(..).use(arbitrary)|maybeUse(arbitrary, 0.5).in()|inSetter()
+    - Builders.withBuilder(supplier).use(arbitrary).withProbability(0.5).in()|inSetter()
       to replace Combinators.withBuilder() but target cannot change across build
       steps (-> much better performance and shrinking)
         - Deprecate Combinators.withBuilder

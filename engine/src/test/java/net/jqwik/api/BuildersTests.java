@@ -66,8 +66,8 @@ class BuildersTests {
 		Arbitrary<Person> personArbitrary =
 			Builders
 				.withBuilder(PersonBuilder::new)
-				.maybeUse(name, 0).in(PersonBuilder::withName)
-				.maybeUse(age, 1).in(PersonBuilder::withAge)
+				.use(name).withProbability(0).in(PersonBuilder::withName)
+				.use(age).withProbability(1).in(PersonBuilder::withAge)
 				.build(PersonBuilder::build);
 
 		Person value = generateFirst(personArbitrary, random);
@@ -83,8 +83,8 @@ class BuildersTests {
 		Arbitrary<Person> personArbitrary =
 			Builders
 				.withBuilder(PersonBuilder::new)
-				.maybeUse(name, 0.5).in(PersonBuilder::withName)
-				.maybeUse(age, 0.5).in(PersonBuilder::withAge)
+				.use(name).withProbability(0.5).in(PersonBuilder::withName)
+				.use(age).withProbability(0.5).in(PersonBuilder::withAge)
 				.build(PersonBuilder::build);
 
 		assertAtLeastOneGenerated(
@@ -186,7 +186,7 @@ class BuildersTests {
 				Builders
 					.withBuilder(PersonBuilder::new)
 					.use(name).in(PersonBuilder::withName)
-					.maybeUse(age, 0.5).in(PersonBuilder::withAge)
+					.use(age).withProbability(0.5).in(PersonBuilder::withAge)
 					.build(PersonBuilder::build);
 
 			Person person = falsifyThenShrink(personArbitrary, random);
@@ -268,7 +268,7 @@ class BuildersTests {
 				Builders
 					.withBuilder(PersonBuilder::new)
 					.use(name).in(PersonBuilder::withName)
-					.maybeUse(age, 0.5).in(PersonBuilder::withAge)
+					.use(age).withProbability(0.5).in(PersonBuilder::withAge)
 					.build(PersonBuilder::build);
 
 			Optional<ExhaustiveGenerator<Person>> optionalGenerator = arbitrary.exhaustive();
