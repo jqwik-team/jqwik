@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Constrain the range of generated date parameters.
  * <p>
- * Applies to LocalDateTime, LocalDate, Date or Calendar parameters which are also annotated with {@code @ForAll}.
+ * Applies to LocalDateTime, Instant, LocalDate, Date or Calendar parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  * @see DayOfMonthRange

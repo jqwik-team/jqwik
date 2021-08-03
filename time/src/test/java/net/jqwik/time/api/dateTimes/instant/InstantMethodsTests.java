@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
-public class InstantMethods {
+public class InstantMethodsTests {
 
 	@Provide
 	Arbitrary<Instant> instants() {
