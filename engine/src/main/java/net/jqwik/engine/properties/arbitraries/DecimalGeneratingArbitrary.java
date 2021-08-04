@@ -63,9 +63,9 @@ class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<Big
 
 	@Override
 	public EdgeCases<BigDecimal> edgeCases(int maxEdgeCases) {
-		EdgeCases<BigDecimal> defaultEdgeCases = EdgeCasesSupport.fromShrinkables(edgeCaseShrinkables(maxEdgeCases));
+		Function<Integer, EdgeCases<BigDecimal>> edgeCasesCreator = max -> EdgeCasesSupport.fromShrinkables(edgeCaseShrinkables(max));
 		DecimalEdgeCasesConfiguration configuration = new DecimalEdgeCasesConfiguration(range, scale, shrinkingTarget());
-		return configuration.configure(edgeCasesConfigurator, defaultEdgeCases);
+		return configuration.configure(edgeCasesConfigurator, edgeCasesCreator, maxEdgeCases);
 	}
 
 	@Override

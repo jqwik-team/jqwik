@@ -26,19 +26,19 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		int frequencyUnquoted = 4;
 		int frequencyQuoted = allowQuotedLocalPart ? 1 : 0;
 		return Arbitraries.frequencyOf(
-				Tuple.of(frequencyUnquoted, unquoted),
-				Tuple.of(frequencyQuoted, quoted)
+			Tuple.of(frequencyUnquoted, unquoted),
+			Tuple.of(frequencyQuoted, quoted)
 		);
 	}
 
 	private Arbitrary<String> localPartUnquoted() {
 		Arbitrary<String> unquoted =
-				Arbitraries.strings()
-						   .withChars("abcdefghijklmnopqrstuvwxyz")
-						   .withChars("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-						   .withChars("0123456789!#$%&'*+-/=?^_`{|}~.")
-						   //.alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.")
-						   .ofMinLength(1).ofMaxLength(64);
+			Arbitraries.strings()
+					   .withChars("abcdefghijklmnopqrstuvwxyz")
+					   .withChars("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+					   .withChars("0123456789!#$%&'*+-/=?^_`{|}~.")
+					   //.alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.")
+					   .ofMinLength(1).ofMaxLength(64);
 		unquoted = unquoted.filter(v -> !v.contains(".."));
 		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
 		unquoted = unquoted.filter(v -> v.charAt(v.length() - 1) != '.');
@@ -47,18 +47,18 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 
 	private Arbitrary<String> localPartQuoted() {
 		Arbitrary<String> quoted =
-				Arbitraries.strings()
-						   .withChars("abcdefghijklmnopqrstuvwxyz")
-						   .withChars("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-						   .withChars("0123456789 !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
-						   // .alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
-						   .ofMinLength(1).ofMaxLength(62);
+			Arbitraries.strings()
+					   .withChars("abcdefghijklmnopqrstuvwxyz")
+					   .withChars("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+					   .withChars("0123456789 !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
+					   // .alpha().numeric().withChars(" !#$%&'*+-/=?^_`{|}~.\"(),:;<>@[\\]")
+					   .ofMinLength(1).ofMaxLength(62);
 		quoted = quoted.map(v -> "\"" + v.replace("\\", "\\\\")
 										 .replace("\"", "\\\"") + "\"");
 		quoted = quoted.filter(v -> v.length() <= 64);
 		return quoted.edgeCases(stringConfig -> stringConfig
-														.includeOnly("\"a\"")
-														.add("\" \""));
+			.includeOnly("\"a\"")
+			.add("\" \""));
 	}
 
 	private Arbitrary<String> host() {
@@ -66,15 +66,14 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		int frequencyIPv4Addresses = allowIPv4Host ? 1 : 0;
 		int frequencyIPv6Addresses = allowIPv6Host ? 1 : 0;
 		return Arbitraries.frequencyOf(
-				Tuple.of(frequencyDomain, webDomain()),
-				Tuple.of(frequencyIPv4Addresses, hostIpv4()),
-				Tuple.of(frequencyIPv6Addresses, hostIpv6())
+			Tuple.of(frequencyDomain, webDomain()),
+			Tuple.of(frequencyIPv4Addresses, hostIpv4()),
+			Tuple.of(frequencyIPv6Addresses, hostIpv6())
 		);
 	}
 
 	private Arbitrary<String> hostIpv4() {
-		Arbitrary<Integer> addressPart =
-				Arbitraries.integers().between(0, 255);
+		Arbitrary<Integer> addressPart = Arbitraries.integers().between(0, 255).edgeCases(c -> c.includeOnly(0, 255));
 		return Combinators.combine(addressPart, addressPart, addressPart, addressPart)
 						  .as((a, b, c, d) -> "[" + a + "." + b + "." + c + "." + d + "]")
 						  .edgeCases(stringConfig -> stringConfig.includeOnly("[0.0.0.0]", "[255.255.255.255]").add("[127.0.0.1]"));
@@ -84,15 +83,15 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 		Arbitrary<List<String>> addressParts = ipv6Part().list().ofSize(8);
 		Arbitrary<String> plainAddress = addressParts.map(parts -> String.join(":", parts));
 		return plainAddress
-					   .map(this::removeThreeOrMoreColons)
-					   .filter(this::validUseOfColonInIPv6Address)
-					   .map(plain -> "[" + plain + "]")
-					   .edgeCases(stringConfig -> stringConfig.includeOnly(
-							   "[::]",
-							   "[0:0:0:0:0:0:0:0]",
-							   "[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
-							   "[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]"
-					   ));
+			.map(this::removeThreeOrMoreColons)
+			.filter(this::validUseOfColonInIPv6Address)
+			.map(plain -> "[" + plain + "]")
+			.edgeCases(stringConfig -> stringConfig.includeOnly(
+				"[::]",
+				"[0:0:0:0:0:0:0:0]",
+				"[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]",
+				"[FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF]"
+			));
 	}
 
 	private boolean validUseOfColonInIPv6Address(String ip) {
@@ -130,9 +129,9 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	private Arbitrary<String> ipv6Part() {
 		Arbitrary<Integer> ipv6PartNumber = Arbitraries.integers().between(0, 0xffff);
 		return Arbitraries.frequencyOf(
-				Tuple.of(1, Arbitraries.just("")),
-				Tuple.of(8, ipv6PartNumber.map(this::toLowerHex)),
-				Tuple.of(1, ipv6PartNumber.map(this::toUpperHex))
+			Tuple.of(1, Arbitraries.just("")),
+			Tuple.of(8, ipv6PartNumber.map(this::toLowerHex)),
+			Tuple.of(1, ipv6PartNumber.map(this::toUpperHex))
 		);
 	}
 

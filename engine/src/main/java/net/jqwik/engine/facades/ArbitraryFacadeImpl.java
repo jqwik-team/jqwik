@@ -196,7 +196,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			@Override
 			public EdgeCases<T> edgeCases(int maxEdgeCases) {
 				GenericEdgeCasesConfiguration<T> config = new GenericEdgeCasesConfiguration<>();
-				return config.configure(configurator, self.edgeCases(maxEdgeCases));
+				return config.configure(configurator, self::edgeCases, maxEdgeCases);
 			}
 		};
 	}

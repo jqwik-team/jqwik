@@ -44,11 +44,16 @@ public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 		return filter(values::contains);
 	}
 
-	public EdgeCases<T> configure(Consumer<EdgeCases.Config<T>> configurator, EdgeCases<T> defaultEdgeCases) {
+	public EdgeCases<T> configure(Consumer<EdgeCases.Config<T>> configurator, Function<Integer, EdgeCases<T>> edgeCasesCreator, int maxEdgeCases) {
 		configurator.accept(this);
-		EdgeCases<T> configuredEdgeCases = defaultEdgeCases;
+
+		EdgeCases<T> configuredEdgeCases;
 		if (none) {
 			configuredEdgeCases = EdgeCases.none();
+		} else if (filters.isEmpty()) {
+			configuredEdgeCases = edgeCasesCreator.apply(maxEdgeCases);
+		} else {
+			configuredEdgeCases = edgeCasesCreator.apply(Integer.MAX_VALUE);
 		}
 
 		List<Supplier<Shrinkable<T>>> suppliers = configuredEdgeCases.suppliers();
