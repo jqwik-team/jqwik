@@ -33,7 +33,7 @@ class PerformanceTests {
 	@Provide
 	private Arbitrary<String> combinedStrings() {
 		Arbitrary<String> arbitrary =
-				Combinators.withBuilder(() -> "")
+				Builders.withBuilder(() -> "")
 						   .use(Arbitraries.strings().alpha().ofMinLength(1)).in((a, b) -> a + b)
 						   .use(Arbitraries.strings().numeric().ofMinLength(1)).in((a, b) -> a + b)
 						   .use(Arbitraries.strings().withChars("+-*/%$?§!").ofMinLength(1)).in((a, b) -> a + b)

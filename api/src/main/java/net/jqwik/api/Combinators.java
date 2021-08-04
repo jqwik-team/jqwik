@@ -134,8 +134,10 @@ public class Combinators {
 	 *                        For exhaustive generation all supplied objects are
 	 *                        supposed to be identical.
 	 * @return BuilderCombinator instance
+	 *
+	 * @deprecated Use {@linkplain Builders#withBuilder(Supplier)} instead. Will be removed in 1.7.0.
 	 */
-	@API(status = MAINTAINED, since = "1.2.0")
+	@API(status = DEPRECATED, since = "1.5.4")
 	public static <B> BuilderCombinator<B> withBuilder(Supplier<B> builderSupplier) {
 		return new BuilderCombinator<>(Arbitraries.create(builderSupplier));
 	}
@@ -146,8 +148,10 @@ public class Combinators {
 	 * @param builderArbitrary The arbitrary is used to generate a builder object
 	 *                         as starting point for building on each value generation.
 	 * @return BuilderCombinator instance
+	 *
+	 * @deprecated Use {@linkplain Builders#withBuilder(Supplier)} instead. Will be removed in 1.7.0.
 	 */
-	@API(status = MAINTAINED, since = "1.2.0")
+	@API(status = DEPRECATED, since = "1.5.4")
 	public static <B> BuilderCombinator<B> withBuilder(Arbitrary<B> builderArbitrary) {
 		return new BuilderCombinator<>(builderArbitrary);
 	}
@@ -942,8 +946,10 @@ public class Combinators {
 	 * or {@linkplain #withBuilder(Arbitrary)}.
 	 *
 	 * @param <B> The builder's type
+	 *
+	 * @deprecated Will be removed in 1.7.0.
 	 */
-	@API(status = MAINTAINED, since = "1.2.0")
+	@API(status = DEPRECATED, since = "1.5.4")
 	public static class BuilderCombinator<B> {
 		private final Arbitrary<B> builder;
 
@@ -982,8 +988,10 @@ public class Combinators {
 	 * {@link BuilderCombinator#use(Arbitrary)}.
 	 *
 	 * @param <B> The builder's type
+	 *
+	 * @deprecated Will be removed in 1.7.0
 	 */
-	@API(status = MAINTAINED, since = "1.2.0")
+	@API(status = DEPRECATED, since = "1.5.4")
 	public static class CombinableBuilder<B, T> {
 		private final Arbitrary<B> builder;
 		private final Arbitrary<T> arbitrary;

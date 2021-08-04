@@ -52,7 +52,9 @@ and
 
 - Generated strings will no longer intentionally generate duplicate characters
   by default. You now have to tell it to do so.
-  
+
+- Methods `Combinators.withBuilder(builderSupplier)` and 
+  `Combinators.withBuilder(arbitrary)` are now deprecated.
 
 #### Bug Fixes
 

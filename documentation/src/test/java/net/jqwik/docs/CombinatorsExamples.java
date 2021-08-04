@@ -25,7 +25,8 @@ class CombinatorsExamples {
 
 	@Group
 	class Combine_asFlat {
-		@Property @Report(Reporting.GENERATED)
+		@Property
+		@Report(Reporting.GENERATED)
 		boolean fullNameHasTwoParts(@ForAll("fullName") String aName) {
 			return aName.split(" ").length == 2;
 		}
@@ -39,48 +40,6 @@ class CombinatorsExamples {
 				Arbitrary<String> lastName = Arbitraries.strings().alpha().ofLength(fLength);
 				return Combinators.combine(firstName, lastName).as((f, l) -> f + " " + l);
 			});
-		}
-	}
-
-	@Group
-	class RealBuilder {
-		@Property
-		void validPeopleHaveIDs(@ForAll("validPeopleWithBuilder") Person aPerson) {
-			Assertions.assertThat(aPerson.getID()).contains("-");
-			Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);
-		}
-
-		@Provide
-		Arbitrary<Person> validPeopleWithBuilder() {
-			Arbitrary<String> names =
-				Arbitraries.strings().withCharRange('a', 'z').ofMinLength(3).ofMaxLength(21);
-			Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
-
-			return Combinators.withBuilder(() -> new PersonBuilder())
-							  .use(names).in((builder, name) -> builder.withName(name))
-							  .use(ages).in((builder, age)-> builder.withAge(age))
-							  .build( builder -> builder.build());
-		}
-	}
-
-	@Group
-	class POJO_as_builder {
-		@Property
-		void validPeopleHaveIDs(@ForAll("validPeopleWithPersonAsBuilder") Person aPerson) {
-			Assertions.assertThat(aPerson.getID()).contains("-");
-			Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);
-		}
-
-		@Provide
-		Arbitrary<Person> validPeopleWithPersonAsBuilder() {
-			Arbitrary<String> names =
-				Arbitraries.strings().withCharRange('a', 'z').ofMinLength(3).ofMaxLength(21);
-			Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
-
-			return Combinators.withBuilder(() -> new Person(null, -1))
-							  .use(names).inSetter(Person::setName)
-							  .use(ages).inSetter(Person::setAge)
-							  .build();
 		}
 	}
 
@@ -109,26 +68,6 @@ class CombinatorsExamples {
 		@Override
 		public String toString() {
 			return String.format("%s:%s", name, age);
-		}
-	}
-
-	static class PersonBuilder {
-
-		private String name = "A name";
-		private int age = 42;
-
-		public PersonBuilder withName(String name) {
-			this.name = name;
-			return this;
-		}
-
-		public PersonBuilder withAge(int age) {
-			this.age = age;
-			return this;
-		}
-
-		public Person build() {
-			return new Person(name, age);
 		}
 	}
 

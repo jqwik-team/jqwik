@@ -1,10 +1,7 @@
 - 1.5.4
 
-    - Builders.withBuilder(supplier).use(arbitrary).withProbability(0.5).in()|inSetter()
-      to replace Combinators.withBuilder() but target cannot change across build
-      steps (-> much better performance and shrinking)
-        - Deprecate Combinators.withBuilder
-        - Add capability to easily generate java beans (if that really makes sense)
+    - Add capability to easily generate java beans with Builders 
+      (if that really makes sense)
       
     - Time Module (zinki97):
         - DateTimes. See https://github.com/jlink/jqwik/issues/175
