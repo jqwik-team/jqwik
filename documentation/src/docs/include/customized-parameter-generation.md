@@ -1008,56 +1008,6 @@ If you need more you have a few options:
 - Introduce a build for your domain object and combine them
   [in this way](#combining-arbitraries-with-builder)
 
-
-#### Combining Arbitraries with Builder
-
-There's an alternative way to combine arbitraries to create an aggregated object
-by using a builder for the aggregated object. Consider the example from
-[above](#combining-arbitraries) and throw a `PersonBuilder` into the mix:
-
-```java
-static class PersonBuilder {
-
-    private String name = "A name";
-    private int age = 42;
-
-    public PersonBuilder withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public PersonBuilder withAge(int age) {
-        this.age = age;
-        return this;
-    }
-
-    public Person build() {
-        return new Person(name, age);
-    }
-}
-```
-
-Then you can go about generating people in the following way:
-
-```java
-@Provide
-Arbitrary<Person> validPeopleWithBuilder() {
-    Arbitrary<String> names = 
-        Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(20);
-    Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
-    
-    return Combinators.withBuilder(() -> new PersonBuilder())
-        .use(names).in((builder, name) -> builder.withName(name))
-        .use(ages).in((builder, age)-> builder.withAge(age))
-        .build( builder -> builder.build());
-}
-```
-
-Have a look at
-[Combinators.withBuilder(Supplier)](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#withBuilder(java.util.function.Supplier))
-and [Combinators.withBuilder(Arbitrary)](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#withBuilder(net.jqwik.api.Arbitrary))
-to check the API.
-
 #### Flat Combination
 
 If generating domain values requires to use several generated values to be used
@@ -1095,6 +1045,71 @@ Arbitrary<String> fullName2() {
 
 This is not only easier to understand but it usually improves shrinking.
 
+
+### Combining Arbitraries with Builders
+
+There's an alternative way to combine arbitraries to create an aggregated object
+by using a builder for the aggregated object. Consider the example from
+[above](#combining-arbitraries) and throw a `PersonBuilder` into the mix:
+
+```java
+static class PersonBuilder {
+
+    private String name = "A name";
+    private int age = 42;
+
+    public PersonBuilder withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public PersonBuilder withAge(int age) {
+        this.age = age;
+        return this;
+    }
+
+    public Person build() {
+        return new Person(name, age);
+    }
+}
+```
+
+Then you can go about generating people in the following way:
+
+```java
+@Provide
+Arbitrary<Person> validPeopleWithBuilder() {
+    Arbitrary<String> names = 
+        Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(20);
+    Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
+    
+    return Builders.withBuilder(() -> new PersonBuilder())
+        .use(names).in((builder, name) -> builder.withName(name))
+        .use(ages).withProbability(0.5).in((builder, age)-> builder.withAge(age))
+        .build( builder -> builder.build());
+}
+```
+
+If you don't want to introduce an explicit builder object, 
+you can also use a mutable POJO -- e.g. a Java bean -- instead:
+
+```java
+@Provide
+Arbitrary<Person> validPeopleWithPersonAsBuilder() {
+	Arbitrary<String> names =
+		Arbitraries.strings().withCharRange('a', 'z').ofMinLength(3).ofMaxLength(21);
+	Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
+
+	return Builders.withBuilder(() -> new Person(null, -1))
+				   .use(names).inSetter(Person::setName)
+				   .use(ages).withProbability(0.5).inSetter(Person::setAge)
+				   .build();
+}
+```
+
+Have a look at
+[Builders.withBuilder(Supplier)](/docs/${docsVersion}/javadoc/net/jqwik/api/Builders.html#withBuilder(java.util.function.Supplier))
+to check the API.
 
 ### Uniqueness Constraints
 

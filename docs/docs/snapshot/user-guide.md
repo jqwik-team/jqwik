@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.5.2-SNAPSHOT
+title: jqwik User Guide - 1.5.4-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.5.2-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.5.4-SNAPSHOT</span>
 </h1>
 
 <h3>Table of Contents
@@ -88,6 +88,7 @@ title: jqwik User Guide - 1.5.2-SNAPSHOT
     - [Select or generate values randomly](#select-or-generate-values-randomly)
     - [Select randomly with Weights](#select-randomly-with-weights)
     - [Characters and Strings](#characters-and-strings)
+    - [String Size](#string-size)
     - [java.util.Random](#javautilrandom)
     - [Shuffling Permutations](#shuffling-permutations)
     - [Default Types](#default-types)
@@ -96,18 +97,23 @@ title: jqwik User Guide - 1.5.2-SNAPSHOT
     - [Decimals](#decimals)
     - [Random Numeric Distribution](#random-numeric-distribution)
   - [Collections, Streams, Iterators and Arrays](#collections-streams-iterators-and-arrays)
+    - [Size of Multi-value Containers](#size-of-multi-value-containers)
   - [Collecting Values in a List](#collecting-values-in-a-list)
   - [Optional](#optional)
   - [Tuples of same base type](#tuples-of-same-base-type)
   - [Maps](#maps)
+    - [Map Size](#map-size)
+    - [Map Entries](#map-entries)
   - [Functional Types](#functional-types)
   - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
   - [Generate `null` values](#generate-null-values)
   - [Inject duplicate values](#inject-duplicate-values)
   - [Filtering](#filtering)
   - [Mapping](#mapping)
+    - [Mapping over Elements of Collection](#mapping-over-elements-of-collection)
   - [Flat Mapping](#flat-mapping)
     - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
+    - [Flat Mapping over Elements of Collection](#flat-mapping-over-elements-of-collection)
     - [Implicit Flat Mapping](#implicit-flat-mapping)
   - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
   - [Combining Arbitraries](#combining-arbitraries)
@@ -223,7 +229,7 @@ repositories {
 ext.junitPlatformVersion = '1.7.2'
 ext.junitJupiterVersion = '5.7.2'
 
-ext.jqwikVersion = '1.5.2-SNAPSHOT'
+ext.jqwikVersion = '1.5.4-SNAPSHOT'
 
 compileTestJava {
     // To enable argument names in reporting and debugging
@@ -322,7 +328,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.5.2-SNAPSHOT</version>
+        <version>1.5.4-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -350,15 +356,15 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-api-1.5.2-SNAPSHOT.jar`
-- `jqwik-engine-1.5.2-SNAPSHOT.jar`
+- `jqwik-api-1.5.4-SNAPSHOT.jar`
+- `jqwik-engine-1.5.4-SNAPSHOT.jar`
 - `junit-platform-engine-1.7.2.jar`
 - `junit-platform-commons-1.7.2.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
-- `jqwik-web-1.5.2-SNAPSHOT.jar`
-- `jqwik-time-1.5.2-SNAPSHOT.jar`
+- `jqwik-web-1.5.4-SNAPSHOT.jar`
+- `jqwik-time-1.5.4-SNAPSHOT.jar`
 
 
 
@@ -373,7 +379,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html).
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with
-[`@ForAll`](/docs/1.5.2-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.5.4-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -1514,8 +1520,52 @@ Shrinking moves towards the start of the frequency list.
 
 #### Characters and Strings
 
-- [`StringArbitrary strings()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#strings())
+You can browse the API for generating strings and chars here:
+
 - [`CharacterArbitrary chars()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#chars())
+- [`StringArbitrary strings()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#strings())
+
+
+When it comes to defining the base set of possible chars to choose from 
+Character and String arbitraries work very similarly, e.g.
+
+```java
+CharacterArbitrary chars = Arbitraries.chars()
+                              .numeric()
+                              .alpha()
+                              .with('.', ',', ';', '!', '?');
+```
+
+creates a generator for alphanumeric chars plus the most common punctuation
+(but no spaces!). For strings combined of this letters, the code is:
+
+```java
+StringArbitrary strings = Arbitraries.strings()
+                            .numeric()
+                            .alpha()
+                            .withChars('.', ',', ';', '!', '?');
+```
+
+#### String Size
+
+Without any additional configuration, the size of generated strings
+is between 0 and 255. 
+To change this `StringArbitrary` comes with additional capabilities to set the minimal
+and maximal length of a string:
+
+- `ofLength(int)`: To fix the length of a generated string
+- `ofMinLength(int)`: To set the lower bound for string length
+- `ofMaxLength(int)`: To set the upper bound for string length
+
+You can also influence the
+[random distribution](#random-numeric-distribution) of the length.
+If you want, for example, a uniform distribution of string length between
+5 and 25 characters, this is how you do it:
+
+```java
+Arbitraries.strings().ofMinLength(5).ofMaxLength(25)
+		   .withLengthDistribution(RandomDistribution.uniform());
+```
 
 #### java.util.Random
 
@@ -1679,6 +1729,28 @@ You can then create the corresponding multi value arbitrary from there:
 - [`ArrayArbitrary<T, A> Arbitrary.array(Class<A> arrayClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#array(java.lang.Class))
 
 
+#### Size of Multi-value Containers
+
+Without any additional configuration, the size of generated containers (lists, sets, arrays etc.)
+is between 0 and 255. To change this all the arbitraries from above support
+- `ofSize(int)`: To fix the size of a generated container
+- `ofMinSize(int)`: To set the lower bound for container size
+- `ofMaxSize(int)`: To set the upper bound for container size
+
+Usually the distribution of generated container size is heavily distorted 
+towards the allowed minimum. 
+If you want to influence the random distribution you can use
+`withSizeDistribution(RandomDistribution)`. For example:
+
+```java
+Arbitraries.integers().list().ofMaxSize(100)
+    .withSizeDistribution(RandomDistribution.uniform());
+```
+
+See the section on [random numeric distribution](#random-numeric-distribution)
+to check out the available distribution implementations.
+
+
 ### Collecting Values in a List
 
 If you do not want any random combination of values in your list - as
@@ -1697,9 +1769,12 @@ Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000)
 
 ### Optional
 
-Using [`Arbitrary.optional()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional())
+Using [`Arbitrary.optional(double presenceProbability)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional(double))
 allows to generate an optional of any type.
-`Optional.empty()` values are injected with a probability of `0.05`, i.e. 1 in 20.
+`Optional.empty()` values are injected with a probability of `1 - presenceProbability`.
+
+Just using [`Arbitrary.optional()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional())
+uses a `presenceProbability` of `0.95`, i.e. 1 in 20 generates is empty.
 
 ### Tuples of same base type
 
@@ -1737,6 +1812,13 @@ Arbitrary<Map<Integer, String>> numberMaps() {
     return Arbitraries.maps(keys, values);
 }
 ```
+
+#### Map Size
+
+Influencing the size of a generated map works exactly like 
+[in other multi-value containers](#size-of-multi-value-containers).
+
+#### Map Entries
 
 For generating individual `Map.Entry` instances there is
 [`Arbitraries.entries(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary)).
@@ -1821,6 +1903,7 @@ which are organized in a flat hierarchy:
 - [StringArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
 - [FunctionArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/FunctionArbitrary.html)
 - [TypeArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/TypeArbitrary.html)
+- [ActionSequenceArbitrary](/docs/snapshot/javadoc/net/jqwik/api/stateful/ActionSequenceArbitrary.html)
 
 
 Here are a
@@ -1965,6 +2048,36 @@ You could generate the same kind of values by constraining and filtering a gener
 However, the [shrinking](#result-shrinking) target would probably be different. In the example above, shrinking
 will move towards the lowest allowed number, that is `10000`.
 
+#### Mapping over Elements of Collection
+
+`ListArbitrary` and `SetArbitrary` provide you with a convenient way to map over each element 
+of a collection and still keep the generated collection. 
+This is useful when the mapping function needs access to all elements of the list to do its job:
+
+- [`ListArbitrary.mapEach`](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ListArbitrary.html#mapEach(java.util.function.BiFunction))
+
+- [`SetArbitrary.mapEach`](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/SetArbitrary.html#mapEach(java.util.function.BiFunction))
+
+
+The following example will generate a list of integers and enrich the elements with
+the number of occurrences of the element within the list:
+
+```java
+@Property
+void elementsAreCorrectlyCounted(@ForAll("elementsWithOccurrence") List<Tuple2<Integer, Long>> list) {
+	Assertions.assertThat(list).allMatch(t -> t.get2() <= list.size());
+}
+
+@Provide
+Arbitrary<List<Tuple2<Integer, Long>>> elementsWithOccurrence() {
+	return Arbitraries.integers().between(10000, 99999).list()
+					  .mapEach((all, i) -> {
+						  long count = all.stream().filter(e -> e.equals(i)).count();
+						  return Tuple.of(i, count);
+					  });
+}
+```
+
 
 ### Flat Mapping
 
@@ -2032,6 +2145,17 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
 
 Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
 very useful.
+
+#### Flat Mapping over Elements of Collection
+
+Just like [mapping over elements of a collection](#mapping-over-elements-of-collection) 
+`ListArbitrary` and `SetArbitrary` provide you with a mechanism to flat-map over each element
+of a collection and still keep the generated collection:
+
+- [`ListArbitrary.flatMapEach`](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ListArbitrary.html#flatMapEach(java.util.function.BiFunction))
+
+- [`SetArbitrary.flatMapEach`](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/SetArbitrary.html#flatMapEach(java.util.function.BiFunction))
+
 
 #### Implicit Flat Mapping
 
@@ -2233,16 +2357,15 @@ Arbitrary<Person> validPeopleWithBuilder() {
         Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(20);
     Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
     
-    return Combinators.withBuilder(() -> new PersonBuilder())
+    return Builders.withBuilder(() -> new PersonBuilder())
         .use(names).in((builder, name) -> builder.withName(name))
-        .use(ages).in((builder, age)-> builder.withAge(age))
+        .use(ages).withProbability(0.5).in((builder, age)-> builder.withAge(age))
         .build( builder -> builder.build());
 }
 ```
 
 Have a look at
-[Combinators.withBuilder(Supplier)](/docs/snapshot/javadoc/net/jqwik/api/Combinators.html#withBuilder(java.util.function.Supplier))
-and [Combinators.withBuilder(Arbitrary)](/docs/snapshot/javadoc/net/jqwik/api/Combinators.html#withBuilder(net.jqwik.api.Arbitrary))
+[Builders.withBuilder(Supplier)](/docs/snapshot/javadoc/net/jqwik/api/Builders.html#withBuilder(java.util.function.Supplier))
 to check the API.
 
 #### Flat Combination
@@ -2839,7 +2962,7 @@ to generate using either the fluent interface or the `@Size` annotation:
 ```java
 @Property
 // check stack with sequences of 7 actions:
-void checkMyStack(@ForAll("sequences") @Size(max = 7) ActionSequence<MyStringStack> actions) {
+void checkMyStack(@ForAll("sequences") @Size(7) ActionSequence<MyStringStack> actions) {
     actions.run(new MyStringStack());
 }
 ```
@@ -3836,7 +3959,7 @@ class AddressProperties {
 The first two properties above will resolve their arbitraries solely through providers
 specified in `AmericanAddresses`, whereas the last one also uses the default (global) context.
 Since `AmericanAddresses` does not configure any arbitrary provider for `String` parameters,
-property method `globalDomainNotPresent` will fail with a `CannotFindArbitraryException`.
+the second property will fail with `CannotFindArbitraryException`.
 
 
 
@@ -5123,4 +5246,4 @@ If a certain element, e.g. a method, is not annotated itself, then it carries th
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#152-snapshot).
+Read this version's [release notes](/release-notes.html#154-snapshot).

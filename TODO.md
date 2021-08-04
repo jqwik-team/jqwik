@@ -4,7 +4,6 @@
       to replace Combinators.withBuilder() but target cannot change across build
       steps (-> much better performance and shrinking)
         - Deprecate Combinators.withBuilder
-        - Write user guide entry
         - Add capability to easily generate java beans (if that really makes sense)
       
     - Time Module (zinki97):

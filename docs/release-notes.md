@@ -27,6 +27,12 @@ title: jqwik Release Notes
 
 ## 1.5.4-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
 #### New and Enhanced Features
 
 - Added default method `DomainContext.initialize(PropertyLifecycleContext)` which
@@ -35,6 +41,11 @@ title: jqwik Release Notes
 - Added `StringArbitrary.repeatChars(double repeatProbability)`
 
 - Added `Arbitrary.optional(double presenceProbability)`
+
+- Improved shrinking performance of combinator-based arbitraries
+
+- Added [`net.jqwik.api.Builders`](/docs/snapshot/javadoc/net/jqwik/api/Builders.html)
+  as replacement for the now deprecated `net.jqwik.api.Combinators.withBuilder(..)` API. 
 
 #### Breaking Changes
 
