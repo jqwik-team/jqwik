@@ -168,4 +168,34 @@ public class EdgeCasesSupport {
 		return EdgeCases.fromSuppliers(flatMappedSuppliers);
 	}
 
+	public static <T> EdgeCases<T> combine(
+		final List<Arbitrary<Object>> arbitraries,
+		final Function<List<Object>, T> combineFunction,
+		int maxEdgeCases
+	) {
+		if (arbitraries.isEmpty() || maxEdgeCases <= 0) {
+			return EdgeCases.none();
+		}
+		List<Iterable<Supplier<Shrinkable<Object>>>> listOfSuppliers = new ArrayList<>();
+		int remainingEdgeCases = maxEdgeCases;
+		for (Arbitrary<Object> a : arbitraries) {
+			List<Supplier<Shrinkable<Object>>> supplierList = a.edgeCases(remainingEdgeCases).suppliers();
+			listOfSuppliers.add(supplierList);
+			remainingEdgeCases = (int) Math.max(1, Math.ceil(remainingEdgeCases / (double) supplierList.size()));
+		}
+
+		Iterator<List<Supplier<Shrinkable<Object>>>> iterator = Combinatorics.combine(listOfSuppliers);
+
+		List<Supplier<Shrinkable<T>>> suppliers = new ArrayList<>();
+		int count = 0;
+		while (iterator.hasNext() && count < maxEdgeCases) {
+			List<Supplier<Shrinkable<Object>>> next = iterator.next();
+			List<Shrinkable<Object>> shrinkables = next.stream().map(Supplier::get).collect(Collectors.toList());
+			suppliers.add(() -> new CombinedShrinkable<>(shrinkables, combineFunction));
+			count++;
+		}
+
+		return EdgeCases.fromSuppliers(suppliers);
+	}
+
 }

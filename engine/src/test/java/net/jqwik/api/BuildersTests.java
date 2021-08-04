@@ -217,16 +217,9 @@ class BuildersTests {
 
 		@Property(tries = 5)
 		void shrinkingBigBuilder(@ForAll Random random) {
-			Arbitrary<Integer> digits = Arbitraries.integers().between(1, 1000);
-
-			int size = 200;
-			Builders.BuilderCombinator<Integer[]> combinator = Builders.withBuilder(() -> new Integer[size]);
-			for (int i = 0; i < size; i++) {
-				int index = i;
-				combinator = combinator.use(digits).inSetter((a, v) -> a[index] = v);
-			}
-
+			Builders.BuilderCombinator<Integer[]> combinator = bigBuilder(200);
 			Arbitrary<Integer[]> arbitrary = combinator.build();
+
 			Integer[] array = falsifyThenShrink(arbitrary, random);
 			assertThat(array).containsOnly(1);
 		}
@@ -285,7 +278,7 @@ class BuildersTests {
 		}
 
 		@Example
-		void withAppendingBuilder_failingDueToWrongGenerationInCombinators() {
+		void withAppendingBuilder() {
 			Arbitrary<String> string = Arbitraries.of("a", "b", "c");
 			Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
 			Arbitrary<String> arbitrary =
@@ -384,6 +377,26 @@ class BuildersTests {
 				"00", "02", "20", "22"
 			);
 		}
+
+		@Example
+		void edgeCasesFromBigBuilder() {
+			Builders.BuilderCombinator<Integer[]> builderCombinator = bigBuilder(100);
+			Arbitrary<Integer[]> arbitrary = builderCombinator.build();
+
+			assertThat(arbitrary.edgeCases(1).size()).isEqualTo(1);
+			assertThat(arbitrary.edgeCases(100).size()).isEqualTo(100);
+			assertThat(arbitrary.edgeCases(10000).size()).isEqualTo(10000);
+		}
+	}
+
+	private Builders.BuilderCombinator<Integer[]> bigBuilder(int size) {
+		Arbitrary<Integer> digits = Arbitraries.integers().between(1, 1000);
+		Builders.BuilderCombinator<Integer[]> combinator = Builders.withBuilder(() -> new Integer[size]);
+		for (int i = 0; i < size; i++) {
+			int index = i;
+			combinator = combinator.use(digits).inSetter((a, v) -> a[index] = v);
+		}
+		return combinator;
 	}
 
 	private static class Person {
