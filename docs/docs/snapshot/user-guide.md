@@ -117,8 +117,8 @@ title: jqwik User Guide - 1.5.4-SNAPSHOT
     - [Implicit Flat Mapping](#implicit-flat-mapping)
   - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
   - [Combining Arbitraries](#combining-arbitraries)
-    - [Combining Arbitraries with Builder](#combining-arbitraries-with-builder)
     - [Flat Combination](#flat-combination)
+  - [Combining Arbitraries with Builders](#combining-arbitraries-with-builders)
   - [Uniqueness Constraints](#uniqueness-constraints)
   - [Ignoring Exceptions During Generation](#ignoring-exceptions-during-generation)
   - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
@@ -2319,8 +2319,45 @@ If you need more you have a few options:
 - Introduce a build for your domain object and combine them
   [in this way](#combining-arbitraries-with-builder)
 
+#### Flat Combination
 
-#### Combining Arbitraries with Builder
+If generating domain values requires to use several generated values to be used
+in generating another one, there's the combination of flat mapping and combining:
+
+```java
+@Property
+boolean fullNameHasTwoParts(@ForAll("fullName") String aName) {
+    return aName.split(" ").length == 2;
+}
+
+@Provide
+Arbitrary<String> fullName() {
+    IntegerArbitrary firstNameLength = Arbitraries.integers().between(2, 10);
+    IntegerArbitrary lastNameLength = Arbitraries.integers().between(2, 10);
+    return Combinators.combine(firstNameLength, lastNameLength).flatAs( (fLength, lLength) -> {
+        Arbitrary<String> firstName = Arbitraries.strings().alpha().ofLength(fLength);
+        Arbitrary<String> lastName = Arbitraries.strings().alpha().ofLength(fLength);
+        return Combinators.combine(firstName, lastName).as((f,l) -> f + " " + l);
+    });
+}
+```
+
+Often, however, there's an easier way to achieve the same goal which
+does not require the flat combination of arbitraries:
+
+```java
+@Provide
+Arbitrary<String> fullName2() {
+    Arbitrary<String> firstName = Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10);
+    Arbitrary<String> lastName = Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10);
+    return Combinators.combine(firstName, lastName).as((f, l) -> f + " " + l);
+}
+```
+
+This is not only easier to understand but it usually improves shrinking.
+
+
+### Combining Arbitraries with Builders
 
 There's an alternative way to combine arbitraries to create an aggregated object
 by using a builder for the aggregated object. Consider the example from
@@ -2364,47 +2401,26 @@ Arbitrary<Person> validPeopleWithBuilder() {
 }
 ```
 
+If you don't want to introduce an explicit builder object, 
+you can also use a mutable POJO -- e.g. a Java bean -- instead:
+
+```java
+@Provide
+Arbitrary<Person> validPeopleWithPersonAsBuilder() {
+	Arbitrary<String> names =
+		Arbitraries.strings().withCharRange('a', 'z').ofMinLength(3).ofMaxLength(21);
+	Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
+
+	return Builders.withBuilder(() -> new Person(null, -1))
+				   .use(names).inSetter(Person::setName)
+				   .use(ages).withProbability(0.5).inSetter(Person::setAge)
+				   .build();
+}
+```
+
 Have a look at
 [Builders.withBuilder(Supplier)](/docs/snapshot/javadoc/net/jqwik/api/Builders.html#withBuilder(java.util.function.Supplier))
 to check the API.
-
-#### Flat Combination
-
-If generating domain values requires to use several generated values to be used
-in generating another one, there's the combination of flat mapping and combining:
-
-```java
-@Property
-boolean fullNameHasTwoParts(@ForAll("fullName") String aName) {
-    return aName.split(" ").length == 2;
-}
-
-@Provide
-Arbitrary<String> fullName() {
-    IntegerArbitrary firstNameLength = Arbitraries.integers().between(2, 10);
-    IntegerArbitrary lastNameLength = Arbitraries.integers().between(2, 10);
-    return Combinators.combine(firstNameLength, lastNameLength).flatAs( (fLength, lLength) -> {
-        Arbitrary<String> firstName = Arbitraries.strings().alpha().ofLength(fLength);
-        Arbitrary<String> lastName = Arbitraries.strings().alpha().ofLength(fLength);
-        return Combinators.combine(firstName, lastName).as((f,l) -> f + " " + l);
-    });
-}
-```
-
-Often, however, there's an easier way to achieve the same goal which
-does not require the flat combination of arbitraries:
-
-```java
-@Provide
-Arbitrary<String> fullName2() {
-    Arbitrary<String> firstName = Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10);
-    Arbitrary<String> lastName = Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10);
-    return Combinators.combine(firstName, lastName).as((f, l) -> f + " " + l);
-}
-```
-
-This is not only easier to understand but it usually improves shrinking.
-
 
 ### Uniqueness Constraints
 

@@ -45,7 +45,8 @@ and
 - Improved shrinking performance of combinator-based arbitraries
 
 - Added [`net.jqwik.api.Builders`](/docs/snapshot/javadoc/net/jqwik/api/Builders.html)
-  as replacement for the now deprecated `net.jqwik.api.Combinators.withBuilder(..)` API. 
+  as replacement for the now deprecated `net.jqwik.api.Combinators.withBuilder(..)` API.
+  Here's the [relevant section](/docs/snapshot/user-guide.html#combining-arbitraries-with-builder) in the user guide.
 
 #### Breaking Changes
 
