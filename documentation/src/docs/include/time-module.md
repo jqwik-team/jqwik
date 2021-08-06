@@ -239,7 +239,7 @@ Here's the list of available methods:
 
 ##### Default Generation of DateTimes
 
-Default generation currently is supported for `LocalDateTime`. 
+Default generation currently is supported for `LocalDateTime` and `Instant`. 
 Here's a small example:
 
 ```java
@@ -255,6 +255,7 @@ void generateLocalDateTimesWithAnnotation(@ForAll @DateTimeRange(min = "2019-01-
 The following annotations can be used to constrain default generation of the enumerated types:
 
 - [`@DateTimeRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DateTimeRange.html)
+- [`@InstantRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/InstantRange.html)
 - [`@DateRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/DateRange.html)
 - [`@YearRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/YearRange.html)
 - [`@MonthRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/MonthRange.html)
@@ -266,7 +267,7 @@ The following annotations can be used to constrain default generation of the enu
 - [`@SecondRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/SecondRange.html)
 - [`@Precision`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/Precision.html)
 
-`@DateTimeRange`, `@DateRange` and `@TimeRange` use the standard format of their classes. 
+`@DateTimeRange`, `@InstantRange`, `@DateRange` and `@TimeRange` use the standard format of their classes. 
 Examples: `2013-05-25T01:34:22.231`, `2013-05-25` and `11:53`.
 
 ##### Programmatic Generation of DateTimes
@@ -290,13 +291,32 @@ Arbitrary<LocalDateTime> dateTimes() {
 Here's the list of available methods:
 
 - [`LocalDateTimeArbitrary dateTimes()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#dateTimes())
-
+- [`InstantArbitrary instants()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#instants())
 
 ###### LocalDateTimeArbitrary
 
 - The target type is `LocalDateTime`.
 - By default, only years between 1900 and 2500 are generated.
 - By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
+- You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain its minimum and maximum value for dates using `dateBetween(min, max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
+- You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
+- You can constrain the minimum and maximum time value using `timeBetween(min, max)`.
+- You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
+- You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
+- You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+###### InstantArbitrary
+
+- The target type is `Instant`.
+- By default, only years between 1900 and 2500 are generated.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
+- The maximum possible year is 999999999.
 - You can constrain its minimum and maximum value using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
 - You can constrain its minimum and maximum value for dates using `dateBetween(min, max)`.
 - You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.

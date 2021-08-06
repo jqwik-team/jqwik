@@ -44,7 +44,6 @@ public interface InstantArbitrary extends Arbitrary<Instant> {
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated local date values.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary dateBetween(LocalDate min, LocalDate max);
 
 	/**
@@ -54,7 +53,6 @@ public interface InstantArbitrary extends Arbitrary<Instant> {
 	 * <p>Calling this method is equivalent to calling {@linkplain #dateBetween(LocalDate, LocalDate)}
 	 * assuming Jan 1 and Dec 31 as first and last day of those years.</p>
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary yearBetween(Year min, Year max);
 
 	/**
@@ -64,7 +62,6 @@ public interface InstantArbitrary extends Arbitrary<Instant> {
 	 * <p>Calling this method is equivalent to calling {@linkplain #dateBetween(LocalDate, LocalDate)}
 	 * assuming Jan 1 and Dec 31 as first and last day of those years.</p>
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	default InstantArbitrary yearBetween(int min, int max) {
 		return yearBetween(Year.of(min), Year.of(max));
 	}
@@ -72,14 +69,12 @@ public interface InstantArbitrary extends Arbitrary<Instant> {
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated month values.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary monthBetween(Month min, Month max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated month values.
 	 * The {@code int} values can be between 1 and 12.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	default InstantArbitrary monthBetween(int min, int max) {
 		return monthBetween(Month.of(min), Month.of(max));
 	}
@@ -87,55 +82,47 @@ public interface InstantArbitrary extends Arbitrary<Instant> {
 	/**
 	 * Set an array of allowed {@code months}.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary onlyMonths(Month... months);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated day of month values.
 	 * The {@code int} values can be between 1 and 31.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary dayOfMonthBetween(int min, int max);
 
 	/**
 	 * Set an array of allowed {@code daysOfWeek}.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary onlyDaysOfWeek(DayOfWeek... daysOfWeek);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated local time values.
 	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary timeBetween(LocalTime min, LocalTime max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated hour values.
 	 * The hours can be between {@code 0} and {@code 23}.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary hourBetween(int min, int max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated minute values.
 	 * The minutes can be between {@code 0} and {@code 59}.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary minuteBetween(int min, int max);
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated second values.
 	 * The minutes can be between {@code 0} and {@code 59}.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary secondBetween(int min, int max);
 
 	/**
 	 * Constrain the precision of generated values.
 	 * Default value: Seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.2")
 	InstantArbitrary ofPrecision(ChronoUnit ofPrecision);
 
 }
