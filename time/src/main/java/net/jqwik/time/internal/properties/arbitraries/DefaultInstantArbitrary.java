@@ -15,11 +15,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = INTERNAL)
 public class DefaultInstantArbitrary extends ArbitraryDecorator<Instant> implements InstantArbitrary {
 
-	private LocalDateTimeArbitrary dateTimeArbitrary;
-
-	public DefaultInstantArbitrary() {
-		dateTimeArbitrary = DateTimes.dateTimes();
-	}
+	private LocalDateTimeArbitrary dateTimeArbitrary = DateTimes.dateTimes();
 
 	@Override
 	protected Arbitrary<Instant> arbitrary() {

@@ -69,6 +69,7 @@ public class DateTimes {
 	 *
 	 * @return a new arbitrary instance
 	 */
+	@API(status = EXPERIMENTAL, since = "1.5.4")
 	public static InstantArbitrary instants() {
 		return new DefaultInstantArbitrary();
 	}
