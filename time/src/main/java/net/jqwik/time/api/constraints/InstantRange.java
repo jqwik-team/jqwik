@@ -7,7 +7,7 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Constrain the range of generated date time parameters.
+ * Constrain the range of generated instant parameters.
  * <p>
  * Applies to Instant parameters which are also annotated with {@code @ForAll}.
  *
@@ -16,7 +16,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@API(status = EXPERIMENTAL, since = "1.5.5")
+@API(status = EXPERIMENTAL, since = "1.5.4")
 public @interface InstantRange {
 	String min() default "1900-01-01T00:00:00Z";
 

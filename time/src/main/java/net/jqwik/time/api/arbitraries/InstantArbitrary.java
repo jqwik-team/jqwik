@@ -15,7 +15,7 @@ import static org.apiguardian.api.API.Status.*;
  * By default, instants with years between 1900 and 2500 are generated.
  * Max possible year is 999_999_999.
  */
-@API(status = EXPERIMENTAL, since = "1.5.5")
+@API(status = EXPERIMENTAL, since = "1.5.4")
 public interface InstantArbitrary extends Arbitrary<Instant> {
 
 	/**
