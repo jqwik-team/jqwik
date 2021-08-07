@@ -2,6 +2,8 @@ package net.jqwik.api.arbitraries;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -83,4 +85,32 @@ public interface DoubleArbitrary extends NumericalArbitrary<Double, DoubleArbitr
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
 	DoubleArbitrary shrinkTowards(double target);
+
+	/**
+	 * Inject a special value into generated values and edge cases.
+	 * This value can be outside the constraints of the arbitrary, 
+	 * e.g. have more decimals than specified by {@linkplain #ofScale(int)}.
+	 *
+	 * @param special value
+	 * @return new instance of arbitrary
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.4")
+	DoubleArbitrary withSpecialValue(double special);
+
+	/**
+	 * Inject a selection of special values using {@linkplain #withSpecialValue(double)}:
+	 * <ul>
+	 *     <li>{@linkplain Double#NaN}</li>
+	 *     <li>{@linkplain Double#MIN_VALUE}</li>
+	 *     <li>{@linkplain Double#MIN_NORMAL}</li>
+	 *     <li>{@linkplain Double#POSITIVE_INFINITY}</li>
+	 *     <li>{@linkplain Double#NEGATIVE_INFINITY}</li>
+	 * </ul>
+	 * This value can be outside the constraints of the arbitrary,
+	 * e.g. have more decimals than specified by {@linkplain #ofScale(int)}.
+	 *
+	 * @return new instance of arbitrary
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.4")
+	Arbitrary<Double> withStandardSpecialValues();
 }

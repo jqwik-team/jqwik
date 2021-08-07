@@ -3,7 +3,6 @@ package net.jqwik.api;
 import java.math.*;
 import java.util.ArrayList;
 import java.util.*;
-import java.util.function.*;
 
 import static java.math.RoundingMode.*;
 import static java.util.Arrays.*;
@@ -240,6 +239,20 @@ class ExhaustiveGenerationTests {
 			ExhaustiveGenerator<Double> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(1);
 			assertThat(generator).containsExactly(100.0);
+		}
+
+		@Example
+		void doublesWithSpecials() {
+			Optional<ExhaustiveGenerator<Double>> optionalGenerator =
+				Arbitraries.doubles()
+						   .between(100.0, 100.0)
+						   .withSpecialValue(Double.MIN_NORMAL)
+						   .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Double> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(2);
+			assertThat(generator).containsExactlyInAnyOrder(100.0, Double.MIN_NORMAL);
 		}
 
 		@Example

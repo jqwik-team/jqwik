@@ -14,6 +14,7 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 	private static final double DEFAULT_MAX = Double.MAX_VALUE;
 
 	private DecimalGeneratingArbitrary generatingArbitrary;
+	private final Set<Double> specials = new HashSet<>();
 
 	public DefaultDoubleArbitrary() {
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(Range.of(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX)));
@@ -21,17 +22,17 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 
 	@Override
 	public RandomGenerator<Double> generator(int genSize) {
-		return generatingArbitrary.generator(genSize).map(BigDecimal::doubleValue);
+		return arbitrary().generator(genSize);
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<Double>> exhaustive(long maxNumberOfSamples) {
-		return generatingArbitrary.exhaustive(maxNumberOfSamples).map(generator -> generator.map(BigDecimal::doubleValue));
+		return arbitrary().exhaustive(maxNumberOfSamples);
 	}
 
 	@Override
 	public EdgeCases<Double> edgeCases(int maxEdgeCases) {
-		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(maxEdgeCases), BigDecimal::doubleValue);
+		return arbitrary().edgeCases(maxEdgeCases);
 	}
 
 	@Override
@@ -94,7 +95,38 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 		return clone;
 	}
 
+	@Override
+	public DoubleArbitrary withSpecialValue(double special) {
+		DefaultDoubleArbitrary clone = typedClone();
+		clone.specials.add(special);
+		return clone;
+	}
+
+	@Override
+	public Arbitrary<Double> withStandardSpecialValues() {
+		DefaultDoubleArbitrary clone = typedClone();
+		clone.specials.add(Double.NaN);
+		clone.specials.add(Double.MIN_VALUE);
+		clone.specials.add(Double.MIN_NORMAL);
+		clone.specials.add(Double.POSITIVE_INFINITY);
+		clone.specials.add(Double.NEGATIVE_INFINITY);
+		return clone;
+	}
+
 	private BigDecimal toBigDecimal(double value) {
 		return new BigDecimal(Double.toString(value));
+	}
+
+	private Arbitrary<Double> arbitrary() {
+		Arbitrary<Double> doubleArbitrary = generatingArbitrary.map(BigDecimal::doubleValue);
+		if (specials.isEmpty()) {
+			return doubleArbitrary;
+		}
+		Arbitrary<Double> specialsArbitrary =
+			Arbitraries.of(specials).edgeCases(c -> c.add(specials.toArray(new Double[0])));
+		return Arbitraries.frequencyOf(
+			Tuple.of(49, doubleArbitrary),
+			Tuple.of(1, specialsArbitrary)
+		);
 	}
 }

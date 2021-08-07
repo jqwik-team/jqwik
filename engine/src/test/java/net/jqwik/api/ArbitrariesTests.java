@@ -821,6 +821,41 @@ class ArbitrariesTests {
 			assertThatThrownBy(() -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
 		}
 
+		@Example
+		void doublesWithSpecials(@ForAll Random random) {
+			Arbitrary<Double> arbitrary = Arbitraries.doubles().between(1.0, 10.0)
+													 .withSpecialValue(Double.NaN)
+													 .withSpecialValue(Double.MIN_VALUE);
+			RandomGenerator<Double> generator = arbitrary.generator(100);
+
+			assertAllGenerated(
+				generator, random,
+				value -> (value >= 1.0 && value <= 10.0) || value.equals(Double.NaN) || value.equals(Double.MIN_VALUE)
+			);
+
+			assertAtLeastOneGenerated(
+				generator, random, value -> value >= 1.0 && value <= 10.0
+			);
+
+			assertAtLeastOneGeneratedOf(
+				generator, random, Double.NaN, Double.MIN_VALUE
+			);
+		}
+
+		@Example
+		void doublesWithStandardSpecials(@ForAll Random random) {
+			Arbitrary<Double> arbitrary = Arbitraries.doubles().between(1.0, 10.0)
+													 .withStandardSpecialValues();
+			RandomGenerator<Double> generator = arbitrary.generator(100);
+
+			assertAtLeastOneGeneratedOf(
+				generator, random,
+				Double.NaN,
+				Double.MIN_VALUE, Double.MIN_NORMAL,
+				Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY
+			);
+		}
+
 	}
 
 	@Group

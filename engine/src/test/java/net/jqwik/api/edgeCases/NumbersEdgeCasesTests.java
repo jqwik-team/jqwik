@@ -100,10 +100,26 @@ class NumbersEdgeCasesTests {
 												   .ofScale(scale);
 			EdgeCases<Double> edgeCases = arbitrary.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
-					-10.0, -1.0, -0.01, 0.0, 0.01, 1.0, 10.0
+				-10.0, -1.0, -0.01, 0.0, 0.01, 1.0, 10.0
 			);
 			// make sure edge cases can be repeatedly generated
 			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(7);
+		}
+
+		@Example
+		void doublesWithSpecials() {
+			int scale = 1;
+			DoubleArbitrary arbitrary = Arbitraries.doubles()
+												   .between(1.0, 10.0)
+												   .ofScale(scale)
+												   .withSpecialValue(Double.NaN)
+												   .withSpecialValue(Double.NEGATIVE_INFINITY);
+			EdgeCases<Double> edgeCases = arbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
+				1.0, 10.0, Double.NaN, Double.NEGATIVE_INFINITY
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
 		}
 
 		@Example
@@ -114,7 +130,7 @@ class NumbersEdgeCasesTests {
 												  .ofScale(scale);
 			EdgeCases<Float> edgeCases = arbitrary.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
-					-10.0f, -1.0f, -0.01f, 0.0f, 0.01f, 1.0f, 10.0f
+				-10.0f, -1.0f, -0.01f, 0.0f, 0.01f, 1.0f, 10.0f
 			);
 			// make sure edge cases can be repeatedly generated
 			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(7);

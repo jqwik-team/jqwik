@@ -68,6 +68,18 @@ public class TestingSupport {
 		assertAtLeastOneGenerated(generator, random, checker, "Failed to generate at least one");
 	}
 
+	@SafeVarargs
+	public static <T> void assertAtLeastOneGeneratedOf(
+		RandomGenerator<? extends T> generator,
+		Random random,
+		T... values
+	) {
+		for (T value : values) {
+			assertAtLeastOneGenerated(generator, random, value::equals, "Failed to generate " + value);
+		}
+	}
+
+
 	public static <T> Set<Shrinkable<T>> collectEdgeCaseShrinkables(EdgeCases<T> edgeCases) {
 		Set<Shrinkable<T>> shrinkables = new HashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {

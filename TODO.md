@@ -1,5 +1,10 @@
 - 1.5.4
 
+    - Double/Float Arbitraries:
+        - FloatArbitrary.withSpecialValue(), withStandardSpecialValues()
+          See https://github.com/jlink/jqwik/issues/171 for discussion
+        - User guide and release notes
+
     - Add capability to easily generate java beans with Builders 
       (if that really makes sense)
       
@@ -13,11 +18,6 @@
           - forType(Class<T> targetType, int depth)
           - @UseType(depth = 1)
         - See https://github.com/jlink/jqwik/issues/191
-
-    - Decimals/Floats Arbitraries:
-        - Arbitrary.injectNaN()|injectNegativeInfinity()
-          |injectPositiveInfinity()
-          |injectMinValue()|injectMinNormal()|injectSpecialValues()
 
 
 - 1.5.x
