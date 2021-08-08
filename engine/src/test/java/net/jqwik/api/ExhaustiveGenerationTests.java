@@ -228,28 +228,6 @@ class ExhaustiveGenerationTests {
 			assertThat(optionalGenerator).isEmpty();
 		}
 
-		@Example
-		void singleFloat() {
-			Optional<ExhaustiveGenerator<Float>> optionalGenerator =
-				Arbitraries.floats()
-						   .between(100.0f, 100.0f)
-						   .exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<Float> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(1);
-			assertThat(generator).containsExactly(100.0f);
-		}
-
-		@Example
-		void floatRangeDoesNotAllowExhaustiveGeneration() {
-			Optional<ExhaustiveGenerator<Float>> optionalGenerator =
-				Arbitraries.floats()
-						   .between(1.0f, 100.0f)
-						   .exhaustive();
-			assertThat(optionalGenerator).isEmpty();
-		}
-
 	}
 
 	@Group

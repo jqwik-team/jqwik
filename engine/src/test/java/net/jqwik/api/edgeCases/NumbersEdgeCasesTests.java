@@ -92,20 +92,6 @@ class NumbersEdgeCasesTests {
 			);
 		}
 
-		@Example
-		void floats() {
-			int scale = 2;
-			FloatArbitrary arbitrary = Arbitraries.floats()
-												  .between(-10.0f, 10.0f)
-												  .ofScale(scale);
-			EdgeCases<Float> edgeCases = arbitrary.edgeCases();
-			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
-				-10.0f, -1.0f, -0.01f, 0.0f, 0.01f, 1.0f, 10.0f
-			);
-			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(7);
-		}
-
 		@Group
 		class DecimalsConfiguration {
 
