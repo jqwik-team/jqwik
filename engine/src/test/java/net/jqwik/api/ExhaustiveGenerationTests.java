@@ -229,42 +229,6 @@ class ExhaustiveGenerationTests {
 		}
 
 		@Example
-		void singleDouble() {
-			Optional<ExhaustiveGenerator<Double>> optionalGenerator =
-				Arbitraries.doubles()
-						   .between(100.0, 100.0)
-						   .exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<Double> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(1);
-			assertThat(generator).containsExactly(100.0);
-		}
-
-		@Example
-		void doublesWithSpecials() {
-			Optional<ExhaustiveGenerator<Double>> optionalGenerator =
-				Arbitraries.doubles()
-						   .between(100.0, 100.0)
-						   .withSpecialValue(Double.MIN_NORMAL)
-						   .exhaustive();
-			assertThat(optionalGenerator).isPresent();
-
-			ExhaustiveGenerator<Double> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(2);
-			assertThat(generator).containsExactlyInAnyOrder(100.0, Double.MIN_NORMAL);
-		}
-
-		@Example
-		void doubleRangeDoesNotAllowExhaustiveGeneration() {
-			Optional<ExhaustiveGenerator<Double>> optionalGenerator =
-				Arbitraries.doubles()
-						   .between(1.0, 100.0)
-						   .exhaustive();
-			assertThat(optionalGenerator).isEmpty();
-		}
-
-		@Example
 		void singleFloat() {
 			Optional<ExhaustiveGenerator<Float>> optionalGenerator =
 				Arbitraries.floats()

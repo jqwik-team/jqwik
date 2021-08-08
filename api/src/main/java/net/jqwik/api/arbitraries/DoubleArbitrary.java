@@ -2,8 +2,6 @@ package net.jqwik.api.arbitraries;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
-
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -112,5 +110,5 @@ public interface DoubleArbitrary extends NumericalArbitrary<Double, DoubleArbitr
 	 * @return new instance of arbitrary
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.4")
-	Arbitrary<Double> withStandardSpecialValues();
+	DoubleArbitrary withStandardSpecialValues();
 }

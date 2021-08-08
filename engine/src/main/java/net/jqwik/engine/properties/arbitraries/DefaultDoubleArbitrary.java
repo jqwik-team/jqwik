@@ -103,7 +103,7 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 	}
 
 	@Override
-	public Arbitrary<Double> withStandardSpecialValues() {
+	public DoubleArbitrary withStandardSpecialValues() {
 		DefaultDoubleArbitrary clone = typedClone();
 		clone.specials.add(Double.NaN);
 		clone.specials.add(Double.MIN_VALUE);
