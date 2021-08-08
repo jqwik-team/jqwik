@@ -71,4 +71,33 @@ public interface FloatArbitrary extends NumericalArbitrary<Float, FloatArbitrary
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
 	FloatArbitrary shrinkTowards(float target);
+
+	/**
+	 * Inject a special value into generated values and edge cases.
+	 * This value can be outside the constraints of the arbitrary,
+	 * e.g. have more decimals than specified by {@linkplain #ofScale(int)}.
+	 *
+	 * @param special value
+	 * @return new instance of arbitrary
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.4")
+	FloatArbitrary withSpecialValue(float special);
+
+	/**
+	 * Inject a selection of special values using {@linkplain #withSpecialValue(float)}:
+	 * <ul>
+	 *     <li>{@linkplain Float#NaN}</li>
+	 *     <li>{@linkplain Float#MIN_VALUE}</li>
+	 *     <li>{@linkplain Float#MIN_NORMAL}</li>
+	 *     <li>{@linkplain Float#POSITIVE_INFINITY}</li>
+	 *     <li>{@linkplain Float#NEGATIVE_INFINITY}</li>
+	 * </ul>
+	 * This value can be outside the constraints of the arbitrary,
+	 * e.g. have more decimals than specified by {@linkplain #ofScale(int)}.
+	 *
+	 * @return new instance of arbitrary
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.4")
+	FloatArbitrary withStandardSpecialValues();
+
 }

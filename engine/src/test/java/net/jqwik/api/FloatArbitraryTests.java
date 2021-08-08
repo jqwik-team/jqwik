@@ -4,19 +4,22 @@ import java.util.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.edgeCases.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.assertAtLeastOneGeneratedOf;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 class FloatArbitraryTests {
 
 	@Example
-	void floatMinsAndMaxesWithEdgeCases() {
+	void floatMinsAndMaxesWithEdgeCases(@ForAll Random random) {
 		RandomGenerator<Float> generator = Arbitraries.floats().generator(1, true);
-		assertAtLeastOneGeneratedOf(generator, 0.01f, -0.01f, -Float.MAX_VALUE, Float.MAX_VALUE);
+		assertAtLeastOneGeneratedOf(
+			generator, random,
+			0.01f, -0.01f, -Float.MAX_VALUE, Float.MAX_VALUE
+		);
 	}
 
 	@Example
@@ -24,7 +27,7 @@ class FloatArbitraryTests {
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().between(-10.0f, 10.0f).ofScale(2);
 		RandomGenerator<Float> generator = floatArbitrary.generator(1, true);
 
-		assertAtLeastOneGeneratedOf(generator, 0.0f);
+		assertAtLeastOneGeneratedOf(generator, random, 0.0f);
 		assertAtLeastOneGenerated(generator, random, value -> value < -1.0 && value > -9.0);
 		assertAtLeastOneGenerated(generator, random, value -> value > 1.0 && value < 9.0);
 		assertAllGenerated(generator, random, value -> {
@@ -82,6 +85,41 @@ class FloatArbitraryTests {
 		assertThatThrownBy(() -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
 	}
 
+	@Example
+	void floatsWithSpecials(@ForAll Random random) {
+		Arbitrary<Float> arbitrary = Arbitraries.floats().between(1.0f, 10.0f)
+												.withSpecialValue(Float.NaN)
+												.withSpecialValue(Float.MIN_VALUE);
+		RandomGenerator<Float> generator = arbitrary.generator(100);
+
+		assertAllGenerated(
+			generator, random,
+			value -> (value >= 1.0f && value <= 10.0f) || value.equals(Float.NaN) || value.equals(Float.MIN_VALUE)
+		);
+
+		assertAtLeastOneGenerated(
+			generator, random, value -> value >= 1.0f && value <= 10.0f
+		);
+
+		TestingSupport.assertAtLeastOneGeneratedOf(
+			generator, random, Float.NaN, Float.MIN_VALUE
+		);
+	}
+
+	@Example
+	void floatsWithStandardSpecials(@ForAll Random random) {
+		Arbitrary<Float> arbitrary = Arbitraries.floats().between(1.0f, 10.0f)
+												.withStandardSpecialValues();
+		RandomGenerator<Float> generator = arbitrary.generator(100);
+
+		TestingSupport.assertAtLeastOneGeneratedOf(
+			generator, random,
+			Float.NaN,
+			Float.MIN_VALUE, Float.MIN_NORMAL,
+			Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY
+		);
+	}
+
 	@Group
 	class ExhaustiveGeneration {
 
@@ -99,6 +137,20 @@ class FloatArbitraryTests {
 		}
 
 		@Example
+		void floatWithSpecials() {
+			Optional<ExhaustiveGenerator<Float>> optionalGenerator =
+				Arbitraries.floats()
+						   .between(100.0f, 100.0f)
+						   .withSpecialValue(Float.MIN_NORMAL)
+						   .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Float> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(2);
+			assertThat(generator).containsExactlyInAnyOrder(100.0f, Float.MIN_NORMAL);
+		}
+
+		@Example
 		void floatRangeDoesNotAllowExhaustiveGeneration() {
 			Optional<ExhaustiveGenerator<Float>> optionalGenerator =
 				Arbitraries.floats()
@@ -113,7 +165,10 @@ class FloatArbitraryTests {
 
 		@Override
 		public Arbitrary<Arbitrary<?>> arbitraries() {
-			return Arbitraries.of(Arbitraries.floats());
+			return Arbitraries.of(
+				Arbitraries.floats(),
+				Arbitraries.floats().withStandardSpecialValues()
+			);
 		}
 
 		@Example
@@ -128,6 +183,22 @@ class FloatArbitraryTests {
 			);
 			// make sure edge cases can be repeatedly generated
 			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(7);
+		}
+
+		@Example
+		void floatsWithSpecials() {
+			int scale = 1;
+			FloatArbitrary arbitrary = Arbitraries.floats()
+												  .between(1.0f, 10.0f)
+												  .ofScale(scale)
+												  .withSpecialValue(Float.NaN)
+												  .withSpecialValue(Float.NEGATIVE_INFINITY);
+			EdgeCases<Float> edgeCases = arbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
+				1.0f, 10.0f, Float.NaN, Float.NEGATIVE_INFINITY
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
 		}
 
 	}

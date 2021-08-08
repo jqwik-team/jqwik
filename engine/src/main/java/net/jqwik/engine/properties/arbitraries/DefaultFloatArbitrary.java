@@ -14,6 +14,7 @@ public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitr
 	private static final float DEFAULT_MAX = Float.MAX_VALUE;
 
 	private DecimalGeneratingArbitrary generatingArbitrary;
+	private final Set<Float> specials = new HashSet<>();
 
 	public DefaultFloatArbitrary() {
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(Range.of(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX)));
@@ -21,17 +22,17 @@ public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitr
 
 	@Override
 	public RandomGenerator<Float> generator(int genSize) {
-		return generatingArbitrary.generator(genSize).map(BigDecimal::floatValue);
+		return arbitrary().generator(genSize);
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<Float>> exhaustive(long maxNumberOfSamples) {
-		return generatingArbitrary.exhaustive(maxNumberOfSamples).map(generator -> generator.map(BigDecimal::floatValue));
+		return arbitrary().exhaustive(maxNumberOfSamples);
 	}
 
 	@Override
 	public EdgeCases<Float> edgeCases(int maxEdgeCases) {
-		return EdgeCasesSupport.map(generatingArbitrary.edgeCases(maxEdgeCases), BigDecimal::floatValue);
+		return arbitrary().edgeCases(maxEdgeCases);
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitr
 		Consumer<EdgeCases.Config<BigDecimal>> decimalConfigurator = new MappedEdgeCasesConsumer<>(
 				configurator,
 				BigDecimal::floatValue,
-				val -> BigDecimal.valueOf(val)
+				BigDecimal::valueOf
 		);
 		DefaultFloatArbitrary clone = typedClone();
 		clone.generatingArbitrary = (DecimalGeneratingArbitrary) generatingArbitrary.edgeCases(decimalConfigurator);
@@ -92,6 +93,37 @@ public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitr
 		DefaultFloatArbitrary clone = typedClone();
 		clone.generatingArbitrary.shrinkingTarget = BigDecimal.valueOf(target);
 		return clone;
+	}
+
+	@Override
+	public FloatArbitrary withSpecialValue(float special) {
+		DefaultFloatArbitrary clone = typedClone();
+		clone.specials.add(special);
+		return clone;
+	}
+
+	@Override
+	public FloatArbitrary withStandardSpecialValues() {
+		DefaultFloatArbitrary clone = typedClone();
+		clone.specials.add(Float.NaN);
+		clone.specials.add(Float.MIN_VALUE);
+		clone.specials.add(Float.MIN_NORMAL);
+		clone.specials.add(Float.POSITIVE_INFINITY);
+		clone.specials.add(Float.NEGATIVE_INFINITY);
+		return clone;
+	}
+
+	private Arbitrary<Float> arbitrary() {
+		Arbitrary<Float> floatArbitrary = generatingArbitrary.map(BigDecimal::floatValue);
+		if (specials.isEmpty()) {
+			return floatArbitrary;
+		}
+		Arbitrary<Float> specialsArbitrary =
+			Arbitraries.of(specials).edgeCases(c -> c.add(specials.toArray(new Float[0])));
+		return Arbitraries.frequencyOf(
+			Tuple.of(49, floatArbitrary),
+			Tuple.of(1, specialsArbitrary)
+		);
 	}
 
 	private BigDecimal toBigDecimal(float value) {
