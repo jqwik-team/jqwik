@@ -1,17 +1,11 @@
 - 1.5.4
 
-    - Double/Float Arbitraries:
-        - FloatArbitrary.withSpecialValue(), withStandardSpecialValues()
-          See https://github.com/jlink/jqwik/issues/171 for discussion
-        - User guide and release notes
-
     - Add capability to easily generate java beans with Builders 
       (if that really makes sense)
       
     - Time Module (zinki97):
         - DateTimes. See https://github.com/jlink/jqwik/issues/175
-        - Generate Instant, OffsetDateTime, Date, Calendar
-        - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
+        - Generate OffsetDateTime, Date, Calendar
 
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
@@ -21,6 +15,9 @@
 
 
 - 1.5.x
+
+    - Time Module:
+        - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
 
     - Create possibility/annotation to suppress reporting inside of a
       test/property but not lose reporting of property's results. May require a
