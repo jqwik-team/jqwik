@@ -327,6 +327,22 @@ Decimal arbitrary types come with a few additional capabilities:
 - You can set the _scale_, i.e. number of significant decimal places with `ofScale(scale)`.
   The default scale is `2`.
 
+#### Special Decimal Values
+
+Since the generation of decimal values is constrained by the significant decimal places,
+some special values, like `MIN_NORMAL` and `MIN_VALUE`, will never be generated,
+although they are attractors of bugs in some cases.
+That's why `DecimalArbitrary` and `FloatArbitrary` provide you with the capability 
+to add special values into the possible generation scope:
+
+- `DoubleArbitrary.withSpecialValue(double)`
+- `DoubleArbitrary.withStandardSpecialValues()`
+- `FloatArbitrary.withSpecialValue(float)`
+- `FloatArbitrary.withStandardSpecialValues()`
+
+Special values are also considered to be edge cases and they are used in exhaustive generation.
+_Standard special values_ are: `MIN_VALUE`, `MIN_NORMAL`, `NaN`, `POSITIV_INFINITY` and `NEGATIVE_INFINITY`.
+
 #### Random Numeric Distribution
 
 With release `1.3.0` jqwik provides you with a means to influence the probability distribution
