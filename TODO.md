@@ -1,5 +1,12 @@
 - 1.5.5
 
+    - Support log on failure. See https://github.com/jlink/jqwik/issues/172 
+      - Create possibility/annotation to suppress reporting inside of a
+        test/property but not lose reporting of property's results. May require a
+        new lifecycle hook.
+          - Apply annotation wherever reporting is test collateral
+          - Make it configurable, e.g. `jqwik.reporting.statistics.onfailureonly`
+
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
           - forType(Class<T> targetType, int depth)
@@ -23,13 +30,7 @@
 
     - Time Module:
         - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
-
-    - Create possibility/annotation to suppress reporting inside of a
-      test/property but not lose reporting of property's results. May require a
-      new lifecycle hook.
-        - Apply annotation wherever reporting is test collateral
-        - Make it configurable, e.g. `jqwik.reporting.statistics.onfailureonly`
-
+        
     - Web Module:
         - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
 
