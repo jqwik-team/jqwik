@@ -48,9 +48,10 @@ public class DateTimes {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	/*public static OffsetDateTimeArbitrary offsetDateTimes() {
-		return null; TODO
-	}*/
+	@API(status = EXPERIMENTAL, since = "1.5.4")
+	public static OffsetDateTimeArbitrary offsetDateTimes() {
+		return new DefaultOffsetDateTimeArbitrary();
+	}
 
 	/*
 	 * Create an arbitrary that generates instances of {@linkplain java.time.ZonedDateTime}.
