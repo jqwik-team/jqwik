@@ -11,3 +11,4 @@ net.jqwik.time.internal.properties.providers.ZoneOffsetsArbitraryProvider
 net.jqwik.time.internal.properties.providers.DurationArbitraryProvider
 net.jqwik.time.internal.properties.providers.DateTimesArbitraryProvider
 net.jqwik.time.internal.properties.providers.InstantArbitraryProvider
+net.jqwik.time.internal.properties.providers.OffsetDateTimesArbitraryProvider
