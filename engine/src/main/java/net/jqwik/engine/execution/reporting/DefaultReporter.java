@@ -24,6 +24,15 @@ public class DefaultReporter implements Reporter {
 	}
 
 	@Override
+	public void publishValueOnFailure(String key, String value) {
+		// TODO: What should actually be published when?
+		// Map<String, String> pairs = new HashMap<>();
+		// pairs.put(key, value);
+		// pairs.put(ON_FAILURE_ONLY_KEY, Boolean.toString(true));
+		// publish(ReportEntry.from(pairs));
+	}
+
+	@Override
 	public void publishReport(String key, Object object) {
 		publish(ReportEntry.from(key, buildReport(object)));
 	}

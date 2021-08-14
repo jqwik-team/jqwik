@@ -54,4 +54,14 @@ public interface Reporter {
 	 * @param objects a map of objects the key of which is used to enumerate them
 	 */
 	void publishReports(String key, Map<String, Object> objects);
+
+	/**
+	 * Publish some {@code value} under a given {@code key} if and only if the property fails.
+	 *
+	 * @param key   a String
+	 * @param value a String
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.5")
+	void publishValueOnFailure(String key, String value);
+
 }

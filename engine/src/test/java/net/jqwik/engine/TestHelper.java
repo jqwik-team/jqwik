@@ -152,6 +152,10 @@ public class TestHelper {
 			@Override
 			public void publishReports(final String key, final Map<String, Object> objects) {
 			}
+
+			@Override
+			public void publishValueOnFailure(String key, String value) {
+			}
 		};
 	}
 

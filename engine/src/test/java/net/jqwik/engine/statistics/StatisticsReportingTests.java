@@ -27,11 +27,14 @@ class StatisticsReportingTests {
 
 		@Override
 		public void publishReport(String key, Object object) {
-			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public void publishReports(final String key, final Map<String, Object> objects) {
+		}
+
+		@Override
+		public void publishValueOnFailure(String key, String value) {
 		}
 
 		@Example
