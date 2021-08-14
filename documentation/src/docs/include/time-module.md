@@ -239,7 +239,7 @@ Here's the list of available methods:
 
 ##### Default Generation of DateTimes
 
-Default generation currently is supported for `LocalDateTime` and `Instant`. 
+Default generation currently is supported for `LocalDateTime`, `Instant` and `OffsetDateTime`. 
 Here's a small example:
 
 ```java
@@ -265,10 +265,17 @@ The following annotations can be used to constrain default generation of the enu
 - [`@HourRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/HourRange.html)
 - [`@MinuteRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/MinuteRange.html)
 - [`@SecondRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/SecondRange.html)
+- [`@OffsetRange`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/OffsetRange.html)
 - [`@Precision`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/constraints/Precision.html)
 
-`@DateTimeRange`, `@InstantRange`, `@DateRange` and `@TimeRange` use the standard format of their classes. 
-Examples: `2013-05-25T01:34:22.231`, `2013-05-25` and `11:53`.
+`@DateTimeRange`, `@InstantRange`, `@DateRange`, `@TimeRange` and `@OffsetRange` use the standard format of their classes. 
+Examples: 
+
+- `@DateTimeRange`: `2013-05-25T01:34:22.231`
+- `@InstantRange`: `2013-05-25T01:34:22.231Z`
+- `@DateRange`: `2013-05-25`
+- `@TimeRange`: "01:32:31.394920222", "23:43:21" or "03:02"
+- `@OffsetRange`: "-09:00", "+3", "+11:22:33" or "Z"
 
 ##### Programmatic Generation of DateTimes
 
@@ -292,6 +299,7 @@ Here's the list of available methods:
 
 - [`LocalDateTimeArbitrary dateTimes()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#dateTimes())
 - [`InstantArbitrary instants()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#instants())
+- [`OffsetDateTimeArbitrary offsetDateTimes()`](/docs/${docsVersion}/javadoc/net/jqwik/time/api/Dates.html#offsetDateTimes())
 
 ###### LocalDateTimeArbitrary
 
@@ -328,4 +336,23 @@ Here's the list of available methods:
 - You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
 - You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
 - You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+###### OffsetDateTimeArbitrary
+
+- The target type is `OffsetDateTime`.
+- By default, only years between 1900 and 2500 are generated.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
+- You can constrain its minimum and maximum value for date times using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain its minimum and maximum value for dates using `dateBetween(min, max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
+- You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
+- You can constrain the minimum and maximum time value using `timeBetween(min, max)`.
+- You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
+- You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
+- You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
+- You can constrain the minimum and maximum value for offset using `offsetBetween(min, max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
