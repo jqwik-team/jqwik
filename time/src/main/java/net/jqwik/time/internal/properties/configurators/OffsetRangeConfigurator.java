@@ -10,6 +10,26 @@ import net.jqwik.time.api.constraints.*;
 
 public class OffsetRangeConfigurator {
 
+	public static class ForOffsetDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(OffsetDateTime.class);
+		}
+
+		public Arbitrary<OffsetDateTime> configure(Arbitrary<OffsetDateTime> arbitrary, OffsetRange range) {
+			ZoneOffset min = ZoneOffset.of(range.min());
+			ZoneOffset max = ZoneOffset.of(range.max());
+			if (arbitrary instanceof OffsetDateTimeArbitrary) {
+				OffsetDateTimeArbitrary offsetDateTimeArbitrary = (OffsetDateTimeArbitrary) arbitrary;
+				return offsetDateTimeArbitrary.offsetBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForOffsetTime extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -53,6 +73,10 @@ public class OffsetRangeConfigurator {
 	private static boolean filter(OffsetTime offsetTime, ZoneOffset min, ZoneOffset max) {
 		ZoneOffset offset = offsetTime.getOffset();
 		return filter(offset, min, max);
+	}
+
+	private static boolean filter(OffsetDateTime dateTime, ZoneOffset min, ZoneOffset max) {
+		return filter(dateTime.toOffsetTime(), min, max);
 	}
 
 	private static boolean filter(ZoneOffset offset, ZoneOffset min, ZoneOffset max) {

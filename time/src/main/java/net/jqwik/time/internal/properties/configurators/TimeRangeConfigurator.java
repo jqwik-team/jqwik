@@ -51,6 +51,26 @@ public class TimeRangeConfigurator {
 
 	}
 
+	public static class ForOffsetDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(OffsetDateTime.class);
+		}
+
+		public Arbitrary<OffsetDateTime> configure(Arbitrary<OffsetDateTime> arbitrary, TimeRange range) {
+			LocalTime min = stringToLocalTime(range.min());
+			LocalTime max = stringToLocalTime(range.max());
+			if (arbitrary instanceof OffsetDateTimeArbitrary) {
+				OffsetDateTimeArbitrary offsetDateTimeArbitrary = (OffsetDateTimeArbitrary) arbitrary;
+				return offsetDateTimeArbitrary.timeBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalTime extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -108,6 +128,10 @@ public class TimeRangeConfigurator {
 			return false;
 		}
 		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant).toLocalTime(), min, max);
+	}
+
+	private static boolean filter(OffsetDateTime dateTime, LocalTime min, LocalTime max) {
+		return filter(dateTime.toLocalTime(), min, max);
 	}
 
 	private static boolean filter(OffsetTime offsetTime, LocalTime min, LocalTime max) {

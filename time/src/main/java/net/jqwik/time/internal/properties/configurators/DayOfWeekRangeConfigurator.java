@@ -50,6 +50,25 @@ public class DayOfWeekRangeConfigurator {
 
 	}
 
+	public static class ForOffsetDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(OffsetDateTime.class);
+		}
+
+		public Arbitrary<OffsetDateTime> configure(Arbitrary<OffsetDateTime> arbitrary, DayOfWeekRange range) {
+			DayOfWeek[] dayOfWeeks = createDayOfWeekArray(range);
+			if (arbitrary instanceof OffsetDateTimeArbitrary) {
+				OffsetDateTimeArbitrary offsetDateTimeArbitrary = (OffsetDateTimeArbitrary) arbitrary;
+				return offsetDateTimeArbitrary.onlyDaysOfWeek(dayOfWeeks);
+			} else {
+				return arbitrary.filter(v -> filter(v, dayOfWeeks));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -133,6 +152,10 @@ public class DayOfWeekRangeConfigurator {
 			return false;
 		}
 		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant).getDayOfWeek(), dayOfWeeks);
+	}
+
+	private static boolean filter(OffsetDateTime dateTime, DayOfWeek[] dayOfWeeks) {
+		return filter(dateTime.getDayOfWeek(), dayOfWeeks);
 	}
 
 	private static boolean filter(LocalDate date, DayOfWeek[] dayOfWeeks) {

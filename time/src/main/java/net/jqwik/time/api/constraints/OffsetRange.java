@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Constrain the range of generated periods.
  * <p>
- * Applies to ZoneOffset and OffsetTime parameters which are also annotated with {@code @ForAll}.
+ * Applies to OffsetDateTime, ZoneOffset and OffsetTime parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  */

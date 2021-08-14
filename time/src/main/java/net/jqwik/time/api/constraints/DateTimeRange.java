@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Constrain the range of generated date time parameters.
  * <p>
- * Applies to LocalDateTime parameters which are also annotated with {@code @ForAll}.
+ * Applies to LocalDateTime and OffsetDateTime parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  */
