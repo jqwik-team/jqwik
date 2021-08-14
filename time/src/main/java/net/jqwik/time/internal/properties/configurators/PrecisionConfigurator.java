@@ -50,6 +50,25 @@ public class PrecisionConfigurator {
 
 	}
 
+	public static class ForOffsetDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(OffsetDateTime.class);
+		}
+
+		public Arbitrary<OffsetDateTime> configure(Arbitrary<OffsetDateTime> arbitrary, Precision range) {
+			ChronoUnit ofPrecision = range.value();
+			if (arbitrary instanceof OffsetDateTimeArbitrary) {
+				OffsetDateTimeArbitrary offsetDateTimeArbitrary = (OffsetDateTimeArbitrary) arbitrary;
+				return offsetDateTimeArbitrary.ofPrecision(ofPrecision);
+			} else {
+				return arbitrary.filter(v -> filter(v, ofPrecision));
+			}
+		}
+
+	}
+
 	public static class ForLocalTime extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -134,6 +153,10 @@ public class PrecisionConfigurator {
 			return false;
 		}
 		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant).toLocalTime(), ofPrecision);
+	}
+
+	private static boolean filter(OffsetDateTime dateTime, ChronoUnit ofPrecision) {
+		return filter(dateTime.toLocalTime(), ofPrecision);
 	}
 
 	private static boolean filter(LocalTime time, ChronoUnit ofPrecision) {

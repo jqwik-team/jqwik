@@ -52,6 +52,26 @@ public class YearRangeConfigurator {
 
 	}
 
+	public static class ForOffsetDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(OffsetDateTime.class);
+		}
+
+		public Arbitrary<OffsetDateTime> configure(Arbitrary<OffsetDateTime> arbitrary, YearRange range) {
+			int min = range.min();
+			int max = range.max();
+			if (arbitrary instanceof OffsetDateTimeArbitrary) {
+				OffsetDateTimeArbitrary offsetDateTimeArbitrary = (OffsetDateTimeArbitrary) arbitrary;
+				return offsetDateTimeArbitrary.yearBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -156,8 +176,8 @@ public class YearRangeConfigurator {
 		return year >= min && year <= max;
 	}
 
-	private static boolean filter(LocalDateTime date, int min, int max) {
-		return filter(date.getYear(), min, max);
+	private static boolean filter(LocalDateTime dateTime, int min, int max) {
+		return filter(dateTime.getYear(), min, max);
 	}
 
 	private static boolean filter(Instant instant, int min, int max) {
@@ -165,6 +185,10 @@ public class YearRangeConfigurator {
 			return false;
 		}
 		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant).getYear(), min, max);
+	}
+
+	private static boolean filter(OffsetDateTime dateTime, int min, int max) {
+		return filter(dateTime.getYear(), min, max);
 	}
 
 	private static boolean filter(LocalDate date, int min, int max) {

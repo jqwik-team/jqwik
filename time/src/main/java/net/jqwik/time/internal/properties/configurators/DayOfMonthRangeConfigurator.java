@@ -53,6 +53,26 @@ public class DayOfMonthRangeConfigurator {
 
 	}
 
+	public static class ForOffsetDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(OffsetDateTime.class);
+		}
+
+		public Arbitrary<OffsetDateTime> configure(Arbitrary<OffsetDateTime> arbitrary, DayOfMonthRange range) {
+			int min = range.min();
+			int max = range.max();
+			if (arbitrary instanceof OffsetDateTimeArbitrary) {
+				OffsetDateTimeArbitrary offsetDateTimeArbitrary = (OffsetDateTimeArbitrary) arbitrary;
+				return offsetDateTimeArbitrary.dayOfMonthBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -157,8 +177,8 @@ public class DayOfMonthRangeConfigurator {
 		return dayOfMonth >= min && dayOfMonth <= max;
 	}
 
-	private static boolean filter(LocalDateTime date, int min, int max) {
-		return filter(date.getDayOfMonth(), min, max);
+	private static boolean filter(LocalDateTime dateTime, int min, int max) {
+		return filter(dateTime.getDayOfMonth(), min, max);
 	}
 
 	private static boolean filter(Instant instant, int min, int max) {
@@ -166,6 +186,10 @@ public class DayOfMonthRangeConfigurator {
 			return false;
 		}
 		return filter(DefaultInstantArbitrary.instantToLocalDateTime(instant).getDayOfMonth(), min, max);
+	}
+
+	private static boolean filter(OffsetDateTime dateTime, int min, int max) {
+		return filter(dateTime.getDayOfMonth(), min, max);
 	}
 
 	private static boolean filter(LocalDate date, int min, int max) {
