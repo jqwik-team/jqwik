@@ -169,6 +169,59 @@ public interface TryExecutionResult {
 	}
 
 	/**
+	 * List of footnotes to be added to failure report
+	 *
+	 * @return list of Strings
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.5")
+	default List<String> footnotes() {
+		return Collections.emptyList();
+	}
+
+	/**
+	 * Add a footnote to be added to failure report
+	 *
+	 * @param footnote a String
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.5")
+	default TryExecutionResult withFootnote(String footnote) {
+		return withFootnotes(footnote);
+	}
+
+	/**
+	 * Add one or more footnotes to be added to failure report
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.5")
+	default TryExecutionResult withFootnotes(String footnote, String ... otherFootnotes) {
+		TryExecutionResult self = this;
+		List<String> footnotes = new ArrayList<>(this.footnotes());
+		footnotes.add(footnote);
+		footnotes.addAll(Arrays.asList(otherFootnotes));
+
+		return new TryExecutionResult() {
+			@Override
+			public Status status() {
+				return self.status();
+			}
+
+			@Override
+			public Optional<Throwable> throwable() {
+				return self.throwable();
+			}
+
+			@Override
+			public boolean shouldPropertyFinishEarly() {
+				return self.shouldPropertyFinishEarly();
+			}
+
+			@Override
+			public List<String> footnotes() {
+				return footnotes;
+			}
+		};
+	}
+
+	/**
 	 * @return Status enum
 	 */
 	Status status();

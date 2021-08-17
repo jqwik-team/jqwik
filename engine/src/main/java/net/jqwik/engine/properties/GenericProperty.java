@@ -65,7 +65,8 @@ public class GenericProperty {
 						FalsifiedSample falsifiedSample = new FalsifiedSampleImpl(
 							sample,
 							shrinkableParams,
-							tryExecutionResult.throwable()
+							tryExecutionResult.throwable(),
+							tryExecutionResult.footnotes()
 						);
 						return shrinkAndCreateCheckResult(
 							reporter,
@@ -100,7 +101,8 @@ public class GenericProperty {
 				FalsifiedSample falsifiedSample = new FalsifiedSampleImpl(
 					sample,
 					shrinkableParams,
-					Optional.of(throwable)
+					Optional.of(throwable),
+					Collections.emptyList()
 				);
 				return PropertyCheckResult.failed(
 					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),

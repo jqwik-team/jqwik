@@ -64,10 +64,12 @@ abstract class AbstractSampleShrinker {
 
 			if (newShrinkingResult.isPresent()) {
 				Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> falsifiedTry = newShrinkingResult.get();
+				TryExecutionResult tryExecutionResult = falsifiedTry.get3();
 				FalsifiedSample falsifiedSample = new FalsifiedSampleImpl(
 					falsifiedTry.get1(),
 					falsifiedTry.get2(),
-					falsifiedTry.get3().throwable()
+					tryExecutionResult.throwable(),
+					tryExecutionResult.footnotes()
 				);
 				shrinkSampleConsumer.accept(falsifiedSample);
 				bestResult = Optional.of(falsifiedSample);

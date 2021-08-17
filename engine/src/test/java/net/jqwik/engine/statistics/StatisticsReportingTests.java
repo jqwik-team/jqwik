@@ -33,10 +33,6 @@ class StatisticsReportingTests {
 		public void publishReports(final String key, final Map<String, Object> objects) {
 		}
 
-		@Override
-		public void publishValueOnFailure(String key, String value) {
-		}
-
 		@Example
 		void published_key_is_created_from_label_fullCount_and_propertyName() {
 			collector.collect(1);

@@ -13,31 +13,23 @@ public class ShrunkFalsifiedSampleImpl extends FalsifiedSampleImpl implements Sh
 		FalsifiedSample falsifiedSample,
 		int shrinkingSteps
 	) {
-		this(falsifiedSample.parameters(), falsifiedSample.shrinkables(), falsifiedSample.falsifyingError(), shrinkingSteps);
+		this(falsifiedSample.parameters(), falsifiedSample.shrinkables(), falsifiedSample.falsifyingError(), shrinkingSteps, falsifiedSample.footnotes());
 	}
 
 	public ShrunkFalsifiedSampleImpl(
 		List<Object> parameters,
 		List<Shrinkable<Object>> shrinkables,
 		Optional<Throwable> falsifyingError,
-		int shrinkingSteps
+		int shrinkingSteps,
+		List<String> footnotes
 	) {
-		super(parameters, shrinkables, falsifyingError);
+		super(parameters, shrinkables, falsifyingError, footnotes);
 		this.shrinkingSteps = shrinkingSteps;
 	}
 
 	@Override
 	public int countShrinkingSteps() {
 		return shrinkingSteps;
-	}
-
-	public boolean equivalentTo(FalsifiedSample sample) {
-		if (sample == null) {
-			return false;
-		}
-		ShrunkFalsifiedSample shrunkWithZeroSteps =
-			new ShrunkFalsifiedSampleImpl(sample.parameters(), sample.shrinkables(), sample.falsifyingError(), 0);
-		return this.equals(shrunkWithZeroSteps);
 	}
 
 	@Override

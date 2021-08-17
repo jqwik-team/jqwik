@@ -10,11 +10,18 @@ public class FalsifiedSampleImpl implements FalsifiedSample {
 	private final List<Object> parameters;
 	private final List<Shrinkable<Object>> shrinkables;
 	private final Optional<Throwable> falsifyingError;
+	private final List<String> footnotes;
 
-	public FalsifiedSampleImpl(List<Object> parameters, List<Shrinkable<Object>> shrinkables, Optional<Throwable> falsifyingError) {
+	public FalsifiedSampleImpl(
+		List<Object> parameters,
+		List<Shrinkable<Object>> shrinkables,
+		Optional<Throwable> falsifyingError,
+		List<String> footnotes
+	) {
 		this.parameters = parameters;
 		this.shrinkables = shrinkables;
 		this.falsifyingError = falsifyingError;
+		this.footnotes = footnotes;
 	}
 
 	@Override
@@ -30,6 +37,11 @@ public class FalsifiedSampleImpl implements FalsifiedSample {
 	@Override
 	public Optional<Throwable> falsifyingError() {
 		return falsifyingError;
+	}
+
+	@Override
+	public List<String> footnotes() {
+		return footnotes;
 	}
 
 	@Override

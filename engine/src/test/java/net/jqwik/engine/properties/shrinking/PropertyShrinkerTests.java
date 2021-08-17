@@ -496,7 +496,7 @@ class PropertyShrinkerTests {
 
 	private FalsifiedSample toFalsifiedSample(List<Shrinkable<Object>> shrinkables, Throwable originalError) {
 		List<Object> parameters = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
-		return new FalsifiedSampleImpl(parameters, shrinkables, Optional.ofNullable(originalError));
+		return new FalsifiedSampleImpl(parameters, shrinkables, Optional.ofNullable(originalError), Collections.emptyList());
 	}
 
 	@SuppressWarnings("unchecked")

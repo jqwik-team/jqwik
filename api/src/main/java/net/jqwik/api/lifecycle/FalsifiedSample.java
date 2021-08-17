@@ -51,4 +51,13 @@ public interface FalsifiedSample {
 	 * @return an optional error
 	 */
 	Optional<Throwable> falsifyingError();
+
+	/**
+	 * List of footnotes to be added to failure report.
+	 *
+	 * @return list of strings
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.5")
+	List<String> footnotes();
+
 }
