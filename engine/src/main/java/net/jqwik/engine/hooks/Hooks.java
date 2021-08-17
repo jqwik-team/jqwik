@@ -24,9 +24,6 @@ public class Hooks {
 	public static class AroundTry {
 		// Should run close to property method
 		public static final int TRY_LIFECYCLE_METHODS_PROXIMITY = -10;
-
-		// Outside lifecycle methods
-		public static final int TRY_RESOLVE_FOOTNOTES_PROXIMITY = -20;
 	}
 
 }

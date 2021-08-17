@@ -3,11 +3,13 @@ package net.jqwik.engine.execution.reporting;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.footnotes.*;
 import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class ResolveFootnotesHookTests {
+@EnableFootnotes
+class EnableFootnotesTests {
 
 	@BeforeTry
 	void beforeTry(Footnotes footnotes) {
@@ -21,7 +23,7 @@ class ResolveFootnotesHookTests {
 
 	@AddLifecycleHook(CheckTries.class)
 	@Property
-	void addAnnotations(@ForAll int anInt, Footnotes footnotes) {
+	void addFootnotes(@ForAll int anInt, Footnotes footnotes) {
 		footnotes.addFootnote("anInt=" + anInt);
 		footnotes.addFootnote("footnote");
 		assertThat(anInt).isLessThan(42);
@@ -45,7 +47,7 @@ class ResolveFootnotesHookTests {
 
 		@Override
 		public int aroundTryProximity() {
-			// Closer than ResolveFootnotesHook
+			// Closer than FootnotesHook
 			return -90;
 		}
 	}

@@ -1,4 +1,4 @@
-package net.jqwik.api;
+package net.jqwik.api.footnotes;
 
 import org.apiguardian.api.*;
 
@@ -9,6 +9,7 @@ import static org.apiguardian.api.API.Status.*;
  * The footnotes will be shown for the original failing sample and the shrunk sample.
  *
  * <p>
+ * To enable footnote support you have to use annotation {@linkplain EnableFootnotes}.
  * To get access to a footnotes object, just add a parameter of type {@code Footnotes}
  * to the property method or any lifecycle method.
  * </p>

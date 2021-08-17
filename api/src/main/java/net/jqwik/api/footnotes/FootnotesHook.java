@@ -1,12 +1,15 @@
-package net.jqwik.engine.hooks;
+package net.jqwik.api.footnotes;
 
 import java.lang.reflect.*;
 import java.util.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
-public class ResolveFootnotesHook implements ResolveParameterHook, AroundTryHook {
+@API(status = API.Status.INTERNAL)
+class FootnotesHook implements ResolveParameterHook, AroundTryHook {
 
 	@Override
 	public PropagationMode propagateTo() {
@@ -46,7 +49,7 @@ public class ResolveFootnotesHook implements ResolveParameterHook, AroundTryHook
 
 	private Store<List<String>> getFootnotesStore() {
 		return Store.getOrCreate(
-			Tuple.of(ResolveFootnotesHook.class, "footnotes"),
+			Tuple.of(FootnotesHook.class, "footnotes"),
 			Lifespan.TRY, ArrayList::new
 		);
 	}
@@ -63,7 +66,8 @@ public class ResolveFootnotesHook implements ResolveParameterHook, AroundTryHook
 
 	@Override
 	public int aroundTryProximity() {
-		return Hooks.AroundTry.TRY_RESOLVE_FOOTNOTES_PROXIMITY;
+		// Outside lifecycle methods
+		return -20;
 	}
 
 	private List<String> getFootnotes() {
