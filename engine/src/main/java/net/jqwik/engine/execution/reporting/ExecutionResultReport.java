@@ -64,9 +64,10 @@ public class ExecutionResultReport {
 			List<Object> parametersAfterRun = shrunkSample.parameters();
 			if (!parameters.isEmpty()) {
 				String shrunkSampleHeadline = String.format("%s (%s steps)", SHRUNK_SAMPLE_HEADLINE, shrunkSample.countShrinkingSteps());
-				SampleReporter.reportSample(reportLines, propertyMethod, parameters, shrunkSampleHeadline);
+				SampleReporter.reportSampleWithoutIndentation(reportLines, propertyMethod, parameters, shrunkSampleHeadline);
 				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun);
 			}
+			reportFootnotes(reportLines, shrunkSample.footnotes());
 		});
 
 		executionResult.originalSample().ifPresent(originalSample -> {
@@ -74,7 +75,7 @@ public class ExecutionResultReport {
 			List<Object> parameters = originalSample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
 			List<Object> parametersAfterRun = originalSample.parameters();
 			if (!parameters.isEmpty()) {
-				SampleReporter.reportSample(reportLines, propertyMethod, parameters, originalSampleHeadline);
+				SampleReporter.reportSampleWithoutIndentation(reportLines, propertyMethod, parameters, originalSampleHeadline);
 				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun);
 				if (executionResult.shrunkSample().isPresent()) {
 					originalSample.falsifyingError().ifPresent(error -> {
@@ -82,7 +83,19 @@ public class ExecutionResultReport {
 					});
 				}
 			}
+			reportFootnotes(reportLines, originalSample.footnotes());
 		});
+	}
+
+	private static void reportFootnotes(StringBuilder reportLines, List<String> footnotes) {
+		if (footnotes.isEmpty()) {
+			return;
+		}
+		for (int i = 0; i < footnotes.size(); i++) {
+			String footnote = footnotes.get(i);
+			reportLines.append(String.format("%n  #%s %s", i + 1, footnote));
+		}
+		reportLines.append(String.format("%n"));
 	}
 
 	private static void reportParameterChanges(

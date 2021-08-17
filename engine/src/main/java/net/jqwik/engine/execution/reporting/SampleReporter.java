@@ -8,7 +8,7 @@ public class SampleReporter {
 
 	public static final int MAX_LINE_LENGTH = 100;
 
-	static void reportSample(
+	static void reportSampleWithoutIndentation(
 		StringBuilder reportLines,
 		Method propertyMethod,
 		List<Object> sample,
