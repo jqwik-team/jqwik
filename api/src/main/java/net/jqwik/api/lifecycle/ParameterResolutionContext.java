@@ -1,6 +1,7 @@
 package net.jqwik.api.lifecycle;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 import org.apiguardian.api.*;
 
@@ -19,4 +20,7 @@ public interface ParameterResolutionContext {
 	TypeUsage typeUsage();
 
 	int index();
+
+	@API(status = MAINTAINED, since = "1.5.5")
+	Optional<Method> optionalMethod();
 }

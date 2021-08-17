@@ -20,9 +20,10 @@ class ResolveFootnotesHookTests {
 	}
 
 	@AddLifecycleHook(CheckTries.class)
-	@Property(seed = "42")
-	void publishValue(@ForAll int anInt, Footnotes footnotes) {
+	@Property
+	void addAnnotations(@ForAll int anInt, Footnotes footnotes) {
 		footnotes.addFootnote("anInt=" + anInt);
+		footnotes.addFootnote("footnote");
 		assertThat(anInt).isLessThan(42);
 	}
 
@@ -32,10 +33,11 @@ class ResolveFootnotesHookTests {
 		public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
 			TryExecutionResult result = aTry.execute(parameters);
 			if (result.isFalsified()) {
-				assertThat(result.footnotes()).hasSize(3);
+				assertThat(result.footnotes()).hasSize(4);
 				assertThat(result.footnotes().get(0)).isEqualTo("before try");
 				assertThat(result.footnotes().get(1)).startsWith("anInt=");
-				assertThat(result.footnotes().get(2)).isEqualTo("after try");
+				assertThat(result.footnotes().get(2)).isEqualTo("footnote");
+				assertThat(result.footnotes().get(3)).isEqualTo("after try");
 				return TryExecutionResult.satisfied();
 			}
 			return result;

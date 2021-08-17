@@ -1,6 +1,8 @@
 - 1.5.5
 
-    - Support log on failure. See https://github.com/jlink/jqwik/issues/172 
+    - Support log on failure (Footnotes). See https://github.com/jlink/jqwik/issues/172 
+      - Only apply around try in ResolveFootnotesHook if footnotes object has been injected
+      - User guide entry for Footnotes
   
     - Create possibility/annotation to suppress reporting inside of a
       test/property but not lose reporting of property's results. May require a

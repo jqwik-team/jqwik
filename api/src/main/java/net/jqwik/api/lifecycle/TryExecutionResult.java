@@ -184,7 +184,7 @@ public interface TryExecutionResult {
 	 * @param otherFootnotes a list of footnotes to add
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.5")
-	default TryExecutionResult withFootnotes(List<String> otherFootnotes) {
+	default TryExecutionResult withFootnotes(Collection<String> otherFootnotes) {
 		TryExecutionResult self = this;
 		List<String> footnotes = new ArrayList<>(this.footnotes());
 		footnotes.addAll(otherFootnotes);

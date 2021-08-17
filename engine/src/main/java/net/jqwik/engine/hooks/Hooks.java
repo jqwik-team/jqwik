@@ -25,7 +25,7 @@ public class Hooks {
 		// Should run close to property method
 		public static final int TRY_LIFECYCLE_METHODS_PROXIMITY = -10;
 
-		// Closer to property method than lifecycle methods
+		// Outside lifecycle methods
 		public static final int TRY_RESOLVE_FOOTNOTES_PROXIMITY = -20;
 	}
 

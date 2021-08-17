@@ -1,6 +1,7 @@
 package net.jqwik.engine.execution;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.providers.*;
@@ -25,5 +26,14 @@ public class DefaultParameterInjectionContext implements ParameterResolutionCont
 	@Override
 	public int index() {
 		return parameter.getIndex();
+	}
+
+	@Override
+	public Optional<Method> optionalMethod() {
+		Executable declaringExecutable = parameter().getDeclaringExecutable();
+		if (declaringExecutable instanceof Method) {
+			return Optional.of((Method) declaringExecutable);
+		}
+		return Optional.empty();
 	}
 }
