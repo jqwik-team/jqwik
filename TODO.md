@@ -2,6 +2,8 @@
 
     - Support log on failure (Footnotes). See https://github.com/jlink/jqwik/issues/172 
       - User guide entry for Footnotes
+      
+    - Solve edge cases performance problems: https://github.com/jlink/jqwik/issues/214
   
     - Create possibility/annotation to suppress reporting inside of a
       test/property but not lose reporting of property's results. May require a
