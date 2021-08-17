@@ -77,13 +77,13 @@ public class ExecutionResultReport {
 			if (!parameters.isEmpty()) {
 				SampleReporter.reportSampleWithoutIndentation(reportLines, propertyMethod, parameters, originalSampleHeadline);
 				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun);
-				if (executionResult.shrunkSample().isPresent()) {
-					originalSample.falsifyingError().ifPresent(error -> {
-						appendOriginalError(reportLines, error);
-					});
-				}
 			}
 			reportFootnotes(reportLines, originalSample.footnotes());
+			if (!parameters.isEmpty() && executionResult.shrunkSample().isPresent()) {
+				originalSample.falsifyingError().ifPresent(error -> {
+					appendOriginalError(reportLines, error);
+				});
+			}
 		});
 	}
 

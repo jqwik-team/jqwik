@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.*;
  * For this tests to work jqwik.properties must have configuration
  * {@code useJunitPlatformReporter=false}. Otherwise it's not clear what the platform will do.
  */
-class ReporterHookTests {
+class ResolveReporterHookTests {
 
 	@Example
 	void publishValue(Reporter reporter) throws Exception {

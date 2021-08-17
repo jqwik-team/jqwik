@@ -11,6 +11,11 @@ import static org.apiguardian.api.API.Status.*;
  * i.e. a test container or property.
  *
  * <p>
+ * To get access to a reporter object, just add a parameter of type {@code Reporter}
+ * to the property method or any lifecycle method.
+ * </p>
+ *
+ * <p>
  * Reporting additional test information is a JUnit 5 platform feature.
  * Some tools will output this information to stdout;
  * other tools, e.g. Gradle as of version 6, ignore it.

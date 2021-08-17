@@ -179,24 +179,15 @@ public interface TryExecutionResult {
 	}
 
 	/**
-	 * Add a footnote to be added to failure report
-	 *
-	 * @param footnote a String
-	 */
-	@API(status = EXPERIMENTAL, since = "1.5.5")
-	default TryExecutionResult withFootnote(String footnote) {
-		return withFootnotes(footnote);
-	}
-
-	/**
 	 * Add one or more footnotes to be added to failure report
+	 *
+	 * @param otherFootnotes a list of footnotes to add
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.5")
-	default TryExecutionResult withFootnotes(String footnote, String ... otherFootnotes) {
+	default TryExecutionResult withFootnotes(List<String> otherFootnotes) {
 		TryExecutionResult self = this;
 		List<String> footnotes = new ArrayList<>(this.footnotes());
-		footnotes.add(footnote);
-		footnotes.addAll(Arrays.asList(otherFootnotes));
+		footnotes.addAll(otherFootnotes);
 
 		return new TryExecutionResult() {
 			@Override
