@@ -6,6 +6,7 @@ import java.util.*;
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 
 @API(status = API.Status.INTERNAL)
@@ -23,8 +24,8 @@ class FootnotesHook implements ResolveParameterHook, AroundTryHook {
 	) {
 		if (parameterContext.typeUsage().isOfType(Footnotes.class)) {
 			ParameterSupplier footnotesSupplier = optionalTry -> {
-				Store<List<String>> footnotesStore = optionalTry
-					.map(ignore -> getFootnotesStore())
+				Tuple2<String, Store<List<String>>> labelAndStore = optionalTry
+					.map(tryLifecycleContext -> Tuple.of(tryLifecycleContext.label(), getFootnotesStore()))
 					.orElseThrow(() -> {
 						String message = String.format(
 							"Illegal argument [%s] in method [%s].%n" +
@@ -38,9 +39,7 @@ class FootnotesHook implements ResolveParameterHook, AroundTryHook {
 						return new IllegalArgumentException(message);
 					});
 
-				return (Footnotes) footnote -> {
-					footnotesStore.get().add(footnote);
-				};
+				return new StoreBasedFootnotes(labelAndStore);
 			};
 			return Optional.of(footnotesSupplier);
 		}
@@ -72,5 +71,26 @@ class FootnotesHook implements ResolveParameterHook, AroundTryHook {
 
 	private List<String> getFootnotes() {
 		return getFootnotesStore().get();
+	}
+
+	private static class StoreBasedFootnotes implements Footnotes {
+
+		private final String label;
+		private final Store<List<String>> store;
+
+		public StoreBasedFootnotes(Tuple2<String, Store<List<String>>> labelAndStore) {
+			this.label = labelAndStore.get1();
+			this.store = labelAndStore.get2();
+		}
+
+		@Override
+		public void addFootnote(String footnote) {
+			store.get().add(footnote);
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%s[%s]", Footnotes.class.getName(), label);
+		}
 	}
 }
