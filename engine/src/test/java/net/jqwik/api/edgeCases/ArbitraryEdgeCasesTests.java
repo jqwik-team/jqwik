@@ -6,7 +6,6 @@ import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.assertAllGenerated;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
@@ -147,19 +146,23 @@ class ArbitraryEdgeCasesTests implements GenericEdgeCasesProperties {
 	class GenericConfiguration {
 
 		@Example
-		void noEdgeCases() {
+		void noEdgeCases(@ForAll Random random) {
 			Arbitrary<String> arbitrary =
-					Arbitraries
-							.of("one", "two", "three")
-							.edgeCases(edgeCasesConfig -> edgeCasesConfig.none());
+				Arbitraries
+					.of("one", "two", "three")
+					.edgeCases(edgeCasesConfig -> edgeCasesConfig.none());
 
 			EdgeCases<String> edgeCases = arbitrary.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases)).isEmpty();
 
 			// Random value generation still works
-			assertAllGenerated(arbitrary.generator(1000, true), s -> {
-				assertThat(s).isIn("one", "two", "three");
-			});
+			assertAllGenerated(
+				arbitrary.generator(1000, true),
+				random,
+				s -> {
+					assertThat(s).isIn("one", "two", "three");
+				}
+			);
 		}
 
 		@Example

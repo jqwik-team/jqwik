@@ -1,12 +1,14 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.util.*;
+
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 @Label("DefaultTypeArbitrary")
@@ -16,7 +18,7 @@ class DefaultTypeArbitraryTests {
 	class DirectUses {
 
 		@Example
-		void useConstructorWithoutParameter() throws NoSuchMethodException {
+		void useConstructorWithoutParameter(@ForAll Random random) throws NoSuchMethodException {
 
 			TypeArbitrary<String> typeArbitrary =
 				new DefaultTypeArbitrary<>(String.class)
@@ -24,12 +26,13 @@ class DefaultTypeArbitraryTests {
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aString -> {return aString.equals("");}
 			);
 		}
 
 		@Example
-		void useSingleFactoryWithoutParameter() throws NoSuchMethodException {
+		void useSingleFactoryWithoutParameter(@ForAll Random random) throws NoSuchMethodException {
 
 			TypeArbitrary<String> typeArbitrary =
 				new DefaultTypeArbitrary<>(String.class)
@@ -37,12 +40,13 @@ class DefaultTypeArbitraryTests {
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aString -> {return aString.equals("a string");}
 			);
 		}
 
 		@Example
-		void twoCreatorsAreUsedRandomly() throws NoSuchMethodException {
+		void twoCreatorsAreUsedRandomly(@ForAll Random random) throws NoSuchMethodException {
 
 			TypeArbitrary<String> typeArbitrary =
 				new DefaultTypeArbitrary<>(String.class)
@@ -53,14 +57,15 @@ class DefaultTypeArbitraryTests {
 
 			assertAllGenerated(
 				generator,
+				random,
 				aString -> aString.equals("") || aString.equals("a string")
 			);
 
-			assertAtLeastOneGeneratedOf(generator, "", "a string");
+			assertAtLeastOneGeneratedOf(generator, random, "", "a string");
 		}
 
 		@Example
-		void exceptionsDuringCreationAreIgnored() throws NoSuchMethodException {
+		void exceptionsDuringCreationAreIgnored(@ForAll Random random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Samples.class.getDeclaredMethod("personFromAge", int.class));
@@ -69,6 +74,7 @@ class DefaultTypeArbitraryTests {
 
 			assertAllGenerated(
 				generator,
+				random,
 				aPerson -> {
 					return aPerson.age > 0;
 				}
@@ -76,37 +82,40 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void useConstructorWithOneParameter() throws NoSuchMethodException {
+		void useConstructorWithOneParameter(@ForAll Random random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Person.class.getConstructor(String.class));
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
 
 		@Example
-		void useConstructorWithTwoParameters() throws NoSuchMethodException {
+		void useConstructorWithTwoParameters(@ForAll Random random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Person.class.getConstructor(String.class, int.class));
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
 
 		@Example
-		void useFactoryMethodWithTwoParameters() throws NoSuchMethodException {
+		void useFactoryMethodWithTwoParameters(@ForAll Random random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Person.class.getDeclaredMethod("create", int.class, String.class));
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
@@ -131,18 +140,19 @@ class DefaultTypeArbitraryTests {
 	class UseDefaults {
 
 		@Example
-		void willUseAllPublicConstructorsAndFactoryMethods() {
+		void willUseAllPublicConstructorsAndFactoryMethods(@ForAll Random random) {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class).useDefaults();
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
 
 		@Example
-		void isOverwrittenByDirectUse() throws NoSuchMethodException {
+		void isOverwrittenByDirectUse(@ForAll Random random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.useDefaults()
@@ -150,28 +160,31 @@ class DefaultTypeArbitraryTests {
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> {return aPerson.toString().equals("a person");}
 			);
 		}
 
 		@Example
-		void onAbstractClassUsesOnlyFactoryMethods() {
+		void onAbstractClassUsesOnlyFactoryMethods(@ForAll Random random) {
 			TypeArbitrary<Animal> typeArbitrary =
 				new DefaultTypeArbitrary<>(Animal.class).useDefaults();
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				animal -> animal.toString().startsWith("Cat") || animal.toString().startsWith("Dog")
 			);
 		}
 
 		@Example
-		void onInterfaceUsesOnlyFactoryMethods() {
+		void onInterfaceUsesOnlyFactoryMethods(@ForAll Random random) {
 			TypeArbitrary<Thing> typeArbitrary =
 				new DefaultTypeArbitrary<>(Thing.class).useDefaults();
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				thing -> {return thing.toString().equals("Thing");}
 			);
 		}
@@ -182,12 +195,13 @@ class DefaultTypeArbitraryTests {
 	class UseConstructors {
 
 		@Example
-		void publicConstructorsOnly() {
+		void publicConstructorsOnly(@ForAll Random random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).usePublicConstructors();
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> {
 					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
 					Assertions.assertThat(aPerson.int1).isEqualTo(aPerson.int2);
@@ -196,38 +210,43 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void allConstructors() {
+		void allConstructors(@ForAll Random random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useAllConstructors();
 
 			assertAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.string1.equals(aPerson.string2)
 			);
 
 			assertAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.int1 == aPerson.int2
 			);
 
 			assertAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> !aPerson.string1.equals(aPerson.string2)
 			);
 
 			assertAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.int1 != aPerson.int2
 			);
 		}
 
 		@Example
-		void filterConstructors() {
+		void filterConstructors(@ForAll Random random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useConstructors(ctor -> ctor.getParameterCount() == 1);
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> {
 					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
 					Assertions.assertThat(aPerson.int1).isEqualTo(0);
@@ -238,7 +257,7 @@ class DefaultTypeArbitraryTests {
 
 		@SuppressWarnings("unchecked")
 		@Example
-		void recursiveConstructorsAreIgnored() {
+		void recursiveConstructorsAreIgnored(@ForAll Random random) {
 
 			DefaultTypeArbitrary<Person> typeArbitrary =
 				(DefaultTypeArbitrary) new DefaultTypeArbitrary<>(Person.class).useAllConstructors();
@@ -246,6 +265,7 @@ class DefaultTypeArbitraryTests {
 			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
@@ -255,12 +275,13 @@ class DefaultTypeArbitraryTests {
 	class UseFactories {
 
 		@Example
-		void publicConstructorsOnly() {
+		void publicConstructorsOnly(@ForAll Random random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).usePublicFactoryMethods();
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> {
 					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
 					Assertions.assertThat(aPerson.int1).isEqualTo(aPerson.int2);
@@ -269,38 +290,43 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void allConstructors() {
+		void allConstructors(@ForAll Random random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useAllFactoryMethods();
 
 			assertAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.string1.equals(aPerson.string2)
 			);
 
 			assertAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.int1 == aPerson.int2
 			);
 
 			assertAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> !aPerson.string1.equals(aPerson.string2)
 			);
 
 			assertAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.int1 != aPerson.int2
 			);
 		}
 
 		@Example
-		void filterFactoryMethods() {
+		void filterFactoryMethods(@ForAll Random random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useFactoryMethods(method -> method.getParameterCount() == 1);
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> {
 					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
 					Assertions.assertThat(aPerson.int1).isEqualTo(0);
@@ -311,7 +337,7 @@ class DefaultTypeArbitraryTests {
 
 		@SuppressWarnings("unchecked")
 		@Example
-		void recursiveFactoryMethodsAreIgnored() throws NoSuchMethodException {
+		void recursiveFactoryMethodsAreIgnored(@ForAll Random random) {
 
 			DefaultTypeArbitrary<Person> typeArbitrary =
 				(DefaultTypeArbitrary) new DefaultTypeArbitrary<>(Person.class).useAllFactoryMethods();
@@ -319,6 +345,7 @@ class DefaultTypeArbitraryTests {
 			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(1);
 			assertAllGenerated(
 				typeArbitrary.generator(1000, true),
+				random,
 				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
@@ -327,7 +354,7 @@ class DefaultTypeArbitraryTests {
 	@Group
 	class ConfigurationErrors {
 		@Example
-		void typeArbitraryWithoutUseFailsOnGeneration() throws NoSuchMethodException {
+		void typeArbitraryWithoutUseFailsOnGeneration() {
 			TypeArbitrary<String> typeArbitrary = new DefaultTypeArbitrary<>(String.class);
 
 			Assertions.assertThatThrownBy(

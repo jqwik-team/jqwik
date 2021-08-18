@@ -15,7 +15,6 @@ import net.jqwik.testing.*;
 import static java.math.BigInteger.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Label("Arbitraries")
@@ -32,7 +31,7 @@ class ArbitrariesTests {
 		Arbitrary<String> stringArbitrary = Arbitraries.randomValue(r -> Integer.toString(r.nextInt(10)));
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertAllGenerated(generator, random, value -> Integer.parseInt(value) < 10);
-		assertAtLeastOneGeneratedOf(generator, "1", "2", "3", "4", "5", "6", "7", "8", "9");
+		assertAtLeastOneGeneratedOf(generator, random, "1", "2", "3", "4", "5", "6", "7", "8", "9");
 	}
 
 	@Example
@@ -48,7 +47,7 @@ class ArbitrariesTests {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
-		assertAtLeastOneGeneratedOf(generator, "1", "hallo", "test");
+		assertAtLeastOneGeneratedOf(generator, random, "1", "hallo", "test");
 	}
 
 	@Example
@@ -57,7 +56,7 @@ class ArbitrariesTests {
 		Arbitrary<String> stringArbitrary = Arbitraries.of(valueList);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
-		assertAtLeastOneGeneratedOf(generator, "1", "hallo", "test");
+		assertAtLeastOneGeneratedOf(generator, random, "1", "hallo", "test");
 	}
 
 	@Example
@@ -86,7 +85,7 @@ class ArbitrariesTests {
 		Arbitrary<String> stringArbitrary = Arbitraries.of(valueSet);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
-		assertAtLeastOneGeneratedOf(generator, "1", "hallo", "test");
+		assertAtLeastOneGeneratedOf(generator, random, "1", "hallo", "test");
 	}
 
 	@Example
@@ -130,7 +129,7 @@ class ArbitrariesTests {
 		Arbitrary<MyEnum> enumArbitrary = Arbitraries.of(MyEnum.class);
 		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1);
 		assertAllGenerated(generator, random, (MyEnum value) -> Arrays.asList(MyEnum.values()).contains(value));
-		assertAtLeastOneGeneratedOf(generator, MyEnum.values());
+		assertAtLeastOneGeneratedOf(generator, random, MyEnum.values());
 	}
 
 	@Example
@@ -200,9 +199,9 @@ class ArbitrariesTests {
 	@Label("shuffle(..)")
 	class Shuffle {
 		@Example
-		void varArgsValues() {
+		void varArgsValues(@ForAll Random random) {
 			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle(1, 2, 3);
-			assertPermutations(shuffled);
+			assertPermutations(shuffled, random);
 		}
 
 		@Example
@@ -216,20 +215,21 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void listOfValues() {
+		void listOfValues(@ForAll Random random) {
 			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle(Arrays.asList(1, 2, 3));
-			assertPermutations(shuffled);
+			assertPermutations(shuffled, random);
 		}
 
-		private void assertPermutations(Arbitrary<List<Integer>> shuffled) {
+		private void assertPermutations(Arbitrary<List<Integer>> shuffled, Random random) {
 			assertAtLeastOneGeneratedOf(
-					shuffled.generator(1000),
-					Arrays.asList(1, 2, 3),
-					Arrays.asList(1, 3, 2),
-					Arrays.asList(2, 3, 1),
-					Arrays.asList(2, 1, 3),
-					Arrays.asList(3, 1, 2),
-					Arrays.asList(3, 2, 1)
+				shuffled.generator(1000),
+				random,
+				Arrays.asList(1, 2, 3),
+				Arrays.asList(1, 3, 2),
+				Arrays.asList(2, 3, 1),
+				Arrays.asList(2, 1, 3),
+				Arrays.asList(3, 1, 2),
+				Arrays.asList(3, 2, 1)
 			);
 		}
 	}
@@ -250,7 +250,7 @@ class ArbitrariesTests {
 			});
 
 			RandomGenerator<Integer> generator = oneOfArbitrary.generator(1000);
-			assertAtLeastOneGeneratedOf(generator, 1, 2, 3, 4, 5);
+			assertAtLeastOneGeneratedOf(generator, random, 1, 2, 3, 4, 5);
 		}
 
 		@Example
@@ -266,7 +266,7 @@ class ArbitrariesTests {
 				assertThat(value).isIn(1, "2");
 			});
 
-			assertAtLeastOneGeneratedOf(generator, 1, "2");
+			assertAtLeastOneGeneratedOf(generator, random, 1, "2");
 		}
 
 		@Property
@@ -299,7 +299,7 @@ class ArbitrariesTests {
 			});
 
 			RandomGenerator<Integer> generator = frequencyOfArbitrary.generator(1000);
-			assertAtLeastOneGeneratedOf(generator, 1, 2);
+			assertAtLeastOneGeneratedOf(generator, random, 1, 2);
 
 			List<Integer> elements = generator.stream(random).map(Shrinkable::value).limit(100).collect(Collectors.toList());
 			int countOnes = Collections.frequency(elements, 1);
@@ -341,11 +341,11 @@ class ArbitrariesTests {
 	class Lazy {
 
 		@Example
-		void lazy() {
+		void lazy(@ForAll Random random) {
 			Arbitrary<Integer> samples = Arbitraries.lazy(() -> new OrderedArbitraryForTesting<>(1, 2, 3));
 
-			assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
-			assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
+			assertGeneratedExactly(samples.generator(1000),random, 1, 2, 3, 1);
+			assertGeneratedExactly(samples.generator(1000), random,1, 2, 3, 1);
 		}
 
 		@Example
@@ -708,12 +708,13 @@ class ArbitrariesTests {
 			Arbitrary<BigInteger> bigIntegerArbitrary = Arbitraries.bigIntegers().between(min, max).shrinkTowards(shrinkingTarget);
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1000, true);
 			assertAtLeastOneGeneratedOf(
-					generator,
-					shrinkingTarget,
-					valueOf(-2), valueOf(-1),
-					valueOf(0),
-					valueOf(1), valueOf(2),
-					min, max
+				generator,
+				random,
+				shrinkingTarget,
+				valueOf(-2), valueOf(-1),
+				valueOf(0),
+				valueOf(1), valueOf(2),
+				min, max
 			);
 		}
 	}

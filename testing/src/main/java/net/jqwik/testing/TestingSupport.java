@@ -79,6 +79,17 @@ public class TestingSupport {
 		}
 	}
 
+	@SafeVarargs
+	public static <T> void assertGeneratedExactly(RandomGenerator<? extends T> generator, Random random, T... expectedValues) {
+		List<T> generated = generator
+			.stream(random)
+			.limit(expectedValues.length)
+			.map(Shrinkable::value)
+			.collect(Collectors.toList());
+
+		assertThat(generated).containsExactly(expectedValues);
+	}
+
 
 	public static <T> Set<Shrinkable<T>> collectEdgeCaseShrinkables(EdgeCases<T> edgeCases) {
 		Set<Shrinkable<T>> shrinkables = new HashSet<>();

@@ -10,16 +10,13 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.assertAllGenerated;
-import static net.jqwik.api.ArbitraryTestHelper.assertAtLeastOneGenerated;
 import static net.jqwik.testing.ShrinkingSupport.*;
-import static net.jqwik.testing.TestingSupport.assertAllGenerated;
 import static net.jqwik.testing.TestingSupport.*;
 
 class MapArbitraryTests {
 
 	@Example
-	void map() {
+	void map(@ForAll Random random) {
 		Arbitrary<Integer> keys = Arbitraries.integers().between(1, 10);
 		Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
 
@@ -27,38 +24,48 @@ class MapArbitraryTests {
 
 		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1, true);
 
-		assertAllGenerated(generator, map -> {
-			assertThat(map.size()).isBetween(0, 10);
-			if (map.isEmpty()) return;
-			assertThat(map.keySet()).containsAnyOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-			assertThat(map.values()).allMatch(value -> value.length() == 5);
-		});
+		assertAllGenerated(
+			generator,
+			random,
+			map -> {
+				assertThat(map.size()).isBetween(0, 10);
+				if (map.isEmpty()) return;
+				assertThat(map.keySet()).containsAnyOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+				assertThat(map.values()).allMatch(value -> value.length() == 5);
+			}
+		);
 
-		assertAtLeastOneGenerated(generator, Map::isEmpty);
-		assertAtLeastOneGenerated(generator, map -> map.size() == 10);
+		assertAtLeastOneGenerated(generator, random, Map::isEmpty);
+		assertAtLeastOneGenerated(generator, random, map -> map.size() == 10);
 
 		// Generated maps are mutable
-		assertAllGenerated(generator, map -> {
-			int sizeBefore = map.size();
-			map.put(42, "fortytwo");
-			assertThat(map.size()).isEqualTo(sizeBefore + 1);
-		});
+		assertAllGenerated(
+			generator,
+			random,
+			map -> {
+				int sizeBefore = map.size();
+				map.put(42, "fortytwo");
+				assertThat(map.size()).isEqualTo(sizeBefore + 1);
+			}
+		);
 	}
 
 	@Example
-	void mapWithLessElementsThanMaxSize() {
+	void mapWithLessElementsThanMaxSize(@ForAll Random random) {
 		Arbitrary<Integer> keys = Arbitraries.integers().between(1, 3);
 		Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
 
 		MapArbitrary<Integer, String> mapArbitrary = Arbitraries.maps(keys, values);
 		RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1, true);
 
-		assertAllGenerated(generator, map -> {
-			assertThat(map.size()).isBetween(0, 3);
-		});
+		assertAllGenerated(
+			generator,
+			random,
+			map -> {assertThat(map.size()).isBetween(0, 3);}
+		);
 
-		assertAtLeastOneGenerated(generator, Map::isEmpty);
-		assertAtLeastOneGenerated(generator, map -> map.size() == 3);
+		assertAtLeastOneGenerated(generator, random, Map::isEmpty);
+		assertAtLeastOneGenerated(generator, random, map -> map.size() == 3);
 	}
 
 	@Example

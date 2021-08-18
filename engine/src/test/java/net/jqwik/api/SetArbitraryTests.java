@@ -11,22 +11,20 @@ import net.jqwik.api.statistics.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.assertAllGenerated;
 import static net.jqwik.testing.ShrinkingSupport.*;
-import static net.jqwik.testing.TestingSupport.assertAllGenerated;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 class SetArbitraryTests {
 
 	@Example
-	void set() {
+	void set(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		SetArbitrary<Integer> setArbitrary = integerArbitrary.set().ofMinSize(2).ofMaxSize(7);
 
 		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1, true);
 
-		assertGeneratedSet(generator, 2, 7);
+		assertGeneratedSet(generator, random, 2, 7);
 	}
 
 	@Example
@@ -44,17 +42,17 @@ class SetArbitraryTests {
 	}
 
 	@Example
-	void setWithLessElementsThanMaxSize() {
+	void setWithLessElementsThanMaxSize(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 		SetArbitrary<Integer> setArbitrary = integerArbitrary.set().ofMinSize(2);
 
 		RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1, true);
 
-		assertGeneratedSet(generator, 2, 5);
+		assertGeneratedSet(generator, random, 2, 5);
 	}
 
 	@Example
-	void mapEach() {
+	void mapEach(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		Arbitrary<Set<Tuple.Tuple2<Integer, Set<Integer>>>> setArbitrary =
 			integerArbitrary
@@ -63,14 +61,18 @@ class SetArbitraryTests {
 
 		RandomGenerator<Set<Tuple.Tuple2<Integer, Set<Integer>>>> generator = setArbitrary.generator(1, true);
 
-		assertAllGenerated(generator, set -> {
-			assertThat(set).hasSize(5);
-			assertThat(set).allMatch(tuple -> tuple.get2().size() == 5);
-		});
+		assertAllGenerated(
+			generator,
+			random,
+			set -> {
+				assertThat(set).hasSize(5);
+				assertThat(set).allMatch(tuple -> tuple.get2().size() == 5);
+			}
+		);
 	}
 
 	@Example
-	void flatMapEach() {
+	void flatMapEach(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		Arbitrary<Set<Tuple.Tuple2<Integer, Integer>>> setArbitrary =
 			integerArbitrary
@@ -81,10 +83,14 @@ class SetArbitraryTests {
 
 		RandomGenerator<Set<Tuple.Tuple2<Integer, Integer>>> generator = setArbitrary.generator(1, true);
 
-		assertAllGenerated(generator, set -> {
-			assertThat(set).hasSize(5);
-			assertThat(set).allMatch(tuple -> tuple.get2() <= 10);
-		});
+		assertAllGenerated(
+			generator,
+			random,
+			set -> {
+				assertThat(set).hasSize(5);
+				assertThat(set).allMatch(tuple -> tuple.get2() <= 10);
+			}
+		);
 	}
 
 	@Example
@@ -304,8 +310,8 @@ class SetArbitraryTests {
 
 	}
 
-	private void assertGeneratedSet(RandomGenerator<Set<Integer>> generator, int minSize, int maxSize) {
-		assertAllGenerated(generator, set -> {
+	private void assertGeneratedSet(RandomGenerator<Set<Integer>> generator, Random random, int minSize, int maxSize) {
+		assertAllGenerated(generator, random, set -> {
 			assertThat(set.size()).isBetween(minSize, maxSize);
 			assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 		});
