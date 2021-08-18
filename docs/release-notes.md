@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.5.5-SNAPSHOT](#155-snapshot)
 - [1.5.4](#154)
 - [1.5.3](#153)
 - [1.5.2](#152)
@@ -23,6 +24,18 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+## 1.5.5-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+- Fixed edge cases performance problem. 
+  See https://github.com/jlink/jqwik/issues/214
 
 
 ## 1.5.4
