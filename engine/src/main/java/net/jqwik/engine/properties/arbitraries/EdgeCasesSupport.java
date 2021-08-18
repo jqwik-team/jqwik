@@ -179,7 +179,11 @@ public class EdgeCasesSupport {
 		List<Iterable<Supplier<Shrinkable<Object>>>> listOfSuppliers = new ArrayList<>();
 		int remainingEdgeCases = maxEdgeCases;
 		for (Arbitrary<Object> a : arbitraries) {
-			List<Supplier<Shrinkable<Object>>> supplierList = a.edgeCases(remainingEdgeCases).suppliers();
+			EdgeCases<Object> edgeCases = a.edgeCases(remainingEdgeCases);
+			if (edgeCases.isEmpty()) {
+				return EdgeCases.none();
+			}
+			List<Supplier<Shrinkable<Object>>> supplierList = edgeCases.suppliers();
 			listOfSuppliers.add(supplierList);
 			remainingEdgeCases = (int) Math.max(1, Math.ceil(remainingEdgeCases / (double) supplierList.size()));
 		}
