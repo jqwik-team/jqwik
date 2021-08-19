@@ -18,21 +18,35 @@ class BigIntegerGrower {
 	) {
 		Object beforeValue = before.value();
 		Object afterValue = after.value();
-		BigInteger diff = calculateDiff(beforeValue, afterValue);
+		BigInteger diff = calculateDiff(beforeValue, afterValue, value);
 		if (diff.compareTo(BigInteger.ZERO) != 0) {
 			BigInteger grownValue = value.add(diff);
-			if (range.includes(grownValue)) {
+			if (sameSign(shrinkingTarget.subtract(value), shrinkingTarget.subtract(grownValue)) && range.includes(grownValue)) {
 				return Optional.of(new ShrinkableBigInteger(grownValue, range, shrinkingTarget));
 			}
 		}
 		return Optional.empty();
 	}
 
-	private BigInteger calculateDiff(Object beforeValue, Object afterValue) {
+	private BigInteger calculateDiff(Object beforeValue, Object afterValue, BigInteger current) {
+		BigInteger before;
+		BigInteger after;
 		if (beforeValue instanceof BigInteger && afterValue instanceof BigInteger) {
-			return ((BigInteger) beforeValue).subtract((BigInteger) afterValue);
+			before = (BigInteger) beforeValue;
+			after = (BigInteger) afterValue;
+		} else {
+			before = BigInteger.valueOf(toLong(beforeValue));
+			after = BigInteger.valueOf(toLong(afterValue));
 		}
-		return BigInteger.valueOf(toLong(beforeValue) - toLong(afterValue));
+		if (sameSign(before, current)) {
+			return before.subtract(after);
+		} else {
+			return after.subtract(before);
+		}
+	}
+
+	private boolean sameSign(BigInteger first, BigInteger second) {
+		return Math.abs(first.signum() - second.signum()) <= 1;
 	}
 
 	private long toLong(Object value) {

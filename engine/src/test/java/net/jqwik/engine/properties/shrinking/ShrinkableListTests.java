@@ -338,6 +338,20 @@ class ShrinkableListTests {
 		}
 
 		@Property(tries = 100)
+		void sumOfIntegersWithShrinkingTarget(@ForAll Random random) {
+			ListArbitrary<Integer> integerLists = Arbitraries.integers().between(0, 20).shrinkTowards(10).list().ofSize(4);
+
+			TestingFalsifier<List<Integer>> falsifier =
+					integers -> {
+						int sum = integers.stream().mapToInt(i -> i).sum();
+						return sum < 43;
+					};
+
+			List<Integer> shrunkValue = falsifyThenShrink(integerLists, random, falsifier);
+			assertThat(shrunkValue).isEqualTo(asList(10, 10, 10, 13));
+		}
+
+		@Property(tries = 100)
 		void sumOfShorts(@ForAll Random random) {
 			ListArbitrary<Short> integerLists = Arbitraries.shorts().between((short) 0, (short) 10).list().ofSize(4);
 
@@ -398,8 +412,7 @@ class ShrinkableListTests {
 			assertThat(shrunkValue).isEqualTo(asList(asList(1, 10, 10)));
 		}
 
-		// Has failed in rare cases, e.g. seed = "-5956523036667114910"
-		@Property(tries = 100, seed = "42")
+		@Property(tries = 100)
 		void sumOfIntegersAcrossSets(@ForAll Random random) {
 			Arbitrary<List<Set<Integer>>> listOfSets =
 					Arbitraries.integers().between(0, 10)

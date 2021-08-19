@@ -100,7 +100,7 @@ class ShrinkingQualityProperties {
 		return Arbitraries.of("a", "b").list().ofSize(n);
 	}
 
-	@Property(seed = "5353", tries = 10)
+	@Property(seed = "535353", tries = 10)
 	void bound5(@ForAll Random random) {
 		ListArbitrary<List<Short>> listOfLists = boundedListTuples();
 

@@ -110,7 +110,14 @@ public class PropertyShrinker {
 		do {
 			before = after;
 			after = shrinkOneParameterAfterTheOther(falsifier, before, shrinkSampleConsumer, shrinkAttemptConsumer);
+			if (!after.equals(before)) {
+				continue;
+			}
 			after = shrinkParametersPairwise(falsifier, after, shrinkSampleConsumer, shrinkAttemptConsumer);
+			if (!after.equals(before)) {
+				continue;
+			}
+			after = shrinkAndGrow(falsifier, after, shrinkSampleConsumer, shrinkAttemptConsumer);
 		} while (!after.equals(before));
 		return after;
 	}
@@ -132,6 +139,15 @@ public class PropertyShrinker {
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		return new PairwiseParameterShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+	}
+
+	private FalsifiedSample shrinkAndGrow(
+		Falsifier<List<Object>> falsifier,
+		FalsifiedSample sample,
+		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> shrinkAttemptConsumer
+	) {
+		return new ShrinkAndGrowShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
 	private ShrunkFalsifiedSample unshrunkOriginalSample() {
