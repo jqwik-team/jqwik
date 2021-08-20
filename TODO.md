@@ -1,11 +1,7 @@
 - 1.5.5
 
-    - Create possibility/annotation to suppress reporting inside of a
-      test/property but not lose reporting of property's results. May require a
-      new lifecycle hook.
-        - Apply annotation wherever reporting is test collateral
-        - Make it configurable, e.g. `jqwik.reporting.statistics.onfailureonly`
-
+    - Suppress logging from tests called in JqwikIntegrationTests
+  
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
           - forType(Class<T> targetType, int depth)

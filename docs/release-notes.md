@@ -32,6 +32,9 @@ title: jqwik Release Notes
 
 - You can now [add footnotes to failure reports](/docs/1.5.5/user-guide.html#adding-footnotes-to-failure-reports)
 
+- Added `StatisticsReport.onFailureOnly()` to suppress statistics reporting
+  for properties that do not fail.
+
 - Shrinking across several for-all parameters has been improved.
 
 #### Breaking Changes

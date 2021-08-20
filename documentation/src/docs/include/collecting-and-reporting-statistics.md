@@ -158,6 +158,17 @@ void queryStatistics(@ForAll int anInt) {
 }
 ```
 
+Or you can just switch it off for properties that do not fail:
+
+```java
+@Property
+@StatisticsReport(onFailureOnly = true)
+void queryStatistics(@ForAll int anInt) {
+	Statistics.collect(anInt);
+}
+```
+
+
 #### Histograms
 
 _jqwik_ comes with two report formats to display collected data as histograms:

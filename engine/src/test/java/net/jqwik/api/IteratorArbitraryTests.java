@@ -30,7 +30,7 @@ class IteratorArbitraryTests {
 	}
 
 	@Example
-	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	@StatisticsReport(onFailureOnly = true)
 	void withSizeDistribution(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		IteratorArbitrary<Integer> arbitrary =

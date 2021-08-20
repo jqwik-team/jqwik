@@ -78,4 +78,10 @@ public @interface StatisticsReport {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.1")
 	String label() default ALL_LABELS;
+
+	/**
+	 * Set to true when only failing properties should report their statistics
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.5")
+	boolean onFailureOnly() default false;
 }

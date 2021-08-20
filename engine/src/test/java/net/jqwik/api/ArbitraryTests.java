@@ -18,7 +18,7 @@ import static net.jqwik.testing.TestingSupport.*;
 
 @Group
 @Label("Arbitrary")
-@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+@StatisticsReport(onFailureOnly = true)
 class ArbitraryTests {
 
 	@Example

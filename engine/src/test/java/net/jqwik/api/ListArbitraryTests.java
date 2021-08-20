@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
-@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+@StatisticsReport(onFailureOnly = true)
 class ListArbitraryTests {
 
 	@Example

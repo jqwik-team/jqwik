@@ -71,7 +71,7 @@ class StreamArbitraryTests {
 	}
 
 	@Example
-	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	@StatisticsReport(onFailureOnly = true)
 	void withSizeDistribution(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		StreamArbitrary<Integer> arbitrary =
