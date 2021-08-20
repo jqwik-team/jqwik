@@ -8,7 +8,6 @@ import net.jqwik.api.footnotes.*;
 @EnableFootnotes
 public class FootnotesExamples {
 
-
 	@Property
 	void differenceShouldBeBelow42(@ForAll int number1, @ForAll int number2, Footnotes footnotes) {
 		int difference = Math.abs(number1 - number2);

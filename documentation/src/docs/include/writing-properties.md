@@ -155,6 +155,50 @@ Those with `report` in their name use jqwik's reporting mechanism and formats
 described [above](#failure-reporting).
 
 
+#### Adding Footnotes to Failure Reports
+
+By using the [platform reporting mechanism](#platform-reporting-with-reporter-object)
+you can publish additional key-value pairs for each and every run of a property method.
+In many cases, however, you only want some clarifying information for failing
+property tries. _Footnotes_ provide this capability:
+
+```java
+@EnableFootnotes
+public class FootnotesExamples {
+	@Property
+	void differenceShouldBeBelow42(@ForAll int number1, @ForAll int number2, Footnotes footnotes) {
+		int difference = Math.abs(number1 - number2);
+		footnotes.addFootnote(Integer.toString(difference));
+		Assertions.assertThat(difference).isLessThan(42);
+	}
+}
+```
+
+Unlike standard reporting, the footnotes feature must be explicitly enabled through
+the annotation `EnableFootnotes`, which can be added to container classes or individual property methods.
+Now you can add a parameter of type `net.jqwik.api.footnotes.Footnotes` to a property method
+or a lifecycle method annotated with either `@BeforeTry` or `@AfterTry`.
+The footnote string will then be part of the sample reporting:
+
+```
+Shrunk Sample (5 steps)
+-----------------------
+  number1: 0
+  number2: 42
+  footnotes: net.jqwik.api.footnotes.Footnotes[differenceShouldBeBelow42]
+
+  #1 42
+
+Original Sample
+---------------
+  number1: 399308
+  number2: -14
+  footnotes: net.jqwik.api.footnotes.Footnotes[differenceShouldBeBelow42]
+
+  #1 399322
+```
+
+
 ### Optional `@Property` Attributes
 
 The [`@Property`](/docs/${docsVersion}/javadoc/net/jqwik/api/Property.html)

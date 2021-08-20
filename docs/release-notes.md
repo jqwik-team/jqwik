@@ -30,6 +30,10 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- You can now [add footnotes to failure reports](/docs/1.5.5/user-guide.html#adding-footnotes-to-failure-reports)
+
+- Shrinking across several for-all parameters has been improved.
+
 #### Breaking Changes
 
 #### Bug Fixes
