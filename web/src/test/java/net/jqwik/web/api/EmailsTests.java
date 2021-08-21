@@ -81,7 +81,6 @@ public class EmailsTests {
 		@Property
 		void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email) {
 			String domain = getEmailHost(email);
-			System.out.println(domain);
 			Assume.that(!isIPAddress(domain));
 			assertThat(domain.charAt(0)).isNotEqualTo('-');
 			assertThat(domain.charAt(domain.length() - 1)).isNotEqualTo('-');
@@ -184,6 +183,7 @@ public class EmailsTests {
 	}
 
 	@Group
+	@StatisticsReport(onFailureOnly = true)
 	class CheckAllVariantsAreCovered {
 
 		@Property

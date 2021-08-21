@@ -66,6 +66,7 @@ class EmailProperties {
 	}
 
 	@Group
+	@StatisticsReport(onFailureOnly = true)
 	class CheckAllVariantsAreCovered {
 
 		@Property
