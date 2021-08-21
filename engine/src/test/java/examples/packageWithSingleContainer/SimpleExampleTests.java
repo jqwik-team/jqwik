@@ -7,7 +7,6 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SuppressLogging
 public class SimpleExampleTests {
 
 	@Property

@@ -3,7 +3,6 @@ package examples.packageWithSeveralContainers;
 import net.jqwik.api.*;
 import net.jqwik.testing.*;
 
-@SuppressLogging
 public class PropertyTests {
 
 	@Property
