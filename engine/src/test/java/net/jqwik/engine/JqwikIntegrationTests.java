@@ -74,8 +74,8 @@ class JqwikIntegrationTests {
 		return new JqwikTestEngine(unusedConfigurationProperties -> configuration(useJunitPlatformReporter));
 	}
 
-	private JqwikTestEngine createTestEngine() {
-		return createTestEngine(false);
+	private JqwikTestEngine createDefaultTestEngine() {
+		return createTestEngine(true);
 	}
 
 	@Example
@@ -85,7 +85,7 @@ class JqwikIntegrationTests {
 		ClasspathRootSelector[] classpathRootSelectors = selectClasspathRoots(classpathRoots)
 															 .toArray(new ClasspathRootSelector[classpathRoots.size()]);
 		Events events = EngineTestKit
-							.engine(createTestEngine())
+							.engine(createDefaultTestEngine())
 							.selectors(classpathRootSelectors)
 							.filters((Filter<?>) PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
 							.execute()
@@ -98,7 +98,7 @@ class JqwikIntegrationTests {
 	@SuppressLogging
 	void runTestsFromPackage() {
 		Events events = EngineTestKit
-							.engine(createTestEngine())
+							.engine(createDefaultTestEngine())
 							.selectors(selectPackage("examples.packageWithSingleContainer"))
 							.execute()
 							.allEvents();
@@ -110,7 +110,7 @@ class JqwikIntegrationTests {
 	@SuppressLogging
 	void runTestsFromClass() {
 		Events events = EngineTestKit
-							.engine(createTestEngine())
+							.engine(createDefaultTestEngine())
 							.selectors(selectClass(SimpleExampleTests.class))
 							.execute()
 							.allEvents();
@@ -122,7 +122,7 @@ class JqwikIntegrationTests {
 	@SuppressLogging
 	void runTestsFromClassWithInheritance() {
 		Events events = EngineTestKit
-							.engine(createTestEngine())
+							.engine(createDefaultTestEngine())
 							.selectors(selectClass(ContainerWithInheritance.class))
 							.execute()
 							.allEvents();
@@ -146,7 +146,7 @@ class JqwikIntegrationTests {
 	@Example
 	void failingConstructorFailsTests() {
 		Events events = EngineTestKit
-							.engine(createTestEngine())
+							.engine(createDefaultTestEngine())
 							.selectors(selectClass(ContainerWithFailingConstructor.class))
 							.execute()
 							.allEvents();
@@ -166,6 +166,7 @@ class JqwikIntegrationTests {
 			event(engine(), started()),
 			event(container(SimpleExampleTests.class), started()),
 			event(test("failing"), started()),
+			event(reported("SimpleExampleTests:failing")),
 			event(test("failing"), finishedWithFailure()),
 			event(test("withJupiterAnnotation"), skippedWithReason(s -> true)),
 			event(test("staticExample"), skippedWithReason(s -> true)),
@@ -179,7 +180,7 @@ class JqwikIntegrationTests {
 	@Example
 	void runTestsFromMethod() {
 		Events events = EngineTestKit
-							.engine(createTestEngine())
+							.engine(createDefaultTestEngine())
 							.selectors(selectMethod(SimpleExampleTests.class, "succeeding"))
 							.execute()
 							.allEvents();
@@ -198,7 +199,7 @@ class JqwikIntegrationTests {
 	void runMixedExamples() {
 
 		Events events = EngineTestKit
-							.engine(createTestEngine())
+							.engine(createDefaultTestEngine())
 							.selectors(selectPackage("examples.packageWithSeveralContainers"))
 							.execute()
 							.allEvents();
@@ -245,7 +246,7 @@ class JqwikIntegrationTests {
 	void runDisabledTests() {
 
 		Events events = EngineTestKit
-							.engine(createTestEngine())
+							.engine(createDefaultTestEngine())
 							.selectors(selectPackage("examples.packageWithDisabledTests"))
 							.execute()
 							.allEvents();
@@ -274,7 +275,7 @@ class JqwikIntegrationTests {
 	void statisticsAreBeingReported() {
 
 		Events events = EngineTestKit
-							.engine(createTestEngine(true))
+							.engine(createDefaultTestEngine())
 							.selectors(selectClass(ContainerWithStatistics.class))
 							.execute()
 							.allEvents();
@@ -292,7 +293,7 @@ class JqwikIntegrationTests {
 	void outOfMemoryErrorIsPropagatedToTop() {
 		Assertions.assertThatThrownBy(
 			() -> EngineTestKit
-					  .engine(createTestEngine(true))
+					  .engine(createDefaultTestEngine())
 					  .selectors(selectClass(ContainerWithOOME.class))
 					  .execute()
 		).isInstanceOf(OutOfMemoryError.class);

@@ -1,7 +1,5 @@
 - 1.5.5
 
-    - Suppress logging from tests called in JqwikIntegrationTests
-  
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
           - forType(Class<T> targetType, int depth)
