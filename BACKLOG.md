@@ -4,7 +4,6 @@
 
 - Tests for TestRunDatabase
 - Tests for TestRunData
-- Tests for JqwikProperties and its use in JqwikTestEngine
 
 ### General
 
@@ -48,17 +47,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
         - Let domains use that hook
         - Let ArbitraryProviders use that hook
 
-    - AroundPropertyHook
-        - Add parameter PropertyConfiguration
-            - tries()
-            - afterFailureMode()
-            - generationMode()
-            - shrinkingMode()
-            - randomSeed()
-        - Allow label to be set, alternative ChangeLabelHook
-        - Allow configuration attributes to be changed
-        - Alternative: Introduce PropertyConfigurationHook
-
     - @ResolveParameter method
         - Returns `Optional<MyType>` | `Optional<ParameterSupplier<MyType>>`
         - Optional Parameters: TypeUsage, LifecycleContext
@@ -76,36 +64,14 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - Across Properties: Does it make sense with non working IntelliJ support?
   - For ActionSequences
 
-- Configuration:
-  - Switch to JUnit platform configuration
-  - Find a way to set config params through command line or env variable
-
-    `request.getConfigurationParameters().get("jqwik.tries.default", Integer::valueOf)`
-
-    plus:
-
-    ```
-    test {
-        useJUnitPlatform {}
-        systemProperties = [
-            "jqwik.tries.default": 100
-        ]
-    }
-    ```
-
-    would do the trick.
-
 ### Reporting
 
 - `@Report(reportOnlyFailures = false)`
-
-- Report before/after state of samples
 
 - Reporting.ARBITRARIES|GENERATORS: report for each property which arbitraries are used.
     - Requires Arbitrary.describe() or something similar
 
 - Property runtime statistics (https://github.com/jlink/jqwik/issues/100)
-
     - Additional reporting data, e.g.
       - Typical runtimes: ~ 1m
       - Fraction of time spent in data generation: ~ 12%
@@ -137,9 +103,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
         https://en.wikipedia.org/wiki/Ziggurat_algorithm
         https://github.com/jeffhain/jafaran/blob/master/src/main/java/net/jafaran/Ziggurat.java
 
-- Probabilistic assertions
-  see experiments.ProbabilisticExperiments
-
 - Statefull Properties:
   - see https://github.com/jlink/jqwik/issues/80
   - Let action generation access the model state?
@@ -154,9 +117,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Arbitraries.series(n -> prime(n)[, maxN])
 
 - Arbitraries.fromStream(aStream[, maxLength])
-
-- Arbitraries.fromSize(Function<Integer, Arbitrary> f) : Arbitrary
-  Use current size to influence arbitrary generation
 
 - @Property(timeout=500) msecs to timeout a property run
 
@@ -189,7 +149,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 - Default Arbitraries, Generators and Shrinking for
   - Tuples.Tuple1/2/3/4/5/6/7/8
-  - Dates and times (LocalDateTime, Date, Calendar, etc.)
   - Files, Paths etc.
   - Arrays of Arrays
 
@@ -199,6 +158,10 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - @Regex(RegularExpression value) or composable RegexStringArbitrary
     see https://github.com/jlink/jqwik/issues/68
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
+
+- Implement grow() for more shrinkables
+    - CombinedShrinkable: grow each leg
+    - CollectShrinkable: grow each element
 
 
 ### Contracts / Specifications / Domain objects
