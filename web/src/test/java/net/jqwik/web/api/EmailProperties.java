@@ -8,7 +8,7 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.web.api.EmailTestingSupport.*;
+import static net.jqwik.web.api.WebTestingSupport.*;
 
 @Group
 class EmailProperties {
@@ -19,7 +19,7 @@ class EmailProperties {
 		@Property
 		void byDefaultOnlyStandardAddressesAreGenerated(@ForAll @Email String email) {
 			assertThat(isQuoted(getLocalPartOfEmail(email))).isFalse();
-			assertThat(isValidDomain(getEmailHost(email))).isTrue();
+			assertThat(isValidWebDomain(getEmailHost(email))).isTrue();
 		}
 
 		@Property

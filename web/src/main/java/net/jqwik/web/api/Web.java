@@ -2,6 +2,7 @@ package net.jqwik.web.api;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
 import net.jqwik.web.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -26,5 +27,14 @@ public class Web {
 		return new DefaultEmailArbitrary();
 	}
 
+	/**
+	 * Create an arbitrary that generates valid internet domain names.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.5.5")
+	public static Arbitrary<String> webDomains() {
+		return new DefaultWebDomainArbitrary();
+	}
 
 }

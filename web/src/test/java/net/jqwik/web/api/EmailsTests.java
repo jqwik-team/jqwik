@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
-import static net.jqwik.web.api.EmailTestingSupport.*;
+import static net.jqwik.web.api.WebTestingSupport.*;
 
 @Group
 @PropertyDefaults(edgeCases = EdgeCasesMode.MIXIN)
@@ -71,57 +71,12 @@ public class EmailsTests {
 			assertThat(localPart.charAt(localPart.length() - 1)).isNotEqualTo('.');
 		}
 
-		@Property(edgeCases = EdgeCasesMode.NONE)
-		void validCharsAfterAt(@ForAll("emails") String email) {
-			String domain = getEmailHost(email);
-			Assume.that(!isIPAddress(domain));
-			assertThat(domain.chars()).allMatch(c -> isIn(c, ALLOWED_CHARS_DOMAIN));
-		}
-
-		@Property
-		void validUseOfHyphenAndDotAfterAt(@ForAll("emails") String email) {
-			String domain = getEmailHost(email);
-			Assume.that(!isIPAddress(domain));
-			assertThat(domain.charAt(0)).isNotEqualTo('-');
-			assertThat(domain.charAt(domain.length() - 1)).isNotEqualTo('-');
-			assertThat(domain).contains(".");
-			assertThat(domain).doesNotContain("..");
-			assertThat(domain.charAt(0)).isNotEqualTo('.');
-			assertThat(domain.charAt(domain.length() - 1)).isNotEqualTo('.');
-			Assume.that(domain.length() >= 2);
-			assertThat(domain.charAt(domain.length() - 2)).isNotEqualTo('.');
-		}
-
-		@Property
-		void validMaxDomainLengthAfterAt(@ForAll("emails") String email) {
-			String domain = getEmailHost(email);
-			Assume.that(!isIPAddress(domain));
-			String[] domainParts = domain.split("\\.");
-			IntStream.range(0, domainParts.length).forEach(i -> {
-				assertThat(domainParts[i].length()).isLessThanOrEqualTo(63);
-			});
-		}
-
-		@Property(tries = 1000)
-		void tldNotAllNumeric(@ForAll("emails") String email) {
-			String domain = getEmailHost(email);
-			Assume.that(!isIPAddress(domain));
-			String[] domainParts = domain.split("\\.");
-			Assume.that(domainParts.length >= 2);
-			String tld = domainParts[domainParts.length - 1];
-			assertThat(containsAtLeastOneOf(tld, ALLOWED_NOT_NUMERIC_CHARS_TLD)).isTrue();
-		}
-
 		@Property(tries = 1000)
 		void validIPAddressAfterAt(@ForAll("withIPAddresses") String email) {
-			String domain = getEmailHost(email);
-			Assume.that(isIPAddress(domain));
-			String ipAddress = extractIPAddress(domain);
+			String host = getEmailHost(email);
+			Assume.that(isIPAddress(host));
+			String ipAddress = extractIPAddress(host);
 			assertThat(isValidIPAddress(ipAddress)).isTrue();
-		}
-
-		private boolean isIn(int c, String string) {
-			return string.contains(String.valueOf((char) c));
 		}
 
 	}
@@ -221,22 +176,6 @@ public class EmailsTests {
 					  });
 		}
 
-		@Property
-		void domainHostsWithTwoAndMorePartsAreGenerated(@ForAll("emails") String email) {
-			String domain = getEmailHost(email);
-			Assume.that(!isIPAddress(domain));
-			int domainParts = (int) (domain.chars().filter(v -> v == '.').count() + 1);
-			Statistics.label("Domain parts")
-					  .collect(domainParts)
-					  .coverage(coverage -> {
-						  coverage.check(2).count(c -> c >= 1);
-						  coverage.check(3).count(c -> c >= 1);
-						  coverage.check(4).count(c -> c >= 1);
-						  coverage.check(5).count(c -> c >= 1);
-						  coverage.check(6).count(c -> c >= 1);
-					  });
-		}
-
 	}
 
 	@Group
@@ -313,7 +252,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Web.emails();
 			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
-											 .map(EmailTestingSupport::getLocalPartOfEmail)
+											 .map(WebTestingSupport::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
 
 			assertThat(localParts).containsExactlyInAnyOrder("a", "A", "0");
@@ -324,7 +263,7 @@ public class EmailsTests {
 			Arbitrary<String> emails = Web.emails().allowQuotedLocalPart().filter(email -> email.startsWith("\""));
 			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
-											 .map(EmailTestingSupport::getLocalPartOfEmail)
+											 .map(WebTestingSupport::getLocalPartOfEmail)
 											 .collect(Collectors.toSet());
 
 			assertThat(localParts).containsExactlyInAnyOrder("\"a\"", "\" \"");
@@ -335,7 +274,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Web.emails();
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
-											 .map(EmailTestingSupport::getEmailHost)
+											 .map(WebTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).containsExactlyInAnyOrder("a.aa", "0.aa");
@@ -346,7 +285,7 @@ public class EmailsTests {
 			Arbitrary<String> emails = Web.emails().allowIpv4Host();
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
-											 .map(EmailTestingSupport::getEmailHost)
+											 .map(WebTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).contains(
@@ -359,7 +298,7 @@ public class EmailsTests {
 			EmailArbitrary emails = Web.emails().allowIpv6Host();
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
-											 .map(EmailTestingSupport::getEmailHost)
+											 .map(WebTestingSupport::getEmailHost)
 											 .collect(Collectors.toSet());
 
 			assertThat(hosts).contains(

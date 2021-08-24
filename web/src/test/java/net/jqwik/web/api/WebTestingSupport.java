@@ -2,7 +2,7 @@ package net.jqwik.web.api;
 
 import inet.ipaddr.*;
 
-class EmailTestingSupport {
+class WebTestingSupport {
 
 	public static final String ALLOWED_CHARS_DOMAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
 	public static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";
@@ -40,7 +40,7 @@ class EmailTestingSupport {
 		return host.substring(1, host.length() - 1);
 	}
 
-	static boolean isValidDomain(String domain) {
+	static boolean isValidWebDomain(String domain) {
 		if (!domain.contains(".")) {
 			return false;
 		}
@@ -82,4 +82,7 @@ class EmailTestingSupport {
 		return new IPAddressString(address).isIPv4();
 	}
 
+	static boolean isIn(int c, String string) {
+		return string.contains(String.valueOf((char) c));
+	}
 }

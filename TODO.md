@@ -1,5 +1,9 @@
 - 1.5.5
 
+    - Web.webDomains()
+      - @WebDomain
+      - User guide entry
+
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
           - forType(Class<T> targetType, int depth)
@@ -25,7 +29,7 @@
         - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
         
     - Web Module:
-        - Web.ipv4Addresses()|ipv6Addresses()|domains()|urls()
+        - Web.ipv4Addresses()|ipv6Addresses()|urls()
 
     - EdgeCases.Configuration.withProbability(double injectProbability)
 
