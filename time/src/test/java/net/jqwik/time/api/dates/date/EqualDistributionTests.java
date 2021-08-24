@@ -11,6 +11,7 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 import static net.jqwik.time.api.testingSupport.ForDate.*;
 
 @PropertyDefaults(tries = 2000, edgeCases = EdgeCasesMode.NONE)
+@StatisticsReport(onFailureOnly = true)
 public class EqualDistributionTests {
 
 	@Provide

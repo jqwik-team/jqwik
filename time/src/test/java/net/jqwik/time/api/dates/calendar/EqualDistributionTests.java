@@ -9,6 +9,7 @@ import net.jqwik.time.api.*;
 import net.jqwik.time.internal.properties.arbitraries.*;
 
 @PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
+@StatisticsReport(onFailureOnly = true)
 public class EqualDistributionTests {
 
 	@Provide

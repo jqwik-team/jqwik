@@ -10,6 +10,7 @@ import net.jqwik.time.api.*;
 import static java.time.temporal.ChronoUnit.*;
 
 @PropertyDefaults(tries = 2000)
+@StatisticsReport(onFailureOnly = true)
 public class EqualDistributionTests {
 
 	@Provide

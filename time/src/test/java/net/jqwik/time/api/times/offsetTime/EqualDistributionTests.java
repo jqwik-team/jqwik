@@ -8,6 +8,7 @@ import net.jqwik.time.api.*;
 
 import static java.time.temporal.ChronoUnit.*;
 
+@StatisticsReport(onFailureOnly = true)
 public class EqualDistributionTests {
 
 	@Provide
