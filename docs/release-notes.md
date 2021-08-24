@@ -37,6 +37,10 @@ title: jqwik Release Notes
 
 - Shrinking across several for-all parameters has been improved.
 
+- The Web module now supports
+  [web domain name generation](/docs/1.5.5/user-guide.html#web-domain-generation).
+
+
 #### Breaking Changes
 
 #### Bug Fixes

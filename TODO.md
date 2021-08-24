@@ -1,8 +1,5 @@
 - 1.5.5
 
-    - Web.webDomains()
-      - User guide entry
-
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
           - forType(Class<T> targetType, int depth)

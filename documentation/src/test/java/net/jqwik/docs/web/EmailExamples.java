@@ -1,4 +1,4 @@
-package net.jqwik.docs;
+package net.jqwik.docs.web;
 
 import net.jqwik.api.*;
 import net.jqwik.web.api.*;

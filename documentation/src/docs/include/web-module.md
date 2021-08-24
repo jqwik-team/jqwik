@@ -1,6 +1,9 @@
 This module's artefact name is `jqwik-web`. It's supposed to provide arbitraries,
-default generation and annotations for web related types. Currently only
-[email generation](#email-address-generation) is supported.
+default generation and annotations for web related types. 
+Currently it supports the generation of
+
+- [Email addresses](#email-address-generation)
+- [Web Domain Names](#web-domain-generation)
 
 This module is part of jqwik's default dependencies.
 
@@ -52,3 +55,25 @@ void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = true, ipv4Host = 
     assertThat(email).contains("@");
 }
 ```
+
+
+#### Web Domain Generation
+
+To generate web domain names
+
+- call up the static method [`Web.webDomains()`](/docs/${docsVersion}/javadoc/net/jqwik/web/api/Web.html#webDomains())
+
+- or use the annotation [`@WebDomain`](/docs/${docsVersion}/javadoc/net/jqwik/web/api/WebDomain.html)
+  on `@ForAll` parameters of type `String`.
+
+Here's an example:
+
+```java
+@Property
+void topLevelDomainCannotHaveSingleLetter(@ForAll @WebDomain String domain) {
+	int lastDot = domain.lastIndexOf('.');
+	String tld = domain.substring(lastDot + 1);
+	Assertions.assertThat(tld).hasSizeGreaterThan(1);
+}
+```
+
