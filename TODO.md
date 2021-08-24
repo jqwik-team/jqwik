@@ -1,26 +1,29 @@
 - 1.5.5
 
+    - Time Module (zinki97):
+        - DateTimes. See https://github.com/jlink/jqwik/issues/175
+            - Generate OffsetDateTime, Date, Calendar
+
+    - Generate Documentation
+    - Fix release notes
+    - Release
+
+- 1.5.x
+
     - Arbitraries.forType(Class<T> targetType)
-        - Recursive use
-          - forType(Class<T> targetType, int depth)
+      - Recursive use
+        - forType(Class<T> targetType, int depth)
           - @UseType(depth = 1)
-        - See https://github.com/jlink/jqwik/issues/191
+      - See https://github.com/jlink/jqwik/issues/191
 
     - Add capability to easily generate java beans with Builders 
       (if that really makes sense).
       ```
       Beans.ofType(...)
-             .excludeProperties(...)
-             .use().forProperties(...)
+           .excludeProperties(...)
+           .use().forProperties(...)
       ```
       
-    - Time Module (zinki97):
-        - DateTimes. See https://github.com/jlink/jqwik/issues/175
-        - Generate OffsetDateTime, Date, Calendar
-
-
-- 1.5.x
-
     - Time Module:
         - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
         
