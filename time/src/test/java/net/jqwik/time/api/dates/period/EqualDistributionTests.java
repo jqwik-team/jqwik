@@ -6,10 +6,8 @@ import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.time.api.*;
 
-import static net.jqwik.api.statistics.StatisticsReport.StatisticsReportMode.*;
-
-@StatisticsReport(onFailureOnly = true)
 @PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
+@StatisticsReport(onFailureOnly = true)
 public class EqualDistributionTests {
 
 	@Provide

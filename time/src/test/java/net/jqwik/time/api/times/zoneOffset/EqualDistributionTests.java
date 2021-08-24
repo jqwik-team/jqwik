@@ -6,6 +6,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.time.api.*;
 
+@StatisticsReport(onFailureOnly = true)
 public class EqualDistributionTests {
 
 	@Provide
