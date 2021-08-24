@@ -1,7 +1,6 @@
 - 1.5.5
 
     - Web.webDomains()
-      - @WebDomain
       - User guide entry
 
     - Arbitraries.forType(Class<T> targetType)

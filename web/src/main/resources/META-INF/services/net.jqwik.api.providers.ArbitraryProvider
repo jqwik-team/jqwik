@@ -1,1 +1,2 @@
 net.jqwik.web.EmailArbitraryProvider
+net.jqwik.web.WebDomainArbitraryProvider

@@ -23,6 +23,11 @@ class WebDomainTests {
 	}
 
 	@Property
+	boolean webDomainAnnotationIsHonoured(@ForAll @WebDomain String domain) {
+		return isValidWebDomain(domain);
+	}
+
+	@Property
 	@StatisticsReport(onFailureOnly = true)
 	void domainHostsWithTwoAndMorePartsAreGenerated(@ForAll("webDomains") String domain) {
 		int domainParts = (int) (domain.chars().filter(v -> v == '.').count() + 1);
@@ -78,8 +83,8 @@ class WebDomainTests {
 	class ValidWebDomains {
 
 		@Property
-		void allDomainsAreValid(@ForAll("webDomains") String domain) {
-			WebTestingSupport.isValidWebDomain(domain);
+		boolean allDomainsAreValid(@ForAll("webDomains") String domain) {
+			return isValidWebDomain(domain);
 		}
 
 		@Property
