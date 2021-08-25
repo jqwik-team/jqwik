@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.testing.*;
 import net.jqwik.time.api.*;
 import net.jqwik.time.api.constraints.*;
 
@@ -30,6 +31,7 @@ public class InvalidCombinationTests {
 	}
 
 	@Property(maxDiscardRatio = 25)
+	@SuppressLogging
 	void hourMinuteSecondTimeBetween(
 		@ForAll @Precision(value = NANOS) LocalTime min,
 		@ForAll @Precision(value = NANOS) LocalTime max,
@@ -59,6 +61,7 @@ public class InvalidCombinationTests {
 	}
 
 	@Property(maxDiscardRatio = 25)
+	@SuppressLogging
 	void hourMinuteSecondBetweenAndBetween(
 		@ForAll LocalDate date,
 		@ForAll @Precision(value = NANOS) LocalTime min,
