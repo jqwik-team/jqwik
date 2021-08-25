@@ -9,20 +9,20 @@ import static org.assertj.core.api.Assertions.*;
 
 public class SimpleExampleTests {
 
-	@Property
+	@Example
 	void succeeding() {
 	}
 
-	@Property
+	@Example
 	static void staticExample() {
 	}
 
-	@Property
+	@Example
 	@DisplayName("with Jupiter annotation")
 	void withJupiterAnnotation() {
 	}
 
-	@Property
+	@Example
 	void failing() {
 		fail("failing");
 	}

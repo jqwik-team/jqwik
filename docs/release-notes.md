@@ -43,6 +43,10 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- Properties with single try (aka examples) with at least one `@ForAll` parameter will now
+  produce a test report even if they succeed.
+  See https://github.com/jlink/jqwik/issues/217.
+
 #### Bug Fixes
 
 - Fixed edge cases performance problem. 

@@ -7,6 +7,7 @@ import examples.packageWithDisabledTests.*;
 import examples.packageWithErrors.*;
 import examples.packageWithFailings.*;
 import examples.packageWithInheritance.*;
+import examples.packageWithProperties.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
 import org.assertj.core.api.Assertions;
@@ -29,7 +30,7 @@ import static org.junit.platform.testkit.engine.EventType.*;
 @SuppressLogging
 class JqwikIntegrationTests {
 
-	private JqwikConfiguration configuration(final boolean useJunitPlatformReporter) {
+	private JqwikConfiguration configuration(final boolean reportOnlyFailures) {
 		return new JqwikConfiguration() {
 			@Override
 			public PropertyAttributesDefaults propertyDefaultValues() {
@@ -60,18 +61,18 @@ class JqwikIntegrationTests {
 
 			@Override
 			public boolean useJunitPlatformReporter() {
-				return useJunitPlatformReporter;
+				return true;
 			}
 
 			@Override
 			public boolean reportOnlyFailures() {
-				return true;
+				return reportOnlyFailures;
 			}
 		};
 	}
 
-	private JqwikTestEngine createTestEngine(final boolean useJunitPlatformReporter) {
-		return new JqwikTestEngine(unusedConfigurationProperties -> configuration(useJunitPlatformReporter));
+	private JqwikTestEngine createTestEngine(final boolean reportOnlyFailures) {
+		return new JqwikTestEngine(unusedConfigurationProperties -> configuration(reportOnlyFailures));
 	}
 
 	private JqwikTestEngine createDefaultTestEngine() {
@@ -79,53 +80,49 @@ class JqwikIntegrationTests {
 	}
 
 	@Example
-	@SuppressLogging
 	void runTestsFromRootDir() {
 		Set<Path> classpathRoots = JqwikReflectionSupport.getAllClasspathRootDirectories();
 		ClasspathRootSelector[] classpathRootSelectors = selectClasspathRoots(classpathRoots)
-															 .toArray(new ClasspathRootSelector[classpathRoots.size()]);
+			.toArray(new ClasspathRootSelector[classpathRoots.size()]);
 		Events events = EngineTestKit
-							.engine(createDefaultTestEngine())
-							.selectors(classpathRootSelectors)
-							.filters((Filter<?>) PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
-							.execute()
-							.allEvents();
+			.engine(createDefaultTestEngine())
+			.selectors(classpathRootSelectors)
+			.filters((Filter<?>) PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
+			.execute()
+			.allEvents();
 
 		assertSimpleExampleTests(events);
 	}
 
 	@Example
-	@SuppressLogging
 	void runTestsFromPackage() {
 		Events events = EngineTestKit
-							.engine(createDefaultTestEngine())
-							.selectors(selectPackage("examples.packageWithSingleContainer"))
-							.execute()
-							.allEvents();
+			.engine(createDefaultTestEngine())
+			.selectors(selectPackage("examples.packageWithSingleContainer"))
+			.execute()
+			.allEvents();
 
 		assertSimpleExampleTests(events);
 	}
 
 	@Example
-	@SuppressLogging
 	void runTestsFromClass() {
 		Events events = EngineTestKit
-							.engine(createDefaultTestEngine())
-							.selectors(selectClass(SimpleExampleTests.class))
-							.execute()
-							.allEvents();
+			.engine(createDefaultTestEngine())
+			.selectors(selectClass(SimpleExampleTests.class))
+			.execute()
+			.allEvents();
 
 		assertSimpleExampleTests(events);
 	}
 
 	@Example
-	@SuppressLogging
 	void runTestsFromClassWithInheritance() {
 		Events events = EngineTestKit
-							.engine(createDefaultTestEngine())
-							.selectors(selectClass(ContainerWithInheritance.class))
-							.execute()
-							.allEvents();
+			.engine(createDefaultTestEngine())
+			.selectors(selectClass(ContainerWithInheritance.class))
+			.execute()
+			.allEvents();
 
 		events.assertEventsMatchLoosely(
 			event(engine(), started()),
@@ -146,10 +143,10 @@ class JqwikIntegrationTests {
 	@Example
 	void failingConstructorFailsTests() {
 		Events events = EngineTestKit
-							.engine(createDefaultTestEngine())
-							.selectors(selectClass(ContainerWithFailingConstructor.class))
-							.execute()
-							.allEvents();
+			.engine(createDefaultTestEngine())
+			.selectors(selectClass(ContainerWithFailingConstructor.class))
+			.execute()
+			.allEvents();
 
 		events.assertEventsMatchExactly(
 			event(engine(), started()),
@@ -180,10 +177,10 @@ class JqwikIntegrationTests {
 	@Example
 	void runTestsFromMethod() {
 		Events events = EngineTestKit
-							.engine(createDefaultTestEngine())
-							.selectors(selectMethod(SimpleExampleTests.class, "succeeding"))
-							.execute()
-							.allEvents();
+			.engine(createDefaultTestEngine())
+			.selectors(selectMethod(SimpleExampleTests.class, "succeeding"))
+			.execute()
+			.allEvents();
 
 		events.assertEventsMatchExactly(
 			event(engine(), started()),
@@ -199,10 +196,10 @@ class JqwikIntegrationTests {
 	void runMixedExamples() {
 
 		Events events = EngineTestKit
-							.engine(createDefaultTestEngine())
-							.selectors(selectPackage("examples.packageWithSeveralContainers"))
-							.execute()
-							.allEvents();
+			.engine(createDefaultTestEngine())
+			.selectors(selectPackage("examples.packageWithSeveralContainers"))
+			.execute()
+			.allEvents();
 
 		// Order of classes is platform dependent :-(
 		// events.assertEventsMatchLooselyInOrder(
@@ -246,10 +243,10 @@ class JqwikIntegrationTests {
 	void runDisabledTests() {
 
 		Events events = EngineTestKit
-							.engine(createDefaultTestEngine())
-							.selectors(selectPackage("examples.packageWithDisabledTests"))
-							.execute()
-							.allEvents();
+			.engine(createDefaultTestEngine())
+			.selectors(selectPackage("examples.packageWithDisabledTests"))
+			.execute()
+			.allEvents();
 
 		events.assertEventsMatchLooselyInOrder(
 			event(container(DisabledTests.class), started()),
@@ -275,10 +272,10 @@ class JqwikIntegrationTests {
 	void statisticsAreBeingReported() {
 
 		Events events = EngineTestKit
-							.engine(createDefaultTestEngine())
-							.selectors(selectClass(ContainerWithStatistics.class))
-							.execute()
-							.allEvents();
+			.engine(createDefaultTestEngine())
+			.selectors(selectClass(ContainerWithStatistics.class))
+			.execute()
+			.allEvents();
 
 		events.assertEventsMatchLooselyInOrder(
 			event(container(ContainerWithStatistics.class), started()),
@@ -293,10 +290,64 @@ class JqwikIntegrationTests {
 	void outOfMemoryErrorIsPropagatedToTop() {
 		Assertions.assertThatThrownBy(
 			() -> EngineTestKit
-					  .engine(createDefaultTestEngine())
-					  .selectors(selectClass(ContainerWithOOME.class))
-					  .execute()
+				.engine(createDefaultTestEngine())
+				.selectors(selectClass(ContainerWithOOME.class))
+				.execute()
 		).isInstanceOf(OutOfMemoryError.class);
+	}
+
+	@Group
+	class Reporting {
+
+		@Example
+		void doNotReportSuccessfulExampleWithoutForAllParameter() {
+			Events events = EngineTestKit
+				.engine(createTestEngine(false))
+				.selectors(selectMethod(TestsForReporting.class, "succeeding"))
+				.execute()
+				.allEvents();
+
+			events.assertThatEvents().noneMatch(event -> event.getType() == REPORTING_ENTRY_PUBLISHED);
+		}
+
+		@Example
+		void doReportFailingExample() {
+			Events events = EngineTestKit
+				.engine(createTestEngine(false))
+				.selectors(selectMethod(TestsForReporting.class, "failing"))
+				.execute()
+				.allEvents();
+
+			events.assertEventsMatchLoosely(
+				reported("TestsForReporting:failing")
+			);
+		}
+
+		@Example
+		void doReportSuccessfulExampleWithForAllParameter() {
+			Events events = EngineTestKit
+				.engine(createTestEngine(false))
+				.selectors(selectMethod(TestsForReporting.class, "succeedingWithForAll", String.class.getName()))
+				.execute()
+				.allEvents();
+
+			events.assertEventsMatchLoosely(
+				reported("TestsForReporting:succeedingWithForAll")
+			);
+		}
+
+		@Example
+		void doReportPropertyWithoutParameters() {
+			Events events = EngineTestKit
+				.engine(createTestEngine(false))
+				.selectors(selectMethod(TestsForReporting.class, "succeedingPropertyWithoutParameters"))
+				.execute()
+				.allEvents();
+
+			events.assertEventsMatchLoosely(
+				reported("TestsForReporting:succeedingPropertyWithoutParameters")
+			);
+		}
 	}
 
 	private Condition<Event> reported(String key) {

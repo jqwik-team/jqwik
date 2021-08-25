@@ -1,9 +1,11 @@
 package net.jqwik.engine.execution;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
+import org.junit.platform.commons.support.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -150,7 +152,19 @@ public class PropertyMethodExecutor {
 		if (executionResult.status() != PropertyExecutionResult.Status.SUCCESSFUL) {
 			return true;
 		}
+		if (hasAtLeastOneForAllParameter(methodDescriptor.getTargetMethod())) {
+			return true;
+		}
 		return executionResult.countTries() > 1;
+	}
+
+	private boolean hasAtLeastOneForAllParameter(Method targetMethod) {
+		for (Parameter parameter : targetMethod.getParameters()) {
+			if (AnnotationSupport.findAnnotation(parameter, ForAll.class).isPresent()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
