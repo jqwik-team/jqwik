@@ -58,7 +58,7 @@ public class EqualDistributionTests {
 		Statistics.label("Leap years")
 				  .collect(new GregorianCalendar().isLeapYear(dateTime.getYear()))
 				  .coverage(coverage -> {
-					  coverage.check(true).percentage(p -> p >= 20);
+					  coverage.check(true).percentage(p -> p >= 15);
 					  coverage.check(false).percentage(p -> p >= 65);
 				  });
 	}
