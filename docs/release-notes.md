@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.5.5-SNAPSHOT](#155-snapshot)
+- [1.5.5](#155)
 - [1.5.4](#154)
 - [1.5.3](#153)
 - [1.5.2](#152)
@@ -26,7 +26,13 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.5.5-SNAPSHOT
+## 1.5.5
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/1.5.5/user-guide.html">User guide</a>
+and
+<a href="/docs/1.5.5/javadoc/index.html">javadoc</a>
+</p>
 
 #### New and Enhanced Features
 
@@ -40,6 +46,7 @@ title: jqwik Release Notes
 - The Web module now supports
   [web domain name generation](/docs/1.5.5/user-guide.html#web-domain-generation).
 
+- The Time module now supports the generation of `java.time.OffsetDateTime` instances.
 
 #### Breaking Changes
 

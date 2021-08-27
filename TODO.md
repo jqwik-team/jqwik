@@ -1,13 +1,3 @@
-- 1.5.5
-
-    - Time Module (zinki97):
-        - DateTimes. See https://github.com/jlink/jqwik/issues/175
-            - Generate OffsetDateTime, Date, Calendar
-
-    - Generate Documentation
-    - Fix release notes
-    - Release
-
 - 1.5.x
 
     - Arbitraries.forType(Class<T> targetType)
