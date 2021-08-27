@@ -1,3 +1,8 @@
+- 1.5.6
+
+    - Bug: `@StatisticsReport(onFailureOnly = true)` does not work 
+      when failure is a statistics check failure.
+  
 - 1.5.x
 
     - Arbitraries.forType(Class<T> targetType)

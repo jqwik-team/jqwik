@@ -38,14 +38,14 @@ public class EqualDistributionTests {
 				  .coverage(this::check24Coverage);
 	}
 
-	@Property
+	@Property(tries = 2000)
 	void minutes(@ForAll("times") OffsetTime time) {
 		Statistics.label("Minutes")
 				  .collect(time.getMinute())
 				  .coverage(this::check60Coverage);
 	}
 
-	@Property
+	@Property(tries = 2000)
 	void seconds(@ForAll("times") OffsetTime time) {
 		Statistics.label("Seconds")
 				  .collect(time.getSecond())
