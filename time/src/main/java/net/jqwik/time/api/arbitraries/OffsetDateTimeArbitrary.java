@@ -11,10 +11,10 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Fluent interface to configure the generation of offset date time values.
- * All generated date times use the Gregorian Calendar, even if they are before October 15, 1582.
+ * All generated offset date times use the Gregorian Calendar, even if they are before October 15, 1582.
  * By default, offset date times with years between 1900 and 2500 are generated.
  */
-@API(status = EXPERIMENTAL, since = "1.5.4")
+@API(status = EXPERIMENTAL, since = "1.5.5")
 public interface OffsetDateTimeArbitrary extends Arbitrary<OffsetDateTime> {
 
 	/**

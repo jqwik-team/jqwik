@@ -25,9 +25,8 @@ public class ShrinkingTests {
 	@Property(tries = 40)
 	void shrinksToSmallestFailingValue(@ForAll Random random) {
 		OffsetDateTimeArbitrary dateTimes = DateTimes.offsetDateTimes();
-		TestingFalsifier<OffsetDateTime> falsifier = dateTime -> dateTime.isBefore(OffsetDateTime.of(LocalDateTime
-																										 .of(2013, MAY, 25, 13, 12, 55), ZoneOffset
-																																			 .ofHours(4)));
+		TestingFalsifier<OffsetDateTime> falsifier =
+			dateTime -> dateTime.isBefore(OffsetDateTime.of(LocalDateTime.of(2013, MAY, 25, 13, 12, 55), ZoneOffset.ofHours(4)));
 		OffsetDateTime value = falsifyThenShrink(dateTimes, random, falsifier);
 		assertThat(value).isEqualTo(OffsetDateTime.of(LocalDateTime.of(2013, MAY, 25, 13, 12, 55), ZoneOffset.ofHours(4)));
 	}

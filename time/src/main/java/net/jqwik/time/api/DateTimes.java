@@ -48,7 +48,7 @@ public class DateTimes {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.4")
+	@API(status = EXPERIMENTAL, since = "1.5.5")
 	public static OffsetDateTimeArbitrary offsetDateTimes() {
 		return new DefaultOffsetDateTimeArbitrary();
 	}
