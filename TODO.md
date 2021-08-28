@@ -2,6 +2,8 @@
 
     - Bug: `@StatisticsReport(onFailureOnly = true)` does not work 
       when failure is a statistics check failure.
+    - Verify StringArbitrary.minLength|maxLength.
+      https://github.com/jlink/jqwik/issues/221 
   
 - 1.5.x
 
