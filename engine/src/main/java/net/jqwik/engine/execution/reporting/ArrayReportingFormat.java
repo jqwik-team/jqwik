@@ -41,6 +41,13 @@ public class ArrayReportingFormat implements SampleReportingFormat {
 			}
 			return list;
 		}
+		if (arrayClass.equals(char[].class)) {
+			List<Character> list = new ArrayList<>();
+			for (char v : ((char[]) value)) {
+				list.add(v);
+			}
+			return list;
+		}
 		if (arrayClass.equals(float[].class)) {
 			List<Float> list = new ArrayList<>();
 			for (float v : ((float[]) value)) {
