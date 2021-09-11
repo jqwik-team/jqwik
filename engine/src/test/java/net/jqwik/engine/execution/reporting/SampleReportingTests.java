@@ -517,6 +517,23 @@ class SampleReportingTests {
 			}
 
 			@Example
+			void charArray() {
+				char[] array = {'j', 'A', 'v', 'a'};
+				ValueReport report = ValueReport.of(array);
+
+				String expectedCompact = "char[] [j, A, v, a]";
+				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
+
+				report.report(lineReporter, 2, "");
+				assertThat(lineReporter.lines).containsSequence(
+					"    char[] [",
+					"      j, A, v, a",
+					"    ]"
+				);
+			}
+
+			@Example
 			void primitiveArray() {
 				int[] array = new int[]{1, 2, 3, 4};
 				ValueReport report = ValueReport.of(array);
