@@ -51,7 +51,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	public Shrinkable<C> next(Random random) {
 		int listSize = sizeGenerator.apply(random);
 		List<Shrinkable<T>> listOfShrinkables = new ArrayList<>();
-		List<T> existingValues = new ArrayList<>();
+		Collection<T> existingValues = new LinkedHashSet<>();
 
 		// Raise probability for no duplicates even in large containers to approx 2 percent
 		// boolean noDuplicates = false;
@@ -86,7 +86,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 
 	private Shrinkable<T> nextUntilAccepted(
 		Random random,
-		List<T> existingValues,
+		Collection<T> existingValues,
 		Function<Random, Shrinkable<T>> fetchShrinkable,
 		boolean noDuplicates
 	) {
@@ -111,7 +111,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		);
 	}
 
-	private boolean checkSpecifiedUniqueness(List<T> elements, T value) {
+	private boolean checkSpecifiedUniqueness(Collection<T> elements, T value) {
 		return checkValueUniqueIn(uniquenessExtractors, value, elements);
 	}
 
