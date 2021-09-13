@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.5.6-SNAPSHOT](#156-snapshot)
 - [1.5.5](#155)
 - [1.5.4](#154)
 - [1.5.3](#153)
@@ -25,6 +26,18 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
+## 1.5.6-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Upgraded to JUnit platform 1.8.0
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+- Added reporting format for type `char[]`. 
 
 ## 1.5.5
 
