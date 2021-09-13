@@ -51,7 +51,6 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	public Shrinkable<C> next(Random random) {
 		int listSize = sizeGenerator.apply(random);
 		List<Shrinkable<T>> listOfShrinkables = new ArrayList<>();
-		Collection<T> existingValues = new LinkedHashSet<>();
 
 		// Raise probability for no duplicates even in large containers to approx 2 percent
 		// boolean noDuplicates = false;
@@ -59,6 +58,8 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 								   && listSize >= 2
 								   && uniquenessExtractors.isEmpty()
 								   && random.nextInt(100) <= 2;
+
+		Collection<T> existingValues = noDuplicates ? new LinkedHashSet<>() : new ArrayList<>();
 
 		while (listOfShrinkables.size() < listSize) {
 			try {
