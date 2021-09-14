@@ -433,6 +433,40 @@ class ArbitrariesTests {
 
 	}
 
+	@Group
+	@Label("list()")
+	class Lists {
+
+		@Property(tries = 10)
+		void unique(@ForAll Random random) {
+			Arbitrary<List<Byte>> uniqueBytes = Arbitraries.bytes().list().uniqueElements();
+			assertAllGenerated(uniqueBytes.generator(10_000), random, bytes -> bytes.size() == bytes.stream().distinct().count());
+		}
+
+		@Property(tries = 10)
+		void uniqueBy(@ForAll Random random) {
+			class ByteAbs {
+				public final byte value;
+				public ByteAbs(byte value) {
+					this.value = value;
+				}
+				@Override public int hashCode() {
+					return Integer.hashCode( Math.abs(value) );
+				}
+				@Override public boolean equals( Object o ) {
+					return o instanceof ByteAbs && Math.abs(value) == Math.abs(((ByteAbs) o).value);
+				}
+			}
+			Function<ByteAbs,Object> keyExtractor = x -> x.value;
+			Arbitrary<List<ByteAbs>> uniqueBytes = Arbitraries.bytes().map(ByteAbs::new).list().uniqueElements(keyExtractor);
+			// make sure that items are unique by keyExtractor
+			assertAllGenerated(uniqueBytes.generator(10_000), random, bytes -> bytes.size() == bytes.stream().map(keyExtractor).distinct().count());
+			// make sure that items are not unique by ByteAbs::hashCode and ByteAbs::equals
+			assertAtLeastOneGenerated(uniqueBytes.generator(10_000), random, bytes -> bytes.size() > bytes.stream().distinct().count());
+		}
+
+	}
+
 	class Tree {
 		final String name;
 		final Tree left;
