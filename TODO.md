@@ -4,6 +4,7 @@
       when failure is a statistics check failure.
     - Verify StringArbitrary.minLength|maxLength.
       https://github.com/jlink/jqwik/issues/221 
+    - Use AnnotationSupport.findAnnotation(Class,Class,SearchOption) in JqwikAnnotationSupport
   
 - 1.5.x
 
