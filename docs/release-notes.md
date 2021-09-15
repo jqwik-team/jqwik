@@ -38,6 +38,9 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- Parameters for `StringArbitrary.ofMinLength()` and `StringArbitrary.ofMaxLength()` are validated.
+  See https://github.com/jlink/jqwik/issues/221.
+
 #### Bug Fixes
 
 - Added reporting format for type `char[]`.

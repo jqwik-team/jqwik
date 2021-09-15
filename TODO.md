@@ -1,11 +1,10 @@
 - 1.5.6
 
-    - Verify StringArbitrary.minLength|maxLength.
-      https://github.com/jlink/jqwik/issues/221
-
     - Use AnnotationSupport.findAnnotation(Class,Class,SearchOption) in JqwikAnnotationSupport
   
 - 1.5.x
+
+    - Verify size settings for all Collection Arbitraries
 
     - Arbitraries.forType(Class<T> targetType)
       - Recursive use

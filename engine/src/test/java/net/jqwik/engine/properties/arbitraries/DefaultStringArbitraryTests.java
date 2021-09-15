@@ -10,6 +10,8 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.statistics.*;
 
+import static org.assertj.core.api.Assertions.*;
+
 import static net.jqwik.testing.TestingSupport.*;
 
 @StatisticsReport(onFailureOnly = true)
@@ -308,9 +310,9 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 		@Provide("a to z, 1 to 3")
 		Arbitrary<String> aToZand1to3() {
 			return new DefaultStringArbitrary()
-					   .withCharRange('a', 'z')
-					   .withCharRange('1', '3')
-					   .ofLength(1);
+				.withCharRange('a', 'z')
+				.withCharRange('1', '3')
+				.ofLength(1);
 		}
 
 		@Property(tries = 2000, edgeCases = EdgeCasesMode.NONE)
@@ -332,4 +334,32 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 
 	}
 
+	@Group
+	@PropertyDefaults(tries = 100)
+	class InvalidValues {
+
+		@Property
+		void minLengthOutOfRange(@ForAll int minLength) {
+			Assume.that(minLength < 0);
+			assertThatThrownBy(
+				() -> Arbitraries.strings().ofMinLength(minLength)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void maxLengthOutOfRange(@ForAll int maxLength) {
+			Assume.that(maxLength < 0);
+			assertThatThrownBy(
+				() -> Arbitraries.strings().ofMaxLength(maxLength)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void minLargerThanMax(@ForAll @IntRange(max = 2147483647) int minLength, @IntRange(min = 1) @ForAll int maxLength) {
+			Assume.that(maxLength < minLength);
+			assertThatThrownBy(
+				() -> Arbitraries.strings().ofMinLength(minLength).ofMaxLength(maxLength)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+	}
 }
