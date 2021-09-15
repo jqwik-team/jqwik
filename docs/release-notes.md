@@ -40,7 +40,12 @@ title: jqwik Release Notes
 
 #### Bug Fixes
 
-- Added reporting format for type `char[]`. 
+- Added reporting format for type `char[]`.
+
+- `@StatisticsReport(onFailureOnly = true)` now also works when failure 
+  is a statistics check failure.`@StatisticsReport(onFailureOnly = true)` now also works when failure 
+  is a statistics check failure.
+
 
 ## 1.5.5
 

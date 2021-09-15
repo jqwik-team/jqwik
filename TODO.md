@@ -1,9 +1,8 @@
 - 1.5.6
 
-    - Bug: `@StatisticsReport(onFailureOnly = true)` does not work 
-      when failure is a statistics check failure.
     - Verify StringArbitrary.minLength|maxLength.
-      https://github.com/jlink/jqwik/issues/221 
+      https://github.com/jlink/jqwik/issues/221
+
     - Use AnnotationSupport.findAnnotation(Class,Class,SearchOption) in JqwikAnnotationSupport
   
 - 1.5.x

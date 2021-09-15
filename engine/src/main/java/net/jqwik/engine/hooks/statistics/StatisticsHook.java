@@ -37,11 +37,12 @@ public class StatisticsHook implements AroundPropertyHook {
 		PropertyExecutionResult testExecutionResult = property.execute();
 
 		Map<String, StatisticsCollectorImpl> collectors = collectorsStore.get();
-		boolean isFailure = testExecutionResult.status() == PropertyExecutionResult.Status.FAILED;
-		createStatisticsReports(collectors, context, isFailure);
 		if (testExecutionResult.status() == PropertyExecutionResult.Status.SUCCESSFUL) {
-			return checkCoverages(testExecutionResult, collectors.values());
+			testExecutionResult = checkCoverages(testExecutionResult, collectors.values());
 		}
+
+		createStatisticsReports(collectors, context, testExecutionResult);
+
 		return testExecutionResult;
 	}
 
@@ -63,13 +64,14 @@ public class StatisticsHook implements AroundPropertyHook {
 	private void createStatisticsReports(
 		Map<String, StatisticsCollectorImpl> collectors,
 		PropertyLifecycleContext context,
-		boolean isFailure
+		PropertyExecutionResult testExecutionResult
 	) {
 		List<StatisticsReport> statisticsReportAnnotations = JqwikAnnotationSupport.findRepeatableAnnotationOnElementOrContainer(
 			context.targetMethod(),
 			StatisticsReport.class
 		);
 
+		boolean isFailure = testExecutionResult.status() == PropertyExecutionResult.Status.FAILED;
 		Set<Tuple3<String, StatisticsCollectorImpl, StatisticsReportFormat>> reports =
 			collectors.entrySet().stream()
 					  .map(entry -> {
