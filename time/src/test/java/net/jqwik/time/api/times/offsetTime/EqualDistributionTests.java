@@ -52,7 +52,7 @@ public class EqualDistributionTests {
 				  .coverage(this::check60Coverage);
 	}
 
-	@Property
+	@Property(tries = 2000)
 	void milliseconds(@ForAll("precisionMilliseconds") OffsetTime time) {
 
 		Statistics.label("Milliseconds x--")
@@ -69,7 +69,7 @@ public class EqualDistributionTests {
 
 	}
 
-	@Property
+	@Property(tries = 2000)
 	void microseconds(@ForAll("precisionMicroseconds") OffsetTime time) {
 
 		Statistics.label("Microseconds x--")
@@ -86,7 +86,7 @@ public class EqualDistributionTests {
 
 	}
 
-	@Property
+	@Property(tries = 2000)
 	void nanoseconds(@ForAll("precisionNanoseconds") OffsetTime time) {
 
 		Statistics.label("Nanoseconds x--")
