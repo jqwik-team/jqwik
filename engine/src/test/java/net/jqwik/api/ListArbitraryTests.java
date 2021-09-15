@@ -1,6 +1,7 @@
 package net.jqwik.api;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import org.junit.jupiter.api.*;
@@ -225,6 +226,61 @@ class ListArbitraryTests {
 		});
 	}
 
+	/**
+	 * Motivated by performance issues when generating large lists.
+	 * See https://github.com/jlink/jqwik/pull/227
+	 */
+	@Group
+	class LargeLists {
+
+		int largeSize = 5000;
+
+		class IntegerAbs {
+			public final int value;
+			public IntegerAbs(int value) {
+				this.value = value;
+			}
+			@Override public int hashCode() {
+				return Integer.hashCode( Math.abs(value) );
+			}
+			@Override public boolean equals( Object o ) {
+				return o instanceof IntegerAbs && Math.abs(value) == Math.abs(((IntegerAbs) o).value);
+			}
+		}
+
+		@Example
+		void plain(@ForAll Random random) {
+			Arbitrary<List<Integer>> listOfBytes = Arbitraries.integers().list().ofSize(largeSize);
+			assertAllGenerated(listOfBytes.generator(1000), random, bytes -> bytes.size() == largeSize);
+		}
+
+		@Example
+		void unique(@ForAll Random random) {
+			Arbitrary<List<Integer>> uniqueIntegers = Arbitraries.integers().list().ofSize(largeSize).uniqueElements();
+			RandomGenerator<List<Integer>> generator = uniqueIntegers.generator(1000);
+			List<Integer> list = generator.next(random).value();
+			assertThat(list).hasSize(largeSize);
+			assertThat(list).hasSize((int) list.stream().distinct().count());
+		}
+
+		@Example
+		void uniqueBy(@ForAll Random random) {
+			Function<IntegerAbs,Object> keyExtractor = x -> x.value;
+			Arbitrary<List<IntegerAbs>> uniqueBytes = Arbitraries.integers().map(IntegerAbs::new).list().ofSize(largeSize).uniqueElements(keyExtractor);
+			RandomGenerator<List<IntegerAbs>> generator = uniqueBytes.generator(1000);
+			List<IntegerAbs> list = generator.next(random).value();
+			assertThat(list).hasSize(largeSize);
+
+			// make sure that items are unique by keyExtractor
+			long distinctSize = list.stream().map(keyExtractor).distinct().count();
+			assertThat(distinctSize).isEqualTo(largeSize);
+
+			// make sure that items are not unique by ByteAbs::hashCode and ByteAbs::equals
+			assertAtLeastOneGenerated(generator, random, ints -> ints.size() > ints.stream().distinct().count());
+		}
+
+	}
+
 	@Example
 	void flatMapEach(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
@@ -242,6 +298,7 @@ class ListArbitraryTests {
 			assertThat(set).allMatch(tuple -> tuple.get2() <= 10);
 		});
 	}
+
 
 	@Group
 	class ExhaustiveGeneration {

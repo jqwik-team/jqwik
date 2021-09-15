@@ -59,7 +59,8 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 								   && uniquenessExtractors.isEmpty()
 								   && random.nextInt(100) <= 2;
 
-		Collection<T> existingValues = uniquenessExtractors.isEmpty() ? new HashSet<>() : new ArrayList<>();
+		boolean canUseSetForValues = uniquenessExtractors.isEmpty() || uniquenessExtractors.contains(FeatureExtractor.identity());
+		Collection<T> existingValues = canUseSetForValues ? new HashSet<>() : new ArrayList<>();
 
 		while (listOfShrinkables.size() < listSize) {
 			try {

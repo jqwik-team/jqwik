@@ -33,6 +33,9 @@ title: jqwik Release Notes
 
 - Upgraded to JUnit platform 1.8.0
 
+- Improved performance of large collection generation.
+  See https://github.com/jlink/jqwik/pull/227.
+
 #### Breaking Changes
 
 #### Bug Fixes
