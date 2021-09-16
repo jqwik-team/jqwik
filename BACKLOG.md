@@ -7,6 +7,8 @@
 
 ### General
 
+- `@Repeat(42)`: Repeat a property 42 times
+
 - Use TestDiscovery from JUnit platform 1.5:
 https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discovery/package-summary.html
 

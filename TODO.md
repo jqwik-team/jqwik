@@ -1,7 +1,5 @@
 - 1.5.6
 
-    - Time Module: Calendar, Date
-
     - Release
       - Documentation
       - Release Notes
@@ -20,24 +18,6 @@
           - @UseType(depth = 1)
       - See https://github.com/jlink/jqwik/issues/191
 
-    - Add capability to easily generate java beans with Builders 
-      (if that really makes sense).
-      ```
-      Beans.ofType(...)
-           .excludeProperties(...)
-           .use().forProperties(...)
-      ```
-      
-    - Time Module:
-        - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
-        
-    - Web Module:
-        - Web.ipv4Addresses()|ipv6Addresses()|urls()
-
-    - EdgeCases.Configuration.withProbability(double injectProbability)
-
-    - `@Repeat(42)`: Repeat a property 42 times
-
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
@@ -51,5 +31,21 @@
 
     - Allow to add frequency to chars for String and Character arbitraries eg.
       StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
-    
+
+    - Add capability to easily generate java beans with Builders
+      (if that really makes sense).
+      ```
+      Beans.ofType(...)
+           .excludeProperties(...)
+           .use().forProperties(...)
+      ```
+
+    - Time Module:
+        - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
+
+    - Web Module:
+        - Web.ipv4Addresses()|ipv6Addresses()|urls()
+
+    - EdgeCases.Configuration.withProbability(double injectProbability)
+
 
