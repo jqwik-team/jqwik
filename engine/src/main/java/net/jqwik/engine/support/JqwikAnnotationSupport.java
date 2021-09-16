@@ -21,7 +21,6 @@ public class JqwikAnnotationSupport {
 	 * @return a list of all found annotations
 	 */
 	public static List<Annotation> findAllAnnotations(AnnotatedElement element) {
-
 		List<Annotation> annotations = new ArrayList<>();
 		List<Annotation> presentAnnotations = Arrays.asList(getDeclaredAnnotations(element));
 		annotations.addAll(presentAnnotations);
@@ -54,26 +53,6 @@ public class JqwikAnnotationSupport {
 
 	private static boolean isInJavaLangAnnotationPackage(Class<? extends Annotation> annotationType) {
 		return (annotationType != null && annotationType.getName().startsWith("java.lang.annotation"));
-	}
-
-	public static <A extends Annotation> Optional<A> findAnnotationOnElementOrContainer(
-		AnnotatedElement element,
-		Class<A> annotationType
-	) {
-
-		Optional<A> onElement = AnnotationSupport.findAnnotation(element, annotationType);
-		if (onElement.isPresent()) {
-			return onElement;
-		}
-		if (element instanceof Member) {
-			AnnotatedElement container = ((Member) element).getDeclaringClass();
-			return findAnnotationOnElementOrContainer(container, annotationType);
-		}
-		if (isGroup(element)) {
-			AnnotatedElement container = getGroupContainer((Class<?>) element);
-			return findAnnotationOnElementOrContainer(container, annotationType);
-		}
-		return Optional.empty();
 	}
 
 	public static <A extends Annotation> List<A> findRepeatableAnnotationOnElementOrContainer(

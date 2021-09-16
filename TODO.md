@@ -1,8 +1,16 @@
 - 1.5.6
 
-    - Use AnnotationSupport.findAnnotation(Class,Class,SearchOption) in JqwikAnnotationSupport
+    - Time Module: Calendar, Date
+
+    - Release
+      - Documentation
+      - Release Notes
   
-- 1.5.x
+- 1.6.0
+
+    - Kotlin Support
+
+- 1.6.x
 
     - Verify size settings for all Collection Arbitraries
 
