@@ -1,9 +1,3 @@
-- 1.5.6
-
-    - Release
-      - Documentation
-      - Release Notes
-  
 - 1.6.0
 
     - Kotlin Support

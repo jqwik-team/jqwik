@@ -15,7 +15,7 @@ public interface StringArbitrary extends Arbitrary<String> {
 	/**
 	 * Set the maximum allowed length {@code maxLength} (included) of generated strings.
 	 *
-	 * @throws IllegalArgumentException if maxLength < 0 or maxLength < min length
+	 * @throws IllegalArgumentException if maxLength &lt; 0 or maxLength &lt; min length
 	 */
 	StringArbitrary ofMaxLength(int maxLength);
 
@@ -23,14 +23,14 @@ public interface StringArbitrary extends Arbitrary<String> {
 	 * Set the minimum allowed length {@code minLength} (included) of generated strings.
 	 * This will also set the max length of the string if {@code minLength} is larger than the current max length.
 	 *
-	 * @throws IllegalArgumentException if minLength < 0
+	 * @throws IllegalArgumentException if minLength &lt; 0
 	 */
 	StringArbitrary ofMinLength(int minLength);
 
 	/**
 	 * Fix the length to {@code length} of generated strings.
 	 *
-	 * @throws IllegalArgumentException if length < 0
+	 * @throws IllegalArgumentException if length &lt; 0
 	 */
 	default StringArbitrary ofLength(int length) {
 		return ofMinLength(length).ofMaxLength(length);
