@@ -13,4 +13,5 @@ class TopLevelFunctionsTests {
 
         assertThat(sample is String).isTrue
     }
+
 }
