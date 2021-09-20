@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 class TopLevelFunctionsTests {
 
     @Example
-    fun generate_sample() {
+    fun `generate sample`() {
         val stringArbitrary = Arbitraries.strings()
         val sample = sample(stringArbitrary)
 
