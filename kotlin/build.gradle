@@ -1,0 +1,88 @@
+plugins {
+	id 'org.jetbrains.kotlin.jvm' version '1.5.30'
+}
+
+description = "Jqwik Kotlin module"
+
+jar {
+	archiveBaseName.set('jqwik-kotlin')
+	archiveVersion.set("${jqwikVersion}")
+	manifest {
+		attributes('Automatic-Module-Name': "${moduleName}.kotlin")
+	}
+}
+
+task publishKotlinJavadoc(type: Javadoc) {
+	source = file('./src/main/kotlin')
+	failOnError = false
+	destinationDir = file("${rootDir}/docs/javadoc")
+	include '**/api/**'
+}
+
+publishing {
+	publications {
+		jqwikKotlin(MavenPublication) {
+			groupId = 'net.jqwik'
+			artifactId = 'jqwik-kotlin'
+			from components.java
+			pom {
+				groupId = 'net.jqwik'
+				name = 'jqwik-kotlin'
+				description = project.description
+				url = 'https://jqwik.net/'
+				licenses {
+					license {
+						name = 'Eclipse Public License - v 2.0'
+						url = 'http://www.eclipse.org/legal/epl-v20.html'
+					}
+				}
+				developers {
+					developer {
+						id = 'jlink'
+						name = 'Johannes Link'
+						email = 'business@johanneslink.net'
+					}
+				}
+				scm {
+					connection = 'scm:git:git://github.com/jlink/jqwik.git'
+					developerConnection = 'scm:git:git://github.com/jlink/jqwik.git'
+					url = 'https://github.com/jlink/jqwik'
+				}
+			}
+		}
+	}
+}
+
+signing {
+	if (!isSnapshotRelease) {
+		sign publishing.publications.jqwikKotlin
+	}
+}
+
+test {
+	useJUnitPlatform {
+		includeEngines 'jqwik'
+	}
+
+	include 'net/**/*Properties.class'
+	include 'net/**/*Test.class'
+	include 'net/**/*Tests.class'
+
+	reports {
+		junitXml.required = true
+	}
+
+	// testLogging.showStandardStreams = true
+}
+
+dependencies {
+	api(project(":api"))
+	api("org.opentest4j:opentest4j:${opentest4jVersion}")
+
+	implementation "org.jetbrains.kotlin:kotlin-stdlib"
+	runtimeOnly(project(":engine"))
+
+	testImplementation(project(":testing"))
+
+	testImplementation("org.assertj:assertj-core:${assertJVersion}")
+}
