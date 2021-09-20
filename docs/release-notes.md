@@ -9,13 +9,8 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.5.6](#156)
-- [1.5.5](#155)
-- [1.5.4](#154)
-- [1.5.3](#153)
-- [1.5.2](#152)
-- [1.5.1](#151)
-- [1.5.0](#150)
+- [1.6.0-SNAPSHOT](#160-snapshot)
+- [1.5.x](#15x)
 - [1.4.0](#140)
 - [1.3.x](#13x)
 - [1.2.x](#12x)
@@ -27,7 +22,18 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.5.6
+## 1.6.0-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+
+## 1.5.x
+
+### 1.5.6
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.5.6/user-guide.html">User guide</a>
@@ -55,7 +61,7 @@ and
   is a statistics check failure.
 
 
-## 1.5.5
+### 1.5.5
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.5.5/user-guide.html">User guide</a>
@@ -89,7 +95,7 @@ and
   See https://github.com/jlink/jqwik/issues/214
 
 
-## 1.5.4
+### 1.5.4
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.5.4/user-guide.html">User guide</a>
@@ -134,7 +140,7 @@ and
 - Fixed some type resolution and type usage bug found through
   https://github.com/mihxil/math.
 
-## 1.5.3
+### 1.5.3
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.5.3/user-guide.html">User guide</a>
@@ -177,7 +183,7 @@ and
   See https://github.com/jlink/jqwik/issues/205
 
 
-## 1.5.2
+### 1.5.2
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.5.2/user-guide.html">User guide</a>
@@ -223,7 +229,7 @@ and
 - Fixed bug in Tuple.toString():
   https://github.com/jlink/jqwik/issues/187
 
-## 1.5.1
+### 1.5.1
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.5.1/user-guide.html">User guide</a>
@@ -255,7 +261,7 @@ and
 
 - Shrinking of flat mapped values would sometimes never end.
 
-## 1.5.0
+### 1.5.0
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.5.0/user-guide.html">User guide</a>
