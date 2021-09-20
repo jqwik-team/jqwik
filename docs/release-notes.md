@@ -28,6 +28,8 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- Removed `AbstractDomainContextBase` which had been deprecated in 1.5.2
+
 #### Bug Fixes
 
 
