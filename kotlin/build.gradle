@@ -59,6 +59,17 @@ signing {
 	}
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+	kotlinOptions {
+		freeCompilerArgs = [
+			"-Xjsr305=strict",
+			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
+		]
+		jvmTarget = "8"
+		javaParameters = true // Required to get correct parameter names in reporting
+	}
+}
+
 test {
 	useJUnitPlatform {
 		includeEngines 'jqwik'
