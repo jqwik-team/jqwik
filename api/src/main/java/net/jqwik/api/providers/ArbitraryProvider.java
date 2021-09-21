@@ -1,5 +1,6 @@
 package net.jqwik.api.providers;
 
+import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -30,6 +31,7 @@ import static org.apiguardian.api.API.Status.*;
  * </ul>
  */
 @API(status = MAINTAINED, since = "1.0")
+@NonNullApi
 public interface ArbitraryProvider {
 
 	@FunctionalInterface

@@ -91,6 +91,8 @@ dependencies {
 	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 
 	implementation "org.jetbrains.kotlin:kotlin-stdlib"
+	implementation "org.jetbrains.kotlin:kotlin-reflect"
+
 	runtimeOnly(project(":engine"))
 
 	testImplementation(project(":testing"))

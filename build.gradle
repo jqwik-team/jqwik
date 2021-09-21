@@ -11,6 +11,7 @@ ext {
 	assertJVersion = '3.21.0'
 	mockitoVersion = '3.12.4'
 	systemLambdaVersion = '1.2.0'
+	kotlinVersion = '1.5.30'
 	moduleName = 'net.jqwik'
 	jqwikVersion = '1.6.0-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
@@ -65,6 +66,8 @@ allprojects {
 
 	dependencies {
 		api("org.apiguardian:apiguardian-api:${apiGuardianVersion}")
+		compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+		compileOnly "org.jetbrains.kotlin:kotlin-annotations-jvm:${kotlinVersion}"
 	}
 
 	tasks.withType(Javadoc) {

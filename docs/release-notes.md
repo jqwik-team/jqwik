@@ -26,6 +26,8 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Added new module `jqwik-kotlin` for improved Kotlin support
+
 #### Breaking Changes
 
 - Removed `AbstractDomainContextBase` which had been deprecated in 1.5.2
