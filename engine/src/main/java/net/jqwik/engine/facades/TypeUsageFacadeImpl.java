@@ -18,7 +18,7 @@ public class TypeUsageFacadeImpl extends TypeUsage.TypeUsageFacade {
 			String typeArgumentsString = JqwikStringSupport.displayString(typeParameters);
 			throw new JqwikException(String.format("Type [%s] cannot have type parameters [%s]", type, typeArgumentsString));
 		}
-		TypeUsageImpl typeUsage = new TypeUsageImpl(type, type, null, null, Collections.emptyList());
+		TypeUsageImpl typeUsage = new TypeUsageImpl(type, type, null, null, Collections.emptyList(), null);
 		typeUsage.addTypeArguments(Arrays.asList(typeParameters));
 		return typeUsage;
 	}
@@ -26,7 +26,7 @@ public class TypeUsageFacadeImpl extends TypeUsage.TypeUsageFacade {
 	@Override
 	public TypeUsage wildcard(TypeUsage upperBound) {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
-			Object.class, Object.class, null, TypeUsageImpl.WILDCARD, Collections.emptyList()
+			Object.class, Object.class, null, TypeUsageImpl.WILDCARD, Collections.emptyList(), null
 		);
 		typeUsage.addUpperBounds(Arrays.asList(upperBound));
 		return typeUsage;

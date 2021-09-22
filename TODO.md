@@ -1,6 +1,9 @@
 - 1.6.0
 
+    - Propagate experimental APIs
+
     - Kotlin Support
+      - Add JSR305 annotations to time module and web module
 
 - 1.6.x
 

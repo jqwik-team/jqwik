@@ -228,26 +228,11 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of the same type but inject null values with a probability of {@code nullProbability}.
 	 *
-	 * @param nullProbability the probability. &le; 0 and &ge; 1.
+	 * @param nullProbability the probability. &ge; 0 and &le; 1.
 	 * @return a new arbitrary instance
 	 */
 	default Arbitrary<@NullableType T> injectNull(double nullProbability) {
 		return ArbitraryFacade.implementation.injectNull(Arbitrary.this, nullProbability);
-	}
-
-	/**
-	 * Create a new arbitrary of the same type but inject null values with a probability of {@code nullProbability}.
-	 *
-	 * <p>
-	 *     This is an alias of {@linkplain #injectNull(double)}.
-	 * </p>
-	 *
-	 * @param nullProbability the probability. &le; 0 and &ge; 1.
-	 * @return a new arbitrary instance
-	 */
-	@API(status = EXPERIMENTAL, since = "1.6.0")
-	default Arbitrary<@NullableType T> orNull(double nullProbability) {
-		return injectNull(nullProbability);
 	}
 
 	/**

@@ -185,4 +185,10 @@ public interface TypeUsage {
 	@API(status = INTERNAL, since = "1.2.0")
 	AnnotatedType getAnnotatedType();
 
+	/**
+	 * Return optional {@linkplain Parameter} if this type usage was created from a method parameter.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	Optional<Parameter> getParameter();
+
 }

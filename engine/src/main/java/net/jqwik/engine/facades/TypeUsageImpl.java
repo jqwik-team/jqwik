@@ -22,7 +22,8 @@ public class TypeUsageImpl implements TypeUsage {
 			typeResolution.type(),
 			typeResolution.annotatedType(),
 			extractTypeVariable(typeResolution.type()),
-			extractAnnotations(typeResolution.annotatedType())
+			extractAnnotations(typeResolution.annotatedType()),
+			null
 		);
 		typeUsage.addTypeArguments(extractTypeArguments(typeResolution));
 		typeUsage.addUpperBounds(extractUpperBounds(typeResolution.annotatedType()));
@@ -37,7 +38,8 @@ public class TypeUsageImpl implements TypeUsage {
 			parameter.getType(),
 			parameter.getAnnotatedType(),
 			extractTypeVariable(parameter.getType()),
-			parameter.findAllAnnotations()
+			parameter.findAllAnnotations(),
+			parameter.getRawParameter()
 		);
 		typeUsage.addTypeArguments(extractTypeArguments(parameter));
 		typeUsage.addUpperBounds(extractUpperBounds(parameter));
@@ -113,7 +115,7 @@ public class TypeUsageImpl implements TypeUsage {
 			}
 		}
 
-		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, annotatedType, typeVariable, annotations);
+		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, annotatedType, typeVariable, annotations, null);
 		if (type instanceof TypeVariable) {
 			resolved.put((TypeVariable<?>) type, typeUsage);
 		}
@@ -268,12 +270,15 @@ public class TypeUsageImpl implements TypeUsage {
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
 
+	private final Parameter fromParameter;
+
 	TypeUsageImpl(
 		Class<?> rawType,
 		Type type,
 		AnnotatedType annotatedType,
 		String typeVariable,
-		List<Annotation> annotations
+		List<Annotation> annotations,
+		Parameter fromParameter
 	) {
 		if (rawType == null) {
 			throw new IllegalArgumentException("rawType must never be null");
@@ -283,6 +288,7 @@ public class TypeUsageImpl implements TypeUsage {
 		this.annotatedType = annotatedType;
 		this.typeVariable = typeVariable;
 		this.annotations = new ArrayList<>(annotations);
+		this.fromParameter = fromParameter;
 	}
 
 	void addTypeArguments(List<TypeUsage> typeArguments) {
@@ -584,6 +590,11 @@ public class TypeUsageImpl implements TypeUsage {
 	@Override
 	public AnnotatedType getAnnotatedType() {
 		return annotatedType;
+	}
+
+	@Override
+	public Optional<Parameter> getParameter() {
+		return Optional.ofNullable(fromParameter);
 	}
 
 	@Override

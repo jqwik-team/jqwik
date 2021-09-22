@@ -155,6 +155,29 @@ class TypeUsageTests {
 	@Label("TypeUsageImpl.forParameter()")
 	class ForParameter {
 		@Example
+		void simpleParameter() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withParameter(String aString) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withParameter", String.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage stringType = TypeUsageImpl.forParameter(parameter);
+			assertThat(stringType.getRawType()).isEqualTo(String.class);
+			assertThat(stringType.getType()).isEqualTo(parameter.getType());
+			assertThat(stringType.isOfType(String.class)).isTrue();
+			assertThat(stringType.isGeneric()).isFalse();
+			assertThat(stringType.isArray()).isFalse();
+			assertThat(stringType.isEnum()).isFalse();
+
+			assertThat(stringType.getParameter()).isPresent();
+			assertThat(stringType.getParameter().get()).isEqualTo(method.getParameters()[0]);
+
+			assertThat(stringType.toString()).isEqualTo("String");
+		}
+
+		@Example
 		void twoGenericParameters() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
