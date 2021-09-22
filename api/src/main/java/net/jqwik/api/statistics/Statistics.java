@@ -1,5 +1,6 @@
 package net.jqwik.api.statistics;
 
+import javax.annotation.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
@@ -77,7 +78,7 @@ public class Statistics {
 	 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
 	 * @see #label(String)
 	 */
-	public static void collect(Object... values) {
+	public static void collect(@Nullable Object... values) {
 		StatisticsFacade.implementation.defaultCollector().collect(values);
 	}
 

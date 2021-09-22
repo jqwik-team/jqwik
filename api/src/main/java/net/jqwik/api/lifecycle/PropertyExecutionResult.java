@@ -1,5 +1,6 @@
 package net.jqwik.api.lifecycle;
 
+import javax.annotation.*;
 import java.util.*;
 
 import org.apiguardian.api.*;
@@ -109,7 +110,7 @@ public interface PropertyExecutionResult {
 	 * @param throwable Throwable object or null
 	 * @return the changed result object
 	 */
-	PropertyExecutionResult mapTo(Status newStatus, Throwable throwable);
+	PropertyExecutionResult mapTo(Status newStatus, @Nullable Throwable throwable);
 
 	/**
 	 * Use to change the status of a failed property to {@linkplain Status#SUCCESSFUL}
@@ -131,7 +132,7 @@ public interface PropertyExecutionResult {
 	 * @param throwable Throwable object or null
 	 * @return the changed result object
 	 */
-	default PropertyExecutionResult mapToFailed(Throwable throwable) {
+	default PropertyExecutionResult mapToFailed(@Nullable Throwable throwable) {
 		return mapTo(Status.FAILED, throwable);
 	}
 
@@ -153,7 +154,7 @@ public interface PropertyExecutionResult {
 	 * @param throwable Throwable object or null
 	 * @return the changed result object
 	 */
-	default PropertyExecutionResult mapToAborted(Throwable throwable) {
+	default PropertyExecutionResult mapToAborted(@Nullable Throwable throwable) {
 		return mapTo(Status.ABORTED, throwable);
 	}
 

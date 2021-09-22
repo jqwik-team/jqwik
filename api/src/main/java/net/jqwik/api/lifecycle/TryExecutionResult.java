@@ -1,5 +1,6 @@
 package net.jqwik.api.lifecycle;
 
+import javax.annotation.*;
 import java.util.*;
 
 import org.apiguardian.api.*;
@@ -80,7 +81,7 @@ public interface TryExecutionResult {
 	 * @param throwable The throwable to describe the reason of falsification
 	 * @return result instance
 	 */
-	static TryExecutionResult falsified(Throwable throwable) {
+	static TryExecutionResult falsified(@Nullable Throwable throwable) {
 		return new TryExecutionResult() {
 			@Override
 			public Status status() {
@@ -111,7 +112,7 @@ public interface TryExecutionResult {
 	 * @param throwable A (potentially null) exception. Usually of type {@linkplain TestAbortedException}.
 	 * @return result instance
 	 */
-	static TryExecutionResult invalid(Throwable throwable) {
+	static TryExecutionResult invalid(@Nullable Throwable throwable) {
 		return new TryExecutionResult() {
 			@Override
 			public Status status() {

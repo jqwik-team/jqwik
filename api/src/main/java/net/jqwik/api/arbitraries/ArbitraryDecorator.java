@@ -17,7 +17,6 @@ import static org.apiguardian.api.API.Status.*;
  * @see Arbitraries
  */
 @API(status = EXPERIMENTAL, since = "1.4.0")
-@NonNullApi
 public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> {
 
 	/**

@@ -1,5 +1,6 @@
 package net.jqwik.api.statistics;
 
+import javax.annotation.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
@@ -34,7 +35,7 @@ public interface StatisticsCollector {
 	 *
 	 * @return The current instance of collector to allow a fluent coverage API
 	 */
-	StatisticsCollector collect(Object... values);
+	StatisticsCollector collect(@Nullable Object... values);
 
 	/**
 	 * Perform coverage checking for successful property on statistics.

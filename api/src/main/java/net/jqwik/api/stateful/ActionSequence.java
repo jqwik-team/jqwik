@@ -1,5 +1,6 @@
 package net.jqwik.api.stateful;
 
+import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -48,7 +49,7 @@ public interface ActionSequence<M> {
 	 * @see	#withInvariant(Invariant)
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	ActionSequence<M> withInvariant(String label, Invariant<M> invariant);
+	ActionSequence<M> withInvariant(@Nullable String label, Invariant<M> invariant);
 
 	M finalModel();
 

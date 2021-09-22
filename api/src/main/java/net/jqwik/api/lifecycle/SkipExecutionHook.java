@@ -1,5 +1,6 @@
 package net.jqwik.api.lifecycle;
 
+import javax.annotation.*;
 import java.util.*;
 
 import org.apiguardian.api.*;
@@ -37,7 +38,7 @@ public interface SkipExecutionHook extends LifecycleHook {
 		 * @param reason String to describe why the element will be skipped
 		 * @return instance of {@linkplain SkipResult}
 		 */
-		public static SkipResult skip(String reason) {
+		public static SkipResult skip(@Nullable String reason) {
 			return new SkipResult(true, reason);
 		}
 

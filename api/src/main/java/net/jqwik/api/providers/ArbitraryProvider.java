@@ -31,7 +31,6 @@ import static org.apiguardian.api.API.Status.*;
  * </ul>
  */
 @API(status = MAINTAINED, since = "1.0")
-@NonNullApi
 public interface ArbitraryProvider {
 
 	@FunctionalInterface
