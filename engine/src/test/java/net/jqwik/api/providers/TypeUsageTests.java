@@ -120,7 +120,7 @@ class TypeUsageTests {
 	void forType() throws NoSuchMethodException {
 		class LocalClass {
 			@SuppressWarnings("WeakerAccess")
-			public Tuple2<String, Integer> withReturn() { return null; }
+			public Tuple2<String, Integer> withReturn() {return null;}
 		}
 
 		Type type = LocalClass.class.getMethod("withReturn").getAnnotatedReturnType().getType();
@@ -171,8 +171,8 @@ class TypeUsageTests {
 			assertThat(stringType.isArray()).isFalse();
 			assertThat(stringType.isEnum()).isFalse();
 
-			assertThat(stringType.getParameter()).isPresent();
-			assertThat(stringType.getParameter().get()).isEqualTo(method.getParameters()[0]);
+			assertThat(stringType.getParameterInfo()).isPresent();
+			assertThat(stringType.getParameterInfo().get()).isEqualTo(Tuple.of(method.getParameters()[0], 0));
 
 			assertThat(stringType.toString()).isEqualTo("String");
 		}
@@ -448,21 +448,21 @@ class TypeUsageTests {
 
 			Method differentByNameMethod = LocalClass.class.getMethod("differentByName", Tuple2.class);
 			MethodParameter differentByNameParameter = JqwikReflectionSupport
-														   .getMethodParameters(differentByNameMethod, LocalClass.class).get(0);
+				.getMethodParameters(differentByNameMethod, LocalClass.class).get(0);
 			TypeUsage differentByNameType = TypeUsageImpl.forParameter(differentByNameParameter);
 			assertThat(typeVariableType.equals(differentByNameType)).isFalse();
 
 			Method differentByLowerBoundsMethod = LocalClass.class.getMethod("differentByLowerBounds", Tuple2.class);
 			MethodParameter differentByLowerBoundsParameter = JqwikReflectionSupport
-																  .getMethodParameters(differentByLowerBoundsMethod, LocalClass.class)
-																  .get(0);
+				.getMethodParameters(differentByLowerBoundsMethod, LocalClass.class)
+				.get(0);
 			TypeUsage differentByLowerBoundsType = TypeUsageImpl.forParameter(differentByLowerBoundsParameter);
 			assertThat(typeVariableType.equals(differentByLowerBoundsType)).isFalse();
 
 			Method sameButWildcard = LocalClass.class.getMethod("sameButWildcard", Tuple2.class);
 			MethodParameter sameButWildcardParameter = JqwikReflectionSupport
-																  .getMethodParameters(sameButWildcard, LocalClass.class)
-																  .get(0);
+				.getMethodParameters(sameButWildcard, LocalClass.class)
+				.get(0);
 			TypeUsage sameButWildcardType = TypeUsageImpl.forParameter(sameButWildcardParameter);
 			assertThat(typeVariableType.equals(sameButWildcardType)).isFalse();
 		}
@@ -671,10 +671,10 @@ class TypeUsageTests {
 		void parameterizedTypesWithWildcards() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
-				public List<?> listOfWildcard() { return null; }
+				public List<?> listOfWildcard() {return null;}
 
 				@SuppressWarnings("WeakerAccess")
-				public List<? extends Arbitrary> listOfBoundWildcard() { return null; }
+				public List<? extends Arbitrary> listOfBoundWildcard() {return null;}
 			}
 
 			Type wildcardType = LocalClass.class.getMethod("listOfWildcard").getAnnotatedReturnType().getType();
@@ -708,7 +708,7 @@ class TypeUsageTests {
 		void parameterizedTypesWithBoundWildcards() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
-				public List<? extends Tuple> listOfBoundWildcard() { return null; }
+				public List<? extends Tuple> listOfBoundWildcard() {return null;}
 			}
 
 			Type boundWildcardType = LocalClass.class.getMethod("listOfBoundWildcard").getAnnotatedReturnType().getType();
@@ -726,10 +726,10 @@ class TypeUsageTests {
 		void upperBoundWildcardTypes() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
-				public List<? extends String> listOfWildcardString() { return null; }
+				public List<? extends String> listOfWildcardString() {return null;}
 
 				@SuppressWarnings("WeakerAccess")
-				public List<? extends Serializable> listOfWildcardSerializable() { return null; }
+				public List<? extends Serializable> listOfWildcardSerializable() {return null;}
 			}
 
 			Type wildcardStringType = LocalClass.class.getMethod("listOfWildcardString").getAnnotatedReturnType().getType();
@@ -755,7 +755,7 @@ class TypeUsageTests {
 		void lowerBoundWildcardTypes() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
-				public List<? super String> listOfWildcardSuperString() { return null; }
+				public List<? super String> listOfWildcardSuperString() {return null;}
 
 			}
 
@@ -780,10 +780,10 @@ class TypeUsageTests {
 		void boundTypeVariables() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
-				public <T extends String> List<T> listOfVariableString() { return null; }
+				public <T extends String> List<T> listOfVariableString() {return null;}
 
 				@SuppressWarnings("WeakerAccess")
-				public <T extends Serializable & CharSequence> List<T> listOfVariableSerializable() { return null; }
+				public <T extends Serializable & CharSequence> List<T> listOfVariableSerializable() {return null;}
 			}
 
 			Type variableStringType = LocalClass.class.getMethod("listOfVariableString").getAnnotatedReturnType().getType();
@@ -809,10 +809,10 @@ class TypeUsageTests {
 		void parameterizedTypesWithTypeVariable() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
-				public <T> List<T> listOfTypeVariable() { return null; }
+				public <T> List<T> listOfTypeVariable() {return null;}
 
 				@SuppressWarnings("WeakerAccess")
-				public <T extends Arbitrary> List<T> listOfBoundTypeVariable() { return null; }
+				public <T extends Arbitrary> List<T> listOfBoundTypeVariable() {return null;}
 			}
 
 			Type variableType = LocalClass.class.getMethod("listOfTypeVariable").getAnnotatedReturnType().getType();

@@ -2,6 +2,8 @@
 
     - Propagate experimental APIs
 
+    - Replace Arbitraries.just(null) with Arbitraries.null()
+  
     - Kotlin Support
       - Add JSR305 annotations to time module and web module
 

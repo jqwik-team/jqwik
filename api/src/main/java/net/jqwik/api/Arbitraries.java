@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -435,7 +436,7 @@ public class Arbitraries {
 	/**
 	 * Create an arbitrary that will always generate the same value.
 	 *
-	 * @param value The value to "generate"
+	 * @param value The value to "generate".
 	 * @param <T>   The type of the value
 	 * @return a new arbitrary instance
 	 */

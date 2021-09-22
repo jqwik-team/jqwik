@@ -7,6 +7,7 @@ import java.util.*;
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -186,9 +187,9 @@ public interface TypeUsage {
 	AnnotatedType getAnnotatedType();
 
 	/**
-	 * Return optional {@linkplain Parameter} if this type usage was created from a method parameter.
+	 * Return optional {@linkplain Parameter} and index if this type usage was created from a method parameter.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
-	Optional<Parameter> getParameter();
+	Optional<Tuple2<Parameter, Integer>> getParameterInfo();
 
 }

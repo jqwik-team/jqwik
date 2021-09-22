@@ -1,1 +1,1 @@
-net.jqwik.kotlin.NullabilityArbitraryProvider
+net.jqwik.kotlin.internal.NullabilityArbitraryProvider

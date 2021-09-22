@@ -7,6 +7,8 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 
@@ -39,7 +41,7 @@ public class TypeUsageImpl implements TypeUsage {
 			parameter.getAnnotatedType(),
 			extractTypeVariable(parameter.getType()),
 			parameter.findAllAnnotations(),
-			parameter.getRawParameter()
+			Tuple.of(parameter.getRawParameter(), parameter.getIndex())
 		);
 		typeUsage.addTypeArguments(extractTypeArguments(parameter));
 		typeUsage.addUpperBounds(extractUpperBounds(parameter));
@@ -270,7 +272,7 @@ public class TypeUsageImpl implements TypeUsage {
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
 
-	private final Parameter fromParameter;
+	private final Tuple2<Parameter, Integer> parameterInfo;
 
 	TypeUsageImpl(
 		Class<?> rawType,
@@ -278,7 +280,7 @@ public class TypeUsageImpl implements TypeUsage {
 		AnnotatedType annotatedType,
 		String typeVariable,
 		List<Annotation> annotations,
-		Parameter fromParameter
+		Tuple2<Parameter, Integer> parameterInfo
 	) {
 		if (rawType == null) {
 			throw new IllegalArgumentException("rawType must never be null");
@@ -288,7 +290,7 @@ public class TypeUsageImpl implements TypeUsage {
 		this.annotatedType = annotatedType;
 		this.typeVariable = typeVariable;
 		this.annotations = new ArrayList<>(annotations);
-		this.fromParameter = fromParameter;
+		this.parameterInfo = parameterInfo;
 	}
 
 	void addTypeArguments(List<TypeUsage> typeArguments) {
@@ -593,8 +595,8 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	@Override
-	public Optional<Parameter> getParameter() {
-		return Optional.ofNullable(fromParameter);
+	public Optional<Tuple2<Parameter, Integer>> getParameterInfo() {
+		return Optional.ofNullable(parameterInfo);
 	}
 
 	@Override
