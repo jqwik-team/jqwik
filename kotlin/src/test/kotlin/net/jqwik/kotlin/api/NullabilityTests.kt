@@ -5,6 +5,7 @@ import net.jqwik.api.statistics.Statistics
 import net.jqwik.testing.TestingSupport
 import java.util.*
 import java.util.function.Predicate
+import kotlin.reflect.full.functions
 
 class NullabilityTests {
     @Example
@@ -37,4 +38,22 @@ class NullabilityTests {
     //    //    .collect(aNullableString == null)
     //    //    .coverage { coverage -> coverage.check(true).percentage(Predicate { p -> p > 3 }) }
     //}
+
+    //@Example
+    fun test() {
+        val kotlinClass = TopLevelFunctionsTests::class
+        //println("Kotlin class name: " + kotlinClass.jvmName)
+
+        val javaClass = Arbitraries::class
+
+        println("Kotlin")
+        for (function in kotlinClass.functions) {
+            println(function.parameters)
+        }
+
+        println("java")
+        for (function in javaClass.functions) {
+            println(function.parameters)
+        }
+    }
 }

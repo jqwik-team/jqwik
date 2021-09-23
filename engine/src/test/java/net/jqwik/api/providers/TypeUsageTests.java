@@ -38,6 +38,17 @@ class TypeUsageTests {
 		assertThat(TypeUsage.of(Object.class).isVoid()).isFalse();
 	}
 
+	@Example
+	void nullability() {
+		TypeUsage stringType = of(String.class);
+		assertThat(stringType.isNullable()).isFalse();
+		TypeUsage nullableStringType = of(String.class).asNullable();
+		assertThat(nullableStringType.isNullable()).isTrue();
+		assertThat(nullableStringType.asNotNullable().isNullable()).isFalse();
+
+		assertThat(nullableStringType.toString()).isEqualTo("String?");
+	}
+
 	@Group
 	@Label("of()")
 	class Of {
@@ -171,8 +182,7 @@ class TypeUsageTests {
 			assertThat(stringType.isArray()).isFalse();
 			assertThat(stringType.isEnum()).isFalse();
 
-			assertThat(stringType.getParameterInfo()).isPresent();
-			assertThat(stringType.getParameterInfo().get()).isEqualTo(Tuple.of(method.getParameters()[0], 0));
+			assertThat(stringType.isNullable()).isFalse();
 
 			assertThat(stringType.toString()).isEqualTo("String");
 		}
@@ -884,5 +894,43 @@ class TypeUsageTests {
 			// TODO: jqwik is too loose here which might result in a class cast exception during property resolution
 			// assertThat(actionSequenceStringArbitraryType.canBeAssignedTo(actionSequenceIntegerArbitrary)).isFalse();
 		}
+	}
+
+	@Group
+	class TypeUsageEnhancers {
+
+		@Example
+		void enhancersAreCalledForParameter() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withParameter(String aString) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withParameter", String.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+
+			final TypeUsage typeUsageFromEnhancer1 = TypeUsage.forType(String.class);
+			TypeUsage.Enhancer enhancer1 = new TypeUsage.Enhancer() {
+				@Override
+				public TypeUsage forParameter(TypeUsage typeUsage, Tuple2<Parameter, Integer> parameterInfo) {
+					assertThat(parameterInfo.get1()).isNotNull();
+					assertThat(parameterInfo.get2()).isEqualTo(0);
+					return typeUsageFromEnhancer1;
+				}
+			};
+
+			TypeUsage.Enhancer enhancer2 = new TypeUsage.Enhancer() {
+				@Override
+				public TypeUsage forParameter(TypeUsage typeUsage, Tuple2<Parameter, Integer> parameterInfo) {
+					assertThat(parameterInfo.get1()).isNotNull();
+					assertThat(parameterInfo.get2()).isEqualTo(0);
+					return typeUsage;
+				}
+			};
+
+			TypeUsage stringType = TypeUsageImpl.forParameter(parameter, Arrays.asList(enhancer1, enhancer2));
+			assertThat(stringType).isSameAs(typeUsageFromEnhancer1);
+		}
+
 	}
 }

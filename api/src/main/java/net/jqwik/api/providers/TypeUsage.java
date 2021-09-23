@@ -48,6 +48,16 @@ public interface TypeUsage {
 		public abstract TypeUsage forType(Type type);
 	}
 
+	/**
+	 * Currently used in Kotlin module to add nullability information
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	interface Enhancer {
+		default TypeUsage forParameter(TypeUsage typeUsage, Tuple2<Parameter, Integer> parameterInfo) {
+			return typeUsage;
+		}
+	}
+
 	static TypeUsage of(Class<?> type, TypeUsage... typeParameters) {
 		return TypeUsageFacade.implementation.of(type, typeParameters);
 	}
@@ -187,9 +197,31 @@ public interface TypeUsage {
 	AnnotatedType getAnnotatedType();
 
 	/**
-	 * Return optional {@linkplain Parameter} and index if this type usage was created from a method parameter.
+	 * Return optional true if this type is nullable.
+	 *
+	 * <p>
+	 *     This is false by default and must be overridden in subtypes
+	 * </p>
+	 *
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
-	Optional<Tuple2<Parameter, Integer>> getParameterInfo();
+	default boolean isNullable() {
+		return false;
+	}
+
+	/**
+	 * Return same type usage object with just nullablity set to true
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	TypeUsage asNullable();
+
+	/**
+	 * Return same type usage object with just nullablity set to false
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	TypeUsage asNotNullable();
+
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	String getTypeVariable();
 
 }

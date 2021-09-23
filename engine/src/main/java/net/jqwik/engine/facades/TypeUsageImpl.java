@@ -24,8 +24,7 @@ public class TypeUsageImpl implements TypeUsage {
 			typeResolution.type(),
 			typeResolution.annotatedType(),
 			extractTypeVariable(typeResolution.type()),
-			extractAnnotations(typeResolution.annotatedType()),
-			null
+			extractAnnotations(typeResolution.annotatedType())
 		);
 		typeUsage.addTypeArguments(extractTypeArguments(typeResolution));
 		typeUsage.addUpperBounds(extractUpperBounds(typeResolution.annotatedType()));
@@ -35,19 +34,36 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	public static TypeUsage forParameter(MethodParameter parameter) {
+		return forParameter(parameter, RegisteredTypeUsageEnhancers.getEnhancers());
+	}
+
+	// Only use in tests
+	public static TypeUsage forParameter(MethodParameter parameter, List<TypeUsage.Enhancer> enhancerPipeline) {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
 			extractRawType(parameter.getType()),
 			parameter.getType(),
 			parameter.getAnnotatedType(),
 			extractTypeVariable(parameter.getType()),
-			parameter.findAllAnnotations(),
-			Tuple.of(parameter.getRawParameter(), parameter.getIndex())
+			parameter.findAllAnnotations()
 		);
+
+		TypeUsage enhancedTypeUsage = forParameterThroughEnhancerPipeline(parameter, enhancerPipeline, typeUsage);
+
+		// TODO: Inject enhancedTypeUsage into extract method and add methods to TypeUsage.Enhancer
 		typeUsage.addTypeArguments(extractTypeArguments(parameter));
 		typeUsage.addUpperBounds(extractUpperBounds(parameter));
 		typeUsage.addLowerBounds(extractLowerBounds(parameter));
 
-		return typeUsage;
+		return enhancedTypeUsage;
+	}
+
+	private static TypeUsage forParameterThroughEnhancerPipeline(MethodParameter parameter, List<Enhancer> enhancerPipeline, TypeUsageImpl typeUsage) {
+		Tuple2<Parameter, Integer> parameterInfo = Tuple.of(parameter.getRawParameter(), parameter.getIndex());
+		TypeUsage enhanced = typeUsage;
+		for (Enhancer enhancer : enhancerPipeline) {
+			enhanced = enhancer.forParameter(enhanced, parameterInfo);
+		}
+		return enhanced;
 	}
 
 	static TypeUsageImpl forNonWildcardType(Type type) {
@@ -117,7 +133,7 @@ public class TypeUsageImpl implements TypeUsage {
 			}
 		}
 
-		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, annotatedType, typeVariable, annotations, null);
+		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, annotatedType, typeVariable, annotations);
 		if (type instanceof TypeVariable) {
 			resolved.put((TypeVariable<?>) type, typeUsage);
 		}
@@ -272,15 +288,12 @@ public class TypeUsageImpl implements TypeUsage {
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
 
-	private final Tuple2<Parameter, Integer> parameterInfo;
-
 	TypeUsageImpl(
 		Class<?> rawType,
 		Type type,
 		AnnotatedType annotatedType,
 		String typeVariable,
-		List<Annotation> annotations,
-		Tuple2<Parameter, Integer> parameterInfo
+		List<Annotation> annotations
 	) {
 		if (rawType == null) {
 			throw new IllegalArgumentException("rawType must never be null");
@@ -290,7 +303,6 @@ public class TypeUsageImpl implements TypeUsage {
 		this.annotatedType = annotatedType;
 		this.typeVariable = typeVariable;
 		this.annotations = new ArrayList<>(annotations);
-		this.parameterInfo = parameterInfo;
 	}
 
 	void addTypeArguments(List<TypeUsage> typeArguments) {
@@ -318,16 +330,6 @@ public class TypeUsageImpl implements TypeUsage {
 	@Override
 	public Class<?> getRawType() {
 		return rawType;
-	}
-
-	private boolean hasUpperBoundBeyondObject() {
-		if (upperBounds.size() > 1)
-			return true;
-		return upperBounds.size() == 1 && !upperBounds.get(0).isOfType(Object.class);
-	}
-
-	private boolean hasLowerBounds() {
-		return lowerBounds.size() > 0;
 	}
 
 	@Override
@@ -595,8 +597,34 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	@Override
-	public Optional<Tuple2<Parameter, Integer>> getParameterInfo() {
-		return Optional.ofNullable(parameterInfo);
+	public TypeUsage asNullable() {
+		if (this.isNullable()) {
+			return this;
+		}
+		return new TypeUsageAdapter(this) {
+			@Override
+			public boolean isNullable() {
+				return true;
+			}
+		};
+	}
+
+	@Override
+	public TypeUsage asNotNullable() {
+		if (!this.isNullable()) {
+			return this;
+		}
+		return new TypeUsageAdapter(this) {
+			@Override
+			public boolean isNullable() {
+				return false;
+			}
+		};
+	}
+
+	@Override
+	public String getTypeVariable() {
+		return typeVariable;
 	}
 
 	@Override
@@ -606,76 +634,7 @@ public class TypeUsageImpl implements TypeUsage {
 
 	@Override
 	public String toString() {
-		return toString(this, new HashSet<>());
-	}
-
-	private static String toString(TypeUsage self, Set<TypeUsage> touchedTypes) {
-		if (self instanceof TypeUsageImpl) {
-			return ((TypeUsageImpl) self).toString(touchedTypes);
-		}
-		return self.toString();
-	}
-
-	private String toString(Set<TypeUsage> touchedTypes) {
-		String representation = getRawType().getSimpleName();
-
-		if (touchedTypes.contains(this)) {
-			if (isTypeVariableOrWildcard()) {
-				return typeVariable;
-			}
-			return representation;
-		}
-		touchedTypes.add(this);
-
-		if (isGeneric()) {
-			representation = String.format("%s<%s>", representation, toStringTypeArguments(touchedTypes));
-		}
-		if (isArray()) {
-			//noinspection OptionalGetWithoutIsPresent
-			representation = String.format("%s[]", toString(getComponentType().get(), touchedTypes));
-		}
-		if (isTypeVariableOrWildcard()) {
-			representation = toStringTypeVariable(touchedTypes);
-		}
-		if (!annotations.isEmpty()) {
-			representation = String.format("%s %s", toStringAnnotations(), representation);
-		}
-		return representation;
-	}
-
-	private String toStringTypeArguments(Set<TypeUsage> touchedTypes) {
-		return typeArguments.stream()
-							.map(typeUsage -> toString(typeUsage, touchedTypes))
-							.collect(Collectors.joining(", "));
-	}
-
-	private String toStringAnnotations() {
-		return annotations.stream()
-						  .map(Annotation::toString)
-						  .collect(Collectors.joining(" "));
-	}
-
-	private String toStringTypeVariable(Set<TypeUsage> touchedTypes) {
-		String representation = typeVariable;
-		if (hasUpperBoundBeyondObject()) {
-			representation += String.format(" extends %s", toStringUpperBound(touchedTypes));
-		}
-		if (hasLowerBounds()) {
-			representation += String.format(" super %s", toStringLowerBounds(touchedTypes));
-		}
-		return representation;
-	}
-
-	private String toStringLowerBounds(Set<TypeUsage> touchedTypes) {
-		return lowerBounds.stream()
-						  .map(typeUsage -> toString(typeUsage, touchedTypes))
-						  .collect(Collectors.joining(" & "));
-	}
-
-	private String toStringUpperBound(Set<TypeUsage> touchedTypes) {
-		return upperBounds.stream()
-						  .map(typeUsage -> toString(typeUsage, touchedTypes))
-						  .collect(Collectors.joining(" & "));
+		return TypeUsageToString.toString(this);
 	}
 
 }

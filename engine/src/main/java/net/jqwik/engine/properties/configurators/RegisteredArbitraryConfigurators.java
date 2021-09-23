@@ -12,11 +12,4 @@ public class RegisteredArbitraryConfigurators {
 	public static List<ArbitraryConfigurator> getConfigurators() {
 		return Collections.unmodifiableList(serviceCache.getServices());
 	}
-
-	public static void register(ArbitraryConfigurator configurator) {
-		if (serviceCache.getServices().contains(configurator)) {
-			return;
-		}
-		serviceCache.getServices().add(0, configurator);
-	}
 }

@@ -4,21 +4,17 @@ import net.jqwik.api.Arbitrary
 import net.jqwik.api.providers.ArbitraryProvider
 import net.jqwik.api.providers.TypeUsage
 import net.jqwik.kotlin.api.orNull
-import kotlin.reflect.KParameter
 
 class NullabilityArbitraryProvider : ArbitraryProvider {
     override fun canProvideFor(targetType: TypeUsage): Boolean {
-        val kParameter: KParameter? = targetType.parameterInfo
-            .map { info -> kotlinParameter(info.get1(), info.get2()) }
-            .orElse(null)
-        return kParameter?.isMarkedNullable  ?: false
+        return targetType.isNullable
     }
 
     override fun provideFor(
         targetType: TypeUsage,
         subtypeProvider: ArbitraryProvider.SubtypeProvider
     ): MutableSet<Arbitrary<*>> {
-        val nonNullType : TypeUsage = targetType.nonNull()
+        val nonNullType: TypeUsage = targetType.asNotNullable()
         val rawArbitraries = subtypeProvider.apply(nonNullType)
         return rawArbitraries.map { a -> a.orNull(0.05) }.toMutableSet()
     }

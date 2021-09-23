@@ -12,11 +12,4 @@ public class RegisteredSampleReportingFormats {
 	public static List<SampleReportingFormat> getReportingFormats() {
 		return Collections.unmodifiableList(new ArrayList<>(serviceCache.getServices()));
 	}
-
-	public static void register(SampleReportingFormat reportingFormat) {
-		if (serviceCache.getServices().contains(reportingFormat)) {
-			return;
-		}
-		serviceCache.getServices().add(0, reportingFormat);
-	}
 }
