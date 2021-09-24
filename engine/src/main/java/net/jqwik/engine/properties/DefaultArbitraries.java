@@ -26,6 +26,7 @@ public class DefaultArbitraries {
 		providers.add(new UseTypeArbitraryProvider());
 		providers.add(new FunctionArbitraryProvider());
 		providers.add(new VoidArbitraryProvider());
+		providers.add(new NullableArbitraryProvider());
 		return providers;
 	}
 

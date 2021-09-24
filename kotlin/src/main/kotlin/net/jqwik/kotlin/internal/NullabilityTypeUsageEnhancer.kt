@@ -7,9 +7,9 @@ import kotlin.reflect.KParameter
 
 class NullabilityTypeUsageEnhancer : TypeUsage.Enhancer {
 
-    override fun forParameter(targetType: TypeUsage, parameterInfo: Tuple.Tuple2<Parameter, Int>): TypeUsage {
+    override fun forParameter(original: TypeUsage, parameterInfo: Tuple.Tuple2<Parameter, Int>): TypeUsage {
         val kParameter: KParameter? = kotlinParameter(parameterInfo.get1(), parameterInfo.get2())
         val isNullable: Boolean = kParameter?.isMarkedNullable ?: false
-        return if (isNullable) targetType.asNullable() else targetType
+        return if (isNullable) original.asNullable() else original
     }
 }

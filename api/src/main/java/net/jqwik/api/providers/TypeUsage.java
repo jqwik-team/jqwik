@@ -39,24 +39,28 @@ public interface TypeUsage {
 	abstract class TypeUsageFacade {
 		private static TypeUsageFacade implementation;
 
-		static  {
+		static {
 			implementation = FacadeLoader.load(TypeUsageFacade.class);
 		}
 
 		public abstract TypeUsage of(Class<?> type, TypeUsage... typeParameters);
+
 		public abstract TypeUsage wildcard(TypeUsage upperBound);
+
 		public abstract TypeUsage forType(Type type);
 	}
 
 	/**
-	 * Currently used in Kotlin module to add nullability information
+	 * Enhancers can manipulate the perceived type of parameters.
+	 * They must be registered through Java Service Registration.
+	 *
+	 * <p>
+	 * Currently used in Kotlin module to add nullability information.
+	 * </p>
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
 	interface Enhancer {
 		default TypeUsage forParameter(TypeUsage original, Tuple2<Parameter, Integer> parameterInfo) {
-			return original;
-		}
-		default TypeUsage forTypeArgument(TypeUsage original, TypeUsage parent, int argumentIndex) {
 			return original;
 		}
 	}
@@ -203,23 +207,22 @@ public interface TypeUsage {
 	 * Return optional true if this type is nullable.
 	 *
 	 * <p>
-	 *     This is false by default and must be overridden in subtypes
+	 * Plain Java types are never nullable.
+	 * Nullability must be set explicitly using {@linkplain #asNullable()}.
+	 * This is usually done in registered {@linkplain TypeUsage.Enhancer enhancers}.
 	 * </p>
-	 *
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
-	default boolean isNullable() {
-		return false;
-	}
+	boolean isNullable();
 
 	/**
-	 * Return same type usage object with just nullablity set to true
+	 * Return type usage object with just nullablity set to true
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
 	TypeUsage asNullable();
 
 	/**
-	 * Return same type usage object with just nullablity set to false
+	 * Return type usage object with just nullablity set to false
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
 	TypeUsage asNotNullable();

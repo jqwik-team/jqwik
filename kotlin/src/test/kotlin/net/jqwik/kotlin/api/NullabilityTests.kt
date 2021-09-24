@@ -5,9 +5,9 @@ import net.jqwik.api.statistics.Statistics
 import net.jqwik.testing.TestingSupport
 import java.util.*
 import java.util.function.Predicate
-import kotlin.reflect.full.functions
 
 class NullabilityTests {
+
     @Example
     fun `orNull() makes result type nullable`(@ForAll random: Random) {
         val stringArbitrary: Arbitrary<String> = Arbitraries.strings()
@@ -31,29 +31,4 @@ class NullabilityTests {
             .coverage { coverage -> coverage.check(true).percentage(Predicate { p -> p > 3 }) }
     }
 
-    //@Property
-    //fun embeddedNullableTypesGetNullInjected(@ForAll listOfStrings: List<@AlphaChars String?>) {
-    //    println(listOfStrings)
-    //    //Statistics.label("aNullableString is null")
-    //    //    .collect(aNullableString == null)
-    //    //    .coverage { coverage -> coverage.check(true).percentage(Predicate { p -> p > 3 }) }
-    //}
-
-    //@Example
-    fun test() {
-        val kotlinClass = TopLevelFunctionsTests::class
-        //println("Kotlin class name: " + kotlinClass.jvmName)
-
-        val javaClass = Arbitraries::class
-
-        println("Kotlin")
-        for (function in kotlinClass.functions) {
-            println(function.parameters)
-        }
-
-        println("java")
-        for (function in javaClass.functions) {
-            println(function.parameters)
-        }
-    }
 }

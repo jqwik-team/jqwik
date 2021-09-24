@@ -13,7 +13,7 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
-public class TypeUsageImpl implements TypeUsage {
+public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	private static final Map<TypeVariable<?>, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
 
@@ -38,7 +38,7 @@ public class TypeUsageImpl implements TypeUsage {
 		return forParameter(parameter, RegisteredTypeUsageEnhancers.getEnhancers());
 	}
 
-	// Only use in tests
+	// Only used in tests
 	public static TypeUsage forParameter(MethodParameter parameter, List<TypeUsage.Enhancer> enhancerPipeline) {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
 			extractRawType(parameter.getType()),
@@ -48,21 +48,11 @@ public class TypeUsageImpl implements TypeUsage {
 			parameter.findAllAnnotations()
 		);
 
-		TypeUsage enhancedTypeUsage = forParameterThroughEnhancerPipeline(parameter, enhancerPipeline, typeUsage);
-
-		typeUsage.addTypeArguments(extractTypeArguments(parameter, enhancedTypeUsage, enhancerPipeline));
+		typeUsage.addTypeArguments(extractTypeArguments(parameter));
 		typeUsage.addUpperBounds(extractUpperBounds(parameter));
 		typeUsage.addLowerBounds(extractLowerBounds(parameter));
 
-		return enhancedTypeUsage;
-	}
-
-	private static List<TypeUsage> typeArgumentsThroughEnhancePipeline(
-		List<TypeUsage> typeArguments,
-		TypeUsage parent,
-		List<Enhancer> enhancerPipeline
-	) {
-		return null;
+		return forParameterThroughEnhancerPipeline(parameter, enhancerPipeline, typeUsage);
 	}
 
 	private static TypeUsage forParameterThroughEnhancerPipeline(MethodParameter parameter, List<Enhancer> enhancerPipeline, TypeUsageImpl typeUsage) {
@@ -154,11 +144,7 @@ public class TypeUsageImpl implements TypeUsage {
 		return Optional.ofNullable(resolved.get(typeVariable));
 	}
 
-	private static List<TypeUsage> extractTypeArguments(
-		MethodParameter parameter,
-		TypeUsage parent,
-		List<Enhancer> enhancerPipeline
-	) {
+	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
 		if (parameter.getAnnotatedType() instanceof AnnotatedParameterizedType) {
 			return extractAnnotatedTypeArguments((AnnotatedParameterizedType) parameter.getAnnotatedType());
 		} else {
@@ -299,6 +285,7 @@ public class TypeUsageImpl implements TypeUsage {
 
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
+	private boolean isNullable = false;
 
 	public TypeUsageImpl(
 		Class<?> rawType,
@@ -547,6 +534,16 @@ public class TypeUsageImpl implements TypeUsage {
 		return Optional.empty();
 	}
 
+	private TypeUsageImpl cloneWith(Consumer<TypeUsageImpl> updater) {
+		try {
+			TypeUsageImpl clone = (TypeUsageImpl) this.clone();
+			updater.accept(clone);
+			return clone;
+		} catch (CloneNotSupportedException shouldNeverHappen) {
+			return JqwikExceptionSupport.throwAsUncheckedException(shouldNeverHappen);
+		}
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -576,6 +573,9 @@ public class TypeUsageImpl implements TypeUsage {
 			if (!other.typeVariable.equals(typeVariable))
 				return false;
 			return (other.upperBounds.equals(upperBounds));
+		}
+		if (other.isNullable() != isNullable()) {
+			return false;
 		}
 		return true;
 	}
@@ -609,16 +609,16 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	@Override
+	public boolean isNullable() {
+		return isNullable;
+	}
+
+	@Override
 	public TypeUsage asNullable() {
 		if (this.isNullable()) {
 			return this;
 		}
-		return new TypeUsageAdapter(this) {
-			@Override
-			public boolean isNullable() {
-				return true;
-			}
-		};
+		return cloneWith(t -> t.isNullable = true);
 	}
 
 	@Override
@@ -626,12 +626,7 @@ public class TypeUsageImpl implements TypeUsage {
 		if (!this.isNullable()) {
 			return this;
 		}
-		return new TypeUsageAdapter(this) {
-			@Override
-			public boolean isNullable() {
-				return false;
-			}
-		};
+		return cloneWith(t -> t.isNullable = false);
 	}
 
 	@Override
