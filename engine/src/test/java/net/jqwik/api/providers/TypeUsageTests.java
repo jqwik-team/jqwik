@@ -11,9 +11,9 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
-import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
+import net.jqwik.engine.support.types.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -912,7 +912,7 @@ class TypeUsageTests {
 			final TypeUsage typeUsageFromEnhancer1 = TypeUsage.forType(String.class);
 			TypeUsage.Enhancer enhancer1 = new TypeUsage.Enhancer() {
 				@Override
-				public TypeUsage forParameter(TypeUsage typeUsage, Tuple2<Parameter, Integer> parameterInfo) {
+				public TypeUsage forParameter(TypeUsage original, Tuple2<Parameter, Integer> parameterInfo) {
 					assertThat(parameterInfo.get1()).isNotNull();
 					assertThat(parameterInfo.get2()).isEqualTo(0);
 					return typeUsageFromEnhancer1;
@@ -921,15 +921,45 @@ class TypeUsageTests {
 
 			TypeUsage.Enhancer enhancer2 = new TypeUsage.Enhancer() {
 				@Override
-				public TypeUsage forParameter(TypeUsage typeUsage, Tuple2<Parameter, Integer> parameterInfo) {
+				public TypeUsage forParameter(TypeUsage original, Tuple2<Parameter, Integer> parameterInfo) {
 					assertThat(parameterInfo.get1()).isNotNull();
 					assertThat(parameterInfo.get2()).isEqualTo(0);
-					return typeUsage;
+					return original;
 				}
 			};
 
 			TypeUsage stringType = TypeUsageImpl.forParameter(parameter, Arrays.asList(enhancer1, enhancer2));
 			assertThat(stringType).isSameAs(typeUsageFromEnhancer1);
+		}
+
+		// @Example
+		void enhancersAreCalledForTypeParameters() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withParameter(List<String> listOfStrings) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withParameter", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+
+			final TypeUsage parameterFromEnhancer = TypeUsage.of(List.class, TypeUsage.forType(String.class));
+			final TypeUsage typeArgumentFromEnhancer = TypeUsage.of(String.class);
+			TypeUsage.Enhancer enhancer = new TypeUsage.Enhancer() {
+				@Override
+				public TypeUsage forParameter(TypeUsage original, Tuple2<Parameter, Integer> parameterInfo) {
+					return parameterFromEnhancer;
+				}
+
+				@Override
+				public TypeUsage forTypeArgument(TypeUsage original, TypeUsage parent, int argumentIndex) {
+					assertThat(parent).isSameAs(parameterFromEnhancer);
+					assertThat(argumentIndex).isEqualTo(0);
+					return TypeUsage.Enhancer.super.forTypeArgument(original, parent, argumentIndex);
+				}
+			};
+
+			TypeUsage listType = TypeUsageImpl.forParameter(parameter, Arrays.asList(enhancer));
+			assertThat(listType.getTypeArguments().get(0)).isSameAs(typeArgumentFromEnhancer);
 		}
 
 	}

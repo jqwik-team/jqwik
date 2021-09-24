@@ -4,8 +4,8 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
+import net.jqwik.engine.support.types.*;
 
 public class ExhaustiveShrinkablesGenerator implements ForAllParametersGenerator {
 

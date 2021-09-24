@@ -1,4 +1,4 @@
-package net.jqwik.engine.facades;
+package net.jqwik.engine.support.types;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
@@ -10,13 +10,14 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
 public class TypeUsageImpl implements TypeUsage {
 
 	private static final Map<TypeVariable<?>, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
 
-	static final String WILDCARD = "?";
+	public static final String WILDCARD = "?";
 
 	public static TypeUsage forResolution(TypeResolution typeResolution) {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
@@ -49,12 +50,19 @@ public class TypeUsageImpl implements TypeUsage {
 
 		TypeUsage enhancedTypeUsage = forParameterThroughEnhancerPipeline(parameter, enhancerPipeline, typeUsage);
 
-		// TODO: Inject enhancedTypeUsage into extract method and add methods to TypeUsage.Enhancer
-		typeUsage.addTypeArguments(extractTypeArguments(parameter));
+		typeUsage.addTypeArguments(extractTypeArguments(parameter, enhancedTypeUsage, enhancerPipeline));
 		typeUsage.addUpperBounds(extractUpperBounds(parameter));
 		typeUsage.addLowerBounds(extractLowerBounds(parameter));
 
 		return enhancedTypeUsage;
+	}
+
+	private static List<TypeUsage> typeArgumentsThroughEnhancePipeline(
+		List<TypeUsage> typeArguments,
+		TypeUsage parent,
+		List<Enhancer> enhancerPipeline
+	) {
+		return null;
 	}
 
 	private static TypeUsage forParameterThroughEnhancerPipeline(MethodParameter parameter, List<Enhancer> enhancerPipeline, TypeUsageImpl typeUsage) {
@@ -66,7 +74,7 @@ public class TypeUsageImpl implements TypeUsage {
 		return enhanced;
 	}
 
-	static TypeUsageImpl forNonWildcardType(Type type) {
+	public static TypeUsageImpl forNonWildcardType(Type type) {
 		return resolveVariableOrCreate(
 			extractRawType(type),
 			type,
@@ -80,7 +88,7 @@ public class TypeUsageImpl implements TypeUsage {
 		);
 	}
 
-	static TypeUsageImpl forWildcard(WildcardType wildcardType) {
+	public static TypeUsageImpl forWildcard(WildcardType wildcardType) {
 		return resolveVariableOrCreate(
 			Object.class, wildcardType,
 			WILDCARD,
@@ -146,7 +154,11 @@ public class TypeUsageImpl implements TypeUsage {
 		return Optional.ofNullable(resolved.get(typeVariable));
 	}
 
-	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
+	private static List<TypeUsage> extractTypeArguments(
+		MethodParameter parameter,
+		TypeUsage parent,
+		List<Enhancer> enhancerPipeline
+	) {
 		if (parameter.getAnnotatedType() instanceof AnnotatedParameterizedType) {
 			return extractAnnotatedTypeArguments((AnnotatedParameterizedType) parameter.getAnnotatedType());
 		} else {
@@ -288,7 +300,7 @@ public class TypeUsageImpl implements TypeUsage {
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
 
-	TypeUsageImpl(
+	public TypeUsageImpl(
 		Class<?> rawType,
 		Type type,
 		AnnotatedType annotatedType,
@@ -305,15 +317,15 @@ public class TypeUsageImpl implements TypeUsage {
 		this.annotations = new ArrayList<>(annotations);
 	}
 
-	void addTypeArguments(List<TypeUsage> typeArguments) {
+	public void addTypeArguments(List<TypeUsage> typeArguments) {
 		this.typeArguments.addAll(typeArguments);
 	}
 
-	void addLowerBounds(List<TypeUsage> lowerBounds) {
+	public void addLowerBounds(List<TypeUsage> lowerBounds) {
 		this.lowerBounds.addAll(lowerBounds);
 	}
 
-	void addUpperBounds(List<TypeUsage> upperBounds) {
+	public void addUpperBounds(List<TypeUsage> upperBounds) {
 		this.upperBounds.addAll(upperBounds);
 	}
 

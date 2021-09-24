@@ -5,8 +5,8 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
+import net.jqwik.engine.support.types.*;
 
 public class PropertyMethodArbitraryResolver extends InstanceBasedSubtypeProvider implements ArbitraryResolver {
 

@@ -53,8 +53,11 @@ public interface TypeUsage {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
 	interface Enhancer {
-		default TypeUsage forParameter(TypeUsage typeUsage, Tuple2<Parameter, Integer> parameterInfo) {
-			return typeUsage;
+		default TypeUsage forParameter(TypeUsage original, Tuple2<Parameter, Integer> parameterInfo) {
+			return original;
+		}
+		default TypeUsage forTypeArgument(TypeUsage original, TypeUsage parent, int argumentIndex) {
+			return original;
 		}
 	}
 

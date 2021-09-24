@@ -8,8 +8,8 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
+import net.jqwik.engine.support.types.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 

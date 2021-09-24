@@ -1,4 +1,4 @@
-package net.jqwik.engine.facades;
+package net.jqwik.engine.support.types;
 
 import java.lang.annotation.*;
 import java.util.*;

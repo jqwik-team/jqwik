@@ -6,6 +6,7 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
+import net.jqwik.engine.support.types.*;
 
 /**
  * Is loaded through reflection in api module
