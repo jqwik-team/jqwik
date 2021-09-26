@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.5.4-SNAPSHOT
+title: jqwik User Guide - 1.6.0-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.5.4-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.6.0-SNAPSHOT</span>
 </h1>
 
 <h3>Table of Contents
@@ -54,6 +54,7 @@ title: jqwik User Guide - 1.5.4-SNAPSHOT
     - [Failure Reporting](#failure-reporting)
     - [Additional Reporting Options](#additional-reporting-options)
     - [Platform Reporting with Reporter Object](#platform-reporting-with-reporter-object)
+    - [Adding Footnotes to Failure Reports](#adding-footnotes-to-failure-reports)
   - [Optional `@Property` Attributes](#optional-property-attributes)
     - [Setting Defaults for `@Property` Attributes](#setting-defaults-for-property-attributes)
   - [Creating an Example-based Test](#creating-an-example-based-test)
@@ -173,10 +174,15 @@ title: jqwik User Guide - 1.5.4-SNAPSHOT
 - [Additional Modules](#additional-modules)
   - [Web Module](#web-module)
     - [Email Address Generation](#email-address-generation)
+    - [Web Domain Generation](#web-domain-generation)
   - [Time Module](#time-module)
     - [Generation of Dates](#generation-of-dates)
     - [Generation of Times](#generation-of-times)
     - [Generation of DateTimes](#generation-of-datetimes)
+  - [Kotlin Module](#kotlin-module)
+    - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
+    - [Generation of Nullable Types](#generation-of-nullable-types)
+    - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
   - [Testing Module](#testing-module)
 - [Advanced Topics](#advanced-topics)
   - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
@@ -208,7 +214,7 @@ Snapshot releases are created on a regular basis and can be fetched from
 
 ### Required Version of JUnit Platform
 
-The minimum required version of the JUnit platform is `1.7.2`.
+The minimum required version of the JUnit platform is `1.8.0`.
 
 ### Gradle
 
@@ -227,10 +233,10 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.7.2'
-ext.junitJupiterVersion = '5.7.2'
+ext.junitPlatformVersion = '1.8.0'
+ext.junitJupiterVersion = '5.8.0'
 
-ext.jqwikVersion = '1.5.4-SNAPSHOT'
+ext.jqwikVersion = '1.6.0-SNAPSHOT'
 
 compileTestJava {
     // To enable argument names in reporting and debugging
@@ -260,7 +266,7 @@ dependencies {
     testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.0"
 
     // Add any other test library you need...
     testImplementation "org.assertj:assertj-core:3.12.2"
@@ -329,7 +335,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.5.4-SNAPSHOT</version>
+        <version>1.6.0-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -357,15 +363,15 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-api-1.5.4-SNAPSHOT.jar`
-- `jqwik-engine-1.5.4-SNAPSHOT.jar`
-- `junit-platform-engine-1.7.2.jar`
-- `junit-platform-commons-1.7.2.jar`
+- `jqwik-api-1.6.0-SNAPSHOT.jar`
+- `jqwik-engine-1.6.0-SNAPSHOT.jar`
+- `junit-platform-engine-1.8.0.jar`
+- `junit-platform-commons-1.8.0.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
-- `jqwik-web-1.5.4-SNAPSHOT.jar`
-- `jqwik-time-1.5.4-SNAPSHOT.jar`
+- `jqwik-web-1.6.0-SNAPSHOT.jar`
+- `jqwik-time-1.6.0-SNAPSHOT.jar`
 
 
 
@@ -380,7 +386,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html).
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with
-[`@ForAll`](/docs/1.5.4-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.6.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -526,6 +532,50 @@ void reportInCode(Reporter reporter, @ForAll List<@AlphaChars String> aList) {
 has different publishing methods.
 Those with `report` in their name use jqwik's reporting mechanism and formats
 described [above](#failure-reporting).
+
+
+#### Adding Footnotes to Failure Reports
+
+By using the [platform reporting mechanism](#platform-reporting-with-reporter-object)
+you can publish additional key-value pairs for each and every run of a property method.
+In many cases, however, you only want some clarifying information for failing
+property tries. _Footnotes_ provide this capability:
+
+```java
+@EnableFootnotes
+public class FootnotesExamples {
+	@Property
+	void differenceShouldBeBelow42(@ForAll int number1, @ForAll int number2, Footnotes footnotes) {
+		int difference = Math.abs(number1 - number2);
+		footnotes.addFootnote(Integer.toString(difference));
+		Assertions.assertThat(difference).isLessThan(42);
+	}
+}
+```
+
+Unlike standard reporting, the footnotes feature must be explicitly enabled through
+the annotation `EnableFootnotes`, which can be added to container classes or individual property methods.
+Now you can add a parameter of type `net.jqwik.api.footnotes.Footnotes` to a property method
+or a lifecycle method annotated with either `@BeforeTry` or `@AfterTry`.
+The footnote string will then be part of the sample reporting:
+
+```
+Shrunk Sample (5 steps)
+-----------------------
+  number1: 0
+  number2: 42
+  footnotes: net.jqwik.api.footnotes.Footnotes[differenceShouldBeBelow42]
+
+  #1 42
+
+Original Sample
+---------------
+  number1: 399308
+  number2: -14
+  footnotes: net.jqwik.api.footnotes.Footnotes[differenceShouldBeBelow42]
+
+  #1 399322
+```
 
 
 ### Optional `@Property` Attributes
@@ -3438,6 +3488,17 @@ void queryStatistics(@ForAll int anInt) {
 }
 ```
 
+Or you can just switch it off for properties that do not fail:
+
+```java
+@Property
+@StatisticsReport(onFailureOnly = true)
+void queryStatistics(@ForAll int anInt) {
+	Statistics.collect(anInt);
+}
+```
+
+
 #### Histograms
 
 _jqwik_ comes with two report formats to display collected data as histograms:
@@ -4382,12 +4443,16 @@ _jqwik_ comes with a few additional modules:
 - The [`web` module](#web-module)
 - The [`time` module](#time-module)
 - The [`testing` module](#testing-module)
+- The [`kotlin` module](#kotlin-module)
 
 ### Web Module
 
 This module's artefact name is `jqwik-web`. It's supposed to provide arbitraries,
-default generation and annotations for web related types. Currently only
-[email generation](#email-address-generation) is supported.
+default generation and annotations for web related types. 
+Currently it supports the generation of
+
+- [Email addresses](#email-address-generation)
+- [Web Domain Names](#web-domain-generation)
 
 This module is part of jqwik's default dependencies.
 
@@ -4439,6 +4504,28 @@ void restrictedEmailAddresses(@ForAll @Email(quotedLocalPart = true, ipv4Host = 
     assertThat(email).contains("@");
 }
 ```
+
+
+#### Web Domain Generation
+
+To generate web domain names
+
+- call up the static method [`Web.webDomains()`](/docs/snapshot/javadoc/net/jqwik/web/api/Web.html#webDomains())
+
+- or use the annotation [`@WebDomain`](/docs/snapshot/javadoc/net/jqwik/web/api/WebDomain.html)
+  on `@ForAll` parameters of type `String`.
+
+Here's an example:
+
+```java
+@Property
+void topLevelDomainCannotHaveSingleLetter(@ForAll @WebDomain String domain) {
+	int lastDot = domain.lastIndexOf('.');
+	String tld = domain.substring(lastDot + 1);
+	Assertions.assertThat(tld).hasSizeGreaterThan(1);
+}
+```
+
 
 
 ### Time Module
@@ -4684,7 +4771,7 @@ Here's the list of available methods:
 
 ##### Default Generation of DateTimes
 
-Default generation currently is supported for `LocalDateTime` and `Instant`. 
+Default generation currently is supported for `LocalDateTime`, `Instant` and `OffsetDateTime`. 
 Here's a small example:
 
 ```java
@@ -4710,10 +4797,17 @@ The following annotations can be used to constrain default generation of the enu
 - [`@HourRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/HourRange.html)
 - [`@MinuteRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/MinuteRange.html)
 - [`@SecondRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/SecondRange.html)
+- [`@OffsetRange`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/OffsetRange.html)
 - [`@Precision`](/docs/snapshot/javadoc/net/jqwik/time/api/constraints/Precision.html)
 
-`@DateTimeRange`, `@InstantRange`, `@DateRange` and `@TimeRange` use the standard format of their classes. 
-Examples: `2013-05-25T01:34:22.231`, `2013-05-25` and `11:53`.
+`@DateTimeRange`, `@InstantRange`, `@DateRange`, `@TimeRange` and `@OffsetRange` use the standard format of their classes. 
+Examples: 
+
+- `@DateTimeRange`: `2013-05-25T01:34:22.231`
+- `@InstantRange`: `2013-05-25T01:34:22.231Z`
+- `@DateRange`: `2013-05-25`
+- `@TimeRange`: "01:32:31.394920222", "23:43:21" or "03:02"
+- `@OffsetRange`: "-09:00", "+3", "+11:22:33" or "Z"
 
 ##### Programmatic Generation of DateTimes
 
@@ -4737,6 +4831,7 @@ Here's the list of available methods:
 
 - [`LocalDateTimeArbitrary dateTimes()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#dateTimes())
 - [`InstantArbitrary instants()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#instants())
+- [`OffsetDateTimeArbitrary offsetDateTimes()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#offsetDateTimes())
 
 ###### LocalDateTimeArbitrary
 
@@ -4775,7 +4870,105 @@ Here's the list of available methods:
 - You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
 
+###### OffsetDateTimeArbitrary
 
+- The target type is `OffsetDateTime`.
+- By default, only years between 1900 and 2500 are generated.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
+- You can constrain its minimum and maximum value for date times using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain its minimum and maximum value for dates using `dateBetween(min, max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
+- You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
+- You can constrain the minimum and maximum time value using `timeBetween(min, max)`.
+- You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
+- You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
+- You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
+- You can constrain the minimum and maximum value for offset using `offsetBetween(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+
+### Kotlin Module
+
+This module's artefact name is `jqwik-Module`. 
+It's supposed to simplify and streamline using _jqwik_ in Kotlin projects. 
+
+This module is _not_ in jqwik's default dependencies. 
+It's usually added as a test-implementation dependency.
+
+The module provides:
+
+- [Automatic generation of nullable types](#generation-of-nullable-types)
+- [Convenience Functions for Kotlin](#convenience-functions-for-Kotlin)
+
+#### Build Configuration for Kotlin
+
+Apart from adding this module to the dependencies in test scope,
+there's a few other things you should configure for a seamless jqwik experience in Kotlin:
+
+- As of this writing the current kotlin version (1.5.31) does not generate byte code 
+  for Java annotations by default. 
+  It must be switched on through compiler argument `-Xemit-jvm-type-annotations`. 
+
+- In order to have nullability information for jqwik's API available in Kotlin
+  _JSR305_ compatibility should be switched on with compiler argument `-Xjsr305=strict`.
+
+Here's the jqwik-related part of the Gradle build file for a Kotlin project:
+
+```kotlin
+dependencies {
+    ...
+    testImplementation("net.jqwik:jqwik-kotlin:1.6.0-SNAPSHOT")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf(
+			"-Xjsr305=strict", // Required for strict interpretation of
+			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
+		)
+        jvmTarget = "11" // 1.8 or above
+        javaParameters = true // Required to get correct parameter names in reporting
+    }
+}
+```
+#### Generation of Nullable Types
+
+Top-level nullable Kotlin types are recognized, i.e., `null`'s will automatically be
+generated with a probability of 5%. 
+If you want a different probability you have to use `@WithNull(probability)`.
+
+```kotlin
+@Property
+fun alsoGenerateNulls(@ForAll nullOrString: String?) {
+    println(nullOrString)
+}
+```
+
+Note that the detection of nullable types only works for top-level types.
+Using `@ForAll list: List<String?>` will __not__ result in `null` values within the list.
+Nullability for type parameters must be explicitly set through `@WithNull`:
+
+```kotlin
+@Property(tries = 100)
+fun generateNullsInList(@ForAll list: List<@WithNull String>) {
+    println(list)
+}
+```
+
+#### Convenience Functions for Kotlin
+
+Some parts of the jqwik API are hard to use in Kotlin. 
+That's why this module offers a few extension functions and top-level functions
+to ease the pain:
+
+- `Arbitrary.orNull(probability: Double) : T?` returns a nullable type
 
 ### Testing Module
 
@@ -5299,4 +5492,4 @@ If a certain element, e.g. a method, is not annotated itself, then it carries th
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#154-snapshot).
+Read this version's [release notes](/release-notes.html#160-snapshot).

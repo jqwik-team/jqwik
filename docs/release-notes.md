@@ -26,7 +26,8 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
-- Added new module `jqwik-kotlin` for improved Kotlin support
+- Added new module [`jqwik-kotlin`]((/docs/snapshot/user-guide.html#kotlin-module)) 
+  for improved Kotlin support.
 
 #### Breaking Changes
 

@@ -1,3 +1,7 @@
+plugins {
+	id 'org.jetbrains.kotlin.jvm' version "${kotlinVersion}"
+}
+
 description = "Jqwik Documentation generation"
 
 static releaseNotesVersion(String versionString) {
@@ -119,11 +123,24 @@ test {
 	// testLogging.showStandardStreams = true
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+	kotlinOptions {
+		freeCompilerArgs = [
+			"-Xjsr305=strict", // For strict type warnings
+			"-Xjsr305=under-migration:strict",
+			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
+		]
+		jvmTarget = "1.8"
+		javaParameters = true // Required to get correct parameter names in reporting
+	}
+}
+
 dependencies {
 	testImplementation(project(":base"))
 	testImplementation(project(":time"))
 	testImplementation(project(":web"))
 	testImplementation(project(":testing"))
+	testImplementation(project(":kotlin"))
 	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 }

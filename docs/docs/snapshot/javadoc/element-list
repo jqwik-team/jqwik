@@ -4,6 +4,7 @@ net.jqwik.api.configurators
 net.jqwik.api.constraints
 net.jqwik.api.domains
 net.jqwik.api.facades
+net.jqwik.api.footnotes
 net.jqwik.api.lifecycle
 net.jqwik.api.providers
 net.jqwik.api.stateful

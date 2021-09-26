@@ -148,6 +148,7 @@ _jqwik_ comes with a few additional modules:
 - The [`web` module](#web-module)
 - The [`time` module](#time-module)
 - The [`testing` module](#testing-module)
+- The [`kotlin` module](#kotlin-module)
 
 ### Web Module
 
@@ -157,6 +158,9 @@ ${new File("src/docs/include/web-module.md").text}
 
 ${new File("src/docs/include/time-module.md").text}
 
+### Kotlin Module
+
+${new File("src/docs/include/kotlin-module.md").text}
 
 ### Testing Module
 
