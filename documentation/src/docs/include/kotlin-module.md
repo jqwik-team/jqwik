@@ -7,7 +7,7 @@ It's usually added as a test-implementation dependency.
 The module provides:
 
 - [Automatic generation of nullable types](#generation-of-nullable-types)
-- [Convenience Functions for Kotlin](#convenience-functions-for-Kotlin)
+- [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
 
 #### Build Configuration for Kotlin
 
