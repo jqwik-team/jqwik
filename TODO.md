@@ -8,6 +8,7 @@
       prop(@ForAll int a, @ForAll int b) will mostly generate edge cases for b
   
     - Kotlin Support
+      - Generate JavaDoc/KotlinDoc
       - Add JSR305 annotations to time module and web module
 
 - 1.6.x

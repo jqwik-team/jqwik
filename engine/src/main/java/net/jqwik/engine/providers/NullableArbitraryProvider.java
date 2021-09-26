@@ -4,12 +4,13 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
 public class NullableArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		return targetType.isNullable();
+		return targetType.isNullable() && !targetType.isAnnotated(WithNull.class);
 	}
 
 	@Override

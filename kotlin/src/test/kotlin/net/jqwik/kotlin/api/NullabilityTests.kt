@@ -1,6 +1,7 @@
 package net.jqwik.kotlin.api
 
 import net.jqwik.api.*
+import net.jqwik.api.constraints.WithNull
 import net.jqwik.api.statistics.Statistics
 import net.jqwik.testing.TestingSupport
 import java.util.*
@@ -24,11 +25,18 @@ class NullabilityTests {
         ) { s: String? -> s == null }
     }
 
-    @Property
+    @Property(edgeCases = EdgeCasesMode.NONE)
     fun nullableTypesGetNullInjected(@ForAll aNullableString: String?) {
         Statistics.label("aNullableString is null")
             .collect(aNullableString == null)
             .coverage { coverage -> coverage.check(true).percentage(Predicate { p -> p > 3 }) }
+    }
+
+    @Property(edgeCases = EdgeCasesMode.NONE)
+    fun nullableTypesGetNullInjectedWithCustomProbability(@ForAll @WithNull(0.5) aNullableString: String?) {
+        Statistics.label("aNullableString is null")
+            .collect(aNullableString == null)
+            .coverage { coverage -> coverage.check(true).percentage(Predicate { p -> p > 40 }) }
     }
 
 }
