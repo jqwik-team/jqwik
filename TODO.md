@@ -9,7 +9,6 @@
   
     - Kotlin Support
       - Generate JavaDoc/KotlinDoc
-      - Add JSR305 annotations to time module and web module
 
     - Can `fun test(@ForAll aString: @AlphaChars String) { ... }` be made to work?
 
