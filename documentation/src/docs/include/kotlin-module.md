@@ -44,6 +44,42 @@ tasks.withType<KotlinCompile> {
     }
 }
 ```
+
+#### Differences to Java Usage
+
+Kotlin is very compatible with Java, but a few things do not work or do not work as expected.
+Here are a few of those which I noticed to be relevant for jqwik:
+
+- Repeatable annotations do not work (yet) in Kotlin. 
+  That's why the container annotation must be used explicitly if you need for example more than one tag:
+  
+  ```kotlin
+  @TagList(
+      Tag("tag1"), Tag("tag2")
+  )
+  @Property
+  fun myProperty() { ... }
+  ```
+  That's also necessary for multiple `@Domain`, `@StatisticsReport` etc.
+
+
+- The positioning of constraint annotations can be tricky. Whereas
+  ```kotlin
+  @Property
+  fun test(@ForAll aList: List<@AlphaChars String>) { ... }
+  ```
+  will use only alphabetic characters for the generated list of Strings,
+  ```kotlin
+  @Property(tries = 100)
+  fun test(@ForAll aString: @AlphaChars String) { ... }
+  ```
+  just ignores the `@AlphaChars` annotation. 
+  Instead you have to do it that way:
+  ```kotlin
+  @Property(tries = 100)
+  fun test(@ForAll @AlphaChars aString: String) { ... }
+  ```
+
 #### Generation of Nullable Types
 
 Top-level nullable Kotlin types are recognized, i.e., `null`'s will automatically be

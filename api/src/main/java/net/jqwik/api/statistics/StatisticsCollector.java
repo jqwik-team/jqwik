@@ -5,6 +5,8 @@ import java.util.function.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -12,6 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * data about generated values within a property method.
  */
 @API(status = MAINTAINED, since = "1.2.3")
+@NonNullApi
 public interface StatisticsCollector {
 
 	/**

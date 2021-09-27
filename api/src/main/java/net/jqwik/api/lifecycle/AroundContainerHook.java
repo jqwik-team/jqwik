@@ -2,6 +2,8 @@ package net.jqwik.api.lifecycle;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -9,6 +11,7 @@ import static org.apiguardian.api.API.Status.*;
  * for convenience.
  */
 @API(status = MAINTAINED, since = "1.4.0")
+@NonNullApi
 public interface AroundContainerHook extends BeforeContainerHook, AfterContainerHook {
 
 	/**

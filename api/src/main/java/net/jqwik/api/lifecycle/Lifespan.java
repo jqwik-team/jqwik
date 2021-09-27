@@ -2,6 +2,8 @@ package net.jqwik.api.lifecycle;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -21,6 +23,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see Store
  */
 @API(status = EXPERIMENTAL, since = "1.2.4")
+@NonNullApi
 public enum Lifespan {
 
 	/**

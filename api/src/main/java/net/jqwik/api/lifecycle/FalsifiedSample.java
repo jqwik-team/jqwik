@@ -16,6 +16,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see PropertyExecutionResult#shrunkSample()
  */
 @API(status = EXPERIMENTAL, since = "1.3.5")
+@NonNullApi
 public interface FalsifiedSample {
 
 	/**

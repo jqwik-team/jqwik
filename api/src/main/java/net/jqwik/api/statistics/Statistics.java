@@ -15,6 +15,7 @@ import static org.apiguardian.api.API.Status.*;
  * of that data.
  */
 @API(status = MAINTAINED, since = "1.2.3")
+@NonNullApi
 public class Statistics {
 
 	public static abstract class StatisticsFacade {

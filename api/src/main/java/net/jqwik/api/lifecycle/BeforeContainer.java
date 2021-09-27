@@ -4,6 +4,8 @@ import java.lang.annotation.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -26,6 +28,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @API(status = MAINTAINED, since = "1.4.0")
+@NonNullApi
 public @interface BeforeContainer {
 
 }

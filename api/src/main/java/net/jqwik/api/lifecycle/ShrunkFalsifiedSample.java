@@ -2,6 +2,8 @@ package net.jqwik.api.lifecycle;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -11,6 +13,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see PropertyExecutionResult#originalSample()
  */
 @API(status = EXPERIMENTAL, since = "1.3.5")
+@NonNullApi
 public interface ShrunkFalsifiedSample extends FalsifiedSample {
 
 	/**

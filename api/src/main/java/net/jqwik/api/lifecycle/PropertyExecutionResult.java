@@ -6,12 +6,15 @@ import java.util.*;
 import org.apiguardian.api.*;
 import org.opentest4j.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
  * Represents the result of running a property.
  */
 @API(status = MAINTAINED, since = "1.4.0")
+@NonNullApi
 public interface PropertyExecutionResult {
 
 	/**

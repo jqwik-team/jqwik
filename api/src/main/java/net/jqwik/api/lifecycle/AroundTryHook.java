@@ -4,6 +4,8 @@ import java.util.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -13,6 +15,7 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = MAINTAINED, since = "1.4.0")
 @FunctionalInterface
+@NonNullApi
 public interface AroundTryHook extends LifecycleHook {
 
 	/**

@@ -16,6 +16,7 @@ import static org.apiguardian.api.API.Status.*;
  * into range-based clusters for display in a histogram.
  */
 @API(status = EXPERIMENTAL, since = "1.3.0")
+@NonNullApi
 public class NumberRangeHistogram extends Histogram {
 
 	/**

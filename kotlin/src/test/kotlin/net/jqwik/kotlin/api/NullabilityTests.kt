@@ -3,10 +3,12 @@ package net.jqwik.kotlin.api
 import net.jqwik.api.*
 import net.jqwik.api.constraints.WithNull
 import net.jqwik.api.statistics.Statistics
+import net.jqwik.api.statistics.StatisticsReport
 import net.jqwik.testing.TestingSupport
 import java.util.*
 import java.util.function.Predicate
 
+@StatisticsReport(onFailureOnly = true)
 class NullabilityTests {
 
     @Example

@@ -11,6 +11,9 @@
       - Generate JavaDoc/KotlinDoc
       - Add JSR305 annotations to time module and web module
 
+    - Can `fun test(@ForAll aString: @AlphaChars String) { ... }` be made to work?
+
+
 - 1.6.x
 
     - Verify size settings for all Collection Arbitraries
