@@ -10,6 +10,9 @@
 
     - Can `fun test(@ForAll aString: @AlphaChars String) { ... }` be made to work?
 
+    - Remove old jqwik.properties mechanism.
+      See JqwikProperties.loadWithBackwardsCompatibility(..)
+
 
 - 1.6.x
 
