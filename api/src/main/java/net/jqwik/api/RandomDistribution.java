@@ -30,7 +30,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see net.jqwik.api.arbitraries.DoubleArbitrary
  * @see net.jqwik.api.arbitraries.FloatArbitrary
  */
-@API(status = EXPERIMENTAL, since = "1.3.0")
+@API(status = MAINTAINED, since = "1.3.0")
 public interface RandomDistribution {
 
 	@API(status = INTERNAL)
@@ -51,6 +51,7 @@ public interface RandomDistribution {
 	/**
 	 * Generator for BigInteger values which are behind all generated numeric values in jqwik.
 	 */
+	@API(status = INTERNAL)
 	interface RandomNumericGenerator {
 
 		/**
@@ -122,5 +123,6 @@ public interface RandomDistribution {
 	 *
 	 * @return generator for randomly generated BigInteger values
 	 */
+	@API(status = INTERNAL)
 	RandomNumericGenerator createGenerator(int genSize, BigInteger min, BigInteger max, BigInteger center);
 }

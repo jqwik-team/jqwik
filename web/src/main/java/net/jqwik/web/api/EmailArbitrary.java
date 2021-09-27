@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  *    Other options like quoted local parts and ip addresses as host can be switched on.
  * </p>
  */
-@API(status = EXPERIMENTAL, since = "1.4.0")
+@API(status = MAINTAINED, since = "1.4.0")
 public interface EmailArbitrary extends Arbitrary<String> {
 
 	/**

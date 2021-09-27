@@ -531,7 +531,7 @@ public interface Arbitrary<T> {
 	 * @param exceptionType The exception type to ignore
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.1")
+	@API(status = MAINTAINED, since = "1.3.1")
 	default Arbitrary<T> ignoreException(Class<? extends Throwable> exceptionType) {
 		return ArbitraryFacade.implementation.ignoreException(Arbitrary.this, exceptionType);
 	}

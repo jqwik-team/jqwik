@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see Property
  */
-@API(status = EXPERIMENTAL, since = "1.4.0")
+@API(status = MAINTAINED, since = "1.4.0")
 public enum FixedSeedMode {
 	ALLOW,
 	WARN,

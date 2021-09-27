@@ -90,6 +90,6 @@ public @interface Property {
 	 *
 	 * @return the fixed seed mode
 	 */
-	@API(status = EXPERIMENTAL, since = "1.4.0")
+	@API(status = MAINTAINED, since = "1.4.0")
 	FixedSeedMode whenFixedSeed() default FixedSeedMode.NOT_SET;
 }

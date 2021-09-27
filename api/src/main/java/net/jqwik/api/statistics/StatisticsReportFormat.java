@@ -19,7 +19,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see StatisticsReport
  */
-@API(status = EXPERIMENTAL, since = "1.2.3")
+@API(status = MAINTAINED, since = "1.2.3")
 @NonNullApi
 public interface StatisticsReportFormat {
 

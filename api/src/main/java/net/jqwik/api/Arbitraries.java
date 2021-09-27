@@ -640,7 +640,7 @@ public class Arbitraries {
 	 */
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
-	@API(status = EXPERIMENTAL, since = "1.3.4")
+	@API(status = MAINTAINED, since = "1.3.4")
 	public static <T> Arbitrary<T> lazyOf(Supplier<Arbitrary<? extends T>> first, Supplier<Arbitrary<? extends T>>... rest) {
 		List<Supplier<Arbitrary<T>>> all = new ArrayList<>();
 		all.add(() -> (Arbitrary<T>) first.get());

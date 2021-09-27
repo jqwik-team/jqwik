@@ -44,7 +44,7 @@ public interface ArbitraryProvider {
 		 * @param typeUsages
 		 * @return stream of list of arbitraries
 		 */
-		@API(status = EXPERIMENTAL, since = "1.2.0")
+		@API(status = MAINTAINED, since = "1.2.0")
 		default Stream<List<Arbitrary<?>>> resolveAndCombine(TypeUsage... typeUsages) {
 
 			List<Arbitrary<Arbitrary<?>>> arbitraries =

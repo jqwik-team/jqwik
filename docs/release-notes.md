@@ -29,6 +29,15 @@ title: jqwik Release Notes
 - Added new module [`jqwik-kotlin`](/docs/snapshot/user-guide.html#kotlin-module) 
   for improved Kotlin support.
 
+- Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
+    - `net.jqwik.api.Arbitrary.ignoreException(..)`
+    - `net.jqwik.api.Property.whenFixedSeed`
+    - `net.jqwik.api.RandomDistribution` and its usages in numerical arbitraries
+    - `net.jqwik.api.arbitraries.ArbitraryDecorator`
+    - `net.jqwik.api.constraints.NotBlank`
+    - `net.jqwik.api.domains.DomainContextBase`
+    - `net.jqwik.api.statistics.StatisticsReport`
+
 - Upgraded to JUnit Platform 1.8.1
 
 #### Breaking Changes

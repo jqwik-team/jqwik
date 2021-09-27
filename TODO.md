@@ -1,7 +1,5 @@
 - 1.6.0
 
-    - Propagate experimental APIs
-
     - Replace Arbitraries.just(null) with Arbitraries.null()
 
     - Bug: EdgeCases are overgenerated with more than one forall parameter, e.g.

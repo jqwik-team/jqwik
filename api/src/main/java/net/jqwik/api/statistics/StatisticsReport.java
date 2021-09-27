@@ -37,7 +37,7 @@ import static org.apiguardian.api.API.Status.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Repeatable(StatisticsReportList.class)
-@API(status = EXPERIMENTAL, since = "1.2.3")
+@API(status = MAINTAINED, since = "1.2.3")
 public @interface StatisticsReport {
 
 	@API(status = INTERNAL)
@@ -76,7 +76,7 @@ public @interface StatisticsReport {
 	/**
 	 * The statistics label to which the format in this annotation should be applied.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.1")
+	@API(status = MAINTAINED, since = "1.5.1")
 	String label() default ALL_LABELS;
 
 	/**
