@@ -29,6 +29,8 @@ title: jqwik Release Notes
 - Added new module [`jqwik-kotlin`](/docs/snapshot/user-guide.html#kotlin-module) 
   for improved Kotlin support.
 
+- Upgraded to JUnit Platform 1.8.1
+
 #### Breaking Changes
 
 - Removed `AbstractDomainContextBase` which had been deprecated in 1.5.2
