@@ -44,8 +44,12 @@ title: jqwik Release Notes
 
 - Removed `AbstractDomainContextBase` which had been deprecated in 1.5.2
 
+- `@WithNull` now has a default probability of 0.05 instead of 0.1
+
+
 #### Bug Fixes
 
+_No known bugs_
 
 ## 1.5.x
 
