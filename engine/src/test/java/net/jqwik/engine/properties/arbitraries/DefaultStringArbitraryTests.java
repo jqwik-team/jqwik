@@ -173,7 +173,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 
 		RandomGenerator<String> generator = arbitrary.generator(1, false);
 
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			String string = generator.next(random).value();
 			Statistics.collect(string.length());
 		}
