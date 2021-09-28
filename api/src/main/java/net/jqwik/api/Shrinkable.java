@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -19,7 +20,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 			implementation = FacadeLoader.load(ShrinkableFacade.class);
 		}
 
-		public abstract <T> Shrinkable<T> unshrinkable(Supplier<T> valueSupplier, ShrinkingDistance distance);
+		public abstract <T> Shrinkable<T> unshrinkable(@Nullable Supplier<T> valueSupplier, ShrinkingDistance distance);
 
 		public abstract <T, U> Shrinkable<U> map(Shrinkable<T> self, Function<T, U> mapper);
 
@@ -28,11 +29,11 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed);
 	}
 
-	static <T> Shrinkable<T> unshrinkable(T value) {
+	static <T> Shrinkable<T> unshrinkable(@Nullable T value) {
 		return unshrinkable(value, ShrinkingDistance.of(0));
 	}
 
-	static <T> Shrinkable<T> unshrinkable(T value, ShrinkingDistance distance) {
+	static <T> Shrinkable<T> unshrinkable(@Nullable T value, ShrinkingDistance distance) {
 		return ShrinkableFacade.implementation.unshrinkable(() -> value, distance);
 	}
 

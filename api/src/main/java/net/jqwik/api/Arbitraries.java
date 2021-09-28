@@ -441,7 +441,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.2")
-	public static <T> Arbitrary<T> just(T value) {
+	public static <@NullableType T> Arbitrary<T> just(@Nullable T value) {
 		return fromGenerators(
 			random -> Shrinkable.unshrinkable(value),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(value), max),

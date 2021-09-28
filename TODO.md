@@ -1,7 +1,5 @@
 - 1.6.0
 
-    - Replace Arbitraries.just(null) with Arbitraries.null()
-
     - Kotlin Support
       - Generate JavaDoc/KotlinDoc
 
