@@ -11,12 +11,12 @@ class ArbitrariesExtensionsTests {
 
     @Example
     fun `Arbitraries strings()`(@ForAll random: Random) {
-        val stringArbitrary = String.any()
+        val stringArbitrary = String.any().ofMaxLength(10)
 
         assertAllGenerated(
             stringArbitrary.generator(1000),
             random,
-            Predicate { s: String? -> s != null }
+            Predicate { s: String? -> s != null  && s.length <= 10}
         )
     }
 

@@ -63,22 +63,22 @@ Here are a few of those which I noticed to be relevant for jqwik:
   That's also necessary for multiple `@Domain`, `@StatisticsReport` etc.
 
 
-- The positioning of constraint annotations can be tricky. Whereas
+- The positioning of constraint annotations can be confusing since 
+  Kotlin allows annotations at the parameter and at the parameter's type. 
+  So both of these will constrain generation of Strings to use only alphabetic characters:
+
   ```kotlin
   @Property
-  fun test(@ForAll aList: List<@AlphaChars String>) { ... }
-  ```
-  will use only alphabetic characters for the generated list of Strings,
-  ```kotlin
-  @Property(tries = 100)
-  fun test(@ForAll aString: @AlphaChars String) { ... }
-  ```
-  just ignores the `@AlphaChars` annotation. 
-  Instead you have to do it that way:
-  ```kotlin
-  @Property(tries = 100)
   fun test(@ForAll @AlphaChars aString: String) { ... }
   ```
+  
+  ```kotlin
+  @Property
+  fun test(@ForAll aString: @AlphaChars String) { ... }
+  ```
+
+  The one important exception is `@ForAll` which must always precede the parameter.
+
 
 #### Generation of Nullable Types
 
@@ -111,3 +111,8 @@ That's why this module offers a few extension functions and top-level functions
 to ease the pain:
 
 - `Arbitrary.orNull(probability: Double) : T?` returns a nullable type
+
+#### Quirks and Bugs
+
+As of this writing Kotlin still has a few bugs when it comes to supporting Java annotations.
+That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.

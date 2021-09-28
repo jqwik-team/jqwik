@@ -230,4 +230,7 @@ public interface TypeUsage {
 	@API(status = EXPERIMENTAL, since = "1.6.0")
 	String getTypeVariable();
 
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	<A extends Annotation> TypeUsage withAnnotation(A annotation);
+
 }

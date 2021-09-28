@@ -3,6 +3,7 @@ package net.jqwik.engine.support;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
 import org.junit.platform.commons.support.*;
@@ -36,15 +37,21 @@ public class JqwikAnnotationSupport {
 	}
 
 	private static void appendMetaAnnotations(Annotation annotation, List<Annotation> collector) {
+		Stream<Annotation> metaAnnotationStream = streamMetaAnnotations(annotation);
+		metaAnnotationStream
+			.filter(candidate -> !collector.contains(candidate))
+			.forEach(metaAnnotation -> {
+				collector.add(metaAnnotation);
+				appendMetaAnnotations(metaAnnotation, collector);
+			});
+	}
+
+	public static Stream<Annotation> streamMetaAnnotations(Annotation annotation) {
 		Annotation[] metaAnnotationCandidates = annotation.annotationType().getDeclaredAnnotations();
-		Arrays.stream(metaAnnotationCandidates)
-			  .filter(candidate -> !isInJavaLangAnnotationPackage(candidate.annotationType()))
-			  .filter(candidate -> !isApiAnnotation(candidate.annotationType()))
-			  .filter(candidate -> !collector.contains(candidate))
-			  .forEach(metaAnnotation -> {
-				  collector.add(metaAnnotation);
-				  appendMetaAnnotations(metaAnnotation, collector);
-			  });
+		return Arrays.stream(metaAnnotationCandidates)
+					 .filter(candidate -> !isInJavaLangAnnotationPackage(candidate.annotationType()))
+					 .filter(candidate -> !isApiAnnotation(candidate.annotationType()));
+
 	}
 
 	private static boolean isApiAnnotation(Class<? extends Annotation> annotationType) {

@@ -55,7 +55,11 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		return forParameterThroughEnhancerPipeline(parameter, enhancerPipeline, typeUsage);
 	}
 
-	private static TypeUsage forParameterThroughEnhancerPipeline(MethodParameter parameter, List<Enhancer> enhancerPipeline, TypeUsageImpl typeUsage) {
+	private static TypeUsage forParameterThroughEnhancerPipeline(
+		MethodParameter parameter,
+		List<Enhancer> enhancerPipeline,
+		TypeUsageImpl typeUsage
+	) {
 		Tuple2<Parameter, Integer> parameterInfo = Tuple.of(parameter.getRawParameter(), parameter.getIndex());
 		TypeUsage enhanced = typeUsage;
 		for (Enhancer enhancer : enhancerPipeline) {
@@ -280,7 +284,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private final Type type;
 	private final AnnotatedType annotatedType;
 	private final String typeVariable;
-	private final List<Annotation> annotations;
+	private List<Annotation> annotations;
 	private final List<TypeUsage> typeArguments = new ArrayList<>();
 
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
@@ -466,9 +470,9 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	@Override
 	public <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType) {
 		return getAnnotationsStream()
-				   .filter(annotation -> annotation.annotationType().equals(annotationType))
-				   .map(annotationType::cast)
-				   .findFirst();
+			.filter(annotation -> annotation.annotationType().equals(annotationType))
+			.map(annotationType::cast)
+			.findFirst();
 	}
 
 	@Override
@@ -632,6 +636,17 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	@Override
 	public String getTypeVariable() {
 		return typeVariable;
+	}
+
+	@Override
+	public <A extends Annotation> TypeUsage withAnnotation(A annotation) {
+		return cloneWith(t -> {
+			t.annotations = new ArrayList<>(annotations);
+			t.annotations.add(annotation);
+			JqwikAnnotationSupport.streamMetaAnnotations(annotation)
+								  .filter(candidate -> !t.annotations.contains(candidate))
+								  .forEach(metaAnnotation -> t.annotations.add(metaAnnotation));
+		});
 	}
 
 	@Override

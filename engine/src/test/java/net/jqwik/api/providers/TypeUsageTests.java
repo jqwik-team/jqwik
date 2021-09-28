@@ -52,6 +52,28 @@ class TypeUsageTests {
 		assertThat(stringType).isEqualTo(nullableStringType.asNotNullable());
 	}
 
+	@Example
+	void withAddedAnnotations() throws NoSuchMethodException {
+
+		class LocalClass {
+			@SuppressWarnings("WeakerAccess")
+			public void withAnnotation(@StringLength(5) String length) {}
+		}
+
+		Method method = LocalClass.class.getMethod("withAnnotation", String.class);
+		MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+		StringLength stringLength = parameter.getAnnotation(StringLength.class);
+
+		TypeUsage stringType = of(String.class);
+		assertThat(stringType.getAnnotations()).isEmpty();
+
+		TypeUsage stringWithAnnotation = stringType.withAnnotation(stringLength);
+		assertThat(stringWithAnnotation.getAnnotations()).hasSize(1);
+		Optional<StringLength> annotation = stringWithAnnotation.findAnnotation(StringLength.class);
+		assertThat(annotation).isPresent();
+		annotation.ifPresent(length -> assertThat(length.value()).isEqualTo(5));
+	}
+
 	@Group
 	@Label("of()")
 	class Of {
