@@ -79,6 +79,30 @@ Here are a few of those which I noticed to be relevant for jqwik:
 
   The one important exception is `@ForAll` which must always precede the parameter.
 
+- Grouping - aka nesting - of test container classes requires the `inner` modifier.
+  The reason is that nested classes without `inner` are considered to be `static`
+  in the Java reflection API. 
+
+  ```kotlin
+  class GroupingExamples {
+  
+      @Property
+      fun plainProperty(@ForAll anInt: Int) {}
+  
+      @Group
+      inner class OuterGroup {
+  
+          @Property
+          fun propertyInOuterGroup(@ForAll anInt: Int) {}
+  
+          @Group
+          inner class InnerGroup {
+              @Property
+              fun propertyInInnerGroup(@ForAll anInt: Int) {}
+          }
+      }
+  }  
+  ```
 
 #### Generation of Nullable Types
 
