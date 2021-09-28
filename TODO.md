@@ -1,6 +1,7 @@
 - 1.6.0
 
     - Kotlin Support
+      - Group support 
       - Generate JavaDoc/KotlinDoc
 
     - Remove old jqwik.properties mechanism.
