@@ -1,0 +1,8 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:net.jqwik.kotlin.api////PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/index.html
+$dokka.location:net.jqwik.kotlin.api//any/kotlin.String.Companion#/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/any.html
+$dokka.location:net.jqwik.kotlin.api//orNull/net.jqwik.api.Arbitrary[TypeParam(bounds=[kotlin.Any?])]#kotlin.Double/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/or-null.html
+$dokka.location:net.jqwik.kotlin.api//sample/#net.jqwik.api.Arbitrary[TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/sample.html
+net.jqwik.kotlin.api
+

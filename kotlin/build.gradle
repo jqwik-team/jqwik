@@ -13,6 +13,7 @@ jar {
 	}
 }
 
+// Should this be replaced by a dokkaJavadoc?
 task publishKotlinJavadoc(type: Javadoc) {
 	source = file('./src/main/kotlin')
 	failOnError = false
@@ -22,10 +23,10 @@ task publishKotlinJavadoc(type: Javadoc) {
 
 tasks.named("dokkaHtml") {
 	moduleName.set("jqwik-kotlin")
-	outputDirectory.set(file("${rootDir}/documentation/build/docs/dokka"))
+	outputDirectory.set(file("${rootDir}/documentation/build/docs/kdoc"))
 	dokkaSourceSets.named("main") {
 		perPackageOption {
-			matchingRegex.set(".*\\.internal.*") // will match all .internal packages and sub-packages
+			matchingRegex.set(".*\\.internal.*")
 			suppress.set(true)
 		}
 	}

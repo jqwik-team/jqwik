@@ -3,6 +3,7 @@
     - Kotlin Support
         - Combinators.combine(a1, ...).as(...) -> combine(a1, ...) { o1, ... -> }
 
+    - Include /docs/dokka in Website
 
 - 1.6.x
 

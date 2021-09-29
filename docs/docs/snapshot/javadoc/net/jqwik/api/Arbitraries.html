@@ -945,7 +945,8 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in n
 <h4>just</h4>
 <pre class="methodSignature">@API(status=MAINTAINED,
      since="1.3.2")
-public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;just&#8203;(T&nbsp;value)</pre>
+public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;just&#8203;(@Nullable
+                                    T&nbsp;value)</pre>
 <div class="block">Create an arbitrary that will always generate the same value.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
@@ -1159,7 +1160,7 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="arbitraries/TypeArbitrary.html" title
 <li class="blockList">
 <h4>lazyOf</h4>
 <pre class="methodSignature">@SafeVarargs
-@API(status=EXPERIMENTAL,
+@API(status=MAINTAINED,
      since="1.3.4")
 public static&nbsp;&lt;T&gt;&nbsp;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;lazyOf&#8203;(java.util.function.Supplier&lt;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&gt;&nbsp;first,
                                       java.util.function.Supplier&lt;<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&gt;...&nbsp;rest)</pre>

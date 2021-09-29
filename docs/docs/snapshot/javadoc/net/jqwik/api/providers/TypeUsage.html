@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":1,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":1,"i29":1};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":1,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":1,"i29":1,"i30":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -396,6 +396,11 @@ public interface <span class="typeNameLabel">TypeUsage</span></pre>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#wildcard(net.jqwik.api.providers.TypeUsage)">wildcard</a></span>&#8203;(<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&nbsp;upperBound)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
+<tr id="i30" class="altColor">
+<td class="colFirst"><code>&lt;A extends java.lang.annotation.Annotation&gt;<br><a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#withAnnotation(A)">withAnnotation</a></span>&#8203;(A&nbsp;annotation)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -736,12 +741,25 @@ boolean&nbsp;isNullable()</pre>
 <a id="getTypeVariable()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getTypeVariable</h4>
 <pre class="methodSignature">@API(status=EXPERIMENTAL,
      since="1.6.0")
 java.lang.String&nbsp;getTypeVariable()</pre>
+</li>
+</ul>
+<a id="withAnnotation(java.lang.annotation.Annotation)">
+<!--   -->
+</a><a id="withAnnotation(A)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>withAnnotation</h4>
+<pre class="methodSignature">@API(status=EXPERIMENTAL,
+     since="1.6.0")
+&lt;A extends java.lang.annotation.Annotation&gt;&nbsp;<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&nbsp;withAnnotation&#8203;(A&nbsp;annotation)</pre>
 </li>
 </ul>
 </li>

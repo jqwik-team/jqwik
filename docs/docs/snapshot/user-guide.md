@@ -181,8 +181,10 @@ title: jqwik User Guide - 1.6.0-SNAPSHOT
     - [Generation of DateTimes](#generation-of-datetimes)
   - [Kotlin Module](#kotlin-module)
     - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
+    - [Differences to Java Usage](#differences-to-java-usage)
     - [Generation of Nullable Types](#generation-of-nullable-types)
     - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
+    - [Quirks and Bugs](#quirks-and-bugs)
   - [Testing Module](#testing-module)
 - [Advanced Topics](#advanced-topics)
   - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
@@ -214,7 +216,7 @@ Snapshot releases are created on a regular basis and can be fetched from
 
 ### Required Version of JUnit Platform
 
-The minimum required version of the JUnit platform is `1.8.0`.
+The minimum required version of the JUnit platform is `1.8.1`.
 
 ### Gradle
 
@@ -233,8 +235,8 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.8.0'
-ext.junitJupiterVersion = '5.8.0'
+ext.junitPlatformVersion = '1.8.1'
+ext.junitJupiterVersion = '5.8.1'
 
 ext.jqwikVersion = '1.6.0-SNAPSHOT'
 
@@ -266,7 +268,7 @@ dependencies {
     testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testImplementation "org.junit.jupiter:junit-jupiter:5.8.0"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
 
     // Add any other test library you need...
     testImplementation "org.assertj:assertj-core:3.12.2"
@@ -365,8 +367,8 @@ You will have to add _at least_ the following jars to your classpath:
 
 - `jqwik-api-1.6.0-SNAPSHOT.jar`
 - `jqwik-engine-1.6.0-SNAPSHOT.jar`
-- `junit-platform-engine-1.8.0.jar`
-- `junit-platform-commons-1.8.0.jar`
+- `junit-platform-engine-1.8.1.jar`
+- `junit-platform-commons-1.8.1.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
@@ -4901,7 +4903,7 @@ It's usually added as a test-implementation dependency.
 The module provides:
 
 - [Automatic generation of nullable types](#generation-of-nullable-types)
-- [Convenience Functions for Kotlin](#convenience-functions-for-Kotlin)
+- [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
 
 #### Build Configuration for Kotlin
 
@@ -4938,6 +4940,66 @@ tasks.withType<KotlinCompile> {
     }
 }
 ```
+
+#### Differences to Java Usage
+
+Kotlin is very compatible with Java, but a few things do not work or do not work as expected.
+Here are a few of those which I noticed to be relevant for jqwik:
+
+- Repeatable annotations do not work (yet) in Kotlin. 
+  That's why the container annotation must be used explicitly if you need for example more than one tag:
+  
+  ```kotlin
+  @TagList(
+      Tag("tag1"), Tag("tag2")
+  )
+  @Property
+  fun myProperty() { ... }
+  ```
+  That's also necessary for multiple `@Domain`, `@StatisticsReport` etc.
+
+
+- The positioning of constraint annotations can be confusing since 
+  Kotlin allows annotations at the parameter and at the parameter's type. 
+  So both of these will constrain generation of Strings to use only alphabetic characters:
+
+  ```kotlin
+  @Property
+  fun test(@ForAll @AlphaChars aString: String) { ... }
+  ```
+  
+  ```kotlin
+  @Property
+  fun test(@ForAll aString: @AlphaChars String) { ... }
+  ```
+
+  The one important exception is `@ForAll` which must always precede the parameter.
+
+- Grouping - aka nesting - of test container classes requires the `inner` modifier.
+  The reason is that nested classes without `inner` are considered to be `static`
+  in the Java reflection API. 
+
+  ```kotlin
+  class GroupingExamples {
+  
+      @Property
+      fun plainProperty(@ForAll anInt: Int) {}
+  
+      @Group
+      inner class OuterGroup {
+  
+          @Property
+          fun propertyInOuterGroup(@ForAll anInt: Int) {}
+  
+          @Group
+          inner class InnerGroup {
+              @Property
+              fun propertyInInnerGroup(@ForAll anInt: Int) {}
+          }
+      }
+  }  
+  ```
+
 #### Generation of Nullable Types
 
 Top-level nullable Kotlin types are recognized, i.e., `null`'s will automatically be
@@ -4969,6 +5031,11 @@ That's why this module offers a few extension functions and top-level functions
 to ease the pain:
 
 - `Arbitrary.orNull(probability: Double) : T?` returns a nullable type
+
+#### Quirks and Bugs
+
+As of this writing Kotlin still has a few bugs when it comes to supporting Java annotations.
+That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.
 
 ### Testing Module
 

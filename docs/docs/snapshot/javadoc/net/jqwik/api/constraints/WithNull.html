@@ -122,9 +122,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 public @interface <span class="memberNameLabel">WithNull</span></pre>
 <div class="block">Allows jqwik to inject null parameters into generated values.
 
+ <p>
  Applies to any parameter which is also annotated with <code>@ForAll</code>.
-
- <code>value</code> specifies the probability between 0 and 1.0 to use for injecting null values.</div>
+ <p></div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../ForAll.html" title="annotation in net.jqwik.api"><code>ForAll</code></a></dd>
@@ -179,8 +179,12 @@ public @interface <span class="memberNameLabel">WithNull</span></pre>
 <h4>value</h4>
 <pre>double&nbsp;value</pre>
 <dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the probability between 0 and 1.0 to use for injecting null values. Default is 0.05 or 5%.</dd>
+</dl>
+<dl>
 <dt>Default:</dt>
-<dd>0.1</dd>
+<dd>0.05</dd>
 </dl>
 </li>
 </ul>

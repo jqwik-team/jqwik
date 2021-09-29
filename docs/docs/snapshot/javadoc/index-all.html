@@ -293,7 +293,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html" title="class in net.jqwik.api.arbitraries"><span class="typeNameLink">ArbitraryDecorator</span></a>&lt;<a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html" title="type parameter in ArbitraryDecorator">T</a>&gt; - Class in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
 <dd>
-<div class="block">Use this superclass if you want to provide a specialized type of arbitrary.</div>
+<div class="block">Use this superclass if you want to provide a specialized type of arbitrary,
+ e.g. with additional methods for configuration or defaults,
+ but don't want to implement the whole <a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a> interface yourself.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html#%3Cinit%3E()">ArbitraryDecorator()</a></span> - Constructor for class net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/ArbitraryDecorator.html" title="class in net.jqwik.api.arbitraries">ArbitraryDecorator</a></dt>
 <dd>&nbsp;</dd>
@@ -1626,7 +1628,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Return a list of report lines.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/providers/TypeUsage.Enhancer.html#forParameter(net.jqwik.api.providers.TypeUsage,net.jqwik.api.Tuple.Tuple2)">forParameter(TypeUsage, Tuple.Tuple2&lt;Parameter, Integer&gt;)</a></span> - Method in interface net.jqwik.api.providers.<a href="net/jqwik/api/providers/TypeUsage.Enhancer.html" title="interface in net.jqwik.api.providers">TypeUsage.Enhancer</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/providers/TypeUsage.Enhancer.html#forParameter(net.jqwik.api.providers.TypeUsage,java.lang.reflect.Parameter)">forParameter(TypeUsage, Parameter)</a></span> - Method in interface net.jqwik.api.providers.<a href="net/jqwik/api/providers/TypeUsage.Enhancer.html" title="interface in net.jqwik.api.providers">TypeUsage.Enhancer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#forType(java.lang.Class)">forType(Class&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -4605,6 +4607,8 @@ the order they are declared.</div>
 <dd>
 <div class="block">Allow all chars in <code>allowedChars</code> show up in generated values.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/providers/TypeUsage.html#withAnnotation(A)">withAnnotation(A)</a></span> - Method in interface net.jqwik.api.providers.<a href="net/jqwik/api/providers/TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Builders.html#withBuilder(java.util.function.Supplier)">withBuilder(Supplier&lt;B&gt;)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/Builders.html" title="class in net.jqwik.api">Builders</a></dt>
 <dd>
 <div class="block">Combine Arbitraries by means of a builder.</div>

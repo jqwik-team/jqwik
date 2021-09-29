@@ -138,12 +138,14 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd><code>java.lang.Cloneable</code>, <code><a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></dd>
 </dl>
 <hr>
-<pre>@API(status=EXPERIMENTAL,
+<pre>@API(status=MAINTAINED,
      since="1.4.0")
 public abstract class <span class="typeNameLabel">ArbitraryDecorator&lt;T&gt;</span>
 extends java.lang.Object
 implements java.lang.Cloneable, <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</pre>
-<div class="block">Use this superclass if you want to provide a specialized type of arbitrary.</div>
+<div class="block">Use this superclass if you want to provide a specialized type of arbitrary,
+ e.g. with additional methods for configuration or defaults,
+ but don't want to implement the whole <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a> interface yourself.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../Arbitrary.html" title="interface in net.jqwik.api"><code>Arbitrary</code></a>, 
