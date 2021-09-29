@@ -2,6 +2,11 @@ static isSnapshotRelease(versionString) {
 	versionString.endsWith('SNAPSHOT')
 }
 
+plugins {
+	id 'org.jetbrains.kotlin.jvm' version "1.5.30" apply false
+	id 'org.jetbrains.dokka' version "1.5.30" apply false
+}
+
 ext {
 	junitPlatformVersion = '1.8.1'
 	junitJupiterVersion = '5.8.1'
@@ -11,7 +16,7 @@ ext {
 	assertJVersion = '3.21.0'
 	mockitoVersion = '3.12.4'
 	systemLambdaVersion = '1.2.0'
-	kotlinVersion = '1.5.31'
+	kotlinVersion = '1.5.30'
 	moduleName = 'net.jqwik'
 	jqwikVersion = '1.6.0-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)

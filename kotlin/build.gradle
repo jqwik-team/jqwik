@@ -1,5 +1,6 @@
 plugins {
-	id 'org.jetbrains.kotlin.jvm' version "${kotlinVersion}"
+	id 'org.jetbrains.kotlin.jvm'
+	id 'org.jetbrains.dokka'
 }
 
 description = "Jqwik Kotlin module"
@@ -17,6 +18,17 @@ task publishKotlinJavadoc(type: Javadoc) {
 	failOnError = false
 	destinationDir = file("${rootDir}/docs/javadoc")
 	include '**/api/**'
+}
+
+tasks.named("dokkaHtml") {
+	moduleName.set("jqwik-kotlin")
+	outputDirectory.set(file("${rootDir}/documentation/build/docs/dokka"))
+	dokkaSourceSets.named("main") {
+		perPackageOption {
+			matchingRegex.set(".*\\.internal.*") // will match all .internal packages and sub-packages
+			suppress.set(true)
+		}
+	}
 }
 
 publishing {

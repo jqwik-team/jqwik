@@ -1,5 +1,5 @@
 plugins {
-	id 'org.jetbrains.kotlin.jvm' version "${kotlinVersion}"
+	id 'org.jetbrains.kotlin.jvm'
 }
 
 description = "Jqwik Documentation generation"
@@ -30,28 +30,28 @@ static docsVersion(String versionString) {
 def userGuideTemplate = 'user-guide.template.md'
 
 task composeUserGuide(type: Copy) {
-	from ('src/docs/') {
+	from('src/docs/') {
 		include userGuideTemplate
 	}
 	into "$buildDir/docs"
 	expand(
-			version: '${version}',
-			gitVersion: '${gitVersion}',
-			docsVersion: '${docsVersion}',
-			releaseNotesVersion: '${releaseNotesVersion}',
-			junitPlatformVersion: '${junitPlatformVersion}',
-			junitJupiterVersion: '${junitJupiterVersion}',
-			opentest4jVersion: '${opentest4jVersion}',
+		version: '${version}',
+		gitVersion: '${gitVersion}',
+		docsVersion: '${docsVersion}',
+		releaseNotesVersion: '${releaseNotesVersion}',
+		junitPlatformVersion: '${junitPlatformVersion}',
+		junitJupiterVersion: '${junitJupiterVersion}',
+		opentest4jVersion: '${opentest4jVersion}',
 	)
 }
 
 task expandUserGuide(type: Copy) {
 	dependsOn composeUserGuide
-	from ("$buildDir/docs") {
+	from("$buildDir/docs") {
 		include userGuideTemplate
 	}
 	into "$buildDir/docs"
-	rename { file -> 'user-guide.md'}
+	rename { file -> 'user-guide.md' }
 	expand(
 		version: jqwikVersion,
 		gitVersion: gitVersion(jqwikVersion),
@@ -66,19 +66,20 @@ task expandUserGuide(type: Copy) {
 	}
 }
 
-task generateUserGuideToc(type:Exec) {
+task generateUserGuideToc(type: Exec) {
 	dependsOn expandUserGuide
 
 	workingDir "$buildDir/docs"
 
-	commandLine 'doctoc', '--maxlevel', '4',  'user-guide.md'
+	commandLine 'doctoc', '--maxlevel', '4', 'user-guide.md'
 }
 
-task generateJavaDoc(type:Javadoc) {
+task generateJavaDoc(type: Javadoc) {
+	dependsOn ':kotlin:dokkaHtml'
 	source(
-			file("${rootDir}/api/src/main/java"),
-			file("${rootDir}/web/src/main/java"),
-			file("${rootDir}/time/src/main/java")
+		file("${rootDir}/api/src/main/java"),
+		file("${rootDir}/web/src/main/java"),
+		file("${rootDir}/time/src/main/java")
 	)
 	include("**/api/**")
 	classpath = project.sourceSets.main.compileClasspath + project.sourceSets.test.compileClasspath
@@ -87,7 +88,7 @@ task generateJavaDoc(type:Javadoc) {
 }
 
 task expandJavaDocIndexHtml(type: Copy) {
-	from ('src/docs/') {
+	from('src/docs/') {
 		include 'index.template.html'
 	}
 	into "$buildDir/javadoc"
