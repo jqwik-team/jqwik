@@ -136,6 +136,10 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 	}
 }
 
+compileTestKotlin {
+	kotlinOptions.suppressWarnings = true
+}
+
 dependencies {
 	testImplementation(project(":base"))
 	testImplementation(project(":time"))
