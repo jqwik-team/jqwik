@@ -25,10 +25,9 @@ title: jqwik Release Notes
 ## 1.6.0-SNAPSHOT
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
-and
+<a href="/docs/snapshot/user-guide.html">User guide</a>,
 <a href="/docs/snapshot/javadoc/index.html">javadoc</a>
-<a href="/docs/snapshot/dokka/index.html">kdoc</a>
+and <a href="/docs/snapshot/dokka/index.html">kdoc</a>
 </p>
 
 #### New and Enhanced Features
