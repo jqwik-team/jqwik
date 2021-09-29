@@ -25,18 +25,5 @@ jqwik.seeds.whenfixed = ALLOW                # How a test should act when a seed
                                              # Useful to prevent accidental commits of fixed seeds into source control.                                             
 ```
 
-Prior releases of _jqwik_ used a custom `jqwik.properties`. While this continues to work, it is deprecated
-and will be removed in a future release. Some names have changed:
-
-- `database` -> `jqwik.database`
-- `defaultTries` -> `jqwik.tries.default`
-- `defaultMaxDiscardRatio` -> `jqwik.maxdiscardratio.default`
-- `useJunitPlatformReporter` -> `jqwik.reporting.usejunitplatform`
-- `defaultAfterFailure` -> `jqwik.failures.after.default`
-- `reportOnlyFailures` -> `jqwik.reporting.onlyfailures`
-- `defaultGeneration` -> `jqwik.generation.default`
-- `defaultEdgeCases` -> `jqwik.edgecases.default`
-- `defaultShrinking` -> `jqwik.shrinking.default`
-- `boundedShrinkingSeconds` -> `jqwik.shrinking.bounded.seconds`
-- `runFailuresFirst` -> `jqwik.failures.runfirst`
-
+Prior releases of _jqwik_ used a custom `jqwik.properties` file.
+Since version `1.6.0` this is no longer supported.

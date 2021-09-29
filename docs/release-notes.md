@@ -29,7 +29,7 @@ title: jqwik Release Notes
 - Added new module [`jqwik-kotlin`](/docs/snapshot/user-guide.html#kotlin-module) 
   for improved Kotlin support.
 
-- Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
+- Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`:
     - `net.jqwik.api.Arbitrary.ignoreException(..)`
     - `net.jqwik.api.Property.whenFixedSeed`
     - `net.jqwik.api.RandomDistribution` and its usages in numerical arbitraries
@@ -46,6 +46,8 @@ title: jqwik Release Notes
 
 - `@WithNull` now has a default probability of 0.05 instead of 0.1
 
+- Configuration through a `jqwik.properties` file is no longer supported.
+  Please use [JUnit Platform configuration](/docs/snapshot/user-guide.html#jqwik-configuration) instead.
 
 #### Bug Fixes
 
