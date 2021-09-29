@@ -937,18 +937,16 @@ class TypeUsageTests {
 			final TypeUsage typeUsageFromEnhancer1 = TypeUsage.forType(String.class);
 			TypeUsage.Enhancer enhancer1 = new TypeUsage.Enhancer() {
 				@Override
-				public TypeUsage forParameter(TypeUsage original, Tuple2<Parameter, Integer> parameterInfo) {
-					assertThat(parameterInfo.get1()).isNotNull();
-					assertThat(parameterInfo.get2()).isEqualTo(0);
+				public TypeUsage forParameter(TypeUsage original, Parameter parameter) {
+					assertThat(parameter.getType()).isEqualTo(String.class);
 					return typeUsageFromEnhancer1;
 				}
 			};
 
 			TypeUsage.Enhancer enhancer2 = new TypeUsage.Enhancer() {
 				@Override
-				public TypeUsage forParameter(TypeUsage original, Tuple2<Parameter, Integer> parameterInfo) {
-					assertThat(parameterInfo.get1()).isNotNull();
-					assertThat(parameterInfo.get2()).isEqualTo(0);
+				public TypeUsage forParameter(TypeUsage original, Parameter parameter) {
+					assertThat(parameter.getType()).isEqualTo(String.class);
 					return original;
 				}
 			};

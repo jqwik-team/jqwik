@@ -7,7 +7,6 @@ import java.util.*;
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -60,7 +59,7 @@ public interface TypeUsage {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
 	interface Enhancer {
-		default TypeUsage forParameter(TypeUsage original, Tuple2<Parameter, Integer> parameterInfo) {
+		default TypeUsage forParameter(TypeUsage original, Parameter parameter) {
 			return original;
 		}
 	}

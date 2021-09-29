@@ -7,8 +7,6 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
@@ -60,10 +58,9 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		List<Enhancer> enhancerPipeline,
 		TypeUsageImpl typeUsage
 	) {
-		Tuple2<Parameter, Integer> parameterInfo = Tuple.of(parameter.getRawParameter(), parameter.getIndex());
 		TypeUsage enhanced = typeUsage;
 		for (Enhancer enhancer : enhancerPipeline) {
-			enhanced = enhancer.forParameter(enhanced, parameterInfo);
+			enhanced = enhancer.forParameter(enhanced, parameter.getRawParameter());
 		}
 		return enhanced;
 	}
