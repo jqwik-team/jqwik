@@ -12,7 +12,6 @@ import static org.apiguardian.api.API.Status.*;
  * The context information of a single try of a property.
  */
 @API(status = MAINTAINED, since = "1.4.0")
-@NonNullApi
 public interface TryLifecycleContext extends LifecycleContext {
 
 	/**

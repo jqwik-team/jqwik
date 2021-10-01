@@ -18,7 +18,6 @@ import static org.apiguardian.api.API.Status.*;
  * </p>
  */
 @API(status = EXPERIMENTAL, since = "1.3.4")
-@NonNullApi
 public interface PropertyAttributes {
 
 	/**

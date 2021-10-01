@@ -16,7 +16,6 @@ import static org.apiguardian.api.API.Status.*;
  * into range-based clusters for display in a histogram.
  */
 @API(status = EXPERIMENTAL, since = "1.3.0")
-@NonNullApi
 public class NumberRangeHistogram extends Histogram {
 
 	/**
@@ -32,8 +31,8 @@ public class NumberRangeHistogram extends Histogram {
 	/**
 	 * Determines how a range of numbers is being displayed.
 	 *
-	 * @param min The minimum value of the range (included)
-	 * @param max The maximum value of the range
+	 * @param min         The minimum value of the range (included)
+	 * @param max         The maximum value of the range
 	 * @param maxIncluded If the maximum value is included in the range
 	 * @return A string to describe the range
 	 */
@@ -56,7 +55,6 @@ public class NumberRangeHistogram extends Histogram {
 	final protected Comparator<? super StatisticsEntry> comparator() {
 		return (left, right) -> 0;
 	}
-
 
 	/**
 	 * Does not make sense to override because this has the number range functionality
@@ -126,7 +124,8 @@ public class NumberRangeHistogram extends Histogram {
 					max = value;
 				}
 			} catch (NumberFormatException numberFormatException) {
-				String message = String.format("NumberRangeHistogram instances only accept numeric values. [%s] is not numeric.", entry.values().get(0));
+				String message = String.format("NumberRangeHistogram instances only accept numeric values. [%s] is not numeric.", entry
+					.values().get(0));
 				throw new JqwikException(message);
 			}
 		}

@@ -11,7 +11,6 @@ import static org.apiguardian.api.API.Status.*;
  * for convenience.
  */
 @API(status = MAINTAINED, since = "1.4.0")
-@NonNullApi
 public interface AroundContainerHook extends BeforeContainerHook, AfterContainerHook {
 
 	/**

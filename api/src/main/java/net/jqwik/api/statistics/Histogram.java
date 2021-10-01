@@ -6,15 +6,12 @@ import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
-
 import static org.apiguardian.api.API.Status.*;
 
 /**
  * A statistics report format to display collected statistics entries as a histogram
  */
 @API(status = EXPERIMENTAL, since = "1.3.0")
-@NonNullApi
 public class Histogram implements StatisticsReportFormat {
 
 	private static final Logger LOG = Logger.getLogger(Histogram.class.getName());
@@ -90,7 +87,7 @@ public class Histogram implements StatisticsReportFormat {
 	 * Cluster entries into {@linkplain Bucket buckets}.
 	 *
 	 * <p>
-	 *     Override if entries should be aggregated into buckets to display in histogram.
+	 * Override if entries should be aggregated into buckets to display in histogram.
 	 * </p>
 	 *
 	 * @param entries An already sorted list of entries
@@ -98,9 +95,9 @@ public class Histogram implements StatisticsReportFormat {
 	 */
 	protected List<Bucket> cluster(final List<StatisticsEntry> entries) {
 		return entries
-				   .stream()
-				   .map(entry -> new Bucket(label(entry), entry.count()))
-				   .collect(Collectors.toList());
+			.stream()
+			.map(entry -> new Bucket(label(entry), entry.count()))
+			.collect(Collectors.toList());
 	}
 
 	/**

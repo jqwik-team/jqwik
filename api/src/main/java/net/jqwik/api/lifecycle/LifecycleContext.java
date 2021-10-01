@@ -19,7 +19,6 @@ import static org.apiguardian.api.API.Status.*;
  * @see TryLifecycleContext
  */
 @API(status = MAINTAINED, since = "1.4.0")
-@NonNullApi
 public interface LifecycleContext {
 
 	/**

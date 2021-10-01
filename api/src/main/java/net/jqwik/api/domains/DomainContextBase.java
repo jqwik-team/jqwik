@@ -38,7 +38,6 @@ import static org.apiguardian.api.API.Status.*;
  * @see Provide
  */
 @API(status = MAINTAINED, since = "1.5.2")
-@NonNullApi
 public abstract class DomainContextBase implements DomainContext {
 
 	// Have higher priority than jqwik default providers

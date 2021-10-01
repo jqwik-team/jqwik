@@ -15,7 +15,6 @@ import static org.apiguardian.api.API.Status.*;
  * of that data.
  */
 @API(status = MAINTAINED, since = "1.2.3")
-@NonNullApi
 public class Statistics {
 
 	public static abstract class StatisticsFacade {
@@ -75,7 +74,6 @@ public class Statistics {
 	 *               <li>The number of values must always be the same in a single property</li>
 	 *               <li>Values can be {@code null}</li>
 	 *               </ul>
-	 *
 	 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
 	 * @see #label(String)
 	 */

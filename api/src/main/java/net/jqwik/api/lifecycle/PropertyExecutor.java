@@ -11,7 +11,6 @@ import static org.apiguardian.api.API.Status.*;
  * This is used in {@linkplain AroundPropertyHook}.
  */
 @API(status = MAINTAINED, since = "1.4.0")
-@NonNullApi
 public interface PropertyExecutor {
 
 	/**

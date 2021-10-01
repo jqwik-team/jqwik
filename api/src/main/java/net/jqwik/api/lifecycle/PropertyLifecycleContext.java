@@ -13,7 +13,6 @@ import static org.apiguardian.api.API.Status.*;
  * The context information of a property or example.
  */
 @API(status = MAINTAINED, since = "1.4.0")
-@NonNullApi
 public interface PropertyLifecycleContext extends LifecycleContext {
 
 	/**

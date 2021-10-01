@@ -14,7 +14,6 @@ import static org.apiguardian.api.API.Status.*;
  * Represents the result of calling a property method with a list of parameters.
  */
 @API(status = MAINTAINED, since = "1.4.0")
-@NonNullApi
 public interface TryExecutionResult {
 
 	/**

@@ -14,7 +14,6 @@ import static org.apiguardian.api.API.Status.*;
  * Represents the result of running a property.
  */
 @API(status = MAINTAINED, since = "1.4.0")
-@NonNullApi
 public interface PropertyExecutionResult {
 
 	/**

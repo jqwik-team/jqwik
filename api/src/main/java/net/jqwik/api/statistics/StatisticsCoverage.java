@@ -5,8 +5,6 @@ import java.util.function.*;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
-
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -15,7 +13,6 @@ import static org.apiguardian.api.API.Status.*;
  * @see Statistics#coverage(Consumer)
  */
 @API(status = MAINTAINED, since = "1.4.0")
-@NonNullApi
 public interface StatisticsCoverage {
 
 	interface CoverageChecker {

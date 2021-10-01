@@ -17,12 +17,12 @@ import static org.apiguardian.api.API.Status.*;
  * to be usable in this way.
  *
  * <p>
- *     Lifecycle: Instantiate exactly once per property, then {@linkplain #initialize(PropertyLifecycleContext)}
- *     will be called before providers and configurators will be retrieved.
+ * Lifecycle: Instantiate exactly once per property, then {@linkplain #initialize(PropertyLifecycleContext)}
+ * will be called before providers and configurators will be retrieved.
  * </p>
  *
  * <p>
- *     Most implementing class will subclass {@linkplain DomainContextBase}.
+ * Most implementing class will subclass {@linkplain DomainContextBase}.
  * </p>
  *
  * @see Domain
@@ -30,7 +30,6 @@ import static org.apiguardian.api.API.Status.*;
  */
 
 @API(status = MAINTAINED, since = "1.2.0")
-@NonNullApi
 public interface DomainContext {
 
 	@API(status = INTERNAL)

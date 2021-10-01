@@ -11,7 +11,6 @@ import static org.apiguardian.api.API.Status.*;
  * that should be run exactly once after of its property methods and child containers.
  */
 @API(status = MAINTAINED, since = "1.4.0")
-@NonNullApi
 public interface AfterContainerHook extends LifecycleHook {
 
 	/**

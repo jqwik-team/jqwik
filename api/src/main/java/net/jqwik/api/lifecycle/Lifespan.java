@@ -23,7 +23,6 @@ import static org.apiguardian.api.API.Status.*;
  * @see Store
  */
 @API(status = EXPERIMENTAL, since = "1.2.4")
-@NonNullApi
 public enum Lifespan {
 
 	/**

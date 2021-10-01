@@ -4,8 +4,6 @@ import java.util.*;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
-
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -20,7 +18,6 @@ import static org.apiguardian.api.API.Status.*;
  * @see StatisticsReport
  */
 @API(status = MAINTAINED, since = "1.2.3")
-@NonNullApi
 public interface StatisticsReportFormat {
 
 	/**
@@ -28,7 +25,6 @@ public interface StatisticsReportFormat {
 	 * but that must not necessarily be the case.
 	 *
 	 * @return All report lines. No trailing `CR` or `LF` characters are needed.
-	 *
 	 * @see StatisticsEntry
 	 */
 	List<String> formatReport(List<StatisticsEntry> entries);

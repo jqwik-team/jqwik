@@ -5,8 +5,6 @@ import java.util.function.*;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
-
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -14,16 +12,15 @@ import static org.apiguardian.api.API.Status.*;
  * data about generated values within a property method.
  */
 @API(status = MAINTAINED, since = "1.2.3")
-@NonNullApi
 public interface StatisticsCollector {
 
 	/**
 	 * Call this method to record an entry for statistical data about generated values.
 	 * As soon as this method is called at least once in a property method,
 	 * the statistical data will be reported after the property has finished.
-	 * 
+	 *
 	 * <p>
-	 *     For examples see {@linkplain Statistics#collect(Object...)}
+	 * For examples see {@linkplain Statistics#collect(Object...)}
 	 * </p>
 	 *
 	 * @param values Can be anything. The list of these values is considered
@@ -34,9 +31,8 @@ public interface StatisticsCollector {
 	 *               must always be the same in a single property</li>
 	 *               <li>Values can be {@code null}</li>
 	 *               </ul>
-	 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
-	 *
 	 * @return The current instance of collector to allow a fluent coverage API
+	 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
 	 */
 	StatisticsCollector collect(@Nullable Object... values);
 
@@ -44,7 +40,7 @@ public interface StatisticsCollector {
 	 * Perform coverage checking for successful property on statistics.
 	 *
 	 * <p>
-	 *     For examples see {@linkplain Statistics#coverage(Consumer)}
+	 * For examples see {@linkplain Statistics#coverage(Consumer)}
 	 * </p>
 	 *
 	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
