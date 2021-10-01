@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        java: [ '8', '11', '14', '15', '16', '17' ]
+        java: [ '8.0.302+8', '11.0.12+7', '16.0.2+7', '17.0.0+35' ]
 
     name: Test on Java ${{ matrix.Java }}
 
