@@ -52,7 +52,7 @@ public class TestingSupport {
 		Optional<? extends Shrinkable<? extends T>> success =
 				generator
 						.stream(random)
-						.limit(3000)
+						.limit(5000)
 						.filter(shrinkable -> checker.apply(shrinkable.value()))
 						.findAny();
 		if (!success.isPresent()) {
