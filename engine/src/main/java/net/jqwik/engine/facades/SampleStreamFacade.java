@@ -25,7 +25,7 @@ class SampleStreamFacade {
 		}
 	};
 
-	private static final Map<Arbitrary<Object>, RandomGenerator<Object>> generators = new HashMap<>();
+	private static final Map<Arbitrary<Object>, RandomGenerator<Object>> generators = new GeneratorLruCache(500);
 
 	@SuppressWarnings("unchecked")
 	private static <T> RandomGenerator<T> getGeneratorForSampling(Arbitrary<T> arbitrary) {
@@ -68,4 +68,17 @@ class SampleStreamFacade {
 					 .map(shrinkable -> runInDescriptor(() -> shrinkable.value()));
 	}
 
+	private static class GeneratorLruCache extends LinkedHashMap<Arbitrary<Object>, RandomGenerator<Object>> {
+		private final int maxSize;
+
+		GeneratorLruCache(int maxSize) {
+			super(maxSize + 1, 1, true);
+			this.maxSize = maxSize;
+		}
+
+		@Override
+		protected boolean removeEldestEntry(Map.Entry<Arbitrary<Object>, RandomGenerator<Object>> eldest) {
+			return size() > maxSize;
+		}
+	}
 }
