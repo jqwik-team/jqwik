@@ -70,13 +70,20 @@ class FlatCombinatorsTests {
 		assertThat(value.value()).isEqualTo(36);
 	}
 
-	@Property(tries =1, seed="-4082664798422409837")
+	@Example
 	void listOfArbitrariesCanBeCombined() {
-		List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(one(), one(), two(), two(), three(), three());
-		Arbitrary<Integer> combineList = Combinators.combine(listOfArbitraries)
-													.flatAs(list -> Arbitraries.just(list.stream().mapToInt(e -> e).sum()));
+		List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(one(), two(), three());
+		Arbitrary<Integer> combineList =
+			Combinators.combine(listOfArbitraries)
+					   .flatAs(list -> {
+						   assertThat(list).hasSize(3);
+						   assertThat(list.get(0)).isEqualTo(1);
+						   assertThat(list.get(1)).isEqualTo(2);
+						   assertThat(list.get(2)).isEqualTo(3);
+						   return Arbitraries.just(list.stream().mapToInt(e -> e).sum());
+					   });
 		Shrinkable<Integer> value = generate(combineList);
-		assertThat(value.value()).isEqualTo(12);
+		assertThat(value.value()).isEqualTo(6);
 	}
 
 	Arbitrary<Integer> one() {

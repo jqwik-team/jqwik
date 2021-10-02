@@ -27,7 +27,7 @@ public class TestingSupport {
 						.findAny();
 
 		failure.ifPresent(shrinkable -> {
-			Assertions.fail(String.format("Value [%s] failed to fulfill condition.", shrinkable.value().toString()));
+			Assertions.fail(String.format("Value [%s] failed to fulfill condition.", shrinkable.value()));
 		});
 	}
 

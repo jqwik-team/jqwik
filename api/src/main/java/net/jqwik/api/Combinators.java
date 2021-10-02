@@ -919,7 +919,7 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<R>> flatCombinator) {
-			return combineFlat(new ArrayList<>(listOfArbitraries), new ArrayList<>(), flatCombinator);
+			return combineFlat(new ArrayList<>(listOfArbitraries), Collections.emptyList(), flatCombinator);
 		}
 
 		// Caution: This method is NOT tail-recursive.
@@ -932,10 +932,12 @@ public class Combinators {
 		) {
 			if (arbitraries.isEmpty())
 				return flatCombinator.apply(values);
-			Arbitrary<T> first = arbitraries.remove(0);
+			ArrayList<Arbitrary<T>> newArbitraries = new ArrayList<>(arbitraries);
+			Arbitrary<T> first = newArbitraries.remove(0);
 			return first.flatMap(value -> {
-				values.add(0, value);
-				return combineFlat(arbitraries, values, flatCombinator);
+				ArrayList<T> newValues = new ArrayList<>(values);
+				newValues.add(value);
+				return combineFlat(newArbitraries, newValues, flatCombinator);
 			});
 		}
 	}
