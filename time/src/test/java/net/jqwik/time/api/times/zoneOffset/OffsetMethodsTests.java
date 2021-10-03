@@ -24,7 +24,7 @@ public class OffsetMethodsTests {
 
 		Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().between(startOffset, endOffset);
 
-		assertAllGenerated(offsets.generator(1000), random, offset -> {
+		checkAllGenerated(offsets.generator(1000), random, offset -> {
 			assertThat(offset.getTotalSeconds()).isGreaterThanOrEqualTo(startOffset.getTotalSeconds());
 			assertThat(offset.getTotalSeconds()).isLessThanOrEqualTo(endOffset.getTotalSeconds());
 			return true;
@@ -36,7 +36,7 @@ public class OffsetMethodsTests {
 
 		Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().between(sameOffset, sameOffset);
 
-		assertAllGenerated(offsets.generator(1000), random, offset -> {
+		checkAllGenerated(offsets.generator(1000), random, offset -> {
 			assertThat(offset).isEqualTo(sameOffset);
 			return true;
 		});
@@ -66,7 +66,7 @@ public class OffsetMethodsTests {
 
 			Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().between(startOffset, endOffset);
 
-			assertAllGenerated(offsets.generator(1000), random, offset -> {
+			checkAllGenerated(offsets.generator(1000), random, offset -> {
 				assertThat(offset.getTotalSeconds()).isGreaterThanOrEqualTo(startOffset.getTotalSeconds());
 				assertThat(offset.getTotalSeconds()).isLessThanOrEqualTo(endOffset.getTotalSeconds());
 				return true;

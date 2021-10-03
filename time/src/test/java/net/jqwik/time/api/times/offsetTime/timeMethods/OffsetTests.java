@@ -19,7 +19,7 @@ public class OffsetTests {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().offsetBetween(startOffset, endOffset);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.getOffset().getTotalSeconds()).isGreaterThanOrEqualTo(startOffset.getTotalSeconds());
 			assertThat(time.getOffset().getTotalSeconds()).isLessThanOrEqualTo(endOffset.getTotalSeconds());
 			return true;
@@ -32,7 +32,7 @@ public class OffsetTests {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().offsetBetween(offset, offset);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.getOffset()).isEqualTo(offset);
 			return true;
 		});

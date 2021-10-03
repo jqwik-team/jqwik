@@ -73,7 +73,7 @@ public class TimeTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().timeBetween(min, max);
 
-			assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 				assertThat(dateTime.toLocalTime()).isAfterOrEqualTo(min);
 				assertThat(dateTime.toLocalTime()).isBeforeOrEqualTo(max);
 				return true;
@@ -87,7 +87,7 @@ public class TimeTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().timeBetween(min, max);
 
-			assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 				assertThat(dateTime.toLocalTime()).isAfterOrEqualTo(max);
 				assertThat(dateTime.toLocalTime()).isBeforeOrEqualTo(min);
 				return true;
@@ -99,7 +99,7 @@ public class TimeTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().timeBetween(same, same);
 
-			assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 				assertThat(dateTime.toLocalTime()).isEqualTo(same);
 				return true;
 			});
@@ -118,7 +118,7 @@ public class TimeTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().hourBetween(startHour, endHour);
 
-			assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 				assertThat(dateTime.getHour()).isGreaterThanOrEqualTo(startHour);
 				assertThat(dateTime.getHour()).isLessThanOrEqualTo(endHour);
 				return true;
@@ -131,7 +131,7 @@ public class TimeTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().hourBetween(hour, hour);
 
-			assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 				assertThat(dateTime.getHour()).isEqualTo(hour);
 				return true;
 			});
@@ -150,7 +150,7 @@ public class TimeTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().minuteBetween(startMinute, endMinute);
 
-			assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 				assertThat(dateTime.getMinute()).isGreaterThanOrEqualTo(startMinute);
 				assertThat(dateTime.getMinute()).isLessThanOrEqualTo(endMinute);
 				return true;
@@ -163,7 +163,7 @@ public class TimeTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().minuteBetween(minute, minute);
 
-			assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 				assertThat(dateTime.getMinute()).isEqualTo(minute);
 				return true;
 			});
@@ -182,7 +182,7 @@ public class TimeTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().secondBetween(startSecond, endSecond);
 
-			assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 				assertThat(dateTime.getSecond()).isGreaterThanOrEqualTo(startSecond);
 				assertThat(dateTime.getSecond()).isLessThanOrEqualTo(endSecond);
 				return true;
@@ -195,7 +195,7 @@ public class TimeTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().secondBetween(second, second);
 
-			assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 				assertThat(dateTime.getSecond()).isEqualTo(second);
 				return true;
 			});

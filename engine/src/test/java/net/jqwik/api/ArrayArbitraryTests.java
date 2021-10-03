@@ -7,6 +7,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -64,8 +65,8 @@ class ArrayArbitraryTests {
 			assertThat(sum).isBetween(1, 50);
 		});
 
-		assertAtLeastOneGenerated(generator, random, sum -> sum == 1);
-		assertAtLeastOneGenerated(generator, random, sum -> sum > 30);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, sum -> sum == 1);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, sum -> sum > 30);
 	}
 
 	@Example

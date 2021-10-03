@@ -41,7 +41,7 @@ public class SimpleArbitrariesTests {
 
 			Arbitrary<Duration> durations = Times.durations().between(start, end);
 
-			assertAllGenerated(durations.generator(1000), random, durationGenerated -> {
+			checkAllGenerated(durations.generator(1000), random, durationGenerated -> {
 				assertThat(durationGenerated).isNotNull();
 				return true;
 			});
@@ -61,7 +61,7 @@ public class SimpleArbitrariesTests {
 
 			Arbitrary<Duration> durations = Times.durations().between(start, end);
 
-			assertAllGenerated(durations.generator(1000), random, durationGenerated -> {
+			checkAllGenerated(durations.generator(1000), random, durationGenerated -> {
 				assertThat(durationGenerated).isNotNull();
 				return true;
 			});
@@ -81,7 +81,7 @@ public class SimpleArbitrariesTests {
 
 			Arbitrary<Duration> durations = Times.durations().between(start, end);
 
-			assertAllGenerated(durations.generator(1000), random, durationGenerated -> {
+			checkAllGenerated(durations.generator(1000), random, durationGenerated -> {
 				assertThat(durationGenerated).isNotNull();
 				return true;
 			});
@@ -101,7 +101,7 @@ public class SimpleArbitrariesTests {
 
 			Arbitrary<Duration> durations = Times.durations().between(start, end);
 
-			assertAllGenerated(durations.generator(1000), random, durationGenerated -> {
+			checkAllGenerated(durations.generator(1000), random, durationGenerated -> {
 				assertThat(durationGenerated).isNotNull();
 				return true;
 			});
@@ -121,7 +121,7 @@ public class SimpleArbitrariesTests {
 
 			Arbitrary<Duration> durations = Times.durations().between(start, end);
 
-			assertAllGenerated(durations.generator(1000), random, durationGenerated -> {
+			checkAllGenerated(durations.generator(1000), random, durationGenerated -> {
 				assertThat(durationGenerated).isNotNull();
 				return true;
 			});
@@ -141,7 +141,7 @@ public class SimpleArbitrariesTests {
 
 			Arbitrary<Duration> durations = Times.durations().between(start, end);
 
-			assertAllGenerated(durations.generator(1000), random, durationGenerated -> {
+			checkAllGenerated(durations.generator(1000), random, durationGenerated -> {
 				assertThat(durationGenerated).isNotNull();
 				return true;
 			});
@@ -161,7 +161,7 @@ public class SimpleArbitrariesTests {
 
 			Arbitrary<Duration> durations = Times.durations().between(start, end);
 
-			assertAllGenerated(durations.generator(1000), random, durationGenerated -> {
+			checkAllGenerated(durations.generator(1000), random, durationGenerated -> {
 				assertThat(durationGenerated).isNotNull();
 				return true;
 			});
@@ -181,7 +181,7 @@ public class SimpleArbitrariesTests {
 
 			Arbitrary<Duration> durations = Times.durations().between(start, end);
 
-			assertAllGenerated(durations.generator(1000), random, durationGenerated -> {
+			checkAllGenerated(durations.generator(1000), random, durationGenerated -> {
 				assertThat(durationGenerated).isNotNull();
 				return true;
 			});
@@ -196,7 +196,7 @@ public class SimpleArbitrariesTests {
 
 			Arbitrary<Duration> durations = Times.durations().between(start, end);
 
-			assertAllGenerated(durations.generator(1000), random, durationGenerated -> {
+			checkAllGenerated(durations.generator(1000), random, durationGenerated -> {
 				assertThat(durationGenerated).isNotNull();
 				return true;
 			});

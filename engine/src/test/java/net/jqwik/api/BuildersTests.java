@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -87,22 +88,22 @@ class BuildersTests {
 				.use(age).withProbability(0.5).in(PersonBuilder::withAge)
 				.build(PersonBuilder::build);
 
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			personArbitrary.generator(1000),
 			random,
 			(Person person) -> person.name.equals(PersonBuilder.DEFAULT_NAME)
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			personArbitrary.generator(1000),
 			random,
 			(Person person) -> !person.name.equals(PersonBuilder.DEFAULT_NAME)
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			personArbitrary.generator(1000),
 			random,
 			(Person person) -> person.age == 42
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			personArbitrary.generator(1000),
 			random,
 			(Person person) -> person.age != 42
@@ -116,7 +117,7 @@ class BuildersTests {
 				.withBuilder(() -> new Person("john", 42))
 				.build();
 
-		assertAllGenerated(
+		checkAllGenerated(
 			personArbitrary.generator(1, true),
 			random,
 			person -> person.age == 42 && person.name.equals("john")
@@ -133,7 +134,7 @@ class BuildersTests {
 						.use(name).in(PersonBuilder::withName)
 						.build(PersonBuilder::build);
 
-		assertAllGenerated(
+		checkAllGenerated(
 				personArbitrary.generator(1, true),
 				random,
 				person -> person.age == PersonBuilder.DEFAULT_AGE

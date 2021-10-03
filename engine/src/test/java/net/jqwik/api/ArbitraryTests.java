@@ -11,6 +11,7 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,7 +26,7 @@ class ArbitraryTests {
 	void generatorWithoutEdgeCases(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
 		RandomGenerator<Integer> generator = arbitrary.generator(10, false);
-		assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
+		checkAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
 	}
 
 	@Example
@@ -98,12 +99,12 @@ class ArbitraryTests {
 			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
 			RandomGenerator<Integer> generator = arbitrary.generator(10, true);
 
-			assertAtLeastOneGenerated(generator, random, i -> i == -1000);
-			assertAtLeastOneGenerated(generator, random, i -> i == -1);
-			assertAtLeastOneGenerated(generator, random, i -> i == 0);
-			assertAtLeastOneGenerated(generator, random, i -> i == 1);
-			assertAtLeastOneGenerated(generator, random, i -> i == 1000);
-			assertAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == -1000);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == -1);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == 1);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == 1000);
+			checkAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
 		}
 
 		@Property
@@ -345,11 +346,11 @@ class ArbitraryTests {
 			assertThat(generator.next(random).value()).hasSize(4);
 			assertThat(generator.next(random).value()).hasSize(5);
 
-			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("a"));
-			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("b"));
-			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("c"));
-			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("d"));
-			assertAtLeastOneGenerated(generator, random, s -> s.startsWith("e"));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("a"));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("b"));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("c"));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("d"));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("e"));
 		}
 
 	}

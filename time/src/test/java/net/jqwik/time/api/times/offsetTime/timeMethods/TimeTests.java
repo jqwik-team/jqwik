@@ -17,7 +17,7 @@ public class TimeTests {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime);
 			return true;
 		});
@@ -29,7 +29,7 @@ public class TimeTests {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().atTheLatest(endTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.toLocalTime()).isBeforeOrEqualTo(endTime);
 			return true;
 		});
@@ -43,7 +43,7 @@ public class TimeTests {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().between(startTime, endTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.toLocalTime()).isAfterOrEqualTo(startTime);
 			assertThat(time.toLocalTime()).isBeforeOrEqualTo(endTime);
 			return true;
@@ -61,7 +61,7 @@ public class TimeTests {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().between(startTime, endTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.toLocalTime()).isAfterOrEqualTo(endTime);
 			assertThat(time.toLocalTime()).isBeforeOrEqualTo(startTime);
 			return true;
@@ -73,7 +73,7 @@ public class TimeTests {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().between(sameTime, sameTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.toLocalTime()).isEqualTo(sameTime);
 			return true;
 		});

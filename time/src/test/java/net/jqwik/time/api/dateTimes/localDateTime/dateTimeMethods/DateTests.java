@@ -5,7 +5,6 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.statistics.*;
 import net.jqwik.time.api.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -30,7 +29,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dateBetween(min, max);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.toLocalDate()).isAfterOrEqualTo(min);
 				assertThat(dateTime.toLocalDate()).isBeforeOrEqualTo(max);
 				return true;
@@ -43,7 +42,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dateBetween(same, same);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.toLocalDate()).isEqualTo(same);
 				return true;
 			});
@@ -66,7 +65,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().between(min, max).dateBetween(minDate, maxDate);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime).isBetween(min, max);
 				assertThat(dateTime.toLocalDate()).isBetween(minDate, maxDate);
 				return true;
@@ -86,7 +85,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().yearBetween(min, max);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getYear()).isGreaterThanOrEqualTo(min);
 				assertThat(dateTime.getYear()).isLessThanOrEqualTo(max);
 				return true;
@@ -99,7 +98,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().yearBetween(year, year);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getYear()).isEqualTo(year);
 				return true;
 			});
@@ -113,7 +112,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().yearBetween(min, max);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getYear()).isGreaterThanOrEqualTo(max);
 				assertThat(dateTime.getYear()).isLessThanOrEqualTo(min);
 				return true;
@@ -138,7 +137,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().monthBetween(min, max);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getMonth()).isGreaterThanOrEqualTo(Month.of(min));
 				assertThat(dateTime.getMonth()).isLessThanOrEqualTo(Month.of(max));
 				return true;
@@ -151,7 +150,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().monthBetween(month, month);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getMonth()).isEqualTo(Month.of(month));
 				return true;
 			});
@@ -165,7 +164,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().monthBetween(min, max);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getMonth()).isGreaterThanOrEqualTo(Month.of(max));
 				assertThat(dateTime.getMonth()).isLessThanOrEqualTo(Month.of(min));
 				return true;
@@ -178,7 +177,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().onlyMonths(months.toArray(new Month[]{}));
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getMonth()).isIn(months);
 				return true;
 			});
@@ -206,7 +205,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dayOfMonthBetween(min, max);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getDayOfMonth()).isGreaterThanOrEqualTo(min);
 				assertThat(dateTime.getDayOfMonth()).isLessThanOrEqualTo(max);
 				return true;
@@ -225,7 +224,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dayOfMonthBetween(min, max);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getDayOfMonth()).isGreaterThanOrEqualTo(max);
 				assertThat(dateTime.getDayOfMonth()).isLessThanOrEqualTo(min);
 				return true;
@@ -238,7 +237,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dayOfMonthBetween(dayOfMonth, dayOfMonth);
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getDayOfMonth()).isEqualTo(dayOfMonth);
 				return true;
 			});
@@ -260,7 +259,7 @@ public class DateTests {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 
-			assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+			checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 				assertThat(dateTime.getDayOfWeek()).isIn(dayOfWeeks);
 				return true;
 			});

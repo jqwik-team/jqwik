@@ -28,9 +28,9 @@ class FloatArbitraryTests {
 		RandomGenerator<Float> generator = floatArbitrary.generator(1, true);
 
 		assertAtLeastOneGeneratedOf(generator, random, 0.0f);
-		assertAtLeastOneGenerated(generator, random, value -> value < -1.0 && value > -9.0);
-		assertAtLeastOneGenerated(generator, random, value -> value > 1.0 && value < 9.0);
-		assertAllGenerated(generator, random, value -> {
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value < -1.0 && value > -9.0);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value > 1.0 && value < 9.0);
+		checkAllGenerated(generator, random, value -> {
 			float rounded = (float) (Math.round(value * 100) / 100.0);
 			return value >= -10.0 && value <= 10.0 && value == rounded;
 		});
@@ -42,7 +42,7 @@ class FloatArbitraryTests {
 		float max = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().between(min, false, max, false).ofScale(1);
 		RandomGenerator<Float> generator = floatArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value > min && value < max);
+		checkAllGenerated(generator, random, value -> value > min && value < max);
 	}
 
 	@Example
@@ -50,7 +50,7 @@ class FloatArbitraryTests {
 		float max = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().lessThan(max).ofScale(0);
 		RandomGenerator<Float> generator = floatArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value < max);
+		checkAllGenerated(generator, random, value -> value < max);
 	}
 
 	@Example
@@ -58,7 +58,7 @@ class FloatArbitraryTests {
 		float max = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().lessOrEqual(max).ofScale(0);
 		RandomGenerator<Float> generator = floatArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value <= max);
+		checkAllGenerated(generator, random, value -> value <= max);
 	}
 
 	@Example
@@ -66,7 +66,7 @@ class FloatArbitraryTests {
 		float min = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().greaterThan(min).ofScale(0);
 		RandomGenerator<Float> generator = floatArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value > min);
+		checkAllGenerated(generator, random, value -> value > min);
 	}
 
 	@Example
@@ -74,7 +74,7 @@ class FloatArbitraryTests {
 		float min = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().greaterOrEqual(min).ofScale(0);
 		RandomGenerator<Float> generator = floatArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value >= min);
+		checkAllGenerated(generator, random, value -> value >= min);
 	}
 
 	@Example
@@ -92,12 +92,12 @@ class FloatArbitraryTests {
 												.withSpecialValue(Float.MIN_VALUE);
 		RandomGenerator<Float> generator = arbitrary.generator(100);
 
-		assertAllGenerated(
+		checkAllGenerated(
 			generator, random,
 			value -> (value >= 1.0f && value <= 10.0f) || value.equals(Float.NaN) || value.equals(Float.MIN_VALUE)
 		);
 
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			generator, random, value -> value >= 1.0f && value <= 10.0f
 		);
 

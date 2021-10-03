@@ -9,6 +9,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -35,7 +36,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 
 	@Example
 	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated(@ForAll Random random, @ForAll int i) {
-		assertAllGenerated(arbitrary.generator(10000, true), random, s -> {
+		checkAllGenerated(arbitrary.generator(10000, true), random, s -> {
 			return s.chars().allMatch(c -> {
 				if (DefaultCharacterArbitrary.isNoncharacter(c))
 					return false;
@@ -47,14 +48,14 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void allAlsoAllowsNoncharactersAndPrivateUseCharacters(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.all();
-		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {
+		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);
 		});
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.chars().anyMatch(DefaultCharacterArbitrary::isNoncharacter)
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.chars().anyMatch(DefaultCharacterArbitrary::isPrivateUseCharacter)
 		);
@@ -63,14 +64,14 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void withCharRange(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333');
-		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {
+		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c >= '\u0222' && c <= '\u0333');
 		});
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('\u0222'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('\u0333'))
 		);
@@ -79,22 +80,22 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void withTwoCharRanges(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333').withCharRange('A', 'Z');
-		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {
+		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> (c >= '\u0222' && c <= '\u0333') || (c >= 'A' && c <= 'Z'));
 		});
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('\u0222'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('\u0333'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('A'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('Z'))
 		);
@@ -103,18 +104,18 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void withChars(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withChars('a', 'm', 'x');
-		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {
+		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c == 'a' || c == 'm' || c == 'x');
 		});
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('a'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('m'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('x'))
 		);
@@ -123,18 +124,18 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void withCharsFromCharSequence(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withChars("amx");
-		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {
+		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c == 'a' || c == 'm' || c == 'x');
 		});
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('a'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('m'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('x'))
 		);
@@ -143,7 +144,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void withCharsAndCharRange(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333').withChars('a', 'm', 'x');
-		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {
+		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> (c == 'a' || c == 'm' || c == 'x') || (c >= '\u0222' && c <= '\u0333'));
 		});
 	}
@@ -151,7 +152,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void lengthRange(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.ofMinLength(3).ofMaxLength(10);
-		assertAllGenerated(
+		checkAllGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.length() >= 3 && s.length() <= 10
 		);
@@ -160,7 +161,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void ofLength(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.ofLength(17);
-		assertAllGenerated(
+		checkAllGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.length() == 17
 		);
@@ -189,10 +190,10 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void ascii(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.ascii();
-		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {
+		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c <= DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT);
 		});
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString((char) DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT))
 		);
@@ -201,22 +202,22 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void alpha(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.alpha();
-		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {
+		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
 		});
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('a'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('z'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('A'))
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			stringArbitrary.generator(10, true), random,
 			s -> s.contains(Character.toString('Z'))
 		);
@@ -225,7 +226,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 	@Example
 	void numeric(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.numeric();
-		assertAllGenerated(stringArbitrary.generator(10, true), random, s -> {
+		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c >= '0' && c <= '9');
 		});
 	}
@@ -236,7 +237,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 
 		RandomGenerator<String> generator = stringArbitrary.generator(10, true);
 		for (char c : DefaultCharacterArbitrary.WHITESPACE_CHARS) {
-			assertAtLeastOneGenerated(generator, random, s -> s.contains(Character.toString(c)));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.contains(Character.toString(c)));
 		}
 	}
 

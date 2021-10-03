@@ -54,7 +54,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().atTheEarliest(min);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.toLocalDateTime()).isAfterOrEqualTo(min);
 			return true;
 		});
@@ -66,7 +66,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().atTheLatest(max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.toLocalDateTime()).isBeforeOrEqualTo(max);
 			return true;
 		});
@@ -80,7 +80,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().between(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.toLocalDateTime()).isAfterOrEqualTo(min);
 			assertThat(dateTime.toLocalDateTime()).isBeforeOrEqualTo(max);
 			return true;
@@ -95,7 +95,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().between(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.toLocalDateTime()).isAfterOrEqualTo(max);
 			assertThat(dateTime.toLocalDateTime()).isBeforeOrEqualTo(min);
 			return true;
@@ -110,7 +110,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().dateBetween(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.toLocalDate()).isAfterOrEqualTo(min);
 			assertThat(dateTime.toLocalDate()).isBeforeOrEqualTo(max);
 			return true;
@@ -125,7 +125,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().yearBetween(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.getYear()).isGreaterThanOrEqualTo(min);
 			assertThat(dateTime.getYear()).isLessThanOrEqualTo(max);
 			return true;
@@ -140,7 +140,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().monthBetween(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.getMonth()).isGreaterThanOrEqualTo(Month.of(min));
 			assertThat(dateTime.getMonth()).isLessThanOrEqualTo(Month.of(max));
 			return true;
@@ -153,7 +153,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().onlyMonths(months.toArray(new Month[]{}));
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.getMonth()).isIn(months);
 			return true;
 		});
@@ -171,7 +171,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().dayOfMonthBetween(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.getDayOfMonth()).isGreaterThanOrEqualTo(min);
 			assertThat(dateTime.getDayOfMonth()).isLessThanOrEqualTo(max);
 			return true;
@@ -184,7 +184,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime.getDayOfWeek()).isIn(dayOfWeeks);
 			return true;
 		});
@@ -197,7 +197,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().timeBetween(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 			assertThat(dateTime.toLocalTime()).isAfterOrEqualTo(min);
 			assertThat(dateTime.toLocalTime()).isBeforeOrEqualTo(max);
 			return true;
@@ -211,7 +211,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().hourBetween(startHour, endHour);
 
-		assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 			assertThat(dateTime.getHour()).isGreaterThanOrEqualTo(startHour);
 			assertThat(dateTime.getHour()).isLessThanOrEqualTo(endHour);
 			return true;
@@ -226,7 +226,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().minuteBetween(startMinute, endMinute);
 
-		assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 			assertThat(dateTime.getMinute()).isGreaterThanOrEqualTo(startMinute);
 			assertThat(dateTime.getMinute()).isLessThanOrEqualTo(endMinute);
 			return true;
@@ -241,7 +241,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().secondBetween(startSecond, endSecond);
 
-		assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 			assertThat(dateTime.getSecond()).isGreaterThanOrEqualTo(startSecond);
 			assertThat(dateTime.getSecond()).isLessThanOrEqualTo(endSecond);
 			return true;
@@ -263,7 +263,7 @@ public class OffsetDateTimeMethodsTests {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().offsetBetween(startOffset, endOffset);
 
-		assertAllGenerated(dateTimes.generator(1000), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000), random, dateTime -> {
 			assertThat(dateTime.getOffset().getTotalSeconds()).isGreaterThanOrEqualTo(startOffset.getTotalSeconds());
 			assertThat(dateTime.getOffset().getTotalSeconds()).isLessThanOrEqualTo(endOffset.getTotalSeconds());
 			return true;

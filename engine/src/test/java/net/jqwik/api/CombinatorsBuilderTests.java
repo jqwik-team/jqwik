@@ -68,7 +68,7 @@ class CombinatorsBuilderTests {
 						.use(name).in((b, n) -> b.withName(n))
 						.build(PersonBuilder::build);
 
-		assertAllGenerated(
+		checkAllGenerated(
 				personArbitrary.generator(1, true),
 				SourceOfRandomness.current(),
 				person -> person.age == PersonBuilder.DEFAULT_AGE
@@ -82,7 +82,7 @@ class CombinatorsBuilderTests {
 						.withBuilder(() -> new Person("john", 42))
 						.build();
 
-		assertAllGenerated(
+		checkAllGenerated(
 				personArbitrary.generator(1, true),
 				SourceOfRandomness.current(),
 				person -> person.age == 42 && person.name.equals("john")

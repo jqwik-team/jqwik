@@ -60,7 +60,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().atTheEarliest(min);
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(instant).isAfterOrEqualTo(min);
 			return true;
 		});
@@ -72,7 +72,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().atTheLatest(max);
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(instant).isBeforeOrEqualTo(max);
 			return true;
 		});
@@ -86,7 +86,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().between(min, max);
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(instant).isAfterOrEqualTo(min);
 			assertThat(instant).isBeforeOrEqualTo(max);
 			return true;
@@ -101,7 +101,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().between(min, max);
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(instant).isAfterOrEqualTo(max);
 			assertThat(instant).isBeforeOrEqualTo(min);
 			return true;
@@ -116,7 +116,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().dateBetween(min, max);
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).toLocalDate()).isAfterOrEqualTo(min);
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).toLocalDate()).isBeforeOrEqualTo(max);
 			return true;
@@ -131,7 +131,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().yearBetween(min, max);
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getYear()).isGreaterThanOrEqualTo(min);
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getYear()).isLessThanOrEqualTo(max);
 			return true;
@@ -146,7 +146,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().monthBetween(min, max);
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getMonth()).isGreaterThanOrEqualTo(Month.of(min));
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getMonth()).isLessThanOrEqualTo(Month.of(max));
 			return true;
@@ -159,7 +159,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().onlyMonths(months.toArray(new Month[]{}));
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getMonth()).isIn(months);
 			return true;
 		});
@@ -177,7 +177,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().dayOfMonthBetween(min, max);
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getDayOfMonth()).isGreaterThanOrEqualTo(min);
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getDayOfMonth()).isLessThanOrEqualTo(max);
 			return true;
@@ -190,7 +190,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 
-		assertAllGenerated(instants.generator(1000, true), random, instant -> {
+		checkAllGenerated(instants.generator(1000, true), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getDayOfWeek()).isIn(dayOfWeeks);
 			return true;
 		});
@@ -203,7 +203,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().timeBetween(min, max);
 
-		assertAllGenerated(instants.generator(1000), random, instant -> {
+		checkAllGenerated(instants.generator(1000), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).toLocalTime()).isAfterOrEqualTo(min);
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).toLocalTime()).isBeforeOrEqualTo(max);
 			return true;
@@ -217,7 +217,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().hourBetween(startHour, endHour);
 
-		assertAllGenerated(instants.generator(1000), random, instant -> {
+		checkAllGenerated(instants.generator(1000), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getHour()).isGreaterThanOrEqualTo(startHour);
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getHour()).isLessThanOrEqualTo(endHour);
 			return true;
@@ -232,7 +232,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().minuteBetween(startMinute, endMinute);
 
-		assertAllGenerated(instants.generator(1000), random, instant -> {
+		checkAllGenerated(instants.generator(1000), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getMinute()).isGreaterThanOrEqualTo(startMinute);
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getMinute()).isLessThanOrEqualTo(endMinute);
 			return true;
@@ -247,7 +247,7 @@ public class InstantMethodsTests {
 
 		Arbitrary<Instant> instants = DateTimes.instants().secondBetween(startSecond, endSecond);
 
-		assertAllGenerated(instants.generator(1000), random, instant -> {
+		checkAllGenerated(instants.generator(1000), random, instant -> {
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getSecond()).isGreaterThanOrEqualTo(startSecond);
 			assertThat(DefaultInstantArbitrary.instantToLocalDateTime(instant).getSecond()).isLessThanOrEqualTo(endSecond);
 			return true;

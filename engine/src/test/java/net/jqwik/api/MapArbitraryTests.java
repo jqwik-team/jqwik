@@ -35,8 +35,8 @@ class MapArbitraryTests {
 			}
 		);
 
-		assertAtLeastOneGenerated(generator, random, Map::isEmpty);
-		assertAtLeastOneGenerated(generator, random, map -> map.size() == 10);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, Map::isEmpty);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, map -> map.size() == 10);
 
 		// Generated maps are mutable
 		assertAllGenerated(
@@ -64,8 +64,8 @@ class MapArbitraryTests {
 			map -> {assertThat(map.size()).isBetween(0, 3);}
 		);
 
-		assertAtLeastOneGenerated(generator, random, Map::isEmpty);
-		assertAtLeastOneGenerated(generator, random, map -> map.size() == 3);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, Map::isEmpty);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, map -> map.size() == 3);
 	}
 
 	@Example

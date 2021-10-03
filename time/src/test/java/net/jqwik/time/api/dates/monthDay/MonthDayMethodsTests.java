@@ -27,7 +27,7 @@ public class MonthDayMethodsTests {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().atTheEarliest(monthDay);
 
-			assertAllGenerated(dates.generator(1000, true), random, md -> {
+			checkAllGenerated(dates.generator(1000, true), random, md -> {
 				assertThat(md).isGreaterThanOrEqualTo(monthDay);
 				return true;
 			});
@@ -39,7 +39,7 @@ public class MonthDayMethodsTests {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().atTheLatest(monthDay);
 
-			assertAllGenerated(dates.generator(1000, true), random, md -> {
+			checkAllGenerated(dates.generator(1000, true), random, md -> {
 				assertThat(md).isLessThanOrEqualTo(monthDay);
 				return true;
 			});
@@ -53,7 +53,7 @@ public class MonthDayMethodsTests {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().between(startMonthDay, endMonthDay);
 
-			assertAllGenerated(dates.generator(1000, true), random, md -> {
+			checkAllGenerated(dates.generator(1000, true), random, md -> {
 				assertThat(md).isGreaterThanOrEqualTo(startMonthDay);
 				assertThat(md).isLessThanOrEqualTo(endMonthDay);
 				return true;
@@ -65,7 +65,7 @@ public class MonthDayMethodsTests {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().between(monthDay, monthDay);
 
-			assertAllGenerated(dates.generator(1000, true), random, md -> {
+			checkAllGenerated(dates.generator(1000, true), random, md -> {
 				assertThat(md).isEqualTo(monthDay);
 				return true;
 			});
@@ -84,7 +84,7 @@ public class MonthDayMethodsTests {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().monthBetween(startMonth, endMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, md -> {
+			checkAllGenerated(dates.generator(1000, true), random, md -> {
 				assertThat(md.getMonth()).isGreaterThanOrEqualTo(Month.of(startMonth));
 				assertThat(md.getMonth()).isLessThanOrEqualTo(Month.of(endMonth));
 				return true;
@@ -97,7 +97,7 @@ public class MonthDayMethodsTests {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().monthBetween(month, month);
 
-			assertAllGenerated(dates.generator(1000, true), random, md -> {
+			checkAllGenerated(dates.generator(1000, true), random, md -> {
 				assertThat(md.getMonth()).isEqualTo(Month.of(month));
 				return true;
 			});
@@ -109,7 +109,7 @@ public class MonthDayMethodsTests {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().onlyMonths(months.toArray(new Month[]{}));
 
-			assertAllGenerated(dates.generator(1000, true), random, md -> {
+			checkAllGenerated(dates.generator(1000, true), random, md -> {
 				assertThat(md.getMonth()).isIn(months);
 				return true;
 			});
@@ -137,7 +137,7 @@ public class MonthDayMethodsTests {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().dayOfMonthBetween(startDayOfMonth, endDayOfMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, md -> {
+			checkAllGenerated(dates.generator(1000, true), random, md -> {
 				assertThat(md.getDayOfMonth()).isGreaterThanOrEqualTo(startDayOfMonth);
 				assertThat(md.getDayOfMonth()).isLessThanOrEqualTo(endDayOfMonth);
 				return true;
@@ -150,7 +150,7 @@ public class MonthDayMethodsTests {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().dayOfMonthBetween(dayOfMonth, dayOfMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, md -> {
+			checkAllGenerated(dates.generator(1000, true), random, md -> {
 				assertThat(md.getDayOfMonth()).isEqualTo(dayOfMonth);
 				return true;
 			});

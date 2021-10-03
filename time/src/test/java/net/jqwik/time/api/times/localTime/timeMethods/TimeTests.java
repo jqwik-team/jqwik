@@ -22,7 +22,7 @@ public class TimeTests {
 
 		Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time).isAfterOrEqualTo(startTime);
 			return true;
 		});
@@ -40,7 +40,7 @@ public class TimeTests {
 
 		Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime).atTheLatest(endTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time).isAfterOrEqualTo(endTime);
 			assertThat(time).isBeforeOrEqualTo(startTime);
 			return true;
@@ -53,7 +53,7 @@ public class TimeTests {
 
 		Arbitrary<LocalTime> times = Times.times().atTheLatest(endTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time).isBeforeOrEqualTo(endTime);
 			return true;
 		});
@@ -71,7 +71,7 @@ public class TimeTests {
 
 		Arbitrary<LocalTime> times = Times.times().atTheLatest(endTime).atTheEarliest(startTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time).isAfterOrEqualTo(endTime);
 			assertThat(time).isBeforeOrEqualTo(startTime);
 			return true;
@@ -86,7 +86,7 @@ public class TimeTests {
 
 		Arbitrary<LocalTime> times = Times.times().between(startTime, endTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time).isAfterOrEqualTo(startTime);
 			assertThat(time).isBeforeOrEqualTo(endTime);
 			return true;
@@ -104,7 +104,7 @@ public class TimeTests {
 
 		Arbitrary<LocalTime> times = Times.times().between(startTime, endTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time).isAfterOrEqualTo(endTime);
 			assertThat(time).isBeforeOrEqualTo(startTime);
 			return true;
@@ -116,7 +116,7 @@ public class TimeTests {
 
 		Arbitrary<LocalTime> times = Times.times().between(sameTime, sameTime);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time).isEqualTo(sameTime);
 			return true;
 		});

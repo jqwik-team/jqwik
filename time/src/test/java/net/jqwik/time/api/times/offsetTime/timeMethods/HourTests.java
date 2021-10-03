@@ -19,7 +19,7 @@ public class HourTests {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().hourBetween(startHour, endHour);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.getHour()).isGreaterThanOrEqualTo(startHour);
 			assertThat(time.getHour()).isLessThanOrEqualTo(endHour);
 			return true;
@@ -32,7 +32,7 @@ public class HourTests {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().hourBetween(hour, hour);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.getHour()).isEqualTo(hour);
 			return true;
 		});

@@ -24,7 +24,7 @@ public class SecondTests {
 
 		Arbitrary<LocalTime> times = Times.times().secondBetween(startSecond, endSecond);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.getSecond()).isGreaterThanOrEqualTo(startSecond);
 			assertThat(time.getSecond()).isLessThanOrEqualTo(endSecond);
 			return true;
@@ -37,7 +37,7 @@ public class SecondTests {
 
 		Arbitrary<LocalTime> times = Times.times().secondBetween(second, second);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.getSecond()).isEqualTo(second);
 			return true;
 		});

@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.edgeCases.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -15,10 +16,10 @@ class DoubleArbitraryTests {
 	@Example
 	void doubleMinsAndMaxesWithEdgeCases(@ForAll Random random) {
 		RandomGenerator<Double> generator = Arbitraries.doubles().generator(1, true);
-		assertAtLeastOneGenerated(generator, random, value -> value == 0.01);
-		assertAtLeastOneGenerated(generator, random, value -> value == -0.01);
-		assertAtLeastOneGenerated(generator, random, value -> value == -Double.MAX_VALUE);
-		assertAtLeastOneGenerated(generator, random, value -> value == Double.MAX_VALUE);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == 0.01);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == -0.01);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == -Double.MAX_VALUE);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == Double.MAX_VALUE);
 	}
 
 	@Example
@@ -26,10 +27,10 @@ class DoubleArbitraryTests {
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(-10.0, 10.0).ofScale(2);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(1);
 
-		assertAtLeastOneGenerated(generator, random, value -> value == 0.0);
-		assertAtLeastOneGenerated(generator, random, value -> value < -1.0 && value > -9.0);
-		assertAtLeastOneGenerated(generator, random, value -> value > 1.0 && value < 9.0);
-		assertAllGenerated(generator, random, value -> {
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == 0.0);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value < -1.0 && value > -9.0);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value > 1.0 && value < 9.0);
+		checkAllGenerated(generator, random, value -> {
 			double rounded = Math.round(value * 100) / 100.0;
 			return value >= -10.0 && value <= 10.0 && value == rounded;
 		});
@@ -41,9 +42,9 @@ class DoubleArbitraryTests {
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, Double.MAX_VALUE).ofScale(2);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100, true);
 
-		assertAtLeastOneGenerated(generator, random, value -> value == 0.0);
-		assertAtLeastOneGenerated(generator, random, value -> value < -1000.0);
-		assertAtLeastOneGenerated(generator, random, value -> value > 1000.0);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == 0.0);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value < -1000.0);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value > 1000.0);
 	}
 
 	@Example
@@ -68,7 +69,7 @@ class DoubleArbitraryTests {
 		double max = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, false, max, false).ofScale(1);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value > min && value < max);
+		checkAllGenerated(generator, random, value -> value > min && value < max);
 	}
 
 	@Example
@@ -76,7 +77,7 @@ class DoubleArbitraryTests {
 		double max = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().lessThan(max).ofScale(0);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value < max);
+		checkAllGenerated(generator, random, value -> value < max);
 	}
 
 	@Example
@@ -84,7 +85,7 @@ class DoubleArbitraryTests {
 		double max = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().lessOrEqual(max).ofScale(0);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value <= max);
+		checkAllGenerated(generator, random, value -> value <= max);
 	}
 
 	@Example
@@ -92,7 +93,7 @@ class DoubleArbitraryTests {
 		double min = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().greaterThan(min).ofScale(0);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value > min);
+		checkAllGenerated(generator, random, value -> value > min);
 	}
 
 	@Example
@@ -100,7 +101,7 @@ class DoubleArbitraryTests {
 		double min = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().greaterOrEqual(min).ofScale(0);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100);
-		assertAllGenerated(generator, random, value -> value >= min);
+		checkAllGenerated(generator, random, value -> value >= min);
 	}
 
 	@Example
@@ -118,12 +119,12 @@ class DoubleArbitraryTests {
 												 .withSpecialValue(Double.MIN_VALUE);
 		RandomGenerator<Double> generator = arbitrary.generator(100);
 
-		assertAllGenerated(
+		checkAllGenerated(
 			generator, random,
 			value -> (value >= 1.0 && value <= 10.0) || value.equals(Double.NaN) || value.equals(Double.MIN_VALUE)
 		);
 
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			generator, random, value -> value >= 1.0 && value <= 10.0
 		);
 

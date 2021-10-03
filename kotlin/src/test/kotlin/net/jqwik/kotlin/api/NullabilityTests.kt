@@ -16,12 +16,12 @@ class NullabilityTests {
         val stringArbitrary: Arbitrary<String> = Arbitraries.strings()
         val nullableArbitrary: Arbitrary<String?> = stringArbitrary.orNull(0.5)
 
-        TestingSupport.assertAtLeastOneGenerated(
+        TestingSupport.checkAtLeastOneGenerated(
             nullableArbitrary.generator(1000),
             random
         ) { s: String? -> s != null }
 
-        TestingSupport.assertAtLeastOneGenerated(
+        TestingSupport.checkAtLeastOneGenerated(
             nullableArbitrary.generator(1000),
             random
         ) { s: String? -> s == null }

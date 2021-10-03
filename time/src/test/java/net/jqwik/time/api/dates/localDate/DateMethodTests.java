@@ -29,7 +29,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().atTheEarliest(startDate);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date).isAfterOrEqualTo(startDate);
 				return true;
 			});
@@ -47,7 +47,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().atTheEarliest(startDate).atTheLatest(endDate);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date).isAfterOrEqualTo(endDate);
 				assertThat(date).isBeforeOrEqualTo(startDate);
 				return true;
@@ -60,7 +60,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().atTheLatest(endDate);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date).isBeforeOrEqualTo(endDate);
 				return true;
 			});
@@ -78,7 +78,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().atTheLatest(endDate).atTheEarliest(startDate);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date).isAfterOrEqualTo(endDate);
 				assertThat(date).isBeforeOrEqualTo(startDate);
 				return true;
@@ -93,7 +93,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().between(startDate, endDate);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date).isAfterOrEqualTo(startDate);
 				assertThat(date).isBeforeOrEqualTo(endDate);
 				return true;
@@ -111,7 +111,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().between(startDate, endDate);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date).isAfterOrEqualTo(endDate);
 				assertThat(date).isBeforeOrEqualTo(startDate);
 				return true;
@@ -123,7 +123,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().between(sameDate, sameDate);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date).isEqualTo(sameDate);
 				return true;
 			});
@@ -142,7 +142,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().yearBetween(startYear, endYear);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getYear()).isGreaterThanOrEqualTo(startYear);
 				assertThat(date.getYear()).isLessThanOrEqualTo(endYear);
 				return true;
@@ -155,7 +155,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().yearBetween(year, year);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getYear()).isEqualTo(year);
 				return true;
 			});
@@ -179,7 +179,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().monthBetween(startMonth, endMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getMonth()).isGreaterThanOrEqualTo(of(startMonth));
 				assertThat(date.getMonth()).isLessThanOrEqualTo(of(endMonth));
 				return true;
@@ -194,7 +194,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().monthBetween(startMonth, endMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getMonth()).isGreaterThanOrEqualTo(of(endMonth));
 				assertThat(date.getMonth()).isLessThanOrEqualTo(of(startMonth));
 				return true;
@@ -207,7 +207,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().monthBetween(month, month);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getMonth()).isEqualTo(of(month));
 				return true;
 			});
@@ -219,7 +219,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().onlyMonths(months.toArray(new Month[]{}));
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getMonth()).isIn(months);
 				return true;
 			});
@@ -247,7 +247,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthBetween(startDayOfMonth, endDayOfMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getDayOfMonth()).isGreaterThanOrEqualTo(startDayOfMonth);
 				assertThat(date.getDayOfMonth()).isLessThanOrEqualTo(endDayOfMonth);
 				return true;
@@ -266,7 +266,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthBetween(startDayOfMonth, endDayOfMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getDayOfMonth()).isGreaterThanOrEqualTo(endDayOfMonth);
 				assertThat(date.getDayOfMonth()).isLessThanOrEqualTo(startDayOfMonth);
 				return true;
@@ -279,7 +279,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthBetween(dayOfMonth, dayOfMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getDayOfMonth()).isEqualTo(dayOfMonth);
 				return true;
 			});
@@ -301,7 +301,7 @@ public class DateMethodTests {
 
 			Arbitrary<LocalDate> dates = Dates.dates().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date.getDayOfWeek()).isIn(dayOfWeeks);
 				return true;
 			});
@@ -329,7 +329,7 @@ public class DateMethodTests {
 											  .onlyMonths(FEBRUARY)
 											  .dayOfMonthBetween(minDayOfMonth, maxDayOfMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date).isBetween(min, max);
 				assertThat(date.getMonth()).isEqualTo(FEBRUARY);
 				assertThat(date.getDayOfMonth()).isEqualTo(29);
@@ -373,7 +373,7 @@ public class DateMethodTests {
 											  .onlyMonths(FEBRUARY)
 											  .dayOfMonthBetween(minDayOfMonth, maxDayOfMonth);
 
-			assertAllGenerated(dates.generator(1000, true), random, date -> {
+			checkAllGenerated(dates.generator(1000, true), random, date -> {
 				assertThat(date).isBetween(min, max);
 				assertThat(date.getMonth()).isEqualTo(FEBRUARY);
 				assertThat(date.getDayOfMonth()).isEqualTo(29);

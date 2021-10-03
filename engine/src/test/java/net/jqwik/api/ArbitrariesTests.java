@@ -30,7 +30,7 @@ class ArbitrariesTests {
 	void randomValues(@ForAll Random random) {
 		Arbitrary<String> stringArbitrary = Arbitraries.randomValue(r -> Integer.toString(r.nextInt(10)));
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertAllGenerated(generator, random, value -> Integer.parseInt(value) < 10);
+		checkAllGenerated(generator, random, value -> Integer.parseInt(value) < 10);
 		assertAtLeastOneGeneratedOf(generator, random, "1", "2", "3", "4", "5", "6", "7", "8", "9");
 	}
 
@@ -39,14 +39,14 @@ class ArbitrariesTests {
 		Arbitrary<String> stringArbitrary =
 				Arbitraries.fromGenerator(r -> Shrinkable.unshrinkable(Integer.toString(r.nextInt(10))));
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertAllGenerated(generator, random, value -> Integer.parseInt(value) < 10);
+		checkAllGenerated(generator, random, value -> Integer.parseInt(value) < 10);
 	}
 
 	@Example
 	void ofValues(@ForAll Random random) {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
+		checkAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
 		assertAtLeastOneGeneratedOf(generator, random, "1", "hallo", "test");
 	}
 
@@ -55,7 +55,7 @@ class ArbitrariesTests {
 		List<String> valueList = Arrays.asList("1", "hallo", "test");
 		Arbitrary<String> stringArbitrary = Arbitraries.of(valueList);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
+		checkAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
 		assertAtLeastOneGeneratedOf(generator, random, "1", "hallo", "test");
 	}
 
@@ -76,7 +76,7 @@ class ArbitrariesTests {
 
 		Arbitrary<String> stringArbitrary = Arbitraries.of(valueList);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertAllGenerated(generator, random, (String value) -> Arrays.asList("a", "b").contains(value));
+		checkAllGenerated(generator, random, (String value) -> Arrays.asList("a", "b").contains(value));
 	}
 
 	@Example
@@ -84,7 +84,7 @@ class ArbitrariesTests {
 		Set<String> valueSet = new HashSet<>(Arrays.asList("1", "hallo", "test"));
 		Arbitrary<String> stringArbitrary = Arbitraries.of(valueSet);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
+		checkAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
 		assertAtLeastOneGeneratedOf(generator, random, "1", "hallo", "test");
 	}
 
@@ -128,7 +128,7 @@ class ArbitrariesTests {
 	void ofEnum(@ForAll Random random) {
 		Arbitrary<MyEnum> enumArbitrary = Arbitraries.of(MyEnum.class);
 		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1);
-		assertAllGenerated(generator, random, (MyEnum value) -> Arrays.asList(MyEnum.values()).contains(value));
+		checkAllGenerated(generator, random, (MyEnum value) -> Arrays.asList(MyEnum.values()).contains(value));
 		assertAtLeastOneGeneratedOf(generator, random, MyEnum.values());
 	}
 
@@ -136,7 +136,7 @@ class ArbitrariesTests {
 	void randoms(@ForAll Random random) {
 		Arbitrary<Random> randomArbitrary = Arbitraries.randoms();
 		RandomGenerator<Random> generator = randomArbitrary.generator(1);
-		assertAllGenerated(generator, random, (Random value) -> value.nextInt(100) < 100);
+		checkAllGenerated(generator, random, (Random value) -> value.nextInt(100) < 100);
 	}
 
 	@Example
@@ -351,7 +351,7 @@ class ArbitrariesTests {
 		@Example
 		void recursiveLazy(@ForAll Random random) {
 			Arbitrary<Tree> trees = trees();
-			assertAllGenerated(
+			checkAllGenerated(
 					trees.generator(1000, true),
 					random,
 					tree -> {
@@ -467,7 +467,7 @@ class ArbitrariesTests {
 		@Example
 		void onePair(@ForAll Random random) {
 			Arbitrary<String> one = Arbitraries.frequency(Tuple.of(1, "a"));
-			assertAllGenerated(one.generator(1000), random, value -> {return value.equals("a");});
+			checkAllGenerated(one.generator(1000), random, value -> {return value.equals("a");});
 		}
 
 		@Property(tries = 10)
@@ -512,22 +512,22 @@ class ArbitrariesTests {
 		@Example
 		void simpleType(@ForAll Random random) {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.defaultFor(Integer.class);
-			assertAllGenerated(integerArbitrary.generator(1000), random, Objects::nonNull);
+			checkAllGenerated(integerArbitrary.generator(1000), random, Objects::nonNull);
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Example
 		void parameterizedType(@ForAll Random random) {
 			Arbitrary<List> list = Arbitraries.defaultFor(List.class, String.class);
-			assertAllGenerated(list.generator(1000), random, List.class::isInstance);
+			checkAllGenerated(list.generator(1000), random, List.class::isInstance);
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Example
 		void moreThanOneDefault(@ForAll Random random) {
 			Arbitrary<Collection> collections = Arbitraries.defaultFor(Collection.class, String.class);
-			assertAtLeastOneGenerated(collections.generator(1000), random, List.class::isInstance);
-			assertAtLeastOneGenerated(collections.generator(1000), random, Set.class::isInstance);
+			TestingSupport.checkAtLeastOneGenerated(collections.generator(1000), random, List.class::isInstance);
+			TestingSupport.checkAtLeastOneGenerated(collections.generator(1000), random, Set.class::isInstance);
 		}
 
 		@Property(tries = 100)
@@ -550,7 +550,7 @@ class ArbitrariesTests {
 		void charsDefault(@ForAll Random random) {
 			Arbitrary<Character> arbitrary = Arbitraries.chars();
 			RandomGenerator<Character> generator = arbitrary.generator(1);
-			assertAllGenerated(generator, random, Objects::nonNull);
+			checkAllGenerated(generator, random, Objects::nonNull);
 		}
 
 		@Example
@@ -558,7 +558,7 @@ class ArbitrariesTests {
 			Arbitrary<Character> arbitrary = Arbitraries.chars().range('a', 'd');
 			RandomGenerator<Character> generator = arbitrary.generator(1);
 			List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
-			assertAllGenerated(generator, random, (Character value) -> allowedChars.contains(value));
+			checkAllGenerated(generator, random, (Character value) -> allowedChars.contains(value));
 		}
 	}
 
@@ -581,8 +581,8 @@ class ArbitrariesTests {
 														   .withCharRange('a', 'a')
 														   .ofMinLength(size).ofMaxLength(size);
 			RandomGenerator<String> generator = stringArbitrary.generator(1);
-			assertAllGenerated(generator, random, value -> value.length() == size);
-			assertAllGenerated(generator, random, (String value) -> value.chars().allMatch(i -> i == 'a'));
+			checkAllGenerated(generator, random, value -> value.length() == size);
+			checkAllGenerated(generator, random, (String value) -> value.chars().allMatch(i -> i == 'a'));
 		}
 
 		@Example
@@ -604,7 +604,7 @@ class ArbitrariesTests {
 		void shorts(@ForAll Random random) {
 			Arbitrary<Short> enumArbitrary = Arbitraries.shorts();
 			RandomGenerator<Short> generator = enumArbitrary.generator(100);
-			assertAllGenerated(generator, random, (Short value) -> value >= Short.MIN_VALUE && value <= Short.MAX_VALUE);
+			checkAllGenerated(generator, random, (Short value) -> value >= Short.MIN_VALUE && value <= Short.MAX_VALUE);
 		}
 
 		@Example
@@ -612,16 +612,16 @@ class ArbitrariesTests {
 			Arbitrary<Short> enumArbitrary = Arbitraries.shorts().between((short) -10, (short) 10);
 			RandomGenerator<Short> generator = enumArbitrary.generator(100);
 
-			assertAtLeastOneGenerated(generator, random, value -> value < 0 && value > -5);
-			assertAtLeastOneGenerated(generator, random, value -> value > 0 && value < 5);
-			assertAllGenerated(generator, random, value -> value >= -10 && value <= 10);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value < 0 && value > -5);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value > 0 && value < 5);
+			checkAllGenerated(generator, random, value -> value >= -10 && value <= 10);
 		}
 
 		@Example
 		void bytes(@ForAll Random random) {
 			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes();
 			RandomGenerator<Byte> generator = enumArbitrary.generator(1);
-			assertAllGenerated(generator, random, (Byte value) -> value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE);
+			checkAllGenerated(generator, random, (Byte value) -> value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE);
 		}
 
 		@Example
@@ -629,16 +629,16 @@ class ArbitrariesTests {
 			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes().between((byte) -10, (byte) 10);
 			RandomGenerator<Byte> generator = enumArbitrary.generator(1);
 
-			assertAtLeastOneGenerated(generator, random, value -> value < 0 && value > -5);
-			assertAtLeastOneGenerated(generator, random, value -> value > 0 && value < 5);
-			assertAllGenerated(generator, random, value -> value >= -10 && value <= 10);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value < 0 && value > -5);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value > 0 && value < 5);
+			checkAllGenerated(generator, random, value -> value >= -10 && value <= 10);
 		}
 
 		@Example
 		void integerMinsAndMaxesWithEdgeCases(@ForAll Random random) {
 			RandomGenerator<Integer> generator = Arbitraries.integers().generator(1, true);
-			assertAtLeastOneGenerated(generator, random, value -> value == Integer.MIN_VALUE);
-			assertAtLeastOneGenerated(generator, random, value -> value == Integer.MAX_VALUE);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == Integer.MIN_VALUE);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == Integer.MAX_VALUE);
 		}
 
 		@Example
@@ -646,16 +646,16 @@ class ArbitrariesTests {
 			Arbitrary<Integer> intArbitrary = Arbitraries.integers().between(-10, 10);
 			RandomGenerator<Integer> generator = intArbitrary.generator(10);
 
-			assertAtLeastOneGenerated(generator, random, value -> value < 0 && value > -5);
-			assertAtLeastOneGenerated(generator, random, value -> value > 0 && value < 5);
-			assertAllGenerated(generator, random, value -> value >= -10 && value <= 10);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value < 0 && value > -5);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value > 0 && value < 5);
+			checkAllGenerated(generator, random, value -> value >= -10 && value <= 10);
 		}
 
 		@Example
 		void longMinsAndMaxesWithEdgeCases(@ForAll Random random) {
 			RandomGenerator<Long> generator = Arbitraries.longs().generator(1, true);
-			assertAtLeastOneGenerated(generator, random, value -> value == Long.MIN_VALUE);
-			assertAtLeastOneGenerated(generator, random, value -> value == Long.MAX_VALUE);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == Long.MIN_VALUE);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == Long.MAX_VALUE);
 		}
 
 		@Example
@@ -663,9 +663,9 @@ class ArbitrariesTests {
 			Arbitrary<Long> longArbitrary = Arbitraries.longs().between(-100L, 100L);
 			RandomGenerator<Long> generator = longArbitrary.generator(1000);
 
-			assertAtLeastOneGenerated(generator, random, value -> value < -50);
-			assertAtLeastOneGenerated(generator, random, value -> value > 50);
-			assertAllGenerated(generator, random, value -> value >= -100L && value <= 100L);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value < -50);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value > 50);
+			checkAllGenerated(generator, random, value -> value >= -100L && value <= 100L);
 		}
 
 		@Example
@@ -673,9 +673,9 @@ class ArbitrariesTests {
 			Arbitrary<BigInteger> bigIntegerArbitrary = Arbitraries.bigIntegers().between(valueOf(-100L), valueOf(100L));
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
 
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(valueOf(-50L)) < 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(valueOf(50L)) > 0);
-			assertAllGenerated(
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(valueOf(-50L)) < 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(valueOf(50L)) > 0);
+			checkAllGenerated(
 					generator,
 					random,
 					value -> value.compareTo(valueOf(-100L)) >= 0
@@ -691,9 +691,9 @@ class ArbitrariesTests {
 							   .withDistribution(RandomDistribution.uniform());
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
 
-			assertAtLeastOneGenerated(generator, random, value -> value.longValue() > -1000 && value.longValue() < -980);
-			assertAtLeastOneGenerated(generator, random, value -> value.longValue() < 1000 && value.longValue() > 980);
-			TestingSupport.assertAllGenerated(
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.longValue() > -1000 && value.longValue() < -980);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.longValue() < 1000 && value.longValue() > 980);
+			TestingSupport.checkAllGenerated(
 					generator,
 					random,
 					value -> value.compareTo(valueOf(-1000L)) >= 0 && value.compareTo(valueOf(1000L)) <= 0
@@ -730,15 +730,15 @@ class ArbitrariesTests {
 														 .shrinkTowards(BigDecimal.valueOf(4.2));
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1, true);
 
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.valueOf(4.2)) == 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.valueOf(-100.0)) == 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.valueOf(100.0)) == 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ZERO) == 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ONE) == 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ONE.negate()) == 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.doubleValue() < -1.0 && value.doubleValue() > -9.0);
-			assertAtLeastOneGenerated(generator, random, value -> value.doubleValue() > 1.0 && value.doubleValue() < 9.0);
-			assertAllGenerated(generator, random, value -> value.scale() <= 2);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.valueOf(4.2)) == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.valueOf(-100.0)) == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.valueOf(100.0)) == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ZERO) == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ONE) == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ONE.negate()) == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.doubleValue() < -1.0 && value.doubleValue() > -9.0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.doubleValue() > 1.0 && value.doubleValue() < 9.0);
+			checkAllGenerated(generator, random, value -> value.scale() <= 2);
 		}
 
 		@Example
@@ -746,7 +746,7 @@ class ArbitrariesTests {
 			BigDecimal max = BigDecimal.valueOf(10);
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().lessOrEqual(max);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
-			assertAllGenerated(generator, random, value -> value.compareTo(max) <= 0);
+			checkAllGenerated(generator, random, value -> value.compareTo(max) <= 0);
 		}
 
 		@Example
@@ -754,7 +754,7 @@ class ArbitrariesTests {
 			BigDecimal max = BigDecimal.valueOf(10);
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().lessThan(max).ofScale(1);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
-			assertAllGenerated(generator, random, value -> value.compareTo(max) < 0);
+			checkAllGenerated(generator, random, value -> value.compareTo(max) < 0);
 		}
 
 		@Example
@@ -762,7 +762,7 @@ class ArbitrariesTests {
 			BigDecimal min = BigDecimal.valueOf(10);
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().greaterOrEqual(min);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
-			assertAllGenerated(generator, random, value -> value.compareTo(min) >= 0);
+			checkAllGenerated(generator, random, value -> value.compareTo(min) >= 0);
 		}
 
 		@Example
@@ -770,7 +770,7 @@ class ArbitrariesTests {
 			BigDecimal min = BigDecimal.valueOf(10);
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().greaterThan(min).ofScale(1);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
-			assertAllGenerated(generator, random, value -> value.compareTo(min) > 0);
+			checkAllGenerated(generator, random, value -> value.compareTo(min) > 0);
 		}
 
 		@Example
@@ -789,11 +789,11 @@ class ArbitrariesTests {
 														 .ofScale(1);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1000, true);
 
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ZERO) == 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ONE) == 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.valueOf(-1)) == 0);
-			assertAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ONE.negate()) == 0);
-			assertAllGenerated(generator, random, range::includes);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ZERO) == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ONE) == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.valueOf(-1)) == 0);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(BigDecimal.ONE.negate()) == 0);
+			checkAllGenerated(generator, random, range::includes);
 		}
 
 		@Property(tries = 10)
@@ -805,9 +805,9 @@ class ArbitrariesTests {
 														 .withDistribution(RandomDistribution.uniform());
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
 
-			assertAtLeastOneGenerated(generator, random, value -> value.longValue() > -1000 && value.longValue() < -980);
-			assertAtLeastOneGenerated(generator, random, value -> value.longValue() < 1000 && value.longValue() > 980);
-			TestingSupport.assertAllGenerated(
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.longValue() > -1000 && value.longValue() < -980);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.longValue() < 1000 && value.longValue() > 980);
+			TestingSupport.checkAllGenerated(
 					generator,
 					random,
 					value -> value.compareTo(BigDecimal.valueOf(-1000L)) >= 0
@@ -827,9 +827,9 @@ class ArbitrariesTests {
 
 			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
 
-			assertAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("one"));
-			assertAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("two"));
-			assertAtLeastOneGenerated(generator, random, optional -> !optional.isPresent());
+			TestingSupport.checkAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("one"));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("two"));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, optional -> !optional.isPresent());
 		}
 
 		@Example
@@ -839,9 +839,9 @@ class ArbitrariesTests {
 
 			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
 
-			assertAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("one"));
-			assertAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("two"));
-			assertAtLeastOneGenerated(generator, random, optional -> !optional.isPresent());
+			TestingSupport.checkAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("one"));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, optional -> optional.orElse("").equals("two"));
+			TestingSupport.checkAtLeastOneGenerated(generator, random, optional -> !optional.isPresent());
 		}
 
 		@Example
@@ -868,9 +868,9 @@ class ArbitrariesTests {
 	}
 
 	private void assertGeneratedString(RandomGenerator<String> generator, Random random, int minLength, int maxLength) {
-		assertAllGenerated(generator, random, value -> value.length() >= minLength && value.length() <= maxLength);
+		checkAllGenerated(generator, random, value -> value.length() >= minLength && value.length() <= maxLength);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
-		assertAllGenerated(
+		checkAllGenerated(
 				generator, random,
 				(String value) -> value.chars().allMatch(i -> allowedChars.contains((char) i))
 		);

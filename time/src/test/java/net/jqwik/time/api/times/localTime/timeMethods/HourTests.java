@@ -24,7 +24,7 @@ public class HourTests {
 
 		Arbitrary<LocalTime> times = Times.times().hourBetween(startHour, endHour);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.getHour()).isGreaterThanOrEqualTo(startHour);
 			assertThat(time.getHour()).isLessThanOrEqualTo(endHour);
 			return true;
@@ -37,7 +37,7 @@ public class HourTests {
 
 		Arbitrary<LocalTime> times = Times.times().hourBetween(hour, hour);
 
-		assertAllGenerated(times.generator(1000), random, time -> {
+		checkAllGenerated(times.generator(1000), random, time -> {
 			assertThat(time.getHour()).isEqualTo(hour);
 			return true;
 		});

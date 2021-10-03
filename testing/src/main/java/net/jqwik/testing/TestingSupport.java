@@ -18,13 +18,13 @@ public class TestingSupport {
 	private TestingSupport() {
 	}
 
-	public static <T> void assertAllGenerated(RandomGenerator<? extends T> generator, Random random, Predicate<T> checker) {
+	public static <T> void checkAllGenerated(RandomGenerator<? extends T> generator, Random random, Predicate<T> checker) {
 		Optional<? extends Shrinkable<? extends T>> failure =
-				generator
-						.stream(random)
-						.limit(100)
-						.filter(shrinkable -> !checker.test(shrinkable.value()))
-						.findAny();
+			generator
+				.stream(random)
+				.limit(100)
+				.filter(shrinkable -> !checker.test(shrinkable.value()))
+				.findAny();
 
 		failure.ifPresent(shrinkable -> {
 			Assertions.fail(String.format("Value [%s] failed to fulfill condition.", shrinkable.value()));
@@ -40,32 +40,40 @@ public class TestingSupport {
 				return false;
 			}
 		};
-		assertAllGenerated(generator, random, checker);
+		checkAllGenerated(generator, random, checker);
 	}
 
-	public static <T> void assertAtLeastOneGenerated(
-			RandomGenerator<? extends T> generator,
-			Random random,
-			Function<T, Boolean> checker,
-			String failureMessage
+	public static <T> void assertAllGeneratedEqualTo(RandomGenerator<? extends T> generator, Random random, T expected) {
+		assertAllGenerated(
+			generator,
+			random,
+			value -> assertThat(value).isEqualTo(expected)
+		);
+	}
+
+	public static <T> void checkAtLeastOneGenerated(
+		RandomGenerator<? extends T> generator,
+		Random random,
+		Predicate<T> checker,
+		String failureMessage
 	) {
 		Optional<? extends Shrinkable<? extends T>> success =
-				generator
-						.stream(random)
-						.limit(5000)
-						.filter(shrinkable -> checker.apply(shrinkable.value()))
+			generator
+				.stream(random)
+				.limit(5000)
+				.filter(shrinkable -> checker.test(shrinkable.value()))
 						.findAny();
 		if (!success.isPresent()) {
 			fail(failureMessage);
 		}
 	}
 
-	public static <T> void assertAtLeastOneGenerated(
-			RandomGenerator<? extends T> generator,
-			Random random,
-			Function<T, Boolean> checker
+	public static <T> void checkAtLeastOneGenerated(
+		RandomGenerator<? extends T> generator,
+		Random random,
+		Predicate<T> checker
 	) {
-		assertAtLeastOneGenerated(generator, random, checker, "Failed to generate at least one");
+		checkAtLeastOneGenerated(generator, random, checker, "Failed to generate at least one");
 	}
 
 	@SafeVarargs
@@ -75,7 +83,7 @@ public class TestingSupport {
 		T... values
 	) {
 		for (T value : values) {
-			assertAtLeastOneGenerated(generator, random, value::equals, "Failed to generate " + value);
+			checkAtLeastOneGenerated(generator, random, value::equals, "Failed to generate " + value);
 		}
 	}
 

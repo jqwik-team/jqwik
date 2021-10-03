@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.testing.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
@@ -14,7 +15,7 @@ class DefaultCharacterArbitraryTests {
 
 	@Example
 	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated(@ForAll Random random) {
-		assertAllGenerated(
+		checkAllGenerated(
 			this.arbitrary.generator(1000, true),
 			random,
 			c -> {
@@ -24,12 +25,12 @@ class DefaultCharacterArbitraryTests {
 			}
 		);
 
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			this.arbitrary.generator(1000, true),
 			random,
 			c -> c <= '\u1000'
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			this.arbitrary.generator(1000, true),
 			random,
 			c -> c >= '\uF000'
@@ -38,7 +39,7 @@ class DefaultCharacterArbitraryTests {
 
 	@Example
 	void edgeCasesAreGenerated(@ForAll Random random) {
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			this.arbitrary.generator(1000, true),
 			random,
 			c -> c == Character.MIN_VALUE
@@ -48,17 +49,17 @@ class DefaultCharacterArbitraryTests {
 	@Example
 	void allOverridesAnythingBefore(@ForAll Random random) {
 		CharacterArbitrary all = this.arbitrary.ascii().all();
-		assertAllGenerated(
+		checkAllGenerated(
 			all.generator(1000, true),
 			random,
 			c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			all.generator(1000, true),
 			random,
 			c -> c <= '\u1000'
 		);
-		assertAtLeastOneGenerated(
+		TestingSupport.checkAtLeastOneGenerated(
 			all.generator(1000, true),
 			random,
 			c -> c >= '\uF000'
@@ -69,7 +70,7 @@ class DefaultCharacterArbitraryTests {
 	void chars(@ForAll Random random) {
 		final List<Character> chars = Arrays.asList('a', 'b', 'c', '1', '2', '.');
 		CharacterArbitrary all = this.arbitrary.with('a', 'b', 'c', '1', '2', '.');
-		assertAllGenerated(
+		checkAllGenerated(
 			all.generator(1000, true),
 			random,
 			chars::contains
@@ -85,7 +86,7 @@ class DefaultCharacterArbitraryTests {
 	void charsFromCharSequence(@ForAll Random random) {
 		final List<Character> chars = Arrays.asList('a', 'b', 'c', '1', '2', '.');
 		CharacterArbitrary all = this.arbitrary.with("abc12.");
-		assertAllGenerated(
+		checkAllGenerated(
 			all.generator(1000, true),
 			random,
 			chars::contains
@@ -102,7 +103,7 @@ class DefaultCharacterArbitraryTests {
 		char min = '\u0010';
 		char max = '\u0030';
 		CharacterArbitrary all = this.arbitrary.range(min, max);
-		assertAllGenerated(
+		checkAllGenerated(
 			all.generator(1000, true),
 			random,
 			c -> c >= min && c <= max
@@ -117,7 +118,7 @@ class DefaultCharacterArbitraryTests {
 	@Example
 	void digit(@ForAll Random random) {
 		CharacterArbitrary all = this.arbitrary.numeric();
-		assertAllGenerated(
+		checkAllGenerated(
 			all.generator(1000, true),
 			random,
 			c -> c >= '0' && c <= '9'
@@ -132,7 +133,7 @@ class DefaultCharacterArbitraryTests {
 	@Example
 	void ascii(@ForAll Random random) {
 		CharacterArbitrary all = this.arbitrary.ascii();
-		assertAllGenerated(
+		checkAllGenerated(
 			all.generator(1000, true),
 			random,
 			c -> c >= 0 && c <= 127
@@ -147,7 +148,7 @@ class DefaultCharacterArbitraryTests {
 	@Example
 	void alpha(@ForAll Random random) {
 		CharacterArbitrary all = this.arbitrary.alpha();
-		assertAllGenerated(
+		checkAllGenerated(
 			all.generator(1000, true),
 			random,
 			this::isAlpha
@@ -176,7 +177,7 @@ class DefaultCharacterArbitraryTests {
 			.range(min3, max3)
 			.with('a', 'b', 'c', '1', '2', '.');
 
-		assertAllGenerated(
+		checkAllGenerated(
 			all.generator(1000, true),
 			random,
 			c -> (c >= min1 && c <= max1) ||
@@ -196,7 +197,7 @@ class DefaultCharacterArbitraryTests {
 	@Example
 	void whitespace(@ForAll Random random) {
 		CharacterArbitrary all = this.arbitrary.whitespace();
-		assertAllGenerated(
+		checkAllGenerated(
 			all.generator(1000, true),
 			random,
 			(Predicate<Character>) Character::isWhitespace

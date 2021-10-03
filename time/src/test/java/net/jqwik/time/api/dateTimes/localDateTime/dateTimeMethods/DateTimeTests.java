@@ -22,7 +22,7 @@ public class DateTimeTests {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().atTheEarliest(min);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime).isAfterOrEqualTo(min);
 			return true;
 		});
@@ -40,7 +40,7 @@ public class DateTimeTests {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().atTheEarliest(min).atTheLatest(max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime).isAfterOrEqualTo(max);
 			assertThat(dateTime).isBeforeOrEqualTo(min);
 			return true;
@@ -53,7 +53,7 @@ public class DateTimeTests {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().atTheLatest(max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime).isBeforeOrEqualTo(max);
 			return true;
 		});
@@ -71,7 +71,7 @@ public class DateTimeTests {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().atTheLatest(max).atTheEarliest(min);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime).isAfterOrEqualTo(max);
 			assertThat(dateTime).isBeforeOrEqualTo(min);
 			return true;
@@ -86,7 +86,7 @@ public class DateTimeTests {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().between(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime).isAfterOrEqualTo(min);
 			assertThat(dateTime).isBeforeOrEqualTo(max);
 			return true;
@@ -101,7 +101,7 @@ public class DateTimeTests {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().between(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime).isAfterOrEqualTo(max);
 			assertThat(dateTime).isBeforeOrEqualTo(min);
 			return true;
@@ -114,7 +114,7 @@ public class DateTimeTests {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().between(same, same);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime).isEqualTo(same);
 			return true;
 		});

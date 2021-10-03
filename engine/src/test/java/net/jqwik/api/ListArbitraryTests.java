@@ -11,6 +11,7 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.engine.*;
+import net.jqwik.testing.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -61,8 +62,8 @@ class ListArbitraryTests {
 			assertThat(sum).isBetween(1, 50);
 		});
 
-		assertAtLeastOneGenerated(generator, random, sum -> sum == 1);
-		assertAtLeastOneGenerated(generator, random, sum -> sum > 30);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, sum -> sum == 1);
+		TestingSupport.checkAtLeastOneGenerated(generator, random, sum -> sum > 30);
 	}
 
 	@Example
@@ -251,7 +252,7 @@ class ListArbitraryTests {
 		@Example
 		void plain(@ForAll Random random) {
 			Arbitrary<List<Integer>> listOfBytes = Arbitraries.integers().list().ofSize(largeSize);
-			assertAllGenerated(listOfBytes.generator(1000), random, bytes -> bytes.size() == largeSize);
+			checkAllGenerated(listOfBytes.generator(1000), random, bytes -> bytes.size() == largeSize);
 		}
 
 		@Example
@@ -276,7 +277,7 @@ class ListArbitraryTests {
 			assertThat(distinctSize).isEqualTo(largeSize);
 
 			// make sure that items are not unique by ByteAbs::hashCode and ByteAbs::equals
-			assertAtLeastOneGenerated(generator, random, ints -> ints.size() > ints.stream().distinct().count());
+			TestingSupport.checkAtLeastOneGenerated(generator, random, ints -> ints.size() > ints.stream().distinct().count());
 		}
 
 	}

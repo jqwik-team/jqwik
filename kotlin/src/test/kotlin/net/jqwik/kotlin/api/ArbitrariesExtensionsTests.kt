@@ -2,10 +2,8 @@ package net.jqwik.kotlin.api
 
 import net.jqwik.api.Example
 import net.jqwik.api.ForAll
-import net.jqwik.testing.TestingSupport
-import net.jqwik.testing.TestingSupport.assertAllGenerated
+import net.jqwik.testing.TestingSupport.checkAllGenerated
 import java.util.*
-import java.util.function.Predicate
 
 class ArbitrariesExtensionsTests {
 
@@ -13,10 +11,10 @@ class ArbitrariesExtensionsTests {
     fun `Arbitraries strings()`(@ForAll random: Random) {
         val stringArbitrary = String.any().ofMaxLength(10)
 
-        assertAllGenerated(
+        checkAllGenerated(
             stringArbitrary.generator(1000),
             random,
-            Predicate { s: String? -> s != null  && s.length <= 10}
+            { s: String? -> s != null && s.length <= 10 }
         )
     }
 

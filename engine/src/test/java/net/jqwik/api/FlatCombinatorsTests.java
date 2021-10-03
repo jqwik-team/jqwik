@@ -3,6 +3,7 @@ package net.jqwik.api;
 import java.util.*;
 
 import net.jqwik.engine.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -66,12 +67,12 @@ class FlatCombinatorsTests {
 	void eightArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine8 = Combinators.combine(one(), two(), three(), four(), five(), six(), seven(), eight())
 												 .flatAs((a, b, c, d, e, f, g, h) -> Arbitraries.just(a + b + c + d + e + f + g + h));
-		Shrinkable<Integer> value = generate(combine8);
-		assertThat(value.value()).isEqualTo(36);
+		RandomGenerator<Integer> generator = combine8.generator(1000);
+		TestingSupport.assertAllGeneratedEqualTo(generator, random, 36);
 	}
 
 	@Example
-	void listOfArbitrariesCanBeCombined() {
+	void listOfArbitrariesCanBeCombined(@ForAll Random random) {
 		List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(one(), two(), three());
 		Arbitrary<Integer> combineList =
 			Combinators.combine(listOfArbitraries)
@@ -82,8 +83,8 @@ class FlatCombinatorsTests {
 						   assertThat(list.get(2)).isEqualTo(3);
 						   return Arbitraries.just(list.stream().mapToInt(e -> e).sum());
 					   });
-		Shrinkable<Integer> value = generate(combineList);
-		assertThat(value.value()).isEqualTo(6);
+		RandomGenerator<Integer> generator = combineList.generator(1000);
+		TestingSupport.assertAllGeneratedEqualTo(generator, random, 6);
 	}
 
 	Arbitrary<Integer> one() {

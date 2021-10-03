@@ -39,7 +39,7 @@ public class SimpleArbitrariesTests {
 
 		LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().between(min, max);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime).isNotNull();
 			return true;
 		});
@@ -60,7 +60,7 @@ public class SimpleArbitrariesTests {
 
 		LocalDateTimeArbitrary dateTimes = DateTimes.dateTimes().between(min, max).ofPrecision(NANOS);
 
-		assertAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
+		checkAllGenerated(dateTimes.generator(1000, true), random, dateTime -> {
 			assertThat(dateTime).isNotNull();
 			return true;
 		});

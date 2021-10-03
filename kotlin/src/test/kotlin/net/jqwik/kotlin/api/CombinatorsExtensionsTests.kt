@@ -1,11 +1,13 @@
 package net.jqwik.kotlin.api
 
-import net.jqwik.api.*
 import net.jqwik.api.Arbitraries.just
+import net.jqwik.api.Arbitrary
+import net.jqwik.api.Example
+import net.jqwik.api.ForAll
+import net.jqwik.api.Group
 import net.jqwik.testing.TestingSupport
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*
-import java.util.function.Consumer
 
 @Group
 class CombinatorsExtensionsTests {
@@ -101,7 +103,11 @@ class CombinatorsExtensionsTests {
             val arbitraries: List<Arbitrary<Int>> = listOf(just(1), just(2), just(3))
 
             val combined = combine(arbitraries) { values: List<Int> -> values.sum() }
-            assertAllGeneratedAreEqualTo(combined.generator(1000), random, 6)
+            TestingSupport.assertAllGeneratedEqualTo(
+                combined.generator(1000),
+                random,
+                6
+            )
         }
     }
 
@@ -188,26 +194,24 @@ class CombinatorsExtensionsTests {
                 just(7),
                 just(8)
             ) { v1, v2, v3, v4, v5, v6, v7, v8 -> just(v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8) }
-            assertAllGeneratedAreEqualTo(combined.generator(1000), random, 36)
+            TestingSupport.assertAllGeneratedEqualTo(
+                combined.generator(1000),
+                random,
+                36
+            )
         }
 
         @Example
         fun `combineFlat list of arbitraries`(@ForAll random: Random) {
             val arbitraries: List<Arbitrary<Int>> = listOf(just(1), just(2), just(3))
             val combined = combineFlat(arbitraries) { values: List<Int> -> just(values.sum()) }
-            assertAllGeneratedAreEqualTo(combined.generator(1000), random, 6)
+            TestingSupport.assertAllGeneratedEqualTo(
+                combined.generator(1000),
+                random,
+                6
+            )
         }
 
     }
 
-    private fun assertAllGeneratedAreEqualTo(
-        generator: RandomGenerator<Int>,
-        random: Random,
-        expected: Int
-    ) {
-        TestingSupport.assertAllGenerated(
-            generator,
-            random,
-            Consumer { value: Int -> assertThat(value).isEqualTo(expected) })
-    }
 }

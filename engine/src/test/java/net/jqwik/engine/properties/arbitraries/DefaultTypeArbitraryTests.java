@@ -7,6 +7,7 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.*;
+import net.jqwik.testing.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
@@ -24,7 +25,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(String.class)
 					.use(String.class.getConstructor());
 
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aString -> {return aString.equals("");}
@@ -38,7 +39,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(String.class)
 					.use(Samples.class.getDeclaredMethod("stringFromNoParams"));
 
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aString -> {return aString.equals("a string");}
@@ -55,7 +56,7 @@ class DefaultTypeArbitraryTests {
 
 			RandomGenerator<String> generator = typeArbitrary.generator(1000, true);
 
-			assertAllGenerated(
+			checkAllGenerated(
 				generator,
 				random,
 				aString -> aString.equals("") || aString.equals("a string")
@@ -72,7 +73,7 @@ class DefaultTypeArbitraryTests {
 
 			RandomGenerator<Person> generator = typeArbitrary.generator(1000, true);
 
-			assertAllGenerated(
+			checkAllGenerated(
 				generator,
 				random,
 				aPerson -> {
@@ -87,7 +88,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Person.class.getConstructor(String.class));
 
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.toString().length() <= 100
@@ -100,7 +101,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Person.class.getConstructor(String.class, int.class));
 
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.toString().length() <= 100
@@ -113,7 +114,7 @@ class DefaultTypeArbitraryTests {
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Person.class.getDeclaredMethod("create", int.class, String.class));
 
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.toString().length() <= 100
@@ -144,7 +145,7 @@ class DefaultTypeArbitraryTests {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class).useDefaults();
 
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.toString().length() <= 100
@@ -158,7 +159,7 @@ class DefaultTypeArbitraryTests {
 					.useDefaults()
 					.use(Samples.class.getDeclaredMethod("personFromNoParams"));
 
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> {return aPerson.toString().equals("a person");}
@@ -170,7 +171,7 @@ class DefaultTypeArbitraryTests {
 			TypeArbitrary<Animal> typeArbitrary =
 				new DefaultTypeArbitrary<>(Animal.class).useDefaults();
 
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				animal -> animal.toString().startsWith("Cat") || animal.toString().startsWith("Dog")
@@ -182,7 +183,7 @@ class DefaultTypeArbitraryTests {
 			TypeArbitrary<Thing> typeArbitrary =
 				new DefaultTypeArbitrary<>(Thing.class).useDefaults();
 
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				thing -> {return thing.toString().equals("Thing");}
@@ -214,25 +215,25 @@ class DefaultTypeArbitraryTests {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useAllConstructors();
 
-			assertAtLeastOneGenerated(
+			TestingSupport.checkAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.string1.equals(aPerson.string2)
 			);
 
-			assertAtLeastOneGenerated(
+			TestingSupport.checkAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.int1 == aPerson.int2
 			);
 
-			assertAtLeastOneGenerated(
+			TestingSupport.checkAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> !aPerson.string1.equals(aPerson.string2)
 			);
 
-			assertAtLeastOneGenerated(
+			TestingSupport.checkAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.int1 != aPerson.int2
@@ -263,7 +264,7 @@ class DefaultTypeArbitraryTests {
 				(DefaultTypeArbitrary) new DefaultTypeArbitrary<>(Person.class).useAllConstructors();
 
 			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.toString().length() <= 100
@@ -294,25 +295,25 @@ class DefaultTypeArbitraryTests {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useAllFactoryMethods();
 
-			assertAtLeastOneGenerated(
+			TestingSupport.checkAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.string1.equals(aPerson.string2)
 			);
 
-			assertAtLeastOneGenerated(
+			TestingSupport.checkAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.int1 == aPerson.int2
 			);
 
-			assertAtLeastOneGenerated(
+			TestingSupport.checkAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> !aPerson.string1.equals(aPerson.string2)
 			);
 
-			assertAtLeastOneGenerated(
+			TestingSupport.checkAtLeastOneGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.int1 != aPerson.int2
@@ -343,7 +344,7 @@ class DefaultTypeArbitraryTests {
 				(DefaultTypeArbitrary) new DefaultTypeArbitrary<>(Person.class).useAllFactoryMethods();
 
 			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(1);
-			assertAllGenerated(
+			checkAllGenerated(
 				typeArbitrary.generator(1000, true),
 				random,
 				aPerson -> aPerson.toString().length() <= 100

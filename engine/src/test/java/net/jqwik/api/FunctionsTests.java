@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
+import static net.jqwik.testing.TestingSupport.*;
 
 class FunctionsTests {
 
@@ -45,13 +46,14 @@ class FunctionsTests {
 	}
 
 	@Example
-	void some_functions_create_different_result_for_different_input() {
+	void some_functions_create_different_result_for_different_input(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
-		assertAtLeastOneGenerated(
+		checkAtLeastOneGenerated(
 			functions.generator(10, true),
+			random,
 			function -> !function.apply("value1").equals(function.apply("value2"))
 		);
 	}
@@ -126,13 +128,14 @@ class FunctionsTests {
 	}
 
 	@Example
-	void null_value_is_accepted_as_input() {
+	void null_value_is_accepted_as_input(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
-		assertAllGenerated(
+		checkAllGenerated(
 			functions.generator(10, true),
+			random,
 			function -> function.apply(null) != null
 		);
 	}
@@ -228,7 +231,7 @@ class FunctionsTests {
 	@Group
 	class Conditional_results {
 		@Example
-		void function_with_conditional_answer() {
+		void function_with_conditional_answer(@ForAll Random random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 			Arbitrary<Function<String, Integer>> functions =
 				Functions
@@ -236,14 +239,15 @@ class FunctionsTests {
 					.when(params -> params.get(0).equals("three"), params -> 3)
 					.when(params -> params.get(0).equals("four"), params -> 4);
 
-			assertAllGenerated(
+			checkAllGenerated(
 				functions.generator(10, true),
+				random,
 				function -> function.apply("three") == 3 && function.apply("four") == 4
 			);
 		}
 
 		@Example
-		void first_matching_conditional_answer_is_used() {
+		void first_matching_conditional_answer_is_used(@ForAll Random random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 			Arbitrary<Function<String, Integer>> functions =
 				Functions
@@ -251,22 +255,24 @@ class FunctionsTests {
 					.when(params -> params.get(0).equals("three"), params -> 3)
 					.when(params -> params.get(0).equals("three"), params -> 33);
 
-			assertAllGenerated(
+			checkAllGenerated(
 				functions.generator(10, true),
+				random,
 				function -> function.apply("three") == 3
 			);
 		}
 
 		@Example
-		void function_with_conditional_null_answer() {
+		void function_with_conditional_null_answer(@ForAll Random random) {
 			Arbitrary<String> integers = Arbitraries.of("1", "2", "3");
 			Arbitrary<Function<String, String>> functions =
 				Functions
 					.function(Function.class).returns(integers)
 					.when(params -> params.get(0).equals("null"), params -> null);
 
-			assertAllGenerated(
+			checkAllGenerated(
 				functions.generator(10, true),
+				random,
 				function -> function.apply("null") == null
 			);
 		}
