@@ -72,6 +72,7 @@ allprojects {
 	dependencies {
 		api("org.apiguardian:apiguardian-api:${apiGuardianVersion}")
 		compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+		compileOnly 'org.jetbrains:annotations:16.0.2'
 		// compileOnly "org.jetbrains.kotlin:kotlin-annotations-jvm:${kotlinVersion}"
 		testCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 	}

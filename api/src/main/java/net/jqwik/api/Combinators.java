@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.jetbrains.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -247,7 +248,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
+		public <@NotNull R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
 			// This is a shorter implementation of as, which however would have worse shrinking
 			// behaviour because it builds on flatMap:
 			//		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
@@ -320,7 +321,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F3<T1, T2, T3, R> combinator) {
+		public <@NotNull R> Arbitrary<R> as(F3<T1, T2, T3, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -396,7 +397,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F4<T1, T2, T3, T4, R> combinator) {
+		public <@NotNull R> Arbitrary<R> as(F4<T1, T2, T3, T4, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -478,7 +479,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, R> combinator) {
+		public <@NotNull R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -563,7 +564,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, R> combinator) {
+		public <@NotNull R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -655,7 +656,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator) {
+		public <@NotNull R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -750,7 +751,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator) {
+		public <@NotNull R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -830,7 +831,7 @@ public class Combinators {
 		 * @return arbitrary instance
 		 */
 		@SuppressWarnings("unchecked")
-		public <R> Arbitrary<R> as(Function<List<T>, R> combinator) {
+		public <@NotNull R> Arbitrary<R> as(Function<List<T>, R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {

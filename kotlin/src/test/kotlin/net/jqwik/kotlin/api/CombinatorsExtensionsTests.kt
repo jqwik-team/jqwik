@@ -6,6 +6,8 @@ import net.jqwik.api.Example
 import net.jqwik.api.ForAll
 import net.jqwik.api.Group
 import net.jqwik.testing.TestingSupport
+import net.jqwik.testing.TestingSupport.assertAtLeastOneGeneratedOf
+import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*
 
@@ -21,6 +23,23 @@ class CombinatorsExtensionsTests {
                 just(2)
             ) { v1, v2 -> v1 + v2 }
             assertThat(combined.sample()).isEqualTo(3)
+        }
+
+        @Example
+        fun `combine nullable arbitraries`(@ForAll random: Random) {
+            val combined = combine(
+                just(1).orNull(0.5),
+                just(2)
+            ) { v1, v2 -> (v1 ?: 0) + v2 }
+
+            val generator = combined.generator(1000)
+            checkAllGenerated(
+                generator,
+                random
+            ) { value -> value == 2 || value == 3 }
+
+            assertAtLeastOneGeneratedOf(generator, random, 2)
+            assertAtLeastOneGeneratedOf(generator, random, 3)
         }
 
         @Example
