@@ -295,7 +295,7 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<R>> flatCombinator) {
-			return a1.flatMap(v1 -> a2.flatMap(v2 -> flatCombinator.apply(v1, v2)));
+			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
 
@@ -368,10 +368,7 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<R>> flatCombinator) {
-			return a1.flatMap(
-				v1 -> a2.flatMap(
-					v2 -> a3.flatMap(
-						v3 -> flatCombinator.apply(v1, v2, v3))));
+			return as(flatCombinator).flatMap(Function.identity());
 		}
 
 	}
@@ -451,11 +448,7 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<R>> flatCombinator) {
-			return a1.flatMap(
-				v1 -> a2.flatMap(
-					v2 -> a3.flatMap(
-						v3 -> a4.flatMap(
-							v4 -> flatCombinator.apply(v1, v2, v3, v4)))));
+			return as(flatCombinator).flatMap(Function.identity());
 		}
 
 	}
@@ -538,12 +531,7 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<R>> flatCombinator) {
-			return a1.flatMap(
-				v1 -> a2.flatMap(
-					v2 -> a3.flatMap(
-						v3 -> a4.flatMap(
-							v4 -> a5.flatMap(
-								v5 -> flatCombinator.apply(v1, v2, v3, v4, v5))))));
+			return as(flatCombinator).flatMap(Function.identity());
 		}
 
 	}
@@ -630,13 +618,7 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<R>> flatCombinator) {
-			return a1.flatMap(
-				v1 -> a2.flatMap(
-					v2 -> a3.flatMap(
-						v3 -> a4.flatMap(
-							v4 -> a5.flatMap(
-								v5 -> a6.flatMap(
-									v6 -> flatCombinator.apply(v1, v2, v3, v4, v5, v6)))))));
+			return as(flatCombinator).flatMap(Function.identity());
 		}
 
 	}
@@ -729,14 +711,7 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<R>> flatCombinator) {
-			return a1.flatMap(
-				v1 -> a2.flatMap(
-					v2 -> a3.flatMap(
-						v3 -> a4.flatMap(
-							v4 -> a5.flatMap(
-								v5 -> a6.flatMap(
-									v6 -> a7.flatMap(
-										v7 -> flatCombinator.apply(v1, v2, v3, v4, v5, v6, v7))))))));
+			return as(flatCombinator).flatMap(Function.identity());
 		}
 
 	}
@@ -833,15 +808,7 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<R>> flatCombinator) {
-			return a1.flatMap(
-				v1 -> a2.flatMap(
-					v2 -> a3.flatMap(
-						v3 -> a4.flatMap(
-							v4 -> a5.flatMap(
-								v5 -> a6.flatMap(
-									v6 -> a7.flatMap(
-										v7 -> a8.flatMap(
-											v8 -> flatCombinator.apply(v1, v2, v3, v4, v5, v6, v7, v8)))))))));
+			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
 
@@ -919,26 +886,7 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<R>> flatCombinator) {
-			return combineFlat(new ArrayList<>(listOfArbitraries), Collections.emptyList(), flatCombinator);
-		}
-
-		// Caution: This method is NOT tail-recursive.
-		// No easy conversion to iteration possible.
-		// Stack overflow possible.
-		private <R> Arbitrary<R> combineFlat(
-			List<Arbitrary<T>> arbitraries,
-			List<T> values,
-			Function<List<T>, Arbitrary<R>> flatCombinator
-		) {
-			if (arbitraries.isEmpty())
-				return flatCombinator.apply(values);
-			ArrayList<Arbitrary<T>> newArbitraries = new ArrayList<>(arbitraries);
-			Arbitrary<T> first = newArbitraries.remove(0);
-			return first.flatMap(value -> {
-				ArrayList<T> newValues = new ArrayList<>(values);
-				newValues.add(value);
-				return combineFlat(newArbitraries, newValues, flatCombinator);
-			});
+			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
 

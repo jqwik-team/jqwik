@@ -112,10 +112,10 @@ class CombinatorsExtensionsTests {
     }
 
     @Group
-    inner class CombineFlat {
+    inner class FlatCombine {
         @Example
-        fun `combineFlat 2 arbitraries`() {
-            val combined = combineFlat(
+        fun `flatCombine 2 arbitraries`() {
+            val combined = flatCombine(
                 just(1),
                 just(2)
             ) { v1, v2 -> just(v1 + v2) }
@@ -123,8 +123,8 @@ class CombinatorsExtensionsTests {
         }
 
         @Example
-        fun `combineFlat 3 arbitraries`() {
-            val combined = combineFlat(
+        fun `flatCombine 3 arbitraries`() {
+            val combined = flatCombine(
                 just(1),
                 just(2),
                 just(3)
@@ -133,8 +133,8 @@ class CombinatorsExtensionsTests {
         }
 
         @Example
-        fun `combineFlat 4 arbitraries`() {
-            val combined = combineFlat(
+        fun `flatCombine 4 arbitraries`() {
+            val combined = flatCombine(
                 just(1),
                 just(2),
                 just(3),
@@ -144,8 +144,8 @@ class CombinatorsExtensionsTests {
         }
 
         @Example
-        fun `combineFlat 5 arbitraries`() {
-            val combined = combineFlat(
+        fun `flatCombine 5 arbitraries`() {
+            val combined = flatCombine(
                 just(1),
                 just(2),
                 just(3),
@@ -156,8 +156,8 @@ class CombinatorsExtensionsTests {
         }
 
         @Example
-        fun `combineFlat 6 arbitraries`() {
-            val combined = combineFlat(
+        fun `flatCombine 6 arbitraries`() {
+            val combined = flatCombine(
                 just(1),
                 just(2),
                 just(3),
@@ -169,8 +169,8 @@ class CombinatorsExtensionsTests {
         }
 
         @Example
-        fun `combineFlat 7 arbitraries`() {
-            val combined = combineFlat(
+        fun `flatCombine 7 arbitraries`() {
+            val combined = flatCombine(
                 just(1),
                 just(2),
                 just(3),
@@ -183,8 +183,8 @@ class CombinatorsExtensionsTests {
         }
 
         @Example
-        fun `combineFlat 8 arbitraries`(@ForAll random: Random) {
-            val combined = combineFlat(
+        fun `flatCombine 8 arbitraries`(@ForAll random: Random) {
+            val combined = flatCombine(
                 just(1),
                 just(2),
                 just(3),
@@ -202,9 +202,9 @@ class CombinatorsExtensionsTests {
         }
 
         @Example
-        fun `combineFlat list of arbitraries`(@ForAll random: Random) {
+        fun `flatCombine list of arbitraries`(@ForAll random: Random) {
             val arbitraries: List<Arbitrary<Int>> = listOf(just(1), just(2), just(3))
-            val combined = combineFlat(arbitraries) { values: List<Int> -> just(values.sum()) }
+            val combined = flatCombine(arbitraries) { values: List<Int> -> just(values.sum()) }
             TestingSupport.assertAllGeneratedEqualTo(
                 combined.generator(1000),
                 random,

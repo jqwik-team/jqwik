@@ -81,13 +81,13 @@ fun <T, R> combine(
 ): Arbitrary<R> =
     Combinators.combine(arbitraries).`as`(f)
 
-fun <T1, T2, R> combineFlat(
+fun <T1, T2, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>, f: (v1: T1, v2: T2) -> Arbitrary<R>
 ): Arbitrary<R> =
     Combinators.combine(a1, a2).flatAs(f)
 
-fun <T1, T2, T3, R> combineFlat(
+fun <T1, T2, T3, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
     a3: Arbitrary<T3>,
@@ -95,7 +95,7 @@ fun <T1, T2, T3, R> combineFlat(
 ): Arbitrary<R> =
     Combinators.combine(a1, a2, a3).flatAs(f)
 
-fun <T1, T2, T3, T4, R> combineFlat(
+fun <T1, T2, T3, T4, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
     a3: Arbitrary<T3>,
@@ -104,7 +104,7 @@ fun <T1, T2, T3, T4, R> combineFlat(
 ): Arbitrary<R> =
     Combinators.combine(a1, a2, a3, a4).flatAs(f)
 
-fun <T1, T2, T3, T4, T5, R> combineFlat(
+fun <T1, T2, T3, T4, T5, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
     a3: Arbitrary<T3>,
@@ -114,7 +114,7 @@ fun <T1, T2, T3, T4, T5, R> combineFlat(
 ): Arbitrary<R> =
     Combinators.combine(a1, a2, a3, a4, a5).flatAs(f)
 
-fun <T1, T2, T3, T4, T5, T6, R> combineFlat(
+fun <T1, T2, T3, T4, T5, T6, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
     a3: Arbitrary<T3>,
@@ -125,7 +125,7 @@ fun <T1, T2, T3, T4, T5, T6, R> combineFlat(
 ): Arbitrary<R> =
     Combinators.combine(a1, a2, a3, a4, a5, a6).flatAs(f)
 
-fun <T1, T2, T3, T4, T5, T6, T7, R> combineFlat(
+fun <T1, T2, T3, T4, T5, T6, T7, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
     a3: Arbitrary<T3>,
@@ -137,7 +137,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> combineFlat(
 ): Arbitrary<R> =
     Combinators.combine(a1, a2, a3, a4, a5, a6, a7).flatAs(f)
 
-fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combineFlat(
+fun <T1, T2, T3, T4, T5, T6, T7, T8, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
     a3: Arbitrary<T3>,
@@ -151,7 +151,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combineFlat(
     Combinators.combine(a1, a2, a3, a4, a5, a6, a7, a8).flatAs(f)
 
 
-fun <T, R> combineFlat(
+fun <T, R> flatCombine(
     arbitraries: List<Arbitrary<T>>,
     f: (v1: List<T>) -> Arbitrary<R>
 ): Arbitrary<R> {
