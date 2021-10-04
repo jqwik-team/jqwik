@@ -148,6 +148,8 @@ to ease the pain.
 
 - `Char.any()` can replace `Arbitraries.chars()`
 
+- `Boolean.any()` can replace `Arbitraries.of(false, true)`
+
 ##### Kotlin Top-Level Functions
 
 - `combine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> R)` can replace all

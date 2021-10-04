@@ -27,4 +27,14 @@ class ArbitrariesExtensionsTests {
         ) { value -> value != null && Character.isDigit(value) }
     }
 
+    @Example
+    fun `Boolean any()`(@ForAll random: Random) {
+        val any = Boolean.any()
+
+        checkAllGenerated(
+            any.generator(1000),
+            random
+        ) { value -> value is Boolean }
+    }
+
 }
