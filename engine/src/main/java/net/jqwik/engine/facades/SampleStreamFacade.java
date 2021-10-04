@@ -56,7 +56,15 @@ class SampleStreamFacade {
 
 	private static <T> T runInDescriptor(Supplier<T> code) {
 		if (CurrentTestDescriptor.isEmpty()) {
-			return CurrentTestDescriptor.runWithDescriptor(SAMPLE_STREAM_DESCRIPTOR, code);
+			// CurrentTestDescriptor.isEmpty is not common case.
+			// ex: run sampleStream outside the jqwik thread or class static scope.
+			// Use the temporary Descriptor and then finish it within its own scope.
+			// (To prevent leakage of the store)
+			return CurrentTestDescriptor.runWithDescriptor(SAMPLE_STREAM_DESCRIPTOR, () -> {
+				T value = code.get();
+				StoreRepository.getCurrent().finishScope(SAMPLE_STREAM_DESCRIPTOR);
+				return value;
+			});
 		} else {
 			return code.get();
 		}
