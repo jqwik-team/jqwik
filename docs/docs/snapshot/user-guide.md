@@ -4420,22 +4420,8 @@ jqwik.seeds.whenfixed = ALLOW                # How a test should act when a seed
                                              # Useful to prevent accidental commits of fixed seeds into source control.                                             
 ```
 
-Prior releases of _jqwik_ used a custom `jqwik.properties`. While this continues to work, it is deprecated
-and will be removed in a future release. Some names have changed:
-
-- `database` -> `jqwik.database`
-- `defaultTries` -> `jqwik.tries.default`
-- `defaultMaxDiscardRatio` -> `jqwik.maxdiscardratio.default`
-- `useJunitPlatformReporter` -> `jqwik.reporting.usejunitplatform`
-- `defaultAfterFailure` -> `jqwik.failures.after.default`
-- `reportOnlyFailures` -> `jqwik.reporting.onlyfailures`
-- `defaultGeneration` -> `jqwik.generation.default`
-- `defaultEdgeCases` -> `jqwik.edgecases.default`
-- `defaultShrinking` -> `jqwik.shrinking.default`
-- `boundedShrinkingSeconds` -> `jqwik.shrinking.bounded.seconds`
-- `runFailuresFirst` -> `jqwik.failures.runfirst`
-
-
+Prior releases of _jqwik_ used a custom `jqwik.properties` file.
+Since version `1.6.0` this is no longer supported.
 
 
 ## Additional Modules
@@ -4900,10 +4886,15 @@ It's supposed to simplify and streamline using _jqwik_ in Kotlin projects.
 This module is _not_ in jqwik's default dependencies. 
 It's usually added as a test-implementation dependency.
 
-The module provides:
+__Table of contents:__
 
+- [Build Configuration for Kotlin](#build-configuration-for-kotlin)
+- [Differences to Java Usage](#differences-to-java-usage)
 - [Automatic generation of nullable types](#generation-of-nullable-types)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
+  - [Kotlin Extension Functions](#kotlin-extension-functions)
+  - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
+- [Quirks and Bugs](#quirks-and-bugs)
 
 #### Build Configuration for Kotlin
 
@@ -5028,14 +5019,49 @@ fun generateNullsInList(@ForAll list: List<@WithNull String>) {
 
 Some parts of the jqwik API are hard to use in Kotlin. 
 That's why this module offers a few extension functions and top-level functions
-to ease the pain:
+to ease the pain.
 
-- `Arbitrary.orNull(probability: Double) : T?` returns a nullable type
+##### Kotlin Extension Functions
+
+- `Arbitrary.orNull(probability: Double) : T?` can replace `Arbitrary.injectNull(probabilit)`
+  and returns a nullable type.
+
+- `String.any()` can replace `Arbitraries.strings()`
+
+##### Kotlin Top-Level Functions
+
+- `combine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> R)` can replace all
+  variants of `Combinators.combine(a1, ...).as((v1: T1, ...) -> R)`. 
+  Here's an example:
+
+  ```kotlin
+  @Property
+  fun `full names have a space`(@ForAll("fullNames") fullName: String) {
+      Assertions.assertThat(fullName).contains(" ")
+  }
+
+  @Provide
+  fun fullNames() : Arbitrary<String> {
+      val firstNames = String.any().alpha().ofMinLength(1)
+      val lastNames = String.any().alpha().ofMinLength(1)
+      return combine(firstNames, lastNames) {first, last -> first + " " + last }
+  }
+  ```
+
+- `flatCombine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> Arbitrary<R>)` can replace all
+  variants of `Combinators.combine(a1, ...).flatAs((v1: T1, ...) -> Arbitrary<R>)`.
+
 
 #### Quirks and Bugs
 
-As of this writing Kotlin still has a few bugs when it comes to supporting Java annotations.
-That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.
+- Despite our best effort to enrich jqwik's Java API with nullability information,
+  the derived Kotlin types are not always correct. 
+  That means that you may run into `null` objects despite the type system showing non null types,
+  or you may have to ignore Kotlin's warning about nullable types where in practice nulls are impossible.
+
+- As of this writing Kotlin still has a few bugs when it comes to supporting Java annotations.
+  That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.
+
 
 ### Testing Module
 

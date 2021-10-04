@@ -4,10 +4,15 @@ It's supposed to simplify and streamline using _jqwik_ in Kotlin projects.
 This module is _not_ in jqwik's default dependencies. 
 It's usually added as a test-implementation dependency.
 
-The module provides:
+__Table of contents:__
 
+- [Build Configuration for Kotlin](#build-configuration-for-kotlin)
+- [Differences to Java Usage](#differences-to-java-usage)
 - [Automatic generation of nullable types](#generation-of-nullable-types)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
+  - [Kotlin Extension Functions](#kotlin-extension-functions)
+  - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
+- [Quirks and Bugs](#quirks-and-bugs)
 
 #### Build Configuration for Kotlin
 
@@ -157,7 +162,7 @@ to ease the pain.
   fun fullNames() : Arbitrary<String> {
       val firstNames = String.any().alpha().ofMinLength(1)
       val lastNames = String.any().alpha().ofMinLength(1)
-      return combine(firstNames, lastNames) {first, last -> "$first $last" }
+      return combine(firstNames, lastNames) {first, last -> first + " " + last }
   }
   ```
 
