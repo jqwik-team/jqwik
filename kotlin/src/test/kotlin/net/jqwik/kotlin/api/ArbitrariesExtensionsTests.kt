@@ -14,7 +14,7 @@ class ArbitrariesExtensionsTests {
         checkAllGenerated(
             any.generator(1000),
             random
-        ) { value -> value != null && value.length <= 10 }
+        ) { value -> value is String && value.length <= 10 }
     }
 
     @Example
@@ -24,7 +24,7 @@ class ArbitrariesExtensionsTests {
         checkAllGenerated(
             any.generator(1000),
             random
-        ) { value -> value != null && Character.isDigit(value) }
+        ) { value -> value is Char && Character.isDigit(value) }
     }
 
     @Example
