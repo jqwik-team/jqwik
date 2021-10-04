@@ -6,11 +6,12 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.support.*;
 
 class Memoize {
 
 	private static Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> generatorStore() {
-		return Store.getOrCreate(Memoize.class, Lifespan.PROPERTY, () -> new MemoizeLruCache<>(500));
+		return Store.getOrCreate(Memoize.class, Lifespan.PROPERTY, () -> new LruCache<>(500));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -47,17 +48,4 @@ class Memoize {
 		return result;
 	}
 
-	private static class MemoizeLruCache<K, V> extends LinkedHashMap<K, V> {
-		private final int maxSize;
-
-		MemoizeLruCache(int maxSize) {
-			super(maxSize + 1, 1, true);
-			this.maxSize = maxSize;
-		}
-
-		@Override
-		protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-			return size() > maxSize;
-		}
-	}
 }

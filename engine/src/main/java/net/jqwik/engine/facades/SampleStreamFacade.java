@@ -10,14 +10,15 @@ import org.junit.platform.engine.support.descriptor.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.engine.support.*;
 
 import static org.junit.platform.engine.TestDescriptor.Type.*;
 
 class SampleStreamFacade {
 
 	private static final TestDescriptor SAMPLE_STREAM_DESCRIPTOR = new AbstractTestDescriptor(
-			UniqueId.root("jqwik", "samples"),
-			"Streaming samples outside jqwik thread"
+		UniqueId.root("jqwik", "samples"),
+		"Streaming samples outside jqwik thread"
 	) {
 		@Override
 		public Type getType() {
@@ -25,7 +26,7 @@ class SampleStreamFacade {
 		}
 	};
 
-	private static final Map<Arbitrary<Object>, RandomGenerator<Object>> generators = new GeneratorLruCache(500);
+	private static final Map<Arbitrary<Object>, RandomGenerator<Object>> generators = new LruCache<>(500);
 
 	@SuppressWarnings("unchecked")
 	private static <T> RandomGenerator<T> getGeneratorForSampling(Arbitrary<T> arbitrary) {
@@ -66,19 +67,5 @@ class SampleStreamFacade {
 		RandomGenerator<T> generator = getGeneratorForSampling(arbitrary);
 		return Stream.generate(wrapInDescriptor(() -> generator.next(SourceOfRandomness.current())))
 					 .map(shrinkable -> runInDescriptor(() -> shrinkable.value()));
-	}
-
-	private static class GeneratorLruCache extends LinkedHashMap<Arbitrary<Object>, RandomGenerator<Object>> {
-		private final int maxSize;
-
-		GeneratorLruCache(int maxSize) {
-			super(maxSize + 1, 1, true);
-			this.maxSize = maxSize;
-		}
-
-		@Override
-		protected boolean removeEldestEntry(Map.Entry<Arbitrary<Object>, RandomGenerator<Object>> eldest) {
-			return size() > maxSize;
-		}
 	}
 }
