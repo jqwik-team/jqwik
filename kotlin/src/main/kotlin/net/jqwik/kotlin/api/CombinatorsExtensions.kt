@@ -2,6 +2,7 @@ package net.jqwik.kotlin.api
 
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Combinators
+import org.apiguardian.api.API
 
 
 /**
@@ -9,6 +10,7 @@ import net.jqwik.api.Combinators
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, R> combine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -21,6 +23,7 @@ fun <T1, T2, R> combine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, R> combine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -34,6 +37,7 @@ fun <T1, T2, T3, R> combine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, R> combine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -48,6 +52,7 @@ fun <T1, T2, T3, T4, R> combine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, T5, R> combine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -63,6 +68,7 @@ fun <T1, T2, T3, T4, T5, R> combine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, T5, T6, R> combine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -79,6 +85,7 @@ fun <T1, T2, T3, T4, T5, T6, R> combine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, T5, T6, T7, R> combine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -96,6 +103,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> combine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -115,6 +123,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> combine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T, R> combine(
     arbitraries: List<Arbitrary<T>>,
     combinator: (v1: List<T>) -> R
@@ -126,6 +135,7 @@ fun <T, R> combine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -138,6 +148,7 @@ fun <T1, T2, R> flatCombine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -151,6 +162,7 @@ fun <T1, T2, T3, R> flatCombine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -165,6 +177,7 @@ fun <T1, T2, T3, T4, R> flatCombine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, T5, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -180,6 +193,7 @@ fun <T1, T2, T3, T4, T5, R> flatCombine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, T5, T6, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -196,6 +210,7 @@ fun <T1, T2, T3, T4, T5, T6, R> flatCombine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, T5, T6, T7, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -213,6 +228,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, R> flatCombine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T1, T2, T3, T4, T5, T6, T7, T8, R> flatCombine(
     a1: Arbitrary<T1>,
     a2: Arbitrary<T2>,
@@ -232,6 +248,7 @@ fun <T1, T2, T3, T4, T5, T6, T7, T8, R> flatCombine(
  *
  * @return new Arbitrary instance
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T, R> flatCombine(
     arbitraries: List<Arbitrary<T>>,
     flatCombinator: (v1: List<T>) -> Arbitrary<R>

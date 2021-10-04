@@ -132,11 +132,45 @@ fun generateNullsInList(@ForAll list: List<@WithNull String>) {
 
 Some parts of the jqwik API are hard to use in Kotlin. 
 That's why this module offers a few extension functions and top-level functions
-to ease the pain:
+to ease the pain.
 
-- `Arbitrary.orNull(probability: Double) : T?` returns a nullable type
+##### Kotlin Extension Functions
+
+- `Arbitrary.orNull(probability: Double) : T?` can replace `Arbitrary.injectNull(probabilit)`
+  and returns a nullable type.
+
+- `String.any()` can replace `Arbitraries.strings()`
+
+##### Kotlin Top-Level Functions
+
+- `combine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> R)` can replace all
+  variants of `Combinators.combine(a1, ...).as((v1: T1, ...) -> R)`. 
+  Here's an example:
+
+  ```kotlin
+  @Property
+  fun `full names have a space`(@ForAll("fullNames") fullName: String) {
+      Assertions.assertThat(fullName).contains(" ")
+  }
+
+  @Provide
+  fun fullNames() : Arbitrary<String> {
+      val firstNames = String.any().alpha().ofMinLength(1)
+      val lastNames = String.any().alpha().ofMinLength(1)
+      return combine(firstNames, lastNames) {first, last -> "$first $last" }
+  }
+  ```
+
+- `flatCombine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> Arbitrary<R>)` can replace all
+  variants of `Combinators.combine(a1, ...).flatAs((v1: T1, ...) -> Arbitrary<R>)`.
+
 
 #### Quirks and Bugs
 
-As of this writing Kotlin still has a few bugs when it comes to supporting Java annotations.
-That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.
+- Despite our best effort to enrich jqwik's Java API with nullability information,
+  the derived Kotlin types are not always correct. 
+  That means that you may run into `null` objects despite the type system showing non null types,
+  or you may have to ignore Kotlin's warning about nullable types where in practice nulls are impossible.
+
+- As of this writing Kotlin still has a few bugs when it comes to supporting Java annotations.
+  That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.
