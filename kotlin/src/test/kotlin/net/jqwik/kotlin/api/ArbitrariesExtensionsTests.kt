@@ -8,14 +8,23 @@ import java.util.*
 class ArbitrariesExtensionsTests {
 
     @Example
-    fun `Arbitraries strings()`(@ForAll random: Random) {
-        val stringArbitrary = String.any().ofMaxLength(10)
+    fun `String any()`(@ForAll random: Random) {
+        val any = String.any().ofMaxLength(10)
 
         checkAllGenerated(
-            stringArbitrary.generator(1000),
-            random,
-            { s: String? -> s != null && s.length <= 10 }
-        )
+            any.generator(1000),
+            random
+        ) { value -> value != null && value.length <= 10 }
+    }
+
+    @Example
+    fun `Char any()`(@ForAll random: Random) {
+        val any = Char.any().numeric()
+
+        checkAllGenerated(
+            any.generator(1000),
+            random
+        ) { value -> value != null && Character.isDigit(value) }
     }
 
 }

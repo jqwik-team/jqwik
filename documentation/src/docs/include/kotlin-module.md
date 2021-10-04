@@ -146,6 +146,8 @@ to ease the pain.
 
 - `String.any()` can replace `Arbitraries.strings()`
 
+- `Char.any()` can replace `Arbitraries.chars()`
+
 ##### Kotlin Top-Level Functions
 
 - `combine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> R)` can replace all
