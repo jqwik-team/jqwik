@@ -1,12 +1,14 @@
 package net.jqwik;
 
 import java.util.*;
+import java.util.stream.*;
 
 import org.junit.jupiter.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -125,6 +127,14 @@ class UseArbitrariesOutsideJqwikTests {
 				   .map(it -> it + Arbitraries.strings().alpha().sample())
 				   .filter(it -> it != null && !it.trim().isEmpty())
 				   .sample();
+	}
+
+	@Test
+	void closingSampleStreamWillGetRidOfStores() {
+		try (Stream<String> stringStream = Arbitraries.strings().ofLength(5).sampleStream()) {
+			stringStream.limit(10).forEach(v -> assertThat(v).hasSize(5));
+		};
+		assertThat(StoreRepository.getCurrent().size()).isEqualTo(0);
 	}
 
 	private static class PersonProvider implements ArbitraryProvider {

@@ -107,7 +107,15 @@ public class StoreRepository {
 		// forEach does not work because map underlying the stream is changed
 		for (ScopedStore<?> store : storesToRemove) {
 			store.close();
-			storesByIdentifier.get(store.getIdentifier()).remove(store.getScope());
+			removeStore(store);
+		}
+	}
+
+	private void removeStore(ScopedStore<?> store) {
+		IdentifiedStores identifiedStores = storesByIdentifier.get(store.getIdentifier());
+		identifiedStores.remove(store.getScope());
+		if (identifiedStores.isEmpty()) {
+			storesByIdentifier.remove(store.getIdentifier());
 		}
 	}
 
@@ -142,5 +150,9 @@ public class StoreRepository {
 			.filter(store -> store.lifespan() == Lifespan.TRY)
 			.filter(store -> store.isVisibleFor(scope))
 			.forEach(Store::reset);
+	}
+
+	public int size() {
+		return storesByIdentifier.values().stream().mapToInt(HashMap::size).sum();
 	}
 }

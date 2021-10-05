@@ -66,6 +66,14 @@ class SampleStreamFacade {
 	<T> Stream<T> sampleStream(Arbitrary<T> arbitrary) {
 		RandomGenerator<T> generator = getGeneratorForSampling(arbitrary);
 		return Stream.generate(wrapInDescriptor(() -> generator.next(SourceOfRandomness.current())))
-					 .map(shrinkable -> runInDescriptor(() -> shrinkable.value()));
+					 .map(shrinkable -> runInDescriptor(shrinkable::value))
+					 // Close method on stream must be called explicitly, e.g. through try(stream) {}
+					 .onClose(this::finishSampleStreamDescriptorLifecycle);
+	}
+
+	private void finishSampleStreamDescriptorLifecycle() {
+		StoreRepository.getCurrent().finishTry(SAMPLE_STREAM_DESCRIPTOR);
+		StoreRepository.getCurrent().finishProperty(SAMPLE_STREAM_DESCRIPTOR);
+		StoreRepository.getCurrent().finishScope(SAMPLE_STREAM_DESCRIPTOR);
 	}
 }

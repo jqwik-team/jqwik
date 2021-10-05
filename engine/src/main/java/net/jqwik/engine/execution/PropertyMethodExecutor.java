@@ -43,6 +43,7 @@ public class PropertyMethodExecutor {
 			DomainContextFacadeImpl.setCurrentContext(domainContext);
 			return executePropertyMethod(lifecycleSupplier);
 		} finally {
+			StoreRepository.getCurrent().finishScope(methodDescriptor);
 			DomainContextFacadeImpl.removeCurrentContext();
 		}
 	}
@@ -100,7 +101,6 @@ public class PropertyMethodExecutor {
 			);
 		}
 		StoreRepository.getCurrent().finishProperty(methodDescriptor);
-		StoreRepository.getCurrent().finishScope(methodDescriptor);
 		reportResult(propertyLifecycleContext.reporter(), propertyExecutionResult);
 		return propertyExecutionResult;
 	}
