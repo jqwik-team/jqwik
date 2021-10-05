@@ -1,5 +1,7 @@
 - 1.6.0
 
+    - Fix cases 2 and 3 in https://github.com/jlink/jqwik/issues/236
+
     - Kotlin Support
         - any() methods
           - Int, Short, Long, Byte, BigInteger
