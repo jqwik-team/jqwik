@@ -11,14 +11,6 @@ public class CurrentTestDescriptor {
 	// e.g. in JqwikIntegrationTests
 	private static final ThreadLocal<List<TestDescriptor>> descriptors = ThreadLocal.withInitial(ArrayList::new);
 
-	public static void runWithDescriptor(TestDescriptor currentDescriptor, Runnable executable) {
-		Supplier<Void> supplier = () -> {
-			executable.run();
-			return null;
-		};
-		runWithDescriptor(currentDescriptor, supplier);
-	}
-
 	public static <T> T runWithDescriptor(TestDescriptor currentDescriptor, Supplier<T> executable) {
 		push(currentDescriptor);
 		try {

@@ -52,7 +52,7 @@ class SampleStreamFacade {
 	}
 
 	private static <T> Supplier<T> wrapInDescriptor(Supplier<T> code) {
-		return () -> CurrentTestDescriptor.runWithDescriptor(SAMPLE_STREAM_DESCRIPTOR, code);
+		return () -> runInDescriptor(code);
 	}
 
 	private static <T> T runInDescriptor(Supplier<T> code) {

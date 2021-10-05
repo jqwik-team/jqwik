@@ -57,7 +57,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 #### Bug Fixes
 
-_No known bugs_
+- Fixed memory leak when calling `Arbitrary.sample()` in jqwik scope.
+  See https://github.com/jlink/jqwik/issues/236.
 
 ## 1.5.x
 
