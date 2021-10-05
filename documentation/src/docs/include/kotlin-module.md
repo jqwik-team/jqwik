@@ -10,7 +10,8 @@ __Table of contents:__
 - [Differences to Java Usage](#differences-to-java-usage)
 - [Automatic generation of nullable types](#generation-of-nullable-types)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
-  - [Kotlin Extension Functions](#kotlin-extension-functions)
+  - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
+  - [Arbitrary Extensions](#arbitrary-extensions)
   - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
 - [Quirks and Bugs](#quirks-and-bugs)
 
@@ -139,16 +140,30 @@ Some parts of the jqwik API are hard to use in Kotlin.
 That's why this module offers a few extension functions and top-level functions
 to ease the pain.
 
-##### Kotlin Extension Functions
+##### Extensions for Built-in Kotlin Types
+
+- `String.any() : StringArbitrary` can replace `Arbitraries.strings()`
+
+- `Char.any() : CharacterArbitrary` can replace `Arbitraries.chars()`
+
+- `Boolean.any() : Arbitrary<Boolean>` can replace `Arbitraries.of(false, true)`
+
+- `Byte.any() : ByteArbitrary` can replace `Arbitraries.bytes()`
+
+- `Short.any() : ShortArbitrary` can replace `Arbitraries.shorts()`
+
+- `Int.any() : IntegerArbitrary` can replace `Arbitraries.integers()`
+
+- `Long.any() : LongArbitrary` can replace `Arbitraries.longs()`
+
+- `Float.any() : FloatArbitrary` can replace `Arbitraries.floats()`
+
+- `Double.any() : DoubleArbitrary` can replace `Arbitraries.doubles()`
+
+##### Arbitrary Extensions
 
 - `Arbitrary.orNull(probability: Double) : T?` can replace `Arbitrary.injectNull(probabilit)`
   and returns a nullable type.
-
-- `String.any()` can replace `Arbitraries.strings()`
-
-- `Char.any()` can replace `Arbitraries.chars()`
-
-- `Boolean.any()` can replace `Arbitraries.of(false, true)`
 
 ##### Kotlin Top-Level Functions
 
