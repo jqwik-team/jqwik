@@ -82,7 +82,7 @@ fun Double.Companion.any(): DoubleArbitrary {
  * Function to create an arbitrary for [UByte].
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun UByte.Companion.any(): Arbitrary<UByte> {
+fun UByte.Companion.any(): UByteArbitrary {
     return UByteArbitrary()
 }
 

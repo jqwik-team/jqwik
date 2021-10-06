@@ -4,6 +4,7 @@ import net.jqwik.api.Disabled
 import net.jqwik.api.Example
 import net.jqwik.api.ForAll
 import net.jqwik.api.Group
+import net.jqwik.kotlin.api.arbitraries.UByteArbitrary
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import java.util.*
 
@@ -104,9 +105,8 @@ class KotlinTypesExtensionsTests {
     inner class UnsignedIntegerGeneration {
 
         @Example
-        @Disabled("Not fully implemented yet")
         fun `UByte any()`(@ForAll random: Random) {
-            val any = UByte.any()//.between(10.toUByte(), 99.toUByte())
+            val any = UByte.any().between(10.toUByte(), 99.toUByte())
 
             checkAllGenerated(
                 any.generator(1000),
