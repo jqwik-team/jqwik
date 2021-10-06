@@ -1,7 +1,9 @@
 package net.jqwik.kotlin.api
 
+import net.jqwik.api.Disabled
 import net.jqwik.api.Example
 import net.jqwik.api.ForAll
+import net.jqwik.api.Group
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import java.util.*
 
@@ -96,6 +98,22 @@ class KotlinTypesExtensionsTests {
             any.generator(1000),
             random
         ) { value -> value is Double && value >= 42.1 && value <= 99.0 }
+    }
+
+    @Group
+    inner class UnsignedIntegerGeneration {
+
+        @Example
+        @Disabled("Not fully implemented yet")
+        fun `UByte any()`(@ForAll random: Random) {
+            val any = UByte.any()//.between(10.toUByte(), 99.toUByte())
+
+            checkAllGenerated(
+                any.generator(1000),
+                random
+            ) { value -> value is UByte && value >= 10.toUByte() && value <= 99.toUByte() }
+
+        }
     }
 
 }
