@@ -1,8 +1,9 @@
 - 1.6.0
 
     - Kotlin Support
-        - any(BigInteger, BigDecimal) method -> Arbitraries.defaultFor()
-        - Handle Arrays better?
+      - Support Generation of Ranges
+      - Support Type Aliases
+      - Support Sequences
 
     - Include /docs/dokka in Website
 

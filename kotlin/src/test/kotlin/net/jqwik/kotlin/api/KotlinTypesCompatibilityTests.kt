@@ -1,9 +1,6 @@
 package net.jqwik.kotlin.api
 
-import net.jqwik.api.ForAll
-import net.jqwik.api.Group
-import net.jqwik.api.Property
-import net.jqwik.api.PropertyDefaults
+import net.jqwik.api.*
 import net.jqwik.api.constraints.Size
 import net.jqwik.api.constraints.StringLength
 import org.assertj.core.api.Assertions.assertThat
@@ -86,6 +83,63 @@ class KotlinTypesCompatibilityTests {
             assertThat(anArray).allMatch() { i -> i is Byte }
         }
 
+    }
+
+    @Group
+    inner class UnsignedIntegers {
+
+        @Property
+        fun unsignedBytes(@ForAll anInt: UByte) {
+            assertThat(anInt is UByte).isTrue
+            assertThat(anInt).isBetween(UByte.MIN_VALUE, UByte.MAX_VALUE)
+        }
+
+        @Property
+        fun unsignedShorts(@ForAll anInt: UShort) {
+            assertThat(anInt is UShort).isTrue
+            assertThat(anInt).isBetween(UShort.MIN_VALUE, UShort.MAX_VALUE)
+        }
+
+        @Property
+        fun unsignedInts(@ForAll anInt: UInt) {
+            assertThat(anInt is UInt).isTrue
+            assertThat(anInt).isBetween(UInt.MIN_VALUE, UInt.MAX_VALUE)
+        }
+
+        @Property
+        @Report(Reporting.GENERATED)
+        fun unsignedLongs(@ForAll anInt: ULong) {
+            assertThat(anInt is ULong).isTrue
+            assertThat(anInt).isBetween(ULong.MIN_VALUE, ULong.MAX_VALUE)
+        }
+
+        @Property
+        @ExperimentalUnsignedTypes
+        fun unsignedByteArray(@ForAll anArray: UByteArray) {
+            assertThat(anArray is UByteArray).isTrue
+            assertThat(anArray).allMatch() { i -> i >= UByte.MIN_VALUE && i <= UByte.MAX_VALUE }
+        }
+
+        @Property
+        @ExperimentalUnsignedTypes
+        fun unsignedShortArray(@ForAll anArray: UShortArray) {
+            assertThat(anArray is UShortArray).isTrue
+            assertThat(anArray).allMatch() { i -> i >= UShort.MIN_VALUE && i <= UShort.MAX_VALUE }
+        }
+
+        @Property
+        @ExperimentalUnsignedTypes
+        fun unsignedIntArray(@ForAll anArray: UIntArray) {
+            assertThat(anArray is UIntArray).isTrue
+            assertThat(anArray).allMatch() { i -> i >= UInt.MIN_VALUE && i <= UInt.MAX_VALUE }
+        }
+
+        @Property
+        @ExperimentalUnsignedTypes
+        fun unsignedLongArray(@ForAll anArray: ULongArray) {
+            assertThat(anArray is ULongArray).isTrue
+            assertThat(anArray).allMatch() { i -> i >= ULong.MIN_VALUE && i <= ULong.MAX_VALUE }
+        }
     }
 
 }

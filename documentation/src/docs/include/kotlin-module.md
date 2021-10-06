@@ -8,6 +8,7 @@ __Table of contents:__
 
 - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
 - [Differences to Java Usage](#differences-to-java-usage)
+- [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
 - [Automatic generation of nullable types](#generation-of-nullable-types)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
@@ -134,6 +135,14 @@ fun generateNullsInList(@ForAll list: List<@WithNull String>) {
 }
 ```
 
+#### Support for Kotlin Collection Types
+
+Kotlin has its own variations of collection types, e.g. (`kotlin.collections.List` and `kotlin.collections.MutableList`) 
+that are - under the hood - instances of their corresponding, mutable Java type.
+Using those types in ForAll-parameters works as expected.
+This is also true for Kotlin's notation of arrays, e.g. `Array<Int>`, 
+and Kotlin's unsigned integer types: `UByte`, `UShort`, `UInt` and `ULong`.
+
 #### Convenience Functions for Kotlin
 
 Some parts of the jqwik API are hard to use in Kotlin. 
@@ -198,3 +207,8 @@ to ease the pain.
 
 - As of this writing Kotlin still has a few bugs when it comes to supporting Java annotations.
   That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.
+
+- Some types, e.g. `UByte`, are not visible during runtime. 
+  That means that jqwik cannot determine if an `int` value is really a `UByte`,
+  which will lead to confusing value reporting, e.g. a UByte value of `254` is reported
+  as `-2` because that's the internal representation.
