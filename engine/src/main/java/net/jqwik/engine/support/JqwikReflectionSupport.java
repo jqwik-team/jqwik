@@ -342,27 +342,6 @@ public class JqwikReflectionSupport {
 		return method.getReturnType().equals(Void.TYPE);
 	}
 
-	public static boolean isInternalKotlinMethod(Method method) {
-		Class<?> aClass = method.getDeclaringClass();
-		return isKotlinClass(aClass) && isKotlinInternal(method);
-	}
-
-	private static boolean isKotlinInternal(Method method) {
-		// Kotlin appends a module extension to internal method names
-		// The exact text of this extension is not known (to me)
-		return method.getName().lastIndexOf('$') > 0;
-	}
-
-	// Learned mechanism to detect Kotlin class in https://stackoverflow.com/a/39806722
-	public static boolean isKotlinClass(Class<?> aClass) {
-		for (Annotation annotation : aClass.getDeclaredAnnotations()) {
-			if (annotation.annotationType().getTypeName().equals("kotlin.Metadata")) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static boolean implementsMethod(Class<?> aClass, String methodName, Class<?>[] parameterTypes, Class<?> ignoreImplementationClass) {
 		Optional<Method> optionalMethod = ReflectionSupport.findMethod(aClass, methodName, parameterTypes);
 		return optionalMethod.map(method -> !method.getDeclaringClass().equals(ignoreImplementationClass)).orElse(false);

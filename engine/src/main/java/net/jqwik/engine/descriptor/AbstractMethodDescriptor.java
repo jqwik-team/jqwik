@@ -12,7 +12,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 
 import static net.jqwik.engine.descriptor.DiscoverySupport.*;
-import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+import static net.jqwik.engine.discovery.JqwikKotlinSupport.*;
 
 abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements JqwikDescriptor {
 	private final Method targetMethod;
@@ -38,12 +38,10 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implement
 		if (isInternalKotlinMethod(targetMethod)) {
 			return nameWithoutInternalPart(targetMethod);
 		}
+		if (isInnerKotlinMethod(targetMethod)) {
+			return nameWithoutSpecialPart(targetMethod);
+		}
 		return targetMethod.getName();
-	}
-
-	private static String nameWithoutInternalPart(Method targetMethod) {
-		int lastDollarPosition = targetMethod.getName().lastIndexOf('$');
-		return targetMethod.getName().substring(0, lastDollarPosition);
 	}
 
 	public Method getTargetMethod() {

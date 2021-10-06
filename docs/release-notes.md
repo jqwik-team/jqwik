@@ -60,6 +60,10 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Fixed memory leak when calling `Arbitrary.sample()` in jqwik scope.
   See https://github.com/jlink/jqwik/issues/236.
 
+- Sometimes Kotlin method names have a postfix. 
+  They can now be resolved and have normal display name.
+
+
 ## 1.5.x
 
 ### 1.5.6
