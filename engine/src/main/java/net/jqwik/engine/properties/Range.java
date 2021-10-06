@@ -10,7 +10,7 @@ public class Range<T extends Comparable<T>> {
 
 	public static <T extends Comparable<T>> Range<T> of(T min, boolean minIncluded, T max, boolean maxIncluded) {
 		if (min.compareTo(max) > 0)
-			throw new IllegalArgumentException(String.format("Min value [%s] must not be greater that max value [%s].", min, max));
+			throw new IllegalArgumentException(String.format("Min value [%s] must not be greater than max value [%s].", min, max));
 		if (min.compareTo(max) == 0 && (!minIncluded || !maxIncluded))
 			throw new IllegalArgumentException(
 				String.format("If min value [%s] is equal to max value [%s] borders must be included.", min, max)
