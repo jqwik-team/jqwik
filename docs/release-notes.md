@@ -63,6 +63,9 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Sometimes Kotlin method names have a postfix. 
   They can now be resolved and have normal display name.
 
+- Arbitrary.withoutEdgeCases() sometimes did not work in combination with 
+  filter, map and flatMap.
+
 
 ## 1.5.x
 
