@@ -449,7 +449,7 @@ public interface Arbitrary<T> {
 
 			@Override
 			public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
-				return Arbitrary.this.generator(genSize, true).injectDuplicates(duplicateProbability);
+				return Arbitrary.this.generatorWithEmbeddedEdgeCases(genSize).injectDuplicates(duplicateProbability);
 			}
 
 			@Override

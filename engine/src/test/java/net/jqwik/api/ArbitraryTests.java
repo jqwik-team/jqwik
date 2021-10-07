@@ -71,22 +71,39 @@ class ArbitraryTests {
 				  .coverage(checker -> checker.check(true).percentage(p -> p > 80));
 	}
 
-	@Property
-	void withoutEdgeCases(@ForAll("listsWithoutEdgeCases") List<Integer> listWithoutEdgeCases) {
+	@Group
+	@PropertyDefaults(edgeCases = EdgeCasesMode.MIXIN, tries = 2000)
+	class WithoutEdgeCases {
 
-		Statistics.label("list is empty")
-				  .collect(listWithoutEdgeCases.isEmpty())
-				  .coverage(checker -> checker.check(true).percentage(p -> p < 6));
+		@Property
+		void withoutEdgeCases(@ForAll("listsWithoutEdgeCases") List<Integer> listWithoutEdgeCases) {
+			Statistics.label("list is empty")
+					  .collect(listWithoutEdgeCases.isEmpty())
+					  .coverage(checker -> checker.check(true).percentage(p -> p < 6));
 
-		Statistics.label("list contains Integer.MAX_VALUE")
-				  .collect(listWithoutEdgeCases.stream().anyMatch(e -> e == Integer.MAX_VALUE))
-				  .coverage(checker -> checker.check(true).percentage(p -> p < 1));
-	}
+			Statistics.label("list contains Integer.MAX_VALUE")
+					  .collect(listWithoutEdgeCases.stream().anyMatch(e -> e == Integer.MAX_VALUE))
+					  .coverage(checker -> checker.check(true).percentage(p -> p < 1));
+		}
 
-	@Provide
-	Arbitrary<List<Integer>> listsWithoutEdgeCases() {
-		Arbitrary<Integer> ints = Arbitraries.integers();
-		return ints.list().withoutEdgeCases();
+		@Provide
+		Arbitrary<List<Integer>> listsWithoutEdgeCases() {
+			Arbitrary<Integer> ints = Arbitraries.integers();
+			return ints.list().withoutEdgeCases();
+		}
+
+		@Property
+		void withoutEdgeCasesUsingFilterAndMap(@ForAll("intsMappedAndFilteredWithoutEdgeCases") int intWithoutEdgeCases) {
+			Statistics.label("int is Integer.MAX_VALUE")
+					  .collect(intWithoutEdgeCases == Integer.MAX_VALUE)
+					  .coverage(checker -> checker.check(true).percentage(p -> p < 0.1));
+		}
+
+		@Provide
+		Arbitrary<Integer> intsMappedAndFilteredWithoutEdgeCases() {
+			Arbitrary<Integer> ints = Arbitraries.integers();
+			return ints.map(it -> it).withoutEdgeCases().filter(it -> true);
+		}
 	}
 
 	@Group
