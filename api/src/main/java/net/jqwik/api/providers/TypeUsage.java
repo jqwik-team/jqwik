@@ -229,7 +229,22 @@ public interface TypeUsage {
 	@API(status = EXPERIMENTAL, since = "1.6.0")
 	String getTypeVariable();
 
+	/**
+	 * Return type usage object with additional annotation
+	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
 	<A extends Annotation> TypeUsage withAnnotation(A annotation);
+
+	/**
+	 * Get meta info for a certain key
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	Optional<Object> getMetaInfo(String key);
+
+	/**
+	 * Return type usage object with additional meta info
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	TypeUsage withMetaInfo(String key, Object value);
 
 }

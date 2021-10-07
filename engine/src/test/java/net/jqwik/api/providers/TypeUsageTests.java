@@ -53,6 +53,21 @@ class TypeUsageTests {
 	}
 
 	@Example
+	void metaInfo() {
+		TypeUsage stringType = of(String.class);
+		assertThat(stringType.getMetaInfo("key1")).isEmpty();
+
+		TypeUsage withMetaInfo = stringType
+			.withMetaInfo("key1", 1)
+			.withMetaInfo("key2", 2)
+			.withMetaInfo("key1", 11);
+
+		assertThat(stringType).isNotSameAs(withMetaInfo);
+		assertThat(withMetaInfo.getMetaInfo("key1").get()).isEqualTo(11);
+		assertThat(withMetaInfo.getMetaInfo("key2").get()).isEqualTo(2);
+	}
+
+	@Example
 	void withAddedAnnotations() throws NoSuchMethodException {
 
 		class LocalClass {

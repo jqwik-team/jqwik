@@ -7,9 +7,13 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 public class TypeUsageImpl implements TypeUsage, Cloneable {
 
@@ -286,6 +290,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
+	private HashMap<String, Object> metaInfo = new HashMap<>();
 	private boolean isNullable = false;
 
 	public TypeUsageImpl(
@@ -643,6 +648,19 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 			JqwikAnnotationSupport.streamMetaAnnotations(annotation)
 								  .filter(candidate -> !t.annotations.contains(candidate))
 								  .forEach(metaAnnotation -> t.annotations.add(metaAnnotation));
+		});
+	}
+
+	@Override
+	public Optional<Object> getMetaInfo(String key) {
+		return Optional.ofNullable(metaInfo.get(key));
+	}
+
+	@Override
+	public TypeUsage withMetaInfo(String key, Object value) {
+		return cloneWith(t -> {
+			t.metaInfo = new HashMap<>(metaInfo);
+			t.metaInfo.put(key, value);
 		});
 	}
 
