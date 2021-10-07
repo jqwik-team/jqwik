@@ -13,7 +13,7 @@ import java.math.BigInteger
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 class UByteArbitrary : ArbitraryDecorator<UByte>() {
 
-    private val base = Int.any()
+    private val base = Int.any().between(UByte.MIN_VALUE.toInt(), UByte.MAX_VALUE.toInt())
 
     override fun arbitrary(): Arbitrary<UByte> = base.map() { b -> b.toUByte() }
 

@@ -101,19 +101,4 @@ class KotlinTypesExtensionsTests {
         ) { value -> value is Double && value >= 42.1 && value <= 99.0 }
     }
 
-    @Group
-    inner class UnsignedIntegerGeneration {
-
-        @Example
-        fun `UByte any()`(@ForAll random: Random) {
-            val any = UByte.any().between(10.toUByte(), 99.toUByte())
-
-            checkAllGenerated(
-                any.generator(1000),
-                random
-            ) { value -> value is UByte && value >= 10.toUByte() && value <= 99.toUByte() }
-
-        }
-    }
-
 }
