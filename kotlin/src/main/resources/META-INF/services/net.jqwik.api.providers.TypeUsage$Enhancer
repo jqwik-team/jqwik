@@ -1,2 +1,3 @@
+net.jqwik.kotlin.internal.KTypeEnhancer
 net.jqwik.kotlin.internal.NullabilityEnhancer
 net.jqwik.kotlin.internal.ParameterAnnotationEnhancer

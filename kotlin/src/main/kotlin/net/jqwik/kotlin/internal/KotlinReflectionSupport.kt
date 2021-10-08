@@ -10,9 +10,7 @@ import kotlin.reflect.jvm.kotlinFunction
 
 private const val metadataFqName = "kotlin.Metadata"
 
-fun Class<*>.isKotlinClass(): Boolean {
-    return declaredAnnotations.any { it.annotationClass.java.name == metadataFqName }
-}
+fun Class<*>.isKotlinClass(): Boolean = declaredAnnotations.any { it.annotationClass.java.name == metadataFqName }
 
 val Parameter.kotlinParameter: KParameter?
     get() {
