@@ -83,6 +83,13 @@ class KotlinTypesCompatibilityTests {
             assertThat(anArray).allMatch() { i -> i is Byte }
         }
 
+        @Property
+        fun byteArray(@ForAll @Size(5) anArray: ByteArray) {
+            assertThat(anArray is ByteArray).isTrue
+            assertThat(anArray).hasSize(5)
+            assertThat(anArray.toTypedArray()).allMatch() { i -> i is Byte }
+        }
+
     }
 
     @Group
