@@ -7,6 +7,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
 
+@StatisticsReport(onFailureOnly = true)
 class WithNullProperties {
 
 	@Property

@@ -5,8 +5,6 @@
       - Support Type Aliases
       - Support Sequences
 
-    - StatisticsReport(onlyOnFailure = true) should work for ExpectFailure annotation
-
     - Include /docs/dokka in Website
 
     - Implement net.jqwik.api.session.JqwikSession.

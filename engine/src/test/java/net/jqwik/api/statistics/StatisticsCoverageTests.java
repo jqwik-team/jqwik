@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.api.statistics.StatisticsReport.StatisticsReportMode.*;
 
 @Group
-@StatisticsReport(onFailureOnly = true)
+@StatisticsReport(OFF) // Switch on if a test fails to see why it fails
 class StatisticsCoverageTests {
 
 	@Property(tries = 50)
