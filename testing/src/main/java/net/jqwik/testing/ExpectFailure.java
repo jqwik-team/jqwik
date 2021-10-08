@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.function.*;
 
 import org.junit.platform.commons.support.*;
-import org.opentest4j.*;
 
 import net.jqwik.api.facades.*;
 import net.jqwik.api.lifecycle.*;
@@ -50,9 +49,14 @@ public @interface ExpectFailure {
 			String messageFromAnnotation = getMessage(context.targetMethod());
 			Class<? extends Throwable> expectedFailureType = getFailureType(context.targetMethod());
 
+			String headerText = messageFromAnnotation == null ? "" : messageFromAnnotation + "\n\t";
+
 			try {
 				if (testExecutionResult.status() == FAILED) {
-					checkFailureType(expectedFailureType, testExecutionResult);
+					Optional<String> checkFailureResult = checkFailureType(expectedFailureType, testExecutionResult.throwable(), context.label(), headerText);
+					if (checkFailureResult.isPresent()) {
+						return testExecutionResult.mapToFailed(checkFailureResult.get());
+					}
 					resultChecker.accept(testExecutionResult);
 					return testExecutionResult.mapToSuccessful();
 				}
@@ -60,32 +64,44 @@ public @interface ExpectFailure {
 				return testExecutionResult.mapToFailed(assertionError);
 			}
 
-			String headerText = messageFromAnnotation == null ? "" : messageFromAnnotation + "\n\t";
-			String reason = testExecutionResult.throwable()
-											   .map(throwable -> String.format("it failed with [%s]", throwable))
-											   .orElse("it did not fail at all");
-			String message = String.format(
-					"%sProperty [%s] should have failed with failure of type %s, but %s",
-					headerText,
-					context.label(),
-					expectedFailureType.getName(),
-					reason
-			);
+			String message = createErrorMessage(context.label(), expectedFailureType, headerText, "it did not fail at all");
 			return testExecutionResult.mapToFailed(message);
 		}
 
-		private void checkFailureType(Class<? extends Throwable> expectedFailureType, PropertyExecutionResult testExecutionResult) {
+		private String createErrorMessage(
+			String label,
+			Class<? extends Throwable> expectedFailureType,
+			String headerText,
+			String reason
+		) {
+			String message = String.format(
+				"%sProperty [%s] should have failed with [%s], but %s",
+				headerText,
+				label,
+				expectedFailureType.getName(),
+				reason
+			);
+			return message;
+		}
+
+		private Optional<String> checkFailureType(
+			Class<? extends Throwable> expectedFailureType,
+			Optional<Throwable> throwable,
+			String label,
+			String headerText
+		) {
 			if (expectedFailureType.equals(NoFailure.class)) {
-				return;
+				return Optional.empty();
 			}
-			testExecutionResult.throwable().ifPresent(throwable -> {
-				if (!expectedFailureType.isAssignableFrom(throwable.getClass())) {
-					throw new AssertionFailedError("Wrong failure type: " + throwable);
-				}
-			});
-			if (!testExecutionResult.throwable().isPresent()) {
-				throw new AssertionFailedError("No failure exception");
+			if (!throwable.isPresent()) {
+				String reason = "it failed without exception";
+				return Optional.of(createErrorMessage(label, expectedFailureType, headerText, reason));
 			}
+			if (!expectedFailureType.isAssignableFrom(throwable.get().getClass())) {
+				String reason = String.format("it failed with [%s]", throwable.get());
+				return Optional.of(createErrorMessage(label, expectedFailureType, headerText, reason));
+			}
+			return Optional.empty();
 		}
 
 		private String getMessage(Method method) {
@@ -98,7 +114,7 @@ public @interface ExpectFailure {
 
 		private Class<? extends Throwable> getFailureType(Method method) {
 			Optional<ExpectFailure> annotation = AnnotationSupport.findAnnotation(method, ExpectFailure.class);
-			if (annotation.isPresent()) {
+			if (annotation.isPresent() && (annotation.get().failureType() != NoFailure.class)) {
 				return annotation.get().failureType();
 			} else {
 				return Throwable.class;
@@ -110,9 +126,9 @@ public @interface ExpectFailure {
 			return annotation.map((ExpectFailure expectFailure) -> {
 				Class<? extends Consumer<PropertyExecutionResult>> checkResult = expectFailure.checkResult();
 				return (Consumer<PropertyExecutionResult>) ReflectionSupportFacade.implementation
-																   .newInstanceInTestContext(checkResult, testInstance);
+					.newInstanceInTestContext(checkResult, testInstance);
 			}).orElse(
-					ReflectionSupportFacade.implementation.newInstanceInTestContext(NullChecker.class, testInstance)
+				ReflectionSupportFacade.implementation.newInstanceInTestContext(NullChecker.class, testInstance)
 			);
 		}
 
