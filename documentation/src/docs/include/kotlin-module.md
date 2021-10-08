@@ -84,7 +84,7 @@ Here are a few of those which I noticed to be relevant for jqwik:
   fun test(@ForAll aString: @AlphaChars String) { ... }
   ```
 
-  The one important exception is `@ForAll` which must always precede the parameter.
+  Mind that `@ForAll` must always precede the parameter, though!
 
 - Grouping - aka nesting - of test container classes requires the `inner` modifier.
   The reason is that nested classes without `inner` are considered to be `static`

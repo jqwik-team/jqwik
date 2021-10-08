@@ -7,8 +7,7 @@ import kotlin.reflect.KParameter
 class ParameterAnnotationEnhancer : TypeUsage.Enhancer {
 
     override fun forParameter(original: TypeUsage, parameter: Parameter): TypeUsage {
-        val kParameter: KParameter? = parameter.kotlinParameter
-        val typeAnnotations: List<Annotation> = kParameter?.type?.annotations ?: listOf()
+        val typeAnnotations = parameter.annotatedType.annotations
         if (typeAnnotations.isEmpty()) {
             return original
         }

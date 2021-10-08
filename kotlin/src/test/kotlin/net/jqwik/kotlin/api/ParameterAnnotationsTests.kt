@@ -16,6 +16,11 @@ class ParameterAnnotationsTests {
     }
 
     @Property
+    fun annotationWithDefaultValuesAtTypeIsRespected(@ForAll aString: @StringLength(5) String) {
+        assert(aString.length == 5) { -> "String length should be 5" }
+    }
+
+    @Property
     fun annotationAtTypeIsCombinedWithAnnotationAtParameter(@ForAll @StringLength(5) aString: @NumericChars String) {
         assert(aString.length == 5) { -> "String length should be 5" }
         assert(aString.chars().allMatch(Character::isDigit)) { -> "String contains only numerics" }
