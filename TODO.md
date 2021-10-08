@@ -1,8 +1,6 @@
 - 1.6.0
 
     - Kotlin Support
-      - Arbitrary.invoke -> Arbitrary.map? Oder Arbitrary.map {}
-      - Provide aliases for @IntRange/LongRange/CharRange
       - Support Generation of Ranges
       - Support Type Aliases
       - Support Sequences

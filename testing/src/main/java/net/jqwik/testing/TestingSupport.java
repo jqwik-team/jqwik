@@ -18,6 +18,10 @@ public class TestingSupport {
 	private TestingSupport() {
 	}
 
+	public static <T> void checkAllGenerated(Arbitrary<? extends T> arbitrary, Random random, Predicate<T> checker) {
+		checkAllGenerated(arbitrary.generator(1000), random, checker);
+	}
+
 	public static <T> void checkAllGenerated(RandomGenerator<? extends T> generator, Random random, Predicate<T> checker) {
 		Optional<? extends Shrinkable<? extends T>> failure =
 			generator
