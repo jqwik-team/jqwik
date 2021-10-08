@@ -209,7 +209,8 @@ to ease the pain.
   That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.
 
 - Some prominent types in jqwik's API have a counterpart with the same name in 
-  Kotlin's default namespace and must therefore always be fully qualified:
+  Kotlin's default namespace and must therefore be either fully qualified or 
+  be imported manually (since the IDE assumes Kotlin's default type):
   - `net.jqwik.api.constraints.IntRange`
   - `net.jqwik.api.constraints.LongRange`
   - `net.jqwik.api.constraints.CharRange`
