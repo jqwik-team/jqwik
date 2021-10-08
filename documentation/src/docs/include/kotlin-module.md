@@ -57,7 +57,7 @@ tasks.withType<KotlinCompile> {
 Kotlin is very compatible with Java, but a few things do not work or do not work as expected.
 Here are a few of those which I noticed to be relevant for jqwik:
 
-- Repeatable annotations do not work (yet) in Kotlin. 
+- Repeatable annotations do not exist (yet) in Kotlin. 
   That's why the container annotation must be used explicitly if you need for example more than one tag:
   
   ```kotlin
@@ -212,3 +212,13 @@ to ease the pain.
   That means that jqwik cannot determine if an `int` value is really a `UByte`,
   which will lead to confusing value reporting, e.g. a UByte value of `254` is reported
   as `-2` because that's the internal representation.
+
+- Kotlin's unsigned integer types (`UByte`, `UShort`, `UInt` and `ULong`) look like their
+  signed counter parts to the JVM. Default generation works but range constraints do not.
+  If you build your own arbitraries for unsigned types you have to generate 
+  `Byte` instead of `UByte` and so on.
+  One day _jqwik_ may be able to handle the intricacies of hidden Kotlin types
+  better. 
+  [Create an issue](https://github.com/jlink/jqwik/issues/new) if that's important for you.
+  
+  

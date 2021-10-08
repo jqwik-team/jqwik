@@ -3,7 +3,6 @@ package net.jqwik.kotlin.api
 import net.jqwik.api.Arbitraries
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.arbitraries.*
-import net.jqwik.kotlin.api.arbitraries.UByteArbitrary
 import org.apiguardian.api.API
 
 /**
@@ -77,12 +76,3 @@ fun Float.Companion.any(): FloatArbitrary {
 fun Double.Companion.any(): DoubleArbitrary {
     return Arbitraries.doubles()
 }
-
-/**
- * Function to create an arbitrary for [UByte].
- */
-@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun UByte.Companion.any(): UByteArbitrary {
-    return UByteArbitrary()
-}
-

@@ -1,10 +1,7 @@
 package net.jqwik.kotlin.api
 
-import net.jqwik.api.Disabled
 import net.jqwik.api.Example
 import net.jqwik.api.ForAll
-import net.jqwik.api.Group
-import net.jqwik.kotlin.api.arbitraries.UByteArbitrary
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import java.util.*
 
