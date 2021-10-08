@@ -208,6 +208,12 @@ to ease the pain.
 - As of this writing Kotlin still has a few bugs when it comes to supporting Java annotations.
   That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.
 
+- Some prominent types in jqwik's API have a counterpart with the same name in 
+  Kotlin's default namespace and must therefore always be fully qualified:
+  - `net.jqwik.api.constraints.IntRange`
+  - `net.jqwik.api.constraints.LongRange`
+  - `net.jqwik.api.constraints.CharRange`
+
 - Some types, e.g. `UByte`, are not visible during runtime. 
   That means that jqwik cannot determine if an `int` value is really a `UByte`,
   which will lead to confusing value reporting, e.g. a UByte value of `254` is reported
