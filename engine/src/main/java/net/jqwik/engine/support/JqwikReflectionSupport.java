@@ -346,4 +346,16 @@ public class JqwikReflectionSupport {
 		Optional<Method> optionalMethod = ReflectionSupport.findMethod(aClass, methodName, parameterTypes);
 		return optionalMethod.map(method -> !method.getDeclaringClass().equals(ignoreImplementationClass)).orElse(false);
 	}
+
+	public static Class<?> extractRawType(Type parameterizedType) {
+		if (parameterizedType instanceof Class) {
+			return (Class<?>) parameterizedType;
+		}
+		if (parameterizedType instanceof ParameterizedType) {
+			return (Class<?>) ((ParameterizedType) parameterizedType).getRawType();
+		}
+		// Now we have a type variable (java.lang.reflect.TypeVariable)
+		return Object.class;
+	}
+
 }

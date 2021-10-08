@@ -7,13 +7,11 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.apiguardian.api.*;
-
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
-import static org.apiguardian.api.API.Status.*;
+import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 public class TypeUsageImpl implements TypeUsage, Cloneable {
 
@@ -268,17 +266,6 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	private static List<TypeUsage> extractLowerBoundsForWildcard(WildcardType wildcardType) {
 		return toTypeUsages(wildcardType.getLowerBounds());
-	}
-
-	private static Class<?> extractRawType(Type parameterizedType) {
-		if (parameterizedType instanceof Class) {
-			return (Class<?>) parameterizedType;
-		}
-		if (parameterizedType instanceof ParameterizedType) {
-			return (Class<?>) ((ParameterizedType) parameterizedType).getRawType();
-		}
-		// Now we have a type variable (java.lang.reflect.TypeVariable)
-		return Object.class;
 	}
 
 	private final Class<?> rawType;
