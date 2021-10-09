@@ -58,9 +58,9 @@ public class DateTimes {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	/*public static ZonedDateTimeArbitrary zonedDateTime() {
-		return null; TODO
-	}*/
+	public static ZonedDateTimeArbitrary zonedDateTime() {
+		return null;
+	}
 
 	/*
 	 * Create an arbitrary that generates instances of {@linkplain java.time.Instant}.
