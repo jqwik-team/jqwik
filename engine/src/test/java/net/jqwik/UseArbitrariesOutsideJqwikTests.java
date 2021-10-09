@@ -7,7 +7,9 @@ import org.junit.jupiter.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.sessions.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.providers.*;
 
@@ -129,12 +131,55 @@ class UseArbitrariesOutsideJqwikTests {
 				   .sample();
 	}
 
-	@Test
-	void closingSampleStreamWillGetRidOfStores() {
-		try (Stream<String> stringStream = Arbitraries.strings().ofLength(5).sampleStream()) {
+	@Nested
+	class Sessions {
+
+		int initialStoreSize = StoreRepository.getCurrent().size();
+
+		@AfterEach
+		void finishSession() {
+			if (JqwikSession.isActive()) {
+				JqwikSession.finish();
+			}
+		}
+
+		@Test
+		void finishingJqwikSessionWillGetRidOfStores() {
+			JqwikSession.start();
+			assertThat(JqwikSession.isActive()).isTrue();
+			Stream<String> stringStream = Arbitraries.strings().ofLength(5).sampleStream();
 			stringStream.limit(10).forEach(v -> assertThat(v).hasSize(5));
-		};
-		assertThat(StoreRepository.getCurrent().size()).isEqualTo(0);
+			JqwikSession.finish();
+			assertThat(JqwikSession.isActive()).isFalse();
+			assertThat(StoreRepository.getCurrent().size()).isEqualTo(initialStoreSize);
+		}
+
+		@Test
+		void sessionCannotBeStartedTwice() {
+			JqwikSession.start();
+			assertThatThrownBy(() -> JqwikSession.start()).isInstanceOf(JqwikException.class);
+		}
+
+		@Test
+		void finishingTryWillResetTryStores() {
+			JqwikSession.start();
+			Store<String> stringStore = Store.create("strings", Lifespan.TRY, () -> "initial");
+			stringStore.update(s -> s + " changed");
+			JqwikSession.finishTry();
+			assertThat(stringStore.get()).isEqualTo("initial");
+		}
+
+		@Test
+		void runInSession() {
+			JqwikSession.run(() -> {
+				assertThat(JqwikSession.isActive()).isTrue();
+				Stream<String> stringStream = Arbitraries.strings().ofLength(5).sampleStream();
+				stringStream.limit(10).forEach(v -> assertThat(v).hasSize(5));
+			});
+			assertThat(JqwikSession.isActive()).isFalse();
+			assertThat(StoreRepository.getCurrent().size()).isEqualTo(initialStoreSize);
+		}
+
 	}
 
 	private static class PersonProvider implements ArbitraryProvider {

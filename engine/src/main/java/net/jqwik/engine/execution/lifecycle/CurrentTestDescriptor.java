@@ -23,11 +23,11 @@ public class CurrentTestDescriptor {
 		}
 	}
 
-	private static TestDescriptor pop() {
+	public static TestDescriptor pop() {
 		return descriptors.get().remove(0);
 	}
 
-	private static void push(TestDescriptor currentDescriptor) {
+	public static void push(TestDescriptor currentDescriptor) {
 		descriptors.get().add(0, currentDescriptor);
 	}
 

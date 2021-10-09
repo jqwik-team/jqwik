@@ -8,10 +8,7 @@
     - Include /docs/dokka in Website
 
     - Implement net.jqwik.api.session.JqwikSession.
-      See https://github.com/jlink/jqwik/issues/237.
-      - newSession(), run(code), close()
-      - nextTry()
-      - newThreadBoundSession()
+      - Document, Release Notes, Issue Description
 
 - 1.6.x
 
