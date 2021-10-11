@@ -4,7 +4,7 @@ static isSnapshotRelease(versionString) {
 
 plugins {
 	id 'org.jetbrains.kotlin.jvm' version "1.5.31" apply false
-	id 'org.jetbrains.dokka' version "1.5.30" apply false
+	id 'org.jetbrains.dokka' version "1.5.31" apply false
 }
 
 ext {
