@@ -114,7 +114,6 @@ class KotlinTypesCompatibilityTests {
         }
 
         @Property
-        @Report(Reporting.GENERATED)
         fun unsignedLongs(@ForAll anInt: ULong) {
             assertThat(anInt is ULong).isTrue
             assertThat(anInt).isBetween(ULong.MIN_VALUE, ULong.MAX_VALUE)
