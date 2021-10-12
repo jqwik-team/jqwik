@@ -1,6 +1,7 @@
 - 1.6.0
 
     - Kotlin Support
+      - Int.any(1..1000)
       - Support Generation of Ranges
       - Support Type Aliases
       - Support Sequences

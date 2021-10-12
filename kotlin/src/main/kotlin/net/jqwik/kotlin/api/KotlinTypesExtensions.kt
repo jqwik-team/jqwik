@@ -37,6 +37,24 @@ fun Byte.Companion.any(): ByteArbitrary {
     return Arbitraries.bytes()
 }
 
+internal val MaxByteRage = (-128..127)
+
+/**
+ * Convenience function to create an arbitrary for [Byte] in a range.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun Byte.Companion.any(range: IntRange): ByteArbitrary {
+    if (!MaxByteRage.contains(range.first)) {
+        val message = String.format("range.first [%s] must be in %s", range.first, MaxByteRage)
+        throw IllegalArgumentException(message)
+    }
+    if (!MaxByteRage.contains(range.last)) {
+        val message = String.format("range.last [%s] must be in %s", range.last, MaxByteRage)
+        throw IllegalArgumentException(message)
+    }
+    return Arbitraries.bytes().between(range.first.toByte(), range.last.toByte())
+}
+
 /**
  * Convenience function to create an arbitrary for [Short].
  */

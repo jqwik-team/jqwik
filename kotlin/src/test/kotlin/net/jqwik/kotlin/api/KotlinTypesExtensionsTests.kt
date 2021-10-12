@@ -49,6 +49,16 @@ class KotlinTypesExtensionsTests {
     }
 
     @Example
+    fun `Byte any(range)`(@ForAll random: Random) {
+        val any = Byte.any(-100..100)
+
+        checkAllGenerated(
+            any.generator(1000),
+            random
+        ) { value -> value is Byte && value >= -100 && value <= 100 }
+    }
+
+    @Example
     fun `Short any()`(@ForAll random: Random) {
         val any = Short.any().between(42, 1000)
 
