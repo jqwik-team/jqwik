@@ -46,6 +46,10 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - Upgraded to JUnit Platform 1.8.1
 
+- Added experimental `JqwikSession` API to 
+  [use arbitraries outside jqwik's lifecycle](/docs/snapshot/user-guide.html#using-arbitraries-outside-jqwik-lifecycle).
+
+
 #### Breaking Changes
 
 - Removed `AbstractDomainContextBase` which had been deprecated in 1.5.2

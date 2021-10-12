@@ -7,9 +7,9 @@
 
     - Include /docs/dokka in Website
 
-    - Implement net.jqwik.api.session.JqwikSession.
-      - Document, Release Notes, Issue Description
-    
+    - JqwikSession:
+      - setRandomSessionSeed(), getRandomSessionSeed()
+
 
 - 1.6.x
 

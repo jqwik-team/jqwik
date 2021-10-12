@@ -26,7 +26,7 @@
     catch(err) {
     }
 //-->
-var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":1,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":1,"i29":1,"i30":6};
+var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":1,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":1,"i30":1,"i31":6,"i32":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -262,6 +262,13 @@ public interface <span class="typeNameLabel">TypeUsage</span></pre>
 </td>
 </tr>
 <tr id="i10" class="altColor">
+<td class="colFirst"><code>java.util.Optional&lt;java.lang.Object&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getMetaInfo(java.lang.String)">getMetaInfo</a></span>&#8203;(java.lang.String&nbsp;key)</code></th>
+<td class="colLast">
+<div class="block">Get meta info for a certain key</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.Class&lt;?&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getRawType()">getRawType</a></span>()</code></th>
 <td class="colLast">
@@ -269,45 +276,45 @@ public interface <span class="typeNameLabel">TypeUsage</span></pre>
  specification.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.util.Optional&lt;<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getSuperclass()">getSuperclass</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return superclass of this type.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.lang.reflect.Type</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getType()">getType</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code><a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTypeArgument(int)">getTypeArgument</a></span>&#8203;(int&nbsp;position)</code></th>
 <td class="colLast">
 <div class="block">Return the type argument at a specific position.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTypeArguments()">getTypeArguments</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return the type arguments of a generic type in the order of there appearance in a type's declaration.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTypeVariable()">getTypeVariable</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getUpperBounds()">getUpperBounds</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return upper bounds if a generic type is a wildcard or type variable.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>&lt;A extends java.lang.annotation.Annotation&gt;<br>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isAnnotated(java.lang.Class)">isAnnotated</a></span>&#8203;(java.lang.Class&lt;A&gt;&nbsp;annotationType)</code></th>
 <td class="colLast">
@@ -315,91 +322,101 @@ public interface <span class="typeNameLabel">TypeUsage</span></pre>
  with a specific <code>annotationType</code>.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isArray()">isArray</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return true if a type is an array type.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isAssignableFrom(java.lang.Class)">isAssignableFrom</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;providedClass)</code></th>
 <td class="colLast">
 <div class="block">Check if a given <code>providedClass</code> is assignable from this generic type.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isEnum()">isEnum</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return true if a type is an <code>enum</code> type.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isGeneric()">isGeneric</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return true if a type has any type arguments itself.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isNullable()">isNullable</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return optional true if this type is nullable.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isOfType(java.lang.Class)">isOfType</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;aRawType)</code></th>
 <td class="colLast">
 <div class="block">Check if an instance is of a specific raw type</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isTypeVariable()">isTypeVariable</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return true if a generic type is a wildcard.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isTypeVariableOrWildcard()">isTypeVariableOrWildcard</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return true if a generic type is a type variable or a wildcard.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isVoid()">isVoid</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return true if type is Void.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isWildcard()">isWildcard</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Return true if a generic type is a wildcard.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>static <a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#of(java.lang.Class,net.jqwik.api.providers.TypeUsage...)">of</a></span>&#8203;(java.lang.Class&lt;?&gt;&nbsp;type,
   <a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>...&nbsp;typeParameters)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>static <a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#wildcard(net.jqwik.api.providers.TypeUsage)">wildcard</a></span>&#8203;(<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&nbsp;upperBound)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>&lt;A extends java.lang.annotation.Annotation&gt;<br><a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#withAnnotation(A)">withAnnotation</a></span>&#8203;(A&nbsp;annotation)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Return type usage object with additional annotation</div>
+</td>
+</tr>
+<tr id="i32" class="altColor">
+<td class="colFirst"><code><a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#withMetaInfo(java.lang.String,java.lang.Object)">withMetaInfo</a></span>&#8203;(java.lang.String&nbsp;key,
+            java.lang.Object&nbsp;value)</code></th>
+<td class="colLast">
+<div class="block">Return type usage object with additional meta info</div>
+</td>
 </tr>
 </table>
 </li>
@@ -754,12 +771,38 @@ java.lang.String&nbsp;getTypeVariable()</pre>
 </a><a id="withAnnotation(A)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>withAnnotation</h4>
 <pre class="methodSignature">@API(status=EXPERIMENTAL,
      since="1.6.0")
 &lt;A extends java.lang.annotation.Annotation&gt;&nbsp;<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&nbsp;withAnnotation&#8203;(A&nbsp;annotation)</pre>
+<div class="block">Return type usage object with additional annotation</div>
+</li>
+</ul>
+<a id="getMetaInfo(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMetaInfo</h4>
+<pre class="methodSignature">@API(status=EXPERIMENTAL,
+     since="1.6.0")
+java.util.Optional&lt;java.lang.Object&gt;&nbsp;getMetaInfo&#8203;(java.lang.String&nbsp;key)</pre>
+<div class="block">Get meta info for a certain key</div>
+</li>
+</ul>
+<a id="withMetaInfo(java.lang.String,java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>withMetaInfo</h4>
+<pre class="methodSignature">@API(status=EXPERIMENTAL,
+     since="1.6.0")
+<a href="TypeUsage.html" title="interface in net.jqwik.api.providers">TypeUsage</a>&nbsp;withMetaInfo&#8203;(java.lang.String&nbsp;key,
+                       java.lang.Object&nbsp;value)</pre>
+<div class="block">Return type usage object with additional meta info</div>
 </li>
 </ul>
 </li>

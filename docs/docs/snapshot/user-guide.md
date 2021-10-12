@@ -134,6 +134,7 @@ title: jqwik User Guide - 1.6.0-SNAPSHOT
   - [Generating a Stream of Values](#generating-a-stream-of-values)
   - [Generating all possible values](#generating-all-possible-values)
   - [Iterating through all possible values](#iterating-through-all-possible-values)
+  - [Using Arbitraries Outside Jqwik Lifecycle](#using-arbitraries-outside-jqwik-lifecycle)
 - [Contract Tests](#contract-tests)
 - [Stateful Testing](#stateful-testing)
   - [Specify Actions](#specify-actions)
@@ -183,6 +184,7 @@ title: jqwik User Guide - 1.6.0-SNAPSHOT
     - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
     - [Differences to Java Usage](#differences-to-java-usage)
     - [Generation of Nullable Types](#generation-of-nullable-types)
+    - [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
     - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
     - [Quirks and Bugs](#quirks-and-bugs)
   - [Testing Module](#testing-module)
@@ -2806,7 +2808,35 @@ In this example a simple for loop over `allKeys()` would also work. In more comp
 _jqwik_ will do all the combinations and filtering for you.
 
 
+### Using Arbitraries Outside Jqwik Lifecycle
 
+All the methode mentioned in this chapter can be used outside a property, 
+which also means outside jqwik's lifecycle control. 
+Probably the most prominent reason to that is to experiment with arbitraries
+and value generation in a Java console or a main method.
+Another reason can be to use jqwik's data generation capabilities for testing
+data in Jupiter or Cucumber tests.
+
+In principal, there's no problem with that approach.
+However, some generators are expensive to create and will therefore be cached.
+Other generators require some data persistence across generation iterations to
+work as expected.
+All this data will fill up your heap space and never be released, because
+jqwik cannot know, if you're done with using a specific generator or not.
+
+In order to mitigate that, there's an experimental API that allows you
+to simulate a small part of jqwik's property lifecycle. 
+Currently this API consists of a few static methods on class `net.jqwik.api.sessions.JqwikSession`:
+
+- `JqwikSession.start()`: Start explicitly a session for using arbitraries and generators.
+- `JqwikSession.isActive()`: Check is a session is currently active.
+- `JqwikSession.finish()`: Finish the currently active session, thereby releasing all the implicitly used memory space.
+- `JqwikSession.finishTry()`: Announce that you're done with the current `trie` of a property.
+  This will, for example, reset the uniqueness collector of a generator for collections.
+- `JqwikSession.run(Runnable code)`: Wrap the runnable code segment in implicit `start()` and `finish()` calls.
+
+Mind that there's currently no way to use nested sessions, spread the same session across threads
+or use more than one session concurrently.
 
 
 
@@ -4890,9 +4920,11 @@ __Table of contents:__
 
 - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
 - [Differences to Java Usage](#differences-to-java-usage)
+- [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
 - [Automatic generation of nullable types](#generation-of-nullable-types)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
-  - [Kotlin Extension Functions](#kotlin-extension-functions)
+  - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
+  - [Arbitrary Extensions](#arbitrary-extensions)
   - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
 - [Quirks and Bugs](#quirks-and-bugs)
 
@@ -4937,7 +4969,7 @@ tasks.withType<KotlinCompile> {
 Kotlin is very compatible with Java, but a few things do not work or do not work as expected.
 Here are a few of those which I noticed to be relevant for jqwik:
 
-- Repeatable annotations do not work (yet) in Kotlin. 
+- Repeatable annotations do not exist (yet) in Kotlin. 
   That's why the container annotation must be used explicitly if you need for example more than one tag:
   
   ```kotlin
@@ -4964,7 +4996,7 @@ Here are a few of those which I noticed to be relevant for jqwik:
   fun test(@ForAll aString: @AlphaChars String) { ... }
   ```
 
-  The one important exception is `@ForAll` which must always precede the parameter.
+  Mind that `@ForAll` must always precede the parameter, though!
 
 - Grouping - aka nesting - of test container classes requires the `inner` modifier.
   The reason is that nested classes without `inner` are considered to be `static`
@@ -5015,18 +5047,44 @@ fun generateNullsInList(@ForAll list: List<@WithNull String>) {
 }
 ```
 
+#### Support for Kotlin Collection Types
+
+Kotlin has its own variations of collection types, e.g. (`kotlin.collections.List` and `kotlin.collections.MutableList`) 
+that are - under the hood - instances of their corresponding, mutable Java type.
+Using those types in ForAll-parameters works as expected.
+This is also true for Kotlin's notation of arrays, e.g. `Array<Int>`, 
+and Kotlin's unsigned integer types: `UByte`, `UShort`, `UInt` and `ULong`.
+
 #### Convenience Functions for Kotlin
 
 Some parts of the jqwik API are hard to use in Kotlin. 
 That's why this module offers a few extension functions and top-level functions
 to ease the pain.
 
-##### Kotlin Extension Functions
+##### Extensions for Built-in Kotlin Types
+
+- `String.any() : StringArbitrary` can replace `Arbitraries.strings()`
+
+- `Char.any() : CharacterArbitrary` can replace `Arbitraries.chars()`
+
+- `Boolean.any() : Arbitrary<Boolean>` can replace `Arbitraries.of(false, true)`
+
+- `Byte.any() : ByteArbitrary` can replace `Arbitraries.bytes()`
+
+- `Short.any() : ShortArbitrary` can replace `Arbitraries.shorts()`
+
+- `Int.any() : IntegerArbitrary` can replace `Arbitraries.integers()`
+
+- `Long.any() : LongArbitrary` can replace `Arbitraries.longs()`
+
+- `Float.any() : FloatArbitrary` can replace `Arbitraries.floats()`
+
+- `Double.any() : DoubleArbitrary` can replace `Arbitraries.doubles()`
+
+##### Arbitrary Extensions
 
 - `Arbitrary.orNull(probability: Double) : T?` can replace `Arbitrary.injectNull(probabilit)`
   and returns a nullable type.
-
-- `String.any()` can replace `Arbitraries.strings()`
 
 ##### Kotlin Top-Level Functions
 
@@ -5061,6 +5119,28 @@ to ease the pain.
 
 - As of this writing Kotlin still has a few bugs when it comes to supporting Java annotations.
   That's why in some constellations you'll run into strange behaviour - usually runtime exceptions or ignored constraints - when using predefined jqwik annotations on types.
+
+- Some prominent types in jqwik's API have a counterpart with the same name in 
+  Kotlin's default namespace and must therefore be either fully qualified or 
+  be imported manually (since the IDE assumes Kotlin's default type):
+  - `net.jqwik.api.constraints.IntRange`
+  - `net.jqwik.api.constraints.LongRange`
+  - `net.jqwik.api.constraints.CharRange`
+
+- Some types, e.g. `UByte`, are not visible during runtime. 
+  That means that jqwik cannot determine if an `int` value is really a `UByte`,
+  which will lead to confusing value reporting, e.g. a UByte value of `254` is reported
+  as `-2` because that's the internal representation.
+
+- Kotlin's unsigned integer types (`UByte`, `UShort`, `UInt` and `ULong`) look like their
+  signed counter parts to the JVM. Default generation works but range constraints do not.
+  If you build your own arbitraries for unsigned types you have to generate 
+  `Byte` instead of `UByte` and so on.
+  One day _jqwik_ may be able to handle the intricacies of hidden Kotlin types
+  better. 
+  [Create an issue](https://github.com/jlink/jqwik/issues/new) if that's important for you.
+  
+  
 
 
 ### Testing Module

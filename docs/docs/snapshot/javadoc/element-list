@@ -7,6 +7,7 @@ net.jqwik.api.facades
 net.jqwik.api.footnotes
 net.jqwik.api.lifecycle
 net.jqwik.api.providers
+net.jqwik.api.sessions
 net.jqwik.api.stateful
 net.jqwik.api.statistics
 net.jqwik.time.api

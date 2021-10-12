@@ -67,4 +67,32 @@ In this example a simple for loop over `allKeys()` would also work. In more comp
 _jqwik_ will do all the combinations and filtering for you.
 
 
+### Using Arbitraries Outside Jqwik Lifecycle
 
+All the methode mentioned in this chapter can be used outside a property, 
+which also means outside jqwik's lifecycle control. 
+Probably the most prominent reason to that is to experiment with arbitraries
+and value generation in a Java console or a main method.
+Another reason can be to use jqwik's data generation capabilities for testing
+data in Jupiter or Cucumber tests.
+
+In principal, there's no problem with that approach.
+However, some generators are expensive to create and will therefore be cached.
+Other generators require some data persistence across generation iterations to
+work as expected.
+All this data will fill up your heap space and never be released, because
+jqwik cannot know, if you're done with using a specific generator or not.
+
+In order to mitigate that, there's an experimental API that allows you
+to simulate a small part of jqwik's property lifecycle. 
+Currently this API consists of a few static methods on class `net.jqwik.api.sessions.JqwikSession`:
+
+- `JqwikSession.start()`: Start explicitly a session for using arbitraries and generators.
+- `JqwikSession.isActive()`: Check is a session is currently active.
+- `JqwikSession.finish()`: Finish the currently active session, thereby releasing all the implicitly used memory space.
+- `JqwikSession.finishTry()`: Announce that you're done with the current `trie` of a property.
+  This will, for example, reset the uniqueness collector of a generator for collections.
+- `JqwikSession.run(Runnable code)`: Wrap the runnable code segment in implicit `start()` and `finish()` calls.
+
+Mind that there's currently no way to use nested sessions, spread the same session across threads
+or use more than one session concurrently.
