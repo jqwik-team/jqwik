@@ -22,6 +22,14 @@ fun Char.Companion.any(): CharacterArbitrary {
 }
 
 /**
+ * Convenience function to create an arbitrary for [Char] in range.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun Char.Companion.any(range: CharRange): CharacterArbitrary {
+    return Arbitraries.chars().range(range.first, range.last)
+}
+
+/**
  * Convenience function to create an arbitrary for [Boolean].
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
@@ -37,30 +45,32 @@ fun Byte.Companion.any(): ByteArbitrary {
     return Arbitraries.bytes()
 }
 
-internal val MaxByteRage = (-128..127)
-
+internal val MaxByteRage = (Byte.MIN_VALUE..Byte.MAX_VALUE)
 /**
  * Convenience function to create an arbitrary for [Byte] in a range.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun Byte.Companion.any(range: IntRange): ByteArbitrary {
-    if (!MaxByteRage.contains(range.first)) {
-        val message = String.format("range.first [%s] must be in %s", range.first, MaxByteRage)
-        throw IllegalArgumentException(message)
-    }
-    if (!MaxByteRage.contains(range.last)) {
-        val message = String.format("range.last [%s] must be in %s", range.last, MaxByteRage)
-        throw IllegalArgumentException(message)
-    }
+    validateRange(MaxByteRage, range)
     return Arbitraries.bytes().between(range.first.toByte(), range.last.toByte())
 }
 
 /**
- * Convenience function to create an arbitrary for [Short].
+ * Convenience function to create an arbitrary for [Short] in a range.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun Short.Companion.any(): ShortArbitrary {
     return Arbitraries.shorts()
+}
+
+internal val MaxShortRage = (Short.MIN_VALUE..Short.MAX_VALUE)
+/**
+ * Convenience function to create an arbitrary for [Short].
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun Short.Companion.any(range: IntRange): ShortArbitrary {
+    validateRange(MaxShortRage, range)
+    return Arbitraries.shorts().between(range.first.toShort(), range.last.toShort())
 }
 
 /**
@@ -72,11 +82,27 @@ fun Int.Companion.any(): IntegerArbitrary {
 }
 
 /**
+ * Convenience function to create an arbitrary for [Int] in range.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun Int.Companion.any(range: IntRange): IntegerArbitrary {
+    return Arbitraries.integers().between(range.first, range.last)
+}
+
+/**
  * Convenience function to create an arbitrary for [Long].
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun Long.Companion.any(): LongArbitrary {
     return Arbitraries.longs()
+}
+
+/**
+ * Convenience function to create an arbitrary for [Long] in range.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun Long.Companion.any(range: LongRange): LongArbitrary {
+    return Arbitraries.longs().between(range.first, range.last)
 }
 
 /**
@@ -88,9 +114,36 @@ fun Float.Companion.any(): FloatArbitrary {
 }
 
 /**
+ * Convenience function to create an arbitrary for [Float] in range.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun Float.Companion.any(range: ClosedFloatingPointRange<Float>): FloatArbitrary {
+    return Arbitraries.floats().between(range.start, range.endInclusive)
+}
+
+/**
  * Convenience function to create an arbitrary for [Double].
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun Double.Companion.any(): DoubleArbitrary {
     return Arbitraries.doubles()
+}
+
+/**
+ * Convenience function to create an arbitrary for [Double] in range.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun Double.Companion.any(range: ClosedFloatingPointRange<Double>): DoubleArbitrary {
+    return Arbitraries.doubles().between(range.start, range.endInclusive)
+}
+
+private fun validateRange(allowedRange: IntRange, range: IntRange) {
+    if (!allowedRange.contains(range.first)) {
+        val message = String.format("range.first [%s] must be in %s", range.first, allowedRange)
+        throw IllegalArgumentException(message)
+    }
+    if (!allowedRange.contains(range.last)) {
+        val message = String.format("range.last [%s] must be in %s", range.last, allowedRange)
+        throw IllegalArgumentException(message)
+    }
 }

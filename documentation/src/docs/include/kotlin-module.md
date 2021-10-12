@@ -155,19 +155,34 @@ to ease the pain.
 
 - `Char.any() : CharacterArbitrary` can replace `Arbitraries.chars()`
 
+- `Char.any(range: CharRange) : CharacterArbitrary` can replace `Arbitraries.chars().range(..)`
+
 - `Boolean.any() : Arbitrary<Boolean>` can replace `Arbitraries.of(false, true)`
 
 - `Byte.any() : ByteArbitrary` can replace `Arbitraries.bytes()`
 
+- `Byte.any(range: IntRange) : ByteArbitrary` can replace `Arbitraries.bytes().between(..)`
+
 - `Short.any() : ShortArbitrary` can replace `Arbitraries.shorts()`
+
+- `Short.any(range: IntRange) : ShortArbitrary` can replace `Arbitraries.shorts().between(..)`
 
 - `Int.any() : IntegerArbitrary` can replace `Arbitraries.integers()`
 
+- `Int.any(range: IntRange) : IntegerArbitrary` can replace `Arbitraries.integers().between(..)`
+
 - `Long.any() : LongArbitrary` can replace `Arbitraries.longs()`
+
+- `Long.any(range: LongRange) : LongArbitrary` can replace `Arbitraries.longs().between(..)`
 
 - `Float.any() : FloatArbitrary` can replace `Arbitraries.floats()`
 
+- `Float.any(range: ClosedFloatingPointRange<Float>) : FloatArbitrary` can replace `Arbitraries.floats().between(..)`
+
 - `Double.any() : DoubleArbitrary` can replace `Arbitraries.doubles()`
+
+- `Double.any(range: ClosedFloatingPointRange<Float>) : DoubleArbitrary` can replace `Arbitraries.doubles().between(..)`
+
 
 ##### Arbitrary Extensions
 

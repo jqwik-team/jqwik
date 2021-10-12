@@ -28,6 +28,16 @@ class KotlinTypesExtensionsTests {
     }
 
     @Example
+    fun `Char any(range)`(@ForAll random: Random) {
+        val any = Char.any('0'..'9')
+
+        checkAllGenerated(
+            any.generator(1000),
+            random
+        ) { value -> value is Char && Character.isDigit(value) }
+    }
+
+    @Example
     fun `Boolean any()`(@ForAll random: Random) {
         val any = Boolean.any()
 
@@ -69,8 +79,28 @@ class KotlinTypesExtensionsTests {
     }
 
     @Example
+    fun `Short any(range)`(@ForAll random: Random) {
+        val any = Short.any(42..1000)
+
+        checkAllGenerated(
+            any.generator(1000),
+            random
+        ) { value -> value is Short && value >= 42 && value <= 1000 }
+    }
+
+    @Example
     fun `Int any()`(@ForAll random: Random) {
         val any = Int.any().between(42, 1000)
+
+        checkAllGenerated(
+            any.generator(1000),
+            random
+        ) { value -> value is Int && value >= 42 && value <= 1000 }
+    }
+
+    @Example
+    fun `Int any(range)`(@ForAll random: Random) {
+        val any = Int.any(42..1000)
 
         checkAllGenerated(
             any.generator(1000),
@@ -89,6 +119,16 @@ class KotlinTypesExtensionsTests {
     }
 
     @Example
+    fun `Long any(range)`(@ForAll random: Random) {
+        val any = Long.any(42L..10000L)
+
+        checkAllGenerated(
+            any.generator(1000),
+            random
+        ) { value -> value is Long && value >= 42 && value <= 10000 }
+    }
+
+    @Example
     fun `Float any()`(@ForAll random: Random) {
         val any = Float.any().between(42.1f, 99.0f)
 
@@ -99,8 +139,28 @@ class KotlinTypesExtensionsTests {
     }
 
     @Example
+    fun `Float any(range)`(@ForAll random: Random) {
+        val any = Float.any(42.1f..99.0f)
+
+        checkAllGenerated(
+            any.generator(1000),
+            random
+        ) { value -> value is Float && value >= 42.1f && value <= 99.0f }
+    }
+
+    @Example
     fun `Double any()`(@ForAll random: Random) {
         val any = Double.any().between(42.1, 99.0)
+
+        checkAllGenerated(
+            any.generator(1000),
+            random
+        ) { value -> value is Double && value >= 42.1 && value <= 99.0 }
+    }
+
+    @Example
+    fun `Double any(range)`(@ForAll random: Random) {
+        val any = Double.any(42.1..99.0)
 
         checkAllGenerated(
             any.generator(1000),
