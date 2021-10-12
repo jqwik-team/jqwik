@@ -66,6 +66,7 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Arbitrary.withoutEdgeCases() sometimes did not work in combination with 
   filter, map and flatMap.
 
+- When an arbitrary fails to generate values, the property seed will now be reported.
 
 ## 1.5.x
 

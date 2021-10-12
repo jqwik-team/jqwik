@@ -1,10 +1,5 @@
 - 1.6.0
 
-    - Seed not reported:
-      SimpleArbitrariesTests > worstCaseTimeGeneration2Minutes2SecondsPossible FAILED
-        net.jqwik.api.TooManyFilterMissesException: Filtering [net.jqwik.api.  RandomGenerator$$Lambda$367/0x0000000800d96b90@3506d826] missed more than 10000 times.
-        at app//net.jqwik.engine.properties.arbitraries.randomized.FilteredGenerator.lambda$nextUntilAccepted$2(FilteredGenerator.java:41)
-
     - Kotlin Support
       - Support Generation of Ranges
       - Support Type Aliases

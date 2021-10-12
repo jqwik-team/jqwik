@@ -120,7 +120,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		GenerationMode generation,
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
-		int edgeCasesTried
+		int edgeCasesTried,
+		Throwable throwable
 	) {
 		return new PropertyCheckResult(
 			CheckStatus.EXHAUSTED,
@@ -135,7 +136,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			edgeCasesTried,
 			null,
 			null,
-			null
+			throwable
 		);
 	}
 

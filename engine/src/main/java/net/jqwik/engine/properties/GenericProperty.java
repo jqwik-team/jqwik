@@ -51,9 +51,18 @@ public class GenericProperty {
 			countTries++;
 
 			TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
-			List<Shrinkable<Object>> shrinkableParams = parametersGenerator.next(tryLifecycleContext);
-			List<Object> sample = extractParams(shrinkableParams);
 
+			List<Shrinkable<Object>> shrinkableParams;
+			try {
+				shrinkableParams = parametersGenerator.next(tryLifecycleContext);
+			} catch (Throwable throwable) {
+				// Mostly TooManyFilterMissesException gets here
+				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+
+				return exhaustedCheckResult(maxTries, countChecks, throwable);
+			}
+
+			List<Object> sample = extractParams(shrinkableParams);
 			try {
 				countChecks++;
 				TryExecutionResult tryExecutionResult = testPredicate(tryLifecycleContext, sample, reporter, reporting);
@@ -113,17 +122,7 @@ public class GenericProperty {
 			}
 		}
 		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, countTries, configuration.getMaxDiscardRatio())) {
-			return PropertyCheckResult.exhausted(
-				configuration.getStereotype(),
-				name,
-				maxTries,
-				countChecks,
-				configuration.getSeed(),
-				configuration.getGenerationMode(),
-				configuration.getEdgeCasesMode(),
-				parametersGenerator.edgeCasesTotal(),
-				parametersGenerator.edgeCasesTried()
-			);
+			return exhaustedCheckResult(maxTries, countChecks, null);
 		}
 		return PropertyCheckResult.successful(
 			configuration.getStereotype(),
@@ -135,6 +134,21 @@ public class GenericProperty {
 			configuration.getEdgeCasesMode(),
 			parametersGenerator.edgeCasesTotal(),
 			parametersGenerator.edgeCasesTried()
+		);
+	}
+
+	private PropertyCheckResult exhaustedCheckResult(int maxTries, int countChecks, Throwable throwable) {
+		return PropertyCheckResult.exhausted(
+			configuration.getStereotype(),
+			name,
+			maxTries,
+			countChecks,
+			configuration.getSeed(),
+			configuration.getGenerationMode(),
+			configuration.getEdgeCasesMode(),
+			parametersGenerator.edgeCasesTotal(),
+			parametersGenerator.edgeCasesTried(),
+			throwable
 		);
 	}
 
