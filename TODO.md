@@ -2,17 +2,16 @@
 
     - Kotlin Support
       - IntRangeArbitrary
-        - ofMax/MinSize, @Size
         - Documentation
       - Support Sequences
 
     - Include /docs/dokka in Website
 
-    - JqwikSession:
-      - setRandomSessionSeed(), getRandomSessionSeed()
-
 
 - 1.6.x
+
+    - JqwikSession:
+        - setRandomSessionSeed(), getRandomSessionSeed()
 
     - Verify size settings for all Collection Arbitraries
 
