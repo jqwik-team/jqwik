@@ -1,8 +1,9 @@
 - 1.6.0
 
     - Kotlin Support
-      - Support Generation of Ranges
-      - Support Type Aliases
+      - IntRangeArbitrary
+        - Annotations @IntRange 
+        - ofMax/MinSize, @Size
       - Support Sequences
 
     - Include /docs/dokka in Website

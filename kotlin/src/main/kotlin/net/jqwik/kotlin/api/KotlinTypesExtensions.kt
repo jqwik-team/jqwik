@@ -147,3 +147,19 @@ private fun validateRange(allowedRange: IntRange, range: IntRange) {
         throw IllegalArgumentException(message)
     }
 }
+
+/**
+ * Convenience function to create an arbitrary for [IntRange].
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun IntRange.Companion.any(): IntRangeArbitrary {
+    return IntRangeArbitrary()
+}
+
+/**
+ * Convenience function to create an arbitrary for [IntRange] with range.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun IntRange.Companion.any(range: IntRange): IntRangeArbitrary {
+    return IntRange.any().between(range.first, range.last)
+}
