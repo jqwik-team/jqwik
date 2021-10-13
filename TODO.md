@@ -2,8 +2,8 @@
 
     - Kotlin Support
       - IntRangeArbitrary
-        - Annotations @IntRange 
         - ofMax/MinSize, @Size
+        - Documentation
       - Support Sequences
 
     - Include /docs/dokka in Website
