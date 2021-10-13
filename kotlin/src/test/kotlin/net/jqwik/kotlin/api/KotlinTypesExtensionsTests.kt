@@ -12,7 +12,7 @@ class KotlinTypesExtensionsTests {
         val any = String.any().ofMaxLength(10)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is String && value.length <= 10 }
     }
@@ -22,7 +22,7 @@ class KotlinTypesExtensionsTests {
         val any = Char.any().numeric()
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Char && Character.isDigit(value) }
     }
@@ -32,7 +32,7 @@ class KotlinTypesExtensionsTests {
         val any = Char.any('0'..'9')
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Char && Character.isDigit(value) }
     }
@@ -42,7 +42,7 @@ class KotlinTypesExtensionsTests {
         val any = Boolean.any()
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Boolean }
     }
@@ -53,7 +53,7 @@ class KotlinTypesExtensionsTests {
         val any = Byte.any().between(-100, 100)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Byte && value >= -100 && value <= 100 }
     }
@@ -63,7 +63,7 @@ class KotlinTypesExtensionsTests {
         val any = Byte.any(-100..100)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Byte && value >= -100 && value <= 100 }
     }
@@ -73,7 +73,7 @@ class KotlinTypesExtensionsTests {
         val any = Short.any().between(42, 1000)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Short && value >= 42 && value <= 1000 }
     }
@@ -83,7 +83,7 @@ class KotlinTypesExtensionsTests {
         val any = Short.any(42..1000)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Short && value >= 42 && value <= 1000 }
     }
@@ -93,7 +93,7 @@ class KotlinTypesExtensionsTests {
         val any = Int.any().between(42, 1000)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Int && value >= 42 && value <= 1000 }
     }
@@ -103,7 +103,7 @@ class KotlinTypesExtensionsTests {
         val any = Int.any(42..1000)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Int && value >= 42 && value <= 1000 }
     }
@@ -113,7 +113,7 @@ class KotlinTypesExtensionsTests {
         val any = Long.any().between(42, 1000)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Long && value >= 42 && value <= 1000 }
     }
@@ -123,7 +123,7 @@ class KotlinTypesExtensionsTests {
         val any = Long.any(42L..10000L)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Long && value >= 42 && value <= 10000 }
     }
@@ -133,7 +133,7 @@ class KotlinTypesExtensionsTests {
         val any = Float.any().between(42.1f, 99.0f)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Float && value >= 42.1f && value <= 99.0f }
     }
@@ -143,7 +143,7 @@ class KotlinTypesExtensionsTests {
         val any = Float.any(42.1f..99.0f)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Float && value >= 42.1f && value <= 99.0f }
     }
@@ -153,7 +153,7 @@ class KotlinTypesExtensionsTests {
         val any = Double.any().between(42.1, 99.0)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Double && value >= 42.1 && value <= 99.0 }
     }
@@ -163,7 +163,7 @@ class KotlinTypesExtensionsTests {
         val any = Double.any(42.1..99.0)
 
         checkAllGenerated(
-            any.generator(1000),
+            any,
             random
         ) { value -> value is Double && value >= 42.1 && value <= 99.0 }
     }

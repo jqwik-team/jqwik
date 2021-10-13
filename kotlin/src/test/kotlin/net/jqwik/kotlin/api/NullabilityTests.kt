@@ -4,7 +4,7 @@ import net.jqwik.api.*
 import net.jqwik.api.constraints.WithNull
 import net.jqwik.api.statistics.Statistics
 import net.jqwik.api.statistics.StatisticsReport
-import net.jqwik.testing.TestingSupport
+import net.jqwik.testing.TestingSupport.checkAtLeastOneGenerated
 import java.util.*
 import java.util.function.Predicate
 
@@ -16,13 +16,13 @@ class NullabilityTests {
         val stringArbitrary: Arbitrary<String> = Arbitraries.strings()
         val nullableArbitrary: Arbitrary<String?> = stringArbitrary.orNull(0.5)
 
-        TestingSupport.checkAtLeastOneGenerated(
-            nullableArbitrary.generator(1000),
+        checkAtLeastOneGenerated(
+            nullableArbitrary,
             random
         ) { s: String? -> s != null }
 
-        TestingSupport.checkAtLeastOneGenerated(
-            nullableArbitrary.generator(1000),
+        checkAtLeastOneGenerated(
+            nullableArbitrary,
             random
         ) { s: String? -> s == null }
     }

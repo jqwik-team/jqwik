@@ -55,6 +55,14 @@ public class TestingSupport {
 		);
 	}
 
+	public static <T> void assertAllGeneratedEqualTo(Arbitrary<? extends T> arbitrary, Random random, T expected) {
+		assertAllGeneratedEqualTo(
+			arbitrary.generator(1000),
+			random,
+			expected
+		);
+	}
+
 	public static <T> void checkAtLeastOneGenerated(
 		RandomGenerator<? extends T> generator,
 		Random random,
@@ -78,6 +86,14 @@ public class TestingSupport {
 		Predicate<T> checker
 	) {
 		checkAtLeastOneGenerated(generator, random, checker, "Failed to generate at least one");
+	}
+
+	public static <T> void checkAtLeastOneGenerated(
+		Arbitrary<? extends T> arbitrary,
+		Random random,
+		Predicate<T> checker
+	) {
+		checkAtLeastOneGenerated(arbitrary.generator(1000), random, checker);
 	}
 
 	@SafeVarargs
