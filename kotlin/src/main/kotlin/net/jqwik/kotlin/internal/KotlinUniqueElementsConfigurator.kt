@@ -1,62 +1,55 @@
-package net.jqwik.kotlin.internal;
+package net.jqwik.kotlin.internal
 
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import net.jqwik.api.Arbitrary
+import net.jqwik.api.configurators.ArbitraryConfigurator
+import net.jqwik.api.constraints.UniqueElements
+import net.jqwik.api.constraints.UniqueElements.NOT_SET
+import net.jqwik.api.facades.ReflectionSupportFacade
+import net.jqwik.api.providers.TypeUsage
+import net.jqwik.kotlin.api.SequenceArbitrary
+import net.jqwik.kotlin.api.isAssignableFrom
+import java.util.function.Function
 
-import kotlin.sequences.*;
+class KotlinUniqueElementsConfigurator : ArbitraryConfigurator {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> configure(arbitrary: Arbitrary<T>, targetType: TypeUsage): Arbitrary<T> {
+        return targetType.findAnnotation(UniqueElements::class.java).map { uniqueness ->
+            return@map when {
+                arbitrary is SequenceArbitrary<*> -> configureSequenceArbitrary(arbitrary, uniqueness)
+                targetType.isAssignableFrom(Sequence::class) -> {
+                    val sequenceArbitrary = arbitrary as Arbitrary<Sequence<*>>
+                    sequenceArbitrary.filter {
+                        isUnique(
+                            it.toList(),
+                            extractor(uniqueness) as Function<Any?, Any>
+                        )
+                    }
+                }
+                else -> arbitrary
+            } as Arbitrary<T>
+        }.orElse(arbitrary)
+    }
 
-import net.jqwik.api.*;
-import net.jqwik.api.configurators.*;
-import net.jqwik.api.constraints.*;
-import net.jqwik.api.facades.*;
-import net.jqwik.api.providers.*;
-import net.jqwik.kotlin.api.*;
+    private fun isUnique(list: Collection<*>, extractor: Function<Any?, Any>): Boolean {
+        val set = list.map { extractor.apply(it) }.toSet()
+        return set.size == list.size
+    }
 
-@SuppressWarnings("unchecked")
-public class KotlinUniqueElementsConfigurator implements ArbitraryConfigurator {
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> configureSequenceArbitrary(
+        arbitrary: SequenceArbitrary<T>,
+        uniqueness: UniqueElements
+    ): SequenceArbitrary<T> {
+        val extractor = extractor(uniqueness) as Function<T, Any>
+        return arbitrary.uniqueElements(extractor)
+    }
 
-	@SuppressWarnings("OverlyComplexMethod")
-	@Override
-	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
-		return targetType.findAnnotation(UniqueElements.class).map(uniqueness -> {
-			if (arbitrary instanceof SequenceArbitrary) {
-				return (Arbitrary<T>) configureSequenceArbitrary((SequenceArbitrary<?>) arbitrary, uniqueness);
-			}
-			if (targetType.isAssignableFrom(Sequence.class)) {
-				Arbitrary<Sequence<?>> sequenceArbitrary = (Arbitrary<Sequence<?>>) arbitrary;
-				return (Arbitrary<T>) sequenceArbitrary.filter(s -> isUnique(toList(s.iterator()), (Function<Object, Object>) extractor(uniqueness)));
-			}
-			return arbitrary;
-		}).orElse(arbitrary);
-	}
-
-	private <T> List<T> toList(Iterator<T> i) {
-		List<T> list = new ArrayList<>();
-		while (i.hasNext()) {
-			list.add(i.next());
-		}
-		return list;
-	}
-
-	private boolean isUnique(Collection<?> list, Function<Object, Object> extractor) {
-		Set<Object> set = list.stream().map(extractor).collect(Collectors.toSet());
-		return set.size() == list.size();
-	}
-
-	private <T> Arbitrary<?> configureSequenceArbitrary(SequenceArbitrary<T> arbitrary, UniqueElements uniqueness) {
-		Function<T, Object> extractor = (Function<T, Object>) extractor(uniqueness);
-		return arbitrary.uniqueElements(extractor);
-	}
-
-	private Function<?, Object> extractor(UniqueElements uniqueness) {
-		Class<? extends Function<?, Object>> extractorClass = uniqueness.by();
-		return extractorClass.equals(UniqueElements.NOT_SET.class)
-				   ? Function.identity()
-				   // TODO: Create instance in context of test instance.
-				   //       This requires an extension of ArbitraryConfiguration interface
-				   //       to provide access to PropertyLifecycleContext
-				   : ReflectionSupportFacade.implementation.newInstanceWithDefaultConstructor(extractorClass);
-	}
-
+    private fun extractor(uniqueElements: UniqueElements): Function<*, Any> {
+        val extractorClass: Class<out Function<*, Any>> = uniqueElements.by.java
+        return if (extractorClass == NOT_SET::class.java) Function.identity()
+        // TODO: Create instance in context of test instance.
+        //       This requires an extension of ArbitraryConfiguration interface
+        //       to provide access to PropertyLifecycleContext
+        else ReflectionSupportFacade.implementation.newInstanceWithDefaultConstructor(extractorClass)
+    }
 }

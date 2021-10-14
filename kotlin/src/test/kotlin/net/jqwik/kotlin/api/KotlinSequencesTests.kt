@@ -1,15 +1,13 @@
 package net.jqwik.kotlin.api
 
-import net.jqwik.api.Example
-import net.jqwik.api.ForAll
-import net.jqwik.api.Property
+import net.jqwik.api.*
 import net.jqwik.api.constraints.Size
 import net.jqwik.api.constraints.UniqueElements
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*
 
-class SequencesTests {
+class KotlinSequencesTests {
 
     @Example
     fun sequenceFromArbitrary(@ForAll random: Random) {
@@ -49,7 +47,7 @@ class SequencesTests {
 
     @Property(tries = 10)
     fun sequenceAsForAllParameter(@ForAll sequence: Sequence<@JqwikIntRange(min = 1, max = 10) Int>) {
-        assertThat(sequence.all { i -> i in 1..10 }).isTrue()
+        assertThat(sequence.all { i -> i in 1..10 }).isTrue
     }
 
     @Property(tries = 10)
@@ -61,4 +59,12 @@ class SequencesTests {
     fun sequenceAsForAllParameterWithUniqueness(@ForAll @UniqueElements sequence: Sequence<Int>) {
         assertThat(sequence.toList().size).isEqualTo(sequence.toSet().size)
     }
+
+    @Property(tries = 10)
+    fun providedSequenceWithUniqueness(@ForAll("sequences") @UniqueElements sequence: Sequence<Int>) {
+        assertThat(sequence.toList().size).isEqualTo(sequence.toSet().size)
+    }
+
+    @Provide
+    fun sequences() : Arbitrary<Sequence<Int>> = Int.any().sequence()
 }
