@@ -25,4 +25,13 @@ public abstract class ReflectionSupportFacade {
 	 * @return the newly created instance
 	 */
 	public abstract  <T> T newInstanceInTestContext(Class<T> clazz, Object context);
+
+	/**
+	 * Create instance of a class that can potentially be a non static inner class
+	 *
+	 * @param <T>   The type of the instance to create
+	 * @param clazz The class to instantiate
+	 * @return the newly created instance
+	 */
+	public abstract <T> T newInstanceWithDefaultConstructor(Class<T> clazz);
 }

@@ -157,6 +157,19 @@ Some of them are already supported directly:
   You can use annotations `@JqwikIntRange` and `@Size` in order to
   constrain the possible ranges.
 
+
+##### `Sequence<T>`
+
+- Create a `SequenceArbitrary` by using `.sequence()` on any other arbitrary,
+  which will be used to generate the elements for the the sequence.
+  `SequenceArbitrary` offers similar configurability as most other multi-value arbitraries in jqwik.
+
+- Using `Sequence` as type in a for-all-parameter will auto-generate it.
+  You can use annotations @Size` in order to
+  constrain number of values produced by the sequence.
+
+jqwik will never create infinite sequences by itself.
+
 #### Convenience Functions for Kotlin
 
 Some parts of the jqwik API are hard to use in Kotlin. 

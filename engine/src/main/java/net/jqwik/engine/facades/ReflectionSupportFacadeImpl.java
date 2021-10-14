@@ -9,4 +9,9 @@ public class ReflectionSupportFacadeImpl extends ReflectionSupportFacade {
 	public <T> T newInstanceInTestContext(Class<T> clazz, Object context) {
 		return JqwikReflectionSupport.newInstanceInTestContext(clazz, context);
 	}
+
+	@Override
+	public <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
+		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(clazz);
+	}
 }

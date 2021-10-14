@@ -7,13 +7,15 @@ import net.jqwik.api.arbitraries.ListArbitrary
 import net.jqwik.api.arbitraries.SizableArbitrary
 import org.apiguardian.api.API
 import org.apiguardian.api.API.Status.EXPERIMENTAL
+import java.util.function.Function
 
 /**
  * Fluent interface to add functionality to arbitraries that generate instances
  * of type [Sequence]
  */
 @API(status = EXPERIMENTAL, since = "1.6.0")
-class SequenceArbitrary<T>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<Sequence<T>>(), SizableArbitrary<Sequence<T>> {
+class SequenceArbitrary<T>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<Sequence<T>>(),
+    SizableArbitrary<Sequence<T>> {
 
     private var listArbitrary: ListArbitrary<T>
 
@@ -48,4 +50,35 @@ class SequenceArbitrary<T>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<
         clone.listArbitrary = listArbitrary.withSizeDistribution(distribution)
         return clone
     }
+
+    /**
+     * Add the constraint that elements of the generated iterator must be unique,
+     * i.e. no two elements must return true when being compared using [Object.equals].
+     *
+     * The constraint can be combined with other [.uniqueElements] constraints.
+     *
+     * @return new arbitrary instance
+     */
+    fun uniqueElements(): SequenceArbitrary<T> {
+        val clone = typedClone<SequenceArbitrary<T>>()
+        clone.listArbitrary = listArbitrary.uniqueElements()
+        return clone
+    }
+
+    /**
+     * Add the constraint that elements of the generated iterator must be unique
+     * relating to an element's "feature" being extracted using the
+     * `by` function.
+     * The extracted features are being compared using [Object.equals].
+     *
+     * The constraint can be combined with other [.uniqueElements] constraints.
+     *
+     * @return new arbitrary instance
+     */
+    fun uniqueElements(by: Function<T, Any>): SequenceArbitrary<T> {
+        val clone = typedClone<SequenceArbitrary<T>>()
+        clone.listArbitrary = listArbitrary.uniqueElements(by)
+        return clone
+    }
+
 }

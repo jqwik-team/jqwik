@@ -4,6 +4,7 @@ import net.jqwik.api.Example
 import net.jqwik.api.ForAll
 import net.jqwik.api.Property
 import net.jqwik.api.constraints.Size
+import net.jqwik.api.constraints.UniqueElements
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*
@@ -36,6 +37,16 @@ class SequencesTests {
         }
     }
 
+    @Example
+    fun sequenceWithUniqueElements(@ForAll random: Random) {
+        val sequences = Int.any(1..10).sequence().uniqueElements()
+
+        checkAllGenerated(
+            sequences,
+            random
+        ) { sequence -> sequence.toList().size == sequence.toSet().size }
+    }
+
     @Property(tries = 10)
     fun sequenceAsForAllParameter(@ForAll sequence: Sequence<@JqwikIntRange(min = 1, max = 10) Int>) {
         assertThat(sequence.all { i -> i in 1..10 }).isTrue()
@@ -44,5 +55,10 @@ class SequencesTests {
     @Property(tries = 10)
     fun sequenceAsForAllParameterWithSize(@ForAll @Size(min = 1, max = 5) sequence: Sequence<Int>) {
         assertThat(sequence.toList()).hasSizeBetween(1, 5)
+    }
+
+    @Property(tries = 10)
+    fun sequenceAsForAllParameterWithUniqueness(@ForAll @UniqueElements sequence: Sequence<Int>) {
+        assertThat(sequence.toList().size).isEqualTo(sequence.toSet().size)
     }
 }

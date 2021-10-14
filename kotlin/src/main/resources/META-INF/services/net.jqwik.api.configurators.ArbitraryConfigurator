@@ -1,1 +1,2 @@
 net.jqwik.kotlin.internal.KotlinIntRangeConfigurator
+net.jqwik.kotlin.internal.KotlinUniqueElementsConfigurator
