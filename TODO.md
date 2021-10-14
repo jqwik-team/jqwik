@@ -1,7 +1,6 @@
 - 1.6.0
 
     - Kotlin Support
-      - Support Sequences: Documentation
       - Support Pair, Triple, Tuple
 
     - Include /docs/dokka in Website
