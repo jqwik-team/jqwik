@@ -1,7 +1,7 @@
 - 1.6.0
 
     - Kotlin Support
-      - Support Sequences
+      - Support Sequences: Documentation
 
     - Include /docs/dokka in Website
 

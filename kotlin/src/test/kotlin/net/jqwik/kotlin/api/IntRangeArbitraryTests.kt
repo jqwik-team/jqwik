@@ -9,8 +9,6 @@ import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions
 import java.util.*
 
-typealias KIntRange = net.jqwik.api.constraints.IntRange
-
 class IntRangeArbitraryTests {
 
     @Example
@@ -60,7 +58,7 @@ class IntRangeArbitraryTests {
     }
 
     @Property(tries = 10)
-    fun intRangeForAllParameterWithRangeAnnotation(@ForAll @KIntRange(min = 10, max = 42) range: IntRange) {
+    fun intRangeForAllParameterWithRangeAnnotation(@ForAll @JqwikIntRange(min = 10, max = 42) range: IntRange) {
         Assertions.assertThat(range.first).isBetween(10, 42)
         Assertions.assertThat(range.last).isBetween(10, 42)
     }

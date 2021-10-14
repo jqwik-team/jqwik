@@ -154,7 +154,7 @@ Some of them are already supported directly:
 - Create an `IntRangeArbitrary` through `IntRange.any()` or `IntRange.any(range)`
 
 - Using `IntRange` as type in a for-all-parameter will auto-generate it.
-  You can use annotations `@net.jqwik.api.constraints.IntRange` and `@Size` in order to
+  You can use annotations `@JqwikIntRange` and `@Size` in order to
   constrain the possible ranges.
 
 #### Convenience Functions for Kotlin
@@ -240,10 +240,11 @@ to ease the pain.
 - Some prominent types in jqwik's API have a counterpart with the same name in 
   Kotlin's default namespace and must therefore be either fully qualified or 
   be imported manually (since the IDE assumes Kotlin's default type)
-  or, even better, use a type alias for them:
-  - `net.jqwik.api.constraints.IntRange`
-  - `net.jqwik.api.constraints.LongRange`
-  - `net.jqwik.api.constraints.CharRange`
+  or, even better, use the predefined type alias:
+  - `net.jqwik.api.constraints.ShortRange` : `JqwikIntRange`
+  - `net.jqwik.api.constraints.IntRange` : `JqwikShortRange`
+  - `net.jqwik.api.constraints.LongRange` : `JqwikLongRange`
+  - `net.jqwik.api.constraints.CharRange` : `JqwikCharRange`
 
 - Some types, e.g. `UByte`, are not visible during runtime. 
   That means that jqwik cannot determine if an `int` value is really a `UByte`,
