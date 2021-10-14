@@ -9,6 +9,7 @@ __Table of contents:__
 - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
 - [Differences to Java Usage](#differences-to-java-usage)
 - [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
+- [Support for Kotlin-only Types](#supported-kotlin-only-types)
 - [Automatic generation of nullable types](#generation-of-nullable-types)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
@@ -143,6 +144,19 @@ Using those types in ForAll-parameters works as expected.
 This is also true for Kotlin's notation of arrays, e.g. `Array<Int>`, 
 and Kotlin's unsigned integer types: `UByte`, `UShort`, `UInt` and `ULong`.
 
+#### Supported Kotlin-only Types
+
+The Kotlin standard library comes with a lot of types that don't have an equivalent in the JDK.
+Some of them are already supported directly:
+
+##### `IntRange`
+
+- Create an `IntRangeArbitrary` through `IntRange.any()` or `IntRange.any(range)`
+
+- Using `IntRange` as type in a for-all-parameter will auto-generate it.
+  You can use annotations `@net.jqwik.api.constraints.IntRange` and `@Size` in order to
+  constrain the possible ranges.
+
 #### Convenience Functions for Kotlin
 
 Some parts of the jqwik API are hard to use in Kotlin. 
@@ -225,7 +239,8 @@ to ease the pain.
 
 - Some prominent types in jqwik's API have a counterpart with the same name in 
   Kotlin's default namespace and must therefore be either fully qualified or 
-  be imported manually (since the IDE assumes Kotlin's default type):
+  be imported manually (since the IDE assumes Kotlin's default type)
+  or, even better, use a type alias for them:
   - `net.jqwik.api.constraints.IntRange`
   - `net.jqwik.api.constraints.LongRange`
   - `net.jqwik.api.constraints.CharRange`

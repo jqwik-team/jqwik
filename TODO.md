@@ -1,8 +1,6 @@
 - 1.6.0
 
     - Kotlin Support
-      - IntRangeArbitrary
-        - Documentation
       - Support Sequences
 
     - Include /docs/dokka in Website
