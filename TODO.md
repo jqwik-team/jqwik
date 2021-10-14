@@ -2,6 +2,7 @@
 
     - Kotlin Support
       - Support Sequences: Documentation
+      - Support Pair, Triple, Tuple
 
     - Include /docs/dokka in Website
 
