@@ -185,6 +185,7 @@ title: jqwik User Guide - 1.6.0-SNAPSHOT
     - [Differences to Java Usage](#differences-to-java-usage)
     - [Generation of Nullable Types](#generation-of-nullable-types)
     - [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
+    - [Supported Kotlin-only Types](#supported-kotlin-only-types)
     - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
     - [Quirks and Bugs](#quirks-and-bugs)
   - [Testing Module](#testing-module)
@@ -4921,6 +4922,7 @@ __Table of contents:__
 - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
 - [Differences to Java Usage](#differences-to-java-usage)
 - [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
+- [Support for Kotlin-only Types](#supported-kotlin-only-types)
 - [Automatic generation of nullable types](#generation-of-nullable-types)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
@@ -5055,6 +5057,32 @@ Using those types in ForAll-parameters works as expected.
 This is also true for Kotlin's notation of arrays, e.g. `Array<Int>`, 
 and Kotlin's unsigned integer types: `UByte`, `UShort`, `UInt` and `ULong`.
 
+#### Supported Kotlin-only Types
+
+The Kotlin standard library comes with a lot of types that don't have an equivalent in the JDK.
+Some of them are already supported directly:
+
+##### `IntRange`
+
+- Create an `IntRangeArbitrary` through `IntRange.any()` or `IntRange.any(range)`
+
+- Using `IntRange` as type in a for-all-parameter will auto-generate it.
+  You can use annotations `@JqwikIntRange` and `@Size` in order to
+  constrain the possible ranges.
+
+
+##### `Sequence<T>`
+
+- Create a `SequenceArbitrary` by using `.sequence()` on any other arbitrary,
+  which will be used to generate the elements for the the sequence.
+  `SequenceArbitrary` offers similar configurability as most other multi-value arbitraries in jqwik.
+
+- Using `Sequence` as type in a for-all-parameter will auto-generate it.
+  You can use annotations @Size` in order to
+  constrain number of values produced by the sequence.
+
+jqwik will never create infinite sequences by itself.
+
 #### Convenience Functions for Kotlin
 
 Some parts of the jqwik API are hard to use in Kotlin. 
@@ -5067,19 +5095,34 @@ to ease the pain.
 
 - `Char.any() : CharacterArbitrary` can replace `Arbitraries.chars()`
 
+- `Char.any(range: CharRange) : CharacterArbitrary` can replace `Arbitraries.chars().range(..)`
+
 - `Boolean.any() : Arbitrary<Boolean>` can replace `Arbitraries.of(false, true)`
 
 - `Byte.any() : ByteArbitrary` can replace `Arbitraries.bytes()`
 
+- `Byte.any(range: IntRange) : ByteArbitrary` can replace `Arbitraries.bytes().between(..)`
+
 - `Short.any() : ShortArbitrary` can replace `Arbitraries.shorts()`
+
+- `Short.any(range: IntRange) : ShortArbitrary` can replace `Arbitraries.shorts().between(..)`
 
 - `Int.any() : IntegerArbitrary` can replace `Arbitraries.integers()`
 
+- `Int.any(range: IntRange) : IntegerArbitrary` can replace `Arbitraries.integers().between(..)`
+
 - `Long.any() : LongArbitrary` can replace `Arbitraries.longs()`
+
+- `Long.any(range: LongRange) : LongArbitrary` can replace `Arbitraries.longs().between(..)`
 
 - `Float.any() : FloatArbitrary` can replace `Arbitraries.floats()`
 
+- `Float.any(range: ClosedFloatingPointRange<Float>) : FloatArbitrary` can replace `Arbitraries.floats().between(..)`
+
 - `Double.any() : DoubleArbitrary` can replace `Arbitraries.doubles()`
+
+- `Double.any(range: ClosedFloatingPointRange<Float>) : DoubleArbitrary` can replace `Arbitraries.doubles().between(..)`
+
 
 ##### Arbitrary Extensions
 
@@ -5122,10 +5165,12 @@ to ease the pain.
 
 - Some prominent types in jqwik's API have a counterpart with the same name in 
   Kotlin's default namespace and must therefore be either fully qualified or 
-  be imported manually (since the IDE assumes Kotlin's default type):
-  - `net.jqwik.api.constraints.IntRange`
-  - `net.jqwik.api.constraints.LongRange`
-  - `net.jqwik.api.constraints.CharRange`
+  be imported manually (since the IDE assumes Kotlin's default type)
+  or, even better, use the predefined type alias:
+  - `net.jqwik.api.constraints.ShortRange` : `JqwikIntRange`
+  - `net.jqwik.api.constraints.IntRange` : `JqwikShortRange`
+  - `net.jqwik.api.constraints.LongRange` : `JqwikLongRange`
+  - `net.jqwik.api.constraints.CharRange` : `JqwikCharRange`
 
 - Some types, e.g. `UByte`, are not visible during runtime. 
   That means that jqwik cannot determine if an `int` value is really a `UByte`,
