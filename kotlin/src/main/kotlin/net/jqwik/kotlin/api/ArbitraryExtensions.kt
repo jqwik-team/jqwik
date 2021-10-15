@@ -29,7 +29,7 @@ fun <T> Arbitrary<T>.sequence(): SequenceArbitrary<T> {
 }
 
 /**
- * Create a new arbitrary for type [<Pair<T, T>][Pair]
+ * Create a new arbitrary for type [Pair<T, T>][Pair]
  * using the existing arbitrary for generating the elements of the pair.
  *
  * @return a new arbitrary instance
