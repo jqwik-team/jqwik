@@ -1,3 +1,4 @@
 net.jqwik.kotlin.internal.IntRangeArbitraryProvider
 net.jqwik.kotlin.internal.SequenceArbitraryProvider
 net.jqwik.kotlin.internal.PairArbitraryProvider
+net.jqwik.kotlin.internal.TripleArbitraryProvider

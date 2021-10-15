@@ -7,7 +7,7 @@ import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*
 
-class KotlinSequencesTests {
+class KotlinSequenceTests {
 
     @Example
     fun sequenceFromArbitrary(@ForAll random: Random) {

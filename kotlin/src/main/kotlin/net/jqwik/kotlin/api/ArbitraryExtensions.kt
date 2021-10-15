@@ -29,7 +29,7 @@ fun <T> Arbitrary<T>.sequence(): SequenceArbitrary<T> {
 }
 
 /**
- * Create a new arbitrary of type [Arbitrary<Pair<T>>][Arbitrary]
+ * Create a new arbitrary for type [<Pair<T, T>][Pair]
  * using the existing arbitrary for generating the elements of the pair.
  *
  * @return a new arbitrary instance
@@ -37,5 +37,16 @@ fun <T> Arbitrary<T>.sequence(): SequenceArbitrary<T> {
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <T> Arbitrary<T>.pair(): Arbitrary<Pair<T, T>> {
     return anyPair(this, this)
+}
+
+/**
+ * Create a new arbitrary for type [Triple<T, T, T>][Triple]
+ * using the existing arbitrary for generating the elements of the triple.
+ *
+ * @return a new arbitrary instance
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun <T> Arbitrary<T>.triple(): Arbitrary<Triple<T, T, T>> {
+    return anyTriple(this, this, this)
 }
 

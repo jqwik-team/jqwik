@@ -9,7 +9,7 @@ import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions
 import java.util.*
 
-class KotlinPairsTests {
+class KotlinPairTests {
 
     @Example
     fun pairFromArbitraries(@ForAll random: Random) {

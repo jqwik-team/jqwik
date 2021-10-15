@@ -175,9 +175,20 @@ jqwik will never create infinite sequences by itself.
 - Create an instance of `Arbitrary<Pair<A, B>>` by using the global function
   `anyPair(a: Arbitrary<A>, b: Arbitrary<B>)`.
 
-- Create an instance of `Arbitrary<Pair<T>>` by calling `arbitraryForT.pair()`.
+- Create an instance of `Arbitrary<Pair<T, T>>` by calling `arbitraryForT.pair()`.
 
 - Using `Pair` as type in a for-all-parameter will auto-generate,
+  thereby using the type parameters with their annotations to create the
+  component arbitraries.
+
+##### `Triple<A, B, C>`
+
+- Create an instance of `Arbitrary<Triple<A, B, C>>` by using the global function
+  `anyTriple(a: Arbitrary<A>, b: Arbitrary<B>, c: Arbitrary<C>)`.
+
+- Create an instance of `Arbitrary<Triple<T, T, T>>` by calling `arbitraryForT.triple()`.
+
+- Using `Triple` as type in a for-all-parameter will auto-generate,
   thereby using the type parameters with their annotations to create the
   component arbitraries.
 

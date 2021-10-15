@@ -1,7 +1,7 @@
 - 1.6.0
 
     - Kotlin Support
-      - Support Pair, Triple, Tuple
+      - Support Tuple
 
     - Include /docs/dokka in Website
 
