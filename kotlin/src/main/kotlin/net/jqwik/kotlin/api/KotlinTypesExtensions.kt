@@ -149,7 +149,7 @@ private fun validateRange(allowedRange: IntRange, range: IntRange) {
 }
 
 /**
- * Convenience function to create an arbitrary for [IntRange].
+ * Function to create an arbitrary for [IntRange].
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun IntRange.Companion.any(): IntRangeArbitrary {
@@ -157,7 +157,7 @@ fun IntRange.Companion.any(): IntRangeArbitrary {
 }
 
 /**
- * Convenience function to create an arbitrary for [IntRange] with range.
+ * Function to create an arbitrary for [IntRange] with range.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun IntRange.Companion.any(range: IntRange): IntRangeArbitrary {

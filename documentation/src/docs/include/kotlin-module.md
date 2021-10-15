@@ -170,6 +170,17 @@ Some of them are already supported directly:
 
 jqwik will never create infinite sequences by itself.
 
+##### `Pair<A, B>`
+
+- Create an instance of `Arbitrary<Pair<A, B>>` by using the global function
+  `anyPair(a: Arbitrary<A>, b: Arbitrary<B>)`.
+
+- Create an instance of `Arbitrary<Pair<T>>` by calling `arbitraryForT.pair()`.
+
+- Using `Pair` as type in a for-all-parameter will auto-generate,
+  thereby using the type parameters with their annotations to create the
+  component arbitraries.
+
 #### Convenience Functions for Kotlin
 
 Some parts of the jqwik API are hard to use in Kotlin. 

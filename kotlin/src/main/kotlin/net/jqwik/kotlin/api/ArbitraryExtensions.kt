@@ -28,3 +28,14 @@ fun <T> Arbitrary<T>.sequence(): SequenceArbitrary<T> {
     return SequenceArbitrary(this)
 }
 
+/**
+ * Create a new arbitrary of type [Arbitrary<Pair<T>>][Arbitrary]
+ * using the existing arbitrary for generating the elements of the pair.
+ *
+ * @return a new arbitrary instance
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+fun <T> Arbitrary<T>.pair(): Arbitrary<Pair<T, T>> {
+    return anyPair(this, this)
+}
+
