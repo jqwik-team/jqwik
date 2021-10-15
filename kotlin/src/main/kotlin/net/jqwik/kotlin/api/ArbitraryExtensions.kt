@@ -5,9 +5,8 @@ import org.apiguardian.api.API
 
 /**
  * Create a new arbitrary of the same type but inject null values with a probability of `nullProbability`.
- * <p>
- *     This is a type-safe version of [Arbitrary.injectNull()][Arbitrary.injectNull]
- * </p>
+ *
+ * This is a type-safe version of [Arbitrary.injectNull()][Arbitrary.injectNull].
  *
  * @param nullProbability the probability. &ge; 0 and  &le; 1.
  * @return a new arbitrary instance
