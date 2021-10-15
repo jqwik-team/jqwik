@@ -4928,6 +4928,7 @@ __Table of contents:__
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
   - [Arbitrary Extensions](#arbitrary-extensions)
   - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
+  - [Jqwik Tuples in Kotlin](#jqwik-tuples-in-kotlin)
 - [Quirks and Bugs](#quirks-and-bugs)
 
 #### Build Configuration for Kotlin
@@ -5083,6 +5084,28 @@ Some of them are already supported directly:
 
 jqwik will never create infinite sequences by itself.
 
+##### `Pair<A, B>`
+
+- Create an instance of `Arbitrary<Pair<A, B>>` by using the global function
+  `anyPair(a: Arbitrary<A>, b: Arbitrary<B>)`.
+
+- Create an instance of `Arbitrary<Pair<T, T>>` by calling `arbitraryForT.pair()`.
+
+- Using `Pair` as type in a for-all-parameter will auto-generate,
+  thereby using the type parameters with their annotations to create the
+  component arbitraries.
+
+##### `Triple<A, B, C>`
+
+- Create an instance of `Arbitrary<Triple<A, B, C>>` by using the global function
+  `anyTriple(a: Arbitrary<A>, b: Arbitrary<B>, c: Arbitrary<C>)`.
+
+- Create an instance of `Arbitrary<Triple<T, T, T>>` by calling `arbitraryForT.triple()`.
+
+- Using `Triple` as type in a for-all-parameter will auto-generate,
+  thereby using the type parameters with their annotations to create the
+  component arbitraries.
+
 #### Convenience Functions for Kotlin
 
 Some parts of the jqwik API are hard to use in Kotlin. 
@@ -5152,6 +5175,13 @@ to ease the pain.
 - `flatCombine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> Arbitrary<R>)` can replace all
   variants of `Combinators.combine(a1, ...).flatAs((v1: T1, ...) -> Arbitrary<R>)`.
 
+##### Jqwik Tuples in Kotlin
+
+Jqwik's `Tuple` types can be used to assign multi values, e.g.
+
+`val (a, b) = Tuple.of(1, 2)`
+
+will assign `1` to variable `a` and `2` to variable `b`.
 
 #### Quirks and Bugs
 
