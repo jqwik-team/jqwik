@@ -1,7 +1,7 @@
 - 1.6.0
 
     - Kotlin Support
-      - Operators component1..n for jqwik tuple types
+      - Generate Functions
 
     - Include /docs/dokka in Website
       - Generate kdoc for Types

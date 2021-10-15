@@ -15,6 +15,7 @@ __Table of contents:__
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
   - [Arbitrary Extensions](#arbitrary-extensions)
   - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
+  - [Jqwik Tuples in Kotlin](#jqwik-tuples-in-kotlin)
 - [Quirks and Bugs](#quirks-and-bugs)
 
 #### Build Configuration for Kotlin
@@ -261,6 +262,13 @@ to ease the pain.
 - `flatCombine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> Arbitrary<R>)` can replace all
   variants of `Combinators.combine(a1, ...).flatAs((v1: T1, ...) -> Arbitrary<R>)`.
 
+##### Jqwik Tuples in Kotlin
+
+Jqwik's `Tuple` types can be used to assign multi values, e.g.
+
+`val (a, b) = Tuple.of(1, 2)`
+
+will assign `1` to variable `a` and `2` to variable `b`.
 
 #### Quirks and Bugs
 
