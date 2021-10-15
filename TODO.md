@@ -1,7 +1,7 @@
 - 1.6.0
 
     - Kotlin Support
-      - Generate Functions
+      - Generate Functions: Tests for Function1-22, Documentation
 
     - Include /docs/dokka in Website
       - Generate kdoc for Types
