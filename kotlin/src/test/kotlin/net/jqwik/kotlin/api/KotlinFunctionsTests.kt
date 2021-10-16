@@ -21,10 +21,8 @@ class KotlinFunctionsTests {
     }
 
     @Example
-    fun `anyFunction0()`(@ForAll random: Random) {
-        val funcs: Arbitrary<() -> String> =
-            anyFunction0().returning(String.any().ofLength(5))
-
+    fun `anyFunction0(returning)`(@ForAll random: Random) {
+        val funcs: Arbitrary<() -> String> = anyFunction0(String.any().ofLength(5))
         checkAllGenerated(
             funcs,
             random
@@ -32,10 +30,8 @@ class KotlinFunctionsTests {
     }
 
     @Example
-    fun `anyFunction1()`(@ForAll random: Random) {
-        val funcs: Arbitrary<(Int) -> String> =
-            anyFunction1().returning(String.any().ofLength(5))
-
+    fun `anyFunction1(returning)`(@ForAll random: Random) {
+        val funcs: Arbitrary<(Int) -> String> = anyFunction1(String.any().ofLength(5))
         checkAllGenerated(
             funcs,
             random
@@ -43,14 +39,14 @@ class KotlinFunctionsTests {
     }
 
     @Example
-    fun `anyFunction2 to anyFunction4()`(@ForAll random: Random) {
-        val funcs2: Arbitrary<(Int, Int) -> String> = anyFunction2().returning(just("2"))
+    fun `anyFunction2(returning) to anyFunction4(returning)`(@ForAll random: Random) {
+        val funcs2: Arbitrary<(Int, Int) -> String> = anyFunction2(just("2"))
         Assertions.assertThat(funcs2.sample()(1, 2)).isEqualTo("2")
 
-        val funcs3: Arbitrary<(Int, Int, Int) -> String> = anyFunction3().returning(just("3"))
+        val funcs3: Arbitrary<(Int, Int, Int) -> String> = anyFunction3(just("3"))
         Assertions.assertThat(funcs3.sample()(1, 2, 3)).isEqualTo("3")
 
-        val funcs4: Arbitrary<(Int, Int, Int, Int) -> String> = anyFunction4().returning(just("4"))
+        val funcs4: Arbitrary<(Int, Int, Int, Int) -> String> = anyFunction4(just("4"))
         Assertions.assertThat(funcs4.sample()(1, 2, 3, 4)).isEqualTo("4")
     }
 

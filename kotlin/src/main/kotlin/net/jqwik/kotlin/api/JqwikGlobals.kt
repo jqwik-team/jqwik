@@ -2,6 +2,7 @@ package net.jqwik.kotlin.api
 
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Functions
+import net.jqwik.api.arbitraries.FunctionArbitrary
 import org.apiguardian.api.API
 import kotlin.reflect.KClass
 
@@ -31,41 +32,41 @@ fun anyFunction(kClass: KClass<*>): Functions.FunctionWrapper {
 }
 
 /**
- * Create a [FunctionWrapper] for Kotlin function without parameters.
+ * Create a [FunctionArbitrary] for Kotlin function without parameters.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun anyFunction0(): Functions.FunctionWrapper {
-    return anyFunction(Function0::class)
+fun <R> anyFunction0(returning: Arbitrary<R>): FunctionArbitrary<Function0<R>, R> {
+    return anyFunction(Function0::class).returning(returning)
 }
 
 /**
- * Create a [FunctionWrapper] for Kotlin function with 1 parameter.
+ * Create a [FunctionArbitrary] for Kotlin function with 1 parameter.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun anyFunction1(): Functions.FunctionWrapper {
-    return anyFunction(Function1::class)
+fun <A, R> anyFunction1(returning: Arbitrary<R>): FunctionArbitrary<Function1<A, R>, R> {
+    return anyFunction(Function1::class).returning(returning)
 }
 
 /**
- * Create a [FunctionWrapper] for Kotlin function with 2 parameters.
+ * Create a [FunctionArbitrary] for Kotlin function with 2 parameters.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun anyFunction2(): Functions.FunctionWrapper {
-    return anyFunction(Function2::class)
+fun <A, B, R> anyFunction2(returning: Arbitrary<R>): FunctionArbitrary<Function2<A, B, R>, R> {
+    return anyFunction(Function2::class).returning(returning)
 }
 
 /**
- * Create a [FunctionWrapper] for Kotlin function with 3 parameters.
+ * Create a [FunctionArbitrary] for Kotlin function with 3 parameters.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun anyFunction3(): Functions.FunctionWrapper {
-    return anyFunction(Function3::class)
+fun <A, B, C, R> anyFunction3(returning: Arbitrary<R>): FunctionArbitrary<Function3<A, B, C, R>, R> {
+    return anyFunction(Function3::class).returning(returning)
 }
 
 /**
- * Create a [FunctionWrapper] for Kotlin function with 4 parameters.
+ * Create a [FunctionArbitrary] for Kotlin function with 4 parameters.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun anyFunction4(): Functions.FunctionWrapper {
-    return anyFunction(Function4::class)
+fun <A, B, C, D, R> anyFunction4(returning: Arbitrary<R>): FunctionArbitrary<Function4<A, B, C, D, R>, R> {
+    return anyFunction(Function4::class).returning(returning)
 }
