@@ -42,6 +42,9 @@ public class Functions {
 		return new FunctionWrapper(functionalType);
 	}
 
+	/**
+	 * Wraps a function to be generated.
+	 */
 	public static class FunctionWrapper {
 		private final Class<?> functionalType;
 
