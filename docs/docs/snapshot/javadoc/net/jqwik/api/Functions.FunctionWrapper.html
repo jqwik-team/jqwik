@@ -26,8 +26,8 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var data = {"i0":10,"i1":42};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -136,6 +136,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <hr>
 <pre>public static class <span class="typeNameLabel">Functions.FunctionWrapper</span>
 extends java.lang.Object</pre>
+<div class="block">Wraps a function to be generated.</div>
 </li>
 </ul>
 </div>
@@ -150,7 +151,7 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
@@ -158,9 +159,18 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>&lt;F,&#8203;R&gt;<br><a href="arbitraries/FunctionArbitrary.html" title="interface in net.jqwik.api.arbitraries">FunctionArbitrary</a>&lt;F,&#8203;R&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#returns(net.jqwik.api.Arbitrary)">returns</a></span>&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;R&gt;&nbsp;resultArbitrary)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#returning(net.jqwik.api.Arbitrary)">returning</a></span>&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;R&gt;&nbsp;resultArbitrary)</code></th>
 <td class="colLast">
 <div class="block">Create an arbitrary to create instances of functions represented by this wrapper.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>&lt;F,&#8203;R&gt;<br><a href="arbitraries/FunctionArbitrary.html" title="interface in net.jqwik.api.arbitraries">FunctionArbitrary</a>&lt;F,&#8203;R&gt;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#returns(net.jqwik.api.Arbitrary)">returns</a></span>&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;R&gt;&nbsp;resultArbitrary)</code></th>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="#returning(net.jqwik.api.Arbitrary)">returning(Arbitrary)</a> instead.</div>
+</div>
 </td>
 </tr>
 </table>
@@ -190,12 +200,27 @@ extends java.lang.Object</pre>
 <a id="returns(net.jqwik.api.Arbitrary)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>returns</h4>
-<pre class="methodSignature">public&nbsp;&lt;F,&#8203;R&gt;&nbsp;<a href="arbitraries/FunctionArbitrary.html" title="interface in net.jqwik.api.arbitraries">FunctionArbitrary</a>&lt;F,&#8203;R&gt;&nbsp;returns&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;R&gt;&nbsp;resultArbitrary)</pre>
+<pre class="methodSignature">@API(status=DEPRECATED,
+     since="1.6.0")
+public&nbsp;&lt;F,&#8203;R&gt;&nbsp;<a href="arbitraries/FunctionArbitrary.html" title="interface in net.jqwik.api.arbitraries">FunctionArbitrary</a>&lt;F,&#8203;R&gt;&nbsp;returns&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;R&gt;&nbsp;resultArbitrary)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="#returning(net.jqwik.api.Arbitrary)">returning(Arbitrary)</a> instead. Will be removed in 1.7.0.</div>
+</div>
+</li>
+</ul>
+<a id="returning(net.jqwik.api.Arbitrary)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>returning</h4>
+<pre class="methodSignature">@API(status=MAINTAINED,
+     since="1.6.0")
+public&nbsp;&lt;F,&#8203;R&gt;&nbsp;<a href="arbitraries/FunctionArbitrary.html" title="interface in net.jqwik.api.arbitraries">FunctionArbitrary</a>&lt;F,&#8203;R&gt;&nbsp;returning&#8203;(<a href="Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;R&gt;&nbsp;resultArbitrary)</pre>
 <div class="block">Create an arbitrary to create instances of functions represented by this wrapper.
-
  The generated functions are guaranteed to return the same result
  given the same input values.
 

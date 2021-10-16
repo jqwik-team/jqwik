@@ -1714,7 +1714,9 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><a href="net/jqwik/api/Functions.FunctionsFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">Functions.FunctionsFacade</span></a> - Class in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/Functions.FunctionWrapper.html" title="class in net.jqwik.api"><span class="typeNameLink">Functions.FunctionWrapper</span></a> - Class in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Wraps a function to be generated.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Functions.FunctionsFacade.html#%3Cinit%3E()">FunctionsFacade()</a></span> - Constructor for class net.jqwik.api.<a href="net/jqwik/api/Functions.FunctionsFacade.html" title="class in net.jqwik.api">Functions.FunctionsFacade</a></dt>
 <dd>&nbsp;</dd>
 </dl>
@@ -2800,6 +2802,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Create instance of a class that can potentially be a non static inner class
  and its outer instance might be <code>context</code></div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/facades/ReflectionSupportFacade.html#newInstanceWithDefaultConstructor(java.lang.Class)">newInstanceWithDefaultConstructor(Class&lt;T&gt;)</a></span> - Method in class net.jqwik.api.facades.<a href="net/jqwik/api/facades/ReflectionSupportFacade.html" title="class in net.jqwik.api.facades">ReflectionSupportFacade</a></dt>
+<dd>
+<div class="block">Create instance of a class that can potentially be a non static inner class</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.RandomNumericGenerator.html#next(java.util.Random)">next(Random)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.RandomNumericGenerator.html" title="interface in net.jqwik.api">RandomDistribution.RandomNumericGenerator</a></dt>
 <dd>
 <div class="block">Generate next random number within the specified range given on creation of the generator.</div>
@@ -3614,9 +3620,15 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">A functional interface specialized on providing parameters to property methods
  and to annotated lifecycle methods.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Functions.FunctionWrapper.html#returns(net.jqwik.api.Arbitrary)">returns(Arbitrary&lt;R&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Functions.FunctionWrapper.html" title="class in net.jqwik.api">Functions.FunctionWrapper</a></dt>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Functions.FunctionWrapper.html#returning(net.jqwik.api.Arbitrary)">returning(Arbitrary&lt;R&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Functions.FunctionWrapper.html" title="class in net.jqwik.api">Functions.FunctionWrapper</a></dt>
 <dd>
 <div class="block">Create an arbitrary to create instances of functions represented by this wrapper.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Functions.FunctionWrapper.html#returns(net.jqwik.api.Arbitrary)">returns(Arbitrary&lt;R&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Functions.FunctionWrapper.html" title="class in net.jqwik.api">Functions.FunctionWrapper</a></dt>
+<dd>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="net/jqwik/api/Functions.FunctionWrapper.html#returning(net.jqwik.api.Arbitrary)">Functions.FunctionWrapper.returning(Arbitrary)</a> instead. Will be removed in 1.7.0.</div>
+</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/sessions/JqwikSession.Runnable.html#run()">run()</a></span> - Method in interface net.jqwik.api.sessions.<a href="net/jqwik/api/sessions/JqwikSession.Runnable.html" title="interface in net.jqwik.api.sessions">JqwikSession.Runnable</a></dt>
 <dd>&nbsp;</dd>
