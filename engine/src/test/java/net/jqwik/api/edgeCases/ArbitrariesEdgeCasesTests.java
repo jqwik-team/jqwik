@@ -189,7 +189,7 @@ class ArbitrariesEdgeCasesTests implements GenericEdgeCasesProperties {
 
 	private Arbitrary<Function<String, Integer>> functionArbitrary() {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(10, 100);
-		return Functions.function(Function.class).returns(integers);
+		return Functions.function(Function.class).returning(integers);
 	}
 
 	@Group

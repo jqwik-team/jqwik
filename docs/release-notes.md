@@ -49,6 +49,7 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Added experimental `JqwikSession` API to 
   [use arbitraries outside jqwik's lifecycle](/docs/snapshot/user-guide.html#using-arbitraries-outside-jqwik-lifecycle).
 
+- Added `Functions.FunctionWrapper.returning()` as replacement for deprecated `returns()`.
 
 #### Breaking Changes
 

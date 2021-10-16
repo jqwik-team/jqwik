@@ -29,14 +29,14 @@ class FunctionsTests {
 	@Provide
 	Arbitrary<Function<String, Integer>> stringToIntegerFunctions() {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(-100, 100);
-		return Functions.function(Function.class).returns(integers);
+		return Functions.function(Function.class).returning(integers);
 	}
 
 	@Example
 	void function_creates_same_result_for_same_input(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Function<String, Integer>> functions =
-			Functions.function(Function.class).returns(integers);
+			Functions.function(Function.class).returning(integers);
 
 		Function<String, Integer> function = functions.generator(10, true).next(random).value();
 
@@ -49,7 +49,7 @@ class FunctionsTests {
 	void some_functions_create_different_result_for_different_input(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Function<String, Integer>> functions =
-			Functions.function(Function.class).returns(integers);
+			Functions.function(Function.class).returning(integers);
 
 		checkAtLeastOneGenerated(
 			functions.generator(10, true),
@@ -62,7 +62,7 @@ class FunctionsTests {
 	void toString_of_functions_can_be_called(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.just(42);
 		Arbitrary<Function<String, Integer>> functions =
-			Functions.function(Function.class).returns(integers);
+			Functions.function(Function.class).returning(integers);
 
 		Function<String, Integer> function = functions.generator(10, true).next(random).value();
 		assertThat(function.toString()).contains("Function");
@@ -73,7 +73,7 @@ class FunctionsTests {
 	void hashCode_of_functions_can_be_called(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10000);
 		Arbitrary<Function<String, Integer>> functions =
-			Functions.function(Function.class).returns(integers);
+			Functions.function(Function.class).returning(integers);
 
 		RandomGenerator<Function<String, Integer>> generator = functions.generator(10, true);
 		Function<String, Integer> function1 = generator.next(random).value();
@@ -95,7 +95,7 @@ class FunctionsTests {
 	void equals_of_functions_can_be_called(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10000);
 		Arbitrary<Function<String, Integer>> functions =
-			Functions.function(Function.class).returns(integers);
+			Functions.function(Function.class).returning(integers);
 
 		RandomGenerator<Function<String, Integer>> generator = functions.generator(10, true);
 		Function<String, Integer> function1 = generator.next(random).value();
@@ -108,7 +108,7 @@ class FunctionsTests {
 	void default_methods_of_functions_can_be_called(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.just(42);
 		Arbitrary<Function<String, Integer>> functions =
-			Functions.function(Function.class).returns(integers);
+			Functions.function(Function.class).returning(integers);
 
 		Function<String, Integer> function = functions.generator(10, true).next(random).value();
 
@@ -121,7 +121,7 @@ class FunctionsTests {
 	void default_methods_of_self_made_functional_interface_can_be_called(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.just(42);
 		Arbitrary<MyFunctionalInterface<String, String, Integer>> functions =
-			Functions.function(MyFunctionalInterface.class).returns(integers);
+			Functions.function(MyFunctionalInterface.class).returning(integers);
 
 		MyFunctionalInterface<String, String, Integer> function = functions.generator(10, true).next(random).value();
 		assertThat(function.hello()).isEqualTo("hello");
@@ -131,7 +131,7 @@ class FunctionsTests {
 	void null_value_is_accepted_as_input(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Function<String, Integer>> functions =
-			Functions.function(Function.class).returns(integers);
+			Functions.function(Function.class).returning(integers);
 
 		checkAllGenerated(
 			functions.generator(10, true),
@@ -144,7 +144,7 @@ class FunctionsTests {
 	void supplier_always_returns_same_element(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Supplier<Integer>> functions =
-			Functions.function(Supplier.class).returns(integers);
+			Functions.function(Supplier.class).returning(integers);
 
 		Supplier<Integer> supplier = functions.generator(10, true).next(random).value();
 
@@ -156,7 +156,7 @@ class FunctionsTests {
 	@Example
 	void consumer_accepts_anything(@ForAll Random random) {
 		Arbitrary<Consumer<Integer>> functions =
-			Functions.function(Consumer.class).returns(Arbitraries.nothing());
+			Functions.function(Consumer.class).returning(Arbitraries.nothing());
 
 		Consumer<Integer> supplier = functions.generator(10, true).next(random).value();
 
@@ -168,14 +168,14 @@ class FunctionsTests {
 	void functional_interfaces_and_SAM_types_are_accepted() {
 		Arbitrary<Integer> any = Arbitraries.just(1);
 
-		assertThat(Functions.function(Function.class).returns(any)).isNotNull();
-		assertThat(Functions.function(Supplier.class).returns(any)).isNotNull();
-		assertThat(Functions.function(Consumer.class).returns(Arbitraries.nothing())).isNotNull();
-		assertThat(Functions.function(Predicate.class).returns(any)).isNotNull();
-		assertThat(Functions.function(MyFunctionalInterface.class).returns(any)).isNotNull();
-		assertThat(Functions.function(MyInheritedFunctionalInterface.class).returns(any)).isNotNull();
-		assertThat(Functions.function(MySamType.class).returns(any)).isNotNull();
-		assertThat(Functions.function(IntTransformer.class).returns(any)).isNotNull();
+		assertThat(Functions.function(Function.class).returning(any)).isNotNull();
+		assertThat(Functions.function(Supplier.class).returning(any)).isNotNull();
+		assertThat(Functions.function(Consumer.class).returning(Arbitraries.nothing())).isNotNull();
+		assertThat(Functions.function(Predicate.class).returning(any)).isNotNull();
+		assertThat(Functions.function(MyFunctionalInterface.class).returning(any)).isNotNull();
+		assertThat(Functions.function(MyInheritedFunctionalInterface.class).returning(any)).isNotNull();
+		assertThat(Functions.function(MySamType.class).returning(any)).isNotNull();
+		assertThat(Functions.function(IntTransformer.class).returning(any)).isNotNull();
 	}
 
 	@Example
@@ -183,10 +183,10 @@ class FunctionsTests {
 		Arbitrary<Integer> any = Arbitraries.just(1);
 
 		assertThatThrownBy(
-			() -> Functions.function(NotAFunctionalInterface.class).returns(any))
+			() -> Functions.function(NotAFunctionalInterface.class).returning(any))
 			.isInstanceOf(JqwikException.class);
 		assertThatThrownBy(
-			() -> Functions.function(MyAbstractClass.class).returns(any))
+			() -> Functions.function(MyAbstractClass.class).returning(any))
 			.isInstanceOf(JqwikException.class);
 	}
 
@@ -194,7 +194,7 @@ class FunctionsTests {
 	void functions_are_shrunk_to_constant_functions(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 20);
 		Arbitrary<Function<String, Integer>> functions =
-			Functions.function(Function.class).returns(integers);
+			Functions.function(Function.class).returning(integers);
 
 		Falsifier<Function<String, Integer>> falsifier =
 			f -> (f.apply("value1") < 11) ?
@@ -235,7 +235,7 @@ class FunctionsTests {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 			Arbitrary<Function<String, Integer>> functions =
 				Functions
-					.function(Function.class).returns(integers)
+					.function(Function.class).returning(integers)
 					.when(params -> params.get(0).equals("three"), params -> 3)
 					.when(params -> params.get(0).equals("four"), params -> 4);
 
@@ -251,7 +251,7 @@ class FunctionsTests {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 			Arbitrary<Function<String, Integer>> functions =
 				Functions
-					.function(Function.class).returns(integers)
+					.function(Function.class).returning(integers)
 					.when(params -> params.get(0).equals("three"), params -> 3)
 					.when(params -> params.get(0).equals("three"), params -> 33);
 
@@ -267,7 +267,7 @@ class FunctionsTests {
 			Arbitrary<String> integers = Arbitraries.of("1", "2", "3");
 			Arbitrary<Function<String, String>> functions =
 				Functions
-					.function(Function.class).returns(integers)
+					.function(Function.class).returning(integers)
 					.when(params -> params.get(0).equals("null"), params -> null);
 
 			checkAllGenerated(
@@ -282,7 +282,7 @@ class FunctionsTests {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 			Arbitrary<Function<String, Integer>> functions =
 				Functions
-					.function(Function.class).returns(integers)
+					.function(Function.class).returning(integers)
 					.when(params -> params.get(0) == null, params -> {
 						throw new IllegalArgumentException();
 					});
@@ -302,7 +302,7 @@ class FunctionsTests {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 			Arbitrary<Function<String, Integer>> functions =
 				Functions
-					.function(Function.class).returns(integers)
+					.function(Function.class).returning(integers)
 					.when(params -> params.get(0).equals("three"), params -> 3);
 
 			Function<String, Integer> shrunkFunction = ShrinkingSupport.falsifyThenShrink(functions, random);

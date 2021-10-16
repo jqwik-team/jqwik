@@ -1,13 +1,12 @@
 package net.jqwik.kotlin.api
 
-import net.jqwik.api.*
-import net.jqwik.api.arbitraries.FunctionArbitrary
+import net.jqwik.api.ForAll
+import net.jqwik.api.Group
+import net.jqwik.api.Property
+import net.jqwik.api.PropertyDefaults
 import net.jqwik.api.constraints.Size
 import net.jqwik.api.constraints.StringLength
-import net.jqwik.testing.TestingSupport
-import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions.assertThat
-import java.util.*
 
 @PropertyDefaults(tries = 100)
 class KotlinTypesCompatibilityTests {
@@ -152,31 +151,4 @@ class KotlinTypesCompatibilityTests {
         }
     }
 
-    @Group
-    @PropertyDefaults(tries = 10)
-    inner class KotlinFunctions {
-
-        @Example
-        fun anyFunction3(@ForAll random: Random) {
-            val funcs: Arbitrary<(Int, Int, Int) -> String> =
-                anyFunction(Function3::class).returning(String.any().ofLength(5))
-
-            checkAllGenerated(
-                funcs,
-                random
-            ) { func -> func(42, 0, -10).length == 5 }
-        }
-
-        @Property
-        fun noParams(@ForAll aFun: () -> String) {
-            assertThat(aFun()).isInstanceOf(String::class.java)
-        }
-
-        @Property
-        fun resultTypeWithConstraints(@ForAll aFun: () -> @StringLength(5) String) {
-            val result = aFun()
-            assertThat(result).isInstanceOf(String::class.java)
-            assertThat(result).hasSize(5)
-        }
-    }
 }

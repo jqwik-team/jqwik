@@ -35,7 +35,7 @@ class FunctionalTypeExamples {
 	Arbitrary<Predicate<String>> predicates() {
 		return Functions
 			.function(Predicate.class)
-			.returns(Arbitraries.of(true, false))
+			.returning(Arbitraries.of(true, false))
 			.when(parameters -> parameters.get(0).equals(""), parameters -> false);
 	}
 

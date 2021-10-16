@@ -30,8 +30,3 @@ fun <A, B, C> anyTriple(firstArbitrary: Arbitrary<A>, secondArbitrary: Arbitrary
 fun anyFunction(kClass: KClass<*>): Functions.FunctionWrapper {
     return Functions.function(kClass.java)
 }
-
-@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun <F, R> Functions.FunctionWrapper.returning(rArbitrary: Arbitrary<R>): FunctionArbitrary<F, R> {
-    return this.returns(rArbitrary)
-}

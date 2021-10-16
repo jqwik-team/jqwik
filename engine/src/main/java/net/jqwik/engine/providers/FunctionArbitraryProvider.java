@@ -11,7 +11,7 @@ import net.jqwik.engine.support.types.*;
 
 public class FunctionArbitraryProvider implements ArbitraryProvider {
 
-	private static Class<?>[] EXCLUDE_TYPES =
+	private static final Class<?>[] EXCLUDE_TYPES =
 		new Class[]{Iterable.class, Comparable.class};
 
 	@Override
@@ -36,7 +36,7 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 				   .resolveAndCombine(returnType)
 				   .map(arbitraries -> {
 					   Arbitrary<?> resultArbitrary = arbitraries.get(0);
-					   return Functions.function(functionalType).returns(resultArbitrary);
+					   return Functions.function(functionalType).returning(resultArbitrary);
 				   })
 				   .collect(Collectors.toSet());
 	}
