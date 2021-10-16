@@ -1,7 +1,6 @@
 - 1.6.0
 
     - Kotlin Support
-      - Generate Functions: Tests for Function1-22, Documentation
       - Handle Test Container classes with quoted name, e.g. `MyClass Tests`
       - Handle Test method names, e.g. `myFunc2-8()`
 

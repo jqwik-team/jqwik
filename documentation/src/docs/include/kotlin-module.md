@@ -9,6 +9,7 @@ __Table of contents:__
 - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
 - [Differences to Java Usage](#differences-to-java-usage)
 - [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
+- [Support for Kotlin Functions](#support-for-kotlin-functions)
 - [Support for Kotlin-only Types](#supported-kotlin-only-types)
 - [Automatic generation of nullable types](#generation-of-nullable-types)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
@@ -145,6 +146,34 @@ Using those types in ForAll-parameters works as expected.
 This is also true for Kotlin's notation of arrays, e.g. `Array<Int>`, 
 and Kotlin's unsigned integer types: `UByte`, `UShort`, `UInt` and `ULong`.
 
+#### Support for Kotlin Functions
+
+Kotlin provides a generic way to specify functional types, 
+e.g. `(String, String) -> Int` specifies a function with two `String` parameters 
+that returns an `Int`.
+You can use those function types as `ForAll` parameters:
+
+```kotlin
+@Property
+fun generatedFunctionsAreStable(@ForAll aFunc: (String) -> Int) {
+    assertThat(aFunc("hello")).isEqualTo(aFunc("hello"))
+}
+```
+
+Moreover, there are a few top-level functions to create arbitraries for functional
+types: `anyFunction0(Arbitrary<R>)` ... `anyFunction4(Arbitrary<R>)`.
+Look at this code example:
+
+```kotlin
+@Property
+fun providedFunctionsAreAlsoStable(@ForAll("myIntFuncs") aFunc: (String, String) -> Int) {
+    assertThat(aFunc("a", "b")).isBetween(10, 1000)
+}
+
+@Provide
+fun myIntFuncs(): Arbitrary<(String, String) -> Int> = anyFunction2(Int.any(10..1000))
+```
+
 #### Supported Kotlin-only Types
 
 The Kotlin standard library comes with a lot of types that don't have an equivalent in the JDK.
@@ -261,6 +290,8 @@ to ease the pain.
 
 - `flatCombine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> Arbitrary<R>)` can replace all
   variants of `Combinators.combine(a1, ...).flatAs((v1: T1, ...) -> Arbitrary<R>)`.
+
+- `anyFunction(kKlass: KClass<*>)` can replace `Functions.function(kKlass.java)`
 
 ##### Jqwik Tuples in Kotlin
 
