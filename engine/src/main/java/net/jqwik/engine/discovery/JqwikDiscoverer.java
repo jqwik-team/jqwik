@@ -69,7 +69,7 @@ public class JqwikDiscoverer {
 			);
 		});
 		request.getSelectorsByType(MethodSelector.class).forEach(selector -> {
-			Method javaMethod = getJavaMethodIfNecessaryFromInnerKotlinClass(selector);
+			Method javaMethod = getJavaMethodWithSpecialKotlinHandling(selector);
 			discoveryListener.selectorProcessed(
 				engineDescriptor.getUniqueId(),
 				selector,
@@ -85,15 +85,18 @@ public class JqwikDiscoverer {
 		});
 	}
 
-	private Method getJavaMethodIfNecessaryFromInnerKotlinClass(MethodSelector selector) {
-		// This is for Kotlin methods within inner classes, the names of which have a unique postfix
+	private Method getJavaMethodWithSpecialKotlinHandling(MethodSelector selector) {
+		// Method names of Kotlin functions sometimes show peculiar naming in Java
 		try {
 			return selector.getJavaMethod();
 		} catch (Exception methodNotFound) {
 			String methodName = selector.getMethodName();
 			for (Method method : selector.getJavaClass().getMethods()) {
 				// TODO: Also match parameters
-				if (matchesInnerKotlinMethod(method, methodName)) {
+				if (matchesSpecialKotlinMethod(method, methodName)) {
+					return method;
+				}
+				if (matchesInternalKotlinMethod(method, methodName)) {
 					return method;
 				}
 			}
@@ -101,12 +104,18 @@ public class JqwikDiscoverer {
 		}
 	}
 
-	private boolean matchesInnerKotlinMethod(Method method, String methodName) {
-		if (!JqwikKotlinSupport.isInnerKotlinMethod(method)) {
+	private boolean matchesSpecialKotlinMethod(Method method, String methodName) {
+		if (JqwikKotlinSupport.isSpeciallyNamedKotlinMethod(method)) {
+			return methodName.equals(JqwikKotlinSupport.nameWithoutSpecialPart(method));
+		}
+		return false;
+	}
+
+	private boolean matchesInternalKotlinMethod(Method method, String methodName) {
+		if (!JqwikKotlinSupport.isInternalKotlinMethod(method)) {
 			return false;
 		}
-		String plainMethodName = JqwikKotlinSupport.nameWithoutSpecialPart(method);
-		return plainMethodName.equals(methodName);
+		return methodName.equals(JqwikKotlinSupport.nameWithoutInternalPart(method));
 	}
 
 	private HierarchicalJavaResolver createHierarchicalResolver(TestDescriptor engineDescriptor) {

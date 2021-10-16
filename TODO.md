@@ -2,7 +2,6 @@
 
     - Kotlin Support
       - Handle Test Container classes with quoted name, e.g. `MyClass Tests`
-      - Handle Test method names, e.g. `myFunc2-8()`
 
     - Include /docs/dokka in Website
       - Generate kdoc for Types

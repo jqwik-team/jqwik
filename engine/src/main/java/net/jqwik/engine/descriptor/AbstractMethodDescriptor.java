@@ -34,11 +34,10 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implement
 	}
 
 	private static String getDefaultName(Method targetMethod) {
-		// TODO: Move this hack to yet to create jqwik-kotlin module
 		if (isInternalKotlinMethod(targetMethod)) {
 			return nameWithoutInternalPart(targetMethod);
 		}
-		if (isInnerKotlinMethod(targetMethod)) {
+		if (isSpeciallyNamedKotlinMethod(targetMethod)) {
 			return nameWithoutSpecialPart(targetMethod);
 		}
 		return targetMethod.getName();

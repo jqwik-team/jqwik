@@ -10,7 +10,7 @@ public class JqwikKotlinSupport {
 		return isKotlinClass(aClass) && isKotlinInternal(method);
 	}
 
-	public static boolean isInnerKotlinMethod(Method method) {
+	public static boolean isSpeciallyNamedKotlinMethod(Method method) {
 		Class<?> aClass = method.getDeclaringClass();
 		return isKotlinClass(aClass) && isKotlinSpecial(method);
 	}
@@ -22,10 +22,12 @@ public class JqwikKotlinSupport {
 	}
 
 	private static boolean isKotlinSpecial(Method method) {
-		// Kotlin appends an extension separated by a hyphen to method names in special cases
-		// e.g. when method has UInt parameter.
+		// Kotlin appends an 7-char-extension separated by a hyphen to method names in special cases
+		// e.g. when method has UInt parameter, the original method is appended with '-WZ4Q5Ns'
 		// TODO: Find out what's really happening here
-		return method.getName().lastIndexOf('-') > 0;
+		String name = method.getName();
+		int lastIndexOfHyphen = name.lastIndexOf('-');
+		return lastIndexOfHyphen == (name.length() - 8);
 	}
 
 	// Learned mechanism to detect Kotlin class in https://stackoverflow.com/a/39806722
