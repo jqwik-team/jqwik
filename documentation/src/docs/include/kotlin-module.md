@@ -114,6 +114,11 @@ Here are a few of those which I noticed to be relevant for jqwik:
   }  
   ```
 
+- Just like abstract classes and interfaces Kotlin's _sealed_ classes
+  can give shelter to property methods and other lifecycle relevant behaviour. 
+  Sealed classes cannot be "run" themselves, but their subclasses inherit
+  all property methods, lifecycle methods and lifecycle hooks from them. 
+
 #### Generation of Nullable Types
 
 Top-level nullable Kotlin types are recognized, i.e., `null`'s will automatically be

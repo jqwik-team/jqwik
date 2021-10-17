@@ -1,8 +1,9 @@
 - 1.6.0
 
     - Kotlin Support
-      - Sealed Classes
       - Inline Classes
+          - as Test Container
+          - to generate
       - Data Classes
       - Enum Classes
 

@@ -100,9 +100,10 @@ class HierarchicalJavaResolver {
 	}
 
 	private Set<TestDescriptor> resolveContainerWithParents(Class<?> testClass) {
-		Set<TestDescriptor> potentialParents = isContainerAGroup.test(testClass)
-												   ? resolveContainerWithParents(testClass.getDeclaringClass()) : Collections
-																													  .singleton(engineDescriptor);
+		Set<TestDescriptor> potentialParents =
+			isContainerAGroup.test(testClass)
+				? resolveContainerWithParents(testClass.getDeclaringClass())
+				: Collections.singleton(engineDescriptor);
 		return resolveForAllParents(testClass, potentialParents);
 	}
 
