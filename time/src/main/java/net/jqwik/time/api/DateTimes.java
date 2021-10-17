@@ -4,7 +4,6 @@ import org.apiguardian.api.*;
 
 import net.jqwik.time.api.arbitraries.*;
 import net.jqwik.time.internal.properties.arbitraries.*;
-import net.jqwik.time.internal.properties.arbitraries.valueRanges.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -60,7 +59,7 @@ public class DateTimes {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
-	public static ZonedDateTimeArbitrary zonedDateTime() {
+	public static ZonedDateTimeArbitrary zonedDateTimes() {
 		return new DefaultZonedDateTimeArbitrary();
 	}
 

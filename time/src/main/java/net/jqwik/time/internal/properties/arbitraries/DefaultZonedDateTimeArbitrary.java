@@ -1,4 +1,4 @@
-package net.jqwik.time.internal.properties.arbitraries.valueRanges;
+package net.jqwik.time.internal.properties.arbitraries;
 
 import java.time.*;
 import java.time.temporal.*;
@@ -20,7 +20,9 @@ public class DefaultZonedDateTimeArbitrary extends ArbitraryDecorator<ZonedDateT
 
 	@Override
 	protected Arbitrary<ZonedDateTime> arbitrary() {
-		return Combinators.combine(localDateTimes, zoneIds).as(ZonedDateTime::of);
+		return Combinators.combine(localDateTimes, zoneIds)
+						  .as((dateTime, zoneId) -> ZonedDateTime.ofStrict(dateTime, zoneId.getRules().getOffset(dateTime), zoneId))
+						  .ignoreException(DateTimeException.class);
 	}
 
 	@Override
