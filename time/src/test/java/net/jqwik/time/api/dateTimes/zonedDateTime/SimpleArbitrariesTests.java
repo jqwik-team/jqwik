@@ -11,7 +11,7 @@ public class SimpleArbitrariesTests {
 
 	@Provide
 	Arbitrary<ZonedDateTime> zonedDateTimes() {
-		return DateTimes.zonedDateTime();
+		return DateTimes.zonedDateTimes();
 	}
 
 	@Property
