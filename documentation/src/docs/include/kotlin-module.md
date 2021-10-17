@@ -332,5 +332,12 @@ will assign `1` to variable `a` and `2` to variable `b`.
   One day _jqwik_ may be able to handle the intricacies of hidden Kotlin types
   better. 
   [Create an issue](https://github.com/jlink/jqwik/issues/new) if that's important for you.
+
+- Kotlin class names can have special characters just like Kotlin function names:
+  ```kotlin
+  class `My Special Tests` {...}
+  ```
+  This works in principle but IntelliJ's test runner cannot handle this.
+  See https://youtrack.jetbrains.com/issue/IDEA-280536.
   
   

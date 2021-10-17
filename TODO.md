@@ -1,7 +1,10 @@
 - 1.6.0
 
     - Kotlin Support
-      - Handle Test Container classes with quoted name, e.g. `MyClass Tests`
+      - Sealed Classes
+      - Inline Classes
+      - Data Classes
+      - Enum Classes
 
     - Include /docs/dokka in Website
       - Generate kdoc for Types
