@@ -43,9 +43,17 @@ public class DefaultZonedDateTimeArbitrary extends ArbitraryDecorator<ZonedDateT
 	}
 
 	private void addEdgeCases(EdgeCases.Config<ZonedDateTime> config, LocalDateTime localDateTime) {
-		config.add(getStrict(localDateTime, ZONE_ID_IDL));
-		config.add(getStrict(localDateTime, ZONE_ID_ZERO));
-		config.add(getStrict(localDateTime, ZONE_ID_IDLW));
+		addEdgeCaseToConfig(config, localDateTime, ZONE_ID_IDL);
+		addEdgeCaseToConfig(config, localDateTime, ZONE_ID_ZERO);
+		addEdgeCaseToConfig(config, localDateTime, ZONE_ID_IDLW);
+	}
+
+	private void addEdgeCaseToConfig(EdgeCases.Config<ZonedDateTime> config, LocalDateTime localDateTime, ZoneId zoneId) {
+		try {
+			config.add(getStrict(localDateTime, zoneId));
+		} catch (DateTimeException e) {
+			//do not add, do nothing
+		}
 	}
 
 	@Override
