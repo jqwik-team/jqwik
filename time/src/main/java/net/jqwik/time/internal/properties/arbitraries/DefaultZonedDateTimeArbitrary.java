@@ -18,11 +18,34 @@ public class DefaultZonedDateTimeArbitrary extends ArbitraryDecorator<ZonedDateT
 	private LocalDateTimeArbitrary localDateTimes = DateTimes.dateTimes();
 	private Arbitrary<ZoneId> zoneIds = Times.zoneIds();
 
+	public final static ZoneId ZONE_ID_IDL = ZoneId.of("Pacific/Kiritimati");
+	public final static ZoneId ZONE_ID_ZERO = ZoneId.of("Europe/London");
+	public final static ZoneId ZONE_ID_IDLW = ZoneId.of("Etc/GMT+12");
+
 	@Override
 	protected Arbitrary<ZonedDateTime> arbitrary() {
 		return Combinators.combine(localDateTimes, zoneIds)
-						  .as((dateTime, zoneId) -> ZonedDateTime.ofStrict(dateTime, zoneId.getRules().getOffset(dateTime), zoneId))
-						  .ignoreException(DateTimeException.class);
+						  .as(this::getStrict)
+						  .ignoreException(DateTimeException.class)
+						  .edgeCases(config -> {
+							  localDateTimes.edgeCases().forEach(shrinkable -> addEdgeCases(config, shrinkable.value()));
+							  config.filter(this::edgeCaseFilter);
+						  });
+	}
+
+	private ZonedDateTime getStrict(LocalDateTime dateTime, ZoneId zoneId) {
+		return ZonedDateTime.ofStrict(dateTime, zoneId.getRules().getOffset(dateTime), zoneId);
+	}
+
+	private boolean edgeCaseFilter(ZonedDateTime zonedDateTime) {
+		ZoneId zoneId = zonedDateTime.getZone();
+		return zoneId.equals(ZONE_ID_IDL) || zoneId.equals(ZONE_ID_ZERO) || zoneId.equals(ZONE_ID_IDLW);
+	}
+
+	private void addEdgeCases(EdgeCases.Config<ZonedDateTime> config, LocalDateTime localDateTime) {
+		config.add(getStrict(localDateTime, ZONE_ID_IDL));
+		config.add(getStrict(localDateTime, ZONE_ID_ZERO));
+		config.add(getStrict(localDateTime, ZONE_ID_IDLW));
 	}
 
 	@Override
