@@ -16,7 +16,7 @@ import static org.apiguardian.api.API.Status.*;
 public class DefaultZonedDateTimeArbitrary extends ArbitraryDecorator<ZonedDateTime> implements ZonedDateTimeArbitrary {
 
 	private LocalDateTimeArbitrary localDateTimes = DateTimes.dateTimes();
-	private Arbitrary<ZoneId> zoneIds = Times.zoneIds();
+	private Arbitrary<ZoneId> zoneIds = Times.zoneIds().dontShrink();
 
 	public final static ZoneId ZONE_ID_IDL = ZoneId.of("Pacific/Kiritimati");
 	public final static ZoneId ZONE_ID_ZERO = ZoneId.of("Europe/London");

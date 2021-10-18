@@ -21,7 +21,7 @@ public class ShrinkingTests {
 	void defaultShrinking(@ForAll Random random) {
 		ZonedDateTimeArbitrary dateTimes = DateTimes.zonedDateTimes();
 		ZonedDateTime value = falsifyThenShrink(dateTimes, random);
-		assertThat(value).isEqualTo(ZonedDateTime.of(LocalDateTime.of(1900, JANUARY, 1, 0, 0, 0), ZoneId.of("Asia/Aden")));
+		assertThat(value.toLocalDateTime()).isEqualTo(LocalDateTime.of(1900, JANUARY, 1, 0, 0, 0));
 	}
 
 	@Property(tries = 40)
