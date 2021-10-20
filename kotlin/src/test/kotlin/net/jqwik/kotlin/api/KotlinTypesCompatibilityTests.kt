@@ -151,4 +151,18 @@ class KotlinTypesCompatibilityTests {
         }
     }
 
+    @JvmInline
+    value class Password(private val s: String) {
+        fun size() = s.length
+    }
+
+    @Group
+    inner class InlineClasses {
+        @Property(tries = 10)
+        fun inlinedStringWithAnnotation(@ForAll password: @StringLength(31) Password) {
+            assertThat(password is Password)
+            assertThat(password.size()).isEqualTo(31)
+        }
+    }
+
 }
