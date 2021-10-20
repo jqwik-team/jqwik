@@ -46,7 +46,19 @@ public class JqwikAnnotationSupport {
 			});
 	}
 
-	public static Stream<Annotation> streamMetaAnnotations(Annotation annotation) {
+	public static List<Annotation> allMetaAnnotations(Annotation annotation) {
+		List<Annotation> all = new ArrayList<>();
+		Stream<Annotation> metaAnnotationStream = streamMetaAnnotations(annotation);
+		metaAnnotationStream
+			.filter(candidate -> !all.contains(candidate))
+			.forEach(metaAnnotation -> {
+				all.add(metaAnnotation);
+				appendMetaAnnotations(metaAnnotation, all);
+			});
+		return all;
+	}
+
+	private static Stream<Annotation> streamMetaAnnotations(Annotation annotation) {
 		Annotation[] metaAnnotationCandidates = annotation.annotationType().getDeclaredAnnotations();
 		return Arrays.stream(metaAnnotationCandidates)
 					 .filter(candidate -> !isInJavaLangAnnotationPackage(candidate.annotationType()))

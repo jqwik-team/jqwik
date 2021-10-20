@@ -14,49 +14,65 @@ class JqwikAnnotationSupportTests {
 
 	@Example
 	void singlePresentAnnotationIsFound() throws NoSuchMethodException {
-		Stream<Class> types = typesFromMethod("singleAnnotation");
+		Stream<Class<? extends Annotation>> types = typesFromMethod("singleAnnotation");
 		assertThat(types).containsExactly(ForAll.class);
 	}
 
 	@Example
 	void twoAnnotationsAreFound() throws NoSuchMethodException {
-		Stream<Class> types = typesFromMethod("twoAnnotations");
+		Stream<Class<? extends Annotation>> types = typesFromMethod("twoAnnotations");
 		assertThat(types).containsExactly(ForAll.class, StringLength.class);
 	}
 
 	@Example
 	void repeatableAnnotationsAreFound() throws NoSuchMethodException {
-		Stream<Class> types = typesFromMethod("repeatableAnnotations");
+		Stream<Class<? extends Annotation>> types = typesFromMethod("repeatableAnnotations");
 		assertThat(types).containsExactly(CharsList.class);
 	}
 
 	@Example
 	void mixedAnnotationsAreFound() throws NoSuchMethodException {
-		Stream<Class> types = typesFromMethod("mixedAnnotations");
+		Stream<Class<? extends Annotation>> types = typesFromMethod("mixedAnnotations");
 		assertThat(types).containsExactly(ForAll.class, CharsList.class);
 	}
 
 	@Example
 	void simpleMetaAnnotation() throws NoSuchMethodException {
-		Stream<Class> types = typesFromMethod("simpleMetaAnnotations");
+		Stream<Class<? extends Annotation>> types = typesFromMethod("simpleMetaAnnotations");
 		assertThat(types).containsExactly(ForAny.class, ForAll.class);
 	}
 
 	@Example
 	void repeatedMetaAnnotations() throws NoSuchMethodException {
-		Stream<Class> types = typesFromMethod("repeatedMetaAnnotations");
-		assertThat(types).containsExactly(AlphaNumeric.class, CharsList.class, StringLength.class);
+		Stream<Class<? extends Annotation>> types = typesFromMethod("repeatedMetaAnnotations");
+		assertThat(types).containsExactly(
+			AlphaChars.class,
+			UpperChars.class, CharRange.class,
+			LowerChars.class, CharRange.class
+		);
+	}
+
+	@Example
+	void allMetaAnnotations() throws NoSuchMethodException {
+		Parameter param = parameterFromMethod("repeatedMetaAnnotations");
+		AlphaChars alphaChars = param.getDeclaredAnnotation(AlphaChars.class);
+		List<Annotation> annotations = JqwikAnnotationSupport.allMetaAnnotations(alphaChars);
+		Stream<Class<? extends Annotation>> types = annotations.stream().map(Annotation::annotationType);
+		assertThat(types).containsExactlyInAnyOrder(
+			UpperChars.class, CharRange.class,
+			LowerChars.class, CharRange.class
+		);
 	}
 
 	@Example
 	void nestedMetaAnnotations() throws NoSuchMethodException {
-		Stream<Class> types = typesFromMethod("nestedMetaAnnotations");
+		Stream<Class<? extends Annotation>> types = typesFromMethod("nestedMetaAnnotations");
 		assertThat(types).containsExactly(Nested.class, AlphaNumeric.class, CharsList.class, StringLength.class);
 	}
 
 	@Example
 	void handleCircularMetaAnnotations() throws NoSuchMethodException {
-		Stream<Class> types = typesFromMethod("circularMetaAnnotations");
+		Stream<Class<? extends Annotation>> types = typesFromMethod("circularMetaAnnotations");
 		assertThat(types).containsExactly(One.class, Two.class);
 	}
 
@@ -76,7 +92,7 @@ class JqwikAnnotationSupportTests {
 		void simpleMetaAnnotations(@ForAny String param) {
 		}
 
-		void repeatedMetaAnnotations(@AlphaNumeric String param) {
+		void repeatedMetaAnnotations(@AlphaChars String param) {
 		}
 
 		void nestedMetaAnnotations(@Nested String param) {
@@ -127,9 +143,9 @@ class JqwikAnnotationSupportTests {
 		return AClass.class.getDeclaredMethod(methodName, String.class).getParameters()[0];
 	}
 
-	private Stream<Class> typesFromMethod(String methodName) throws NoSuchMethodException {
+	private Stream<Class<? extends Annotation>> typesFromMethod(String methodName) throws NoSuchMethodException {
 		List<Annotation> annotations = annotationsFromMethod(methodName);
-		return annotations.stream().map(a -> a.annotationType());
+		return annotations.stream().map(Annotation::annotationType);
 	}
 
 }

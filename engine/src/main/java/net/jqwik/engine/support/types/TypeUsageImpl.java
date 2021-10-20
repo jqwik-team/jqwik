@@ -632,7 +632,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		return cloneWith(t -> {
 			t.annotations = new ArrayList<>(annotations);
 			t.annotations.add(annotation);
-			JqwikAnnotationSupport.streamMetaAnnotations(annotation)
+			JqwikAnnotationSupport.allMetaAnnotations(annotation).stream()
 								  .filter(candidate -> !t.annotations.contains(candidate))
 								  .forEach(metaAnnotation -> t.annotations.add(metaAnnotation));
 		});
