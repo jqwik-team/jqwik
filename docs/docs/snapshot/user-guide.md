@@ -5028,6 +5028,11 @@ Here are a few of those which I noticed to be relevant for jqwik:
   }  
   ```
 
+- Just like abstract classes and interfaces Kotlin's _sealed_ classes
+  can give shelter to property methods and other lifecycle relevant behaviour. 
+  Sealed classes cannot be "run" themselves, but their subclasses inherit
+  all property methods, lifecycle methods and lifecycle hooks from them. 
+
 #### Generation of Nullable Types
 
 Top-level nullable Kotlin types are recognized, i.e., `null`'s will automatically be
@@ -5057,8 +5062,11 @@ fun generateNullsInList(@ForAll list: List<@WithNull String>) {
 Kotlin has its own variations of collection types, e.g. (`kotlin.collections.List` and `kotlin.collections.MutableList`) 
 that are - under the hood - instances of their corresponding, mutable Java type.
 Using those types in ForAll-parameters works as expected.
-This is also true for Kotlin's notation of arrays, e.g. `Array<Int>`, 
-and Kotlin's unsigned integer types: `UByte`, `UShort`, `UInt` and `ULong`.
+
+This is also true for 
+- Kotlin's notation of arrays, e.g. `Array<Int>`, 
+- Kotlin's unsigned integer types: `UByte`, `UShort`, `UInt` and `ULong`,
+- and Kotlin's inline classes which are handled by jqwik like the class they inline.
 
 #### Support for Kotlin Functions
 
@@ -5246,6 +5254,32 @@ will assign `1` to variable `a` and `2` to variable `b`.
   One day _jqwik_ may be able to handle the intricacies of hidden Kotlin types
   better. 
   [Create an issue](https://github.com/jlink/jqwik/issues/new) if that's important for you.
+
+- Inline classes are handled like the class they inline.
+  Default generation works and you can also use constraint annotations for the inlined class:
+
+  ```kotlin
+  @Property
+  fun test2(@ForAll password: @StringLength(51) SecurePassword) {
+      assert(password.length() == 51)
+  }
+
+  @JvmInline
+  value class SecurePassword(private val s: String) {
+      fun length() = s.length
+  }
+  ```
+  
+  However, if you build your own arbitraries for inline classes 
+  you have to generate the inlined class instead.
+  [Create an issue](https://github.com/jlink/jqwik/issues/new) if that bothers you too much.
+
+- Kotlin class names can have special characters just like Kotlin function names:
+  ```kotlin
+  class `My Special Tests` {...}
+  ```
+  This works in principle but in yet unknown circumstances IntelliJ's test runner cannot handle this.
+  See https://youtrack.jetbrains.com/issue/IDEA-280536.
   
   
 
