@@ -183,4 +183,13 @@ class KotlinTypesCompatibilityTests {
         }
     }
 
+    enum class Friend { Josh, Mira, Xin, Sarah }
+
+    @Group
+    inner class EnumClasses {
+        @Property
+        fun enumClassAsForAllParameter(@ForAll friend: Friend) {
+            assertThat(friend is Friend).isTrue
+        }
+    }
 }

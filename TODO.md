@@ -1,8 +1,8 @@
 - 1.6.0
 
     - Kotlin Support
-      - Enum Classes
-
+        - testing of asynchronous Kotlin coroutines
+      
     - Include /docs/dokka in Website
       - Generate kdoc for Types
 
