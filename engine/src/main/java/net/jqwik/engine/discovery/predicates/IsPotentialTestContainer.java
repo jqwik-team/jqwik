@@ -12,6 +12,8 @@ public class IsPotentialTestContainer implements Predicate<Class<?>> {
 			return false;
 		if (isPrivate(candidate))
 			return false;
+		if (candidate.isEnum())
+			return false;
 		if (candidate.isLocalClass())
 			return false;
 		return !candidate.isAnonymousClass();

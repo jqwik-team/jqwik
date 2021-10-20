@@ -9,6 +9,8 @@
 
 - 1.6.x
 
+    - Running an abstract test container (abstract, enum, sealed) will run all concrete subclasses.
+
     - JqwikSession:
         - setRandomSessionSeed(), getRandomSessionSeed()
 
