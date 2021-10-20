@@ -15,6 +15,31 @@ class KotlinTypesCompatibilityTests {
         assertThat(aString).hasSize(5)
     }
 
+    @Target(AnnotationTarget.VALUE_PARAMETER)
+    @Retention(AnnotationRetention.RUNTIME)
+    @StringLength(5)
+    annotation class OfLength5
+
+    @Property
+    fun kAnnotations(@ForAll @OfLength5 aString: String) {
+        assertThat(aString).hasSize(5)
+    }
+
+    enum class Friend { Josh, Mira, Xin, Sarah }
+
+    @Property
+    fun kEnum(@ForAll friend: Friend) {
+        assertThat(friend is Friend).isTrue
+    }
+
+    data class MyMoney(val amount: Long, val currency: String)
+
+    @Property
+    fun dataClasses(@ForAll @UseType money: MyMoney) {
+        assertThat(money.amount is Long).isTrue
+        assertThat(money.currency is String).isTrue
+    }
+
     @Group
     inner class CollectionTypes {
 
@@ -172,24 +197,4 @@ class KotlinTypesCompatibilityTests {
         fun passwords() = String.any().ofLength(31)
     }
 
-    data class MyMoney(val amount: Long, val currency: String)
-
-    @Group
-    inner class DataClasses {
-        @Property
-        fun dataClassAsForAllParameter(@ForAll @UseType money: MyMoney) {
-            assertThat(money.amount is Long).isTrue
-            assertThat(money.currency is String).isTrue
-        }
-    }
-
-    enum class Friend { Josh, Mira, Xin, Sarah }
-
-    @Group
-    inner class EnumClasses {
-        @Property
-        fun enumClassAsForAllParameter(@ForAll friend: Friend) {
-            assertThat(friend is Friend).isTrue
-        }
-    }
 }
