@@ -342,7 +342,7 @@ will assign `1` to variable `a` and `2` to variable `b`.
   ```kotlin
   class `My Special Tests` {...}
   ```
-  This works in principle but IntelliJ's test runner cannot handle this.
+  This works in principle but in yet unknown circumstances IntelliJ's test runner cannot handle this.
   See https://youtrack.jetbrains.com/issue/IDEA-280536.
   
   
