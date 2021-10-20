@@ -1,11 +1,9 @@
 package net.jqwik.kotlin.api
 
-import net.jqwik.api.ForAll
-import net.jqwik.api.Group
-import net.jqwik.api.Property
-import net.jqwik.api.PropertyDefaults
+import net.jqwik.api.*
 import net.jqwik.api.constraints.Size
 import net.jqwik.api.constraints.StringLength
+import net.jqwik.api.constraints.UseType
 import org.assertj.core.api.Assertions.assertThat
 
 @PropertyDefaults(tries = 100)
@@ -158,10 +156,30 @@ class KotlinTypesCompatibilityTests {
 
     @Group
     inner class InlineClasses {
-        @Property(tries = 10)
+        @Property
         fun inlinedStringWithAnnotation(@ForAll password: @StringLength(31) Password) {
             assertThat(password is Password)
             assertThat(password.size()).isEqualTo(31)
+        }
+
+        @Property
+        fun provideInlinedClassInsteadOfInlineClass(@ForAll("passwords") password: Password) {
+            assertThat(password is Password)
+            assertThat(password.size()).isEqualTo(31)
+        }
+
+        @Provide
+        fun passwords() = String.any().ofLength(31)
+    }
+
+    data class MyMoney(val amount: Long, val currency: String)
+
+    @Group
+    inner class DataClasses {
+        @Property
+        fun dataClassAsForAllParameter(@ForAll @UseType money: MyMoney) {
+            assertThat(money.amount is Long).isTrue
+            assertThat(money.currency is String).isTrue
         }
     }
 

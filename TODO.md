@@ -1,7 +1,6 @@
 - 1.6.0
 
     - Kotlin Support
-      - Data Classes
       - Enum Classes
 
     - Include /docs/dokka in Website
