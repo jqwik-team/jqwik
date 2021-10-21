@@ -10,13 +10,11 @@ public abstract class Between<T> {
 		//do nothing in default case
 	}
 
+	@SuppressWarnings("unchecked")
 	protected boolean minIsBeforeMax(T min, T max) {
 		if (min instanceof Comparable && max instanceof Comparable) {
-			Comparable comparableMin = (Comparable) min;
-			Comparable comparableMax = (Comparable) max;
-			if (comparableMin.compareTo(comparableMax) > 0) {
-				return false;
-			}
+			Comparable<T> comparableMin = (Comparable<T>) min;
+			return comparableMin.compareTo(max) <= 0;
 		}
 		return true;
 	}
