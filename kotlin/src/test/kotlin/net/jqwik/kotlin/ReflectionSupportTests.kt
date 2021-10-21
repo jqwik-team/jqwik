@@ -1,4 +1,4 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Example
@@ -51,7 +51,7 @@ class ReflectionSupportTests {
 
             val secondKParameter: KParameter? = second.kotlinParameter
             assertThat(secondKParameter?.name).isEqualTo("second")
-            assertThat(secondKParameter?.isMarkedNullable).isTrue()
+            assertThat(secondKParameter?.isMarkedNullable).isTrue
         }
 
         @Example
@@ -65,10 +65,10 @@ class ReflectionSupportTests {
 
             val secondKParameter: KParameter? = second.kotlinParameter
             assertThat(secondKParameter?.name).isEqualTo("second")
-            assertThat(secondKParameter?.isMarkedNullable).isTrue()
+            assertThat(secondKParameter?.isMarkedNullable).isTrue
         }
 
     }
 
-    class ClassWithConstructor(first: String, second: Int?) {}
+    class ClassWithConstructor(first: String, second: Int?)
 }

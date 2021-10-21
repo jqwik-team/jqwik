@@ -1,9 +1,10 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.*
 import net.jqwik.api.constraints.Size
 import net.jqwik.api.constraints.StringLength
 import net.jqwik.api.constraints.UseType
+import net.jqwik.kotlin.api.any
 import org.assertj.core.api.Assertions.assertThat
 
 @PropertyDefaults(tries = 100)

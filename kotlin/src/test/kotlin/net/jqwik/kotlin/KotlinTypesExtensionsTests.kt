@@ -1,7 +1,8 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.Example
 import net.jqwik.api.ForAll
+import net.jqwik.kotlin.api.any
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import java.util.*
 

@@ -1,7 +1,8 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.Example
 import net.jqwik.api.Tuple
+import net.jqwik.kotlin.api.*
 import org.assertj.core.api.Assertions.assertThat
 
 class JqwikTupleTests {

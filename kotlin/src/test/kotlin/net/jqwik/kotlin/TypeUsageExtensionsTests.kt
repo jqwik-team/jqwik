@@ -1,7 +1,8 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.*
 import net.jqwik.api.providers.TypeUsage
+import net.jqwik.kotlin.api.kotlinType
 
 class TypeUsageExtensionsTests {
 

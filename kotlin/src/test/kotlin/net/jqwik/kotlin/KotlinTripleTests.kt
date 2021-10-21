@@ -1,4 +1,4 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Example
@@ -6,6 +6,10 @@ import net.jqwik.api.ForAll
 import net.jqwik.api.Property
 import net.jqwik.api.constraints.NumericChars
 import net.jqwik.api.constraints.StringLength
+import net.jqwik.kotlin.api.JqwikIntRange
+import net.jqwik.kotlin.api.any
+import net.jqwik.kotlin.api.anyTriple
+import net.jqwik.kotlin.api.triple
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions
 import java.util.*

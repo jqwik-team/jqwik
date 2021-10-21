@@ -1,10 +1,13 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.Arbitraries.just
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Example
 import net.jqwik.api.ForAll
 import net.jqwik.api.Group
+import net.jqwik.kotlin.api.combine
+import net.jqwik.kotlin.api.flatCombine
+import net.jqwik.kotlin.api.orNull
 import net.jqwik.testing.TestingSupport.*
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*

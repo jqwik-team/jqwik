@@ -1,4 +1,4 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.ForAll
 import net.jqwik.api.Property
@@ -51,6 +51,4 @@ class ParameterAnnotationsTests {
 
 @kotlin.annotation.Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE)
 @StringLength(value = 5)
-annotation class MyStringLength {
-
-}
+annotation class MyStringLength

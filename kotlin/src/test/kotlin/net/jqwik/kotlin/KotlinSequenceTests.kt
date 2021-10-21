@@ -1,8 +1,11 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.*
 import net.jqwik.api.constraints.Size
 import net.jqwik.api.constraints.UniqueElements
+import net.jqwik.kotlin.api.JqwikIntRange
+import net.jqwik.kotlin.api.any
+import net.jqwik.kotlin.api.sequence
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*

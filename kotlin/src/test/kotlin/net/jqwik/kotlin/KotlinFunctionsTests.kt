@@ -1,8 +1,9 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.*
 import net.jqwik.api.Arbitraries.just
 import net.jqwik.api.constraints.StringLength
+import net.jqwik.kotlin.api.*
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions
 import java.util.*

@@ -1,9 +1,10 @@
-package net.jqwik.kotlin.api
+package net.jqwik.kotlin
 
 import net.jqwik.api.*
 import net.jqwik.api.constraints.WithNull
 import net.jqwik.api.statistics.Statistics
 import net.jqwik.api.statistics.StatisticsReport
+import net.jqwik.kotlin.api.orNull
 import net.jqwik.testing.TestingSupport.checkAtLeastOneGenerated
 import java.util.*
 import java.util.function.Predicate
