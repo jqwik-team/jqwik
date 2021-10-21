@@ -1,10 +1,7 @@
 package net.jqwik.kotlin
 
 import kotlinx.coroutines.delay
-import net.jqwik.api.Example
-import net.jqwik.api.ForAll
-import net.jqwik.api.Group
-import net.jqwik.api.Property
+import net.jqwik.api.*
 import net.jqwik.kotlin.api.runBlockingAssertion
 import net.jqwik.kotlin.api.runBlockingPredicate
 import net.jqwik.testing.ExpectFailure
@@ -17,21 +14,35 @@ class SuspendedPropertiesTests {
     inner class RunBlockingWrappers {
         @Example
         @ExpectFailure
-        fun useSuspendMethod() = runBlockingAssertion {
+        fun useSuspendAssertion() = runBlockingAssertion {
             assertThat(echo("sausage")).isEqualTo("soy")
         }
 
         @Example
         @ExpectFailure
-        fun usePredicateSuspendMethod() = runBlockingPredicate {
+        fun useSuspendPredicate() = runBlockingPredicate {
             echo("soy") == "sausage"
         }
 
         @Property(tries = 10)
-        fun assertionProperty(@ForAll string: String) = runBlockingAssertion {
+        fun `property with suspend assertion`(@ForAll string: String) = runBlockingAssertion {
             assertThat(echo(string)).isEqualTo(string)
         }
 
+        @Property(tries = 10)
+        fun `property with suspend predicate`(@ForAll string: String) = runBlockingPredicate {
+            echo(string) == string
+        }
+
+    }
+
+    @Group
+    @Disabled("Not yet implemented")
+    inner class `Property function with suspend modifier` {
+        @Example
+        suspend fun succeedingAssertion() {
+            assertThat(echo("sausage")).isEqualTo("sausage")
+        }
     }
 
     suspend fun echo(string: String): String {
