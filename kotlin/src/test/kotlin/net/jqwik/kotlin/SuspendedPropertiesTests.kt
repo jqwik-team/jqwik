@@ -45,7 +45,6 @@ class SuspendedPropertiesTests {
         }
 
         @Example
-        @ExpectFailure
         suspend fun failingAssertion() {
             assertThat(echo("sausage")).isEqualTo("soy")
         }

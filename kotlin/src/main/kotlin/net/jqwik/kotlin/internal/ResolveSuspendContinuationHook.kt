@@ -1,25 +1,44 @@
 package net.jqwik.kotlin.internal
 
-import net.jqwik.api.lifecycle.LifecycleContext
-import net.jqwik.api.lifecycle.ParameterResolutionContext
-import net.jqwik.api.lifecycle.PropagationMode
-import net.jqwik.api.lifecycle.ResolveParameterHook
+import kotlinx.coroutines.runBlocking
+import net.jqwik.api.lifecycle.*
 import net.jqwik.api.lifecycle.ResolveParameterHook.ParameterSupplier
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.Method
 import java.util.*
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+import kotlin.reflect.jvm.kotlinFunction
 
 /**
  * Provide continuation object in those cases where property methods are modified with "suspend"
  */
-class ResolveSuspendContinuationHook : ResolveParameterHook {
+class ResolveSuspendContinuationHook : ResolveParameterHook, AroundTryHook {
 
     override fun propagateTo(): PropagationMode = PropagationMode.ALL_DESCENDANTS
 
-    override fun appliesTo(element: Optional<AnnotatedElement>) = element.map { e -> e is Method }.orElse(false)
+    override fun aroundTry(
+        context: TryLifecycleContext,
+        aTry: TryExecutor,
+        parameters: MutableList<Any>
+    ): TryExecutionResult {
+        val result = runBlocking(EmptyCoroutineContext) {
+            suspendCoroutine<TryExecutionResult> { continuation ->
+                parameters.set(0, continuation)
+                val r = aTry.execute(parameters)
+                //continuation.resume(r)
+            }
+        }
+        return result
+    }
+
+    override fun appliesTo(element: Optional<AnnotatedElement>) =
+        element.map { e -> e.isSuspendFunction() }.orElse(false)
+
+    private fun AnnotatedElement.isSuspendFunction() =
+        this is Method && this.kotlinFunction?.isSuspend ?: false
 
     override fun resolve(
         parameterContext: ParameterResolutionContext,
@@ -38,7 +57,8 @@ class ResolveSuspendContinuationHook : ResolveParameterHook {
             return Optional.empty()
         }
 
-        val continuationSupplier = ParameterSupplier { SuspendPropertyContinuation<Any>(parameterContext.optionalMethod().get()) }
+        val continuationSupplier =
+            ParameterSupplier { SuspendPropertyContinuation<Any>(parameterContext.optionalMethod().get()) }
         return Optional.of(continuationSupplier)
     }
 }
@@ -49,6 +69,6 @@ private class SuspendPropertyContinuation<T>(private val method: Method) : Conti
         throw RuntimeException(message)
     }
 
-    override val context: CoroutineContext
-        get() = EmptyCoroutineContext
+    override val context get() = EmptyCoroutineContext
 }
+

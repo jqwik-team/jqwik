@@ -5,6 +5,7 @@
           https://github.com/junit-team/junit5/issues/1914
           https://kotlinlang.org/docs/coroutines-basics.html#scope-builder
           https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-blocking-test.html
+          https://jorgecastillo.dev/digging-into-kotlin-continuations
       
     - Include /docs/dokka in Website
       - Generate kdoc for Types
