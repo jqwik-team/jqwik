@@ -1,1 +1,1 @@
-net.jqwik.kotlin.internal.ResolveSuspendContinuationHook
+net.jqwik.kotlin.internal.SuspendedPropertyMethodsHook

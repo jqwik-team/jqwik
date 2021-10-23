@@ -8,34 +8,34 @@ import java.lang.reflect.Method
 import java.util.*
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.callSuspend
 import kotlin.reflect.jvm.kotlinFunction
 
 /**
- * Provide continuation object in those cases where property methods are modified with "suspend"
+ * Provide continuation object in those cases where property methods are modified with "suspend".
+ * Invoke suspended method using [callSuspend].
  */
-class ResolveSuspendContinuationHook : ResolveParameterHook, AroundTryHook {
+class SuspendedPropertyMethodsHook : ResolveParameterHook, InvokePropertyMethodHook {
 
     override fun propagateTo(): PropagationMode = PropagationMode.ALL_DESCENDANTS
 
-    override fun aroundTry(
-        context: TryLifecycleContext,
-        aTry: TryExecutor,
-        parameters: MutableList<Any>
-    ): TryExecutionResult {
-        val result = runBlocking(EmptyCoroutineContext) {
-            suspendCoroutine<TryExecutionResult> { continuation ->
-                parameters.set(0, continuation)
-                val r = aTry.execute(parameters)
-                //continuation.resume(r)
-            }
-        }
-        return result
-    }
-
     override fun appliesTo(element: Optional<AnnotatedElement>) =
         element.map { e -> e.isSuspendFunction() }.orElse(false)
+
+    override fun invoke(method: Method, target: Any, vararg args: Any): Any {
+        val kotlinFunction: KFunction<Any> =
+            (method.kotlinFunction ?: return InvokePropertyMethodHook.DEFAULT.invoke(
+                method,
+                target,
+                args
+            )) as KFunction<Any>
+        val r = runBlocking {
+            val rest = args.copyOfRange(0, args.size - 1)
+            kotlinFunction.callSuspend(target, *rest)
+        }
+        return r
+    }
 
     private fun AnnotatedElement.isSuspendFunction() =
         this is Method && this.kotlinFunction?.isSuspend ?: false
@@ -47,7 +47,7 @@ class ResolveSuspendContinuationHook : ResolveParameterHook, AroundTryHook {
         if (!parameterContext.typeUsage().isOfType(Continuation::class.java)) {
             return Optional.empty()
         }
-        if (parameterContext.index() != 0) {
+        if (parameterContext.parameter().name != "\$completion") {
             return Optional.empty()
         }
         if (parameterContext.parameter().kotlinParameter != null) {
@@ -57,18 +57,19 @@ class ResolveSuspendContinuationHook : ResolveParameterHook, AroundTryHook {
             return Optional.empty()
         }
 
-        val continuationSupplier =
-            ParameterSupplier { SuspendPropertyContinuation<Any>(parameterContext.optionalMethod().get()) }
+        val continuationSupplier = ParameterSupplier { SuspendedPropertyContinuation<Any>() }
         return Optional.of(continuationSupplier)
     }
 }
 
-private class SuspendPropertyContinuation<T>(private val method: Method) : Continuation<T> {
+private class SuspendedPropertyContinuation<T> : Continuation<T> {
     override fun resumeWith(result: Result<T>) {
-        val message = "Property Method [$method] with suspend modifier should never be called explicitly."
-        throw RuntimeException(message)
     }
 
     override val context get() = EmptyCoroutineContext
+
+    override fun toString(): String {
+        return "SuspendedPropertyContinuation"
+    }
 }
 

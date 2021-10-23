@@ -82,7 +82,6 @@ public class CheckedPropertyFactory {
 		InvokePropertyMethodHook invokeMethod
 	) {
 		Method targetMethod = propertyLifecycleContext.targetMethod();
-		Class<?> returnType = targetMethod.getReturnType();
 		Function<List<Object>, Object> function = params -> {
 			try {
 				return invokeMethod.invoke(targetMethod, propertyLifecycleContext.testInstance(), params.toArray());
@@ -91,13 +90,13 @@ public class CheckedPropertyFactory {
 			}
 		};
 
-		if (BOOLEAN_RETURN_TYPES.contains(returnType))
-			return params -> (boolean) function.apply(params);
-		else
-			return params -> {
-				function.apply(params);
-				return true;
-			};
+		return params -> {
+			Object result = function.apply(params);
+			if (result != null && BOOLEAN_RETURN_TYPES.contains(result.getClass())) {
+				return (boolean) result;
+			}
+			return true;
+		};
 	}
 
 	private List<MethodParameter> extractParameters(Method targetMethod, Class<?> containerClass) {
