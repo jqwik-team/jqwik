@@ -67,7 +67,8 @@ class CheckedPropertyTests {
 				descriptor,
 				createPropertyContext(descriptor),
 				AroundTryHook.BASE,
-				ResolveParameterHook.DO_NOT_RESOLVE
+				ResolveParameterHook.DO_NOT_RESOLVE,
+				InvokePropertyMethodHook.DEFAULT
 			);
 		}
 

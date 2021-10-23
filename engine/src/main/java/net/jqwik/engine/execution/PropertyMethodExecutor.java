@@ -86,12 +86,13 @@ public class PropertyMethodExecutor {
 		AroundPropertyHook aroundProperty = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		AroundTryHook aroundTry = lifecycleSupplier.aroundTryHook(methodDescriptor);
 		ResolveParameterHook resolveParameter = lifecycleSupplier.resolveParameterHook(methodDescriptor);
+		InvokePropertyMethodHook invokeMethodHook = lifecycleSupplier.invokePropertyMethodHook(methodDescriptor);
 
 		PropertyExecutionResult propertyExecutionResult;
 		try {
 			propertyExecutionResult = aroundProperty.aroundProperty(
 				propertyLifecycleContext,
-				() -> executeMethod(aroundTry, resolveParameter)
+				() -> executeMethod(aroundTry, resolveParameter, invokeMethodHook)
 			);
 		} catch (Throwable throwable) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
@@ -107,10 +108,11 @@ public class PropertyMethodExecutor {
 
 	private ExtendedPropertyExecutionResult executeMethod(
 		AroundTryHook aroundTry,
-		ResolveParameterHook resolveParameter
+		ResolveParameterHook resolveParameter,
+		InvokePropertyMethodHook invokeMethodHook
 	) {
 		try {
-			return executeProperty(aroundTry, resolveParameter);
+			return executeProperty(aroundTry, resolveParameter, invokeMethodHook);
 		} catch (TestAbortedException e) {
 			return PlainExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
@@ -119,12 +121,17 @@ public class PropertyMethodExecutor {
 		}
 	}
 
-	private PropertyCheckResult executeProperty(AroundTryHook aroundTry, ResolveParameterHook resolveParameter) {
+	private PropertyCheckResult executeProperty(
+		AroundTryHook aroundTry,
+		ResolveParameterHook resolveParameter,
+		InvokePropertyMethodHook invokeMethodHook
+	) {
 		CheckedProperty property = checkedPropertyFactory.fromDescriptor(
 			methodDescriptor,
 			propertyLifecycleContext,
 			aroundTry,
-			resolveParameter
+			resolveParameter,
+			invokeMethodHook
 		);
 		return property.check(methodDescriptor.getReporting());
 	}

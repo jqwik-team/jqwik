@@ -62,14 +62,33 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 		return HookSupport.combineSkipExecutionHooks(skipExecutionHooks);
 	}
 
+	@Override
+	public InvokePropertyMethodHook invokePropertyMethodHook(TestDescriptor testDescriptor) {
+		List<InvokePropertyMethodHook> invokeMethodHooks = findHooks(testDescriptor, InvokePropertyMethodHook.class, dontCompare());
+		if (invokeMethodHooks.isEmpty()) {
+			return InvokePropertyMethodHook.DEFAULT;
+		}
+		InvokePropertyMethodHook hookToApply = invokeMethodHooks.get(0);
+		if (invokeMethodHooks.size() > 1) {
+			String message = String.format(
+				"Test [%s] must have only one applicable InvokeMethodHook but it has: %n\t%s.%nOnly [%s] is applied.",
+				testDescriptor.getDisplayName(),
+				invokeMethodHooks,
+				hookToApply
+			);
+			LOG.warning(message);
+		}
+		return hookToApply;
+	}
+
 	private <T extends LifecycleHook> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType, Comparator<T> comparator) {
 		List<Class<T>> hookClasses = findHookClasses(descriptor, hookType);
 		return hookClasses
-				   .stream()
-				   .map(this::getHook)
-				   .filter(hook -> hookAppliesTo(hook, descriptor))
-				   .sorted(comparator)
-				   .collect(Collectors.toList());
+			.stream()
+			.map(this::getHook)
+			.filter(hook -> hookAppliesTo(hook, descriptor))
+			.sorted(comparator)
+			.collect(Collectors.toList());
 	}
 
 	private <T extends LifecycleHook> boolean hookAppliesTo(T hook, TestDescriptor descriptor) {
@@ -168,9 +187,8 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 					);
 				LOG.warning(warnAboutPropagationMode);
 			}
-			RegistrarHook.Registrar registrar = (hookClass, propagationMode) -> {
-				registerLifecycleHook(descriptor, hookClass, propagationMode);
-			};
+			RegistrarHook.Registrar registrar =
+				(hookClass, propagationMode) -> registerLifecycleHook(descriptor, hookClass, propagationMode);
 			((RegistrarHook) hookInstance).registerHooks(registrar);
 		}
 	}

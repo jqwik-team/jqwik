@@ -35,6 +35,9 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Added new module [`jqwik-kotlin`](/docs/snapshot/user-guide.html#kotlin-module) 
   for improved Kotlin support.
 
+- Introduced new lifecycle hook [`InvokePropertyMethodHook`](/docs/snapshot/user-guide.html#invokepropertymethodhook) 
+  in order to support some Kotlin specialties.
+
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`:
     - `net.jqwik.api.Arbitrary.ignoreException(..)`
     - `net.jqwik.api.Property.whenFixedSeed`

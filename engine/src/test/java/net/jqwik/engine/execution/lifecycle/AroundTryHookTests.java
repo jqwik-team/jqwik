@@ -20,7 +20,7 @@ class AroundTryHookTests {
 	void singleHookIsApplied() {
 	}
 
-	class AssertCount1 implements PerProperty.Lifecycle {
+	private class AssertCount1 implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
 			assertThat(count1).isEqualTo(10);
@@ -36,7 +36,7 @@ class AroundTryHookTests {
 	void sameHookTwiceIsIgnored() {
 	}
 
-	class AssertCount2 implements PerProperty.Lifecycle {
+	private class AssertCount2 implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
 			assertThat(count2).isEqualTo(10);
@@ -55,7 +55,7 @@ class AroundTryHookTests {
 		}
 	}
 
-	class AssertCount3 implements PerProperty.Lifecycle {
+	private class AssertCount3 implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
 			assertThat(count3).isEqualTo(10);
@@ -71,7 +71,7 @@ class AroundTryHookTests {
 		sum += anInt;
 	}
 
-	class AssertSum implements PerProperty.Lifecycle {
+	private class AssertSum implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
 			assertThat(sum).isEqualTo(10);
@@ -87,7 +87,7 @@ class AroundTryHookTests {
 		finishEarlyTries += 1;
 	}
 
-	class AssertFinishEarlyTries implements PerProperty.Lifecycle {
+	private class AssertFinishEarlyTries implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
 			assertThat(finishEarlyTries).isEqualTo(5);
@@ -231,7 +231,6 @@ class CheckTryLifecycleContext implements AroundTryHook {
 		assertThat(context.containerClass()).isEqualTo(AroundTryHookTests.class);
 		assertThat(context.targetMethod().getName()).isEqualTo("checkTryLifecycleContextAttributes");
 		assertThat(context.testInstance()).isInstanceOf(AroundTryHookTests.class);
-		;
 		return aTry.execute(parameters);
 	}
 }

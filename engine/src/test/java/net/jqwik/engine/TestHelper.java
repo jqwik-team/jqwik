@@ -132,6 +132,11 @@ public class TestHelper {
 			public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
 				return descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
 			}
+
+			@Override
+			public InvokePropertyMethodHook invokePropertyMethodHook(TestDescriptor testDescriptor) {
+				return InvokePropertyMethodHook.DEFAULT;
+			}
 		};
 	}
 

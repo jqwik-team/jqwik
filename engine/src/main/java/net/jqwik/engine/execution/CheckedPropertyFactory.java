@@ -4,8 +4,6 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import org.junit.platform.commons.support.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
@@ -22,14 +20,15 @@ public class CheckedPropertyFactory {
 		PropertyMethodDescriptor propertyMethodDescriptor,
 		PropertyLifecycleContext propertyLifecycleContext,
 		AroundTryHook aroundTry,
-		ResolveParameterHook parameterResolver
+		ResolveParameterHook parameterResolver,
+		InvokePropertyMethodHook invokeMethod
 	) {
 		String propertyName = propertyMethodDescriptor.extendedLabel();
 
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
-		TryLifecycleExecutor tryLifecycleExecutor = createTryExecutor(propertyMethodDescriptor, propertyLifecycleContext, aroundTry);
+		TryLifecycleExecutor tryLifecycleExecutor = createTryExecutor(propertyMethodDescriptor, propertyLifecycleContext, aroundTry, invokeMethod);
 		List<MethodParameter> propertyParameters = extractParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
@@ -56,7 +55,8 @@ public class CheckedPropertyFactory {
 	private TryLifecycleExecutor createTryExecutor(
 		PropertyMethodDescriptor propertyMethodDescriptor,
 		PropertyLifecycleContext propertyLifecycleContext,
-		AroundTryHook aroundTry
+		AroundTryHook aroundTry,
+		InvokePropertyMethodHook invokeMethod
 	) {
 		AroundTryHook aroundTryWithFinishing = (context, aTry, parameters) -> {
 			try {
@@ -66,18 +66,30 @@ public class CheckedPropertyFactory {
 			}
 		};
 
-		TryExecutor rawExecutor = createRawExecutor(propertyLifecycleContext);
+		TryExecutor rawExecutor = createRawExecutor(propertyLifecycleContext, invokeMethod);
 		return new AroundTryLifecycle(rawExecutor, aroundTryWithFinishing);
 	}
 
-	private TryExecutor createRawExecutor(PropertyLifecycleContext propertyLifecycleContext) {
-		return createRawFunction(propertyLifecycleContext);
+	private TryExecutor createRawExecutor(
+		PropertyLifecycleContext propertyLifecycleContext,
+		InvokePropertyMethodHook invokeMethod
+	) {
+		return createRawFunction(propertyLifecycleContext, invokeMethod);
 	}
 
-	private CheckedFunction createRawFunction(PropertyLifecycleContext propertyLifecycleContext) {
+	private CheckedFunction createRawFunction(
+		PropertyLifecycleContext propertyLifecycleContext,
+		InvokePropertyMethodHook invokeMethod
+	) {
 		Method targetMethod = propertyLifecycleContext.targetMethod();
 		Class<?> returnType = targetMethod.getReturnType();
-		Function<List<Object>, Object> function = params -> ReflectionSupport.invokeMethod(targetMethod, propertyLifecycleContext.testInstance(), params.toArray());
+		Function<List<Object>, Object> function = params -> {
+			try {
+				return invokeMethod.invoke(targetMethod, propertyLifecycleContext.testInstance(), params.toArray());
+			} catch (Throwable e) {
+				return JqwikExceptionSupport.throwAsUncheckedException(e);
+			}
+		};
 
 		if (BOOLEAN_RETURN_TYPES.contains(returnType))
 			return params -> (boolean) function.apply(params);

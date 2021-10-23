@@ -13,7 +13,7 @@ import static net.jqwik.api.lifecycle.TryExecutionResult.Status.*;
 
 public class CheckedPropertyFactoryTests {
 
-	private CheckedPropertyFactory factory = new CheckedPropertyFactory();
+	private final CheckedPropertyFactory factory = new CheckedPropertyFactory();
 
 	@Example
 	void simple() {
@@ -23,7 +23,8 @@ public class CheckedPropertyFactoryTests {
 			descriptor,
 			createPropertyContext(descriptor),
 			AroundTryHook.BASE,
-			ResolveParameterHook.DO_NOT_RESOLVE
+			ResolveParameterHook.DO_NOT_RESOLVE,
+			InvokePropertyMethodHook.DEFAULT
 		);
 
 		assertThat(property.propertyName).isEqualTo("prop");
@@ -60,7 +61,8 @@ public class CheckedPropertyFactoryTests {
 			descriptor,
 			createPropertyContext(descriptor),
 			AroundTryHook.BASE,
-			ResolveParameterHook.DO_NOT_RESOLVE
+			ResolveParameterHook.DO_NOT_RESOLVE,
+			InvokePropertyMethodHook.DEFAULT
 		);
 
 		assertThat(property.propertyParameters).size().isEqualTo(4);
@@ -82,7 +84,8 @@ public class CheckedPropertyFactoryTests {
 			descriptor,
 			createPropertyContext(descriptor),
 			AroundTryHook.BASE,
-			ResolveParameterHook.DO_NOT_RESOLVE
+			ResolveParameterHook.DO_NOT_RESOLVE,
+			InvokePropertyMethodHook.DEFAULT
 		);
 
 		assertThat(property.propertyParameters).size().isEqualTo(0);
