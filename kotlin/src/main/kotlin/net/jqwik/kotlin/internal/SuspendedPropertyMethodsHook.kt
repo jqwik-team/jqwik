@@ -23,6 +23,7 @@ class SuspendedPropertyMethodsHook : ResolveParameterHook, InvokePropertyMethodH
     override fun appliesTo(element: Optional<AnnotatedElement>) =
         element.map { e -> e.isSuspendFunction() }.orElse(false)
 
+    @Suppress("UNCHECKED_CAST")
     override fun invoke(method: Method, target: Any, vararg args: Any): Any {
         val kotlinFunction: KFunction<Any> =
             (method.kotlinFunction ?: return InvokePropertyMethodHook.DEFAULT.invoke(
@@ -30,11 +31,10 @@ class SuspendedPropertyMethodsHook : ResolveParameterHook, InvokePropertyMethodH
                 target,
                 args
             )) as KFunction<Any>
-        val r = runBlocking {
+        return runBlocking {
             val rest = args.copyOfRange(0, args.size - 1)
             kotlinFunction.callSuspend(target, *rest)
         }
-        return r
     }
 
     private fun AnnotatedElement.isSuspendFunction() =
