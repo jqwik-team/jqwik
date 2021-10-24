@@ -90,7 +90,7 @@ public class CheckedPropertyFactory {
 
 		return params -> {
 			Object result = function.apply(params);
-			return result == null || !result.equals(Boolean.FALSE);
+			return result == null || !Boolean.FALSE.equals(result);
 		};
 	}
 

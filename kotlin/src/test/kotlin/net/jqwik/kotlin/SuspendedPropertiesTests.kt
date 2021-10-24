@@ -1,10 +1,12 @@
 package net.jqwik.kotlin
 
 import kotlinx.coroutines.delay
-import net.jqwik.api.*
+import net.jqwik.api.Example
+import net.jqwik.api.ForAll
+import net.jqwik.api.Group
+import net.jqwik.api.Property
 import net.jqwik.api.constraints.AlphaChars
-import net.jqwik.kotlin.api.runBlockingAssertion
-import net.jqwik.kotlin.api.runBlockingPredicate
+import net.jqwik.kotlin.api.runBlockingProperty
 import net.jqwik.testing.ExpectFailure
 import org.assertj.core.api.Assertions.assertThat
 
@@ -12,40 +14,46 @@ import org.assertj.core.api.Assertions.assertThat
 class SuspendedPropertiesTests {
 
     @Group
-    inner class RunBlockingWrappers {
+    inner class UseRunBlockingProperty {
         @Example
         @ExpectFailure
-        fun useSuspendAssertion() = runBlockingAssertion {
+        fun `fail with suspend assertion`() = runBlockingProperty {
             assertThat(echo("sausage")).isEqualTo("soy")
         }
 
         @Example
         @ExpectFailure
-        fun useSuspendPredicate() = runBlockingPredicate {
+        fun `fail with suspend predicate`() = runBlockingProperty {
             echo("soy") == "sausage"
         }
 
         @Property(tries = 10)
-        fun `property with suspend assertion`(@ForAll string: String) = runBlockingAssertion {
+        fun `succeed with suspend assertion`(@ForAll string: String) = runBlockingProperty {
             assertThat(echo(string)).isEqualTo(string)
         }
 
         @Property(tries = 10)
-        fun `property with suspend predicate`(@ForAll string: String) = runBlockingPredicate {
+        fun `succeed with suspend predicate`(@ForAll string: String) = runBlockingProperty {
             echo(string) == string
+        }
+
+        @Property(tries = 10)
+        fun `succeed with suspend null return`(@ForAll string: String) = runBlockingProperty {
+            return@runBlockingProperty echo(null)
         }
 
     }
 
     @Group
-    inner class PropertyFunctionsWithSuspendModifier {
+    inner class PropertyWithSuspendModifier {
+
         @Example
         suspend fun succeedingAssertion() {
             assertThat(echo("sausage")).isEqualTo("sausage")
         }
 
         @Example
-        suspend fun succeedingPredicate() : Boolean {
+        suspend fun succeedingPredicate(): Boolean {
             return echo("sausage") == "sausage"
         }
 
@@ -68,14 +76,16 @@ class SuspendedPropertiesTests {
 
         @Property(tries = 10)
         @ExpectFailure
-        suspend fun failingAssertionWithParams(@ForAll @AlphaChars string: String) {
-            assertThat(echo(string)).isEmpty()
+        suspend fun failingAssertionWithParams(
+            @ForAll @AlphaChars string1: String,
+            @ForAll @AlphaChars string2: String
+        ) {
+            assertThat(echo(string1)).isEqualTo(echo(string2))
         }
-
     }
 
-    suspend fun echo(string: String): String {
-        delay(100)
+    suspend fun echo(string: String?): String? {
+        delay(10)
         return string
     }
 }

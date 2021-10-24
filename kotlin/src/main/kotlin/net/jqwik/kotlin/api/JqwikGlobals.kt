@@ -1,5 +1,6 @@
 package net.jqwik.kotlin.api
 
+import kotlinx.coroutines.*
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Functions
 import net.jqwik.api.arbitraries.FunctionArbitrary
@@ -7,7 +8,6 @@ import org.apiguardian.api.API
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.KClass
-import kotlinx.coroutines.*
 
 /**
  * Function to create an arbitrary for [Pair<A, B>][Pair].
@@ -77,19 +77,12 @@ fun <A, B, C, D, R> anyFunction4(returning: Arbitrary<R>): FunctionArbitrary<Fun
 /**
  * Wrap a property so that it can use asynchronous functions within.
  *
- * @param block Code block that returns [Unit].
+ * @param block Code block that should return a [Boolean] or [Unit].
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun runBlockingAssertion(context: CoroutineContext = EmptyCoroutineContext, block: suspend CoroutineScope.() -> Any) : Any {
-    return runBlocking(context, block)
-}
-
-/**
- * Wrap a property so that it can use asynchronous functions within.
- *
- * @param block Code block that returns a [Boolean] to decide if property holds.
- */
-@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun runBlockingPredicate(context: CoroutineContext = EmptyCoroutineContext, block: suspend CoroutineScope.() -> Boolean) : Boolean {
+fun <T> runBlockingProperty(
+    context: CoroutineContext = EmptyCoroutineContext,
+    block: suspend CoroutineScope.() -> T
+): T {
     return runBlocking(context, block)
 }
