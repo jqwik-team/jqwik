@@ -1,9 +1,6 @@
 - 1.6.0
 
     - Kotlin Support
-        - testing of asynchronous Kotlin coroutines
-          - Document in kotlin-module.md
-          - Comment https://github.com/junit-team/junit5/issues/1914 about how it works in jqwik
       
     - Include /docs/dokka in Website
       - Generate kdoc for Types

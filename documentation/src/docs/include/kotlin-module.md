@@ -8,10 +8,11 @@ __Table of contents:__
 
 - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
 - [Differences to Java Usage](#differences-to-java-usage)
+- [Automatic generation of nullable types](#generation-of-nullable-types)
+- [Support for Coroutines and Asynchronous Code](#support-for-coroutines)
 - [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
 - [Support for Kotlin Functions](#support-for-kotlin-functions)
 - [Support for Kotlin-only Types](#supported-kotlin-only-types)
-- [Automatic generation of nullable types](#generation-of-nullable-types)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
   - [Arbitrary Extensions](#arbitrary-extensions)
@@ -142,6 +143,40 @@ fun generateNullsInList(@ForAll list: List<@WithNull String>) {
     println(list)
 }
 ```
+
+#### Support for Coroutines
+
+In order to test regular suspend functions or coroutines you have several options:
+
+- Use the global function `runBlockingProperty`.
+- Just add the `suspend` modifier to the property method.
+
+```kotlin
+suspend fun echo(string: String): String {
+    delay(100)
+    return string
+}
+
+@Property(tries = 10)
+fun useRunBlocking(@ForAll s: String) = runBlockingProperty {
+    assertThat(echo(s)).isEqualTo(s)
+}
+
+@Property(tries = 10)
+fun useRunBlockingWithContext(@ForAll s: String) = runBlockingProperty(EmptyCoroutineContext) {
+    assertThat(echo(s)).isEqualTo(s)
+}
+
+@Property(tries = 10)
+suspend fun useSuspend(@ForAll s: String) {
+    assertThat(echo(s)).isEqualTo(s)
+}
+```
+
+If you need more control over dispatchers and/or how delays should be handled in tests,
+you might also consider to use 
+[`kotlinx.coroutines` testing support](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/).
+
 
 #### Support for Kotlin Collection Types
 
@@ -300,6 +335,10 @@ to ease the pain.
   variants of `Combinators.combine(a1, ...).flatAs((v1: T1, ...) -> Arbitrary<R>)`.
 
 - `anyFunction(kKlass: KClass<*>)` can replace `Functions.function(kKlass.java)`
+
+- `runBlockingProperty(context: CoroutineContext, block: suspend CoroutineScope.()` to allow 
+   [testing of coroutines and suspend functions](#support-for-coroutines).
+
 
 ##### Jqwik Tuples in Kotlin
 
