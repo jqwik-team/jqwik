@@ -210,8 +210,12 @@ class JqwikIntegrationTests {
 			event(container(ExampleTests.class), started()),
 			event(test("succeeding"), started()),
 			event(test("succeeding"), finishedSuccessfully()),
+			event(test("succeedingWithStringAsObject"), started()),
+			event(test("succeedingWithStringAsObject"), finishedSuccessfully()),
 			event(test("failingSimple"), started()),
 			event(test("failingSimple"), finishedWithFailure()),
+			event(test("failingWithFalseAsObject"), started()),
+			event(test("failingWithFalseAsObject"), finishedWithFailure()),
 			event(container(ExampleTests.class), finishedSuccessfully()),
 
 			// PropertyTests

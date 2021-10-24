@@ -8,11 +8,20 @@ public class ExampleTests {
 
 	@Example
 	void succeeding() {
+	}
 
+	@Example
+	String succeedingWithStringAsObject() {
+		return "hallo";
 	}
 
 	@Example
 	void failingSimple() {
 		fail("failing");
+	}
+
+	@Example
+	Object failingWithFalseAsObject() {
+		return false;
 	}
 }

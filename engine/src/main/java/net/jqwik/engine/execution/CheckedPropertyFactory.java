@@ -14,8 +14,6 @@ import net.jqwik.engine.support.*;
 
 public class CheckedPropertyFactory {
 
-	private static final List<Class<?>> BOOLEAN_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
-
 	public CheckedProperty fromDescriptor(
 		PropertyMethodDescriptor propertyMethodDescriptor,
 		PropertyLifecycleContext propertyLifecycleContext,
@@ -92,10 +90,7 @@ public class CheckedPropertyFactory {
 
 		return params -> {
 			Object result = function.apply(params);
-			if (result != null && BOOLEAN_RETURN_TYPES.contains(result.getClass())) {
-				return (boolean) result;
-			}
-			return true;
+			return result == null || !result.equals(Boolean.FALSE);
 		};
 	}
 

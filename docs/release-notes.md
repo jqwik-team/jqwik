@@ -63,6 +63,10 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Configuration through a `jqwik.properties` file is no longer supported.
   Please use [JUnit Platform configuration](/docs/snapshot/user-guide.html#jqwik-configuration) instead.
 
+- If a property methods returns `false` or `Boolean.FALSE` it will now be considered to have failed.
+  All other return values - including `null` - are regarded as success.
+  Before this version the method's return type had to be `boolean` or `Boolean` for the return value to matter.
+
 #### Bug Fixes
 
 - Fixed memory leak when calling `Arbitrary.sample()` in jqwik scope.
