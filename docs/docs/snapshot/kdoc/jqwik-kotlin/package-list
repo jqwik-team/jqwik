@@ -55,6 +55,7 @@ $dokka.location:net.jqwik.kotlin.api//isAssignableFrom/net.jqwik.api.providers.T
 $dokka.location:net.jqwik.kotlin.api//kotlinType/net.jqwik.api.providers.TypeUsage#/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/kotlin-type.html
 $dokka.location:net.jqwik.kotlin.api//orNull/net.jqwik.api.Arbitrary[TypeParam(bounds=[kotlin.Any?])]#kotlin.Double/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/or-null.html
 $dokka.location:net.jqwik.kotlin.api//pair/net.jqwik.api.Arbitrary[TypeParam(bounds=[kotlin.Any?])]#/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/pair.html
+$dokka.location:net.jqwik.kotlin.api//runBlockingProperty/#kotlin.coroutines.CoroutineContext#kotlin.coroutines.SuspendFunction1[kotlinx.coroutines.CoroutineScope,TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/run-blocking-property.html
 $dokka.location:net.jqwik.kotlin.api//sequence/net.jqwik.api.Arbitrary[TypeParam(bounds=[kotlin.Any?])]#/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/sequence.html
 $dokka.location:net.jqwik.kotlin.api//triple/net.jqwik.api.Arbitrary[TypeParam(bounds=[kotlin.Any?])]#/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/triple.html
 $dokka.location:net.jqwik.kotlin.api/IntRangeArbitrary///PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/-int-range-arbitrary/index.html

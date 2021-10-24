@@ -84,7 +84,7 @@ class SuspendedPropertiesTests {
         }
     }
 
-    suspend fun echo(string: String?): String? {
+    private suspend fun echo(string: String?): String? {
         delay(10)
         return string
     }
