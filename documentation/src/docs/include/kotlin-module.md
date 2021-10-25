@@ -4,6 +4,11 @@ It's supposed to simplify and streamline using _jqwik_ in Kotlin projects.
 This module is _not_ in jqwik's default dependencies. 
 It's usually added as a test-implementation dependency.
 
+Adding this module will add dependencies on:
+- `org.jetbrains.kotlin:kotlin-stdlib`
+- `org.jetbrains.kotlin:kotlin-reflect`
+- `org.jetbrains.kotlinx:kotlinx-coroutines-core`
+
 __Table of contents:__
 
 - [Build Configuration for Kotlin](#build-configuration-for-kotlin)
@@ -146,7 +151,7 @@ fun generateNullsInList(@ForAll list: List<@WithNull String>) {
 
 #### Support for Coroutines
 
-In order to test regular suspend functions or coroutines you have several options:
+In order to test regular suspend functions or coroutines this module offers two options:
 
 - Use the global function `runBlockingProperty`.
 - Just add the `suspend` modifier to the property method.
@@ -173,9 +178,14 @@ suspend fun useSuspend(@ForAll s: String) {
 }
 ```
 
-If you need more control over dispatchers and/or how delays should be handled in tests,
-you might also consider to use 
-[`kotlinx.coroutines` testing support](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/).
+Both variants do nothing more than starting the body of the property method asynchronously
+and waiting for all coroutines to finish.
+That means e.g. that delays will require the full amount of specified delay time. 
+
+If you need more control over the dispatchers to use or the handling of delays,
+you should consider using 
+[`kotlinx.coroutines` testing support](https://github.com/Kotlin/kotlinx.coroutines/tree/master/kotlinx-coroutines-test).
+This will require to add a dependency on `org.jetbrains.kotlinx:kotlinx-coroutines-test`.
 
 
 #### Support for Kotlin Collection Types

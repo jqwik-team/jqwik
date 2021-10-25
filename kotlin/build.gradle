@@ -108,13 +108,14 @@ dependencies {
 	api(project(":api"))
 	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 
-	implementation "org.jetbrains.kotlin:kotlin-stdlib"
-	implementation "org.jetbrains.kotlin:kotlin-reflect"
-	implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxVersion}"
+	implementation("org.jetbrains.kotlin:kotlin-stdlib")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxVersion}")
 
 	runtimeOnly(project(":engine"))
 
 	testImplementation(project(":testing"))
 
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
+	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${kotlinxVersion}")
 }
