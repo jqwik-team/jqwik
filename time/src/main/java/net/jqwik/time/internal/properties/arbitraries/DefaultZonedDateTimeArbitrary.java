@@ -24,36 +24,21 @@ public class DefaultZonedDateTimeArbitrary extends ArbitraryDecorator<ZonedDateT
 
 	@Override
 	protected Arbitrary<ZonedDateTime> arbitrary() {
+		zoneIds = zoneIds.edgeCases(config -> {
+			config.add(ZONE_ID_IDL, ZONE_ID_ZERO, ZONE_ID_IDLW);
+			config.filter(this::edgeCaseFilter);
+		});
 		return Combinators.combine(localDateTimes, zoneIds)
 						  .as(this::getStrict)
-						  .ignoreException(DateTimeException.class)
-						  .edgeCases(config -> {
-							  localDateTimes.edgeCases().forEach(shrinkable -> addEdgeCases(config, shrinkable.value()));
-							  config.filter(this::edgeCaseFilter);
-						  });
+						  .ignoreException(DateTimeException.class);
 	}
 
 	private ZonedDateTime getStrict(LocalDateTime dateTime, ZoneId zoneId) {
 		return ZonedDateTime.ofStrict(dateTime, zoneId.getRules().getOffset(dateTime), zoneId);
 	}
 
-	private boolean edgeCaseFilter(ZonedDateTime zonedDateTime) {
-		ZoneId zoneId = zonedDateTime.getZone();
+	private boolean edgeCaseFilter(ZoneId zoneId) {
 		return zoneId.equals(ZONE_ID_IDL) || zoneId.equals(ZONE_ID_ZERO) || zoneId.equals(ZONE_ID_IDLW);
-	}
-
-	private void addEdgeCases(EdgeCases.Config<ZonedDateTime> config, LocalDateTime localDateTime) {
-		addEdgeCaseToConfig(config, localDateTime, ZONE_ID_IDL);
-		addEdgeCaseToConfig(config, localDateTime, ZONE_ID_ZERO);
-		addEdgeCaseToConfig(config, localDateTime, ZONE_ID_IDLW);
-	}
-
-	private void addEdgeCaseToConfig(EdgeCases.Config<ZonedDateTime> config, LocalDateTime localDateTime, ZoneId zoneId) {
-		try {
-			config.add(getStrict(localDateTime, zoneId));
-		} catch (DateTimeException e) {
-			//do not add, do nothing
-		}
 	}
 
 	@Override
