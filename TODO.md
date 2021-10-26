@@ -2,7 +2,10 @@
 
     - Kotlin Support
       
-    - Include /docs/dokka in Website
+    - Release
+      - Generate Documentation
+      - Set link in docs/current/kdoc/index.html
+      - Write blog entry about Kotlin support
 
 
 - 1.6.x
