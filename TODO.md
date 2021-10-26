@@ -3,10 +3,12 @@
     - Kotlin Support
       
     - Include /docs/dokka in Website
-      - Generate kdoc for Types
 
 
 - 1.6.x
+
+    - Introduce Java module descriptors.
+      See https://github.com/jlink/jqwik/issues/243.
 
     - Running an abstract test container (abstract, enum, sealed) will run all concrete subclasses.
 
