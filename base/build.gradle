@@ -3,8 +3,9 @@ description = "Jqwik Aggregator module"
 jar {
 	archiveBaseName.set('jqwik')
 	archiveVersion.set("${jqwikVersion}")
-	manifest {
-		attributes('Automatic-Module-Name': moduleName)
+	modularity {
+		multiRelease = false // store module descriptor in JAR's root
+		moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
 	}
 }
 
