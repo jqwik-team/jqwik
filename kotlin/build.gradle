@@ -8,8 +8,9 @@ description = "Jqwik Kotlin module"
 jar {
 	archiveBaseName.set('jqwik-kotlin')
 	archiveVersion.set("${jqwikVersion}")
-	manifest {
-		attributes('Automatic-Module-Name': "${moduleName}.kotlin")
+	modularity {
+		multiRelease = false // store module descriptor in JAR's root
+		moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
 	}
 }
 

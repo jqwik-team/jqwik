@@ -7,6 +7,7 @@ module net.jqwik.engine {
 	uses net.jqwik.api.configurators.ArbitraryConfigurator;
 	uses net.jqwik.api.lifecycle.LifecycleHook;
 	uses net.jqwik.api.providers.ArbitraryProvider;
+	uses net.jqwik.api.providers.TypeUsage.Enhancer;
 
 	provides net.jqwik.api.facades.ReflectionSupportFacade with net.jqwik.engine.facades.ReflectionSupportFacadeImpl;
 	provides net.jqwik.api.facades.ShrinkingSupportFacade with net.jqwik.engine.facades.ShrinkingSupportFacadeImpl;
