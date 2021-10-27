@@ -1,5 +1,10 @@
 description = "Jqwik modular API integration test"
 
+repositories {
+	mavenCentral()
+	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_9
 	targetCompatibility = JavaVersion.VERSION_1_9
@@ -12,8 +17,12 @@ test {
 }
 
 dependencies {
-	testImplementation(project(":api"))
-	testRuntimeOnly(project(":engine"))
+	// Does not work in IntelliJ since module-info hidden from IntelliJ because Java 8.
+	//	testImplementation(project(":api"))
+	//	testRuntimeOnly(project(":engine"))
+	// Workaround. This requires to deploy snapshot release first.
+	testImplementation("net.jqwik:jqwik:1.6.0-SNAPSHOT")
+	testRuntimeOnly("net.jqwik:jqwik-engine:1.6.0-SNAPSHOT")
 }
 
 tasks.configureEach {
