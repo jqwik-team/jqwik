@@ -3,8 +3,9 @@ description = "Jqwik Testing support module"
 jar {
 	archiveBaseName.set('jqwik-testing')
 	archiveVersion.set("${jqwikVersion}")
-	manifest {
-		attributes('Automatic-Module-Name': "${moduleName}.testing")
+	modularity {
+		multiRelease = false // store module descriptor in JAR's root
+		moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
 	}
 }
 
