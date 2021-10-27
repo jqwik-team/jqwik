@@ -3,8 +3,9 @@ description = "Jqwik Engine module"
 jar {
 	archiveBaseName.set('jqwik-engine')
 	archiveVersion.set("${jqwikVersion}")
-	manifest {
-		attributes('Automatic-Module-Name': "${moduleName}.engine")
+	modularity {
+		multiRelease = false // store module descriptor in JAR's root
+		moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
 	}
 }
 
