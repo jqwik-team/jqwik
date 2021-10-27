@@ -54,6 +54,11 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - Added `Functions.FunctionWrapper.returning()` as replacement for deprecated `returns()`.
 
+- Added explicit module information for all modules.
+  See https://github.com/jlink/jqwik/issues/243. 
+  Thank you https://github.com/sormuras for the support!
+
+
 #### Breaking Changes
 
 - Removed `AbstractDomainContextBase` which had been deprecated in 1.5.2

@@ -2,9 +2,6 @@
 
     - Kotlin Support
 
-    - Introduce Java module descriptors.
-      See https://github.com/jlink/jqwik/issues/243.
-
     - Release
       - Generate Documentation
       - Set link in docs/current/kdoc/index.html
