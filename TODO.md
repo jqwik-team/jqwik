@@ -1,7 +1,10 @@
 - 1.6.0
 
     - Kotlin Support
-      
+
+    - Introduce Java module descriptors.
+      See https://github.com/jlink/jqwik/issues/243.
+
     - Release
       - Generate Documentation
       - Set link in docs/current/kdoc/index.html
@@ -9,9 +12,6 @@
 
 
 - 1.6.x
-
-    - Introduce Java module descriptors.
-      See https://github.com/jlink/jqwik/issues/243.
 
     - Running an abstract test container (abstract, enum, sealed) will run all concrete subclasses.
 
