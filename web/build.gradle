@@ -3,8 +3,9 @@ description = "Jqwik Web module"
 jar {
 	archiveBaseName.set('jqwik-web')
 	archiveVersion.set("${jqwikVersion}")
-	manifest {
-		attributes('Automatic-Module-Name': "${moduleName}.web")
+	modularity {
+		multiRelease = false // store module descriptor in JAR's root
+		moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
 	}
 }
 
