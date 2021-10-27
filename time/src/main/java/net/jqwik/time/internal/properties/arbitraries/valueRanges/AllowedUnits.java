@@ -2,6 +2,7 @@ package net.jqwik.time.internal.properties.arbitraries.valueRanges;
 
 import java.util.*;
 
+// TODO: Make it immutable
 public abstract class AllowedUnits<T> {
 
 	protected Set<T> allowed;
@@ -12,7 +13,8 @@ public abstract class AllowedUnits<T> {
 
 	protected abstract void setDefaultAllowed();
 
-	public void set(T... values) {
+	@SafeVarargs
+	public final void set(T... values) {
 		allowed = new HashSet<>(Arrays.asList(values));
 	}
 
