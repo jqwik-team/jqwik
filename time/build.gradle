@@ -3,8 +3,9 @@ description = "Jqwik Time module"
 jar {
 	archiveBaseName.set('jqwik-time')
 	archiveVersion.set("${jqwikVersion}")
-	manifest {
-		attributes('Automatic-Module-Name': "${moduleName}.time")
+	modularity {
+		multiRelease = false // store module descriptor in JAR's root
+		moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
 	}
 }
 
