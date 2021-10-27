@@ -1,0 +1,21 @@
+description = "Jqwik modular API integration test"
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_9
+	targetCompatibility = JavaVersion.VERSION_1_9
+
+	modularity.inferModulePath = true
+}
+
+test {
+	useJUnitPlatform()
+}
+
+dependencies {
+	testImplementation(project(":api"))
+	testRuntimeOnly(project(":engine"))
+}
+
+tasks.configureEach {
+	onlyIf { JavaVersion.current().java9Compatible }
+}
