@@ -1,5 +1,6 @@
 module net.jqwik.engine {
 
+	requires java.logging;
 	requires net.jqwik.api;
 	requires org.junit.platform.engine;
 

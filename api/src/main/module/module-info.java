@@ -13,6 +13,7 @@ module net.jqwik.api {
 	exports net.jqwik.api.stateful;
 	exports net.jqwik.api.statistics;
 
+	requires java.logging;
 	requires org.junit.platform.commons;
 	requires org.opentest4j;
 
