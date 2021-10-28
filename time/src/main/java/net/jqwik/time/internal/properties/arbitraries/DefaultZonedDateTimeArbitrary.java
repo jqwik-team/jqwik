@@ -2,6 +2,8 @@ package net.jqwik.time.internal.properties.arbitraries;
 
 import java.time.*;
 import java.time.temporal.*;
+import java.util.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
@@ -16,18 +18,10 @@ import static org.apiguardian.api.API.Status.*;
 public class DefaultZonedDateTimeArbitrary extends ArbitraryDecorator<ZonedDateTime> implements ZonedDateTimeArbitrary {
 
 	private LocalDateTimeArbitrary localDateTimes = DateTimes.dateTimes();
-	private Arbitrary<ZoneId> zoneIds = Times.zoneIds();
-
-	public final static ZoneId ZONE_ID_IDL = ZoneId.of("Pacific/Kiritimati");
-	public final static ZoneId ZONE_ID_ZERO = ZoneId.of("Europe/London");
-	public final static ZoneId ZONE_ID_IDLW = ZoneId.of("Etc/GMT+12");
+	private Arbitrary<ZoneId> zoneIds = sortedZoneIds();
 
 	@Override
 	protected Arbitrary<ZonedDateTime> arbitrary() {
-		zoneIds = zoneIds.edgeCases(config -> {
-			config.add(ZONE_ID_IDL, ZONE_ID_ZERO, ZONE_ID_IDLW);
-			config.filter(this::edgeCaseFilter);
-		});
 		return Combinators.combine(localDateTimes, zoneIds)
 						  .as(this::getStrict)
 						  .ignoreException(DateTimeException.class);
@@ -37,8 +31,14 @@ public class DefaultZonedDateTimeArbitrary extends ArbitraryDecorator<ZonedDateT
 		return ZonedDateTime.ofStrict(dateTime, zoneId.getRules().getOffset(dateTime), zoneId);
 	}
 
-	private boolean edgeCaseFilter(ZoneId zoneId) {
-		return zoneId.equals(ZONE_ID_IDL) || zoneId.equals(ZONE_ID_ZERO) || zoneId.equals(ZONE_ID_IDLW);
+	private Arbitrary<ZoneId> sortedZoneIds() {
+		LocalDateTime refTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0);
+		Comparator<ZoneId> zoneIdComparator = Comparator.comparing(zoneId -> ZonedDateTime.of(refTime, zoneId));
+		List<ZoneId> sortedZoneIds = ZoneId.getAvailableZoneIds().stream()
+										   .map(ZoneId::of)
+										   .sorted(zoneIdComparator)
+										   .collect(Collectors.toList());
+		return Arbitraries.of(sortedZoneIds);
 	}
 
 	@Override
