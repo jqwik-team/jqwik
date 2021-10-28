@@ -1,4 +1,8 @@
-description = "Jqwik modular API integration test"
+plugins {
+	id('java-library')
+}
+
+description = "Use jqwik on the module path"
 
 repositories {
 	mavenCentral()
@@ -17,14 +21,7 @@ test {
 }
 
 dependencies {
-	// Does not work in IntelliJ since module-info hidden from IntelliJ because Java 8.
-	//	testImplementation(project(":api"))
-	//	testRuntimeOnly(project(":engine"))
 	// Workaround. This requires to deploy snapshot release first.
-	testImplementation("net.jqwik:jqwik:1.6.0-SNAPSHOT")
+	testImplementation("net.jqwik:jqwik-api:1.6.0-SNAPSHOT")
 	testRuntimeOnly("net.jqwik:jqwik-engine:1.6.0-SNAPSHOT")
-}
-
-tasks.configureEach {
-	onlyIf { JavaVersion.current().java9Compatible }
 }
