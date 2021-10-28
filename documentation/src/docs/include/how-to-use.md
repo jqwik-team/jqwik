@@ -1,8 +1,8 @@
 __jqwik__ is an alternative test engine for the
-[JUnit 5 platform](https://junit.org/junit5/docs/current/api/org/junit/platform/engine/TestEngine.html).
+[JUnit 5 platform](https://junit.org/junit5/docs/current/user-guide/#launcher-api-engines-custom).
 That means that you can use it either stand-alone or combine it with any other JUnit 5 engine, e.g.
-[Jupiter (the standard engine)](https://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-jupiter) or
-[Vintage (aka JUnit 4)](https://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-vintage).
+[Jupiter (the standard engine)](https://junit.org/junit5/docs/current/api/org.junit.jupiter.engine/org/junit/jupiter/engine/JupiterTestEngine.html) or
+[Vintage (aka JUnit 4)](https://junit.org/junit5/docs/current/api/org.junit.vintage.engine/org/junit/vintage/engine/VintageTestEngine.html).
 All you have to do is add all needed engines to your `testImplementation` dependencies as shown in the
 [gradle file](#gradle) below.
 
