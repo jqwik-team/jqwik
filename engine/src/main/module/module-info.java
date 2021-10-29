@@ -1,6 +1,6 @@
 module net.jqwik.engine {
 
-	opens net.jqwik.engine.properties.configurators to org.junit.platform.commons
+	opens net.jqwik.engine.properties.configurators to org.junit.platform.commons;
 
 	requires java.logging;
 	requires net.jqwik.api;
