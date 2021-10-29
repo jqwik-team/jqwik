@@ -23,13 +23,12 @@ public class ShrinkingTests {
 	}
 
 	@Property(tries = 40)
-	@Disabled("not working at the moment")
 	void shrinksToSmallestFailingValue(@ForAll Random random) {
 		ZonedDateTimeArbitrary dateTimes = DateTimes.zonedDateTimes();
 		TestingFalsifier<ZonedDateTime> falsifier =
 			dateTime -> dateTime.isBefore(ZonedDateTime.of(LocalDateTime.of(2013, MAY, 25, 13, 12, 55), ZoneId.of("Indian/Reunion")));
 		ZonedDateTime value = falsifyThenShrink(dateTimes, random, falsifier);
-		assertThat(value).isEqualTo(ZonedDateTime.of(LocalDateTime.of(2013, MAY, 25, 13, 12, 55), ZoneId.of("Africa/Addis_Ababa")));
+		assertThat(value).isIn(ZonedDateTime.of(LocalDateTime.of(2013, MAY, 25, 13, 12, 55), ZoneId.of("Indian/Reunion")));
 	}
 
 }
