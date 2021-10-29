@@ -1,6 +1,7 @@
 package test.modular.api;
 
-import net.jqwik.api.Example;
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 
 public class ModularTests {
 	@Example
@@ -12,4 +13,11 @@ public class ModularTests {
 	public boolean testsAreRunningOnTheModulePath() {
 		return ModularTests.class.getModule().isNamed();
 	}
+
+	@Property(tries = 10)
+	public boolean configuratorsCanBeAccessed(@ForAll @IntRange(max = 1000) int anInt) {
+		return anInt >= 0 && anInt <= 1000;
+	}
+
+
 }

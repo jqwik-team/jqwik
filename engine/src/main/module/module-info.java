@@ -1,5 +1,7 @@
 module net.jqwik.engine {
 
+	opens net.jqwik.engine.properties.configurators to org.junit.platform.commons
+
 	requires java.logging;
 	requires net.jqwik.api;
 	requires org.junit.platform.engine;
@@ -79,4 +81,5 @@ module net.jqwik.engine {
 
 	provides org.junit.platform.engine.TestEngine with
 		net.jqwik.engine.JqwikTestEngine;
+
 }
