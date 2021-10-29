@@ -1,6 +1,10 @@
 - 1.6.0
 
     - Kotlin Support
+      - Test functions in singleton object should always use singleton as test instance
+        object MyObject {
+          @Property fun myProp() {}
+        }
 
     - Release
       - Generate Documentation
