@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.time.api.*;
 
-@PropertyDefaults(edgeCases = EdgeCasesMode.NONE)
+@PropertyDefaults(tries = 2000, edgeCases = EdgeCasesMode.NONE)
 @StatisticsReport(onFailureOnly = true)
 public class EqualDistributionTests {
 
