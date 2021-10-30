@@ -2,6 +2,7 @@ package test.modular.api;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.web.api.*;
 
 public class ModularTests {
 	@Example
@@ -19,5 +20,8 @@ public class ModularTests {
 		return anInt >= 0 && anInt <= 1000;
 	}
 
-
+	@Property(tries = 10)
+	public boolean configuratorsFromExternalModulesCanBeAccessed(@ForAll @Email String email) {
+		return email.contains("@");
+	}
 }
