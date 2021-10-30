@@ -83,6 +83,7 @@ _jqwik_ currently supports eight types of lifecycle hooks:
     - `AroundPropertyHook`
     - `AroundTryHook`
     - `InvokePropertyMethodHook`
+    - `ProvidePropertyInstanceHook`
 
 - [Other hooks](#other-hooks)
     - `ResolveParameterHook`
@@ -276,6 +277,11 @@ org.opentest4j.AssertionFailedError: sleepingProperty was too slow: 100 ms
 This is an experimental hook, which allows to change the way how a method -
 represented by a `java.lang.reflect.Method` object - is being invoked 
 through reflection mechanisms.
+
+##### ProvidePropertyInstanceHook
+
+This is an experimental hook, which allows to change the way how the instance
+of a container class is created or retrieved.
 
 #### Other Hooks
 

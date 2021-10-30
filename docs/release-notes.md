@@ -38,6 +38,9 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Introduced new lifecycle hook [`InvokePropertyMethodHook`](/docs/snapshot/user-guide.html#invokepropertymethodhook) 
   in order to support some Kotlin specialties.
 
+- Introduced new lifecycle hook [`ProvidePropertyInstanceHook`](/docs/snapshot/user-guide.html#providepropertyinstancehook) 
+  in order to allow Kotlin singleton objects as test containers.
+
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`:
     - `net.jqwik.api.Arbitrary.ignoreException(..)`
     - `net.jqwik.api.Property.whenFixedSeed`

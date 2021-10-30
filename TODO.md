@@ -16,6 +16,10 @@
 
     - Running an abstract test container (abstract, enum, sealed) will run all concrete subclasses.
 
+    - Make ProvidePropertyInstanceHook a useful hook for other purposes.
+      Implementors should be able to wrap default hook.
+      Implementors should be able to resolve potential parameters.
+
     - JqwikSession:
         - setRandomSessionSeed(), getRandomSessionSeed()
 
