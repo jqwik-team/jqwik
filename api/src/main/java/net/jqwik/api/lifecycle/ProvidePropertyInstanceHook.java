@@ -1,17 +1,18 @@
 package net.jqwik.api.lifecycle;
 
-import java.lang.reflect.*;
-
 import org.apiguardian.api.*;
-import org.junit.platform.commons.support.*;
 
 import static org.apiguardian.api.API.Status.*;
 
 /**
  * Implement this hook to override behaviour that provides the test instance for each property try.
- * Per default {@linkplain ReflectionSupport#invokeMethod(Method, Object, Object...)}
- * is called.
+ * Per default the only accessible constructor of the container class is invoked,
+ * with all parameters being resolved through applicable {@linkplain ResolveParameterHook} hooks.
  *
+ * <p>
+ * This hook can only be used in simple cases, since parameter resolution is currently
+ * unavailable to implementors.
+ * </p>
  * <p>
  * Caveat: Only one hook per property method is possible.
  * </p>

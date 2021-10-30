@@ -84,6 +84,7 @@ class PropertyTaskCreator {
 					//TODO: Hand context in from outside to always have the same instance.
 					//  This will require a major overhaul of task creation :-(
 					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(containerDescriptor);
+					ProvidePropertyInstanceHook providePropertyInstanceHook = lifecycleSupplier.providePropertyInstanceHook(containerDescriptor);
 					ContainerLifecycleContext containerLifecycleContext = new DefaultContainerLifecycleContext(
 						(ContainerClassDescriptor) containerDescriptor,
 						reporter,
@@ -91,7 +92,11 @@ class PropertyTaskCreator {
 					);
 					return CurrentTestDescriptor.runWithDescriptor(
 						containerDescriptor,
-						() -> createTestInstanceWithResolvedParameters(containerLifecycleContext, (ContainerClassDescriptor) containerDescriptor)
+						() -> createTestInstanceWithResolvedParameters(
+							containerLifecycleContext,
+							(ContainerClassDescriptor) containerDescriptor,
+							providePropertyInstanceHook
+						)
 					);
 				}).orElseThrow(() -> new JqwikException("Method descriptors must have a parent"));
 		} catch (JqwikException jqwikException) {
@@ -111,12 +116,13 @@ class PropertyTaskCreator {
 
 	private Object createTestInstanceWithResolvedParameters(
 		ContainerLifecycleContext containerLifecycleContext,
-		ContainerClassDescriptor containerDescriptor
+		ContainerClassDescriptor containerDescriptor,
+		ProvidePropertyInstanceHook providePropertyInstanceHook
 	) {
 		TestInstanceCreator testInstanceCreator = new TestInstanceCreator(
 			containerLifecycleContext,
 			containerDescriptor,
-			ProvidePropertyInstanceHook.DEFAULT
+			providePropertyInstanceHook
 		);
 		return testInstanceCreator.create();
 	}

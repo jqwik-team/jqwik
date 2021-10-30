@@ -19,7 +19,7 @@ class TestInstanceCreator {
 	TestInstanceCreator(
 		ContainerLifecycleContext containerLifecycleContext,
 		ContainerClassDescriptor containerDescriptor,
-		ProvidePropertyInstanceHook providePropertyInstance
+		ProvidePropertyInstanceHook providePropertyInstanceHook
 	) {
 		this.containerLifecycleContext = containerLifecycleContext;
 		this.containerClass = containerLifecycleContext.optionalContainerClass().orElseThrow(
@@ -29,7 +29,7 @@ class TestInstanceCreator {
 			}
 		);
 		this.containerDescriptor = containerDescriptor;
-		this.providePropertyInstance = providePropertyInstance;
+		this.providePropertyInstance = providePropertyInstanceHook;
 	}
 
 	Object create() {

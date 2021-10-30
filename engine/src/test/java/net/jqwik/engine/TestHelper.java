@@ -137,6 +137,11 @@ public class TestHelper {
 			public InvokePropertyMethodHook invokePropertyMethodHook(TestDescriptor testDescriptor) {
 				return InvokePropertyMethodHook.DEFAULT;
 			}
+
+			@Override
+			public ProvidePropertyInstanceHook providePropertyInstanceHook(TestDescriptor testDescriptor) {
+				return ProvidePropertyInstanceHook.DEFAULT;
+			}
 		};
 	}
 

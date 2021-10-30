@@ -20,4 +20,6 @@ public interface LifecycleHooksSupplier {
 	SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor);
 
 	InvokePropertyMethodHook invokePropertyMethodHook(TestDescriptor testDescriptor);
+
+	ProvidePropertyInstanceHook providePropertyInstanceHook(TestDescriptor testDescriptor);
 }

@@ -64,15 +64,25 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
 	@Override
 	public InvokePropertyMethodHook invokePropertyMethodHook(TestDescriptor testDescriptor) {
-		List<InvokePropertyMethodHook> invokeMethodHooks = findHooks(testDescriptor, InvokePropertyMethodHook.class, dontCompare());
+		return getSingletonHook(testDescriptor, InvokePropertyMethodHook.class, InvokePropertyMethodHook.DEFAULT);
+	}
+
+	@Override
+	public ProvidePropertyInstanceHook providePropertyInstanceHook(TestDescriptor testDescriptor) {
+		return getSingletonHook(testDescriptor, ProvidePropertyInstanceHook.class, ProvidePropertyInstanceHook.DEFAULT);
+	}
+
+	private <T extends LifecycleHook> T getSingletonHook(TestDescriptor testDescriptor, Class<T> hookType, T defaultHook) {
+		List<T> invokeMethodHooks = findHooks(testDescriptor, hookType, dontCompare());
 		if (invokeMethodHooks.isEmpty()) {
-			return InvokePropertyMethodHook.DEFAULT;
+			return defaultHook;
 		}
-		InvokePropertyMethodHook hookToApply = invokeMethodHooks.get(0);
+		T hookToApply = invokeMethodHooks.get(0);
 		if (invokeMethodHooks.size() > 1) {
 			String message = String.format(
-				"Test [%s] must have only one applicable InvokeMethodHook but it has: %n\t%s.%nOnly [%s] is applied.",
+				"Test [%s] must have only one applicable [%s] but it has: %n\t%s.%nOnly [%s] is applied.",
 				testDescriptor.getDisplayName(),
+				hookType.getSimpleName(),
 				invokeMethodHooks,
 				hookToApply
 			);
