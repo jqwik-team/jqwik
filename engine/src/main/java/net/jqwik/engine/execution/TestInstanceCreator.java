@@ -11,13 +11,15 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
 class TestInstanceCreator {
-	private final LifecycleContext containerLifecycleContext;
+	private final ContainerLifecycleContext containerLifecycleContext;
 	private final Class<?> containerClass;
-	private final TestDescriptor containerDescriptor;
+	private final ContainerClassDescriptor containerDescriptor;
+	private final ProvidePropertyInstanceHook providePropertyInstance;
 
 	TestInstanceCreator(
-		LifecycleContext containerLifecycleContext,
-		TestDescriptor containerDescriptor
+		ContainerLifecycleContext containerLifecycleContext,
+		ContainerClassDescriptor containerDescriptor,
+		ProvidePropertyInstanceHook providePropertyInstance
 	) {
 		this.containerLifecycleContext = containerLifecycleContext;
 		this.containerClass = containerLifecycleContext.optionalContainerClass().orElseThrow(
@@ -27,10 +29,24 @@ class TestInstanceCreator {
 			}
 		);
 		this.containerDescriptor = containerDescriptor;
+		this.providePropertyInstance = providePropertyInstance;
 	}
 
 	Object create() {
-		return create(containerClass, containerDescriptor);
+		if (providePropertyInstance.equals(ProvidePropertyInstanceHook.DEFAULT)) {
+			return create(containerClass, containerDescriptor);
+		}
+		try {
+			return providePropertyInstance.provide(containerClass);
+		} catch (Throwable throwable) {
+			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+			String message = String.format(
+				"ProvidePropertyInstanceHook [%s] cannot provide instance for class [%s]",
+				providePropertyInstance,
+				containerClass
+			);
+			throw new JqwikException(message, throwable);
+		}
 	}
 
 	private Object create(

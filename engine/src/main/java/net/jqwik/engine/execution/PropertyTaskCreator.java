@@ -2,8 +2,6 @@ package net.jqwik.engine.execution;
 
 import java.lang.reflect.*;
 
-import org.junit.platform.engine.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.SkipExecutionHook.*;
@@ -93,7 +91,7 @@ class PropertyTaskCreator {
 					);
 					return CurrentTestDescriptor.runWithDescriptor(
 						containerDescriptor,
-						() -> createTestInstanceWithResolvedParameters(containerLifecycleContext, containerDescriptor)
+						() -> createTestInstanceWithResolvedParameters(containerLifecycleContext, (ContainerClassDescriptor) containerDescriptor)
 					);
 				}).orElseThrow(() -> new JqwikException("Method descriptors must have a parent"));
 		} catch (JqwikException jqwikException) {
@@ -113,9 +111,13 @@ class PropertyTaskCreator {
 
 	private Object createTestInstanceWithResolvedParameters(
 		ContainerLifecycleContext containerLifecycleContext,
-		TestDescriptor containerDescriptor
+		ContainerClassDescriptor containerDescriptor
 	) {
-		TestInstanceCreator testInstanceCreator = new TestInstanceCreator(containerLifecycleContext, containerDescriptor);
+		TestInstanceCreator testInstanceCreator = new TestInstanceCreator(
+			containerLifecycleContext,
+			containerDescriptor,
+			ProvidePropertyInstanceHook.DEFAULT
+		);
 		return testInstanceCreator.create();
 	}
 
