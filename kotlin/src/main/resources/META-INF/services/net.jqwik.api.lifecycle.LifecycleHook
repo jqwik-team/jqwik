@@ -1,1 +1,2 @@
 net.jqwik.kotlin.internal.SuspendedPropertyMethodsHook
+net.jqwik.kotlin.internal.ObjectAsContainerClassHook

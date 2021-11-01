@@ -6,7 +6,8 @@ module net.jqwik.kotlin {
 	requires org.opentest4j;
 
 	provides net.jqwik.api.lifcycle.LifecycleHook with
-		net.jqwik.kotlin.internal.SuspendedPropertyMethodsHook;
+		net.jqwik.kotlin.internal.SuspendedPropertyMethodsHook,
+		net.jqwik.kotlin.internal.ObjectAsContainerClassHook;
 
 	provides net.jqwik.api.configurators.ArbitraryConfigurator with
 		net.jqwik.kotlin.internal.KotlinIntRangeConfigurator,
