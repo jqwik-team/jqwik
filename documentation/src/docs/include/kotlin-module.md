@@ -18,6 +18,7 @@ __Table of contents:__
 - [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
 - [Support for Kotlin Functions](#support-for-kotlin-functions)
 - [Support for Kotlin-only Types](#supported-kotlin-only-types)
+- [Kotlin Singletons as Test Containers](#kotlin-singletons)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
   - [Arbitrary Extensions](#arbitrary-extensions)
@@ -274,6 +275,38 @@ jqwik will never create infinite sequences by itself.
 - Using `Triple` as type in a for-all-parameter will auto-generate,
   thereby using the type parameters with their annotations to create the
   component arbitraries.
+
+
+#### Kotlin Singletons
+
+Since Kotlin `object <name> {...}` definitions are compiled to Java classes there is no
+reason that they cannot be used as test containers.
+As a matter of fact, this module adds a special feature on top:
+Using `object` instead of class will always use the same instance for running all properties and examples:
+
+```kotlin
+// One of the examples will fail
+object KotlinSingletonExample {
+
+    var lastExample: String = ""
+
+    @Example
+    fun example1() {
+        Assertions.assertThat(lastExample).isEmpty()
+        lastExample = "example1"
+    }
+
+    @Example
+    fun example2() {
+        Assertions.assertThat(lastExample).isEmpty()
+        lastExample = "example2"
+    }
+}
+```
+
+Mind that IntelliJ in its current version does not mark functions in object definitions
+as runnable test functions.
+You can, however, run an object-based test container from the project view and the test runner itself.
 
 #### Convenience Functions for Kotlin
 
