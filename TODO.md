@@ -6,6 +6,7 @@
       - Generate Documentation
       - Set link in docs/current/kdoc/index.html
       - Write blog entry about Kotlin support
+      - Use non-snapshot versions in jqwik-samples
 
 
 - 1.6.x
