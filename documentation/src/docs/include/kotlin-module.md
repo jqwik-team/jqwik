@@ -23,6 +23,7 @@ __Table of contents:__
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
   - [Arbitrary Extensions](#arbitrary-extensions)
   - [SizableArbitrary Extensions](#sizablearbitrary-extensions)
+  - [StringArbitrary Extensions](#stringarbitrary-extensions)
   - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
   - [Jqwik Tuples in Kotlin](#jqwik-tuples-in-kotlin)
 - [Quirks and Bugs](#quirks-and-bugs)
@@ -359,8 +360,13 @@ to ease the pain.
 
 ##### SizableArbitrary Extensions
 
-In addition to `minSize(..)` and `maxSize(..)` all sizable
+In addition to `ofMinSize(..)` and `ofMaxSize(..)` all sizable
 arbitraries can now be configured using `ofSize(min..max)`.
+
+##### StringArbitrary Extensions
+
+In addition to `ofMinLength(..)` and `ofMaxLength(..)` a `StringArbitrary`
+can now be configured using `ofLength(min..max)`.
 
 ##### Kotlin Top-Level Functions
 
