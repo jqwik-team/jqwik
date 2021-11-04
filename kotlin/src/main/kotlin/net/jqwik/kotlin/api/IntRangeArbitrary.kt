@@ -41,6 +41,16 @@ data class IntRangeArbitrary(
     }
 
     /**
+     * Set min and max size (the difference between first and last value of a range).
+     *
+     * @param range The range for the size of the generated IntRange
+     * @return new arbitrary instance
+     */
+    fun ofSize(range: IntRange): IntRangeArbitrary {
+        return ofMinSize(range.first).ofMaxSize(range.last)
+    }
+
+    /**
      * Set lower size boundary `minSize` (included).
      *
      * @param minSize The minimum size of the generated IntRange

@@ -39,6 +39,21 @@ class KotlinSequenceTests {
     }
 
     @Example
+    fun sequenceWithSizeRange(@ForAll random: Random) {
+        val sequences = Int.any(1..10).sequence().ofSize(5..10)
+
+        checkAllGenerated(
+            sequences,
+            random
+        ) { sequence ->
+            sequence is Sequence<Int>
+                && sequence.toList().size >= 5
+                && sequence.toList().size <= 10
+                && sequence.all { i -> i in 1..10 }
+        }
+    }
+
+    @Example
     fun sequenceWithUniqueElements(@ForAll random: Random) {
         val sequences = Int.any(1..10).sequence().uniqueElements()
 

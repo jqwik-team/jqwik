@@ -33,6 +33,10 @@ class SequenceArbitrary<T>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<
         return clone
     }
 
+    fun ofSize(range: IntRange): SequenceArbitrary<T> {
+        return ofMinSize(range.first).ofMaxSize(range.last)
+    }
+
     override fun ofMinSize(minSize: Int): SequenceArbitrary<T> {
         val clone = typedClone<SequenceArbitrary<T>>()
         clone.listArbitrary = listArbitrary.ofMinSize(minSize)

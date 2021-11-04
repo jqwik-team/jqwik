@@ -54,6 +54,21 @@ class IntRangeArbitraryTests {
         }
     }
 
+    @Example
+    fun anyWithSizeRange(@ForAll random: Random) {
+        val ranges: Arbitrary<IntRange> = IntRange.any(-1000..1000).ofSize(11..42)
+
+        checkAllGenerated(
+            ranges,
+            random
+        ) { range ->
+            range is IntRange
+                && range.first >= -1000 && range.last <= 1000
+                && (range.last - range.first + 1) >= 11
+                && (range.last - range.first + 1) <= 42
+        }
+    }
+
     @Property(tries = 10)
     fun intRangeForAllParameter(@ForAll range: IntRange) {
         Assertions.assertThat(range).isInstanceOf(IntRange::class.java)

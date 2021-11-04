@@ -1,7 +1,9 @@
 package net.jqwik.kotlin.api
 
 import net.jqwik.api.Arbitrary
+import net.jqwik.api.arbitraries.ArrayArbitrary
 import org.apiguardian.api.API
+import kotlin.reflect.KClass
 
 /**
  * Create a new arbitrary of the same type but inject null values with a probability of `nullProbability`.
@@ -49,3 +51,13 @@ fun <T> Arbitrary<T>.triple(): Arbitrary<Triple<T, T, T>> {
     return anyTriple(this, this, this)
 }
 
+/**
+ * Create a new arbitrary of type [Array<T>] using the existing arbitrary for generating the elements of the array.
+ *
+ * @param <A> Type of resulting array class
+ * @return a new arbitrary instance
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+inline fun <T, reified A> Arbitrary<T>.array(): ArrayArbitrary<T, A> {
+    return array(A::class.java)
+}

@@ -4,6 +4,7 @@ import net.jqwik.api.Arbitraries.just
 import net.jqwik.api.Example
 import net.jqwik.api.ForAll
 import net.jqwik.kotlin.api.any
+import net.jqwik.kotlin.api.array
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import java.util.*
 
@@ -25,5 +26,11 @@ class ArbitraryExtensionsTests {
     fun flatMapCanBeCalledWithoutParentheses(@ForAll random: Random) {
         val strings = String.any().flatMap { s -> just(s + "42") }
         checkAllGenerated(strings, random) { s -> s.endsWith("42") }
+    }
+
+    @Example
+    fun arrayParameterCanBeCalledWithReifiedTypeInstead(@ForAll random: Random) {
+        val stringArray = String.any().array<String, Array<String>>()
+        checkAllGenerated(stringArray, random) { array -> array.all { it is String } }
     }
 }
