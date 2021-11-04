@@ -188,6 +188,7 @@ title: jqwik User Guide - 1.6.0-SNAPSHOT
     - [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
     - [Support for Kotlin Functions](#support-for-kotlin-functions)
     - [Supported Kotlin-only Types](#supported-kotlin-only-types)
+    - [Kotlin Singletons](#kotlin-singletons)
     - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
     - [Quirks and Bugs](#quirks-and-bugs)
   - [Testing Module](#testing-module)
@@ -208,10 +209,10 @@ title: jqwik User Guide - 1.6.0-SNAPSHOT
 ## How to Use
 
 __jqwik__ is an alternative test engine for the
-[JUnit 5 platform](https://junit.org/junit5/docs/current/api/org/junit/platform/engine/TestEngine.html).
+[JUnit 5 platform](https://junit.org/junit5/docs/current/user-guide/#launcher-api-engines-custom).
 That means that you can use it either stand-alone or combine it with any other JUnit 5 engine, e.g.
-[Jupiter (the standard engine)](https://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-jupiter) or
-[Vintage (aka JUnit 4)](https://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-vintage).
+[Jupiter (the standard engine)](https://junit.org/junit5/docs/current/api/org.junit.jupiter.engine/org/junit/jupiter/engine/JupiterTestEngine.html) or
+[Vintage (aka JUnit 4)](https://junit.org/junit5/docs/current/api/org.junit.vintage.engine/org/junit/vintage/engine/VintageTestEngine.html).
 All you have to do is add all needed engines to your `testImplementation` dependencies as shown in the
 [gradle file](#gradle) below.
 
@@ -4933,9 +4934,12 @@ __Table of contents:__
 - [Support for Kotlin Collection Types](#support-for-kotlin-collection-types)
 - [Support for Kotlin Functions](#support-for-kotlin-functions)
 - [Support for Kotlin-only Types](#supported-kotlin-only-types)
+- [Kotlin Singletons as Test Containers](#kotlin-singletons)
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
   - [Arbitrary Extensions](#arbitrary-extensions)
+  - [SizableArbitrary Extensions](#sizablearbitrary-extensions)
+  - [StringArbitrary Extensions](#stringarbitrary-extensions)
   - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
   - [Jqwik Tuples in Kotlin](#jqwik-tuples-in-kotlin)
 - [Quirks and Bugs](#quirks-and-bugs)
@@ -5190,6 +5194,38 @@ jqwik will never create infinite sequences by itself.
   thereby using the type parameters with their annotations to create the
   component arbitraries.
 
+
+#### Kotlin Singletons
+
+Since Kotlin `object <name> {...}` definitions are compiled to Java classes there is no
+reason that they cannot be used as test containers.
+As a matter of fact, this module adds a special feature on top:
+Using `object` instead of class will always use the same instance for running all properties and examples:
+
+```kotlin
+// One of the examples will fail
+object KotlinSingletonExample {
+
+    var lastExample: String = ""
+
+    @Example
+    fun example1() {
+        Assertions.assertThat(lastExample).isEmpty()
+        lastExample = "example1"
+    }
+
+    @Example
+    fun example2() {
+        Assertions.assertThat(lastExample).isEmpty()
+        lastExample = "example2"
+    }
+}
+```
+
+Mind that IntelliJ in its current version does not mark functions in object definitions
+as runnable test functions.
+You can, however, run an object-based test container from the project view and the test runner itself.
+
 #### Convenience Functions for Kotlin
 
 Some parts of the jqwik API are hard to use in Kotlin. 
@@ -5235,6 +5271,18 @@ to ease the pain.
 
 - `Arbitrary.orNull(probability: Double) : T?` can replace `Arbitrary.injectNull(probabilit)`
   and returns a nullable type.
+
+- `Arbitrary.array<T, A>()` can replace `Arbitrary.array(javaClass: Class<A>)`.
+
+##### SizableArbitrary Extensions
+
+In addition to `ofMinSize(..)` and `ofMaxSize(..)` all sizable
+arbitraries can now be configured using `ofSize(min..max)`.
+
+##### StringArbitrary Extensions
+
+In addition to `ofMinLength(..)` and `ofMaxLength(..)` a `StringArbitrary`
+can now be configured using `ofLength(min..max)`.
 
 ##### Kotlin Top-Level Functions
 
@@ -5433,6 +5481,7 @@ _jqwik_ currently supports eight types of lifecycle hooks:
     - `AroundPropertyHook`
     - `AroundTryHook`
     - `InvokePropertyMethodHook`
+    - `ProvidePropertyInstanceHook`
 
 - [Other hooks](#other-hooks)
     - `ResolveParameterHook`
@@ -5626,6 +5675,11 @@ org.opentest4j.AssertionFailedError: sleepingProperty was too slow: 100 ms
 This is an experimental hook, which allows to change the way how a method -
 represented by a `java.lang.reflect.Method` object - is being invoked 
 through reflection mechanisms.
+
+##### ProvidePropertyInstanceHook
+
+This is an experimental hook, which allows to change the way how the instance
+of a container class is created or retrieved.
 
 #### Other Hooks
 
