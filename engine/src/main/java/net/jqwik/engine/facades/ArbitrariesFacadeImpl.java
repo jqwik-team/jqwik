@@ -31,9 +31,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return EdgeCasesSupport.choose(values, maxEdgeCases);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public EdgeCases<Character> edgeCasesChoose(final char[] characters, int maxEdgeCases) {
+	public EdgeCases<Character> edgeCasesChoose(char[] characters, int maxEdgeCases) {
 		List<Character> validCharacters = new ArrayList<>(characters.length);
 		for (char character : characters) {
 			validCharacters.add(character);

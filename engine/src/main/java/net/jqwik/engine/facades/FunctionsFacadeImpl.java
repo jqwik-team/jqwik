@@ -18,9 +18,9 @@ public class FunctionsFacadeImpl extends Functions.FunctionsFacade {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <F, R> FunctionArbitrary<F, R> function(Class<?> functionalType, Arbitrary<R> resultArbitrary) {
-		//noinspection unchecked
 		return (FunctionArbitrary<F, R>) new DefaultFunctionArbitrary<>(functionalType, resultArbitrary);
 	}
 }

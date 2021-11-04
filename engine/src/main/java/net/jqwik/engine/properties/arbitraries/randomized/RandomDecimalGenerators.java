@@ -65,7 +65,7 @@ public class RandomDecimalGenerators {
 	}
 
 	public static BigInteger unscaledBigInteger(final BigDecimal bigDecimal, final int scale) {
-		return bigDecimal.setScale(scale, BigDecimal.ROUND_HALF_UP).unscaledValue();
+		return bigDecimal.setScale(scale, RoundingMode.HALF_UP).unscaledValue();
 	}
 
 	public static BigDecimal defaultShrinkingTarget(Range<BigDecimal> range, int scale) {

@@ -98,7 +98,7 @@ public class JqwikActionsShrinkToNothing {
 			List<Object> shrunkExample = propertyExecutionResult.falsifiedParameters().get();
 			MyStringStack shrunkStack = (MyStringStack) shrunkExample.get(0);
 			assertThat(shrunkStack.size()).isEqualTo(0);
-			ActionSequence shrunkSequence = (ActionSequence) shrunkExample.get(1);
+			ActionSequence<?> shrunkSequence = (ActionSequence<?>) shrunkExample.get(1);
 			assertThat(shrunkSequence.runActions()).hasSize(1);
 		}
 	}

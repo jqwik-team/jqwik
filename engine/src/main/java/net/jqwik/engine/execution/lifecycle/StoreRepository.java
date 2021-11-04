@@ -89,13 +89,17 @@ public class StoreRepository {
 		if (identifiedStores == null) {
 			return Optional.empty();
 		} else {
-			//noinspection unchecked
-			return identifiedStores.values()
-								   .stream()
-								   .filter(store -> store.isVisibleFor(retriever))
-								   .map(store -> (ScopedStore<T>) store)
-								   .findFirst();
+			return getFirstVisibleStore(retriever, identifiedStores);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> Optional<ScopedStore<T>> getFirstVisibleStore(TestDescriptor retriever, IdentifiedStores identifiedStores) {
+		return identifiedStores.values()
+							   .stream()
+							   .filter(store -> store.isVisibleFor(retriever))
+							   .map(store -> (ScopedStore<T>) store)
+							   .findFirst();
 	}
 
 	public void finishScope(TestDescriptor scope) {

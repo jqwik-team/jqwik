@@ -23,10 +23,10 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> Arbitrary<T> of(int hashIdentifier, List<Supplier<Arbitrary<T>>> suppliers) {
 		// It's important for good shrinking to work that the same arbitrary usage is handled by the same arbitrary instance
 		LazyOfArbitrary<?> arbitrary = arbitrariesStore().get().computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
- 		//noinspection unchecked
 		return (Arbitrary<T>) arbitrary;
 	}
 

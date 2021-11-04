@@ -27,6 +27,7 @@ public abstract class ValueReport {
 		return objects;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static ValueReport of(Object value, ReportingFormatFinder formatFinder, Set<Object> visited) {
 		SampleReportingFormat format = formatFinder.find(value);
 		if (visited.contains(value)) {
@@ -36,15 +37,12 @@ public abstract class ValueReport {
 		}
 		Object reportedValue = format.report(value);
 		if (reportedValue instanceof Collection) {
-			//noinspection unchecked
 			return createCollectionReport(format.label(value), (Collection<Object>) reportedValue, formatFinder, visited);
 		}
 		if (reportedValue instanceof Map) {
-			//noinspection unchecked
 			return createMapReport(format.label(value), (Map<Object, Object>) reportedValue, formatFinder, visited);
 		}
 		if (reportedValue instanceof Tuple) {
-			//noinspection unchecked
 			return createTupleReport(format.label(value), (Tuple) reportedValue, formatFinder, visited);
 		}
 		visited.remove(value);

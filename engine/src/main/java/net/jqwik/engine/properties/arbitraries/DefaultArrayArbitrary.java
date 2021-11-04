@@ -73,9 +73,9 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 		return array;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Iterable<T> toIterable(A array) {
-		//noinspection unchecked
 		return () -> Arrays.stream((T[]) array).iterator();
 	}
 

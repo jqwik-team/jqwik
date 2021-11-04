@@ -90,6 +90,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		return useFactoryMethods(method -> true);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void checkCreator(Executable creator) {
 		checkReturnType(creator);
 
@@ -98,7 +99,6 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		}
 
 		if (creator instanceof Constructor) {
-			//noinspection unchecked
 			checkConstructor((Constructor<T>) creator);
 		}
 	}
@@ -160,12 +160,12 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		return arbitrary.ignoreException(GenerationError.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	private Function<Object[], T> combinator(Executable creator) {
 		if (creator instanceof Method) {
 			return combinatorForMethod((Method) creator);
 		}
 		if (creator instanceof Constructor) {
-			//noinspection unchecked
 			return combinatorForConstructor((Constructor<T>) creator);
 		}
 		throw new JqwikException(String.format("Creator %s is not supported", creator));
@@ -181,9 +181,9 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		return params -> generateNext(params, constructor::newInstance);
 	}
 
+	@SuppressWarnings("unchecked")
 	private T generateNext(Object[] params, Combinator combinator) {
 		try {
-			//noinspection unchecked
 			return (T) combinator.combine(params);
 		} catch (Throwable throwable) {
 			throw new GenerationError(throwable);

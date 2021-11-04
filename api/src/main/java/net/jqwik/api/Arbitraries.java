@@ -27,7 +27,7 @@ public class Arbitraries {
 
 		public abstract <T> EdgeCases<T> edgeCasesChoose(List<T> values, int maxEdgeCases);
 
-		public abstract <T> EdgeCases<T> edgeCasesChoose(char[] validChars, int maxEdgeCases);
+		public abstract EdgeCases<Character> edgeCasesChoose(char[] validChars, int maxEdgeCases);
 
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples);
 

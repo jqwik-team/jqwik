@@ -10,8 +10,8 @@ public class DefaultActionSequenceArbitrary<M> extends TypedCloneable implements
 
 	private int size = 0;
 
+	@SuppressWarnings("unchecked")
 	public DefaultActionSequenceArbitrary(Arbitrary<? extends Action<M>> actionArbitrary) {
-		//noinspection unchecked
 		this.actionArbitrary = (Arbitrary<Action<M>>) actionArbitrary;
 	}
 

@@ -23,6 +23,7 @@ public class StatisticsPublisher {
 		);
 	}
 
+	@SuppressWarnings("unchecked")
 	private StatisticsPublisher(
 		StatisticsReportFormat statisticsReportFormat,
 		List<? extends StatisticsEntry> entries,
@@ -30,7 +31,6 @@ public class StatisticsPublisher {
 		String label
 	) {
 		this.statisticsReportFormat = statisticsReportFormat;
-		//noinspection unchecked
 		this.entries = (List<StatisticsEntry>) entries;
 		this.countCollects = countCollects;
 		this.label = label;

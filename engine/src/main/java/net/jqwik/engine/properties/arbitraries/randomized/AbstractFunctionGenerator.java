@@ -24,8 +24,8 @@ abstract class AbstractFunctionGenerator<F, R> implements RandomGenerator<F> {
 		this.conditions = conditions;
 	}
 
+	@SuppressWarnings("unchecked")
 	F createFunctionProxy(InvocationHandler handler) {
-		//noinspection unchecked
 		return (F) Proxy.newProxyInstance(functionalType.getClassLoader(), new Class[]{functionalType}, handler);
 	}
 
