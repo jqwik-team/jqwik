@@ -3,10 +3,11 @@ description = "Jqwik API module"
 jar {
 	archiveBaseName.set('jqwik-api')
 	archiveVersion.set("${jqwikVersion}")	
-	modularity {
-		multiRelease = false // store module descriptor in JAR's root
-		moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
-	}
+}
+
+moduleConfig {
+	moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
+	neverCompileModuleInfo = true
 }
 
 publishing {
