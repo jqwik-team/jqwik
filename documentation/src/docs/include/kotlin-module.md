@@ -22,6 +22,7 @@ __Table of contents:__
 - [Convenience Functions for Kotlin](#convenience-functions-for-kotlin)
   - [Extensions for Built-In Kotlin Types](#extensions-for-built-in-kotlin-types)
   - [Arbitrary Extensions](#arbitrary-extensions)
+  - [SizableArbitrary Extensions](#sizablearbitrary-extensions)
   - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
   - [Jqwik Tuples in Kotlin](#jqwik-tuples-in-kotlin)
 - [Quirks and Bugs](#quirks-and-bugs)
@@ -353,6 +354,13 @@ to ease the pain.
 
 - `Arbitrary.orNull(probability: Double) : T?` can replace `Arbitrary.injectNull(probabilit)`
   and returns a nullable type.
+
+- `Arbitrary.array<T, A>()` can replace `Arbitrary.array(javaClass: Class<A>)`.
+
+##### SizableArbitrary Extensions
+
+In addition to `minSize(..)` and `maxSize(..)` all sizable
+arbitraries can now be configured using `ofSize(min..max)`.
 
 ##### Kotlin Top-Level Functions
 
