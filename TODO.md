@@ -1,6 +1,9 @@
 - 1.6.0
 
     - Kotlin Support
+      - Arbitraries.forType()
+        - Handle default parameters in constructors
+        - Add forType<T>() convenience method
 
     - Release
       - Generate Documentation
