@@ -41,6 +41,14 @@ class KotlinTypesCompatibilityTests {
         assertThat(money.currency is String).isTrue
     }
 
+    data class MyUser(val name: String, val age: Int = -1)
+
+    @Property
+    fun defaultParameterInConstructorIsIgnored(@ForAll @UseType user: MyUser) {
+        assertThat(user.name is String).isTrue
+        assertThat(user.age is Int).isTrue
+    }
+
     @Group
     inner class CollectionTypes {
 

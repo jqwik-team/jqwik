@@ -50,4 +50,16 @@ public class JqwikKotlinSupport {
 		return targetMethod.getName().substring(0, lastDollarPosition);
 	}
 
+	// Kotlin constructor parameters can have default values.
+	// Those will generate overloaded constructors for this class.
+	// In version 1.5.31 this means that there is a parameter present of type
+	// kotlin.jvm.internal.DefaultConstructorMarker
+	public static boolean isOverloadedConstructor(Constructor<?> constructor) {
+		for (Class<?> parameterType : constructor.getParameterTypes()) {
+			if (parameterType.getName().contains("DefaultConstructorMarker")) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

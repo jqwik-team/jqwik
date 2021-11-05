@@ -13,6 +13,8 @@ import net.jqwik.api.providers.*;
 
 import static org.junit.platform.commons.support.ModifierSupport.*;
 
+import static net.jqwik.engine.discovery.JqwikKotlinSupport.*;
+
 public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeArbitrary<T> {
 
 	private final Class<T> targetType;
@@ -54,6 +56,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		}
 		Arrays.stream(targetType.getDeclaredConstructors())
 			  .filter(this::isNotRecursive)
+			  .filter(constructor -> !isOverloadedConstructor(constructor))
 			  .filter(filter)
 			  .forEach(this::use);
 		return this;
@@ -131,7 +134,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
 		if (arbitraries().isEmpty()) {
-			String message = String.format("%s has no arbitraries to choose from.", this.toString());
+			String message = String.format("%s has no arbitraries to choose from.", this);
 			throw new JqwikException(message);
 		}
 		return super.generator(genSize);

@@ -2,7 +2,6 @@
 
     - Kotlin Support
       - Arbitraries.forType()
-        - Handle default parameters in constructors
         - Add forType<T>() convenience method
 
     - Release
