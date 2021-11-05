@@ -1,9 +1,11 @@
 package net.jqwik.kotlin.api
 
 import kotlinx.coroutines.*
+import net.jqwik.api.Arbitraries
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Functions
 import net.jqwik.api.arbitraries.FunctionArbitrary
+import net.jqwik.api.arbitraries.TypeArbitrary
 import org.apiguardian.api.API
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -85,4 +87,14 @@ fun <T> runBlockingProperty(
     block: suspend CoroutineScope.() -> T
 ): T {
     return runBlocking(context, block)
+}
+
+/**
+ * Function to create a [TypeArbitrary].
+ *
+ * This is a Kotlin convenience for [Arbitraries.forType] which requires a Java class instead.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+inline fun <reified T> anyForType(): TypeArbitrary<T> {
+    return Arbitraries.forType(T::class.java)
 }

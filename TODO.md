@@ -1,8 +1,6 @@
 - 1.6.0
 
     - Kotlin Support
-      - Arbitraries.forType()
-        - Add forType<T>() convenience method
 
     - Release
       - Generate Documentation
