@@ -26,7 +26,7 @@ __Table of contents:__
   - [StringArbitrary Extensions](#stringarbitrary-extensions)
   - [Jqwik Tuples in Kotlin](#jqwik-tuples-in-kotlin)
   - [Type-based Arbitraries](#type-based-arbitraries)
-  - [Diverse](#kotlin-convenience-diverse)
+  - [Diverse Convenience Functions](#diverse-convenience-functions)
 - [Quirks and Bugs](#quirks-and-bugs)
 
 #### Build Configuration for Kotlin
@@ -383,7 +383,7 @@ Getting a type-based generator using the Java API looks a bit awkward in Kotlin:
 `Arbitraries.forType(MyType::class.java)`.
 There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
 
-##### Kotlin Convenience Divers
+##### Diverse Convenience Functions
 
 - `combine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> R)` can replace all
   variants of `Combinators.combine(a1, ...).as((v1: T1, ...) -> R)`.
