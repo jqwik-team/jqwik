@@ -412,7 +412,7 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
   [testing of coroutines and suspend functions](#support-for-coroutines).
 
 - `Builders.BuilderCombinator.use(arbitrary, combinator)` to simplify Java API call
-  `Builders.BuilderCombinator.use(arbitrary).in`(combinator)` which requires backticks
+  `Builders.BuilderCombinator.use(arbitrary).in(combinator)` which requires backticks
   in Kotlin because "in" is a keyword.
   
 
