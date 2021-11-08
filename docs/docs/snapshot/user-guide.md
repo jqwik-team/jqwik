@@ -4940,8 +4940,9 @@ __Table of contents:__
   - [Arbitrary Extensions](#arbitrary-extensions)
   - [SizableArbitrary Extensions](#sizablearbitrary-extensions)
   - [StringArbitrary Extensions](#stringarbitrary-extensions)
-  - [Kotlin Top-Level Functions](#kotlin-top-level-functions)
   - [Jqwik Tuples in Kotlin](#jqwik-tuples-in-kotlin)
+  - [Type-based Arbitraries](#type-based-arbitraries)
+  - [Diverse](#kotlin-convenience-diverse)
 - [Quirks and Bugs](#quirks-and-bugs)
 
 #### Build Configuration for Kotlin
@@ -5284,10 +5285,24 @@ arbitraries can now be configured using `ofSize(min..max)`.
 In addition to `ofMinLength(..)` and `ofMaxLength(..)` a `StringArbitrary`
 can now be configured using `ofLength(min..max)`.
 
-##### Kotlin Top-Level Functions
+##### Jqwik Tuples in Kotlin
+
+Jqwik's `Tuple` types can be used to assign multi values, e.g.
+
+`val (a, b) = Tuple.of(1, 2)`
+
+will assign `1` to variable `a` and `2` to variable `b`.
+
+##### Type-based Arbitraries
+
+Getting a type-based generator using the Java API looks a bit awkward in Kotlin:
+`Arbitraries.forType(MyType::class.java)`.
+There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
+
+##### Kotlin Convenience Divers
 
 - `combine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> R)` can replace all
-  variants of `Combinators.combine(a1, ...).as((v1: T1, ...) -> R)`. 
+  variants of `Combinators.combine(a1, ...).as((v1: T1, ...) -> R)`.
   Here's an example:
 
   ```kotlin
@@ -5309,17 +5324,14 @@ can now be configured using `ofLength(min..max)`.
 
 - `anyFunction(kKlass: KClass<*>)` can replace `Functions.function(kKlass.java)`
 
-- `runBlockingProperty(context: CoroutineContext, block: suspend CoroutineScope.()` to allow 
-   [testing of coroutines and suspend functions](#support-for-coroutines).
+- `runBlockingProperty(context: CoroutineContext, block: suspend CoroutineScope.()` to allow
+  [testing of coroutines and suspend functions](#support-for-coroutines).
 
+- `Builders.BuilderCombinator.use(arbitrary, combinator)` to simplify Java API call
+  `Builders.BuilderCombinator.use(arbitrary).in`(combinator)` which requires backticks
+  in Kotlin because "in" is a keyword.
+  
 
-##### Jqwik Tuples in Kotlin
-
-Jqwik's `Tuple` types can be used to assign multi values, e.g.
-
-`val (a, b) = Tuple.of(1, 2)`
-
-will assign `1` to variable `a` and `2` to variable `b`.
 
 #### Quirks and Bugs
 
