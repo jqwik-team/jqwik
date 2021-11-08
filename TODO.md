@@ -1,7 +1,6 @@
 - 1.6.0
 
     - Kotlin Support
-      - Double.any() does not respect scale
 
     - Release
       - Generate Documentation

@@ -8,6 +8,7 @@ import org.apiguardian.api.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.facades.*;
 
 import static org.apiguardian.api.API.Status.*;
 import static org.assertj.core.api.Assertions.*;
@@ -74,7 +75,7 @@ public class TestingSupport {
 				.stream(random)
 				.limit(5000)
 				.filter(shrinkable -> checker.test(shrinkable.value()))
-						.findAny();
+				.findAny();
 		if (!success.isPresent()) {
 			fail(failureMessage);
 		}
@@ -118,7 +119,6 @@ public class TestingSupport {
 		assertThat(generated).containsExactly(expectedValues);
 	}
 
-
 	public static <T> Set<Shrinkable<T>> collectEdgeCaseShrinkables(EdgeCases<T> edgeCases) {
 		Set<Shrinkable<T>> shrinkables = new HashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {
@@ -142,22 +142,30 @@ public class TestingSupport {
 
 	public static <T> Map<T, Long> count(RandomGenerator<T> generator, int tries, Random random) {
 		return generator
-					   .stream(random)
-					   .limit(tries)
-					   .map(shrinkable -> shrinkable.value())
-					   .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+			.stream(random)
+			.limit(tries)
+			.map(Shrinkable::value)
+			.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
 
 	// TODO: Call from TestingSupportFacade
 	public static <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
 		long maxTries = 1000;
 		return generator
-					   .stream(random)
-					   .limit(maxTries)
-					   .filter(shrinkable -> condition.apply(shrinkable.value()))
-					   .findFirst()
-					   .orElseThrow(() -> new JqwikException("Failed to generate value that fits condition after " + maxTries + " tries."));
+			.stream(random)
+			.limit(maxTries)
+			.filter(shrinkable -> condition.apply(shrinkable.value()))
+			.findFirst()
+			.orElseThrow(() -> new JqwikException("Failed to generate value that fits condition after " + maxTries + " tries."));
 	}
 
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	public static String singleLineReport(Object any) {
+		return TestingSupportFacade.implementation.singleLineReport(any);
+	}
 
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	public static List<String> multiLineReport(Object any) {
+		return TestingSupportFacade.implementation.multiLineReport(any);
+	}
 }

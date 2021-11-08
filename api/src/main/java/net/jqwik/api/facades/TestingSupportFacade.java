@@ -15,4 +15,9 @@ public abstract class TestingSupportFacade {
 
 	public abstract <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition);
 
+	public abstract String singleLineReport(Object any);
+
+	public abstract List<String> multiLineReport(Object any);
+
+
 }
