@@ -351,6 +351,8 @@ to ease the pain.
 
 - `Double.any(range: ClosedFloatingPointRange<Float>) : DoubleArbitrary` can replace `Arbitraries.doubles().between(..)`
 
+- `Enum.any<EnumType> : Arbitrary<EnumType>` can replace `Arbitraries.of(EnumType::class.java)`
+
 
 ##### Arbitrary Extensions
 

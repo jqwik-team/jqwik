@@ -27,7 +27,7 @@ public class JqwikKotlinSupport {
 		// TODO: Find out what's really happening here
 		String name = method.getName();
 		int lastIndexOfHyphen = name.lastIndexOf('-');
-		return lastIndexOfHyphen == (name.length() - 8);
+		return lastIndexOfHyphen >= 0 && lastIndexOfHyphen == (name.length() - 8);
 	}
 
 	// Learned mechanism to detect Kotlin class in https://stackoverflow.com/a/39806722

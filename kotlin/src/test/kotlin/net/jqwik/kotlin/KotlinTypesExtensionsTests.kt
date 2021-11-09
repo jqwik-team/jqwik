@@ -169,4 +169,15 @@ class KotlinTypesExtensionsTests {
         ) { value -> value is Double && value >= 42.1 && value <= 99.0 }
     }
 
+
+    private enum class MyEnum { ONE, TWO, THREE }
+
+    @Example
+    fun `Enum any(EnumType)`(@ForAll random: Random) {
+        val any = Enum.any<MyEnum>()
+        checkAllGenerated(
+            any,
+            random
+        ) { value -> value in MyEnum.values() }
+    }
 }

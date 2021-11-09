@@ -98,3 +98,13 @@ fun <T> runBlockingProperty(
 inline fun <reified T> anyForType(): TypeArbitrary<T> {
     return Arbitraries.forType(T::class.java)
 }
+
+/**
+ * Function to create arbitrary for all values of an enum type.
+ *
+ * This is a Kotlin convenience for [Arbitraries.of] which requires the Java class of the enum instead.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
+inline fun <reified T:Enum<T>> Enum.Companion.any(): Arbitrary<T> {
+    return Arbitraries.of(T::class.java)
+}
