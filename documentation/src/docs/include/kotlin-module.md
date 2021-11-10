@@ -248,7 +248,7 @@ Some of them are already supported directly:
 ##### `Sequence<T>`
 
 - Create a `SequenceArbitrary` by using `.sequence()` on any other arbitrary,
-  which will be used to generate the elements for the the sequence.
+  which will be used to generate the elements for the sequence.
   `SequenceArbitrary` offers similar configurability as most other multi-value arbitraries in jqwik.
 
 - Using `Sequence` as type in a for-all-parameter will auto-generate it.
@@ -416,7 +416,6 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
 - `Builders.BuilderCombinator.use(arbitrary, combinator)` to simplify Java API call
   `Builders.BuilderCombinator.use(arbitrary).in(combinator)` which requires backticks
   in Kotlin because "in" is a keyword.
-  
 
 
 #### Quirks and Bugs
