@@ -116,7 +116,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	}
 
 	@Override
-	public Arbitrary<String> repeatChars(double repeatProbability) {
+	public StringArbitrary repeatChars(double repeatProbability) {
 		if (repeatProbability < 0 || repeatProbability >= 1) {
 			throw new IllegalArgumentException("repeatProbability must be between 0 (included) and 1 (excluded)");
 		}

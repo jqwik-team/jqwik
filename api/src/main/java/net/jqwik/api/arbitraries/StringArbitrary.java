@@ -115,5 +115,5 @@ public interface StringArbitrary extends Arbitrary<String> {
 	 * @param repeatProbability Must be between 0 (included) and 1 (excluded)
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.3")
-	Arbitrary<String> repeatChars(double repeatProbability);
+	StringArbitrary repeatChars(double repeatProbability);
 }
