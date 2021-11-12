@@ -5,7 +5,8 @@
 
 
 The main purpose of __jqwik__ is to bring [Property-Based Testing](/property-based-testing.html) (PBT) 
-to the JVM, with a focus on _Java_ and _Kotlin_. 
+to the JVM. 
+The library's focus is mainly on _Java_ and _Kotlin_; Groovy works as well.
 
 _Property-Based Testing_ tries to combine the intuitiveness of 
 [Microtests](https://www.industriallogic.com/blog/history-microtests/) with the
