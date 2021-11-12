@@ -30,11 +30,11 @@ title: jqwik User Guide - ${version}
 - [Data-Driven Properties](#data-driven-properties)
 - [Rerunning Falsified Properties](#rerunning-falsified-properties)
 - [jqwik Configuration](#jqwik-configuration)
-- [Additional Modules](#additional-modules)
+- [Web Module](#web-module)
+- [Time Module](#time-module)
+- [Kotlin Module](#kotlin-module)
 - [Advanced Topics](#advanced-topics)
 - [API Evolution](#api-evolution)
-- [Release Notes](#release-notes)
-
 
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->

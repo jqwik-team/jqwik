@@ -5,7 +5,9 @@
 
 
 The main purpose of __jqwik__ is to bring [Property-Based Testing](/property-based-testing.html) (PBT) 
-to the JVM. _Property-Based Testing_ tries to combine the intuitiveness of 
+to the JVM, with a focus on _Java_ and _Kotlin_. 
+
+_Property-Based Testing_ tries to combine the intuitiveness of 
 [Microtests](https://www.industriallogic.com/blog/history-microtests/) with the
 effectiveness of randomized, generated test data.
 Originally driven by the common hype about functional programming, 
@@ -55,16 +57,15 @@ class FizzBuzzTests {
 }
 ```
 
-By using a few Java annotations __jqwik__ tries to make it as simple as possible 
+By using a few annotations __jqwik__ tries to make it as simple as possible 
 for programmers to write and run Properties.
 
 ### Where to go from here
 
-You want to know more?
-
+- Learn the details of _jqwik_ in [jqwik's elaborate user-guide](/docs/current/user-guide.html)
 - Learn about [property-based testing in general](/property-based-testing.html)
 - Read an introduction to [PBT in Java](https://blog.johanneslink.net/2018/03/24/property-based-testing-in-java-introduction/)
-- Learn the details of _jqwik_ in [the user-guide](/docs/current/user-guide.html)
-- Ask and answer questions ask 
+- Read an introduction to [PBT in Kotlin](https://johanneslink.net/property-based-testing-in-kotlin/)
+- Ask questions or answer them 
   [on Stackoverflow](https://stackoverflow.com/questions/tagged/jqwik).
 
