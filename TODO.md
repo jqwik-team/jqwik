@@ -1,5 +1,8 @@
 - 1.6.1
 
+    - Add paragraph about usage of `ArbitraryDecorator` 
+      in section "Implement your own Arbitraries and Generators" 
+
     - Make ProvidePropertyInstanceHook a useful hook for other purposes.
       Implementors should be able to wrap default hook.
       Implementors should be able to resolve potential parameters.
