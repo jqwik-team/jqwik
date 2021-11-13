@@ -1,30 +1,27 @@
-- 1.6.0
-
-    - Release
-      - Replace "1.6.0-SNAPSHOT" and "snapshot" in blog entry about Kotlin support
-      - Use non-snapshot version 1.6.0 in all jqwik-samples
-
-- 1.6.x
-
-    - Running an abstract test container (abstract, enum, sealed) will run all concrete subclasses.
+- 1.6.1
 
     - Make ProvidePropertyInstanceHook a useful hook for other purposes.
       Implementors should be able to wrap default hook.
       Implementors should be able to resolve potential parameters.
 
-    - JqwikSession:
-        - setRandomSessionSeed(), getRandomSessionSeed()
-
     - Verify size settings for all Collection Arbitraries
 
     - Arbitraries.forType(Class<T> targetType)
-      - Recursive use
-        - forType(Class<T> targetType, int depth)
-          - @UseType(depth = 1)
-      - See https://github.com/jlink/jqwik/issues/191
+        - Recursive use
+            - forType(Class<T> targetType, int depth)
+                - @UseType(depth = 1)
+        - See https://github.com/jlink/jqwik/issues/191
 
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
+
+
+- 1.6.x
+
+    - Running an abstract test container (abstract, enum, sealed) will run all concrete subclasses.
+
+    - JqwikSession:
+        - setRandomSessionSeed(), getRandomSessionSeed()
 
     - Allow state machine / model specification with temporal logic.
       See https://wickstrom.tech/programming/2021/05/03/specifying-state-machines-with-temporal-logic.html
