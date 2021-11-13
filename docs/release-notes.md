@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.6.0-SNAPSHOT](#160-snapshot)
+- [1.6.0](#160)
 - [1.5.x](#15x)
 - [1.4.0](#140)
 - [1.3.x](#13x)
@@ -22,12 +22,12 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.6.0-SNAPSHOT
+## 1.6.0
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>,
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
-and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
+<a href="/docs/1.6.0/user-guide.html">User guide</a>,
+<a href="/docs/1.6.0/javadoc/index.html">javadoc</a>
+and <a href="/docs/1.6.0/kdoc/index.html">kdoc</a>
 </p>
 
 #### New and Enhanced Features
@@ -81,7 +81,7 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
   See https://github.com/jlink/jqwik/issues/236.
 
 - Sometimes Kotlin method names have a postfix. 
-  They can now be resolved and have normal display name.
+  They can now be resolved and have normal display names.
 
 - Arbitrary.withoutEdgeCases() sometimes did not work in combination with 
   filter, map and flatMap.

@@ -1,13 +1,8 @@
 - 1.6.0
 
-    - Kotlin Support
-
     - Release
-      - Generate Documentation
-      - Set link in docs/current/kdoc/index.html
       - Replace "1.6.0-SNAPSHOT" and "snapshot" in blog entry about Kotlin support
       - Use non-snapshot version 1.6.0 in all jqwik-samples
-
 
 - 1.6.x
 
