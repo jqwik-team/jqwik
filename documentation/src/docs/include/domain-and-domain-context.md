@@ -112,5 +112,10 @@ class AddressProperties {
 
 The first two properties above will resolve their arbitraries solely through providers
 specified in `AmericanAddresses`, whereas the last one also uses the default (global) context.
+Keep in mind that the inner part of the return type `Arbitrary<InnerPart>`
+is used to determine the applicability of a provider method.
+It's being used in a covariant way, i.e., `Arbitrary<String>` is also applicable
+for parameter `@ForAll CharSequence charSequence`.
+
 Since `AmericanAddresses` does not configure any arbitrary provider for `String` parameters,
 the second property will fail with `CannotFindArbitraryException`.

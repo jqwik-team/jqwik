@@ -29,6 +29,13 @@ class DomainContextBaseTests {
 
 		@Property
 		@Domain(ContextWithProviderMethods.class)
+		void useProviderFromMethodWithCovariantOfArbitraryInterface(@ForAll CharSequence charSequence) {
+			assertThat(charSequence).hasSize(2);
+			assertThat(charSequence).containsOnlyDigits();
+		}
+
+		@Property
+		@Domain(ContextWithProviderMethods.class)
 		void useProviderFromMethodWithTargetTypeAndSubtypeProvider(@ForAll List<String> listOfStrings) {
 			assertThat(listOfStrings).hasSize(3);
 			listOfStrings.forEach(aString -> {
