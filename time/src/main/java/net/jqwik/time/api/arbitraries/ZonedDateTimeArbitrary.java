@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * All generated zoned date times use the Gregorian Calendar, even if they are before October 15, 1582.
  * By default, zoned date times with years between 1900 and 2500 are generated.
  */
-@API(status = EXPERIMENTAL, since = "1.6.0")
+@API(status = EXPERIMENTAL, since = "1.6.1")
 public interface ZonedDateTimeArbitrary extends Arbitrary<ZonedDateTime> {
 
 	/**
