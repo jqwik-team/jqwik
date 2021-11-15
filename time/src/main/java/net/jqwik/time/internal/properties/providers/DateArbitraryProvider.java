@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.*;
 
-public class DatesArbitraryProvider implements ArbitraryProvider {
+public class DateArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
 		return targetType.isAssignableFrom(LocalDate.class);

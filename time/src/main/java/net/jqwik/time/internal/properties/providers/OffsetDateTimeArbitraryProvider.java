@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.*;
 
-public class OffsetDateTimesArbitraryProvider implements ArbitraryProvider {
+public class OffsetDateTimeArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
