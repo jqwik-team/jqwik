@@ -69,6 +69,25 @@ public class PrecisionConfigurator {
 
 	}
 
+	public static class ForZonedDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(ZonedDateTime.class);
+		}
+
+		public Arbitrary<ZonedDateTime> configure(Arbitrary<ZonedDateTime> arbitrary, Precision range) {
+			ChronoUnit ofPrecision = range.value();
+			if (arbitrary instanceof ZonedDateTimeArbitrary) {
+				ZonedDateTimeArbitrary zonedDateTimeArbitrary = (ZonedDateTimeArbitrary) arbitrary;
+				return zonedDateTimeArbitrary.ofPrecision(ofPrecision);
+			} else {
+				return arbitrary.filter(v -> filter(v, ofPrecision));
+			}
+		}
+
+	}
+
 	public static class ForLocalTime extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -156,6 +175,10 @@ public class PrecisionConfigurator {
 	}
 
 	private static boolean filter(OffsetDateTime dateTime, ChronoUnit ofPrecision) {
+		return filter(dateTime.toLocalTime(), ofPrecision);
+	}
+
+	private static boolean filter(ZonedDateTime dateTime, ChronoUnit ofPrecision) {
 		return filter(dateTime.toLocalTime(), ofPrecision);
 	}
 
