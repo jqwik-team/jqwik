@@ -72,6 +72,26 @@ public class MonthRangeConfigurator {
 
 	}
 
+	public static class ForZonedDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(ZonedDateTime.class);
+		}
+
+		public Arbitrary<ZonedDateTime> configure(Arbitrary<ZonedDateTime> arbitrary, MonthRange range) {
+			Month min = range.min();
+			Month max = range.max();
+			if (arbitrary instanceof ZonedDateTimeArbitrary) {
+				ZonedDateTimeArbitrary zonedDateTimeArbitrary = (ZonedDateTimeArbitrary) arbitrary;
+				return zonedDateTimeArbitrary.monthBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -188,6 +208,10 @@ public class MonthRangeConfigurator {
 	}
 
 	private static boolean filter(OffsetDateTime dateTime, Month min, Month max) {
+		return filter(dateTime.getMonth(), min, max);
+	}
+
+	private static boolean filter(ZonedDateTime dateTime, Month min, Month max) {
 		return filter(dateTime.getMonth(), min, max);
 	}
 

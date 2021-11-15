@@ -71,6 +71,26 @@ public class HourRangeConfigurator {
 
 	}
 
+	public static class ForZonedDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(ZonedDateTime.class);
+		}
+
+		public Arbitrary<ZonedDateTime> configure(Arbitrary<ZonedDateTime> arbitrary, HourRange range) {
+			int min = range.min();
+			int max = range.max();
+			if (arbitrary instanceof ZonedDateTimeArbitrary) {
+				ZonedDateTimeArbitrary zonedDateTimeArbitrary = (ZonedDateTimeArbitrary) arbitrary;
+				return zonedDateTimeArbitrary.hourBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalTime extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -127,6 +147,10 @@ public class HourRangeConfigurator {
 	}
 
 	private static boolean filter(OffsetDateTime dateTime, int min, int max) {
+		return filter(dateTime.toLocalTime(), min, max);
+	}
+
+	private static boolean filter(ZonedDateTime dateTime, int min, int max) {
 		return filter(dateTime.toLocalTime(), min, max);
 	}
 

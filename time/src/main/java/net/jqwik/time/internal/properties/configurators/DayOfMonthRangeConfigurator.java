@@ -73,6 +73,26 @@ public class DayOfMonthRangeConfigurator {
 
 	}
 
+	public static class ForZonedDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(ZonedDateTime.class);
+		}
+
+		public Arbitrary<ZonedDateTime> configure(Arbitrary<ZonedDateTime> arbitrary, DayOfMonthRange range) {
+			int min = range.min();
+			int max = range.max();
+			if (arbitrary instanceof ZonedDateTimeArbitrary) {
+				ZonedDateTimeArbitrary zonedDateTimeArbitrary = (ZonedDateTimeArbitrary) arbitrary;
+				return zonedDateTimeArbitrary.dayOfMonthBetween(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	public static class ForLocalDate extends ArbitraryConfiguratorBase {
 
 		@Override
@@ -189,6 +209,10 @@ public class DayOfMonthRangeConfigurator {
 	}
 
 	private static boolean filter(OffsetDateTime dateTime, int min, int max) {
+		return filter(dateTime.getDayOfMonth(), min, max);
+	}
+
+	private static boolean filter(ZonedDateTime dateTime, int min, int max) {
 		return filter(dateTime.getDayOfMonth(), min, max);
 	}
 

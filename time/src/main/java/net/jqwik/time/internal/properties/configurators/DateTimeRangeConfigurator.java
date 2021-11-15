@@ -50,6 +50,26 @@ public class DateTimeRangeConfigurator extends ArbitraryConfiguratorBase {
 
 	}
 
+	public static class ForZonedDateTime extends ArbitraryConfiguratorBase {
+
+		@Override
+		protected boolean acceptTargetType(TypeUsage targetType) {
+			return targetType.isAssignableFrom(ZonedDateTime.class);
+		}
+
+		public Arbitrary<ZonedDateTime> configure(Arbitrary<ZonedDateTime> arbitrary, DateTimeRange range) {
+			LocalDateTime min = stringToLocalDateTime(range.min());
+			LocalDateTime max = stringToLocalDateTime(range.max());
+			if (arbitrary instanceof ZonedDateTimeArbitrary) {
+				ZonedDateTimeArbitrary zonedDateTimeArbitrary = (ZonedDateTimeArbitrary) arbitrary;
+				return zonedDateTimeArbitrary.between(min, max);
+			} else {
+				return arbitrary.filter(v -> filter(v, min, max));
+			}
+		}
+
+	}
+
 	private static LocalDateTime stringToLocalDateTime(String dateTime) {
 		return LocalDateTime.parse(dateTime);
 	}
@@ -59,6 +79,10 @@ public class DateTimeRangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	private static boolean filter(OffsetDateTime dateTime, LocalDateTime min, LocalDateTime max) {
+		return filter(dateTime.toLocalDateTime(), min, max);
+	}
+
+	private static boolean filter(ZonedDateTime dateTime, LocalDateTime min, LocalDateTime max) {
 		return filter(dateTime.toLocalDateTime(), min, max);
 	}
 
