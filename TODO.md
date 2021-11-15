@@ -1,7 +1,11 @@
 - 1.6.1
 
-    - Add paragraph about usage of `ArbitraryDecorator` 
-      in section "Implement your own Arbitraries and Generators" 
+    - Add paragraph about usage of `ArbitraryDecorator`
+      in section "Implement your own Arbitraries and Generators"
+
+    - DomainContextBase
+      - If implementation implements ArbitraryProvider => register itself
+      - If implementation implements ArbitraryConfigurator => register itself
 
     - Make ProvidePropertyInstanceHook a useful hook for other purposes.
       Implementors should be able to wrap default hook.
