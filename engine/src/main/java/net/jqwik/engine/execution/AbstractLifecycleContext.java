@@ -10,6 +10,7 @@ import org.junit.platform.engine.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.support.*;
 
 abstract class AbstractLifecycleContext implements LifecycleContext {
 
@@ -39,18 +40,18 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 	@Override
 	public <T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass) {
 		return optionalElement()
-				   .flatMap(element -> AnnotationSupport.findAnnotation(element, annotationClass));
+			.flatMap(element -> AnnotationSupport.findAnnotation(element, annotationClass));
 	}
 
 	@Override
 	public <T extends Annotation> List<T> findAnnotationsInContainer(Class<T> annotationClass) {
 		return optionalElement()
-				   .map(element -> {
-					   List<T> annotations = new ArrayList<>();
-					   appendAnnotations(parentContainer(), annotationClass, annotations);
-					   return annotations;
-				   })
-				   .orElse(Collections.emptyList());
+			.map(element -> {
+				List<T> annotations = new ArrayList<>();
+				appendAnnotations(parentContainer(), annotationClass, annotations);
+				return annotations;
+			})
+			.orElse(Collections.emptyList());
 	}
 
 	private Optional<ContainerClassDescriptor> parentContainer() {
@@ -69,8 +70,7 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 		List<T> annotations
 	) {
 		optionalContainer.ifPresent(container -> {
-			AnnotationSupport.findAnnotation(container.getContainerClass(), annotationClass)
-							 .ifPresent(annotations::add);
+			annotations.addAll(JqwikAnnotationSupport.findAnnotation(container.getContainerClass(), annotationClass));
 			appendAnnotations(parentContainer(container), annotationClass, annotations);
 		});
 	}

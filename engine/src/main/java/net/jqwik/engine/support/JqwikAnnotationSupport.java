@@ -100,4 +100,29 @@ public class JqwikAnnotationSupport {
 		}
 		return false;
 	}
+
+	public static <A extends Annotation> List<A> findAnnotation(
+		AnnotatedElement element,
+		Class<A> annotationType
+	) {
+		Optional<A> optional = AnnotationSupport.findAnnotation(element, annotationType);
+		return optional.map(annotation -> {
+			List<A> annotations = new ArrayList<>();
+			annotations.add(annotation);
+			if (isInherited(annotationType)) {
+				List<A> inheritedAnnotations = inheritedAnnotations(annotationType);
+				annotations.addAll(inheritedAnnotations);
+			}
+			return annotations;
+		}).orElse(Collections.emptyList());
+	}
+
+	private static <A extends Annotation> List<A> inheritedAnnotations(Class<A> annotationType) {
+		// TODO: Extract annotations from superclasses and interfaces
+		return new ArrayList<>();
+	}
+
+	private static <A extends Annotation> boolean isInherited(Class<A> annotationType) {
+		return AnnotationSupport.isAnnotated(annotationType, Inherited.class);
+	}
 }

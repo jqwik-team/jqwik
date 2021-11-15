@@ -17,6 +17,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @AddLifecycleHook(PropertyDefaults.PropertyDefaultsHook.class)
+@Inherited
 @API(status = MAINTAINED, since = "1.4.0")
 public @interface PropertyDefaults {
 

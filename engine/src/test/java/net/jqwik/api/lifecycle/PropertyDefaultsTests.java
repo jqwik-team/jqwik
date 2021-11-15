@@ -79,6 +79,36 @@ class PropertyDefaultsTests {
 				assertThat(propertyExecutionResult.countTries()).isEqualTo(20);
 			}
 		}
+	}
+
+	@Group
+	@PropertyDefaults(tries = 10)
+	class GroupWithInheritance extends NestedSuper implements NestedInterface {
+
+		@Disabled("not implemented yet")
+		@Property
+		@PerProperty(CheckInheritedDefaults.class)
+		void runWithInheritedDefaults(@ForAll int anInt) {
+		}
+
+		private class CheckInheritedDefaults implements Lifecycle {
+			@Override
+			public void before(PropertyLifecycleContext context) {
+				assertThat(context.attributes().tries().get()).isEqualTo(10);
+				assertThat(context.attributes().shrinking().get()).isEqualTo(ShrinkingMode.FULL);
+				assertThat(context.attributes().afterFailure().get()).isEqualTo(AfterFailureMode.RANDOM_SEED);
+			}
+		}
+
+	}
+
+	@PropertyDefaults(tries = 41, shrinking = ShrinkingMode.FULL)
+	static class NestedSuper {
+
+	}
+
+	@PropertyDefaults(tries = 42, afterFailure = AfterFailureMode.RANDOM_SEED)
+	interface NestedInterface {
 
 	}
 }
