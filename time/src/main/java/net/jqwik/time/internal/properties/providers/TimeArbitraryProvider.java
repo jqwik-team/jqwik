@@ -7,16 +7,14 @@ import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.time.api.*;
 
-public class DateTimesArbitraryProvider implements ArbitraryProvider {
-
+public class TimeArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		return targetType.isAssignableFrom(LocalDateTime.class);
+		return targetType.isAssignableFrom(LocalTime.class);
 	}
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		return Collections.singleton(DateTimes.dateTimes());
+		return Collections.singleton(Times.times());
 	}
-
 }
