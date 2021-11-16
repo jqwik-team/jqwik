@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.6.1-SNAPSHOT](#161-snapshot)
 - [1.6.0](#160)
 - [1.5.x](#15x)
 - [1.4.0](#140)
@@ -21,6 +22,20 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
+## 1.6.1-SNAPSHOT
+
+#### New and Enhanced Features
+
+- A container class will now inherit `@PropertiesDefault` annotations from superclass and interfaces.
+
+#### Breaking Changes
+
+_No known breaking changes_
+
+#### Bug Fixes
+
+_No known bugs_
 
 ## 1.6.0
 

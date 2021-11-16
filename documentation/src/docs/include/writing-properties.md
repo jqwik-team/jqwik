@@ -316,11 +316,14 @@ class PropertyDefaultsExamples {
 
 Thus, the order in which a property method's attributes are determined is:
 
-1. Use jqwik's built-in defaults
-2. which can be overridden in the [configuration file](#jqwik-configuration)
-3. which can be changed in a container class' `@PropertyDefaults` annotation
-4. which can be overridden by a method's
+1. Use jqwik's built-in defaults,
+2. which can be overridden in the [configuration file](#jqwik-configuration),
+3. which can be changed in a container class' `@PropertyDefaults` annotation,
+4. which override `@PropertyDefaults` attributes in a container's superclass or 
+   implemented interfaces,
+5. which can be overridden by a method's
    [`@Property` annotation attributes](#optional-property-attributes).
+
 
 ### Creating an Example-based Test
 
