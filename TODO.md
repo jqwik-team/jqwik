@@ -1,6 +1,10 @@
 - 1.6.1
 
-    - Container classes should inherit lifecycle methods
+    - Container classes should inherit @Domain annotations from superclass and interfaces
+  
+    - Container classes should inherit @EnableFootnotes annotation from superclass and interfaces
+
+    - Container classes should inherit @Tag annotation from superclass and interfaces
 
     - DomainContextBase
       - If implementation implements ArbitraryProvider => register itself
