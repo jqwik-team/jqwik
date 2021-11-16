@@ -1,7 +1,5 @@
 - 1.6.1
 
-    - Container classes should inherit @Domain annotations from superclass and interfaces
-  
     - Container classes should inherit @EnableFootnotes annotation from superclass and interfaces
 
     - Container classes should inherit @Tag annotation from superclass and interfaces
