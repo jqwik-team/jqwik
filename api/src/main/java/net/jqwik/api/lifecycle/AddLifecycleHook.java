@@ -18,6 +18,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(LifecycleHooks.class)
+@Inherited
 @API(status = MAINTAINED, since = "1.4.0")
 public @interface AddLifecycleHook {
 

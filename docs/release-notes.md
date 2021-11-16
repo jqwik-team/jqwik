@@ -29,9 +29,13 @@ title: jqwik Release Notes
 
 - A container class will now inherit `@PropertiesDefault` annotations from superclass and interfaces.
 
+- A container class will now inherit `@AddLifecycleHook` annotations from superclass and interfaces.
+
 #### Breaking Changes
 
-_No known breaking changes_
+- Inherited property defaults could change behaviour of existing properties
+
+- Inherited lifecycle hooks could break existing properties
 
 #### Bug Fixes
 

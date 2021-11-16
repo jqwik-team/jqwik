@@ -1,6 +1,6 @@
 - 1.6.1
 
-    - Container classes should inherit @AddLifecycleHook
+    - Container classes should inherit lifecycle methods
 
     - DomainContextBase
       - If implementation implements ArbitraryProvider => register itself
