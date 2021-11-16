@@ -38,7 +38,10 @@ class JqwikAnnotationSupportTests {
 			Stream<Class<? extends Annotation>> types = typesFromMethod("mixedAnnotations");
 			assertThat(types).containsExactly(ForAll.class, CharsList.class);
 		}
+	}
 
+	@Group
+	class AllMetaAnnotations {
 		@Example
 		void simpleMetaAnnotation() throws NoSuchMethodException {
 			Stream<Class<? extends Annotation>> types = typesFromMethod("simpleMetaAnnotations");
@@ -79,22 +82,21 @@ class JqwikAnnotationSupportTests {
 			assertThat(types).containsExactly(One.class, Two.class);
 		}
 
-		private List<Annotation> annotationsFromMethod(String methodName) throws NoSuchMethodException {
-			Parameter param = parameterFromMethod(methodName);
-			return JqwikAnnotationSupport.findAllAnnotations(param);
-		}
-
-		private Parameter parameterFromMethod(String methodName) throws NoSuchMethodException {
-			return AClass.class.getDeclaredMethod(methodName, String.class).getParameters()[0];
-		}
-
-		private Stream<Class<? extends Annotation>> typesFromMethod(String methodName) throws NoSuchMethodException {
-			List<Annotation> annotations = annotationsFromMethod(methodName);
-			return annotations.stream().map(Annotation::annotationType);
-		}
-
 	}
 
+	private List<Annotation> annotationsFromMethod(String methodName) throws NoSuchMethodException {
+		Parameter param = parameterFromMethod(methodName);
+		return JqwikAnnotationSupport.findAllAnnotations(param);
+	}
+
+	private Parameter parameterFromMethod(String methodName) throws NoSuchMethodException {
+		return AClass.class.getDeclaredMethod(methodName, String.class).getParameters()[0];
+	}
+
+	private Stream<Class<? extends Annotation>> typesFromMethod(String methodName) throws NoSuchMethodException {
+		List<Annotation> annotations = annotationsFromMethod(methodName);
+		return annotations.stream().map(Annotation::annotationType);
+	}
 
 	static class AClass {
 		void singleAnnotation(@ForAll String param) {
