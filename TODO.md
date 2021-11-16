@@ -1,8 +1,8 @@
 - 1.6.1
 
-    - Container classes should inherit @EnableFootnotes annotation from superclass and interfaces
-
-    - Container classes should inherit @Tag annotation from superclass and interfaces
+    - Tags
+      - Tags should be reported in standard property report
+      - Container classes should inherit @Tag annotation from superclass and interfaces
 
     - DomainContextBase
       - If implementation implements ArbitraryProvider => register itself
