@@ -5,9 +5,6 @@
 
     - Container classes should inherit @AddLifecycleHook
 
-    - Container classes should inherit PropertyDefaults.
-      See https://github.com/jlink/jqwik/issues/252.
-
     - DomainContextBase
       - If implementation implements ArbitraryProvider => register itself
       - If implementation implements ArbitraryConfigurator => register itself

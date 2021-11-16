@@ -38,16 +38,16 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 	}
 
 	@Override
-	public <T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass) {
+	public <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationClass) {
 		return optionalElement()
 			.flatMap(element -> AnnotationSupport.findAnnotation(element, annotationClass));
 	}
 
 	@Override
-	public <T extends Annotation> List<T> findAnnotationsInContainer(Class<T> annotationClass) {
+	public <A extends Annotation> List<A> findAnnotationsInContainer(Class<A> annotationClass) {
 		return optionalElement()
 			.map(element -> {
-				List<T> annotations = new ArrayList<>();
+				List<A> annotations = new ArrayList<>();
 				appendAnnotations(parentContainer(), annotationClass, annotations);
 				return annotations;
 			})

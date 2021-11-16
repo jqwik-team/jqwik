@@ -130,4 +130,8 @@ public class JqwikStreamSupport {
 		}
 		return StreamSupport.stream(new Taking(stream.spliterator()), stream.isParallel()).onClose(stream::close);
 	}
+
+	public static <T> Stream<T> toStream(Optional<T> optional) {
+		return optional.map(Stream::of).orElse(Stream.empty());
+	}
 }

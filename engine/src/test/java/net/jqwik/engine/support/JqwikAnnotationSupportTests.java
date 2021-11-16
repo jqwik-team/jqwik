@@ -102,7 +102,7 @@ class JqwikAnnotationSupportTests {
 	class FindContainerAnnotations {
 
 		@Example
-		void notInheritedAnnotation() {
+		void notInheritedAnnotationType() {
 			List<MyNotInheritedAnnotation> annotations = JqwikAnnotationSupport.findContainerAnnotations(MyChild.class, MyNotInheritedAnnotation.class);
 
 			List<String> annotationValues = annotations.stream().map(MyNotInheritedAnnotation::value).collect(Collectors.toList());
@@ -110,11 +110,19 @@ class JqwikAnnotationSupportTests {
 		}
 
 		@Example
-		void inheritedAnnotation() {
+		void inheritedAnnotationType() {
 			List<MyInheritedAnnotation> annotations = JqwikAnnotationSupport.findContainerAnnotations(MyChild.class, MyInheritedAnnotation.class);
 
 			List<String> annotationValues = annotations.stream().map(MyInheritedAnnotation::value).collect(Collectors.toList());
 			assertThat(annotationValues).containsExactly("atChild", "atParent", "atInterface");
+		}
+
+		@Example
+		void inheritedRepeatableAnnotationType() {
+			List<MyRepeatable> annotations = JqwikAnnotationSupport.findContainerAnnotations(MyChild.class, MyRepeatable.class);
+
+			List<String> annotationValues = annotations.stream().map(MyRepeatable::value).collect(Collectors.toList());
+			assertThat(annotationValues).containsExactly("atChild2", "atChild1", "atInterface", "atParent");
 		}
 
 	}
@@ -168,16 +176,20 @@ class JqwikAnnotationSupportTests {
 
 	@MyInheritedAnnotation("atParent")
 	@MyNotInheritedAnnotation("atParent")
+	@MyRepeatable("atParent")
 	private static class MyParent {
 	}
 
 	@MyInheritedAnnotation("atInterface")
 	@MyNotInheritedAnnotation("atInterface")
+	@MyRepeatable("atInterface")
 	private interface MyInterface {
 	}
 
 	@MyInheritedAnnotation("atChild")
 	@MyNotInheritedAnnotation("atChild")
+	@MyRepeatable("atChild1")
+	@MyRepeatable("atChild2")
 	private static class MyChild extends MyParent implements MyInterface {
 	}
 
