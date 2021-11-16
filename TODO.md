@@ -1,8 +1,5 @@
 - 1.6.1
 
-    - Add paragraph about usage of `ArbitraryDecorator`
-      in section "Implement your own Arbitraries and Generators"
-
     - Container classes should inherit @AddLifecycleHook
 
     - DomainContextBase
