@@ -25,5 +25,11 @@ jqwik.seeds.whenfixed = ALLOW                # How a test should act when a seed
                                              # Useful to prevent accidental commits of fixed seeds into source control.                                             
 ```
 
+Besides the properties file there is also the possibility to set properties
+in [Gradle](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle-config-params) or 
+[Maven Surefire](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven-config-params).
+
+#### Legacy Configuration in `jqwik.properties` File
+
 Prior releases of _jqwik_ used a custom `jqwik.properties` file.
 Since version `1.6.0` this is no longer supported.
