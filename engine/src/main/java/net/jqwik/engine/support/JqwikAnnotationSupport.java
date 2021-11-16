@@ -101,25 +101,49 @@ public class JqwikAnnotationSupport {
 		return false;
 	}
 
-	public static <A extends Annotation> List<A> findAnnotation(
-		AnnotatedElement element,
+	/**
+	 * Find all annotation instances of a given type on a container class, even if they are repeatable or annotated.
+	 *
+	 * Sort those annotations from closer (directly on class) to more remote (on extended classes and interfaces)
+	 */
+	public static <A extends Annotation> List<A> findContainerAnnotations(
+		Class<?> container,
 		Class<A> annotationType
 	) {
-		Optional<A> optional = AnnotationSupport.findAnnotation(element, annotationType);
+		Optional<A> optional = AnnotationSupport.findAnnotation(container, annotationType);
 		return optional.map(annotation -> {
 			List<A> annotations = new ArrayList<>();
 			annotations.add(annotation);
-			if (isInherited(annotationType)) {
-				List<A> inheritedAnnotations = inheritedAnnotations(annotationType);
-				annotations.addAll(inheritedAnnotations);
-			}
+			appendInheritedAnnotations(container, annotationType,annotation, annotations);
 			return annotations;
 		}).orElse(Collections.emptyList());
 	}
 
-	private static <A extends Annotation> List<A> inheritedAnnotations(Class<A> annotationType) {
-		// TODO: Extract annotations from superclasses and interfaces
-		return new ArrayList<>();
+	private static <A extends Annotation> void appendInheritedAnnotations(
+		Class<?> container,
+		Class<A> annotationType,
+		A annotation,
+		List<A> collector
+	) {
+		if (isInherited(annotationType)) {
+			List<A> inheritedAnnotations = inheritedAnnotations(container, annotationType);
+			for (A inheritedAnnotation : inheritedAnnotations) {
+				if (inheritedAnnotation != annotation) {
+					collector.add(inheritedAnnotation);
+				}
+			}
+		}
+	}
+	private static <A extends Annotation> List<A> inheritedAnnotations(Class<?> container, Class<A> annotationType) {
+		List<A> inheritedAnnotations = new ArrayList<>();
+		Class<?> superclass = container.getSuperclass();
+		if (superclass != null) {
+			inheritedAnnotations.addAll(findContainerAnnotations(superclass, annotationType));
+		}
+		for (Class<?> anInterface : container.getInterfaces()) {
+			inheritedAnnotations.addAll(findContainerAnnotations(anInterface, annotationType));
+		}
+		return inheritedAnnotations;
 	}
 
 	private static <A extends Annotation> boolean isInherited(Class<A> annotationType) {

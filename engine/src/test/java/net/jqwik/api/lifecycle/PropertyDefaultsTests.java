@@ -85,7 +85,6 @@ class PropertyDefaultsTests {
 	@PropertyDefaults(tries = 10)
 	class GroupWithInheritance extends NestedSuper implements NestedInterface {
 
-		@Disabled("not implemented yet")
 		@Property
 		@PerProperty(CheckInheritedDefaults.class)
 		void runWithInheritedDefaults(@ForAll int anInt) {

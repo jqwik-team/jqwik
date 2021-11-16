@@ -70,7 +70,7 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 		List<T> annotations
 	) {
 		optionalContainer.ifPresent(container -> {
-			annotations.addAll(JqwikAnnotationSupport.findAnnotation(container.getContainerClass(), annotationClass));
+			annotations.addAll(JqwikAnnotationSupport.findContainerAnnotations(container.getContainerClass(), annotationClass));
 			appendAnnotations(parentContainer(container), annotationClass, annotations);
 		});
 	}

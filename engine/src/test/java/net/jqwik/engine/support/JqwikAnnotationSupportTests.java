@@ -93,9 +93,30 @@ class JqwikAnnotationSupportTests {
 			List<MyRepeatable> annotations = JqwikAnnotationSupport.findRepeatableAnnotationOnElementOrContainer(method, MyRepeatable.class);
 			assertThat(annotations).hasSize(4);
 
-			List<String> annotationValues = annotations.stream().map(a -> a.value()).collect(Collectors.toList());
+			List<String> annotationValues = annotations.stream().map(MyRepeatable::value).collect(Collectors.toList());
 			assertThat(annotationValues).containsExactly("atMethod1", "atMethod2", "atClass1", "atClass2");
 		}
+	}
+
+	@Group
+	class FindContainerAnnotations {
+
+		@Example
+		void notInheritedAnnotation() {
+			List<MyNotInheritedAnnotation> annotations = JqwikAnnotationSupport.findContainerAnnotations(MyChild.class, MyNotInheritedAnnotation.class);
+
+			List<String> annotationValues = annotations.stream().map(MyNotInheritedAnnotation::value).collect(Collectors.toList());
+			assertThat(annotationValues).containsExactly("atChild");
+		}
+
+		@Example
+		void inheritedAnnotation() {
+			List<MyInheritedAnnotation> annotations = JqwikAnnotationSupport.findContainerAnnotations(MyChild.class, MyInheritedAnnotation.class);
+
+			List<String> annotationValues = annotations.stream().map(MyInheritedAnnotation::value).collect(Collectors.toList());
+			assertThat(annotationValues).containsExactly("atChild", "atParent", "atInterface");
+		}
+
 	}
 
 	private List<Annotation> annotationsFromMethod(String methodName) throws NoSuchMethodException {
@@ -145,6 +166,21 @@ class JqwikAnnotationSupportTests {
 		}
 	}
 
+	@MyInheritedAnnotation("atParent")
+	@MyNotInheritedAnnotation("atParent")
+	private static class MyParent {
+	}
+
+	@MyInheritedAnnotation("atInterface")
+	@MyNotInheritedAnnotation("atInterface")
+	private interface MyInterface {
+	}
+
+	@MyInheritedAnnotation("atChild")
+	@MyNotInheritedAnnotation("atChild")
+	private static class MyChild extends MyParent implements MyInterface {
+	}
+
 	@Target({ ElementType.PARAMETER })
 	@Retention(RetentionPolicy.RUNTIME)
 	@ForAll
@@ -179,13 +215,28 @@ class JqwikAnnotationSupportTests {
 
 	@Target({ ElementType.TYPE, ElementType.METHOD })
 	@Retention(RetentionPolicy.RUNTIME)
+	@interface MyNotInheritedAnnotation {
+		String value();
+	}
+
+	@Target({ ElementType.TYPE, ElementType.METHOD })
+	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
+	@interface MyInheritedAnnotation {
+		String value();
+	}
+
+	@Target({ ElementType.TYPE, ElementType.METHOD })
+	@Retention(RetentionPolicy.RUNTIME)
 	@Repeatable(MyRepeatableList.class)
+	@Inherited
 	@interface MyRepeatable {
 		String value();
 	}
 
 	@Target({ ElementType.TYPE, ElementType.METHOD })
 	@Retention(RetentionPolicy.RUNTIME)
+	@Inherited
 	@interface MyRepeatableList {
 		MyRepeatable[] value();
 	}
