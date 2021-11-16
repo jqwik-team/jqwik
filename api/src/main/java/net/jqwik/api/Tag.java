@@ -39,6 +39,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Inherited
 @Repeatable(TagList.class)
 @API(status = STABLE, since = "1.0")
 public @interface Tag {

@@ -1,9 +1,5 @@
 - 1.6.1
 
-    - Tags
-      - Tags should be reported in standard property report
-      - Container classes should inherit @Tag annotation from superclass and interfaces
-
     - DomainContextBase
       - If implementation implements ArbitraryProvider => register itself
       - If implementation implements ArbitraryConfigurator => register itself
@@ -22,6 +18,8 @@
 
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
+
+    - Tags should be reported in standard property report
 
 
 - 1.6.x

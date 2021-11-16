@@ -33,6 +33,8 @@ title: jqwik Release Notes
 
 - A container class will now inherit `@Domain` annotations from superclass and interfaces.
 
+- A container class will now inherit `@Tag` annotations from superclass and interfaces.
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties
