@@ -69,7 +69,7 @@ class DomainContextBaseTests {
 
 	@Group
 	@PropertyDefaults(tries = 20)
-	class InnerArbitraryProviderClasses {
+	class WithArbitraryProviderClasses {
 
 		@Property
 		@Domain(ContextWithInnerProviderClasses.class)
@@ -106,7 +106,7 @@ class DomainContextBaseTests {
 
 	@Group
 	@PropertyDefaults(tries = 20)
-	class InnerArbitraryConfiguratorClasses {
+	class WithArbitraryConfiguratorClasses {
 
 		@Property
 		@Domain(ContextWithInnerConfiguratorClasses.class)
