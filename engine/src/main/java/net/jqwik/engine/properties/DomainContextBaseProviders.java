@@ -21,9 +21,10 @@ public class DomainContextBaseProviders {
 	private static final Logger LOG = Logger.getLogger(DomainContextBaseProviders.class.getName());
 
 	static public List<ArbitraryProvider> forContextBase(DomainContextBase base, int priority) {
-		return Stream.concat(
+		return JqwikStreamSupport.concat(
 			providersFromProviderMethods(base, priority),
-			providersFromInnerClasses(base, priority)
+			providersFromInnerClasses(base, priority),
+			providersFromBaseItself(base, priority)
 		).collect(Collectors.toList());
 	}
 
@@ -71,17 +72,26 @@ public class DomainContextBaseProviders {
 									   .map(clazz -> createArbitraryProvider(clazz, base, priority));
 	}
 
+	private static Stream<ArbitraryProvider> providersFromBaseItself(DomainContextBase base, int priority) {
+		if (base instanceof ArbitraryProvider) {
+			return Stream.of(new ArbitraryProviderWithPriority((ArbitraryProvider) base, priority));
+		}
+		return Stream.empty();
+	}
+
 	private static void warnIfClassesHaveNoFittingConstructor(List<Class<?>> classes) {
 		classes.stream()
 			   .filter(aClass -> !hasFittingConstructor(aClass))
-			   .forEach(aClass -> {
-				   String message = String.format(
-					   "Class <%s> does not have a default constructor and cannot be instantiated as arbitrary provider.",
-					   aClass.getName()
-				   );
-				   LOG.warning(message);
-			   });
+			   .forEach(DomainContextBaseProviders::warnThatNoDefaultConstructorPresent);
 
+	}
+
+	private static void warnThatNoDefaultConstructorPresent(Class<?> aClass) {
+		String message = String.format(
+			"Class <%s> does not have a default constructor and cannot be instantiated as arbitrary provider.",
+			aClass.getName()
+		);
+		LOG.warning(message);
 	}
 
 	private static boolean hasFittingConstructor(Class<?> clazz) {

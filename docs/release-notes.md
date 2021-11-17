@@ -35,6 +35,9 @@ title: jqwik Release Notes
 
 - A container class will now inherit `@Tag` annotations from superclass and interfaces.
 
+- Subclasses of `DomainContextBase` can now implement `ArbitraryProvider` which
+  is used as a provider for this domain.
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties

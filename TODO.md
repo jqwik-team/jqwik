@@ -1,7 +1,6 @@
 - 1.6.1
 
     - DomainContextBase
-      - If implementation implements ArbitraryProvider => register itself
       - If implementation implements ArbitraryConfigurator => register itself
 
     - Make ProvidePropertyInstanceHook a useful hook for other purposes.

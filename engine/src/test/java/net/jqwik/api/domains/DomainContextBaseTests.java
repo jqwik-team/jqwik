@@ -79,6 +79,13 @@ class DomainContextBaseTests {
 		}
 
 		@Property
+		@Domain(ContextIsArbitraryProvider.class)
+		void useContextItselfAsArbitraryProvider(@ForAll String aString) {
+			assertThat(aString).hasSize(2);
+			assertThat(aString).containsOnlyDigits();
+		}
+
+		@Property
 		@Domain(ContextWithInnerProviderClasses.class)
 		void useProviderFromStaticInnerClass(@ForAll boolean aBoolean) {
 			assertThat(aBoolean).isFalse();

@@ -26,6 +26,9 @@ arbitrary providers and configurators:
   of type `TypeUsage` or `ArbitraryProvider.SubtypeProvider` 
   and can do [implicit flat-mapping](#implicit-flat-mapping) over `@ForAll` arguments. 
 
+- Additionally implement `ArbitraryProvider` and the domain context instance
+  itself will be used as arbitrary provider.
+
 - Add inner classes (static or not static, but not private) that implement `ArbitraryProvider`.
   An instance of this class will then be created and used as arbitrary provider.
 
