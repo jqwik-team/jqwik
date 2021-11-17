@@ -26,14 +26,17 @@ arbitrary providers and configurators:
   of type `TypeUsage` or `ArbitraryProvider.SubtypeProvider` 
   and can do [implicit flat-mapping](#implicit-flat-mapping) over `@ForAll` arguments. 
 
-- Additionally implement `ArbitraryProvider` and the domain context instance
-  itself will be used as arbitrary provider.
-
 - Add inner classes (static or not static, but not private) that implement `ArbitraryProvider`.
   An instance of this class will then be created and used as arbitrary provider.
 
+- Additionally implement `ArbitraryProvider` and the domain context instance
+  itself will be used as arbitrary provider.
+
 - Add inner classes (static or not static, but not private) that implement `ArbitraryConfigurator`.
   An instance of this class will then be created and used as configurator.
+
+- Additionally implement `ArbitraryConfigurator` and the domain context instance
+  itself will be used as configurator.
 
 As of this version the lifecycle of `DomainContext` instances is not properly defined,
 therefore do not rely on storing or caching any information in member variables.

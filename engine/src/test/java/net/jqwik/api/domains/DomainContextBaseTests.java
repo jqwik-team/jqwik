@@ -123,6 +123,13 @@ class DomainContextBaseTests {
 		}
 
 		@Property
+		@Domain(ContextIsArbitraryConfigurator.class)
+		@Domain(DomainContext.Global.class)
+		void useContextItselfAsConfigurator(@ForAll @Doubled String aString) {
+			assertThat(aString.length()).isEven();
+		}
+
+		@Property
 		@Domain(ContextWithInnerConfiguratorClasses.class)
 		@Domain(DomainContext.Global.class)
 		void useConfiguratorFromInnerStaticClass(@ForAll @MakeNegative int aNumber) {

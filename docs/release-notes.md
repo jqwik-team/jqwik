@@ -38,6 +38,9 @@ title: jqwik Release Notes
 - Subclasses of `DomainContextBase` can now implement `ArbitraryProvider` which
   is used as a provider for this domain.
 
+- Subclasses of `DomainContextBase` can now implement `ArbitraryConfigurator` which
+  is used as a configurator for this domain.
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties

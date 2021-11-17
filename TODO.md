@@ -1,8 +1,5 @@
 - 1.6.1
 
-    - DomainContextBase
-      - If implementation implements ArbitraryConfigurator => register itself
-
     - Make ProvidePropertyInstanceHook a useful hook for other purposes.
       Implementors should be able to wrap default hook.
       Implementors should be able to resolve potential parameters.

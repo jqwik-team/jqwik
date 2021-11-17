@@ -18,18 +18,27 @@ public class DomainContextBaseConfigurators {
 	private static final Logger LOG = Logger.getLogger(DomainContextBaseConfigurators.class.getName());
 
 	static public List<ArbitraryConfigurator> forContextBase(DomainContextBase base) {
-		return configuratorsFromInnerClasses(base);
+		return Stream.concat(
+			configuratorsFromInnerClasses(base),
+			configuratorsFromBaseItself(base)
+		).collect(Collectors.toList());
 	}
 
-	private static List<ArbitraryConfigurator> configuratorsFromInnerClasses(DomainContextBase base) {
+	private static Stream<ArbitraryConfigurator> configuratorsFromInnerClasses(DomainContextBase base) {
 		Predicate<Class<?>> implementsArbitraryConfigurator =
 			clazz -> ArbitraryConfigurator.class.isAssignableFrom(clazz) && !JqwikReflectionSupport.isPrivate(clazz);
 		List<Class<?>> arbitraryProviderClasses = ReflectionSupport.findNestedClasses(base.getClass(), implementsArbitraryConfigurator);
 		warnIfClassesHaveNoFittingConstructor(arbitraryProviderClasses);
 		return arbitraryProviderClasses.stream()
 									   .filter(DomainContextBaseConfigurators::hasFittingConstructor)
-									   .map(clazz -> createArbitraryConfigurator(clazz, base))
-									   .collect(Collectors.toList());
+									   .map(clazz -> createArbitraryConfigurator(clazz, base));
+	}
+
+	private static Stream<ArbitraryConfigurator> configuratorsFromBaseItself(DomainContextBase base) {
+		if (base instanceof ArbitraryConfigurator) {
+			return Stream.of((ArbitraryConfigurator) base);
+		}
+		return Stream.empty();
 	}
 
 	private static void warnIfClassesHaveNoFittingConstructor(List<Class<?>> classes) {
