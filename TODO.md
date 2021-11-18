@@ -1,9 +1,5 @@
 - 1.6.1
 
-    - Make ProvidePropertyInstanceHook a useful hook for other purposes.
-      Implementors should be able to wrap default hook.
-      Implementors should be able to resolve potential parameters.
-
     - Verify size settings for all Collection Arbitraries
 
     - Arbitraries.forType(Class<T> targetType)
@@ -20,6 +16,10 @@
 
 - 1.6.x
 
+    - Make ProvidePropertyInstanceHook a useful hook for other purposes.
+      Implementors should be able to wrap default hook.
+      Implementors should be able to resolve potential parameters.
+
     - Running an abstract test container (abstract, enum, sealed) will run all concrete subclasses.
 
     - JqwikSession:
@@ -27,14 +27,6 @@
 
     - Allow state machine / model specification with temporal logic.
       See https://wickstrom.tech/programming/2021/05/03/specifying-state-machines-with-temporal-logic.html
-
-    - Guided Generation
-      https://github.com/jlink/jqwik/issues/84
-        - Maybe change AroundTryHook to allow replacement of `Random` source
-        - Or: Introduce ProvideGenerationSourceHook
-
-    - Allow to add frequency to chars for String and Character arbitraries eg.
-      StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
 
     - Add capability to easily generate java beans with Builders
       (if that really makes sense).
@@ -51,5 +43,4 @@
         - Web.ipv4Addresses()|ipv6Addresses()|urls()
 
     - EdgeCases.Configuration.withProbability(double injectProbability)
-
 

@@ -7,6 +7,15 @@
 
 ### General
 
+- Allow usage of simple Jupiter extensions:
+  Requires a jqwik extension with set of lifecycle hooks.
+  Additional module, e.g. jqwik-jupiter-extensions-adapter
+
+- Guided Generation
+  https://github.com/jlink/jqwik/issues/84
+    - Maybe change AroundTryHook to allow replacement of `Random` source
+    - Or: Introduce ProvideGenerationSourceHook
+    
 - `@Repeat(42)`: Repeat a property 42 times
 
 - Use TestDiscovery from JUnit platform 1.5:
@@ -49,11 +58,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
         - Let domains use that hook
         - Let ArbitraryProviders use that hook
 
-    - @ResolveParameter method
-        - Returns `Optional<MyType>` | `Optional<ParameterSupplier<MyType>>`
-        - Optional Parameters: TypeUsage, LifecycleContext
-        - static and non-static
-
     - PerProperty.Lifecycle
         - void beforeTry(TryLifecycleContext, parameters)
         - void afterTry(TryLifecycleContext, TryExecutionResult)
@@ -80,6 +84,9 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 
 ### Properties
+
+- Allow to add frequency to chars for String and Character arbitraries eg.
+  StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
 
 - Lib to generate Json from JsonSchema as in
   https://github.com/Zac-HD/hypothesis-jsonschema
