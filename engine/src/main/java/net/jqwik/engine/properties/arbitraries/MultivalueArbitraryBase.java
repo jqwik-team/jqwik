@@ -28,6 +28,11 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 	@Override
 	public StreamableArbitrary<T, U> ofMinSize(int minSize) {
+		if (minSize < 0) {
+			String message = String.format("minSize (%s) must be between 0 and 2147483647", minSize);
+			throw new IllegalArgumentException(message);
+		}
+
 		MultivalueArbitraryBase<T, U> clone = typedClone();
 		clone.minSize = minSize;
 		return clone;
@@ -35,6 +40,15 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 	@Override
 	public StreamableArbitrary<T, U> ofMaxSize(int maxSize) {
+		if (maxSize < 0) {
+			String message = String.format("maxSize (%s) must be between 0 and 2147483647", maxSize);
+			throw new IllegalArgumentException(message);
+		}
+		if (maxSize < minSize) {
+			String message = String.format("minSize (%s) must not be larger than maxSize (%s)", minSize, maxSize);
+			throw new IllegalArgumentException(message);
+		}
+
 		MultivalueArbitraryBase<T, U> clone = typedClone();
 		clone.maxSize = maxSize;
 		return clone;

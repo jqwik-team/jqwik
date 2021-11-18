@@ -85,7 +85,8 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	@Override
 	public StringArbitrary ofMinLength(int minLength) {
 		if (minLength < 0) {
-			throw new IllegalArgumentException("minLength must be between 0 and 2147483647");
+			String message = String.format("minLength (%s) must be between 0 and 2147483647", minLength);
+			throw new IllegalArgumentException(message);
 		}
 		DefaultStringArbitrary clone = typedClone();
 		clone.minLength = minLength;
@@ -96,7 +97,8 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	@Override
 	public StringArbitrary ofMaxLength(int maxLength) {
 		if (maxLength < 0) {
-			throw new IllegalArgumentException("maxLength must be between 0 and 2147483647");
+			String message = String.format("maxLength (%s) must be between 0 and 2147483647", maxLength);
+			throw new IllegalArgumentException(message);
 		}
 		if (maxLength < minLength) {
 			String message = String.format("minLength (%s) must not be larger than maxLength (%s)", minLength, maxLength);

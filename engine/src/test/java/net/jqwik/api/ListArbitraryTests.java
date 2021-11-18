@@ -495,6 +495,33 @@ class ListArbitraryTests {
 
 	}
 
+	@Group
+	@PropertyDefaults(tries = 100)
+	class InvalidValues {
+
+		@Property
+		void minSizeOutOfRange(@ForAll @Negative int minSize) {
+			assertThatThrownBy(
+				() -> Arbitraries.strings().list().ofMinSize(minSize)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void maxSizeOutOfRange(@ForAll @Negative int maxSize) {
+			assertThatThrownBy(
+				() -> Arbitraries.strings().list().ofMaxSize(maxSize)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Property
+		void minLargerThanMax(@ForAll @IntRange(min = 0) int minSize, @IntRange(min = 1) @ForAll int maxSize) {
+			Assume.that(maxSize < minSize);
+			assertThatThrownBy(
+				() -> Arbitraries.strings().list().ofMinSize(minSize).ofMaxSize(maxSize)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+	}
+
 	private void assertGeneratedLists(RandomGenerator<List<String>> generator, int minSize, int maxSize) {
 		Random random = SourceOfRandomness.current();
 		assertAllGenerated(generator, random, list -> {

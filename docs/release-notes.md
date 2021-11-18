@@ -41,6 +41,9 @@ title: jqwik Release Notes
 - Subclasses of `DomainContextBase` can now implement `ArbitraryConfigurator` which
   is used as a configurator for this domain.
 
+- Multi-value arbitraries (ListArbitrary, SetArbitrary etc.) check minSize and maxSize
+  values at configuration time now.
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties

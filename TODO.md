@@ -1,7 +1,5 @@
 - 1.6.1
 
-    - Verify size settings for all Collection Arbitraries
-
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
             - forType(Class<T> targetType, int depth)
