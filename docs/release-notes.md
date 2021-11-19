@@ -52,10 +52,12 @@ title: jqwik Release Notes
 
 - Inherited domain contexts could break existing properties
 
+- `TypeArbitrary.useDefaults()` no longer allows non-public factory methods
 
 #### Bug Fixes
 
-_No known bugs_
+- `TypeArbitrary.useDefaults()` also allowed non-public factory methods,
+  which is against the documented behaviour.
 
 ## 1.6.0
 

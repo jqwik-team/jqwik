@@ -87,7 +87,7 @@ class DefaultTypeArbitraryTests {
 			checkAllGenerated(
 				typeArbitrary,
 				random,
-				aPerson -> aPerson.toString().length() <= 100
+				aPerson -> aPerson.name.length() <= 100
 			);
 		}
 
@@ -144,7 +144,7 @@ class DefaultTypeArbitraryTests {
 			checkAllGenerated(
 				typeArbitrary,
 				random,
-				aPerson -> aPerson.toString().length() <= 100
+				aPerson -> !aPerson.name.equals("non-public-factory-name")
 			);
 		}
 
@@ -158,7 +158,7 @@ class DefaultTypeArbitraryTests {
 			checkAllGenerated(
 				typeArbitrary,
 				random,
-				aPerson -> aPerson.toString().equals("a person")
+				aPerson -> aPerson.name.equals("a person") && aPerson.age == 42
 			);
 		}
 
@@ -339,7 +339,7 @@ class DefaultTypeArbitraryTests {
 			DefaultTypeArbitrary<Person> typeArbitrary =
 				(DefaultTypeArbitrary<Person>) new DefaultTypeArbitrary<>(Person.class).useAllFactoryMethods();
 
-			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(1);
+			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 			checkAllGenerated(
 				typeArbitrary,
 				random,
@@ -482,6 +482,10 @@ class DefaultTypeArbitraryTests {
 		private final String name;
 		private final int age;
 
+		static Person nonPublicFactory(int age) {
+			return new Person("non-public-factory-name", -1);
+		}
+
 		public static Person copy(Person person) {
 			return new Person(person);
 		}
@@ -508,7 +512,7 @@ class DefaultTypeArbitraryTests {
 
 		@Override
 		public String toString() {
-			return name;
+			return String.format("%s=%s", name, age);
 		}
 	}
 

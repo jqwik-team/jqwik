@@ -9,6 +9,7 @@ import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
 import static org.junit.platform.commons.support.ModifierSupport.*;
@@ -19,6 +20,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	private final Class<T> targetType;
 	private final Set<Executable> creators = new HashSet<>();
+	//private final Set<UseTypeMode> useTypeModes = new HashSet<>();
 	private boolean defaultsSet = false;
 	private boolean allowRecursion = false;
 
@@ -29,7 +31,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	public TypeArbitrary<T> useDefaults() {
 		usePublicConstructors();
-		useAllFactoryMethods();
+		usePublicFactoryMethods();
 		defaultsSet = true;
 		return this;
 	}
@@ -155,7 +157,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public String toString() {
-		return String.format("TypeArbitrary<%s>", targetType.getName());
+		return String.format("TypeArbitrary<%s>(allowRecursion=%s)", targetType.getName(), allowRecursion);
 	}
 
 	private Arbitrary<T> createArbitrary(Executable creator) {
