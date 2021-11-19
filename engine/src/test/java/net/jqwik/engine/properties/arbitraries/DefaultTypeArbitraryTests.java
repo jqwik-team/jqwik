@@ -100,7 +100,7 @@ class DefaultTypeArbitraryTests {
 			checkAllGenerated(
 				typeArbitrary,
 				random,
-				aPerson -> aPerson.toString().length() <= 100
+				aPerson -> aPerson.name.length() <= 100
 			);
 		}
 
@@ -113,7 +113,7 @@ class DefaultTypeArbitraryTests {
 			checkAllGenerated(
 				typeArbitrary,
 				random,
-				aPerson -> aPerson.toString().length() <= 100
+				aPerson -> aPerson.name.length() <= 100
 			);
 		}
 
@@ -263,7 +263,7 @@ class DefaultTypeArbitraryTests {
 			checkAllGenerated(
 				typeArbitrary,
 				random,
-				aPerson -> aPerson.toString().length() <= 100
+				aPerson -> aPerson.name.length() <= 100
 			);
 		}
 	}
@@ -343,7 +343,7 @@ class DefaultTypeArbitraryTests {
 			checkAllGenerated(
 				typeArbitrary,
 				random,
-				aPerson -> aPerson.toString().length() <= 100
+				aPerson -> aPerson.name.length() <= 100
 			);
 		}
 	}

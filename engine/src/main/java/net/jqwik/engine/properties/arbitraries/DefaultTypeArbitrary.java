@@ -20,7 +20,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	private final Class<T> targetType;
 	private final Set<Executable> creators = new HashSet<>();
-	//private final Set<UseTypeMode> useTypeModes = new HashSet<>();
+	private final Set<UseTypeMode> useTypeModes = new HashSet<>();
 	private boolean defaultsSet = false;
 	private boolean allowRecursion = false;
 
@@ -67,11 +67,25 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public TypeArbitrary<T> usePublicConstructors() {
+		addUseTypeMode(UseTypeMode.PUBLIC_CONSTRUCTORS);
 		return useConstructors(ModifierSupport::isPublic);
+	}
+
+	private void addUseTypeMode(UseTypeMode useTypeMode) {
+		switch (useTypeMode) {
+			case PUBLIC_CONSTRUCTORS:
+				useTypeModes.remove(UseTypeMode.CONSTRUCTORS);
+				break;
+			case PUBLIC_FACTORIES:
+				useTypeModes.remove(UseTypeMode.FACTORIES);
+				break;
+		}
+		useTypeModes.add(useTypeMode);
 	}
 
 	@Override
 	public TypeArbitrary<T> useAllConstructors() {
+		addUseTypeMode(UseTypeMode.CONSTRUCTORS);
 		return useConstructors(ctor -> true);
 	}
 
@@ -88,11 +102,13 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public TypeArbitrary<T> usePublicFactoryMethods() {
+		addUseTypeMode(UseTypeMode.PUBLIC_FACTORIES);
 		return useFactoryMethods(ModifierSupport::isPublic);
 	}
 
 	@Override
 	public TypeArbitrary<T> useAllFactoryMethods() {
+		addUseTypeMode(UseTypeMode.FACTORIES);
 		return useFactoryMethods(method -> true);
 	}
 
