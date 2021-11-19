@@ -2,6 +2,7 @@
 
     - @UseType(allowRecursion=true)
       - Rework documentation in generation-from-type.md
+      - what about recursive types (e.g. Composite Pattern)?
       
     - See https://github.com/jlink/jqwik/issues/191
 
