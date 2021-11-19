@@ -20,6 +20,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	private final Class<T> targetType;
 	private final Set<Executable> creators = new HashSet<>();
 	private boolean defaultsSet = false;
+	private boolean allowRecursion = false;
 
 	public DefaultTypeArbitrary(Class<T> targetType) {
 		super(Collections.emptyList());
@@ -91,6 +92,11 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	@Override
 	public TypeArbitrary<T> useAllFactoryMethods() {
 		return useFactoryMethods(method -> true);
+	}
+
+	@Override
+	public TypeArbitrary<T> allowRecursion() {
+		return this;
 	}
 
 	@SuppressWarnings("unchecked")
