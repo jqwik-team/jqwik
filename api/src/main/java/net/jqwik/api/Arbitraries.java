@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = STABLE, since = "1.0")
 public class Arbitraries {
 
-    @API(status = INTERNAL)
+	@API(status = INTERNAL)
 	public static abstract class ArbitrariesFacade {
 		private static final ArbitrariesFacade implementation;
 
@@ -73,7 +73,7 @@ public class Arbitraries {
 
 		public abstract <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>[] typeParameters);
 
-		public abstract <T> Arbitrary<T> defaultFor(TypeUsage typeUsage);
+		public abstract <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<T>> noDefaultHandler);
 
 		public abstract <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier);
 
@@ -261,7 +261,7 @@ public class Arbitraries {
 	 * Create an arbitrary that will randomly choose between all given arbitraries of the same type T.
 	 *
 	 * @param choices A collection of arbitraries to choose from
-	 * @param <T> The type of values to generate
+	 * @param <T>     The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@SuppressWarnings("unchecked")
@@ -523,14 +523,35 @@ public class Arbitraries {
 	 * This is more or less the same mechanism that jqwik uses to find arbitraries for
 	 * property method parameters.
 	 *
+	 * <p>The returned arbitrary is lazy, i.e. it be evaluated at generation time to allow
+	 * domain contexts to be used.</p>
+	 *
 	 * @param typeUsage The type of the value to find an arbitrary for
 	 * @param <T>       The type of values to generate
 	 * @return a new arbitrary instance
-	 * @throws CannotFindArbitraryException if there is no registered arbitrary provider to serve this type
 	 */
 	@API(status = MAINTAINED, since = "1.1")
 	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
-		return ArbitrariesFacade.implementation.defaultFor(typeUsage);
+		return defaultFor(typeUsage, ignore -> {throw new CannotFindArbitraryException(typeUsage);});
+	}
+
+	/**
+	 * Find a registered arbitrary that will be used to generate values of type T.
+	 * All default arbitrary providers and all registered arbitrary providers are considered.
+	 * This is more or less the same mechanism that jqwik uses to find arbitraries for
+	 * property method parameters.
+	 *
+	 * <p>The returned arbitrary is lazy, i.e. it be evaluated at generation time to allow
+	 * domain contexts to be used. Those </p>
+	 *
+	 * @param typeUsage The type of the value to find an arbitrary for
+	 * @param noDefaultHandler Alternative behaviour when no default arbitrary can be found at generation time
+	 * @param <T>       The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.1")
+	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<T>> noDefaultHandler) {
+		return ArbitrariesFacade.implementation.defaultFor(typeUsage, noDefaultHandler);
 	}
 
 	/**

@@ -87,7 +87,8 @@ public interface TypeArbitrary<T> extends Arbitrary<T> {
 
 	/**
 	 * Allow recursive use of type arbitrary:
-	 * If a parameter of creator function does not have an associated arbitrary,
+	 * If any parameter of a creator function does not have an associated arbitrary
+	 * (globally registered or through a domain context),
 	 * jqwik will try to resolve this parameter using its type information as weill.
 	 *
 	 * @return the same arbitrary instance

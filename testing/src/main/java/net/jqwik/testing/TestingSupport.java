@@ -36,14 +36,14 @@ public class TestingSupport {
 		});
 	}
 
+	public static <T> void assertAllGenerated(Arbitrary<? extends T> arbitrary, Random random, Consumer<T> assertions) {
+		assertAllGenerated(arbitrary.generator(1000), random, assertions);
+	}
+
 	public static <T> void assertAllGenerated(RandomGenerator<? extends T> generator, Random random, Consumer<T> assertions) {
 		Predicate<T> checker = value -> {
-			try {
-				assertions.accept(value);
-				return true;
-			} catch (Throwable any) {
-				return false;
-			}
+			assertions.accept(value);
+			return true;
 		};
 		checkAllGenerated(generator, random, checker);
 	}

@@ -1,10 +1,9 @@
 - 1.6.1
 
-    - Arbitraries.forType(Class<T> targetType)
-        - Recursive use
-            - forType(Class<T> targetType, int depth)
-                - @UseType(depth = 1)
-        - See https://github.com/jlink/jqwik/issues/191
+    - @UseType(allowRecursion=true)
+      - Rework documentation in generation-from-type.md
+      
+    - See https://github.com/jlink/jqwik/issues/191
 
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91

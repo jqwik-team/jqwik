@@ -185,18 +185,18 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 				Arrays.stream(typeParameters)
 					  .map(TypeUsage::of)
 					  .toArray(TypeUsage[]::new);
-		return defaultFor(TypeUsage.of(type, genericTypeParameters));
+		return defaultFor(TypeUsage.of(type, genericTypeParameters), typeUsage -> {throw new CannotFindArbitraryException(typeUsage);});
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
+	public <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<T>> noDefaultHandler) {
 		// Lazy evaluation is necessary since defaults only exist in context of a domain
 		// and domains are only present during execution of a property
 		return Arbitraries.lazy(() -> {
 			Set<Arbitrary<?>> arbitraries = allDefaultsFor(typeUsage);
 			if (arbitraries.isEmpty()) {
-				throw new CannotFindArbitraryException(typeUsage);
+				return noDefaultHandler.apply(typeUsage);
 			}
 
 			List<Arbitrary<? extends T>> arbitrariesList = new ArrayList<>();

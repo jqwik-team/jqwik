@@ -44,6 +44,9 @@ title: jqwik Release Notes
 - Multi-value arbitraries (ListArbitrary, SetArbitrary etc.) check minSize and maxSize
   values at configuration time now.
 
+- Added `TypeArbitrary.allowRecursion()` to enable recursive usage of type based
+  generation for types that do not have an applicable default arbitrary.
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties

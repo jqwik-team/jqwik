@@ -6,8 +6,8 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.engine.*;
-import net.jqwik.testing.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
@@ -123,12 +123,12 @@ class DefaultTypeArbitraryTests {
 
 			DefaultTypeArbitrary<String> typeArbitrary =
 				(DefaultTypeArbitrary<String>) new DefaultTypeArbitrary<>(String.class)
-										   .use(String.class.getConstructor())
-										   .use(String.class.getConstructor())
-										   .use(Samples.class.getDeclaredMethod("stringFromNoParams"))
-										   .use(Samples.class.getDeclaredMethod("stringFromNoParams"));
+					.use(String.class.getConstructor())
+					.use(String.class.getConstructor())
+					.use(Samples.class.getDeclaredMethod("stringFromNoParams"))
+					.use(Samples.class.getDeclaredMethod("stringFromNoParams"));
 
-			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
+			assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 		}
 	}
 
@@ -200,8 +200,8 @@ class DefaultTypeArbitraryTests {
 				typeArbitrary.generator(1000, true),
 				random,
 				aDomain -> {
-					Assertions.assertThat(aDomain.string1).isEqualTo(aDomain.string2);
-					Assertions.assertThat(aDomain.int1).isEqualTo(aDomain.int2);
+					assertThat(aDomain.string1).isEqualTo(aDomain.string2);
+					assertThat(aDomain.int1).isEqualTo(aDomain.int2);
 				}
 			);
 		}
@@ -245,9 +245,9 @@ class DefaultTypeArbitraryTests {
 				typeArbitrary.generator(1000, true),
 				random,
 				aDomain -> {
-					Assertions.assertThat(aDomain.string1).isEqualTo(aDomain.string2);
-					Assertions.assertThat(aDomain.int1).isEqualTo(0);
-					Assertions.assertThat(aDomain.int2).isEqualTo(0);
+					assertThat(aDomain.string1).isEqualTo(aDomain.string2);
+					assertThat(aDomain.int1).isEqualTo(0);
+					assertThat(aDomain.int2).isEqualTo(0);
 				}
 			);
 		}
@@ -259,7 +259,7 @@ class DefaultTypeArbitraryTests {
 			DefaultTypeArbitrary<Person> typeArbitrary =
 				(DefaultTypeArbitrary<Person>) new DefaultTypeArbitrary<>(Person.class).useAllConstructors();
 
-			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
+			assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 			checkAllGenerated(
 				typeArbitrary,
 				random,
@@ -280,8 +280,8 @@ class DefaultTypeArbitraryTests {
 				typeArbitrary.generator(1000, true),
 				random,
 				aDomain -> {
-					Assertions.assertThat(aDomain.string1).isEqualTo(aDomain.string2);
-					Assertions.assertThat(aDomain.int1).isEqualTo(aDomain.int2);
+					assertThat(aDomain.string1).isEqualTo(aDomain.string2);
+					assertThat(aDomain.int1).isEqualTo(aDomain.int2);
 				}
 			);
 		}
@@ -325,9 +325,9 @@ class DefaultTypeArbitraryTests {
 				typeArbitrary.generator(1000, true),
 				random,
 				aDomain -> {
-					Assertions.assertThat(aDomain.string1).isEqualTo(aDomain.string2);
-					Assertions.assertThat(aDomain.int1).isEqualTo(0);
-					Assertions.assertThat(aDomain.int2).isEqualTo(0);
+					assertThat(aDomain.string1).isEqualTo(aDomain.string2);
+					assertThat(aDomain.int1).isEqualTo(0);
+					assertThat(aDomain.int2).isEqualTo(0);
 				}
 			);
 		}
@@ -339,7 +339,7 @@ class DefaultTypeArbitraryTests {
 			DefaultTypeArbitrary<Person> typeArbitrary =
 				(DefaultTypeArbitrary<Person>) new DefaultTypeArbitrary<>(Person.class).useAllFactoryMethods();
 
-			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
+			assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 			checkAllGenerated(
 				typeArbitrary,
 				random,
@@ -352,16 +352,40 @@ class DefaultTypeArbitraryTests {
 	class RecursiveUse {
 
 		@Example
-		@Disabled
-		void withRecursiveUse_UnresolvableTypesAreResolvedThroughTypeArbitrary(@ForAll Random random) {
-			TypeArbitrary<Customer> typeArbitrary = new DefaultTypeArbitrary<>(Customer.class)
+		void unresolvableSimpleTypeIsResolvedThroughTypeArbitrary(@ForAll Random random) {
+			Arbitrary<Customer> typeArbitrary = new DefaultTypeArbitrary<>(Customer.class)
 				.useDefaults()
 				.allowRecursion();
 
-			checkAllGenerated(
+			assertAllGenerated(
 				typeArbitrary,
 				random,
-				customer -> customer.person instanceof Person
+				customer -> {
+					assertThat(customer.person).isNotNull();
+					assertThat(customer.tags).isNotNull();
+				}
+			);
+
+			assertAtLeastOneGeneratedOf(
+				typeArbitrary.generator(1000),
+				random,
+				Customer.defaultCustomer()
+			);
+		}
+
+		@Example
+		void resolveDeeperTypeRecursively(@ForAll Random random) {
+			Arbitrary<Contract> typeArbitrary = new DefaultTypeArbitrary<>(Contract.class)
+				.usePublicConstructors()
+				.allowRecursion();
+
+			assertAllGenerated(
+				typeArbitrary,
+				random,
+				contract -> {
+					assertThat(contract.customers).hasSize(2);
+					assertThat(contract.customers).allMatch(c -> c instanceof Customer);
+				}
 			);
 		}
 
@@ -382,7 +406,7 @@ class DefaultTypeArbitraryTests {
 		void nonStaticMethodsAreNotSupported() {
 			Assertions.assertThatThrownBy(
 				() -> new DefaultTypeArbitrary<>(String.class)
-						  .use(Samples.class.getDeclaredMethod("nonStaticMethod"))
+					.use(Samples.class.getDeclaredMethod("nonStaticMethod"))
 			).isInstanceOf(JqwikException.class);
 		}
 
@@ -390,18 +414,18 @@ class DefaultTypeArbitraryTests {
 		void creatorWithWrongReturnTypeIsNotSupported() {
 			Assertions.assertThatThrownBy(
 				() -> new DefaultTypeArbitrary<>(int.class)
-						  .use(Samples.class.getDeclaredMethod("stringFromNoParams"))
+					.use(Samples.class.getDeclaredMethod("stringFromNoParams"))
 			).isInstanceOf(JqwikException.class);
 		}
 
 		@Example
-		void creatorWithParameterThatHasNoDefaultArbitrary_willThrowException_whenGeneratedValueIsRequests() throws NoSuchMethodException {
+		void creatorWithParameterThatHasNoDefaultArbitrary_willThrowException_whenGeneratedValueIsRequests(@ForAll Random random) {
 			TypeArbitrary<Customer> typeArbitrary =
-				new DefaultTypeArbitrary<>(Customer.class).useDefaults();
+				new DefaultTypeArbitrary<>(Customer.class).usePublicConstructors();
 
 			RandomGenerator<Customer> generator = typeArbitrary.generator(1000, true);
 			Assertions.assertThatThrownBy(
-					() -> generator.next(SourceOfRandomness.current()).value()
+				() -> generator.next(random).value()
 			).isInstanceOf(JqwikException.class);
 		}
 
@@ -490,7 +514,6 @@ class DefaultTypeArbitraryTests {
 			return new Person(person);
 		}
 
-
 		public Person(Person person) {
 			this(person.name);
 		}
@@ -511,15 +534,87 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Person person = (Person) o;
+
+			if (age != person.age) return false;
+			return name.equals(person.name);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = name.hashCode();
+			result = 31 * result + age;
+			return result;
+		}
+
+		@Override
 		public String toString() {
-			return String.format("%s=%s", name, age);
+			return String.format("%s(%s)", name, age);
 		}
 	}
 
 	private static class Customer {
 		final Person person;
+		final List<String> tags;
 
-		public Customer(Person person) {this.person = person;}
+		public static Customer defaultCustomer() {
+			return new Customer(new Person("P", 42), Collections.emptyList());
+		}
+
+		public Customer(Person person, List<String> tags) {
+			this.person = person;
+			this.tags = tags;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Customer customer = (Customer) o;
+
+			if (!person.equals(customer.person)) return false;
+			return tags.equals(customer.tags);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = person.hashCode();
+			result = 31 * result + tags.hashCode();
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			final StringBuffer sb = new StringBuffer("Customer{");
+			sb.append("person=").append(person);
+			sb.append(", tags=").append(tags);
+			sb.append('}');
+			return sb.toString();
+		}
+	}
+
+	private static class Contract {
+		final List<Customer> customers = new ArrayList<>();
+
+		public static Contract aContract() {
+			return new Contract(Customer.defaultCustomer(), Customer.defaultCustomer(), Customer.defaultCustomer());
+		}
+
+		private Contract(Customer c1, Customer c2, Customer c3) {
+			customers.add(c1);
+			customers.add(c2);
+			customers.add(c3);
+		}
+
+		public Contract(Customer c1, Customer c2) {
+			customers.add(c1);
+			customers.add(c2);
+		}
 	}
 
 	private static class MyDomain {

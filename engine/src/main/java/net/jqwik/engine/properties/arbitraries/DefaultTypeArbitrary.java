@@ -114,6 +114,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public TypeArbitrary<T> allowRecursion() {
+		allowRecursion = true;
 		return this;
 	}
 
@@ -179,12 +180,28 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	private Arbitrary<T> createArbitrary(Executable creator) {
 		List<Arbitrary<Object>> parameterArbitraries =
 			Arrays.stream(creator.getAnnotatedParameterTypes())
-				  .map(annotatedType -> Arbitraries.defaultFor(TypeUsage.forType(annotatedType.getType())))
+				  .map(annotatedType -> arbitraryFor(TypeUsage.forType(annotatedType.getType())))
 				  .collect(Collectors.toList());
 
 		Function<List<Object>, T> combinator = paramList -> combinator(creator).apply(paramList.toArray());
 		Arbitrary<T> arbitrary = Combinators.combine(parameterArbitraries).as(combinator);
 		return arbitrary.ignoreException(GenerationError.class);
+	}
+
+	private Arbitrary<Object> arbitraryFor(TypeUsage parameterTypeUsage) {
+		return Arbitraries.defaultFor(parameterTypeUsage, this::arbitraryForTypeWithoutDefault);
+	}
+
+	@SuppressWarnings("unchecked")
+	private TypeArbitrary<Object> arbitraryForTypeWithoutDefault(TypeUsage typeUsage) {
+		if (!allowRecursion) {
+			throw new CannotFindArbitraryException(typeUsage);
+		}
+		TypeArbitrary<Object> typeArbitrary = new DefaultTypeArbitrary<>((Class<Object>) typeUsage.getRawType());
+		for (UseTypeMode useTypeMode : useTypeModes) {
+			typeArbitrary = useTypeMode.modify(typeArbitrary);
+		}
+		return typeArbitrary.allowRecursion();
 	}
 
 	@SuppressWarnings("unchecked")
