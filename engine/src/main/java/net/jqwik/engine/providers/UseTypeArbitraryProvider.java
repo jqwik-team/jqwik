@@ -18,7 +18,11 @@ public class UseTypeArbitraryProvider implements ArbitraryProvider {
 			return false;
 		}
 		if (!targetType.getTypeArguments().isEmpty()) {
-			LOG.warning("@UseType cannot be applied to parameterized types");
+			String message = String.format(
+				"@UseType cannot be applied to parameterized types.%n" +
+					"Try to apply it to the type parameters themselves!"
+			);
+			LOG.warning(message);
 			return false;
 		}
 		return true;
@@ -36,8 +40,15 @@ public class UseTypeArbitraryProvider implements ArbitraryProvider {
 									   .map(UseType::value)
 									   .orElse(new UseTypeMode[0]);
 
+		boolean allowRecursion = targetType.findAnnotation(UseType.class)
+										   .map(UseType::allowRecursion)
+										   .orElse(true);
+
 		for (UseTypeMode use : uses) {
 			typeArbitrary = use.modify(typeArbitrary);
+		}
+		if (allowRecursion) {
+			typeArbitrary = typeArbitrary.allowRecursion();
 		}
 
 		return typeArbitrary;

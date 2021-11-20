@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -12,7 +13,7 @@ import static net.jqwik.api.constraints.UseTypeMode.*;
 @Group
 class UseTypeProperties {
 	@Property
-	boolean withoutValue(@ForAll @UseType Person aPerson) {
+	boolean simpleType(@ForAll @UseType Person aPerson) {
 		return aPerson != null;
 	}
 
@@ -21,6 +22,18 @@ class UseTypeProperties {
 		@ForAll @UseType({CONSTRUCTORS, FACTORIES}) Person aPerson
 	) {
 		return aPerson != null;
+	}
+
+	@Property
+	void nestedType(@ForAll @UseType Parties aParties) {
+		assertThat(aParties).isNotNull();
+		assertThat(aParties.p1).isInstanceOf(Person.class);
+		assertThat(aParties.p2).isInstanceOf(Person.class);
+	}
+
+	@Property
+	@ExpectFailure(failureType = CannotFindArbitraryException.class)
+	void nestedTypeWithoutAllowRecursion_throwsException(@ForAll @UseType(allowRecursion = false) Parties aParties) {
 	}
 
 	@Property(tries = 20)
@@ -70,4 +83,13 @@ class UseTypeProperties {
 		}
 	}
 
+	private static class Parties {
+		final Person p1;
+		final Person p2;
+
+		public Parties(Person p1, Person p2) {
+			this.p1 = p1;
+			this.p2 = p2;
+		}
+	}
 }

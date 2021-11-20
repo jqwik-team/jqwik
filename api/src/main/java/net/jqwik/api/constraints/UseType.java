@@ -28,5 +28,13 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = MAINTAINED, since = "1.2")
 public @interface UseType {
 	UseTypeMode[] value() default {};
+
+	/**
+	 * When true then type information is also used to generate
+	 * embedded types if (and only if) there's no other arbitrary
+	 * available for this type.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.0")
+	boolean allowRecursion() default true;
 }
 

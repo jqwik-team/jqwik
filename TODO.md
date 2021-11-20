@@ -1,6 +1,6 @@
 - 1.6.1
 
-    - @UseType(allowRecursion=true)
+    - TypeArbitrary with Recursion
         - See https://github.com/jlink/jqwik/issues/191
         - Rework documentation in generation-from-type.md
         - what about recursive types (e.g. Composite Pattern)?
