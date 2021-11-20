@@ -71,6 +71,19 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		return useConstructors(ModifierSupport::isPublic);
 	}
 
+	@Override
+	protected void validateBeforeGeneration(List<Arbitrary<T>> all) {
+		if (all.isEmpty()) {
+			String message = String.format(
+				"No usable generator methods (constructors or factory methods) " +
+					"could be found for type [%s] and type modes: %s.",
+				targetType,
+				useTypeModes
+			);
+			throw new JqwikException(message);
+		}
+	}
+
 	private void addUseTypeMode(UseTypeMode useTypeMode) {
 		switch (useTypeMode) {
 			case PUBLIC_CONSTRUCTORS:

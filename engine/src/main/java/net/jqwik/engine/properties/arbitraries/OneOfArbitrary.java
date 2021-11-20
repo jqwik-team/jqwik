@@ -32,11 +32,16 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 	}
 
 	private RandomGenerator<T> rawGeneration(int genSize, boolean withEmbeddedEdgeCases) {
+		validateBeforeGeneration(all);
 		List<Tuple2<Integer, Arbitrary<T>>> frequencies =
 			all.stream()
 			   .map(a -> Tuple.of(1, a))
 			   .collect(Collectors.toList());
 		return RandomGenerators.frequencyOf(frequencies, genSize, withEmbeddedEdgeCases);
+	}
+
+	protected void validateBeforeGeneration(List<Arbitrary<T>> all) {
+		// Override in subclasses if necessary
 	}
 
 	@Override

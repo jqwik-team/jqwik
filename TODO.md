@@ -3,7 +3,6 @@
     - TypeArbitrary with Recursion
         - See https://github.com/jlink/jqwik/issues/191
         - Rework documentation in generation-from-type.md
-        - what about recursive types (e.g. Composite Pattern)?
 
     - Improve shrinking of (duplicate) emails
       - Maybe have a "simple emails" config with restricted length and restricted domains
