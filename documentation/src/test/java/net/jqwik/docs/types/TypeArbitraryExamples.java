@@ -16,6 +16,16 @@ class TypeArbitraryExamples {
 	}
 
 	@Property
+	@Domain(People.class)
+	@Report(Reporting.GENERATED)
+	void aPartyOfPeopleCanBeGenerated(@ForAll @UseType Party aParty) {
+		Assertions.assertThat(aParty.name).isNotBlank();
+		// Assertions.assertThat(aParty.people).allMatch(
+		// 	person -> !person.name.isEmpty()
+		// );
+	}
+
+	@Property
 	@Report(Reporting.GENERATED)
 	void aPersonsFromTheFactoryIsAlways0(@ForAll("people") Person aPerson) {
 		Assertions.assertThat(aPerson.name).isNotBlank();

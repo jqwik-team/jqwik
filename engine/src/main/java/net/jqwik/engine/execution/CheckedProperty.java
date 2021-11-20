@@ -65,8 +65,8 @@ public class CheckedProperty {
 		try {
 			Reporter reporter = propertyLifecycleContext.reporter();
 			return createGenericProperty(effectiveConfiguration).check(reporter, reporting);
-		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
-			return failed(effectiveConfiguration, cannotFindArbitraryException);
+		} catch (CannotFindArbitraryException | TooManyFilterMissesException generationFailedException) {
+			return failed(effectiveConfiguration, generationFailedException);
 		}
 	}
 
