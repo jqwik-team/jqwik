@@ -1,10 +1,12 @@
 - 1.6.1
 
     - @UseType(allowRecursion=true)
-      - Rework documentation in generation-from-type.md
-      - what about recursive types (e.g. Composite Pattern)?
-      
-    - See https://github.com/jlink/jqwik/issues/191
+        - See https://github.com/jlink/jqwik/issues/191
+        - Rework documentation in generation-from-type.md
+        - what about recursive types (e.g. Composite Pattern)?
+
+    - Improve shrinking of (duplicate) emails
+      - Maybe have a "simple emails" config with restricted length and restricted domains
 
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
