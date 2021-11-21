@@ -52,40 +52,75 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	}
 
 	public TypeArbitrary<T> useDefaults() {
-		usePublicConstructors();
-		usePublicFactoryMethods();
-		defaultsSet = true;
-		return this;
+		if (defaultsSet) {
+			return this;
+		}
+		DefaultTypeArbitrary<T> clone = typedClone();
+		clone.creators.clear();
+		clone.addPublicConstructors();
+		clone.addPublicFactoryMethods();
+		clone.defaultsSet = true;
+		return clone;
+	}
+
+	private void addPublicFactoryMethods() {
+		addUseTypeMode(UseTypeMode.PUBLIC_FACTORIES);
+		addFactoryMethods(ModifierSupport::isPublic);
 	}
 
 	@Override
 	public TypeArbitrary<T> use(Executable creator) {
+		DefaultTypeArbitrary<T> clone = cloneWithClearedDefaults();
+		clone.addCreator(creator);
+		return clone;
+	}
+
+	private DefaultTypeArbitrary<T> cloneWithClearedDefaults() {
+		DefaultTypeArbitrary<T> clone = typedClone();
+		clone.clearDefaults();
+		return clone;
+	}
+
+	private void addCreator(Executable creator) {
+		checkCreator(creator);
+		creators.add(creator);
+	}
+
+	private void clearDefaults() {
 		if (defaultsSet) {
 			creators.clear();
 			defaultsSet = false;
 		}
-		checkCreator(creator);
-		creators.add(creator);
-		return this;
 	}
 
 	@Override
 	public TypeArbitrary<T> useConstructors(Predicate<? super Constructor<?>> filter) {
+		DefaultTypeArbitrary<T> clone = cloneWithClearedDefaults();
+		clone.addConstructors(filter);
+		return clone;
+	}
+
+	private void addConstructors(Predicate<? super Constructor<?>> filter) {
 		if (isAbstract(targetType)) {
-			return this;
+			return;
 		}
 		Arrays.stream(targetType.getDeclaredConstructors())
 			  .filter(this::isNotRecursive)
 			  .filter(constructor -> !isOverloadedConstructor(constructor))
 			  .filter(filter)
-			  .forEach(this::use);
-		return this;
+			  .forEach(this::addCreator);
 	}
 
 	@Override
 	public TypeArbitrary<T> usePublicConstructors() {
+		DefaultTypeArbitrary<T> clone = cloneWithClearedDefaults();
+		clone.addPublicConstructors();
+		return clone;
+	}
+
+	private void addPublicConstructors() {
 		addUseTypeMode(UseTypeMode.PUBLIC_CONSTRUCTORS);
-		return useConstructors(ModifierSupport::isPublic);
+		addConstructors(ModifierSupport::isPublic);
 	}
 
 	private void addUseTypeMode(UseTypeMode useTypeMode) {
@@ -102,37 +137,48 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 
 	@Override
 	public TypeArbitrary<T> useAllConstructors() {
-		addUseTypeMode(UseTypeMode.CONSTRUCTORS);
-		return useConstructors(ctor -> true);
+		DefaultTypeArbitrary<T> clone = cloneWithClearedDefaults();
+		clone.addUseTypeMode(UseTypeMode.CONSTRUCTORS);
+		clone.addConstructors(ctor -> true);
+		return clone;
 	}
 
 	@Override
 	public TypeArbitrary<T> useFactoryMethods(Predicate<Method> filter) {
+		DefaultTypeArbitrary<T> clone = cloneWithClearedDefaults();
+		clone.addFactoryMethods(filter);
+		return clone;
+	}
+
+	private void addFactoryMethods(Predicate<Method> filter) {
 		Arrays.stream(targetType.getDeclaredMethods())
 			  .filter(ModifierSupport::isStatic)
 			  .filter(this::hasFittingReturnType)
 			  .filter(this::isNotRecursive)
 			  .filter(filter)
-			  .forEach(this::use);
-		return this;
+			  .forEach(this::addCreator);
 	}
 
 	@Override
 	public TypeArbitrary<T> usePublicFactoryMethods() {
-		addUseTypeMode(UseTypeMode.PUBLIC_FACTORIES);
-		return useFactoryMethods(ModifierSupport::isPublic);
+		DefaultTypeArbitrary<T> clone = cloneWithClearedDefaults();
+		clone.addPublicFactoryMethods();
+		return clone;
 	}
 
 	@Override
 	public TypeArbitrary<T> useAllFactoryMethods() {
-		addUseTypeMode(UseTypeMode.FACTORIES);
-		return useFactoryMethods(method -> true);
+		DefaultTypeArbitrary<T> clone = cloneWithClearedDefaults();
+		clone.addUseTypeMode(UseTypeMode.FACTORIES);
+		clone.addFactoryMethods(method -> true);
+		return clone;
 	}
 
 	@Override
 	public TypeArbitrary<T> allowRecursion() {
-		allowRecursion = true;
-		return this;
+		DefaultTypeArbitrary<T> clone = typedClone();
+		clone.allowRecursion = true;
+		return clone;
 	}
 
 	@SuppressWarnings("unchecked")
