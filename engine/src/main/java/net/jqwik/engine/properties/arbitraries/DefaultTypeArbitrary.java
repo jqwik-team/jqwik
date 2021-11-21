@@ -21,7 +21,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	private final Class<T> targetType;
 	private final Set<Executable> creators = new HashSet<>();
 	private final Set<UseTypeMode> useTypeModes = new HashSet<>();
-	private final List<Arbitrary<? extends T>> arbitraries = new ArrayList<>();
 	private boolean defaultsSet = false;
 	private boolean allowRecursion = false;
 
@@ -31,7 +30,17 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 
 	@Override
 	protected Arbitrary<T> arbitrary() {
-		if (arbitraries.isEmpty()) {
+		failWithoutCreators();
+
+		List<Arbitrary<? extends T>> arbitraries = creators
+			.stream()
+			.map(this::createArbitrary)
+			.collect(Collectors.toList());
+		return Arbitraries.oneOf(arbitraries);
+	}
+
+	private void failWithoutCreators() {
+		if (creators.isEmpty()) {
 			String message = String.format(
 				"No usable generator methods (constructors or factory methods) " +
 					"could be found for type [%s] and type modes: %s.",
@@ -40,10 +49,7 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 			);
 			throw new JqwikException(message);
 		}
-
-		return Arbitraries.oneOf(arbitraries);
 	}
-
 
 	public TypeArbitrary<T> useDefaults() {
 		usePublicConstructors();
@@ -56,14 +62,9 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	public TypeArbitrary<T> use(Executable creator) {
 		if (defaultsSet) {
 			creators.clear();
-			arbitraries.clear();
 			defaultsSet = false;
 		}
-		if (creators.contains(creator)) {
-			return this;
-		}
 		checkCreator(creator);
-		arbitraries.add(createArbitrary(creator));
 		creators.add(creator);
 		return this;
 	}
