@@ -1,4 +1,4 @@
-This module's artefact name is `jqwik-Module`. 
+This module's artefact name is `jqwik-kotlin`. 
 It's supposed to simplify and streamline using _jqwik_ in Kotlin projects. 
 
 This module is _not_ in jqwik's default dependencies. 
