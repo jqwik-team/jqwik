@@ -62,8 +62,8 @@ public class IgnoreExceptionExhaustiveGenerator<T> implements ExhaustiveGenerato
 						String message =
 							String.format("Filter missed more than %s times.", maxMisses);
 						return new TooManyFilterMissesException(message);
-					}
-				);
+					},
+                        10000);
 			}
 
 		};

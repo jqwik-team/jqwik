@@ -41,7 +41,8 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 			(maxMisses) -> {
 				String message = String.format("%s missed more than %s times.", toString(), maxMisses);
 				return new TooManyFilterMissesException(message);
-			}
+			},
+			10000
 		);
 	}
 

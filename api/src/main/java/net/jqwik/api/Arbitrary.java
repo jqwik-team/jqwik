@@ -1,6 +1,5 @@
 package net.jqwik.api;
 
-import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -42,7 +41,7 @@ public interface Arbitrary<T> {
 
 		public abstract <T> Arbitrary<T> injectNull(Arbitrary<T> self, double nullProbability);
 
-		public abstract <T> Arbitrary<T> filter(Arbitrary<T> self, Predicate<T> filterPredicate);
+		public abstract <T> Arbitrary<T> filter(Arbitrary<T> self, Predicate<T> filterPredicate, int maxMisses);
 
 		public abstract <T, U> Arbitrary<U> map(Arbitrary<T> self, Function<T, U> mapper);
 
@@ -195,10 +194,24 @@ public interface Arbitrary<T> {
 	 *
 	 * @param filterPredicate The predicate used for filtering
 	 * @return a new arbitrary instance
-	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
+	 * @throws TooManyFilterMissesException if filtering will fail to come up with a value after 10000 tries
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
-		return ArbitraryFacade.implementation.filter(this, filterPredicate);
+		return filter(filterPredicate, 10000);
+	}
+
+	/**
+	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but only allows
+	 * values that are accepted by the {@code filterPredicate}.
+	 *
+	 * @param filterPredicate The predicate used for filtering
+	 * @param maxMisses The max number of misses allowed for filtering
+	 * @return a new arbitrary instance
+	 * @throws TooManyFilterMissesException if filtering will fail to come up with a value after {@code maxMisses} tries
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.1")
+	default Arbitrary<T> filter(Predicate<T> filterPredicate, int maxMisses) {
+		return ArbitraryFacade.implementation.filter(this, filterPredicate, maxMisses);
 	}
 
 	/**

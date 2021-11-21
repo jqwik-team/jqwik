@@ -32,8 +32,8 @@ public class CollectGenerator<T> implements RandomGenerator<List<T>> {
 				String message =
 					String.format("Generated list not fulfilled condition after maximum of %s elements", maxMisses);
 				return new JqwikException(message);
-			}
-		);
+			},
+                10000);
 		return new CollectShrinkable<>(shrinkables, until);
 	}
 }

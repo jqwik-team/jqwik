@@ -15,8 +15,8 @@ public class ExhaustiveGeneratorFacadeImpl extends ExhaustiveGenerator.Exhaustiv
 	}
 
 	@Override
-	public <T> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<T> self, Predicate<T> filterPredicate) {
-		return new FilteredExhaustiveGenerator<>(self, filterPredicate);
+	public <T> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<T> self, Predicate<T> filterPredicate, int maxMisses) {
+		return new FilteredExhaustiveGenerator<>(self, filterPredicate, maxMisses);
 	}
 
 	@Override

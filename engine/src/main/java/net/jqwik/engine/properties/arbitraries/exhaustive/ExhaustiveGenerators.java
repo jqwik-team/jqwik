@@ -45,7 +45,7 @@ public class ExhaustiveGenerators {
 				maxCount ->
 				{
 					ListExhaustiveGenerator<T> exhaustiveGenerator = new ListExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize);
-					return exhaustiveGenerator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l));
+					return exhaustiveGenerator.filter(l -> checkUniquenessOfValues(uniquenessExtractors, l), 10000);
 				}
 		);
 	}
@@ -73,7 +73,7 @@ public class ExhaustiveGenerators {
 		Optional<Long> optionalMaxCount = SetExhaustiveGenerator.calculateMaxCount(elementArbitrary, minSize, maxSize, maxNumberOfSamples);
 		return optionalMaxCount.map(
 				maxCount -> new SetExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize)
-									.filter(s -> UniquenessChecker.checkUniquenessOfValues(featureExtractors, s))
+									.filter(s -> UniquenessChecker.checkUniquenessOfValues(featureExtractors, s), 10000)
 		);
 	}
 

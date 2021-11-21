@@ -24,7 +24,7 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
 		public abstract <T, U> ExhaustiveGenerator<U> map(ExhaustiveGenerator<T> self, Function<T, U> mapper);
 
-		public abstract <T> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<T> self, Predicate<T> filterPredicate);
+		public abstract <T> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<T> self, Predicate<T> filterPredicate, int maxMisses);
 
 		public abstract <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<T> self);
 
@@ -40,8 +40,8 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 		return ExhaustiveGeneratorFacade.implementation.map(this, mapper);
 	}
 
-	default ExhaustiveGenerator<T> filter(Predicate<T> filterPredicate) {
-		return ExhaustiveGeneratorFacade.implementation.filter(this, filterPredicate);
+	default ExhaustiveGenerator<T> filter(Predicate<T> filterPredicate, int maxMisses) {
+		return ExhaustiveGeneratorFacade.implementation.filter(this, filterPredicate, maxMisses);
 	}
 
 	default ExhaustiveGenerator<T> injectNull() {

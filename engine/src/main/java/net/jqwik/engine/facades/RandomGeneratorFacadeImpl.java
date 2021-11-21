@@ -28,8 +28,8 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 	}
 
 	@Override
-	public <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate) {
-		return new FilteredGenerator<>(self, filterPredicate);
+	public <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate, int maxMisses) {
+		return new FilteredGenerator<>(self, filterPredicate, maxMisses);
 	}
 
 	@Override

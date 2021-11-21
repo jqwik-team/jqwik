@@ -29,7 +29,7 @@ public interface RandomGenerator<T> {
 				boolean withEmbeddedEdgeCases
 		);
 
-		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate);
+		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate, int maxMisses);
 
 		public abstract <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases);
 
@@ -77,8 +77,8 @@ public interface RandomGenerator<T> {
 	}
 
 	@API(status = INTERNAL)
-	default RandomGenerator<T> filter(Predicate<T> filterPredicate) {
-		return RandomGeneratorFacade.implementation.filter(this, filterPredicate);
+	default RandomGenerator<T> filter(Predicate<T> filterPredicate, int maxMisses) {
+		return RandomGeneratorFacade.implementation.filter(this, filterPredicate, maxMisses);
 	}
 
 	@API(status = INTERNAL)

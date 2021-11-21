@@ -10,10 +10,12 @@ import net.jqwik.engine.properties.shrinking.*;
 public class FilteredGenerator<T> implements RandomGenerator<T> {
 	private final RandomGenerator<T> toFilter;
 	private final Predicate<T> filterPredicate;
+	private int maxMisses;
 
-	public FilteredGenerator(RandomGenerator<T> toFilter, Predicate<T> filterPredicate) {
+	public FilteredGenerator(RandomGenerator<T> toFilter, Predicate<T> filterPredicate, int maxMisses) {
 		this.toFilter = toFilter;
 		this.filterPredicate = filterPredicate;
+		this.maxMisses = maxMisses;
 	}
 
 	@Override
@@ -36,10 +38,11 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 				}
 				return Tuple.of(false, next);
 			},
-			(maxMisses) -> {
-				String message = String.format("%s missed more than %s times.", toString(), maxMisses);
+			(missed) -> {
+				String message = String.format("%s missed more than %s times.", toString(), missed);
 				return new TooManyFilterMissesException(message);
-			}
+			},
+			maxMisses
 		);
 		return new FilteredShrinkable<>(accepted, filterPredicate);
 	}

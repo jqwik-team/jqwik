@@ -6,12 +6,12 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 
 public class MaxTriesLoop {
-	private static final long MAX_MISSES = 10000;
 
 	public static <T>  T loop(
 		BooleanSupplier loopCondition,
 		Function<T, Tuple2<Boolean, T>> loopAndReturn,
-		Function<Long, ? extends JqwikException> tooManyMissesExceptionSupplier
+		Function<Integer, ? extends JqwikException> tooManyMissesExceptionSupplier,
+		int maxMisses
 	) {
 		long count = 0;
 		T value = null;
@@ -21,8 +21,8 @@ public class MaxTriesLoop {
 			if (result.get1()) {
 				break;
 			}
-			if (++count > MAX_MISSES) {
-				throw tooManyMissesExceptionSupplier.apply(MAX_MISSES);
+			if (++count > maxMisses) {
+				throw tooManyMissesExceptionSupplier.apply(maxMisses);
 			}
 		}
 		return value;

@@ -9,10 +9,12 @@ import net.jqwik.engine.properties.*;
 public class FilteredExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 	private final ExhaustiveGenerator<T> toFilter;
 	private final Predicate<T> filter;
+	private int maxMisses;
 
-	public FilteredExhaustiveGenerator(ExhaustiveGenerator<T> toFilter, Predicate<T> filter) {
+	public FilteredExhaustiveGenerator(ExhaustiveGenerator<T> toFilter, Predicate<T> filter, int maxMisses) {
 		this.toFilter = toFilter;
 		this.filter = filter;
+		this.maxMisses = maxMisses;
 	}
 
 	@Override
@@ -55,11 +57,12 @@ public class FilteredExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 						}
 						return Tuple.of(false, next);
 					},
-					maxMisses -> {
+					missed -> {
 						String message =
-							String.format("Filter missed more than %s times.", maxMisses);
+							String.format("Filter missed more than %s times.", missed);
 						return new TooManyFilterMissesException(message);
-					}
+					},
+					maxMisses
 				);
 			}
 

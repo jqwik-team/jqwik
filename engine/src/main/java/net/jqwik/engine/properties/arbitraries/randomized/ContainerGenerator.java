@@ -109,8 +109,8 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 			(maxMisses) -> {
 				String message = String.format("Trying to fulfill uniqueness constraint missed more than %s times.", maxMisses);
 				return new TooManyFilterMissesException(message);
-			}
-		);
+			},
+                10000);
 	}
 
 	private boolean checkSpecifiedUniqueness(Collection<T> elements, T value) {
