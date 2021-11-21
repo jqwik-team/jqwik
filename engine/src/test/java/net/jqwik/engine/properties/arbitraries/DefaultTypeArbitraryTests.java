@@ -418,13 +418,12 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void creatorWithParameterThatHasNoDefaultArbitrary_willThrowException_whenGeneratedValueIsRequests(@ForAll Random random) {
+		void creatorWithParameterThatHasNoDefaultArbitrary_willThrowException_whenGeneratorIsCreated(@ForAll Random random) {
 			TypeArbitrary<Customer> typeArbitrary =
 				new DefaultTypeArbitrary<>(Customer.class).usePublicConstructors();
 
-			RandomGenerator<Customer> generator = typeArbitrary.generator(1000, true);
 			Assertions.assertThatThrownBy(
-				() -> generator.next(random).value()
+				() -> typeArbitrary.generator(1000, true)
 			).isInstanceOf(JqwikException.class);
 		}
 
