@@ -21,6 +21,8 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = MAINTAINED, since = "1.4.0")
 public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> {
 
+	private Arbitrary<T> instance = null;
+
 	/**
 	 * Implement by calling jqwik's standard DSL for building arbitraries.
 	 *
@@ -28,24 +30,31 @@ public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> 
 	 */
 	abstract protected Arbitrary<T> arbitrary();
 
+	private Arbitrary<T> instance() {
+		if (instance == null) {
+			instance = arbitrary();
+		}
+		return instance;
+	}
+
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
-		return arbitrary().generator(genSize);
+		return instance().generator(genSize);
 	}
 
 	@Override
 	public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
-		return arbitrary().generatorWithEmbeddedEdgeCases(genSize);
+		return instance().generatorWithEmbeddedEdgeCases(genSize);
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-		return arbitrary().exhaustive(maxNumberOfSamples);
+		return instance().exhaustive(maxNumberOfSamples);
 	}
 
 	@Override
 	public EdgeCases<T> edgeCases(int maxEdgeCases) {
-		return arbitrary().edgeCases(maxEdgeCases);
+		return instance().edgeCases(maxEdgeCases);
 	}
 
 	@Override
