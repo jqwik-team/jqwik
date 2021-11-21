@@ -108,6 +108,20 @@ class ArbitrariesEdgeCasesTests implements GenericEdgeCasesProperties {
 	}
 
 	@Example
+	@Label("Arbitraries.defaultFor()")
+	void defaultFor() {
+		Arbitrary<Integer> arbitrary = Arbitraries.defaultFor(Integer.class);
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
+			-2, -1, 0, 1, 2,
+			Integer.MIN_VALUE, Integer.MAX_VALUE,
+			Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(9);
+	}
+
+	@Example
 	@Label("Arbitraries.shuffle()")
 	void shuffle() {
 		Arbitrary<List<Integer>> arbitrary = Arbitraries.shuffle(1, 2, 3);

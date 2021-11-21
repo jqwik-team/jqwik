@@ -9,6 +9,7 @@ import java.util.stream.*;
 import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.domains.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.testing.*;
 
@@ -531,7 +532,7 @@ class ArbitrariesTests {
 		}
 
 		@Property(tries = 100)
-		void defaultForParameterizedType(@ForAll("stringLists") @Size(10) List<?> stringList) {
+		void defaultForParameterizedType(@ForAll("stringLists") @Size(10) List<String> stringList) {
 			assertThat(stringList).hasSize(10);
 			assertThat(stringList).allMatch(element -> element instanceof String);
 		}
@@ -540,6 +541,24 @@ class ArbitrariesTests {
 		@Provide
 		Arbitrary<List> stringLists() {
 			return Arbitraries.defaultFor(List.class, String.class);
+		}
+
+		@Property(tries = 100)
+		@Domain(Int42.class)
+		void defaultForWithDomain(@ForAll("intLists") List<Integer> intList) {
+			assertThat(intList).allMatch(element -> element == 42);
+		}
+
+		@SuppressWarnings("rawtypes")
+		@Provide
+		Arbitrary<List> intLists() {
+			return Arbitraries.defaultFor(List.class, Integer.class);
+		}
+
+		class Int42 extends DomainContextBase {
+			@Provide Arbitrary<Integer> fortyTwo() {
+				return Arbitraries.just(42);
+			}
 		}
 	}
 

@@ -88,7 +88,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	@Override
 	public <T> Arbitrary<T> frequencyOf(List<Tuple.Tuple2<Integer, Arbitrary<T>>> frequencies) {
 		List<Tuple.Tuple2<Integer, Arbitrary<T>>> aboveZeroFrequencies =
-				frequencies.stream().filter(f -> f.get1() > 0).collect(Collectors.toList());
+			frequencies.stream().filter(f -> f.get1() > 0).collect(Collectors.toList());
 		if (aboveZeroFrequencies.size() == 1) {
 			return aboveZeroFrequencies.get(0).get2();
 		}
@@ -165,16 +165,16 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 			throw new RuntimeException();
 		} catch (RuntimeException rte) {
 			Optional<Integer> optionalHash =
-					Arrays.stream(rte.getStackTrace())
-						  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(ArbitrariesFacadeImpl.class.getName()))
-						  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(Arbitraries.class.getName()))
-						  .findFirst()
-						  .map(stackTraceElement -> Objects.hash(
-								  stackTraceElement.getClassName(),
-								  stackTraceElement.getMethodName(),
-								  stackTraceElement.getLineNumber(),
-								  numberOfSuppliers
-						  ));
+				Arrays.stream(rte.getStackTrace())
+					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(ArbitrariesFacadeImpl.class.getName()))
+					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(Arbitraries.class.getName()))
+					  .findFirst()
+					  .map(stackTraceElement -> Objects.hash(
+						  stackTraceElement.getClassName(),
+						  stackTraceElement.getMethodName(),
+						  stackTraceElement.getLineNumber(),
+						  numberOfSuppliers
+					  ));
 			return optionalHash.orElse(0);
 		}
 	}
@@ -182,27 +182,23 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	@Override
 	public <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>[] typeParameters) {
 		TypeUsage[] genericTypeParameters =
-				Arrays.stream(typeParameters)
-					  .map(TypeUsage::of)
-					  .toArray(TypeUsage[]::new);
+			Arrays.stream(typeParameters)
+				  .map(TypeUsage::of)
+				  .toArray(TypeUsage[]::new);
 		return defaultFor(TypeUsage.of(type, genericTypeParameters), typeUsage -> {throw new CannotFindArbitraryException(typeUsage);});
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<T>> noDefaultHandler) {
-		// Lazy evaluation is necessary since defaults only exist in context of a domain
-		// and domains are only present during execution of a property
-		return Arbitraries.lazy(() -> {
-			Set<Arbitrary<?>> arbitraries = allDefaultsFor(typeUsage);
-			if (arbitraries.isEmpty()) {
-				return noDefaultHandler.apply(typeUsage);
-			}
+		Set<Arbitrary<?>> arbitraries = allDefaultsFor(typeUsage);
+		if (arbitraries.isEmpty()) {
+			return noDefaultHandler.apply(typeUsage);
+		}
 
-			List<Arbitrary<? extends T>> arbitrariesList = new ArrayList<>();
-			arbitraries.forEach(arbitrary -> arbitrariesList.add((Arbitrary<? extends T>) arbitrary));
-			return Arbitraries.oneOf(arbitrariesList);
-		});
+		List<Arbitrary<? extends T>> arbitrariesList = new ArrayList<>();
+		arbitraries.forEach(arbitrary -> arbitrariesList.add((Arbitrary<? extends T>) arbitrary));
+		return Arbitraries.oneOf(arbitrariesList);
 	}
 
 	@Override
@@ -214,7 +210,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	public <K, V> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		// The map cannot be larger than the max number of possible keys
 		return new DefaultMapArbitrary<>(keysArbitrary, valuesArbitrary)
-				   		.ofMaxSize(maxNumberOfElements(keysArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
+			.ofMaxSize(maxNumberOfElements(keysArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
 	@Override
@@ -225,16 +221,16 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
 		DomainContext domainContext = DomainContextFacadeImpl.getCurrentContext();
 		RegisteredArbitraryResolver defaultArbitraryResolver =
-				new RegisteredArbitraryResolver(domainContext.getArbitraryProviders());
+			new RegisteredArbitraryResolver(domainContext.getArbitraryProviders());
 		ArbitraryProvider.SubtypeProvider subtypeProvider = ArbitrariesFacadeImpl::allDefaultsFor;
 		return defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
 	}
 
 	@Override
 	public <T> Arbitrary<T> recursive(
-			Supplier<Arbitrary<T>> base,
-			Function<Arbitrary<T>, Arbitrary<T>> recur,
-			int depth
+		Supplier<Arbitrary<T>> base,
+		Function<Arbitrary<T>, Arbitrary<T>> recur,
+		int depth
 	) {
 		if (depth == 0) {
 			return base.get();

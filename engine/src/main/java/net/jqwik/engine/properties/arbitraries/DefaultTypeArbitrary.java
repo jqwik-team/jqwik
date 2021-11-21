@@ -16,6 +16,7 @@ import static org.junit.platform.commons.support.ModifierSupport.*;
 
 import static net.jqwik.engine.discovery.JqwikKotlinSupport.*;
 
+// TODO: No longer subclass OneOfArbitrary but use ArbitraryDecorator instead
 public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeArbitrary<T> {
 
 	private final Class<T> targetType;
@@ -202,7 +203,10 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	}
 
 	private Arbitrary<Object> arbitraryFor(TypeUsage parameterTypeUsage) {
-		return Arbitraries.defaultFor(parameterTypeUsage, this::arbitraryForTypeWithoutDefault);
+		// TODO: Get rid of lazy arbitrary
+		return Arbitraries.lazy(
+			() -> Arbitraries.defaultFor(parameterTypeUsage, this::arbitraryForTypeWithoutDefault)
+		);
 	}
 
 	@SuppressWarnings("unchecked")
