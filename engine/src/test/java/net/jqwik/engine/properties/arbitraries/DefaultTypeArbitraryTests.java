@@ -384,7 +384,6 @@ class DefaultTypeArbitraryTests {
 				typeArbitrary,
 				random,
 				contract -> {
-					assertThat(contract.customers).hasSize(2);
 					assertThat(contract.customers).allMatch(c -> c instanceof Customer);
 				}
 			);
@@ -718,6 +717,10 @@ class DefaultTypeArbitraryTests {
 		public Contract(Customer c1, Customer c2) {
 			customers.add(c1);
 			customers.add(c2);
+		}
+
+		public Contract(List<Customer> customers) {
+			this.customers.addAll(customers);
 		}
 	}
 

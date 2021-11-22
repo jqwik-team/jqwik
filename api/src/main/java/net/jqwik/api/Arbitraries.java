@@ -73,7 +73,7 @@ public class Arbitraries {
 
 		public abstract <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>[] typeParameters);
 
-		public abstract <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<T>> noDefaultHandler);
+		public abstract <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver);
 
 		public abstract <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier);
 
@@ -545,13 +545,13 @@ public class Arbitraries {
 	 * domain contexts to be used. Those </p>
 	 *
 	 * @param typeUsage The type of the value to find an arbitrary for
-	 * @param noDefaultHandler Alternative behaviour when no default arbitrary can be found at generation time
+	 * @param noDefaultResolver Alternative resolution when no default arbitrary can be found at generation time
 	 * @param <T>       The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.1")
-	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<T>> noDefaultHandler) {
-		return ArbitrariesFacade.implementation.defaultFor(typeUsage, noDefaultHandler);
+	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver) {
+		return ArbitrariesFacade.implementation.defaultFor(typeUsage, noDefaultResolver);
 	}
 
 	/**

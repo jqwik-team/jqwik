@@ -190,10 +190,10 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<T>> noDefaultHandler) {
-		Set<Arbitrary<?>> arbitraries = allDefaultsFor(typeUsage);
+	public <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver) {
+		Set<Arbitrary<?>> arbitraries = allDefaultsFor(typeUsage, noDefaultResolver);
 		if (arbitraries.isEmpty()) {
-			return noDefaultHandler.apply(typeUsage);
+			return (Arbitrary<T>) noDefaultResolver.apply(typeUsage);
 		}
 
 		List<Arbitrary<? extends T>> arbitrariesList = new ArrayList<>();
@@ -218,11 +218,17 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return Combinators.combine(keysArbitrary, valuesArbitrary).as(AbstractMap.SimpleEntry::new);
 	}
 
-	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
+	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver) {
 		DomainContext domainContext = DomainContextFacadeImpl.getCurrentContext();
 		RegisteredArbitraryResolver defaultArbitraryResolver =
 			new RegisteredArbitraryResolver(domainContext.getArbitraryProviders());
-		ArbitraryProvider.SubtypeProvider subtypeProvider = ArbitrariesFacadeImpl::allDefaultsFor;
+		ArbitraryProvider.SubtypeProvider subtypeProvider = subtypeUsage -> {
+			Set<Arbitrary<?>> subtypeArbitraries = allDefaultsFor(subtypeUsage, noDefaultResolver);
+			if (subtypeArbitraries.isEmpty()) {
+				return Collections.singleton(noDefaultResolver.apply(subtypeUsage));
+			}
+			return subtypeArbitraries;
+		};
 		return defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
 	}
 
