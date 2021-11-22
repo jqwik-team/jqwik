@@ -3,7 +3,7 @@ static isSnapshotRelease(versionString) {
 }
 
 plugins {
-	id 'org.jetbrains.kotlin.jvm' version "1.5.31" apply false
+	id 'org.jetbrains.kotlin.jvm' version "1.6.0" apply false
 	id 'org.jetbrains.dokka' version "1.5.31" apply false
 	id 'org.beryx.jar' version "2.0.0-rc-5" apply false
 }
@@ -17,8 +17,8 @@ ext {
 	assertJVersion = '3.21.0'
 	mockitoVersion = '4.1.0'
 	systemLambdaVersion = '1.2.0'
-	kotlinVersion = '1.5.31'
-	kotlinxVersion = '1.5.2'
+	kotlinVersion = '1.6.0'
+	kotlinxVersion = '1.6.0-RC'
 	moduleName = 'net.jqwik'
 	jqwikVersion = '1.6.1-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)

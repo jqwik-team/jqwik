@@ -8,7 +8,6 @@
 
     - Tags should be reported in standard property report
 
-    - Update to Kotlin 1.6.0
 
 - 1.6.x
 

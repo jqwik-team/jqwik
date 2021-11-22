@@ -56,6 +56,9 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - `@UseType` now has an additional attribute `allowRecursion`,
   which is set to `true` by default.
 
+- Upgrade to Kotlin 1.6.0. Versions 1.5.x should still work with the binary. 
+
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties
@@ -65,6 +68,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Inherited domain contexts could break existing properties
 
 - `TypeArbitrary.useDefaults()` no longer allows non-public factory methods
+
+- `@UseType` will by default allow recursively resolve by type
 
 #### Bug Fixes
 

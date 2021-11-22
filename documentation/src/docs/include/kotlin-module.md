@@ -70,8 +70,9 @@ tasks.withType<KotlinCompile> {
 Kotlin is very compatible with Java, but a few things do not work or do not work as expected.
 Here are a few of those which I noticed to be relevant for jqwik:
 
-- Repeatable annotations do not exist (yet) in Kotlin. 
-  That's why the container annotation must be used explicitly if you need for example more than one tag:
+- Before Kotlin 1.6.0 repeatable annotations with runtime retention did not work. 
+  That's why with Kotlin 1.5 the container annotation must be used explicitly 
+  if you need for example more than one tag:
   
   ```kotlin
   @TagList(
@@ -81,7 +82,6 @@ Here are a few of those which I noticed to be relevant for jqwik:
   fun myProperty() { ... }
   ```
   That's also necessary for multiple `@Domain`, `@StatisticsReport` etc.
-
 
 - The positioning of constraint annotations can be confusing since 
   Kotlin allows annotations at the parameter and at the parameter's type. 
