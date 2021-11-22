@@ -1,12 +1,9 @@
 - 1.6.1
 
-    - Improve shrinking of (duplicate) emails
-      - Maybe have a "simple emails" config with restricted length and restricted domains
-
+    - Tags should be reported in standard property report
+        
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
-
-    - Tags should be reported in standard property report
 
 
 - 1.6.x

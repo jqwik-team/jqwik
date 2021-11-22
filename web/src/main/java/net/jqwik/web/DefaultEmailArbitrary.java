@@ -39,9 +39,15 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 					   .withChars("0123456789!#$%&'*+-/=?^_`{|}~.")
 					   //.alpha().numeric().withChars("!#$%&'*+-/=?^_`{|}~.")
 					   .ofMinLength(1).ofMaxLength(64);
-		unquoted = unquoted.filter(v -> !v.contains(".."));
-		unquoted = unquoted.filter(v -> v.charAt(0) != '.');
-		unquoted = unquoted.filter(v -> v.charAt(v.length() - 1) != '.');
+
+		// No double dot, no dot at beginning or end of local part allowed.
+		// Single filter shrinks faster than three smaller ones.
+		unquoted = unquoted.filter(
+			v -> !v.contains("..")
+					 && v.charAt(0) != '.'
+					 && v.charAt(v.length() - 1) != '.'
+		);
+
 		return unquoted.edgeCases(stringConfig -> stringConfig.includeOnly("A", "a", "0"));
 	}
 
