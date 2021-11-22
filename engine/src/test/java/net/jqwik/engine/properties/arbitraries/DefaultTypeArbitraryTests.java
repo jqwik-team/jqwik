@@ -6,7 +6,6 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -457,6 +456,84 @@ class DefaultTypeArbitraryTests {
 		}
 
 	}
+
+	@Group
+	class ExhaustiveGeneration {
+		@Example
+		void exhaustiveCombinationOfUsedArbitraries() {
+			Arbitrary<Coordinates> arbitrary = new DefaultTypeArbitrary<>(Coordinates.class).usePublicConstructors();
+
+			Optional<ExhaustiveGenerator<Coordinates>> optionalGenerator = arbitrary.exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Coordinates> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(256 * 256);
+
+			assertThat(generator).contains(
+				new Coordinates((byte) -128, (byte) -128),
+				new Coordinates((byte) 127, (byte) 127),
+				new Coordinates((byte) 0, (byte) 0)
+			);
+		}
+	}
+
+	@Group
+	class EdgeCaseGeneration {
+		@Example
+		void combinationOfEdgeCasesOfUsedArbitraries() {
+			Arbitrary<Coordinates> arbitrary = new DefaultTypeArbitrary<>(Coordinates.class).usePublicConstructors();
+
+			Set<Coordinates> edgeCases = collectEdgeCaseValues(arbitrary.edgeCases());
+			assertThat(edgeCases).hasSize(81);
+			assertThat(edgeCases).contains(
+				new Coordinates((byte) -128, (byte) -128),
+				new Coordinates((byte) 127, (byte) 127),
+				new Coordinates((byte) 0, (byte) 0)
+			);
+		}
+
+		@Example
+		void canBeSwitchedOff() {
+			Arbitrary<Coordinates> arbitrary = new DefaultTypeArbitrary<>(Coordinates.class).usePublicConstructors().withoutEdgeCases();
+
+			Set<Coordinates> edgeCases = collectEdgeCaseValues(arbitrary.edgeCases());
+			assertThat(edgeCases).isEmpty();
+		}
+	}
+
+	private static class Coordinates {
+		private final byte x;
+		private final byte y;
+
+		public Coordinates(byte x, byte y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Coordinates position = (Coordinates) o;
+
+			if (x != position.x) return false;
+			return y == position.y;
+		}
+
+		@Override
+		public int hashCode() {
+			int result = x;
+			result = 31 * result + y;
+			return result;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("(%s,%s)", x, y);
+		}
+	}
+
 
 	private static class Samples {
 

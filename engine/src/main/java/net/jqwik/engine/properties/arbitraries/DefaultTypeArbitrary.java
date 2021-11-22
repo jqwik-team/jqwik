@@ -220,13 +220,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-		// Exhaustive generation cannot work because Arbitraries.defaultFor()
-		// is evaluated lazily which prevents ad ante calculation of combinations
-		return Optional.empty();
-	}
-
-	@Override
 	public String toString() {
 		return String.format("TypeArbitrary<%s>(allowRecursion=%s)", targetType.getName(), allowRecursion);
 	}
