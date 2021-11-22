@@ -86,15 +86,6 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 10)
-	boolean forType(@ForAll Random random) {
-		Arbitrary<Counter> arbitrary = Arbitraries.forType(Counter.class);
-		Counter value = falsifyThenShrink(arbitrary, random);
-
-		// 0:1, 1:0, 0:-1 or -1:0
-		return Math.abs(value.n1 + value.n2) == 1;
-	}
-
-	@Property(tries = 10)
 	void collectedListShrinksElementsAndSize(@ForAll Random random) {
 		Arbitrary<Integer> integersShrunkTowardMax =
 			Arbitraries

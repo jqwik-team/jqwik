@@ -6,9 +6,12 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.shrinking.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
@@ -425,6 +428,32 @@ class DefaultTypeArbitraryTests {
 			Assertions.assertThatThrownBy(
 				() -> typeArbitrary.generator(1000, true)
 			).isInstanceOf(JqwikException.class);
+		}
+
+	}
+
+	@Group
+	@PropertyDefaults(tries = 20)
+	class Shrinking {
+
+		@Property
+		void simpleType(@ForAll Random random) {
+			Arbitrary<Person> arbitrary = new DefaultTypeArbitrary<>(Person.class).usePublicConstructors();
+			Person shrunkValue = falsifyThenShrink(arbitrary, random);
+
+			assertThat(shrunkValue).isEqualTo(
+				new Person("", 0)
+			);
+		}
+
+		@Property
+		void recursiveType(@ForAll Random random) {
+			Arbitrary<Customer> arbitrary = new DefaultTypeArbitrary<>(Customer.class).usePublicConstructors().allowRecursion();
+			Customer shrunkValue = falsifyThenShrink(arbitrary, random);
+
+			assertThat(shrunkValue).isEqualTo(
+				new Customer(new Person("", 0), Collections.emptyList())
+			);
 		}
 
 	}
