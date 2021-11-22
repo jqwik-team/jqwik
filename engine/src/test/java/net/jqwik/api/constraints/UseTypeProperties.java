@@ -36,6 +36,12 @@ class UseTypeProperties {
 	void nestedTypeWithoutAllowRecursion_throwsException(@ForAll @UseType(allowRecursion = false) Parties aParties) {
 	}
 
+	@Property
+	void embeddedInGenericType(@ForAll List<@UseType Person> people) {
+		assertThat(people).isNotNull();
+		assertThat(people).allMatch(p -> p instanceof Person);
+	}
+
 	@Property(tries = 20)
 	@Domain(SmallNumbers.class)
 	void useTypeShouldWorkRegardlessOfDomainContext(

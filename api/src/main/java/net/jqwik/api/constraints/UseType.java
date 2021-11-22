@@ -22,7 +22,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see net.jqwik.api.ForAll
  */
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = MAINTAINED, since = "1.2")
