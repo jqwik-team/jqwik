@@ -20,9 +20,9 @@ class TypeArbitraryExamples {
 	@Report(Reporting.GENERATED)
 	void aPartyOfPeopleCanBeGenerated(@ForAll @UseType Party aParty) {
 		Assertions.assertThat(aParty.name).isNotBlank();
-		// Assertions.assertThat(aParty.people).allMatch(
-		// 	person -> !person.name.isEmpty()
-		// );
+		Assertions.assertThat(aParty.people).allMatch(
+			person -> !person.name.isEmpty()
+		);
 	}
 
 	@Property
