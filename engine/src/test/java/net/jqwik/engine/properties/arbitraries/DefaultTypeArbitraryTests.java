@@ -439,8 +439,9 @@ class DefaultTypeArbitraryTests {
 			Arbitrary<Person> arbitrary = new DefaultTypeArbitrary<>(Person.class).usePublicConstructors();
 			Person shrunkValue = falsifyThenShrink(arbitrary, random);
 
-			assertThat(shrunkValue).isEqualTo(
-				new Person("", 0)
+			assertThat(shrunkValue).isIn(
+				new Person("", 0),
+				new Person("", 99)
 			);
 		}
 
@@ -449,8 +450,9 @@ class DefaultTypeArbitraryTests {
 			Arbitrary<Customer> arbitrary = new DefaultTypeArbitrary<>(Customer.class).usePublicConstructors().allowRecursion();
 			Customer shrunkValue = falsifyThenShrink(arbitrary, random);
 
-			assertThat(shrunkValue).isEqualTo(
-				new Customer(new Person("", 0), Collections.emptyList())
+			assertThat(shrunkValue).isIn(
+				new Customer(new Person("", 0), Collections.emptyList()),
+				new Customer(new Person("", 99), Collections.emptyList())
 			);
 		}
 
