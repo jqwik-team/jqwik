@@ -8,6 +8,7 @@ $dokka.location:net.jqwik.kotlin.api//any/kotlin.Char.Companion#/PointingToDecla
 $dokka.location:net.jqwik.kotlin.api//any/kotlin.Char.Companion#kotlin.ranges.CharRange/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/any.html
 $dokka.location:net.jqwik.kotlin.api//any/kotlin.Double.Companion#/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/any.html
 $dokka.location:net.jqwik.kotlin.api//any/kotlin.Double.Companion#kotlin.ranges.ClosedFloatingPointRange[kotlin.Double]/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/any.html
+$dokka.location:net.jqwik.kotlin.api//any/kotlin.Enum.Companion#/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/any.html
 $dokka.location:net.jqwik.kotlin.api//any/kotlin.Float.Companion#/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/any.html
 $dokka.location:net.jqwik.kotlin.api//any/kotlin.Float.Companion#kotlin.ranges.ClosedFloatingPointRange[kotlin.Float]/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/any.html
 $dokka.location:net.jqwik.kotlin.api//any/kotlin.Int.Companion#/PointingToDeclaration/jqwik-kotlin/net.jqwik.kotlin.api/any.html

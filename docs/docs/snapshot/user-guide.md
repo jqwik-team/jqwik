@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.6.0-SNAPSHOT
+title: jqwik User Guide - 1.6.1-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.6.0-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.6.1-SNAPSHOT</span>
 </h1>
 
 <h3>Table of Contents
@@ -30,11 +30,11 @@ title: jqwik User Guide - 1.6.0-SNAPSHOT
 - [Data-Driven Properties](#data-driven-properties)
 - [Rerunning Falsified Properties](#rerunning-falsified-properties)
 - [jqwik Configuration](#jqwik-configuration)
-- [Additional Modules](#additional-modules)
+- [Web Module](#web-module)
+- [Time Module](#time-module)
+- [Kotlin Module](#kotlin-module)
 - [Advanced Topics](#advanced-topics)
 - [API Evolution](#api-evolution)
-- [Release Notes](#release-notes)
-
 
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -172,6 +172,7 @@ title: jqwik User Guide - 1.6.0-SNAPSHOT
 - [Data-Driven Properties](#data-driven-properties)
 - [Rerunning Falsified Properties](#rerunning-falsified-properties)
 - [jqwik Configuration](#jqwik-configuration)
+    - [Legacy Configuration in `jqwik.properties` File](#legacy-configuration-in-jqwikproperties-file)
 - [Additional Modules](#additional-modules)
   - [Web Module](#web-module)
     - [Email Address Generation](#email-address-generation)
@@ -244,7 +245,7 @@ repositories {
 ext.junitPlatformVersion = '1.8.1'
 ext.junitJupiterVersion = '5.8.1'
 
-ext.jqwikVersion = '1.6.0-SNAPSHOT'
+ext.jqwikVersion = '1.6.1-SNAPSHOT'
 
 compileTestJava {
     // To enable argument names in reporting and debugging
@@ -343,7 +344,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.6.0-SNAPSHOT</version>
+        <version>1.6.1-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -371,15 +372,15 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-api-1.6.0-SNAPSHOT.jar`
-- `jqwik-engine-1.6.0-SNAPSHOT.jar`
+- `jqwik-api-1.6.1-SNAPSHOT.jar`
+- `jqwik-engine-1.6.1-SNAPSHOT.jar`
 - `junit-platform-engine-1.8.1.jar`
 - `junit-platform-commons-1.8.1.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
-- `jqwik-web-1.6.0-SNAPSHOT.jar`
-- `jqwik-time-1.6.0-SNAPSHOT.jar`
+- `jqwik-web-1.6.1-SNAPSHOT.jar`
+- `jqwik-time-1.6.1-SNAPSHOT.jar`
 
 
 
@@ -394,7 +395,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html).
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with
-[`@ForAll`](/docs/1.6.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.6.1-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -703,11 +704,14 @@ class PropertyDefaultsExamples {
 
 Thus, the order in which a property method's attributes are determined is:
 
-1. Use jqwik's built-in defaults
-2. which can be overridden in the [configuration file](#jqwik-configuration)
-3. which can be changed in a container class' `@PropertyDefaults` annotation
-4. which can be overridden by a method's
+1. Use jqwik's built-in defaults,
+2. which can be overridden in the [configuration file](#jqwik-configuration),
+3. which can be changed in a container class' `@PropertyDefaults` annotation,
+4. which override `@PropertyDefaults` attributes in a container's superclass or 
+   implemented interfaces,
+5. which can be overridden by a method's
    [`@Property` annotation attributes](#optional-property-attributes).
+
 
 ### Creating an Example-based Test
 
@@ -4005,8 +4009,14 @@ arbitrary providers and configurators:
 - Add inner classes (static or not static, but not private) that implement `ArbitraryProvider`.
   An instance of this class will then be created and used as arbitrary provider.
 
+- Additionally implement `ArbitraryProvider` and the domain context instance
+  itself will be used as arbitrary provider.
+
 - Add inner classes (static or not static, but not private) that implement `ArbitraryConfigurator`.
   An instance of this class will then be created and used as configurator.
+
+- Additionally implement `ArbitraryConfigurator` and the domain context instance
+  itself will be used as configurator.
 
 As of this version the lifecycle of `DomainContext` instances is not properly defined,
 therefore do not rely on storing or caching any information in member variables.
@@ -4088,6 +4098,11 @@ class AddressProperties {
 
 The first two properties above will resolve their arbitraries solely through providers
 specified in `AmericanAddresses`, whereas the last one also uses the default (global) context.
+Keep in mind that the inner part of the return type `Arbitrary<InnerPart>`
+is used to determine the applicability of a provider method.
+It's being used in a covariant way, i.e., `Arbitrary<String>` is also applicable
+for parameter `@ForAll CharSequence charSequence`.
+
 Since `AmericanAddresses` does not configure any arbitrary provider for `String` parameters,
 the second property will fail with `CannotFindArbitraryException`.
 
@@ -4145,7 +4160,40 @@ use all public constructors and all public, static factory methods in
 the class in order to generate instances. Whenever there's an exception during
 generation they will be ignored; that way you'll only get valid instances.
 
-There are quite a few ways usage and configuration options. Have a look
+While the creation of a `Person` instance requires only basic Java types - 
+`String` and `int` - that already have default arbitraries available,
+`@UseType` is also applied to nested types without default generators.
+That's why class `Party`:
+
+```java
+public class Party {
+
+	final String name;
+	final Set<Person> people;
+
+	public Party(String name, Set<Person> people) {
+		this.name = name;
+		this.people = people;
+	}
+}
+```
+
+can also be generated in the same way:
+
+```java
+@Property
+void aPartyOfPeopleCanBeGenerated(@ForAll @UseType Party aParty) {
+	Assertions.assertThat(aParty.name).isNotBlank();
+	Assertions.assertThat(aParty.people).allMatch(
+		person -> !person.name.isEmpty()
+	);
+}
+```
+
+This _recursive_ application of `@UseType` is switched on by default, 
+but can also be switched off: `@UseType(allowRecursion=false)`.
+
+To learn about all configuration options have a look
 at the [complete example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/types/TypeArbitraryExamples.java)
 and check the following api entry points:
 
@@ -4453,6 +4501,12 @@ jqwik.shrinking.bounded.seconds = 10         # The maximum number of seconds to 
 jqwik.seeds.whenfixed = ALLOW                # How a test should act when a seed is fixed. Can set to ALLOW, WARN or FAIL
                                              # Useful to prevent accidental commits of fixed seeds into source control.                                             
 ```
+
+Besides the properties file there is also the possibility to set properties
+in [Gradle](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle-config-params) or 
+[Maven Surefire](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven-config-params).
+
+#### Legacy Configuration in `jqwik.properties` File
 
 Prior releases of _jqwik_ used a custom `jqwik.properties` file.
 Since version `1.6.0` this is no longer supported.
@@ -4914,7 +4968,7 @@ Here's the list of available methods:
 
 ### Kotlin Module
 
-This module's artefact name is `jqwik-Module`. 
+This module's artefact name is `jqwik-kotlin`. 
 It's supposed to simplify and streamline using _jqwik_ in Kotlin projects. 
 
 This module is _not_ in jqwik's default dependencies. 
@@ -4942,7 +4996,7 @@ __Table of contents:__
   - [StringArbitrary Extensions](#stringarbitrary-extensions)
   - [Jqwik Tuples in Kotlin](#jqwik-tuples-in-kotlin)
   - [Type-based Arbitraries](#type-based-arbitraries)
-  - [Diverse](#kotlin-convenience-diverse)
+  - [Diverse Convenience Functions](#diverse-convenience-functions)
 - [Quirks and Bugs](#quirks-and-bugs)
 
 #### Build Configuration for Kotlin
@@ -4962,7 +5016,7 @@ Here's the jqwik-related part of the Gradle build file for a Kotlin project:
 ```kotlin
 dependencies {
     ...
-    testImplementation("net.jqwik:jqwik-kotlin:1.6.0-SNAPSHOT")
+    testImplementation("net.jqwik:jqwik-kotlin:1.6.1-SNAPSHOT")
 }
 
 tasks.withType<Test> {
@@ -5164,7 +5218,7 @@ Some of them are already supported directly:
 ##### `Sequence<T>`
 
 - Create a `SequenceArbitrary` by using `.sequence()` on any other arbitrary,
-  which will be used to generate the elements for the the sequence.
+  which will be used to generate the elements for the sequence.
   `SequenceArbitrary` offers similar configurability as most other multi-value arbitraries in jqwik.
 
 - Using `Sequence` as type in a for-all-parameter will auto-generate it.
@@ -5267,6 +5321,8 @@ to ease the pain.
 
 - `Double.any(range: ClosedFloatingPointRange<Float>) : DoubleArbitrary` can replace `Arbitraries.doubles().between(..)`
 
+- `Enum.any<EnumType> : Arbitrary<EnumType>` can replace `Arbitraries.of(EnumType::class.java)`
+
 
 ##### Arbitrary Extensions
 
@@ -5299,7 +5355,7 @@ Getting a type-based generator using the Java API looks a bit awkward in Kotlin:
 `Arbitraries.forType(MyType::class.java)`.
 There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
 
-##### Kotlin Convenience Divers
+##### Diverse Convenience Functions
 
 - `combine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> R)` can replace all
   variants of `Combinators.combine(a1, ...).as((v1: T1, ...) -> R)`.
@@ -5328,9 +5384,8 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
   [testing of coroutines and suspend functions](#support-for-coroutines).
 
 - `Builders.BuilderCombinator.use(arbitrary, combinator)` to simplify Java API call
-  `Builders.BuilderCombinator.use(arbitrary).in`(combinator)` which requires backticks
+  `Builders.BuilderCombinator.use(arbitrary).in(combinator)` which requires backticks
   in Kotlin because "in" is a keyword.
-  
 
 
 #### Quirks and Bugs
@@ -5411,13 +5466,67 @@ test-implementation dependency.
 ### Implement your own Arbitraries and Generators
 
 Looking at _jqwik_'s most prominent interfaces -- `Arbitrary` and `RandomGenerator` -- you might
-think that rolling your own implementations is a reasonable thing to do.
+think that rolling your own implementations of these is a reasonable thing to do.
 I'd like to tell you that it _never_ is, but I've learned that "never" is a word you should never use.
 There's just too many things to consider when implementing a new type of `Arbitrary`
 to make it work smoothly with the rest of the framework.
 
 Therefore, use the innumerable features to combine existing arbitraries into your special one.
-If you cannot figure out how to create an arbitrary with the desired behaviour
+If your domain arbitrary must implement another interface - e.g. for configuration -,
+subclassing `net.jqwik.api.arbitraries.ArbitraryDecorator` is the way to go.
+An example would come in handy now...
+
+Imagine you have to roll your own complex number type: 
+
+```java
+public class ComplexNumber {
+    ...
+	public ComplexNumber(double rational, double imaginary) {
+		this.rational = rational;
+		this.imaginary = imaginary;
+	}
+}
+```
+
+And you want to be able to tell the arbitrary whether or not the generated number
+should have an imaginary part:
+
+```java
+@Property
+void rationalNumbers(@ForAll("rationalOnly") ComplexNumber number) {
+    ...
+}
+
+@Provide
+Arbitrary<ComplexNumber> rationalOnly() {
+	return new ComplexNumberArbitrary().withoutImaginaryPart();
+}
+```
+
+Here's how you could implement a configurable `ComplexNumberArbitrary` type:
+
+```java
+public class ComplexNumberArbitrary extends ArbitraryDecorator<ComplexNumber> {
+
+	private boolean withImaginaryPart = true;
+
+	@Override
+	protected Arbitrary<ComplexNumber> arbitrary() {
+		Arbitrary<Double> rationalPart = Arbitraries.doubles();
+		Arbitrary<Double> imaginaryPart = withImaginaryPart ? Arbitraries.doubles() : Arbitraries.just(0.0);
+		return Combinators.combine(rationalPart, imaginaryPart).as(ComplexNumber::new);
+	}
+
+	public ComplexNumberArbitrary withoutImaginaryPart() {
+		this.withImaginaryPart = false;
+		return this;
+	}
+}
+```
+
+Overriding `ArbitraryDecorator.arbitrary()` is where you can apply the knowledge
+of the previous chapters.
+If you get stuck figuring out how to create an arbitrary with the desired behaviour
 either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
 or [open a Github issue](https://github.com/jlink/jqwik/issues).
 
@@ -5929,4 +6038,4 @@ If a certain element, e.g. a method, is not annotated itself, then it carries th
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#160-snapshot).
+Read this version's [release notes](/release-notes.html#161-snapshot).
