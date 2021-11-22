@@ -243,10 +243,7 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	}
 
 	private Arbitrary<Object> arbitraryFor(TypeUsage parameterTypeUsage) {
-		// TODO: Get rid of lazy arbitrary
-		return Arbitraries.lazy(
-			() -> Arbitraries.defaultFor(parameterTypeUsage, this::arbitraryForTypeWithoutDefault)
-		);
+		return Arbitraries.defaultFor(parameterTypeUsage, this::arbitraryForTypeWithoutDefault);
 	}
 
 	@SuppressWarnings("unchecked")
