@@ -1,8 +1,5 @@
 - 1.6.1
 
-    - TypeArbitrary with Recursion (https://github.com/jlink/jqwik/issues/191)
-      - Rework documentation in generation-from-type.md
-
     - Improve shrinking of (duplicate) emails
       - Maybe have a "simple emails" config with restricted length and restricted domains
 

@@ -47,6 +47,9 @@ title: jqwik Release Notes
 - Added `TypeArbitrary.allowRecursion()` to enable recursive usage of type based
   generation for types that do not have an applicable default arbitrary.
 
+- `@UseType` now has an additional attribute `allowRecursion`,
+  which is set to `true` by default.
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties
