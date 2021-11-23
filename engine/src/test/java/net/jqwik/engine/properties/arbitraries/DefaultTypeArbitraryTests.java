@@ -139,8 +139,7 @@ class DefaultTypeArbitraryTests {
 
 		@Example
 		void willUseAllPublicConstructorsAndFactoryMethods(@ForAll Random random) {
-			TypeArbitrary<Person> typeArbitrary =
-				new DefaultTypeArbitrary<>(Person.class).useDefaults();
+			TypeArbitrary<Person> typeArbitrary = new DefaultTypeArbitrary<>(Person.class);
 
 			checkAllGenerated(
 				typeArbitrary,
@@ -153,7 +152,6 @@ class DefaultTypeArbitraryTests {
 		void isOverwrittenByDirectUse(@ForAll Random random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
-					.useDefaults()
 					.use(Samples.class.getDeclaredMethod("personFromNoParams"));
 
 			checkAllGenerated(
@@ -165,8 +163,7 @@ class DefaultTypeArbitraryTests {
 
 		@Example
 		void onAbstractClassUsesOnlyFactoryMethods(@ForAll Random random) {
-			TypeArbitrary<Animal> typeArbitrary =
-				new DefaultTypeArbitrary<>(Animal.class).useDefaults();
+			TypeArbitrary<Animal> typeArbitrary = new DefaultTypeArbitrary<>(Animal.class);
 
 			checkAllGenerated(
 				typeArbitrary,
@@ -177,8 +174,7 @@ class DefaultTypeArbitraryTests {
 
 		@Example
 		void onInterfaceUsesOnlyFactoryMethods(@ForAll Random random) {
-			TypeArbitrary<Thing> typeArbitrary =
-				new DefaultTypeArbitrary<>(Thing.class).useDefaults();
+			TypeArbitrary<Thing> typeArbitrary = new DefaultTypeArbitrary<>(Thing.class);
 
 			checkAllGenerated(
 				typeArbitrary,
@@ -355,7 +351,6 @@ class DefaultTypeArbitraryTests {
 		@Example
 		void unresolvableSimpleTypeIsResolvedThroughTypeArbitrary(@ForAll Random random) {
 			Arbitrary<Customer> typeArbitrary = new DefaultTypeArbitrary<>(Customer.class)
-				.useDefaults()
 				.allowRecursion();
 
 			assertAllGenerated(

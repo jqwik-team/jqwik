@@ -203,7 +203,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
 	public <T> TypeArbitrary<T> forType(Class<T> targetType) {
-		return new DefaultTypeArbitrary<>(targetType).useDefaults();
+		return new DefaultTypeArbitrary<>(targetType);
 	}
 
 	@Override

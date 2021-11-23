@@ -1,6 +1,8 @@
 - 1.6.1
 
     - Extract a generic Arbitraries.traverse() from Arbitraries.useType()
+      - Create tests for DefaultTraverseArbitrary
+      - Create Arbitraries.traverse(Class type, parameterResolver)
 
     - Tags should be reported in standard property report
         

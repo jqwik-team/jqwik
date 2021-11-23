@@ -175,7 +175,7 @@ public class JqwikReflectionSupport {
 					 .collect(toSet());
 	}
 
-	public static List<MethodParameter> getMethodParameters(Method method, Class<?> containerClass) {
+	public static List<MethodParameter> getMethodParameters(Executable method, Class<?> containerClass) {
 		List<MethodParameter> list = new ArrayList<>();
 		Parameter[] parameters = method.getParameters();
 		GenericsClassContext containerClassContext = GenericsSupport.contextFor(containerClass);
