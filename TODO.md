@@ -1,16 +1,19 @@
 - 1.6.1
 
-    - Extract a generic Arbitraries.traverse() from Arbitraries.useType()
+    - Introduce Arbitraries.traverse()
+      - Rename TraverseArbitrary.allowRecursion -> enableRecursion(boolean)
+      - Rename TypeArbitrary.allowRecursion -> enableRecursion(boolean)
+      - Rename UseType.allowRecursion -> enableRecursion
       - Create tests for DefaultTraverseArbitrary
       - Create Arbitraries.traverse(Class type, parameterResolver)
 
     - Tags should be reported in standard property report
         
-    - Allow specification of provider class in `@ForAll` and `@From`
-      see https://github.com/jlink/jqwik/issues/91
-
 
 - 1.6.x
+
+    - Allow specification of provider class in `@ForAll` and `@From`
+      see https://github.com/jlink/jqwik/issues/91
 
     - Make ProvidePropertyInstanceHook a useful hook for other purposes.
       Implementors should be able to wrap default hook.
