@@ -1,8 +1,5 @@
 - 1.6.1
 
-    - DomainContext implementations "inherit" domains they are annotated with
-      (also in super types).
-  
     - Extract a generic Arbitraries.traverse() from Arbitraries.useType()
 
     - Tags should be reported in standard property report

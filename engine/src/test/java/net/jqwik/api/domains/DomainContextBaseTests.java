@@ -138,5 +138,23 @@ class DomainContextBaseTests {
 
 	}
 
+	@Group
+	@PropertyDefaults
+	class WithDomainAnnotations {
+
+		@Property
+		@Domain(ContextWithDomainAnnotation.class)
+		void directDomainAnnotation(@ForAll int anInt) {
+			assertThat(anInt).isEqualTo(42);
+		}
+
+		@Property
+		@Domain(ContextWithDomainAnnotation.class)
+		void inheritedDomainAnnotation(@ForAll String aString) {
+			assertThat(aString).isEqualTo("hello");
+		}
+
+	}
+
 }
 

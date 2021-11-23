@@ -58,6 +58,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - Upgrade to Kotlin 1.6.0. Versions 1.5.x should still work with the binary. 
 
+- `DomainContext` implementation classes can now be annotated with `@Domain` themselves. 
+
 
 #### Breaking Changes
 

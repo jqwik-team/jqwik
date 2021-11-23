@@ -9,6 +9,7 @@ import org.junit.platform.commons.support.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
@@ -55,6 +56,9 @@ public class PropertyMethodExecutor {
 		Set<DomainContext> domainContexts =
 			domainAnnotations
 				.stream()
+				.flatMap(this::expandDomain)
+				.map(this::annotationToTuple)
+				.distinct()
 				.map(this::createDomainContext)
 				.peek(domainContext -> {
 					domainContext.initialize(propertyLifecycleContext);
@@ -63,14 +67,29 @@ public class PropertyMethodExecutor {
 		return new CombinedDomainContext(domainContexts);
 	}
 
-	private DomainContext createDomainContext(Domain domain) {
-		Class<? extends DomainContext> domainContextClass = domain.value();
+	// Use this transformation to make distinct() call on stream meaningful
+	private Tuple2<Class<? extends DomainContext>, Integer> annotationToTuple(Domain domain) {
+		return Tuple.of(domain.value(), domain.priority());
+	}
+
+	private Stream<Domain> expandDomain(Domain domain) {
+		Stream<Domain> inheritedDomains =
+			JqwikAnnotationSupport.findContainerAnnotations(domain.value(), Domain.class).stream();
+		return Stream.concat(
+			Stream.of(domain),
+			inheritedDomains
+		);
+	}
+
+	private DomainContext createDomainContext(Tuple2<Class<? extends DomainContext>, Integer> domainSpec) {
+		Class<? extends DomainContext> domainContextClass = domainSpec.get1();
+		int domainPriority = domainSpec.get2();
 		try {
 			DomainContext domainContext =
 				JqwikReflectionSupport.newInstanceInTestContext(domainContextClass, propertyLifecycleContext.testInstance());
 
-			if (domain.priority() != Domain.PRIORITY_NOT_SET) {
-				domainContext.setDefaultPriority(domain.priority());
+			if (domainPriority != Domain.PRIORITY_NOT_SET) {
+				domainContext.setDefaultPriority(domainPriority);
 			}
 			return domainContext;
 		} catch (Throwable throwable) {

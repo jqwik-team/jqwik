@@ -38,8 +38,14 @@ arbitrary providers and configurators:
 - Additionally implement `ArbitraryConfigurator` and the domain context instance
   itself will be used as configurator.
 
-As of this version the lifecycle of `DomainContext` instances is not properly defined,
-therefore do not rely on storing or caching any information in member variables.
+A `DomainContext` implementation class can itself have `@Domain` annotations,
+which are then used to add to the property's set of domains.
+
+You can override method `DomainContext.initialize(PropertyLifecycleContext context)`,
+which will be called once for each property to which this context is applied.
+Since the lifecycle of `DomainContext` instances is not specified,
+do not rely on storing or caching any information in member variables.
+Instead use jqwik's [Storage Mechanism](#lifecycle-storage) to persist data if needed.
 
 
 ### Domain example: American Addresses

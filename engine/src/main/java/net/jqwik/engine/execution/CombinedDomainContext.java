@@ -11,7 +11,9 @@ class CombinedDomainContext implements DomainContext {
 	private final List<ArbitraryConfigurator> configurators = new ArrayList<>();
 
 	CombinedDomainContext(Set<DomainContext> domainContexts) {
-		for (DomainContext domainContext : domainContexts) {
+		Set<DomainContext> expandedContexts = new HashSet<>(domainContexts);
+
+		for (DomainContext domainContext : expandedContexts) {
 			providers.addAll(domainContext.getArbitraryProviders());
 			configurators.addAll(domainContext.getArbitraryConfigurators());
 		}
