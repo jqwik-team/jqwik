@@ -183,9 +183,9 @@ extends <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries">TypeArbitrary</a>&lt;<a href="TypeArbitrary.html" title="type parameter in TypeArbitrary">T</a>&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#allowRecursion()">allowRecursion</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#enableRecursion()">enableRecursion</a></span>()</code></th>
 <td class="colLast">
-<div class="block">Allow recursive use of type arbitrary:
+<div class="block">Enable recursive use of type arbitrary:
  If any parameter of a creator function does not have an associated arbitrary
  (globally registered or through a domain context),
  jqwik will try to resolve this parameter using its type information as weill.</div>
@@ -284,7 +284,7 @@ extends <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>creator</code> - The static function or constructor</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the same arbitrary instance</dd>
+<dd>new arbitrary instance</dd>
 </dl>
 </li>
 </ul>
@@ -299,7 +299,7 @@ extends <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary
  for generating values of type <code>T</code></div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the same arbitrary instance</dd>
+<dd>new arbitrary instance</dd>
 </dl>
 </li>
 </ul>
@@ -314,7 +314,7 @@ extends <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary
  for generating values of type <code>T</code></div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the same arbitrary instance</dd>
+<dd>new arbitrary instance</dd>
 </dl>
 </li>
 </ul>
@@ -331,7 +331,7 @@ extends <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>filter</code> - Predicate to add only those constructors for which the predicate returns true</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the same arbitrary instance</dd>
+<dd>new arbitrary instance</dd>
 </dl>
 </li>
 </ul>
@@ -346,7 +346,7 @@ extends <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary
  of class <code>T</code> to be used for generating values of type <code>T</code></div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the same arbitrary instance</dd>
+<dd>new arbitrary instance</dd>
 </dl>
 </li>
 </ul>
@@ -361,7 +361,7 @@ extends <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary
  of class <code>T</code> to be used for generating values of type <code>T</code></div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the same arbitrary instance</dd>
+<dd>new arbitrary instance</dd>
 </dl>
 </li>
 </ul>
@@ -378,26 +378,26 @@ extends <a href="../Arbitrary.html" title="interface in net.jqwik.api">Arbitrary
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>filter</code> - Predicate to add only those factory methods for which the predicate returns true</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the same arbitrary instance</dd>
+<dd>new arbitrary instance</dd>
 </dl>
 </li>
 </ul>
-<a id="allowRecursion()">
+<a id="enableRecursion()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>allowRecursion</h4>
+<h4>enableRecursion</h4>
 <pre class="methodSignature">@API(status=EXPERIMENTAL,
      since="1.6.1")
-<a href="TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries">TypeArbitrary</a>&lt;<a href="TypeArbitrary.html" title="type parameter in TypeArbitrary">T</a>&gt;&nbsp;allowRecursion()</pre>
-<div class="block">Allow recursive use of type arbitrary:
+<a href="TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries">TypeArbitrary</a>&lt;<a href="TypeArbitrary.html" title="type parameter in TypeArbitrary">T</a>&gt;&nbsp;enableRecursion()</pre>
+<div class="block">Enable recursive use of type arbitrary:
  If any parameter of a creator function does not have an associated arbitrary
  (globally registered or through a domain context),
  jqwik will try to resolve this parameter using its type information as weill.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the same arbitrary instance</dd>
+<dd>new arbitrary instance</dd>
 </dl>
 </li>
 </ul>

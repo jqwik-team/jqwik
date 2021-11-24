@@ -4018,8 +4018,14 @@ arbitrary providers and configurators:
 - Additionally implement `ArbitraryConfigurator` and the domain context instance
   itself will be used as configurator.
 
-As of this version the lifecycle of `DomainContext` instances is not properly defined,
-therefore do not rely on storing or caching any information in member variables.
+A `DomainContext` implementation class can itself have `@Domain` annotations,
+which are then used to add to the property's set of domains.
+
+You can override method `DomainContext.initialize(PropertyLifecycleContext context)`,
+which will be called once for each property to which this context is applied.
+Since the lifecycle of `DomainContext` instances is not specified,
+do not rely on storing or caching any information in member variables.
+Instead use jqwik's [Storage Mechanism](#lifecycle-storage) to persist data if needed.
 
 
 ### Domain example: American Addresses
@@ -4191,7 +4197,7 @@ void aPartyOfPeopleCanBeGenerated(@ForAll @UseType Party aParty) {
 ```
 
 This _recursive_ application of `@UseType` is switched on by default, 
-but can also be switched off: `@UseType(allowRecursion=false)`.
+but can also be switched off: `@UseType(enableRecursion=false)`.
 
 To learn about all configuration options have a look
 at the [complete example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/types/TypeArbitraryExamples.java)
@@ -5040,8 +5046,9 @@ tasks.withType<KotlinCompile> {
 Kotlin is very compatible with Java, but a few things do not work or do not work as expected.
 Here are a few of those which I noticed to be relevant for jqwik:
 
-- Repeatable annotations do not exist (yet) in Kotlin. 
-  That's why the container annotation must be used explicitly if you need for example more than one tag:
+- Before Kotlin 1.6.0 repeatable annotations with runtime retention did not work. 
+  That's why with Kotlin 1.5 the container annotation must be used explicitly 
+  if you need for example more than one tag:
   
   ```kotlin
   @TagList(
@@ -5051,7 +5058,6 @@ Here are a few of those which I noticed to be relevant for jqwik:
   fun myProperty() { ... }
   ```
   That's also necessary for multiple `@Domain`, `@StatisticsReport` etc.
-
 
 - The positioning of constraint annotations can be confusing since 
   Kotlin allows annotations at the parameter and at the parameter's type. 

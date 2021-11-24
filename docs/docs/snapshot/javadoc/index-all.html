@@ -218,19 +218,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Allow the local part of an email to be quoted within " characters.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/TypeArbitrary.html#allowRecursion()">allowRecursion()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries">TypeArbitrary</a></dt>
-<dd>
-<div class="block">Allow recursive use of type arbitrary:
- If any parameter of a creator function does not have an associated arbitrary
- (globally registered or through a domain context),
- jqwik will try to resolve this parameter using its type information as weill.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/UseType.html#allowRecursion()">allowRecursion()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/UseType.html" title="annotation in net.jqwik.api.constraints">UseType</a></dt>
-<dd>
-<div class="block">When true then type information is also used to generate
- embedded types if (and only if) there's no other arbitrary
- available for this type.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#allValues()">allValues()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
 <div class="block">Create optional stream of all possible values this arbitrary could generate.</div>
@@ -1366,6 +1353,25 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Use this annotation to enable footnote support.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/TraverseArbitrary.html#enableRecursion()">enableRecursion()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/TraverseArbitrary.html" title="interface in net.jqwik.api.arbitraries">TraverseArbitrary</a></dt>
+<dd>
+<div class="block">Enable recursive use of traversal:
+ If a parameter of a creator function cannot be resolved,
+ jqwik will also traverse this parameter's type.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/TypeArbitrary.html#enableRecursion()">enableRecursion()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries">TypeArbitrary</a></dt>
+<dd>
+<div class="block">Enable recursive use of type arbitrary:
+ If any parameter of a creator function does not have an associated arbitrary
+ (globally registered or through a domain context),
+ jqwik will try to resolve this parameter using its type information as weill.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/constraints/UseType.html#enableRecursion()">enableRecursion()</a></span> - Method in annotation type net.jqwik.api.constraints.<a href="net/jqwik/api/constraints/UseType.html" title="annotation in net.jqwik.api.constraints">UseType</a></dt>
+<dd>
+<div class="block">When true then type information is also used to generate
+ embedded types if (and only if) there's no other arbitrary
+ available for this type.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Functions.FunctionsFacade.html#ensureFunctionalType(java.lang.Class)">ensureFunctionalType(Class&lt;?&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Functions.FunctionsFacade.html" title="class in net.jqwik.api">Functions.FunctionsFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#entries(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary)">entries(Arbitrary&lt;K&gt;, Arbitrary&lt;V&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
@@ -1547,6 +1553,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/LifecycleContext.html#findAnnotationsInContainer(java.lang.Class)">findAnnotationsInContainer(Class&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a></dt>
 <dd>
 <div class="block">Retrieve an annotation if present in the current element's containers.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/TraverseArbitrary.Traverser.html#findCreators(net.jqwik.api.providers.TypeUsage)">findCreators(TypeUsage)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/TraverseArbitrary.Traverser.html" title="interface in net.jqwik.api.arbitraries">TraverseArbitrary.Traverser</a></dt>
+<dd>
+<div class="block">Return all creators (constructors or static factory methods) for a type to traverse.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/sessions/JqwikSession.html#finish()">finish()</a></span> - Static method in class net.jqwik.api.sessions.<a href="net/jqwik/api/sessions/JqwikSession.html" title="class in net.jqwik.api.sessions">JqwikSession</a></dt>
 <dd>&nbsp;</dd>
@@ -3654,6 +3664,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Resolve a parameter from a method in the context of the property in which it
  is running.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/TraverseArbitrary.Traverser.html#resolveParameter(net.jqwik.api.providers.TypeUsage)">resolveParameter(TypeUsage)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/TraverseArbitrary.Traverser.html" title="interface in net.jqwik.api.arbitraries">TraverseArbitrary.Traverser</a></dt>
+<dd>
+<div class="block">Create an arbitrary for a creator parameter.</div>
+</dd>
 <dt><a href="net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">ResolveParameterHook</span></a> - Interface in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>
 <div class="block">This hook type allows to provide parameters for property methods
@@ -4209,6 +4223,24 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Tuple.Tuple8.html#toString()">toString()</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Tuple.Tuple8.html" title="class in net.jqwik.api">Tuple.Tuple8</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#traverse(java.lang.Class,net.jqwik.api.arbitraries.TraverseArbitrary.Traverser)">traverse(Class&lt;T&gt;, TraverseArbitrary.Traverser)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.html#traverse(java.lang.Class,net.jqwik.api.arbitraries.TraverseArbitrary.Traverser)">traverse(Class&lt;T&gt;, TraverseArbitrary.Traverser)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.html" title="class in net.jqwik.api">Arbitraries</a></dt>
+<dd>
+<div class="block">Create an arbitrary for type <code>T</code> that will try to traverse a type
+ - and all types it is based on - given a <a href="net/jqwik/api/arbitraries/TraverseArbitrary.Traverser.html" title="interface in net.jqwik.api.arbitraries">TraverseArbitrary.Traverser</a> strategy.</div>
+</dd>
+<dt><a href="net/jqwik/api/arbitraries/TraverseArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">TraverseArbitrary</span></a>&lt;<a href="net/jqwik/api/arbitraries/TraverseArbitrary.html" title="type parameter in TraverseArbitrary">T</a>&gt; - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
+<dd>
+<div class="block">Fluent interface to configure arbitraries that try to generate instances
+ of a given type <code>T</code> from the type's available constructors and factory methods.</div>
+</dd>
+<dt><a href="net/jqwik/api/arbitraries/TraverseArbitrary.Traverser.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">TraverseArbitrary.Traverser</span></a> - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
+<dd>
+<div class="block">A traverser describes how to travers a given type by providing a hook to
+ resolve a parameter into an arbitrary and a means to find all relevant
+ creators (constructors or factory methods) for a type that does not have a suitable default arbitrary.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/PropertyAttributes.html#tries()">tries()</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyAttributes.html" title="interface in net.jqwik.api.lifecycle">PropertyAttributes</a></dt>
 <dd>
 <div class="block">The number of tries to be run in the property at hand.</div>

@@ -230,6 +230,21 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 </td>
 </tr>
 <tr class="altColor">
+<th class="colFirst" scope="row"><a href="TraverseArbitrary.html" title="interface in net.jqwik.api.arbitraries">TraverseArbitrary</a>&lt;T&gt;</th>
+<td class="colLast">
+<div class="block">Fluent interface to configure arbitraries that try to generate instances
+ of a given type <code>T</code> from the type's available constructors and factory methods.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<th class="colFirst" scope="row"><a href="TraverseArbitrary.Traverser.html" title="interface in net.jqwik.api.arbitraries">TraverseArbitrary.Traverser</a></th>
+<td class="colLast">
+<div class="block">A traverser describes how to travers a given type by providing a hook to
+ resolve a parameter into an arbitrary and a means to find all relevant
+ creators (constructors or factory methods) for a type that does not have a suitable default arbitrary.</div>
+</td>
+</tr>
+<tr class="altColor">
 <th class="colFirst" scope="row"><a href="TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries">TypeArbitrary</a>&lt;T&gt;</th>
 <td class="colLast">
 <div class="block">Fluent interface to configure arbitraries that try to generate instances
