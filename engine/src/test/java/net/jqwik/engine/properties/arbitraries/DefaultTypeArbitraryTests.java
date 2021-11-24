@@ -118,19 +118,6 @@ class DefaultTypeArbitraryTests {
 			);
 		}
 
-		@SuppressWarnings("unchecked")
-		@Example
-		void reusingCreatorsIsIgnored() throws NoSuchMethodException {
-
-			DefaultTypeArbitrary<String> typeArbitrary =
-				(DefaultTypeArbitrary<String>) new DefaultTypeArbitrary<>(String.class)
-					.use(String.class.getConstructor())
-					.use(String.class.getConstructor())
-					.use(Samples.class.getDeclaredMethod("stringFromNoParams"))
-					.use(Samples.class.getDeclaredMethod("stringFromNoParams"));
-
-			assertThat(typeArbitrary.countCreators()).isEqualTo(2);
-		}
 	}
 
 	@Group
@@ -256,7 +243,6 @@ class DefaultTypeArbitraryTests {
 			DefaultTypeArbitrary<Person> typeArbitrary =
 				(DefaultTypeArbitrary<Person>) new DefaultTypeArbitrary<>(Person.class).useAllConstructors();
 
-			assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 			checkAllGenerated(
 				typeArbitrary,
 				random,
@@ -336,7 +322,6 @@ class DefaultTypeArbitraryTests {
 			DefaultTypeArbitrary<Person> typeArbitrary =
 				(DefaultTypeArbitrary<Person>) new DefaultTypeArbitrary<>(Person.class).useAllFactoryMethods();
 
-			assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 			checkAllGenerated(
 				typeArbitrary,
 				random,
@@ -398,18 +383,20 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void nonStaticMethodsAreNotSupported() {
+		void nonStaticMethodsAreNotSupported() throws NoSuchMethodException {
+			TypeArbitrary<String> typeArbitrary = new DefaultTypeArbitrary<>(String.class)
+				.use(Samples.class.getDeclaredMethod("nonStaticMethod"));
 			Assertions.assertThatThrownBy(
-				() -> new DefaultTypeArbitrary<>(String.class)
-					.use(Samples.class.getDeclaredMethod("nonStaticMethod"))
+				() -> typeArbitrary.generator(1000)
 			).isInstanceOf(JqwikException.class);
 		}
 
 		@Example
-		void creatorWithWrongReturnTypeIsNotSupported() {
+		void creatorWithWrongReturnTypeIsNotSupported() throws NoSuchMethodException {
+			TypeArbitrary<Integer> typeArbitrary = new DefaultTypeArbitrary<>(int.class)
+				.use(Samples.class.getDeclaredMethod("stringFromNoParams"));
 			Assertions.assertThatThrownBy(
-				() -> new DefaultTypeArbitrary<>(int.class)
-					.use(Samples.class.getDeclaredMethod("stringFromNoParams"))
+				() -> typeArbitrary.generator(1000)
 			).isInstanceOf(JqwikException.class);
 		}
 

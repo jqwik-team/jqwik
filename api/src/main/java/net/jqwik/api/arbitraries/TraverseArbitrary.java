@@ -1,11 +1,12 @@
 package net.jqwik.api.arbitraries;
 
 import java.lang.reflect.*;
-import java.util.function.*;
+import java.util.*;
 
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -16,71 +17,38 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.6.1")
 public interface TraverseArbitrary<T> extends Arbitrary<T> {
 
-	/**
-	 * Add another creator (function or constructor) to be used
-	 * for generating values of type {@code T}
-	 *
-	 * @param creator The static function or constructor
-	 * @return new arbitrary instance
-	 */
-	TraverseArbitrary<T> use(Executable creator);
+	interface Traverser {
+
+		/**
+		 * Create an arbitrary for a creator parameter.
+		 * Only implement if you do not want to resolve the parameter through its default arbitrary (if there is one)
+		 *
+		 * @param parameterType The typeUsage of the parameter, including annotations
+		 * @return New Arbitrary or {@code Optional.empty()}
+		 */
+		default Optional<Arbitrary<Object>> resolveParameter(TypeUsage parameterType) {
+			return Optional.empty();
+		}
+
+		/**
+		 * Return all creators (constructors or static factory methods) for a type to traverse.
+		 *
+		 * <p>
+		 * If you return an empty set, the attempt to generate a type will be stopped by throwing an exception.
+		 * </p>
+		 *
+		 * @param targetType The target type for which to find creators (factory methods or constructors)
+		 * @return A set of at least one creator.
+		 */
+		Set<Executable> findCreators(TypeUsage targetType);
+	}
 
 	/**
-	 * Add public constructors of class {@code T} to be used
-	 * for generating values of type {@code T}
-	 *
-	 * @return new arbitrary instance
-	 */
-	TraverseArbitrary<T> usePublicConstructors();
-
-	/**
-	 * Add all constructors (public, private or package scope) of class {@code T} to be used
-	 * for generating values of type {@code T}
-	 *
-	 * @return new arbitrary instance
-	 */
-	TraverseArbitrary<T> useAllConstructors();
-
-	/**
-	 * Add all constructors (public, private or package scope) of class {@code T} to be used
-	 * for generating values of type {@code T}
-	 *
-	 * @param filter Predicate to add only those constructors for which the predicate returns true
-	 * @return the same arbitrary instance
-	 */
-	TraverseArbitrary<T> useConstructors(Predicate<? super Constructor<?>> filter);
-
-	/**
-	 * Add public factory methods (static methods with return type {@code T})
-	 * of class {@code T} to be used for generating values of type {@code T}
-	 *
-	 * @return new arbitrary instance
-	 */
-	TraverseArbitrary<T> usePublicFactoryMethods();
-
-	/**
-	 * Add all factory methods (static methods with return type {@code T})
-	 * of class {@code T} to be used for generating values of type {@code T}
-	 *
-	 * @return new arbitrary instance
-	 */
-	TraverseArbitrary<T> useAllFactoryMethods();
-
-	/**
-	 * Add all factory methods (static methods with return type {@code T})
-	 * of class {@code T} to be used for generating values of type {@code T}
-	 *
-	 * @param filter Predicate to add only those factory methods for which the predicate returns true
-	 * @return new arbitrary instance
-	 */
-	TraverseArbitrary<T> useFactoryMethods(Predicate<Method> filter);
-
-	/**
-	 * Allow recursive use of traversal:
+	 * Enable recursive use of traversal:
 	 * If a parameter of a creator function cannot be resolved,
 	 * jqwik will also traverse this parameter's type.
 	 *
 	 * @return new arbitrary instance
 	 */
-	TraverseArbitrary<T> allowRecursion();
+	TraverseArbitrary<T> enableRecursion();
 }
