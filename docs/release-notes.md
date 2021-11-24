@@ -75,9 +75,6 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 #### Bug Fixes
 
-- `TypeArbitrary.useDefaults()` also allowed non-public factory methods,
-  which is against the documented behaviour.
-
 - `Arbitraries.defaultFor(..)` did not apply configurators, but does now.
 
 ## 1.6.0
