@@ -220,8 +220,27 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver) {
 		DomainContext domainContext = DomainContextFacadeImpl.getCurrentContext();
-		RegisteredArbitraryResolver defaultArbitraryResolver =
-			new RegisteredArbitraryResolver(domainContext.getArbitraryProviders());
+		Set<Arbitrary<?>> unconfiguredArbitraries = createDefaultArbitraries(typeUsage, noDefaultResolver, domainContext);
+		return configureDefaultArbitraries(typeUsage, domainContext, unconfiguredArbitraries);
+	}
+
+	private static Set<Arbitrary<?>> configureDefaultArbitraries(
+		TypeUsage typeUsage,
+		DomainContext domainContext,
+		Set<Arbitrary<?>> unconfiguredArbitraries
+	) {
+		RegisteredArbitraryConfigurer defaultArbitraryConfigurer = new RegisteredArbitraryConfigurer(domainContext.getArbitraryConfigurators());
+		return unconfiguredArbitraries.stream()
+									  .map(arbitrary -> defaultArbitraryConfigurer.configure(arbitrary, typeUsage))
+									  .collect(Collectors.toSet());
+	}
+
+	private static Set<Arbitrary<?>> createDefaultArbitraries(
+		TypeUsage typeUsage,
+		Function<TypeUsage, Arbitrary<Object>> noDefaultResolver,
+		DomainContext domainContext
+	) {
+		RegisteredArbitraryResolver defaultArbitraryResolver = new RegisteredArbitraryResolver(domainContext.getArbitraryProviders());
 		ArbitraryProvider.SubtypeProvider subtypeProvider = subtypeUsage -> {
 			Set<Arbitrary<?>> subtypeArbitraries = allDefaultsFor(subtypeUsage, noDefaultResolver);
 			if (subtypeArbitraries.isEmpty()) {

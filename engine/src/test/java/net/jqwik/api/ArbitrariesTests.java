@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -10,7 +11,10 @@ import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.domains.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.engine.support.*;
+import net.jqwik.engine.support.types.*;
 import net.jqwik.testing.*;
 
 import static java.math.BigInteger.*;
@@ -529,6 +533,25 @@ class ArbitrariesTests {
 			Arbitrary<Collection> collections = Arbitraries.defaultFor(Collection.class, String.class);
 			TestingSupport.checkAtLeastOneGenerated(collections.generator(1000), random, List.class::isInstance);
 			TestingSupport.checkAtLeastOneGenerated(collections.generator(1000), random, Set.class::isInstance);
+		}
+
+		@Example
+		void defaultForWithTypeUsage(@ForAll Random random) throws NoSuchMethodException {
+			class Container {
+				void method(@Size(3) List<Integer> intList) {}
+			}
+
+			Method method = Container.class.getDeclaredMethod("method", List.class);
+			MethodParameter intListParameter = JqwikReflectionSupport.getMethodParameters(method, Container.class).get(0);
+			TypeUsage parameterUsage = TypeUsageImpl.forParameter(intListParameter);
+
+			Arbitrary<List<Integer>> arbitrary = Arbitraries.defaultFor(parameterUsage);
+
+			TestingSupport.assertAllGenerated(
+				arbitrary,
+				random,
+				list -> assertThat(list).hasSize(3)
+			);
 		}
 
 		@Property(tries = 100)
