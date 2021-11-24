@@ -20,12 +20,18 @@ public class DefaultTraverseArbitrary<T> extends ArbitraryDecorator<T> implement
 
 	private final Class<T> targetType;
 	private final Traverser traverser;
+	private final Map<TypeUsage, Arbitrary<Object>> arbitrariesCache;
 
 	private boolean enableRecursion = false;
 
 	public DefaultTraverseArbitrary(Class<T> targetType, Traverser traverser) {
+		this(targetType, traverser, new HashMap<>());
+	}
+
+	private DefaultTraverseArbitrary(Class<T> targetType, Traverser traverser, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
 		this.targetType = targetType;
 		this.traverser = traverser;
+		this.arbitrariesCache = arbitrariesCache;
 	}
 
 	@Override
@@ -115,8 +121,12 @@ public class DefaultTraverseArbitrary<T> extends ArbitraryDecorator<T> implement
 	private Arbitrary<Object> arbitraryFor(
 		TypeUsage parameterTypeUsage
 	) {
-		Optional<Arbitrary<Object>> resolvedArbitrary = traverser.resolveParameter(parameterTypeUsage);
-		return resolvedArbitrary.orElseGet(() -> Arbitraries.defaultFor(parameterTypeUsage, this::arbitraryForTypeWithoutDefault));
+		return arbitrariesCache.computeIfAbsent(
+			parameterTypeUsage,
+			dontUse -> {
+				Optional<Arbitrary<Object>> resolvedArbitrary = traverser.resolveParameter(parameterTypeUsage);
+				return resolvedArbitrary.orElseGet(() -> Arbitraries.defaultFor(parameterTypeUsage, this::arbitraryForTypeWithoutDefault));
+			});
 	}
 
 	@SuppressWarnings("unchecked")
@@ -124,7 +134,7 @@ public class DefaultTraverseArbitrary<T> extends ArbitraryDecorator<T> implement
 		if (!enableRecursion) {
 			throw new CannotFindArbitraryException(typeUsage);
 		}
-		TraverseArbitrary<Object> traverseArbitrary = new DefaultTraverseArbitrary<>((Class<Object>) typeUsage.getRawType(), traverser);
+		TraverseArbitrary<Object> traverseArbitrary = new DefaultTraverseArbitrary<>((Class<Object>) typeUsage.getRawType(), traverser, arbitrariesCache);
 		return traverseArbitrary.enableRecursion();
 	}
 
