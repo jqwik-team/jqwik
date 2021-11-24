@@ -63,6 +63,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Added experimental `Arbitraries.traverse(..)` as a mechanism to traverse a type
   and all the types it depends on for arbitrary generation.
 
+- `TypeArbitrary.use(Executable creator)` is now deprecated and will be removed in 1.8.0
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties

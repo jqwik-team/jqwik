@@ -32,7 +32,11 @@ public interface TypeArbitrary<T> extends Arbitrary<T> {
 	 *
 	 * @param creator The static function or constructor
 	 * @return new arbitrary instance
+	 *
+	 * @deprecated No longer supported. Will be removed in 1.8.0.
 	 */
+	@Deprecated
+	@API(status = DEPRECATED, since = "1.6.1")
 	TypeArbitrary<T> use(Executable creator);
 
 	/**
