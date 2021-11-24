@@ -1,10 +1,6 @@
 - 1.6.1
 
     - Introduce Arbitraries.traverse()
-      - Rename TraverseArbitrary.allowRecursion -> enableRecursion(boolean)
-      - Rename TypeArbitrary.allowRecursion -> enableRecursion(boolean)
-      - Rename UseType.allowRecursion -> enableRecursion
-      - Create tests for DefaultTraverseArbitrary
       - Create Arbitraries.traverse(Class type, parameterResolver)
 
     - Tags should be reported in standard property report

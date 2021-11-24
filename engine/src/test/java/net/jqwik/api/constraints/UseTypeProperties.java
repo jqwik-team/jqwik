@@ -33,7 +33,7 @@ class UseTypeProperties {
 
 	@Property
 	@ExpectFailure(failureType = CannotFindArbitraryException.class)
-	void nestedTypeWithoutAllowRecursion_throwsException(@ForAll @UseType(allowRecursion = false) Parties aParties) {
+	void nestedTypeWithDisabledRecursion_throwsException(@ForAll @UseType(enableRecursion = false) Parties aParties) {
 	}
 
 	@Property

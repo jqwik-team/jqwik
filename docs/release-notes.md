@@ -50,10 +50,10 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Multi-value arbitraries (ListArbitrary, SetArbitrary etc.) check minSize and maxSize
   values at configuration time now.
 
-- Added `TypeArbitrary.allowRecursion()` to enable recursive usage of type based
+- Added `TypeArbitrary.enableRecursion()` to enable recursive usage of type based
   generation for types that do not have an applicable default arbitrary.
 
-- `@UseType` now has an additional attribute `allowRecursion`,
+- `@UseType` now has an additional attribute `enableRecursion`,
   which is set to `true` by default.
 
 - Upgrade to Kotlin 1.6.0. Versions 1.5.x should still work with the binary. 

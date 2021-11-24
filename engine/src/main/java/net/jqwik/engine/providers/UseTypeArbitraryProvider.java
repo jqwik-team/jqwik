@@ -41,14 +41,14 @@ public class UseTypeArbitraryProvider implements ArbitraryProvider {
 									   .orElse(new UseTypeMode[0]);
 
 		boolean allowRecursion = targetType.findAnnotation(UseType.class)
-										   .map(UseType::allowRecursion)
+										   .map(UseType::enableRecursion)
 										   .orElse(true);
 
 		for (UseTypeMode use : uses) {
 			typeArbitrary = use.modify(typeArbitrary);
 		}
 		if (allowRecursion) {
-			typeArbitrary = typeArbitrary.allowRecursion();
+			typeArbitrary = typeArbitrary.enableRecursion();
 		}
 
 		return typeArbitrary;

@@ -86,7 +86,7 @@ public interface TypeArbitrary<T> extends Arbitrary<T> {
 	TypeArbitrary<T> useFactoryMethods(Predicate<Method> filter);
 
 	/**
-	 * Allow recursive use of type arbitrary:
+	 * Enable recursive use of type arbitrary:
 	 * If any parameter of a creator function does not have an associated arbitrary
 	 * (globally registered or through a domain context),
 	 * jqwik will try to resolve this parameter using its type information as weill.
@@ -94,5 +94,5 @@ public interface TypeArbitrary<T> extends Arbitrary<T> {
 	 * @return new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.1")
-	TypeArbitrary<T> allowRecursion();
+	TypeArbitrary<T> enableRecursion();
 }

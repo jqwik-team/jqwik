@@ -6,7 +6,6 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -336,7 +335,7 @@ class DefaultTypeArbitraryTests {
 		@Example
 		void unresolvableSimpleTypeIsResolvedThroughTypeArbitrary(@ForAll Random random) {
 			Arbitrary<Customer> typeArbitrary = new DefaultTypeArbitrary<>(Customer.class)
-				.allowRecursion();
+				.enableRecursion();
 
 			assertAllGenerated(
 				typeArbitrary,
@@ -358,7 +357,7 @@ class DefaultTypeArbitraryTests {
 		void resolveDeeperTypeRecursively(@ForAll Random random) {
 			Arbitrary<Contract> typeArbitrary = new DefaultTypeArbitrary<>(Contract.class)
 				.usePublicConstructors()
-				.allowRecursion();
+				.enableRecursion();
 
 			assertAllGenerated(
 				typeArbitrary,
@@ -429,7 +428,7 @@ class DefaultTypeArbitraryTests {
 
 		@Property
 		void recursiveType(@ForAll Random random) {
-			Arbitrary<Customer> arbitrary = new DefaultTypeArbitrary<>(Customer.class).usePublicConstructors().allowRecursion();
+			Arbitrary<Customer> arbitrary = new DefaultTypeArbitrary<>(Customer.class).usePublicConstructors().enableRecursion();
 			Customer shrunkValue = falsifyThenShrink(arbitrary, random);
 
 			assertThat(shrunkValue).isIn(

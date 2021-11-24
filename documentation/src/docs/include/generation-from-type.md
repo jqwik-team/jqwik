@@ -79,7 +79,7 @@ void aPartyOfPeopleCanBeGenerated(@ForAll @UseType Party aParty) {
 ```
 
 This _recursive_ application of `@UseType` is switched on by default, 
-but can also be switched off: `@UseType(allowRecursion=false)`.
+but can also be switched off: `@UseType(enableRecursion=false)`.
 
 To learn about all configuration options have a look
 at the [complete example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/types/TypeArbitraryExamples.java)

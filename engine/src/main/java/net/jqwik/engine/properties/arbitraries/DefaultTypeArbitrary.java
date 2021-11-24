@@ -132,7 +132,7 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 
 
 	@Override
-	public TypeArbitrary<T> allowRecursion() {
+	public TypeArbitrary<T> enableRecursion() {
 		DefaultTypeArbitrary<T> clone = typedClone();
 		clone.traverseArbitrary = clone.traverseArbitrary.enableRecursion();
 		return clone;

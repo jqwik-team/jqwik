@@ -34,7 +34,7 @@ public @interface UseType {
 	 * embedded types if (and only if) there's no other arbitrary
 	 * available for this type.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.6.0")
-	boolean allowRecursion() default true;
+	@API(status = EXPERIMENTAL, since = "1.6.1")
+	boolean enableRecursion() default true;
 }
 

@@ -13,7 +13,7 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class DefaultTraverseArbitraryTests {
+class TraverseArbitraryTests {
 
 	@Example
 	void traverseWithoutRecursion(@ForAll Random random) {
