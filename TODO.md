@@ -1,8 +1,5 @@
 - 1.6.1
 
-    - Introduce Arbitraries.traverse()
-      - Create Arbitraries.traverse(Class type, parameterResolver)
-
     - Tags should be reported in standard property report
         
 

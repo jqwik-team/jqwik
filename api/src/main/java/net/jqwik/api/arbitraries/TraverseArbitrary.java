@@ -17,6 +17,11 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.6.1")
 public interface TraverseArbitrary<T> extends Arbitrary<T> {
 
+	/**
+	 * A traverser describes how to travers a given type by providing a hook to
+	 * resolve a parameter into an arbitrary and a means to find all relevant
+	 * creators (constructors or factory methods) for a type that does not have a suitable default arbitrary.
+	 */
 	interface Traverser {
 
 		/**

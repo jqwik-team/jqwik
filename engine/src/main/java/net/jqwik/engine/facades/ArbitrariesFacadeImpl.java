@@ -156,6 +156,11 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return LazyOfArbitrary.of(hashIdentifier, suppliers);
 	}
 
+	@Override
+	public <T> TraverseArbitrary<T> traverse(Class<T> targetType, TraverseArbitrary.Traverser traverser) {
+		return new DefaultTraverseArbitrary<>(targetType, traverser);
+	}
+
 	/**
 	 * The calculated cash is supposed to be the same for the same callers of Arbitraries.lazyOf()
 	 * This is important to have a single instance of LazyOfArbitrary for the same code.

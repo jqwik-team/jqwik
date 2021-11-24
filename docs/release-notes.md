@@ -60,6 +60,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - `DomainContext` implementation classes can now be annotated with `@Domain` themselves. 
 
+- Added experimental `Arbitraries.traverse(..)` as a mechanism to traverse a type
+  and all the types it depends on for arbitrary generation.
 
 #### Breaking Changes
 

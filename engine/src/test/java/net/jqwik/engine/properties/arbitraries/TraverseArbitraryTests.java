@@ -17,7 +17,7 @@ class TraverseArbitraryTests {
 
 	@Example
 	void traverseWithoutRecursion(@ForAll Random random) {
-		TraverseArbitrary<MyClass> arbitrary = new DefaultTraverseArbitrary<>(MyClass.class, new NameTraverser());
+		TraverseArbitrary<MyClass> arbitrary = Arbitraries.traverse(MyClass.class, new NameTraverser());
 
 		TestingSupport.assertAllGenerated(
 			arbitrary,
@@ -32,7 +32,7 @@ class TraverseArbitraryTests {
 	@Example
 	void traverseWithRecursion(@ForAll Random random) {
 		TraverseArbitrary<MyNestingClass> arbitrary =
-			new DefaultTraverseArbitrary<>(MyNestingClass.class, new NameTraverser()).enableRecursion();
+			Arbitraries.traverse(MyNestingClass.class, new NameTraverser()).enableRecursion();
 
 		TestingSupport.assertAllGenerated(
 			arbitrary,

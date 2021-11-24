@@ -9,6 +9,7 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.arbitraries.TraverseArbitrary.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.stateful.*;
 
@@ -86,6 +87,8 @@ public class Arbitraries {
 		public abstract <T> Arbitrary<T> recursive(Supplier<Arbitrary<T>> base, Function<Arbitrary<T>, Arbitrary<T>> recur, int depth);
 
 		public abstract <T> Arbitrary<T> lazyOf(List<Supplier<Arbitrary<T>>> suppliers);
+
+		public abstract <T> TraverseArbitrary<T> traverse(Class<T> targetType, Traverser traverser);
 	}
 
 	private Arbitraries() {
@@ -566,6 +569,31 @@ public class Arbitraries {
 	@API(status = MAINTAINED, since = "1.2.0")
 	public static <T> TypeArbitrary<T> forType(Class<T> targetType) {
 		return ArbitrariesFacade.implementation.forType(targetType);
+	}
+
+	/**
+	 * Create an arbitrary for type {@code T} that will try to traverse a type
+	 * - and all types it is based on - given a {@linkplain Traverser} strategy.
+	 *
+	 * <p>
+	 *     By default recursion is disable, i.e. that parameters of creator functions
+	 *     can be resolved by the traverser, have a default arbitrary or generation fails at runtime.
+	 *     Use {@linkplain TraverseArbitrary#enableRecursion()} to switch on recursive traversal.
+	 * </p>
+	 * <p>
+	 *     One usage of this traversing mechanism is {@linkplain #forType(Class)}
+	 *     which uses {@linkplain #traverse(Class, Traverser)} under the hood.
+	 * </p>
+	 *
+	 * @param targetType The class of the type to create an arbitrary for
+	 * @param <T>        The type of values to generate
+	 * @param traverser  The traversing strategy specification
+	 * @return a new arbitrary instance
+	 * @see TraverseArbitrary
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.1")
+	public static <T> TraverseArbitrary<T> traverse(Class<T> targetType, Traverser traverser) {
+		return ArbitrariesFacade.implementation.traverse(targetType, traverser);
 	}
 
 	private static <T> Arbitrary<T> fromGenerators(
