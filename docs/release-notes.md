@@ -71,8 +71,6 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - Inherited domain contexts could break existing properties
 
-- `TypeArbitrary.useDefaults()` no longer allows non-public factory methods
-
 - `@UseType` will by default allow recursively resolve by type
 
 #### Bug Fixes
