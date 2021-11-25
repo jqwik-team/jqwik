@@ -69,7 +69,7 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
   are now being reported in execution result report as part of the key.
 
 - After failure modes `SAMPLE_ONLY` and `SAMPLE_FIRST` now discover changes
-  to parameter configuration with better accuracy, which leads to less
+  to parameter configuration with better accuracy, which leads to fewer
   "impossible" samples being injected into property methods.
 
 #### Breaking Changes
