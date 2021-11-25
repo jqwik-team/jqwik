@@ -68,6 +68,10 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Tags added to containers or property methods through `@Tag` annotations
   are now being reported in execution result report as part of the key.
 
+- After failure modes `SAMPLE_ONLY` and `SAMPLE_FIRST` now discover changes
+  to parameter configuration with better accuracy, which leads to less
+  "impossible" samples being injected into property methods.
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties

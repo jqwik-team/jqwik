@@ -7,11 +7,13 @@ import java.util.stream.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.recording.*;
+import net.jqwik.engine.support.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -167,7 +169,13 @@ class PropertyMethodResolverTests {
 			Method method = TestHelper.getMethod(TestContainer.class, "previouslyFailed");
 			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
 			List<Object> falsifiedSample = Arrays.asList("a", 1);
-			testRunData.add(new TestRun(previouslyFailedId, Status.FAILED, "4243", falsifiedSample));
+			testRunData.add(new TestRun(
+				previouslyFailedId,
+				new ParametersHash(method),
+				Status.FAILED,
+				"4243",
+				falsifiedSample
+			));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
@@ -176,15 +184,37 @@ class PropertyMethodResolverTests {
 		}
 
 		@Example
+		void propertyThatPreviouslyFailedButWithDifferentAnnotations() {
+			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
+			Method method = TestHelper.getMethod(TestContainer.class, "previouslyFailed");
+			Method methodDifferentAnnotation = TestHelper.getMethod(TestContainer.class, "previouslyFailedDifferentAnnotation");
+			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
+			List<Object> falsifiedSample = Arrays.asList("a", 1);
+			testRunData.add(new TestRun(
+				previouslyFailedId,
+				new ParametersHash(methodDifferentAnnotation),
+				Status.FAILED,
+				"4243",
+				falsifiedSample
+			));
+			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
+
+			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
+			assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isEqualTo("4243");
+			assertThat(propertyMethodDescriptor.getConfiguration().getFalsifiedSample()).isNull();
+		}
+
+		@Example
 		void propertyThatDidNotPreviouslyFailWontHavePreviousSeed() {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "previouslyFailed");
 			UniqueId previousId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
-			testRunData.add(new TestRun(previousId, Status.SUCCESSFUL, "4243", null));
+			testRunData.add(new TestRun(previousId, new ParametersHash(method), Status.SUCCESSFUL, "4243", null));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
 			assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isNull();
+			assertThat(propertyMethodDescriptor.getConfiguration().getFalsifiedSample()).isNull();
 		}
 
 		@Example
@@ -192,7 +222,7 @@ class PropertyMethodResolverTests {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "withSeed41");
 			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
-			testRunData.add(new TestRun(previouslyFailedId, Status.FAILED, "9999", null));
+			testRunData.add(new TestRun(previouslyFailedId, new ParametersHash(method), Status.FAILED, "9999", null));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
@@ -287,7 +317,11 @@ class PropertyMethodResolverTests {
 		}
 
 		@Property
-		void previouslyFailed() {
+		void previouslyFailed(String aString) {
+		}
+
+		@Property
+		void previouslyFailedDifferentAnnotation(@StringLength(0) String aString) {
 		}
 
 		@Property(seed = "41")

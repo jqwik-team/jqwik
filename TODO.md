@@ -1,6 +1,8 @@
 - 1.6.1
 
-    - Property's random seed should be thrown away if annotations in parameters have changes
+    - Check if Kotlin Module requires update for new features
+
+    - Release 1.6.1
 
 - 1.6.x
 

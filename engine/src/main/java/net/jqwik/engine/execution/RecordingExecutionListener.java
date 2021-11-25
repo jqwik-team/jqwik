@@ -1,13 +1,16 @@
 package net.jqwik.engine.execution;
 
 import java.io.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.recording.*;
+import net.jqwik.engine.support.*;
 
 public class RecordingExecutionListener implements PropertyExecutionListener {
 
@@ -55,8 +58,17 @@ public class RecordingExecutionListener implements PropertyExecutionListener {
 		List<Object> sample = executionResult.falsifiedParameters()
 											 .filter(this::isSerializable)
 											 .orElse(null);
-		TestRun run = new TestRun(testDescriptor.getUniqueId(), executionResult.status(), seed, sample);
+		ParametersHash parametersHash = parametersHash(testDescriptor);
+		TestRun run = new TestRun(testDescriptor.getUniqueId(), parametersHash, executionResult.status(), seed, sample);
 		recorder.record(run);
+	}
+
+	private ParametersHash parametersHash(TestDescriptor testDescriptor) {
+		if (testDescriptor instanceof PropertyMethodDescriptor) {
+			Method propertyMethod = ((PropertyMethodDescriptor) testDescriptor).getTargetMethod();
+			return new ParametersHash(propertyMethod);
+		}
+		return new ParametersHash(0);
 	}
 
 	private boolean isSerializable(List<Object> sample) {

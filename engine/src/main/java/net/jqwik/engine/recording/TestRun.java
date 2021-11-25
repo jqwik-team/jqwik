@@ -5,17 +5,25 @@ import java.util.*;
 
 import org.junit.platform.engine.*;
 
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
+import net.jqwik.engine.support.*;
 
 public class TestRun implements Serializable {
 	private final String uniqueIdString;
+	private final ParametersHash parametersHash;
 	private final int statusOrdinal;
 	private final String randomSeed;
 	private final List<Object> falsifiedSample;
 
-	public TestRun(UniqueId uniqueId, PropertyExecutionResult.Status status, String randomSeed, List<Object> falsifiedSample) {
+	public TestRun(
+		UniqueId uniqueId,
+		ParametersHash parametersHash,
+		Status status,
+		String randomSeed,
+		List<Object> falsifiedSample
+	) {
 		this.uniqueIdString = uniqueId.toString();
+		this.parametersHash = parametersHash;
 		this.statusOrdinal = status.ordinal();
 		this.randomSeed = randomSeed;
 		this.falsifiedSample = falsifiedSample;
@@ -31,6 +39,10 @@ public class TestRun implements Serializable {
 
 	public UniqueId getUniqueId() {
 		return UniqueId.parse(uniqueIdString);
+	}
+
+	public ParametersHash getParametersHash() {
+		return parametersHash;
 	}
 
 	public Status getStatus() {
@@ -52,6 +64,6 @@ public class TestRun implements Serializable {
 	}
 
 	TestRun withoutFalsifiedSample() {
-		return new TestRun(getUniqueId(), getStatus(), randomSeed, null);
+		return new TestRun(getUniqueId(), parametersHash, getStatus(), randomSeed, null);
 	}
 }
