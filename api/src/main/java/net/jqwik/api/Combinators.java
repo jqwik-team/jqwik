@@ -248,7 +248,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <@NotNull R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
+		public <R> Arbitrary<R> as(F2<T1, T2, @NotNull R> combinator) {
 			// This is a shorter implementation of as, which however would have worse shrinking
 			// behaviour because it builds on flatMap:
 			//		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
@@ -295,7 +295,7 @@ public class Combinators {
 			};
 		}
 
-		public <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<R>> flatCombinator) {
+		public <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -321,7 +321,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <@NotNull R> Arbitrary<R> as(F3<T1, T2, T3, R> combinator) {
+		public <R> Arbitrary<R> as(F3<T1, T2, T3, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -368,7 +368,7 @@ public class Combinators {
 			};
 		}
 
-		public <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<R>> flatCombinator) {
+		public <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -397,7 +397,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <@NotNull R> Arbitrary<R> as(F4<T1, T2, T3, T4, R> combinator) {
+		public <R> Arbitrary<R> as(F4<T1, T2, T3, T4, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -448,7 +448,7 @@ public class Combinators {
 			};
 		}
 
-		public <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<R>> flatCombinator) {
+		public <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -479,7 +479,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <@NotNull R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, R> combinator) {
+		public <R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -531,7 +531,7 @@ public class Combinators {
 			};
 		}
 
-		public <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<R>> flatCombinator) {
+		public <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -564,7 +564,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <@NotNull R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, R> combinator) {
+		public <R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -618,7 +618,7 @@ public class Combinators {
 			};
 		}
 
-		public <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<R>> flatCombinator) {
+		public <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -656,7 +656,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <@NotNull R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator) {
+		public <R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -711,7 +711,7 @@ public class Combinators {
 			};
 		}
 
-		public <R> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<R>> flatCombinator) {
+		public <R> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -751,7 +751,7 @@ public class Combinators {
 		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <@NotNull R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator) {
+		public <R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -808,7 +808,7 @@ public class Combinators {
 			};
 		}
 
-		public <R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<R>> flatCombinator) {
+		public <R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -831,7 +831,7 @@ public class Combinators {
 		 * @return arbitrary instance
 		 */
 		@SuppressWarnings("unchecked")
-		public <@NotNull R> Arbitrary<R> as(Function<List<T>, R> combinator) {
+		public <R> Arbitrary<R> as(Function<List<T>, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
@@ -886,7 +886,7 @@ public class Combinators {
 			};
 		}
 
-		public <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<R>> flatCombinator) {
+		public <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
