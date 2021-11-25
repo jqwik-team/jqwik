@@ -65,6 +65,9 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - `TypeArbitrary.use(Executable creator)` is now deprecated and will be removed in 1.8.0
 
+- Tags added to containers or property methods through `@Tag` annotations
+  are now being reported in execution result report as part of the key.
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties

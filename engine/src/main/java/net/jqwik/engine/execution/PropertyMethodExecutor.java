@@ -6,6 +6,7 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
+import org.junit.platform.engine.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -166,12 +167,21 @@ public class PropertyMethodExecutor {
 					methodDescriptor,
 					(ExtendedPropertyExecutionResult) executionResult
 				);
-				reporter.publishValue(methodDescriptor.extendedLabel(), reportEntry);
+				reporter.publishValue(buildResultReportKey(), reportEntry);
 			}
 		} else {
 			String message = String.format("Unknown PropertyExecutionResult implementation: %s", executionResult.getClass());
 			LOG.warning(message);
 		}
+	}
+
+	private String buildResultReportKey() {
+		Set<String> tags = methodDescriptor.getTags().stream().map(TestTag::getName).collect(Collectors.toSet());
+		String tagsString = tags.isEmpty()
+								? ""
+								: String.format("[%s] ", String.join(", ", tags));
+
+		return String.format("%s%s", tagsString, methodDescriptor.extendedLabel());
 	}
 
 	private boolean isReportWorthy(ExtendedPropertyExecutionResult executionResult) {

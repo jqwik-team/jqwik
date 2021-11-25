@@ -724,6 +724,6 @@ class DisablingExamples {
 Disabled properties will be reported by IDEs and build tools as "skipped"
 together with the reason - if one has been provided.
 
-Be careful not to use the Jupiter annotation with the same name.
+Be careful __not to use__ the Jupiter annotation with the same name.
 _Jqwik_ will refuse to execute methods that have Jupiter annotations.
 

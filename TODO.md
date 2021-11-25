@@ -1,7 +1,6 @@
 - 1.6.1
 
-    - Tags should be reported in standard property report
-        
+    - Property's random seed should be thrown away if annotations in parameters have changes
 
 - 1.6.x
 

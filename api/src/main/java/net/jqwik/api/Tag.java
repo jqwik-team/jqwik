@@ -9,6 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Use {@code @Tag("a tag")} to give test classes, groups and methods an (additional) tag
  * which can later be used to select the set of tests to execute.
+ * A tag on a container class is also "applied" to all property methods and nested containers.
  * <p>
  * You can have many tags on the same element.
  * <p>
