@@ -1,7 +1,5 @@
 - 1.6.1
 
-    - Check if Kotlin Module requires update for new features
-
     - Release 1.6.1
 
 - 1.6.x
