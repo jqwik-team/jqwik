@@ -11,6 +11,7 @@ import java.util.stream.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.support.android.*;
 
 import static java.util.stream.Collectors.*;
 
@@ -232,7 +233,9 @@ public class JqwikReflectionSupport {
 			if (!findDeclaredOrInheritedAnnotation(method, requiredAnnotation).isPresent()) {
 				return false;
 			}
-			TypeUsage generatorReturnType = TypeUsage.forType(method.getAnnotatedReturnType().getType());
+			TypeUsage generatorReturnType = TypeUsage.forType(
+				AndroidAnnotatedSupport.getAnnotatedReturnType(method).getType()
+			);
 			return generatorReturnType.canBeAssignedTo(targetType)
 					   // for generic types in test hierarchies:
 					   || targetType.canBeAssignedTo(generatorReturnType);

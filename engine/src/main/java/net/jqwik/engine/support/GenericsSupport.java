@@ -4,10 +4,11 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.support.android.*;
 
 public class GenericsSupport {
 
-	private static Map<TypeUsage, GenericsClassContext> contextsCache = new HashMap<>();
+	private static final Map<TypeUsage, GenericsClassContext> contextsCache = new HashMap<>();
 
 	/**
 	 * Return a context object which can resolve generic types for a given {@code contextClass}.
@@ -39,7 +40,7 @@ public class GenericsSupport {
 	private static void addResolutionsForInterfaces(TypeUsage contextType, GenericsClassContext context) {
 		Class<?>[] interfaces = contextType.getRawType().getInterfaces();
 		Type[] genericInterfaces = contextType.getRawType().getGenericInterfaces();
-		AnnotatedType[] annotatedInterfaces = contextType.getRawType().getAnnotatedInterfaces();
+		AnnotatedType[] annotatedInterfaces = AndroidAnnotatedSupport.getAnnotatedInterfaces(contextType.getRawType());
 		for (int i = 0; i < interfaces.length; i++) {
 			Class<?> supertype = interfaces[i];
 			Type genericSupertype = genericInterfaces[i];
@@ -52,7 +53,7 @@ public class GenericsSupport {
 		addResolutionsForSupertype(
 			typeUsage.getRawType().getSuperclass(),
 			typeUsage.getRawType().getGenericSuperclass(),
-			typeUsage.getRawType().getAnnotatedSuperclass(),
+			AndroidAnnotatedSupport.getAnnotatedSuperclass(typeUsage.getRawType()),
 			context
 		);
 	}
@@ -84,7 +85,7 @@ public class GenericsSupport {
 		}
 		ParameterizedType genericParameterizedType = (ParameterizedType) genericSupertype;
 		Type[] typeArguments = genericParameterizedType.getActualTypeArguments();
-		TypeVariable[] typeVariables = supertype.getTypeParameters();
+		TypeVariable<?>[] typeVariables = supertype.getTypeParameters();
 		AnnotatedType[] annotatedTypeVariables =
 			((AnnotatedParameterizedType) annotatedSupertype).getAnnotatedActualTypeArguments();
 		addResolutions(context, typeArguments, typeVariables, annotatedTypeVariables);
@@ -96,6 +97,10 @@ public class GenericsSupport {
 		TypeVariable[] typeVariables,
 		AnnotatedType[] annotatedTypeVariables
 	) {
+		if (typeVariables.length != annotatedTypeVariables.length) {
+			// This can happen in Android runtime where annotation reflection is not fully implemented
+			return;
+		}
 		for (int i = 0; i < typeVariables.length; i++) {
 			TypeVariable variable = typeVariables[i];
 			Type resolvedType = typeArguments[i];
