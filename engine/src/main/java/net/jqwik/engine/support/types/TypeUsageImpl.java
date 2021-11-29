@@ -17,7 +17,7 @@ import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 public class TypeUsageImpl implements TypeUsage, Cloneable {
 
-	private static final Map<TypeVariable<?>, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
+	private static final Map<TypeVariable<?>, TypeUsageImpl> resolvedTypeVariables = new ConcurrentHashMap<>();
 
 	public static final String WILDCARD = "?";
 
@@ -166,7 +166,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, annotatedType, typeVariable, annotations);
 		if (type instanceof TypeVariable) {
-			resolved.put((TypeVariable<?>) type, typeUsage);
+			resolvedTypeVariables.put((TypeVariable<?>) type, typeUsage);
 		}
 		processTypeUsage.accept(typeUsage);
 
@@ -174,7 +174,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	}
 
 	private static Optional<TypeUsageImpl> alreadyResolvedIn(TypeVariable<?> typeVariable) {
-		return Optional.ofNullable(resolved.get(typeVariable));
+		return Optional.ofNullable(resolvedTypeVariables.get(typeVariable));
 	}
 
 	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
