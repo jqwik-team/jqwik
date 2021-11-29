@@ -72,6 +72,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
   to parameter configuration with better accuracy, which leads to fewer
   "impossible" samples being injected into property methods.
 
+- Upgrade to JUnit Platform 1.8.2
+
 #### Breaking Changes
 
 - Inherited property defaults could change behaviour of existing properties
