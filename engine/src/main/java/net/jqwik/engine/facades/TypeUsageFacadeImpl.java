@@ -1,11 +1,9 @@
 package net.jqwik.engine.facades;
 
 import java.lang.reflect.*;
-import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
 
 /**
@@ -15,30 +13,17 @@ public class TypeUsageFacadeImpl extends TypeUsage.TypeUsageFacade {
 
 	@Override
 	public TypeUsage of(Class<?> type, TypeUsage... typeParameters) {
-		if (typeParameters.length > 0 && typeParameters.length != type.getTypeParameters().length) {
-			String typeArgumentsString = JqwikStringSupport.displayString(typeParameters);
-			throw new JqwikException(String.format("Type [%s] cannot have type parameters [%s]", type, typeArgumentsString));
-		}
-		TypeUsageImpl typeUsage = new TypeUsageImpl(type, type, null, null, Collections.emptyList());
-		typeUsage.addTypeArguments(Arrays.asList(typeParameters));
-		return typeUsage;
+		return TypeUsageImpl.forParameterizedClass(Tuple.of(type, typeParameters));
 	}
 
 	@Override
-	public TypeUsage wildcard(TypeUsage upperBound) {
-		TypeUsageImpl typeUsage = new TypeUsageImpl(
-			Object.class, Object.class, null, TypeUsageImpl.WILDCARD, Collections.emptyList()
-		);
-		typeUsage.addUpperBounds(Arrays.asList(upperBound));
-		return typeUsage;
+	public TypeUsage wildcardOf(TypeUsage upperBound) {
+		return TypeUsageImpl.wildcardOf(upperBound);
 	}
 
 	@Override
 	public TypeUsage forType(Type type) {
-		if (type instanceof WildcardType) {
-			return TypeUsageImpl.forWildcard((WildcardType) type);
-		}
-		return TypeUsageImpl.forNonWildcardType(type);
+		return TypeUsageImpl.forType(type);
 	}
 
 }

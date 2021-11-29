@@ -7,6 +7,8 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
@@ -18,6 +20,34 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private static final Map<TypeVariable<?>, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
 
 	public static final String WILDCARD = "?";
+
+	public static TypeUsage forParameterizedClass(Tuple2<Class<?>, TypeUsage[]> parameterizedClass) {
+		Class<?> type = parameterizedClass.get1();
+		TypeUsage[] typeParameters = parameterizedClass.get2();
+
+		if (typeParameters.length > 0 && typeParameters.length != type.getTypeParameters().length) {
+			String typeArgumentsString = JqwikStringSupport.displayString(typeParameters);
+			throw new JqwikException(String.format("Type [%s] cannot have type parameters [%s]", type, typeArgumentsString));
+		}
+		TypeUsageImpl typeUsage = new TypeUsageImpl(type, type, null, null, Collections.emptyList());
+		typeUsage.addTypeArguments(Arrays.asList(typeParameters));
+		return typeUsage;
+	}
+
+	public static TypeUsage wildcardOf(TypeUsage upperBound) {
+		TypeUsageImpl typeUsage = new TypeUsageImpl(
+			Object.class, Object.class, null, TypeUsageImpl.WILDCARD, Collections.emptyList()
+		);
+		typeUsage.addUpperBounds(Arrays.asList(upperBound));
+		return typeUsage;
+	}
+
+	public static TypeUsage forType(Type type) {
+		if (type instanceof WildcardType) {
+			return TypeUsageImpl.wildcardOf((WildcardType) type);
+		}
+		return TypeUsageImpl.forNonWildcardType(type);
+	}
 
 	public static TypeUsage forResolution(TypeResolution typeResolution) {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
@@ -81,7 +111,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		);
 	}
 
-	public static TypeUsageImpl forWildcard(WildcardType wildcardType) {
+	public static TypeUsageImpl wildcardOf(WildcardType wildcardType) {
 		return resolveVariableOrCreate(
 			Object.class, wildcardType,
 			WILDCARD,
@@ -567,10 +597,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 				return false;
 			return (other.upperBounds.equals(upperBounds));
 		}
-		if (other.isNullable() != isNullable()) {
-			return false;
-		}
-		return true;
+		return other.isNullable() == isNullable();
 	}
 
 	@Override

@@ -36,7 +36,7 @@ public interface TypeUsage {
 
 	@API(status = INTERNAL)
 	abstract class TypeUsageFacade {
-		private static TypeUsageFacade implementation;
+		private static final TypeUsageFacade implementation;
 
 		static {
 			implementation = FacadeLoader.load(TypeUsageFacade.class);
@@ -44,7 +44,7 @@ public interface TypeUsage {
 
 		public abstract TypeUsage of(Class<?> type, TypeUsage... typeParameters);
 
-		public abstract TypeUsage wildcard(TypeUsage upperBound);
+		public abstract TypeUsage wildcardOf(TypeUsage upperBound);
 
 		public abstract TypeUsage forType(Type type);
 	}
@@ -69,7 +69,7 @@ public interface TypeUsage {
 	}
 
 	static TypeUsage wildcard(TypeUsage upperBound) {
-		return TypeUsageFacade.implementation.wildcard(upperBound);
+		return TypeUsageFacade.implementation.wildcardOf(upperBound);
 	}
 
 	static TypeUsage forType(Type type) {
