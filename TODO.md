@@ -1,5 +1,10 @@
 - 1.6.1
 
+    - Kotlin: 
+      - Provider methods can be "internal"
+      - Add ParameterResolver for combined contexts
+        see https://www.47deg.com/blog/effects-contexts/
+
     - Release 1.6.1
 
 - 1.6.x
