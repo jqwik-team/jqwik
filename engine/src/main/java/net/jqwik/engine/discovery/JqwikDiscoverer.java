@@ -10,6 +10,7 @@ import org.junit.platform.engine.discovery.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.discovery.predicates.*;
 import net.jqwik.engine.recording.*;
+import net.jqwik.engine.support.*;
 
 import static org.junit.platform.commons.support.ReflectionSupport.*;
 import static org.junit.platform.engine.Filter.*;
@@ -93,29 +94,12 @@ public class JqwikDiscoverer {
 			String methodName = selector.getMethodName();
 			for (Method method : selector.getJavaClass().getMethods()) {
 				// TODO: Also match parameters
-				if (matchesSpecialKotlinMethod(method, methodName)) {
-					return method;
-				}
-				if (matchesInternalKotlinMethod(method, methodName)) {
+				if (JqwikKotlinSupport.javaOrKotlinName(method).equals(methodName)) {
 					return method;
 				}
 			}
 			throw methodNotFound;
 		}
-	}
-
-	private boolean matchesSpecialKotlinMethod(Method method, String methodName) {
-		if (JqwikKotlinSupport.isSpeciallyNamedKotlinMethod(method)) {
-			return methodName.equals(JqwikKotlinSupport.nameWithoutSpecialPart(method));
-		}
-		return false;
-	}
-
-	private boolean matchesInternalKotlinMethod(Method method, String methodName) {
-		if (!JqwikKotlinSupport.isInternalKotlinMethod(method)) {
-			return false;
-		}
-		return methodName.equals(JqwikKotlinSupport.nameWithoutInternalPart(method));
 	}
 
 	private HierarchicalJavaResolver createHierarchicalResolver(TestDescriptor engineDescriptor) {

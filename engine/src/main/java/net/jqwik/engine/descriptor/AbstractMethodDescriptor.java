@@ -10,9 +10,9 @@ import org.junit.platform.engine.support.descriptor.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
+import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.descriptor.DiscoverySupport.*;
-import static net.jqwik.engine.discovery.JqwikKotlinSupport.*;
 
 abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements JqwikDescriptor {
 	private final Method targetMethod;
@@ -34,13 +34,7 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implement
 	}
 
 	private static String getDefaultName(Method targetMethod) {
-		if (isInternalKotlinMethod(targetMethod)) {
-			return nameWithoutInternalPart(targetMethod);
-		}
-		if (isSpeciallyNamedKotlinMethod(targetMethod)) {
-			return nameWithoutSpecialPart(targetMethod);
-		}
-		return targetMethod.getName();
+		return JqwikKotlinSupport.javaOrKotlinName(targetMethod);
 	}
 
 	public Method getTargetMethod() {

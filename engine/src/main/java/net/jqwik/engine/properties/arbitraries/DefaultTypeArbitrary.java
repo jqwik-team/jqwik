@@ -8,12 +8,11 @@ import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
 import static org.junit.platform.commons.support.ModifierSupport.*;
 
-import static net.jqwik.engine.discovery.JqwikKotlinSupport.*;
+import static net.jqwik.engine.support.JqwikKotlinSupport.*;
 
 public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements TypeArbitrary<T> {
 
@@ -42,7 +41,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	public TypeArbitrary<T> use(Executable creator) {
 		DefaultTypeArbitrary<T> clone = cloneWithoutDefaultsSet();
 		clone.explicitCreators.add(creator);
-		// clone.traverseArbitrary = clone.traverseArbitrary.use(creator);
 		return clone;
 	}
 
@@ -61,7 +59,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	public TypeArbitrary<T> useConstructors(Predicate<? super Constructor<?>> filter) {
 		DefaultTypeArbitrary<T> clone = cloneWithoutDefaultsSet();
 		clone.addConstructors(filter);
-		// clone.traverseArbitrary = clone.traverseArbitrary.useConstructors(filter);
 		return clone;
 	}
 
@@ -74,7 +71,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	public TypeArbitrary<T> usePublicConstructors() {
 		DefaultTypeArbitrary<T> clone = cloneWithoutDefaultsSet();
 		clone.addPublicConstructors();
-		// clone.traverseArbitrary = clone.traverseArbitrary.usePublicConstructors();
 		return clone;
 	}
 
@@ -86,7 +82,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	public TypeArbitrary<T> useAllConstructors() {
 		DefaultTypeArbitrary<T> clone = cloneWithoutDefaultsSet();
 		clone.addAllConstructors();
-		// clone.traverseArbitrary = clone.traverseArbitrary.useAllConstructors();
 		return clone;
 	}
 
@@ -98,7 +93,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	public TypeArbitrary<T> useFactoryMethods(Predicate<Method> filter) {
 		DefaultTypeArbitrary<T> clone = cloneWithoutDefaultsSet();
 		clone.addFactoryMethods(filter);
-		// clone.traverseArbitrary = clone.traverseArbitrary.useFactoryMethods(filter);
 		return clone;
 	}
 
@@ -110,7 +104,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	public TypeArbitrary<T> usePublicFactoryMethods() {
 		DefaultTypeArbitrary<T> clone = cloneWithoutDefaultsSet();
 		clone.addPublicFactoryMethods();
-		// clone.traverseArbitrary = clone.traverseArbitrary.usePublicFactoryMethods();
 		return clone;
 	}
 
@@ -122,7 +115,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	public TypeArbitrary<T> useAllFactoryMethods() {
 		DefaultTypeArbitrary<T> clone = cloneWithoutDefaultsSet();
 		clone.addAllFactoryMethods();
-		// clone.traverseArbitrary = clone.traverseArbitrary.useAllFactoryMethods();
 		return clone;
 	}
 

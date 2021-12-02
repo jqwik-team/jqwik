@@ -88,6 +88,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - `Arbitraries.defaultFor(..)` did not apply configurators, but does now.
 
+- Kotlin provider methods can now have `internal` modifier
+
 ## 1.6.0
 
 <p style="padding-left:1em;font-size:larger">

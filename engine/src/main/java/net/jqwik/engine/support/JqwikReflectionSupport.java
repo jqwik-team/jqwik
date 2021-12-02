@@ -210,7 +210,7 @@ public class JqwikReflectionSupport {
 		return creators.stream().filter(generatorMethod -> {
 			String generatorName = generatorNameSupplier.apply(generatorMethod);
 			if (generatorName.isEmpty()) {
-				generatorName = generatorMethod.getName();
+				generatorName = JqwikKotlinSupport.javaOrKotlinName(generatorMethod);
 			}
 			return generatorName.equals(generatorToFind);
 		}).findFirst();
