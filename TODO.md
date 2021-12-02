@@ -1,9 +1,5 @@
 - 1.6.1
 
-    - Kotlin: 
-      - Add ParameterResolver for combined contexts
-        see https://www.47deg.com/blog/effects-contexts/
-
     - Release 1.6.1
 
 - 1.6.x
@@ -38,4 +34,8 @@
         - Web.ipv4Addresses()|ipv6Addresses()|urls()
 
     - EdgeCases.Configuration.withProbability(double injectProbability)
+
+    - Kotlin:
+        - Add ParameterResolver for combined contexts
+          see https://www.47deg.com/blog/effects-contexts/
 

@@ -119,6 +119,7 @@ dependencies {
 
 	testImplementation(project(":testing"))
 
+	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${kotlinxVersion}")
 }
