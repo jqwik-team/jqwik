@@ -2,11 +2,10 @@ package net.jqwik.engine.statistics;
 
 import java.util.*;
 
-import org.mockito.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.testing.*;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -19,10 +18,10 @@ class StatisticsHookTests {
 		Statistics.collect(anInt);
 	}
 
-	private static class CheckDefaultStatisticsReport extends CheckStatisticsReport {
+	private static class CheckDefaultStatisticsReport extends CheckReporting {
 		@Override
-		void check(Reporter reporter) {
-			verify(reporter).publishValue(
+		public void check(Reporter mockReporter) {
+			verify(mockReporter).publishValue(
 					contains("statistics"),
 					contains("%")
 			);
@@ -38,14 +37,14 @@ class StatisticsHookTests {
 		Statistics.label("second").collect(anInt);
 	}
 
-	private static class CheckTwoFormats extends CheckStatisticsReport {
+	private static class CheckTwoFormats extends CheckReporting {
 		@Override
-		void check(Reporter reporter) {
-			verify(reporter).publishValue(
+		public void check(Reporter mockReporter) {
+			verify(mockReporter).publishValue(
 					contains("first"),
 					contains("first format")
 			);
-			verify(reporter).publishValue(
+			verify(mockReporter).publishValue(
 					contains("second"),
 					contains("second format")
 			);
@@ -69,23 +68,3 @@ class StatisticsHookTests {
 
 }
 
-abstract class CheckStatisticsReport implements AroundPropertyHook {
-
-	Reporter reporter = Mockito.mock(Reporter.class);
-
-	@Override
-	public int aroundPropertyProximity() {
-		// Outside StatisticsHook
-		return -100;
-	}
-
-	@Override
-	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
-		context.wrapReporter(ignore -> reporter);
-		PropertyExecutionResult result = property.execute();
-		check(reporter);
-		return result;
-	}
-
-	abstract void check(Reporter reporter);
-}

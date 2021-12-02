@@ -62,5 +62,6 @@ dependencies {
 	api(project(":api"))
 	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 
+	implementation("org.mockito:mockito-core:${mockitoVersion}")
 	implementation("org.assertj:assertj-core:${assertJVersion}")
 }
