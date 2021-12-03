@@ -1,7 +1,3 @@
-- 1.6.1
-
-    - Release 1.6.1
-
 - 1.6.x
 
     - Allow specification of provider class in `@ForAll` and `@From`
