@@ -33,6 +33,17 @@ and <a href="/docs/1.6.1/kdoc/index.html">kdoc</a>
 
 #### New and Enhanced Features
 
+- Added `TypeArbitrary.enableRecursion()` to enable recursive usage of type based
+  generation for types that do not have an applicable default arbitrary.
+
+- `@UseType` now has an additional attribute `enableRecursion`,
+  which is set to `true` by default.
+
+- Added experimental `Arbitraries.traverse(..)` as a mechanism to traverse a type
+  and all the types it depends on for arbitrary generation.
+
+- `TypeArbitrary.use(Executable creator)` is now deprecated and will be removed in 1.8.0
+
 - A container class will now inherit `@PropertiesDefault` annotations from superclass and interfaces.
 
 - A container class will now inherit `@AddLifecycleHook` annotations from superclass and interfaces.
@@ -50,20 +61,9 @@ and <a href="/docs/1.6.1/kdoc/index.html">kdoc</a>
 - Multi-value arbitraries (ListArbitrary, SetArbitrary etc.) check minSize and maxSize
   values at configuration time now.
 
-- Added `TypeArbitrary.enableRecursion()` to enable recursive usage of type based
-  generation for types that do not have an applicable default arbitrary.
-
-- `@UseType` now has an additional attribute `enableRecursion`,
-  which is set to `true` by default.
-
 - Upgrade to Kotlin 1.6.0. Versions 1.5.x should still work with the binary. 
 
 - `DomainContext` implementation classes can now be annotated with `@Domain` themselves. 
-
-- Added experimental `Arbitraries.traverse(..)` as a mechanism to traverse a type
-  and all the types it depends on for arbitrary generation.
-
-- `TypeArbitrary.use(Executable creator)` is now deprecated and will be removed in 1.8.0
 
 - Tags added to containers or property methods through `@Tag` annotations
   are now being reported in execution result report as part of the key.
