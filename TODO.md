@@ -1,3 +1,7 @@
+- 1.6.2
+
+    - Make falsified samples reproducible in other way than serialization
+
 - 1.6.x
 
     - Allow specification of provider class in `@ForAll` and `@From`
