@@ -1,5 +1,8 @@
 - 1.6.2
 
+    - Prevent stack overflow when reporting recursive beans 
+      (e.g. https://github.com/jlink/AdventOfPBT/blob/main/src/test/kotlin/adventOfPBT/day4/DetectCycleInLinkedListProperties.kt)
+
     - Make falsified samples reproducible in other way than serialization
 
 - 1.6.x
