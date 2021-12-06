@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.6.2](#162-snapshot)
 - [1.6.1](#161)
 - [1.6.0](#160)
 - [1.5.x](#15x)
@@ -22,6 +23,18 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
+## 1.6.2-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Added `PropertyDefaults.maxDiscardRatio`
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+No known bugs.
 
 ## 1.6.1
 

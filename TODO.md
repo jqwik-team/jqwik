@@ -2,8 +2,6 @@
 
     - Make falsified samples reproducible in other way than serialization
 
-    - Add @PropertyDefaults(maxDiscardRatio=..)
-
 - 1.6.x
 
     - Allow specification of provider class in `@ForAll` and `@From`

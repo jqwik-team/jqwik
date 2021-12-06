@@ -10,6 +10,8 @@ import net.jqwik.api.lifecycle.*;
 
 import static org.apiguardian.api.API.Status.*;
 
+import static net.jqwik.api.Property.*;
+
 /**
  * Annotate a container class with {@code @PropertyDefaults}
  * if you want to set defaults of {@code Property} attributes of all contained property methods.
@@ -33,6 +35,9 @@ public @interface PropertyDefaults {
 
 	@API(status = MAINTAINED, since = "1.4.0")
 	FixedSeedMode whenFixedSeed() default FixedSeedMode.NOT_SET;
+
+	@API(status = MAINTAINED, since = "1.6.2")
+	int maxDiscardRatio() default MAX_DISCARD_RATIO_NOT_SET;
 
 	class PropertyDefaultsHook implements AroundPropertyHook {
 
@@ -74,6 +79,12 @@ public @interface PropertyDefaults {
 				PropertyAttributes attributes = context.attributes();
 				if (!attributes.whenFixedSeed().isPresent()) {
 					attributes.setWhenFixedSeed(mode);
+				}
+			});
+			findMaxDiscardRation(propertyDefaults).ifPresent(ratio -> {
+				PropertyAttributes attributes = context.attributes();
+				if (!attributes.maxDiscardRatio().isPresent()) {
+					attributes.setMaxDiscardRatio(ratio);
 				}
 			});
 
@@ -119,6 +130,13 @@ public @interface PropertyDefaults {
 			return propertyDefaults.stream()
 								   .map(PropertyDefaults::whenFixedSeed)
 								   .filter(mode -> mode != FixedSeedMode.NOT_SET)
+								   .findFirst();
+		}
+
+		private Optional<Integer> findMaxDiscardRation(List<PropertyDefaults> propertyDefaults) {
+			return propertyDefaults.stream()
+								   .map(PropertyDefaults::maxDiscardRatio)
+								   .filter(ratio -> ratio != MAX_DISCARD_RATIO_NOT_SET)
 								   .findFirst();
 		}
 

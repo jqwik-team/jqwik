@@ -14,7 +14,8 @@ class PropertyDefaultsTests {
 		afterFailure = AfterFailureMode.RANDOM_SEED,
 		shrinking = ShrinkingMode.FULL,
 		generation = GenerationMode.RANDOMIZED,
-		edgeCases = EdgeCasesMode.NONE
+		edgeCases = EdgeCasesMode.NONE,
+		maxDiscardRatio = 10
 	)
 	class OtherAttributes {
 
@@ -31,6 +32,7 @@ class PropertyDefaultsTests {
 				assertThat(context.attributes().shrinking().get()).isEqualTo(ShrinkingMode.FULL);
 				assertThat(context.attributes().generation().get()).isEqualTo(GenerationMode.RANDOMIZED);
 				assertThat(context.attributes().edgeCases().get()).isEqualTo(EdgeCasesMode.NONE);
+				assertThat(context.attributes().maxDiscardRatio().get()).isEqualTo(10);
 			}
 		}
 	}
