@@ -68,7 +68,9 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Parallel test execution:
   - Across single property with annotation @Parallel
   - Across Properties: Does it make sense with non working IntelliJ support?
-  - For ActionSequences
+  
+- Concurrent execution of ActionSequences. 
+  See https://www.youtube.com/watch?v=r5i_OiZw6Sw for inspiration
 
 ### Reporting
 
