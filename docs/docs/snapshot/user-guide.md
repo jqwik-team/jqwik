@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.6.1-SNAPSHOT
+title: jqwik User Guide - 1.6.2-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.6.1-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.6.2-SNAPSHOT</span>
 </h1>
 
 <h3>Table of Contents
@@ -78,6 +78,7 @@ title: jqwik User Guide - 1.6.1-SNAPSHOT
     - [Integer Constraints](#integer-constraints)
     - [Decimal Constraints](#decimal-constraints)
   - [Constraining parameterized types](#constraining-parameterized-types)
+  - [Constraining array types](#constraining-array-types)
   - [Providing variable types](#providing-variable-types)
   - [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
@@ -223,7 +224,7 @@ Snapshot releases are created on a regular basis and can be fetched from
 
 ### Required Version of JUnit Platform
 
-The minimum required version of the JUnit platform is `1.8.1`.
+The minimum required version of the JUnit platform is `1.8.2`.
 
 ### Gradle
 
@@ -242,10 +243,10 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.8.1'
-ext.junitJupiterVersion = '5.8.1'
+ext.junitPlatformVersion = '1.8.2'
+ext.junitJupiterVersion = '5.8.2'
 
-ext.jqwikVersion = '1.6.1-SNAPSHOT'
+ext.jqwikVersion = '1.6.2-SNAPSHOT'
 
 compileTestJava {
     // To enable argument names in reporting and debugging
@@ -275,7 +276,7 @@ dependencies {
     testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
 
     // Add any other test library you need...
     testImplementation "org.assertj:assertj-core:3.12.2"
@@ -344,7 +345,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>1.6.2-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -372,15 +373,15 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-api-1.6.1-SNAPSHOT.jar`
-- `jqwik-engine-1.6.1-SNAPSHOT.jar`
-- `junit-platform-engine-1.8.1.jar`
-- `junit-platform-commons-1.8.1.jar`
+- `jqwik-api-1.6.2-SNAPSHOT.jar`
+- `jqwik-engine-1.6.2-SNAPSHOT.jar`
+- `junit-platform-engine-1.8.2.jar`
+- `junit-platform-commons-1.8.2.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
-- `jqwik-web-1.6.1-SNAPSHOT.jar`
-- `jqwik-time-1.6.1-SNAPSHOT.jar`
+- `jqwik-web-1.6.2-SNAPSHOT.jar`
+- `jqwik-time-1.6.2-SNAPSHOT.jar`
 
 
 
@@ -395,7 +396,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html).
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with
-[`@ForAll`](/docs/1.6.1-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.6.2-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -1112,7 +1113,7 @@ class DisablingExamples {
 Disabled properties will be reported by IDEs and build tools as "skipped"
 together with the reason - if one has been provided.
 
-Be careful not to use the Jupiter annotation with the same name.
+Be careful __not to use__ the Jupiter annotation with the same name.
 _Jqwik_ will refuse to execute methods that have Jupiter annotations.
 
 
@@ -1135,7 +1136,7 @@ jqwik will use default generation for the following types:
   as long as `T` can also be provided by default generation.
 - `Iterable<T>` and `Iterator<T>` of types that are provided by default.
 - `Optional<T>` of types that are provided by default.
-- Array `T[]` of types that are provided by default.
+- Array `T[]` of component types `T` that are provided by default.
 - `Map<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `HashMap<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `Map.Entry<K, V>` as long as `K` and `V` can also be provided by default generation.
@@ -1299,6 +1300,29 @@ void aProperty(@ForAll @Size(min= 1) List<@StringLength(max=10) String> listOfSt
 }
 ```
 will generate lists with a minimum size of 1 filled with Strings that have 10 characters max.
+
+### Constraining array types
+
+Before version `1.6.2` annotations on array types - and also in vararg types - were handed down to the array's component type.
+That means that `@ForAll @WithNull String[] aStringArray` used to inject `null` values for `aStringArray`
+as well as for elements in the array.
+
+This behaviour __has changed with version `1.6.2` in an incompatible way__:
+Annotations are only applied to the array itself.
+The reason is that there was no way to specify if an annotation should be applied the array type, the component type or both.
+Therefore, the example above must be re-written as:
+
+```java
+@Property
+void myProperty(@ForAll("stringArrays") String[] aStringArray) {...}
+
+@Provide
+Arbitrary<String[]> stringArrays() {
+  return Arbitraries.strings().injectNull(0.05).array(String[].class).injectNull(0.05);
+}
+```
+
+This is arguably more involved, but allows the finer control that is necessary in some cases.
 
 ### Providing variable types
 
@@ -5022,7 +5046,7 @@ Here's the jqwik-related part of the Gradle build file for a Kotlin project:
 ```kotlin
 dependencies {
     ...
-    testImplementation("net.jqwik:jqwik-kotlin:1.6.1-SNAPSHOT")
+    testImplementation("net.jqwik:jqwik-kotlin:1.6.2-SNAPSHOT")
 }
 
 tasks.withType<Test> {
@@ -6044,4 +6068,4 @@ If a certain element, e.g. a method, is not annotated itself, then it carries th
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#161-snapshot).
+Read this version's [release notes](/release-notes.html#162-snapshot).
