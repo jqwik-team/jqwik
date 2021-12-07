@@ -186,7 +186,7 @@ as well as for elements in the array.
 
 This behaviour __has changed with version `1.6.2` in an incompatible way__:
 Annotations are only applied to the array itself.
-The reason is that there was no way to specify if an annotation should be applied the array type, the component type or both.
+The reason is that there was no way to specify if an annotation should be applied to the array type, the component type or both.
 Therefore, the example above must be re-written as:
 
 ```java
