@@ -12,7 +12,7 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements ArrayArbitrary<T, A>, SelfConfiguringArbitrary<A> {
+public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements ArrayArbitrary<T, A> {
 
 	private final Class<A> arrayClass;
 
@@ -77,12 +77,6 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 	@Override
 	protected Iterable<T> toIterable(A array) {
 		return () -> Arrays.stream((T[]) array).iterator();
-	}
-
-	@Override
-	public Arbitrary<A> configure(ArbitraryConfigurator configurator, TypeUsage targetType) {
-		targetType.getComponentType().ifPresent(elementType -> elementArbitrary = configurator.configure(elementArbitrary, elementType));
-		return configurator.configure(this, targetType);
 	}
 
 	@Override
