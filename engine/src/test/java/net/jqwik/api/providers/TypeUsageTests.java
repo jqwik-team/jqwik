@@ -313,8 +313,9 @@ class TypeUsageTests {
 
 		}
 
+		// This behaviour was disabled in version 1.6.2
 		@Example
-		void annotationsOfArrayArePropagatedToComponentType() throws NoSuchMethodException {
+		void annotationsOfArrayAreNotPropagatedToComponentType() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
 				public void stringArray(@Size(2) @StringLength(3) String[] strings) {}
@@ -330,9 +331,7 @@ class TypeUsageTests {
 
 			TypeUsage componentType = arrayType.getComponentType().get();
 			assertThat(componentType.getRawType()).isEqualTo(String.class);
-			assertThat(componentType.getAnnotations().get(0)).isInstanceOf(Size.class);
-			assertThat(componentType.getAnnotations().get(1)).isInstanceOf(StringLength.class);
-
+			assertThat(componentType.getAnnotations()).isEmpty();
 		}
 
 		@Example

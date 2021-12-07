@@ -32,7 +32,13 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- Parameter annotations on array types (e.g. `@WithNull String[]`) 
+  [are no longer applied to the component type](/docs/snapshot/user-guide.html#constraining-array-types).
+
 #### Bug Fixes
+
+- Using `@WithNull` on primitive array types no longer leads to an `IllegalArgumentException`.
+  See https://github.com/jlink/jqwik/issues/270.
 
 No known bugs.
 
@@ -113,13 +119,13 @@ and <a href="/docs/1.6.0/kdoc/index.html">kdoc</a>
 
 #### New and Enhanced Features
 
-- Added new module [`jqwik-kotlin`](/docs/snapshot/user-guide.html#kotlin-module) 
+- Added new module [`jqwik-kotlin`](/docs/1.6.0/user-guide.html#kotlin-module) 
   for improved Kotlin support.
 
-- Introduced new lifecycle hook [`InvokePropertyMethodHook`](/docs/snapshot/user-guide.html#invokepropertymethodhook) 
+- Introduced new lifecycle hook [`InvokePropertyMethodHook`](/docs/1.6.0/user-guide.html#invokepropertymethodhook) 
   in order to support some Kotlin specialties.
 
-- Introduced new lifecycle hook [`ProvidePropertyInstanceHook`](/docs/snapshot/user-guide.html#providepropertyinstancehook) 
+- Introduced new lifecycle hook [`ProvidePropertyInstanceHook`](/docs/1.6.0/user-guide.html#providepropertyinstancehook) 
   in order to allow Kotlin singleton objects as test containers.
 
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`:
@@ -134,7 +140,7 @@ and <a href="/docs/1.6.0/kdoc/index.html">kdoc</a>
 - Upgraded to JUnit Platform 1.8.1
 
 - Added experimental `JqwikSession` API to 
-  [use arbitraries outside jqwik's lifecycle](/docs/snapshot/user-guide.html#using-arbitraries-outside-jqwik-lifecycle).
+  [use arbitraries outside jqwik's lifecycle](/docs/1.6.0/user-guide.html#using-arbitraries-outside-jqwik-lifecycle).
 
 - Added `Functions.FunctionWrapper.returning()` as replacement for deprecated `returns()`.
 
@@ -150,7 +156,7 @@ and <a href="/docs/1.6.0/kdoc/index.html">kdoc</a>
 - `@WithNull` now has a default probability of 0.05 instead of 0.1
 
 - Configuration through a `jqwik.properties` file is no longer supported.
-  Please use [JUnit Platform configuration](/docs/snapshot/user-guide.html#jqwik-configuration) instead.
+  Please use [JUnit Platform configuration](/docs/1.6.0/user-guide.html#jqwik-configuration) instead.
 
 - If a property methods returns `false` or `Boolean.FALSE` it will now be considered to have failed.
   All other return values - including `null` - are regarded as success.

@@ -509,7 +509,6 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		Class<?> componentRawType = rawType.getComponentType();
 		if (componentRawType != null) {
 			TypeUsageImpl componentType = (TypeUsageImpl) TypeUsage.of(componentRawType);
-			componentType.annotations.addAll(this.annotations);
 			return Optional.of(componentType);
 		}
 		return Optional.empty();

@@ -13,7 +13,7 @@ jqwik will use default generation for the following types:
   as long as `T` can also be provided by default generation.
 - `Iterable<T>` and `Iterator<T>` of types that are provided by default.
 - `Optional<T>` of types that are provided by default.
-- Array `T[]` of types that are provided by default.
+- Array `T[]` of component types `T` that are provided by default.
 - `Map<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `HashMap<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `Map.Entry<K, V>` as long as `K` and `V` can also be provided by default generation.
@@ -177,6 +177,29 @@ void aProperty(@ForAll @Size(min= 1) List<@StringLength(max=10) String> listOfSt
 }
 ```
 will generate lists with a minimum size of 1 filled with Strings that have 10 characters max.
+
+### Constraining array types
+
+Before version `1.6.2` annotations on array types - and also in vararg types - were handed down to the array's component type.
+That means that `@ForAll @WithNull String[] aStringArray` used to inject `null` values for `aStringArray`
+as well as for elements in the array.
+
+This behaviour __has changed with version `1.6.2` in an incompatible way__:
+Annotations are only applied to the array itself.
+The reason is that there was no way to specify if an annotation should be applied the array type, the component type or both.
+Therefore, the example above must be re-written as:
+
+```java
+@Property
+void myProperty(@ForAll("stringArrays") String[] aStringArray) {...}
+
+@Provide
+Arbitrary<String[]> stringArrays() {
+  return Arbitraries.strings().injectNull(0.05).array(String[].class).injectNull(0.05);
+}
+```
+
+This is arguably more involved, but allows the finer control that is necessary in some cases.
 
 ### Providing variable types
 
