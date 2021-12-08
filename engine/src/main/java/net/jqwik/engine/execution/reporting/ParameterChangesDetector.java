@@ -2,7 +2,6 @@ package net.jqwik.engine.execution.reporting;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 
@@ -13,27 +12,36 @@ class ParameterChangesDetector {
 	}
 
 	private static boolean atLeastOneParameterHasChanged(List<Object> before, List<Object> after) {
-		List<Boolean> hasEqualsImplementation =
-				before.stream()
-					  .map(o -> Objects.isNull(o) ? Object.class : o.getClass())
-					  .map(ParameterChangesDetector::hasOwnEqualsImplementation)
-					  .collect(Collectors.toList());
-
-		for (int i = 0; i < hasEqualsImplementation.size(); i++) {
+		if (before.size() != after.size()) {
+			return true;
+		}
+		for (int i = 0; i < before.size(); i++) {
 			Object beforeValue = before.get(i);
 			Object afterValue = after.get(i);
-
-			if (Objects.isNull(beforeValue) != Objects.isNull(afterValue)) {
+			if (new ParameterChangesDetector().hasChanged(beforeValue, afterValue)) {
 				return true;
 			}
+		}
+		return false;
+	}
 
-			if (hasEqualsImplementation.get(i)) {
-				// TODO: Make this implementation more robust,
-				//  e.g. compare non-volatile fields, respect cycles
-				boolean hasDifference = !Objects.equals(beforeValue, afterValue);
-				if (hasDifference) {
-					return true;
-				}
+	boolean hasChanged(Object before, Object after) {
+		if (Objects.isNull(before) != Objects.isNull(after)) {
+			return true;
+		}
+		if (Objects.isNull(before)) {
+			return false;
+		}
+		if (before.getClass() != after.getClass()) {
+			return true;
+		}
+
+		if (hasOwnEqualsImplementation(before.getClass())) {
+			// TODO: Make this implementation more robust,
+			//  e.g. compare non-volatile fields, respect cycles
+			boolean hasDifference = !Objects.equals(before, after);
+			if (hasDifference) {
+				return true;
 			}
 		}
 
