@@ -53,17 +53,16 @@ class ParameterChangesDetectorTests {
 	@Example
 	void nestedFieldHasChanged() {
 		Node node1 = new Node(1);
-		Node node2 = new Node(2);
-		node1.next = node2;
+		node1.next = new Node(2);
+
 		Node node11 = new Node(1);
-		Node node22 = new Node(2);
-		node11.next = node22;
+		node11.next = new Node(2);
 
 		List<Object> before = Arrays.asList(node1);
 		List<Object> after = Arrays.asList(node11);
 		assertThat(haveParametersChanged(before, after)).isFalse();
 
-		node22.value = 3;
+		node11.next.value = 3;
 		assertThat(haveParametersChanged(before, after)).isTrue();
 	}
 
@@ -71,6 +70,14 @@ class ParameterChangesDetectorTests {
 	void nullParameterChanged() {
 		List<Object> before = Arrays.asList(new Object(), "a String", null);
 		List<Object> after = Arrays.asList(new Object(), "a String", 41);
+		assertThat(haveParametersChanged(before, after)).isTrue();
+		assertThat(haveParametersChanged(after, before)).isTrue();
+	}
+
+	@Example
+	void parametersWithDifferentClassesHaveChanged() {
+		List<Object> before = Arrays.asList(new Object());
+		List<Object> after = Arrays.asList(new Object() {});
 		assertThat(haveParametersChanged(before, after)).isTrue();
 		assertThat(haveParametersChanged(after, before)).isTrue();
 	}

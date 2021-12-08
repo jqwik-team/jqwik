@@ -18,14 +18,14 @@ class ParameterChangesDetector {
 		for (int i = 0; i < before.size(); i++) {
 			Object beforeValue = before.get(i);
 			Object afterValue = after.get(i);
-			if (new ParameterChangesDetector().hasChanged(beforeValue, afterValue)) {
+			if (valuesDiffer(beforeValue, afterValue)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	boolean hasChanged(Object before, Object after) {
+	private static boolean valuesDiffer(Object before, Object after) {
 		if (Objects.isNull(before) != Objects.isNull(after)) {
 			return true;
 		}
@@ -37,15 +37,10 @@ class ParameterChangesDetector {
 		}
 
 		if (hasOwnEqualsImplementation(before.getClass())) {
-			// TODO: Make this implementation more robust,
-			//  e.g. compare non-volatile fields, respect cycles
-			boolean hasDifference = !Objects.equals(before, after);
-			if (hasDifference) {
-				return true;
-			}
+			return !Objects.equals(before, after);
+		} else {
+			return false;
 		}
-
-		return false;
 	}
 
 	private static boolean hasOwnEqualsImplementation(Class<?> aClass) {

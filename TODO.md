@@ -1,8 +1,5 @@
 - 1.6.2
 
-    - Make ParameterChangesDetector more robust, 
-      e.g. go through non volatile fields and compare them; respect cycles.
-
     - Make falsified samples reproducible in other way than serialization
 
 - 1.6.x
