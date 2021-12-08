@@ -1,8 +1,5 @@
 - 1.6.2
 
-    - Improve error message for net.jqwik.api.CannotFindArbitraryException, if the reason is a type mismatch, e.g.
-      @ForAll boolean[] but provider method returns Arbitrary<Boolean[]>
-
     - Make ParameterChangesDetector more robust, 
       e.g. go through non volatile fields and compare them; respect cycles.
 
