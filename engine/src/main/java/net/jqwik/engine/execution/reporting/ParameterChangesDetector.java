@@ -27,8 +27,13 @@ class ParameterChangesDetector {
 				return true;
 			}
 
-			if (hasEqualsImplementation.get(i) && !Objects.equals(beforeValue, afterValue)) {
-				return true;
+			if (hasEqualsImplementation.get(i)) {
+				// TODO: Make this implementation more robust,
+				//  e.g. compare non-volatile fields, respect cycles
+				boolean hasDifference = !Objects.equals(beforeValue, afterValue);
+				if (hasDifference) {
+					return true;
+				}
 			}
 		}
 
