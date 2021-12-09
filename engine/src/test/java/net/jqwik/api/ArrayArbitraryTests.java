@@ -7,6 +7,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -47,6 +48,20 @@ class ArrayArbitraryTests {
 	void notAnArrayType() {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		assertThatThrownBy(() -> integerArbitrary.array(String.class)).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Example
+	void arrayForComponentClass(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+		ArrayArbitrary<Integer, Integer[]> arrayArbitrary =
+			DefaultArrayArbitrary.forComponentType(integerArbitrary, Integer.class).ofMinSize(2).ofMaxSize(5);
+
+		RandomGenerator<Integer[]> generator = arrayArbitrary.generator(1, true);
+
+		assertAllGenerated(generator, random, array -> {
+			assertThat(array.length).isBetween(2, 5);
+			assertThat(array).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		});
 	}
 
 	@Example

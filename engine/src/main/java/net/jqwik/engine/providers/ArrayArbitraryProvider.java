@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.properties.arbitraries.*;
 
 public class ArrayArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -15,9 +16,26 @@ public class ArrayArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		TypeUsage componentType = targetType.getComponentType().orElse(TypeUsage.forType(Object.class));
-		return subtypeProvider.apply(componentType) //
-			.stream() //
-			.map(elementArbitrary -> elementArbitrary.array(targetType.getRawType())) //
+		return subtypeProvider.apply(componentType)
+			.stream()
+			.map(elementArbitrary -> {
+				if (!componentType.isTypeVariable()) {
+					Class<?> arrayClass = targetType.getRawType();
+					return elementArbitrary.array(arrayClass);
+				} else {
+					Class<?> componentClass = upperboundsSupertype(componentType);
+					return DefaultArrayArbitrary.forComponentType(elementArbitrary, componentClass);
+				}
+			})
 			.collect(Collectors.toSet());
+	}
+
+	private Class<?> upperboundsSupertype(TypeUsage componentType) {
+		List<TypeUsage> upperBounds = componentType.getUpperBounds();
+		if (upperBounds.size() != 1) {
+			String message = String.format("jqwik cannot handle more than one upper bound in this case: <%s>", componentType);
+			throw new JqwikException(message);
+		}
+		return upperBounds.get(0).getRawType();
 	}
 }

@@ -1,8 +1,5 @@
 - 1.6.2
 
-    - Bug: Parameter generation does not work for generic arrays
-      e.g. `<T extends Comparable<T>> void test(@ForAll T[] array)`
-
     - Make falsified samples reproducible in other way than serialization
 
 - 1.6.x

@@ -48,7 +48,7 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Using `@WithNull` on primitive array types no longer leads to an `IllegalArgumentException`.
   See https://github.com/jlink/jqwik/issues/270.
 
-No known bugs.
+- Generic array types in parameters can now be properly resolved
 
 ## 1.6.1
 

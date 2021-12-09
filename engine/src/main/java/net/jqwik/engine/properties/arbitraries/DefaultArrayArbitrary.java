@@ -12,26 +12,23 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements ArrayArbitrary<T, A> {
 
-	@SuppressWarnings("unchecked")
 	public static <T, A> ArrayArbitrary<T, A> forArrayType(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
-		// If this cast fails then the element type cannot be added to the array type anyway
-		Class<? super T> componentType = (Class<? super T>) arrayClass.getComponentType();
-		if (componentType == null) {
+		if (!arrayClass.isArray()) {
 			String message = String.format("<%s> is not an array type.", arrayClass);
 			throw new IllegalArgumentException(message);
 		}
-		return new DefaultArrayArbitrary<T, A>(elementArbitrary, componentType);
+		return new DefaultArrayArbitrary<>(elementArbitrary, arrayClass.getComponentType());
 	}
 
-	public static <T, A> ArrayArbitrary<T, A> forComponentType(Arbitrary<T> elementArbitrary, Class<? super T> componentType) {
+	public static <T> ArrayArbitrary<T, T[]> forComponentType(Arbitrary<T> elementArbitrary, Class<?> componentType) {
 		return new DefaultArrayArbitrary<>(elementArbitrary, componentType);
 	}
 
-	private final Class<? super T> componentType;
+	private final Class<?> componentClass;
 
-	public DefaultArrayArbitrary(Arbitrary<T> elementArbitrary, Class<? super T> componentType) {
+	public DefaultArrayArbitrary(Arbitrary<T> elementArbitrary, Class<?> componentClass) {
 		super(elementArbitrary);
-		this.componentType = componentType;
+		this.componentClass = componentClass;
 	}
 
 	@Override
@@ -79,7 +76,7 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 
 	@SuppressWarnings("unchecked")
 	private A toArray(List<T> from) {
-		A array = (A) Array.newInstance(componentType, from.size());
+		A array = (A) Array.newInstance(componentClass, from.size());
 		for (int i = 0; i < from.size(); i++) {
 			Array.set(array, i, from.get(i));
 		}

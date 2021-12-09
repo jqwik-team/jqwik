@@ -168,7 +168,7 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Group
-	class Arrays_and_Collections {
+	class ArrayTypes {
 
 		@Property
 		boolean integerArray(@ForAll Integer[] aValue) {
@@ -184,6 +184,25 @@ class RegisteredArbitraryProvidersTests {
 		boolean byteArray(@ForAll byte[] aValue) {
 			return aValue != null;
 		}
+
+		@Property
+		<T> boolean genericArray(@ForAll T[] aValue) {
+			return aValue != null;
+		}
+
+		@Property
+		<T extends Comparable<T>> boolean genericConstrainedArray(@ForAll T[] aValue) {
+			return aValue != null;
+		}
+
+		@Property
+		@ExpectFailure(failureType = JqwikException.class)
+		<T extends Comparable<T> & Serializable> void twoUpperBoundsDoNotWorkInGenericArrays(@ForAll T[] aValue) {
+		}
+	}
+
+	@Group
+	class CollectionTypes {
 
 		@Property
 		boolean integerList(@ForAll List<Integer> aValue) {
