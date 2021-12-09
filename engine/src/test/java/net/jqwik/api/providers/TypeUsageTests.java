@@ -562,6 +562,31 @@ class TypeUsageTests {
 		}
 
 		@Example
+		void typeVariableInGenericArray() throws NoSuchMethodException {
+			class LocalClass {
+				public <T extends Comparable<T>> void withArrayOfTypeVariable(T[] array) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withArrayOfTypeVariable", Comparable[].class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage arrayType = TypeUsageImpl.forParameter(parameter);
+			assertThat(arrayType.isArray()).isTrue();
+			assertThat(arrayType.getComponentType()).isNotEmpty();
+
+			TypeUsage typeVariableType = arrayType.getComponentType().get();
+			assertThat(typeVariableType.isWildcard()).isFalse();
+			assertThat(typeVariableType.isTypeVariableOrWildcard()).isTrue();
+			assertThat(typeVariableType.isTypeVariable()).isTrue();
+
+			assertThat(typeVariableType.getLowerBounds()).isEmpty();
+			assertThat(typeVariableType.getUpperBounds()).containsExactly(
+				TypeUsage.of(Comparable.class, typeVariableType)
+			);
+
+			assertThat(typeVariableType.toString()).isEqualTo("T extends Comparable<T>");
+		}
+
+		@Example
 		void typeVariableWithAnnotationInUpperBound() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")

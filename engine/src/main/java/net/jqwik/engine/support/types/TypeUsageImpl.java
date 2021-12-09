@@ -506,12 +506,27 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public Optional<TypeUsage> getComponentType() {
-		Class<?> componentRawType = rawType.getComponentType();
-		if (componentRawType != null) {
-			TypeUsageImpl componentType = (TypeUsageImpl) TypeUsage.of(componentRawType);
-			return Optional.of(componentType);
+		if (!isArray()) {
+			return Optional.empty();
 		}
-		return Optional.empty();
+		return Optional.of(createComponentType());
+	}
+
+	private TypeUsage createComponentType() {
+		if (type instanceof GenericArrayType) {
+			return createGenericArrayComponentType((GenericArrayType) type);
+		} else {
+			return createSimpleArrayComponentType();
+		}
+	}
+
+	private TypeUsage createGenericArrayComponentType(GenericArrayType genericArrayType) {
+		return TypeUsage.forType(genericArrayType.getGenericComponentType());
+	}
+
+	private TypeUsageImpl createSimpleArrayComponentType() {
+		Class<?> componentRawType = rawType.getComponentType();
+		return (TypeUsageImpl) TypeUsage.of(componentRawType);
 	}
 
 	private boolean boxedTypeMatches(Class<?> providedType, Class<?> targetType) {

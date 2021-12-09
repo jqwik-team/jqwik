@@ -1,6 +1,6 @@
 - 1.6.2
 
-    - Bug: TypeUsage resolution does not work for array parameters with type constraints
+    - Bug: Parameter generation does not work for generic arrays
       e.g. `<T extends Comparable<T>> void test(@ForAll T[] array)`
 
     - Make falsified samples reproducible in other way than serialization

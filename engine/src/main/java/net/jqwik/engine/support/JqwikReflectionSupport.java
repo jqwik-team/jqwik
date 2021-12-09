@@ -354,6 +354,9 @@ public class JqwikReflectionSupport {
 		if (parameterizedType instanceof ParameterizedType) {
 			return (Class<?>) ((ParameterizedType) parameterizedType).getRawType();
 		}
+		if (parameterizedType instanceof GenericArrayType) {
+			return Object[].class;
+		}
 		// Now we have a type variable (java.lang.reflect.TypeVariable)
 		return Object.class;
 	}
