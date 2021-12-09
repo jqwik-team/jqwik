@@ -42,7 +42,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T, A> ArrayArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
-		return new DefaultArrayArbitrary<>(elementArbitrary, arrayClass);
+		return DefaultArrayArbitrary.forArrayType(elementArbitrary, arrayClass);
 	}
 
 	@Override

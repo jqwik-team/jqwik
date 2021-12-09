@@ -6,19 +6,32 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.configurators.*;
-import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements ArrayArbitrary<T, A> {
 
-	private final Class<A> arrayClass;
+	@SuppressWarnings("unchecked")
+	public static <T, A> ArrayArbitrary<T, A> forArrayType(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
+		// If this cast fails then the element type cannot be added to the array type anyway
+		Class<? super T> componentType = (Class<? super T>) arrayClass.getComponentType();
+		if (componentType == null) {
+			String message = String.format("<%s> is not an array type.", arrayClass);
+			throw new IllegalArgumentException(message);
+		}
+		return new DefaultArrayArbitrary<T, A>(elementArbitrary, componentType);
+	}
 
-	public DefaultArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
+	public static <T, A> ArrayArbitrary<T, A> forComponentType(Arbitrary<T> elementArbitrary, Class<? super T> componentType) {
+		return new DefaultArrayArbitrary<>(elementArbitrary, componentType);
+	}
+
+	private final Class<? super T> componentType;
+
+	public DefaultArrayArbitrary(Arbitrary<T> elementArbitrary, Class<? super T> componentType) {
 		super(elementArbitrary);
-		this.arrayClass = arrayClass;
+		this.componentType = componentType;
 	}
 
 	@Override
@@ -49,24 +62,24 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 	@Override
 	public Optional<ExhaustiveGenerator<A>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators
-					   .list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples)
-					   .map(generator -> generator.map(this::toArray));
+			.list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples)
+			.map(generator -> generator.map(this::toArray));
 	}
 
 	@Override
 	public EdgeCases<A> edgeCases(int maxEdgeCases) {
 		return EdgeCasesSupport.map(
-				edgeCases(
-						(elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors),
-						maxEdgeCases
-				),
-				this::toArray
+			edgeCases(
+				(elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors),
+				maxEdgeCases
+			),
+			this::toArray
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	private A toArray(List<T> from) {
-		A array = (A) Array.newInstance(arrayClass.getComponentType(), from.size());
+		A array = (A) Array.newInstance(componentType, from.size());
 		for (int i = 0; i < from.size(); i++) {
 			Array.set(array, i, from.get(i));
 		}

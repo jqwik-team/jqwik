@@ -31,6 +31,25 @@ class ArrayArbitraryTests {
 	}
 
 	@Example
+	void arrayOfSupertype(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+		ArrayArbitrary<Integer, Object[]> arrayArbitrary = integerArbitrary.array(Object[].class).ofMinSize(2).ofMaxSize(5);
+
+		RandomGenerator<Object[]> generator = arrayArbitrary.generator(1, true);
+
+		assertAllGenerated(generator, random, array -> {
+			assertThat(array.length).isBetween(2, 5);
+			assertThat(array).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		});
+	}
+
+	@Example
+	void notAnArrayType() {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+		assertThatThrownBy(() -> integerArbitrary.array(String.class)).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Example
 	@StatisticsReport(onFailureOnly = true)
 	void withSizeDistribution(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
