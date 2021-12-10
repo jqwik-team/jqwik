@@ -30,14 +30,14 @@ public class CheckedProperty {
 	private Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive;
 
 	public CheckedProperty(
-			String propertyName,
-			TryLifecycleExecutor tryLifecycleExecutor,
-			List<MethodParameter> propertyParameters,
-			ArbitraryResolver arbitraryResolver,
-			ResolveParameterHook resolveParameterHook,
-			PropertyLifecycleContext propertyLifecycleContext,
-			Optional<Iterable<? extends Tuple>> optionalData,
-			PropertyConfiguration configuration
+		String propertyName,
+		TryLifecycleExecutor tryLifecycleExecutor,
+		List<MethodParameter> propertyParameters,
+		ArbitraryResolver arbitraryResolver,
+		ResolveParameterHook resolveParameterHook,
+		PropertyLifecycleContext propertyLifecycleContext,
+		Optional<Iterable<? extends Tuple>> optionalData,
+		PropertyConfiguration configuration
 	) {
 		this.propertyName = propertyName;
 		this.tryLifecycleExecutor = tryLifecycleExecutor;
@@ -82,11 +82,11 @@ public class CheckedProperty {
 	private void maybeWarnOnMultipleTriesWithoutForallParameters(PropertyConfiguration effectiveConfiguration) {
 		if (effectiveConfiguration.getTries() > 1 && forAllParameters.isEmpty()) {
 			String message = String.format(
-					"Running %s [%s] in container [%s] without any @ForAll parameters for %s tries.%n    Maybe you want to change it into an @Example?",
-					effectiveConfiguration.getStereotype(),
-					propertyLifecycleContext.extendedLabel(),
-					propertyLifecycleContext.containerClass().getName(),
-					effectiveConfiguration.getTries()
+				"Running %s [%s] in container [%s] without any @ForAll parameters for %s tries.%n    Maybe you want to change it into an @Example?",
+				effectiveConfiguration.getStereotype(),
+				propertyLifecycleContext.extendedLabel(),
+				propertyLifecycleContext.containerClass().getName(),
+				effectiveConfiguration.getTries()
 			);
 			LOG.warning(message);
 		}
@@ -107,19 +107,19 @@ public class CheckedProperty {
 		switch (configuration.getFixedSeedMode()) {
 			case FAIL: {
 				String message = String.format(
-						"Failing %s [%s] in container [%s] as the fixed seed mode is set to FAIL",
-						configuration.getStereotype(),
-						propertyLifecycleContext.extendedLabel(),
-						propertyLifecycleContext.containerClass().getName()
+					"Failing %s [%s] in container [%s] as the fixed seed mode is set to FAIL",
+					configuration.getStereotype(),
+					propertyLifecycleContext.extendedLabel(),
+					propertyLifecycleContext.containerClass().getName()
 				);
 				throw new FailOnFixedSeedException(message);
 			}
 			case WARN: {
 				String message = String.format(
-						"Using fixed seed for %s [%s] in container [%s]",
-						configuration.getStereotype(),
-						propertyLifecycleContext.extendedLabel(),
-						propertyLifecycleContext.containerClass().getName()
+					"Using fixed seed for %s [%s] in container [%s]",
+					configuration.getStereotype(),
+					propertyLifecycleContext.extendedLabel(),
+					propertyLifecycleContext.containerClass().getName()
 				);
 				LOG.warning(message);
 				break;
@@ -136,17 +136,17 @@ public class CheckedProperty {
 		} else if (configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE) {
 			ensureValidExhaustiveMode();
 			configuration = configuration.withTries(
-					Math.toIntExact(getOptionalExhaustive().get().maxCount())
+				Math.toIntExact(getOptionalExhaustive().get().maxCount())
 			);
 		} else if (configuration.getGenerationMode() == GenerationMode.AUTO) {
 			configuration = chooseGenerationMode(configuration);
 		}
 		ForAllParametersGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
 		ResolvingParametersGenerator parametersGenerator = new ResolvingParametersGenerator(
-				propertyParameters,
-				shrinkablesGenerator,
-				resolveParameterHook,
-				propertyLifecycleContext
+			propertyParameters,
+			shrinkablesGenerator,
+			resolveParameterHook,
+			propertyLifecycleContext
 		);
 		Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new DefaultTryLifecycleContext(propertyLifecycleContext);
 		return new GenericProperty(propertyName, configuration, parametersGenerator, tryLifecycleExecutor, tryLifecycleContextSupplier);
@@ -159,7 +159,7 @@ public class CheckedProperty {
 				return createSampleOnlyShrinkableGenerator(configuration);
 			} else if (configuration.getAfterFailureMode() == AfterFailureMode.SAMPLE_FIRST) {
 				return createSampleOnlyShrinkableGenerator(configuration)
-							   .andThen(() -> createDefaultShrinkablesGenerator(configuration));
+					.andThen(() -> createDefaultShrinkablesGenerator(configuration));
 			}
 		}
 		return createDefaultShrinkablesGenerator(configuration);
@@ -214,7 +214,7 @@ public class CheckedProperty {
 		}
 		try {
 			ExhaustiveShrinkablesGenerator exhaustiveShrinkablesGenerator =
-					ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, maxNumberOfSamples);
+				ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, maxNumberOfSamples);
 			return Optional.of(exhaustiveShrinkablesGenerator);
 		} catch (TooManyFilterMissesException tmfme) {
 			throw tmfme;
@@ -233,11 +233,11 @@ public class CheckedProperty {
 	private ForAllParametersGenerator createRandomizedShrinkablesGenerator(PropertyConfiguration configuration) {
 		Random random = SourceOfRandomness.create(configuration.getSeed());
 		return RandomizedShrinkablesGenerator.forParameters(
-				forAllParameters,
-				arbitraryResolver,
-				random,
-				configuration.getTries(),
-				configuration.getEdgeCasesMode()
+			forAllParameters,
+			arbitraryResolver,
+			random,
+			configuration.getTries(),
+			configuration.getEdgeCasesMode()
 		);
 	}
 
@@ -249,7 +249,8 @@ public class CheckedProperty {
 		//noinspection OptionalAssignedToNull
 		if (optionalExhaustive == null) {
 			long maxNumberOfSamples = configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE
-											  ? ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE : configuration.getTries();
+										  ? ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE
+										  : configuration.getTries();
 			optionalExhaustive = createOptionalExhaustiveShrinkablesGenerator(maxNumberOfSamples);
 		}
 		return optionalExhaustive;
