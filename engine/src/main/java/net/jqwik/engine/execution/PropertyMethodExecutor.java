@@ -118,7 +118,7 @@ public class PropertyMethodExecutor {
 			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 			propertyExecutionResult = PlainExecutionResult.failed(
 				throwable,
-				methodDescriptor.getConfiguration().getSeed()
+				new GenerationInfo(methodDescriptor.getConfiguration().getSeed())
 			);
 		}
 		StoreRepository.getCurrent().finishProperty(methodDescriptor);
@@ -134,10 +134,12 @@ public class PropertyMethodExecutor {
 		try {
 			return executeProperty(aroundTry, resolveParameter, invokeMethodHook);
 		} catch (TestAbortedException e) {
-			return PlainExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
+			GenerationInfo generationInfo = new GenerationInfo(methodDescriptor.getConfiguration().getSeed());
+			return PlainExecutionResult.aborted(e, generationInfo);
 		} catch (Throwable t) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(t);
-			return PlainExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed());
+			GenerationInfo generationInfo = new GenerationInfo(methodDescriptor.getConfiguration().getSeed());
+			return PlainExecutionResult.failed(t, generationInfo);
 		}
 	}
 

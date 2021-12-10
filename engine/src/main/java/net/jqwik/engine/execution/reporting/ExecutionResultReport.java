@@ -135,7 +135,7 @@ public class ExecutionResultReport {
 			countChecks = executionResult.countChecks();
 			generationMode = executionResult.generation().name();
 			edgeCasesMode = executionResult.edgeCases().mode().name();
-			randomSeed = executionResult.randomSeed();
+			randomSeed = executionResult.seed().orElse("");
 			helpGenerationMode = helpGenerationMode(executionResult.generation());
 			helpEdgeCasesMode = helpEdgeCasesMode(executionResult.edgeCases().mode());
 		}

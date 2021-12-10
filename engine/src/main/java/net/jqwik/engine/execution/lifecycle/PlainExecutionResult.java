@@ -4,45 +4,41 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.properties.*;
+import net.jqwik.engine.execution.*;
 
 public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 
 	public static ExtendedPropertyExecutionResult successful() {
-		return new PlainExecutionResult(Status.SUCCESSFUL, null, null);
+		return new PlainExecutionResult(Status.SUCCESSFUL, new GenerationInfo(null), null);
 	}
 
-	private static ExtendedPropertyExecutionResult successful(String seed) {
-		return new PlainExecutionResult(Status.SUCCESSFUL, seed, null);
-	}
-
-	public static ExtendedPropertyExecutionResult failed(Throwable throwable, String seed) {
+	public static ExtendedPropertyExecutionResult failed(Throwable throwable, GenerationInfo generationInfo) {
 		if (throwable == null) {
 			throw new IllegalArgumentException("throwable must never be null for failed PropertyExecutionResult");
 		}
-		return new PlainExecutionResult(Status.FAILED, seed, throwable);
+		return new PlainExecutionResult(Status.FAILED, generationInfo, throwable);
 	}
 
-	public static ExtendedPropertyExecutionResult aborted(Throwable throwable, String seed) {
+	public static ExtendedPropertyExecutionResult aborted(Throwable throwable, GenerationInfo generationInfo) {
 		if (throwable == null) {
 			throw new IllegalArgumentException("throwable must never be null for aborted PropertyExecutionResult");
 		}
-		return new PlainExecutionResult(Status.ABORTED, seed, throwable);
+		return new PlainExecutionResult(Status.ABORTED, generationInfo, throwable);
 	}
 
 	private final Status status;
-	private final String seed;
+	private final GenerationInfo generationInfo;
 	private final Throwable throwable;
 
-	private PlainExecutionResult(Status status, String seed, Throwable throwable) {
+	private PlainExecutionResult(Status status, GenerationInfo generationInfo, Throwable throwable) {
 		this.status = status;
-		this.seed = seed != null ? (seed.isEmpty() ? null : seed) : null;
+		this.generationInfo = generationInfo;
 		this.throwable = throwable;
 	}
 
 	@Override
 	public Optional<String> seed() {
-		return Optional.ofNullable(seed);
+		return generationInfo.randomSeed();
 	}
 
 	@Override
@@ -62,7 +58,7 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 
 	@Override
 	public PropertyExecutionResult mapTo(Status newStatus, Throwable throwable) {
-		return new PlainExecutionResult(newStatus, seed, throwable);
+		return new PlainExecutionResult(newStatus, generationInfo, throwable);
 	}
 
 	@Override
@@ -101,12 +97,12 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public String randomSeed() {
-		return Long.toString(0L);
+	public GenerationInfo generationInfo() {
+		return generationInfo;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("PlainPropertyExecutionResult[%s]", status);
+		return String.format("PlainExecutionResult[%s]", status);
 	}
 }

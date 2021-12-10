@@ -6,6 +6,7 @@ import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.execution.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.reporting.*;
 
@@ -34,7 +35,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			propertyName,
 			tries,
 			checks,
-			randomSeed,
+			new GenerationInfo(randomSeed),
 			generation,
 			edgeCasesMode,
 			edgeCasesTotal,
@@ -69,7 +70,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			propertyName,
 			tries,
 			checks,
-			randomSeed,
+			new GenerationInfo(randomSeed),
 			generation,
 			edgeCasesMode,
 			edgeCasesTotal,
@@ -100,7 +101,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			propertyName,
 			1,
 			0,
-			randomSeed,
+			new GenerationInfo(randomSeed),
 			generation,
 			edgeCasesMode,
 			edgeCasesTotal,
@@ -129,7 +130,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			propertyName,
 			tries,
 			checks,
-			randomSeed,
+			new GenerationInfo(randomSeed),
 			generation,
 			edgeCasesMode,
 			edgeCasesTotal,
@@ -145,7 +146,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	private final String propertyName;
 	private final int tries;
 	private final int checks;
-	private final String randomSeed;
+	private final GenerationInfo generationInfo;
 	private final GenerationMode generation;
 	private final EdgeCasesMode edgeCasesMode;
 	private final int edgeCasesTotal;
@@ -159,7 +160,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		String propertyName,
 		int tries,
 		int checks,
-		String randomSeed,
+		GenerationInfo generationInfo,
 		GenerationMode generation,
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
@@ -173,7 +174,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		this.propertyName = propertyName;
 		this.tries = tries;
 		this.checks = checks;
-		this.randomSeed = randomSeed;
+		this.generationInfo = generationInfo;
 		this.generation = generation;
 		this.edgeCasesMode = edgeCasesMode;
 		this.edgeCasesTotal = edgeCasesTotal;
@@ -204,7 +205,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
 	@Override
 	public Optional<String> seed() {
-		return Optional.ofNullable(randomSeed());
+		return generationInfo.randomSeed();
 	}
 
 	@Override
@@ -225,7 +226,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	public PropertyExecutionResult mapTo(Status newStatus, Throwable throwable) {
 		switch (newStatus) {
 			case ABORTED:
-				return PlainExecutionResult.aborted(throwable, randomSeed);
+				return PlainExecutionResult.aborted(throwable, generationInfo);
 			case FAILED:
 				return new PropertyCheckResult(
 					CheckStatus.FAILED,
@@ -233,7 +234,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					propertyName,
 					tries,
 					checks,
-					randomSeed,
+					generationInfo,
 					generation,
 					edgeCasesMode,
 					edgeCasesTotal,
@@ -249,7 +250,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					propertyName,
 					tries,
 					checks,
-					randomSeed,
+					generationInfo,
 					generation,
 					edgeCasesMode,
 					edgeCasesTotal,
@@ -284,8 +285,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		return tries;
 	}
 
-	public String randomSeed() {
-		return randomSeed;
+	public GenerationInfo generationInfo() {
+		return generationInfo;
 	}
 
 	public Optional<FalsifiedSample> originalSample() {

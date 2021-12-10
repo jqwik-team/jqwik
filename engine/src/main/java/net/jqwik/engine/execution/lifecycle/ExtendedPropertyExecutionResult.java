@@ -2,12 +2,17 @@ package net.jqwik.engine.execution.lifecycle;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.execution.*;
 
 public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult {
 
 	boolean isExtended();
 
-	String randomSeed();
+	default String randomSeed() {
+		return generationInfo().randomSeed().orElse(null);
+	}
+
+	GenerationInfo generationInfo();
 
 	GenerationMode generation();
 

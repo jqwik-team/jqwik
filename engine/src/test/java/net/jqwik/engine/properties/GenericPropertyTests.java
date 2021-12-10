@@ -461,7 +461,7 @@ class GenericPropertyTests {
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.SUCCESSFUL);
 			assertThat(result.countTries()).isEqualTo(5);
 			assertThat(result.countChecks()).isEqualTo(5);
-			assertThat(result.randomSeed()).isEqualTo("1000");
+			assertThat(result.seed()).isEqualTo(Optional.of("1000"));
 			assertThat(result.throwable()).isNotPresent();
 			assertThat(result.falsifiedParameters()).isNotPresent();
 		}
@@ -510,6 +510,9 @@ class GenericPropertyTests {
 													   .collect(Collectors.toList());
 
 		return new ParametersGenerator() {
+
+			private int index = 0;
+
 			@Override
 			public boolean hasNext() {
 				return true;
@@ -520,6 +523,7 @@ class GenericPropertyTests {
 				return generators
 						   .stream()
 						   .map(generator -> generator.next(random))
+						   .peek(ignore -> index++)
 						   .collect(Collectors.toList());
 			}
 
@@ -531,6 +535,11 @@ class GenericPropertyTests {
 			@Override
 			public int edgeCasesTried() {
 				return 0;
+			}
+
+			@Override
+			public int generationIndex() {
+				return index;
 			}
 		};
 	}
@@ -556,6 +565,11 @@ class GenericPropertyTests {
 			public int edgeCasesTried() {
 				return 0;
 			}
+
+			@Override
+			public int generationIndex() {
+				return 0;
+			}
 		};
 	}
 
@@ -563,6 +577,8 @@ class GenericPropertyTests {
 		Iterator<Integer> valuesIterator = Arrays.stream(values).iterator();
 
 		return new ParametersGenerator() {
+			private int index = 0;
+
 			@Override
 			public boolean hasNext() {
 				return valuesIterator.hasNext();
@@ -571,6 +587,7 @@ class GenericPropertyTests {
 			@Override
 			public List<Shrinkable<Object>> next(TryLifecycleContext tryLifecycleContext) {
 				Shrinkable<Object> shrinkable = Shrinkable.unshrinkable(valuesIterator.next());
+				index++;
 				return Collections.singletonList(shrinkable);
 			}
 
@@ -582,6 +599,11 @@ class GenericPropertyTests {
 			@Override
 			public int edgeCasesTried() {
 				return 0;
+			}
+
+			@Override
+			public int generationIndex() {
+				return index;
 			}
 		};
 	}
