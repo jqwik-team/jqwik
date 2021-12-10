@@ -72,10 +72,10 @@ public class CheckedProperty {
 
 	private PropertyCheckResult failed(PropertyConfiguration configuration, JqwikException exception) {
 		return PropertyCheckResult.failed(
-				configuration.getStereotype(), propertyName, 0, 0,
-				configuration.getSeed(), configuration.getGenerationMode(),
-				configuration.getEdgeCasesMode(), 0, 0,
-				null, null, exception
+			configuration.getStereotype(), propertyName, 0, 0,
+			new GenerationInfo(configuration.getSeed()), configuration.getGenerationMode(),
+			configuration.getEdgeCasesMode(), 0, 0,
+			null, null, exception
 		);
 	}
 

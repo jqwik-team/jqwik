@@ -12,11 +12,15 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 		return new PlainExecutionResult(Status.SUCCESSFUL, new GenerationInfo(null), null);
 	}
 
-	public static ExtendedPropertyExecutionResult failed(Throwable throwable, GenerationInfo generationInfo) {
+	public static ExtendedPropertyExecutionResult failed(Throwable throwable, String seed) {
 		if (throwable == null) {
 			throw new IllegalArgumentException("throwable must never be null for failed PropertyExecutionResult");
 		}
-		return new PlainExecutionResult(Status.FAILED, generationInfo, throwable);
+		return new PlainExecutionResult(Status.FAILED, new GenerationInfo(seed), throwable);
+	}
+
+	public static ExtendedPropertyExecutionResult aborted(Throwable throwable, String seed) {
+		return aborted(throwable, new GenerationInfo(seed));
 	}
 
 	public static ExtendedPropertyExecutionResult aborted(Throwable throwable, GenerationInfo generationInfo) {
@@ -34,11 +38,6 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 		this.status = status;
 		this.generationInfo = generationInfo;
 		this.throwable = throwable;
-	}
-
-	@Override
-	public Optional<String> seed() {
-		return generationInfo.randomSeed();
 	}
 
 	@Override

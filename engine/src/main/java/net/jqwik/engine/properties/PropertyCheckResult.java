@@ -51,7 +51,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		String propertyName,
 		int tries,
 		int checks,
-		String randomSeed,
+		GenerationInfo generationInfo,
 		GenerationMode generation,
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
@@ -70,7 +70,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			propertyName,
 			tries,
 			checks,
-			new GenerationInfo(randomSeed),
+			generationInfo,
 			generation,
 			edgeCasesMode,
 			edgeCasesTotal,
@@ -201,11 +201,6 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		} else {
 			return Optional.ofNullable(originalSample).map(FalsifiedSample::parameters);
 		}
-	}
-
-	@Override
-	public Optional<String> seed() {
-		return generationInfo.randomSeed();
 	}
 
 	@Override
