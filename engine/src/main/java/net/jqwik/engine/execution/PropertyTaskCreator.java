@@ -69,7 +69,7 @@ class PropertyTaskCreator {
 	) {
 		listener.executionStarted(methodDescriptor);
 		PropertyExecutionResult executionResult =
-			PlainExecutionResult.failed(throwable, new GenerationInfo(methodDescriptor.getConfiguration().getSeed()));
+			PlainExecutionResult.failed(throwable, methodDescriptor.getConfiguration().getSeed());
 		listener.executionFinished(methodDescriptor, executionResult);
 	}
 

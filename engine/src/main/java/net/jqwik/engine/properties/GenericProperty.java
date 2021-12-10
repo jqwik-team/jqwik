@@ -71,7 +71,6 @@ public class GenericProperty {
 						finishEarly = tryExecutionResult.shouldPropertyFinishEarly();
 						continue;
 					case FALSIFIED:
-						System.out.println("#### INDEX=" + parametersGenerator.generationIndex());
 						FalsifiedSample falsifiedSample = new FalsifiedSampleImpl(
 							sample,
 							shrinkableParams,
@@ -108,15 +107,15 @@ public class GenericProperty {
 			} catch (Throwable throwable) {
 				// Only not AssertionErrors and non Exceptions get here
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
-				System.out.println("#### INDEX=" + parametersGenerator.generationIndex());
 				FalsifiedSample falsifiedSample = new FalsifiedSampleImpl(
 					sample,
 					shrinkableParams,
 					Optional.of(throwable),
 					Collections.emptyList()
 				);
+				GenerationInfo generationInfo = new GenerationInfo(configuration.getSeed(), parametersGenerator.generationIndex());
 				return PropertyCheckResult.failed(
-					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
+					configuration.getStereotype(), name, countTries, countChecks, generationInfo,
 					configuration.getGenerationMode(),
 					configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
 					falsifiedSample, null, throwable
@@ -182,8 +181,9 @@ public class GenericProperty {
 		Method targetMethod
 	) {
 		ShrunkFalsifiedSample shrunkSample = shrink(reporter, reporting, originalSample, targetMethod);
+		GenerationInfo generationInfo = new GenerationInfo(configuration.getSeed(), parametersGenerator.generationIndex());
 		return PropertyCheckResult.failed(
-			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration.getGenerationMode(),
+			configuration.getStereotype(), name, countTries, countChecks, generationInfo, configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
 			originalSample, shrunkSample, shrunkSample.falsifyingError().orElse(null)
 		);

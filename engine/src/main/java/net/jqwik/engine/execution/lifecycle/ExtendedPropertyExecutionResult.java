@@ -1,5 +1,7 @@
 package net.jqwik.engine.execution.lifecycle;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.*;
@@ -8,8 +10,9 @@ public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult
 
 	boolean isExtended();
 
-	default String randomSeed() {
-		return generationInfo().randomSeed().orElse(null);
+	@Override
+	default Optional<String> seed() {
+		return generationInfo().randomSeed();
 	}
 
 	GenerationInfo generationInfo();
