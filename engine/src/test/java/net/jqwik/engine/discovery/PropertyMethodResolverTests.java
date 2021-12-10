@@ -12,6 +12,7 @@ import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.execution.*;
 import net.jqwik.engine.recording.*;
 import net.jqwik.engine.support.*;
 
@@ -173,7 +174,7 @@ class PropertyMethodResolverTests {
 				previouslyFailedId,
 				new ParametersHash(method),
 				Status.FAILED,
-				"4243",
+				new GenerationInfo("4243"),
 				falsifiedSample
 			));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
@@ -194,7 +195,7 @@ class PropertyMethodResolverTests {
 				previouslyFailedId,
 				new ParametersHash(methodDifferentAnnotation),
 				Status.FAILED,
-				"4243",
+				new GenerationInfo("4243"),
 				falsifiedSample
 			));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
@@ -209,7 +210,7 @@ class PropertyMethodResolverTests {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "previouslyFailed");
 			UniqueId previousId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
-			testRunData.add(new TestRun(previousId, new ParametersHash(method), Status.SUCCESSFUL, "4243", null));
+			testRunData.add(new TestRun(previousId, new ParametersHash(method), Status.SUCCESSFUL, new GenerationInfo("4243"), null));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
@@ -222,7 +223,7 @@ class PropertyMethodResolverTests {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "withSeed41");
 			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
-			testRunData.add(new TestRun(previouslyFailedId, new ParametersHash(method), Status.FAILED, "9999", null));
+			testRunData.add(new TestRun(previouslyFailedId, new ParametersHash(method), Status.FAILED, new GenerationInfo("9999"), null));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();

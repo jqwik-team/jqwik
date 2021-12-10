@@ -6,26 +6,27 @@ import java.util.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
+import net.jqwik.engine.execution.*;
 import net.jqwik.engine.support.*;
 
 public class TestRun implements Serializable {
 	private final String uniqueIdString;
 	private final ParametersHash parametersHash;
 	private final int statusOrdinal;
-	private final String randomSeed;
+	private final GenerationInfo generationInfo;
 	private final List<Object> falsifiedSample;
 
 	public TestRun(
 		UniqueId uniqueId,
 		ParametersHash parametersHash,
 		Status status,
-		String randomSeed,
+		GenerationInfo generationInfo,
 		List<Object> falsifiedSample
 	) {
 		this.uniqueIdString = uniqueId.toString();
 		this.parametersHash = parametersHash;
 		this.statusOrdinal = status.ordinal();
-		this.randomSeed = randomSeed;
+		this.generationInfo = generationInfo;
 		this.falsifiedSample = falsifiedSample;
 	}
 
@@ -49,8 +50,8 @@ public class TestRun implements Serializable {
 		return Status.values()[statusOrdinal];
 	}
 
-	public Optional<String> randomSeed() {
-		return Optional.ofNullable(randomSeed);
+	public GenerationInfo generationInfo() {
+		return generationInfo;
 	}
 
 	public Optional<List<Object>> falsifiedSample() {
@@ -59,11 +60,10 @@ public class TestRun implements Serializable {
 
 	@Override
 	public String toString() {
-		String randomSeedString = randomSeed().map(s -> ":" + s).orElse("");
-		return String.format("TestRun[%s:%s%s]", uniqueIdString, getStatus(), randomSeedString);
+		return String.format("TestRun[%s:%s:%s]", uniqueIdString, getStatus(), generationInfo);
 	}
 
 	TestRun withoutFalsifiedSample() {
-		return new TestRun(getUniqueId(), parametersHash, getStatus(), randomSeed, null);
+		return new TestRun(getUniqueId(), parametersHash, getStatus(), generationInfo, null);
 	}
 }

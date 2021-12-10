@@ -99,7 +99,7 @@ class PropertyMethodResolver implements ElementResolver {
 	private String previousSeed(UniqueId uniqueId) {
 		return testRunData.byUniqueId(uniqueId)
 						  .filter(TestRun::isNotSuccessful)
-						  .flatMap(TestRun::randomSeed)
+						  .flatMap(testRun -> testRun.generationInfo().randomSeed())
 						  .orElse(null);
 	}
 
