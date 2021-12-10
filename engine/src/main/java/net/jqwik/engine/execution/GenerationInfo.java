@@ -5,6 +5,8 @@ import java.util.*;
 
 public class GenerationInfo implements Serializable {
 
+	public final static GenerationInfo NULL = new GenerationInfo(null);
+
 	private final String randomSeed;
 	private final int generationIndex;
 
@@ -15,6 +17,10 @@ public class GenerationInfo implements Serializable {
 	public GenerationInfo(String randomSeed, int generationIndex) {
 		this.randomSeed = randomSeed != null ? (randomSeed.isEmpty() ? null : randomSeed) : null;
 		this.generationIndex = generationIndex;
+	}
+
+	public boolean isPresent() {
+		return randomSeed().isPresent();
 	}
 
 	public Optional<String> randomSeed() {

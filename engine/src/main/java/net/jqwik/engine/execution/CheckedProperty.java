@@ -97,8 +97,8 @@ public class CheckedProperty {
 			applyFixedSeedMode();
 			return configuration.withSeed(configuration.getSeed());
 		}
-		if (configuration.getPreviousSeed() != null && configuration.getAfterFailureMode() != AfterFailureMode.RANDOM_SEED) {
-			return configuration.withSeed(configuration.getPreviousSeed());
+		if (configuration.getPreviousGeneration().isPresent() && configuration.getAfterFailureMode() != AfterFailureMode.RANDOM_SEED) {
+			return configuration.withSeed(configuration.getPreviousGeneration().randomSeed().get());
 		}
 		return configuration.withSeed(SourceOfRandomness.createRandomSeed());
 	}

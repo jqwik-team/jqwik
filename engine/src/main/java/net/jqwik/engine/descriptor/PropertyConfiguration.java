@@ -5,19 +5,20 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
+import net.jqwik.engine.execution.*;
 
 public class PropertyConfiguration {
 
 	public static PropertyConfiguration from(
 		PropertyAttributes propertyAttributes,
 		PropertyAttributesDefaults propertyAttributesDefaults,
-		String previousSeed,
+		GenerationInfo generationInfo,
 		List<Object> falsifiedSample
 	) {
 		return new PropertyConfiguration(
 			propertyAttributes,
 			propertyAttributesDefaults,
-			previousSeed,
+			generationInfo,
 			falsifiedSample,
 			null,
 			null,
@@ -27,7 +28,7 @@ public class PropertyConfiguration {
 
 	private final PropertyAttributes propertyAttributes;
 	private final PropertyAttributesDefaults propertyAttributesDefaults;
-	private final String previousSeed;
+	private final GenerationInfo generationInfo;
 	private final List<Object> falsifiedSample;
 	private final String overriddenSeed;
 	private final Integer overriddenTries;
@@ -36,7 +37,7 @@ public class PropertyConfiguration {
 	public PropertyConfiguration(
 		PropertyAttributes propertyAttributes,
 		PropertyAttributesDefaults propertyAttributesDefaults,
-		String previousSeed,
+		GenerationInfo generationInfo,
 		List<Object> falsifiedSample,
 		String overriddenSeed,
 		Integer overriddenTries,
@@ -45,7 +46,7 @@ public class PropertyConfiguration {
 		this.propertyAttributes = propertyAttributes;
 		this.propertyAttributesDefaults = propertyAttributesDefaults;
 		this.overriddenSeed = overriddenSeed;
-		this.previousSeed = previousSeed;
+		this.generationInfo = generationInfo;
 		this.falsifiedSample = falsifiedSample;
 		this.overriddenTries = overriddenTries;
 		this.overriddenGenerationMode = overriddenGenerationMode;
@@ -55,7 +56,7 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
-			this.previousSeed,
+			this.generationInfo,
 			this.falsifiedSample,
 			changedSeed,
 			this.overriddenTries,
@@ -67,7 +68,7 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
-			this.previousSeed,
+			this.generationInfo,
 			this.falsifiedSample,
 			this.overriddenSeed,
 			this.overriddenTries,
@@ -79,7 +80,7 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
-			this.previousSeed,
+			this.generationInfo,
 			this.falsifiedSample,
 			this.overriddenSeed,
 			changedTries,
@@ -112,8 +113,8 @@ public class PropertyConfiguration {
 		return propertyAttributes.generation().orElse(propertyAttributesDefaults.generation());
 	}
 
-	public String getPreviousSeed() {
-		return previousSeed;
+	public GenerationInfo getPreviousGeneration() {
+		return generationInfo;
 	}
 
 	public List<Object> getFalsifiedSample() {

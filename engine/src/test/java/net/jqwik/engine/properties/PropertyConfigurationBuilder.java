@@ -7,6 +7,7 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.discovery.*;
+import net.jqwik.engine.execution.*;
 
 class PropertyConfigurationBuilder {
 
@@ -15,6 +16,7 @@ class PropertyConfigurationBuilder {
 	}
 
 	private String seed = null;
+	private GenerationInfo generationInfo = GenerationInfo.NULL;
 	private String previousSeed = null;
 	private List<Object> falsifiedSample = null;
 	private Integer tries = null;
@@ -30,8 +32,8 @@ class PropertyConfigurationBuilder {
 		return this;
 	}
 
-	PropertyConfigurationBuilder withPreviousSeed(String seed) {
-		this.previousSeed = seed;
+	PropertyConfigurationBuilder withGenerationInfo(GenerationInfo generationInfo) {
+		this.generationInfo = generationInfo;
 		return this;
 	}
 
@@ -91,7 +93,9 @@ class PropertyConfigurationBuilder {
 		return new PropertyConfiguration(
 			propertyAttributes,
 			TestHelper.propertyAttributesDefaults(),
-			previousSeed, falsifiedSample, seed,
+			generationInfo,
+			falsifiedSample,
+			seed,
 			tries,
 			generationMode
 		);

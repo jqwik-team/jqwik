@@ -12,6 +12,7 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.discovery.specs.*;
+import net.jqwik.engine.execution.*;
 import net.jqwik.engine.recording.*;
 
 class PropertyMethodResolver implements ElementResolver {
@@ -84,23 +85,23 @@ class PropertyMethodResolver implements ElementResolver {
 			String message = String.format("Method [%s] is not annotated with @Property", method);
 			return new JqwikException(message);
 		});
-		String previousSeed = previousSeed(uniqueId);
+		GenerationInfo generationInfo = generationInfo(uniqueId);
 		List<Object> falsifiedSample = falsifiedSample(uniqueId, method);
 		PropertyAttributes attributes = DefaultPropertyAttributes.from(property);
 		PropertyConfiguration propertyConfig = PropertyConfiguration.from(
 			attributes,
 			propertyDefaultValues,
-			previousSeed,
+			generationInfo,
 			falsifiedSample
 		);
 		return new PropertyMethodDescriptor(uniqueId, method, testClass, propertyConfig);
 	}
 
-	private String previousSeed(UniqueId uniqueId) {
+	private GenerationInfo generationInfo(UniqueId uniqueId) {
 		return testRunData.byUniqueId(uniqueId)
 						  .filter(TestRun::isNotSuccessful)
-						  .flatMap(testRun -> testRun.generationInfo().randomSeed())
-						  .orElse(null);
+						  .map(TestRun::generationInfo)
+						  .orElse(GenerationInfo.NULL);
 	}
 
 	private List<Object> falsifiedSample(UniqueId uniqueId, Method method) {
