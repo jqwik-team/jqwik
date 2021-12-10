@@ -90,7 +90,9 @@ public class TestHelper {
 		PropertyConfiguration propertyConfig = new PropertyConfiguration(
 			propertyAttributes,
 			propertyAttributesDefaults(),
-			null, null, seed,
+			GenerationInfo.NULL,
+			null,
+			seed,
 			tries,
 			GenerationMode.AUTO
 		);

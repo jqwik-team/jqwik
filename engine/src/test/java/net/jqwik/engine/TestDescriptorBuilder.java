@@ -11,6 +11,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.discovery.*;
+import net.jqwik.engine.execution.*;
 import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.JqwikUniqueIdBuilder.*;
@@ -107,7 +108,7 @@ public class TestDescriptorBuilder {
 					PropertyConfiguration.from(
 						attributes,
 						TestHelper.propertyAttributesDefaults(),
-						null,
+						GenerationInfo.NULL,
 						null
 					);
 

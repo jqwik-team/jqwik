@@ -208,7 +208,7 @@ class CheckedPropertyTests {
 				Optional.empty(),
 				aConfig()
 					.withSeed("")
-					.withPreviousSeed("101010")
+					.withGenerationInfo(new GenerationInfo("101010"))
 					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build(),
 				lifecycleContextForMethod("prop1", int.class)
 			);
@@ -228,7 +228,7 @@ class CheckedPropertyTests {
 				Optional.empty(),
 				aConfig()
 					.withSeed("")
-					.withPreviousSeed("101010")
+					.withGenerationInfo(new GenerationInfo("101010"))
 					.withAfterFailure(AfterFailureMode.RANDOM_SEED).build(),
 				lifecycleContextForMethod("prop1", int.class)
 			);
@@ -248,7 +248,7 @@ class CheckedPropertyTests {
 				Optional.empty(),
 				aConfig()
 					.withSeed("4242")
-					.withPreviousSeed("101010")
+					.withGenerationInfo(new GenerationInfo("101010"))
 					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build(),
 				lifecycleContextForMethod("prop1", int.class)
 			);
