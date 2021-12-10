@@ -14,4 +14,6 @@ public interface ParametersGenerator {
 	int edgeCasesTotal();
 
 	int edgeCasesTried();
+
+	int generationIndex();
 }

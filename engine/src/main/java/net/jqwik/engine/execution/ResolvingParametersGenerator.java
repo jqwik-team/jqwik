@@ -12,6 +12,7 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 	private final List<MethodParameter> propertyParameters;
 	private final ForAllParametersGenerator forAllParametersGenerator;
 	private final ParameterSupplierResolver parameterSupplierResolver;
+	private int index = 0;
 
 	public ResolvingParametersGenerator(
 		List<MethodParameter> propertyParameters,
@@ -43,6 +44,7 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 			}
 		}
 
+		index++;
 		return next;
 	}
 
@@ -54,6 +56,11 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 	@Override
 	public int edgeCasesTried() {
 		return forAllParametersGenerator.edgeCasesTried();
+	}
+
+	@Override
+	public int generationIndex() {
+		return index;
 	}
 
 	private Shrinkable<Object> findResolvableParameter(MethodParameter parameter, TryLifecycleContext tryLifecycleContext) {

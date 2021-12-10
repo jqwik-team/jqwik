@@ -185,7 +185,7 @@ class CheckedPropertyTests {
 			);
 
 			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
-			assertThat(check.randomSeed()).isEqualTo("414243");
+			assertThat(check.seed()).isEqualTo(Optional.of("414243"));
 			assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 
 			ArrayList<Integer> generatedAtFirstAttempt = new ArrayList<>(allGeneratedInts);
@@ -214,7 +214,7 @@ class CheckedPropertyTests {
 			);
 
 			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
-			assertThat(check.randomSeed()).isEqualTo("101010");
+			assertThat(check.seed()).isEqualTo(Optional.of("101010"));
 		}
 
 		@Example
@@ -234,7 +234,7 @@ class CheckedPropertyTests {
 			);
 
 			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
-			assertThat(check.randomSeed()).isNotEqualTo("101010");
+			assertThat(check.seed()).isNotEqualTo(Optional.of("101010"));
 		}
 
 		@Example
@@ -254,7 +254,7 @@ class CheckedPropertyTests {
 			);
 
 			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
-			assertThat(check.randomSeed()).isEqualTo("4242");
+			assertThat(check.seed()).isEqualTo(Optional.of("4242"));
 		}
 
 		@SuppressWarnings("unchecked")
