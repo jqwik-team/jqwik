@@ -1,8 +1,9 @@
 package net.jqwik.engine.execution;
 
+import java.io.*;
 import java.util.*;
 
-public class GenerationInfo {
+public class GenerationInfo implements Serializable {
 
 	private final String randomSeed;
 	private final int generationIndex;
@@ -22,5 +23,10 @@ public class GenerationInfo {
 
 	public int generationIndex() {
 		return generationIndex;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("GenerationInfo(seed=%s,index=%s)", randomSeed, generationIndex);
 	}
 }
