@@ -93,17 +93,17 @@ public class CheckedProperty {
 	}
 
 	private PropertyConfiguration configurationWithEffectiveSeed() {
-		if (!configuration.getSeed().equals(Property.SEED_NOT_SET)) {
-			applyFixedSeedMode();
-			return configuration.withSeed(configuration.getSeed());
+		if (configuration.hasFixedSeed()) {
+			applyFixedSeedMode(configuration);
+			return configuration.withFixedSeed();
 		}
-		if (configuration.getPreviousGeneration().isPresent() && configuration.getAfterFailureMode() != AfterFailureMode.RANDOM_SEED) {
-			return configuration.withSeed(configuration.getPreviousGeneration().randomSeed().get());
+		if (configuration.previousFailureMustBeHandled()) {
+			return configuration.withPreviousGenerationSeed();
 		}
 		return configuration.withSeed(SourceOfRandomness.createRandomSeed());
 	}
 
-	private void applyFixedSeedMode() {
+	private void applyFixedSeedMode(PropertyConfiguration configuration) {
 		switch (configuration.getFixedSeedMode()) {
 			case FAIL: {
 				String message = String.format(

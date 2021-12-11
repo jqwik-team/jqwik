@@ -19,10 +19,6 @@ public class GenerationInfo implements Serializable {
 		this.generationIndex = generationIndex;
 	}
 
-	public boolean isPresent() {
-		return randomSeed().isPresent();
-	}
-
 	public Optional<String> randomSeed() {
 		return Optional.ofNullable(randomSeed);
 	}

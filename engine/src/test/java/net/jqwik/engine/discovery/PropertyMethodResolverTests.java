@@ -180,8 +180,9 @@ class PropertyMethodResolverTests {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			assertThat(propertyMethodDescriptor.getConfiguration().getPreviousGeneration().randomSeed()).isEqualTo(Optional.of("4243"));
-			assertThat(propertyMethodDescriptor.getConfiguration().getFalsifiedSample()).isEqualTo(falsifiedSample);
+			PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
+			assertThat(configuration.getPreviousFailureGeneration().randomSeed()).isEqualTo(Optional.of("4243"));
+			assertThat(configuration.getFalsifiedSample()).isEqualTo(falsifiedSample);
 		}
 
 		@Example
@@ -201,8 +202,9 @@ class PropertyMethodResolverTests {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			assertThat(propertyMethodDescriptor.getConfiguration().getPreviousGeneration().randomSeed()).isEqualTo(Optional.of("4243"));
-			assertThat(propertyMethodDescriptor.getConfiguration().getFalsifiedSample()).isNull();
+			PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
+			assertThat(configuration.getPreviousFailureGeneration().randomSeed()).isEqualTo(Optional.of("4243"));
+			assertThat(configuration.getFalsifiedSample()).isNull();
 		}
 
 		@Example
@@ -214,7 +216,7 @@ class PropertyMethodResolverTests {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			assertThat(propertyMethodDescriptor.getConfiguration().getPreviousGeneration().randomSeed()).isEmpty();
+			assertThat(propertyMethodDescriptor.getConfiguration().getPreviousFailureGeneration().randomSeed()).isEmpty();
 			assertThat(propertyMethodDescriptor.getConfiguration().getFalsifiedSample()).isNull();
 		}
 
@@ -280,7 +282,7 @@ class PropertyMethodResolverTests {
 
 	private void assertDefaultConfigurationProperties(PropertyMethodDescriptor propertyMethodDescriptor) {
 		assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEmpty();
-		assertThat(propertyMethodDescriptor.getConfiguration().getPreviousGeneration().randomSeed()).isEmpty();
+		assertThat(propertyMethodDescriptor.getConfiguration().getPreviousFailureGeneration().randomSeed()).isEmpty();
 		assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(DEFAULT_TRIES);
 		assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);
 		assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.BOUNDED);
