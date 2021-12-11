@@ -127,52 +127,48 @@ public class CheckedProperty {
 		}
 	}
 
-	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {
-
-		if (configuration.getGenerationMode() == GenerationMode.RANDOMIZED) {
+	private GenericProperty createGenericProperty(PropertyConfiguration effectiveConfiguration) {
+		if (effectiveConfiguration.getGenerationMode() == GenerationMode.RANDOMIZED) {
 			ensureValidRandomizedMode();
-		} else if (configuration.getGenerationMode() == GenerationMode.DATA_DRIVEN) {
+		} else if (effectiveConfiguration.getGenerationMode() == GenerationMode.DATA_DRIVEN) {
 			ensureValidDataDrivenMode();
-		} else if (configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE) {
+		} else if (effectiveConfiguration.getGenerationMode() == GenerationMode.EXHAUSTIVE) {
 			ensureValidExhaustiveMode();
-			configuration = configuration.withTries(
+			effectiveConfiguration = effectiveConfiguration.withTries(
 				Math.toIntExact(getOptionalExhaustive().get().maxCount())
 			);
-		} else if (configuration.getGenerationMode() == GenerationMode.AUTO) {
-			configuration = chooseGenerationMode(configuration);
+		} else if (effectiveConfiguration.getGenerationMode() == GenerationMode.AUTO) {
+			effectiveConfiguration = chooseGenerationMode(effectiveConfiguration);
 		}
-		ForAllParametersGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
-		ResolvingParametersGenerator parametersGenerator = new ResolvingParametersGenerator(
+
+		ForAllParametersGenerator forAllParametersGenerator = createForAllParametersGenerator(effectiveConfiguration);
+		ParametersGenerator parametersGenerator = new ResolvingParametersGenerator(
 			propertyParameters,
-			shrinkablesGenerator,
+			forAllParametersGenerator,
 			resolveParameterHook,
 			propertyLifecycleContext
 		);
-		Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new DefaultTryLifecycleContext(propertyLifecycleContext);
-		return new GenericProperty(propertyName, configuration, parametersGenerator, tryLifecycleExecutor, tryLifecycleContextSupplier);
-	}
 
-	private ForAllParametersGenerator createShrinkablesGenerator(PropertyConfiguration configuration) {
-		List<Object> falsifiedSample = configuration.getFalsifiedSample();
-		if (falsifiedSample != null && !falsifiedSample.isEmpty()) {
-			if (configuration.getAfterFailureMode() == AfterFailureMode.SAMPLE_ONLY) {
-				return createSampleOnlyShrinkableGenerator(configuration);
-			} else if (configuration.getAfterFailureMode() == AfterFailureMode.SAMPLE_FIRST) {
-				return createSampleOnlyShrinkableGenerator(configuration)
-					.andThen(() -> createDefaultShrinkablesGenerator(configuration));
-			}
+		if (effectiveConfiguration.previousFailureMustBeHandled()) {
+			parametersGenerator = new AfterFailureParametersGenerator(
+				configuration.getAfterFailureMode(),
+				configuration.getPreviousFailureGeneration(),
+				parametersGenerator
+			);
 		}
-		return createDefaultShrinkablesGenerator(configuration);
+
+		Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new DefaultTryLifecycleContext(propertyLifecycleContext);
+		return new GenericProperty(propertyName, effectiveConfiguration, parametersGenerator, tryLifecycleExecutor, tryLifecycleContextSupplier);
 	}
 
-	private ForAllParametersGenerator createDefaultShrinkablesGenerator(PropertyConfiguration configuration) {
-		switch (configuration.getGenerationMode()) {
+	private ForAllParametersGenerator createForAllParametersGenerator(PropertyConfiguration effectiveConfiguration) {
+		switch (effectiveConfiguration.getGenerationMode()) {
 			case EXHAUSTIVE:
 				return getOptionalExhaustive().get();
 			case DATA_DRIVEN:
-				return createDataBasedShrinkablesGenerator(configuration);
+				return createDataBasedShrinkablesGenerator(effectiveConfiguration);
 			default:
-				return createRandomizedShrinkablesGenerator(configuration);
+				return createRandomizedShrinkablesGenerator(effectiveConfiguration);
 		}
 	}
 

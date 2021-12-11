@@ -9,6 +9,7 @@ import org.opentest4j.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
@@ -61,7 +62,7 @@ class GenericPropertyTests {
 
 			GenericProperty property =
 				new GenericProperty("finite property", aConfig()
-														   .build(), shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
+					.build(), shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
 			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(3);
@@ -431,7 +432,6 @@ class GenericPropertyTests {
 			assertThat(result.countChecks()).isEqualTo(0);
 		}
 
-
 	}
 
 	@Group
@@ -451,8 +451,8 @@ class GenericPropertyTests {
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2);
 
 			PropertyConfiguration configuration = aConfig()
-													  .withSeed("1000")
-													  .withTries(5).build();
+				.withSeed("1000")
+				.withTries(5).build();
 			GenericProperty property =
 				new GenericProperty("property with 2", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
 			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
@@ -505,9 +505,9 @@ class GenericPropertyTests {
 		Random random = SourceOfRandomness.current();
 		List<Arbitrary<Object>> arbitraryList = Arrays.stream(arbitraries).collect(Collectors.toList());
 		List<RandomGenerator<Object>> generators = arbitraryList
-													   .stream()
-													   .map(arbitrary -> arbitrary.generator(9999, true))
-													   .collect(Collectors.toList());
+			.stream()
+			.map(arbitrary -> arbitrary.generator(9999, true))
+			.collect(Collectors.toList());
 
 		return new ParametersGenerator() {
 
@@ -519,12 +519,12 @@ class GenericPropertyTests {
 			}
 
 			@Override
-			public List<Shrinkable<Object>> next(TryLifecycleContext tryLifecycleContext) {
-				return generators
-						   .stream()
-						   .map(generator -> generator.next(random))
-						   .peek(ignore -> index++)
-						   .collect(Collectors.toList());
+			public Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> next(Supplier<TryLifecycleContext> contextSupplier) {
+				return Tuple.of(contextSupplier.get(), generators
+					.stream()
+					.map(generator -> generator.next(random))
+					.peek(ignore -> index++)
+					.collect(Collectors.toList()));
 			}
 
 			@Override
@@ -552,8 +552,8 @@ class GenericPropertyTests {
 			}
 
 			@Override
-			public List<Shrinkable<Object>> next(TryLifecycleContext tryLifecycleContext) {
-				return new ArrayList<>();
+			public Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> next(Supplier<TryLifecycleContext> contextSupplier) {
+				return Tuple.of(contextSupplier.get(), new ArrayList<>());
 			}
 
 			@Override
@@ -585,10 +585,10 @@ class GenericPropertyTests {
 			}
 
 			@Override
-			public List<Shrinkable<Object>> next(TryLifecycleContext tryLifecycleContext) {
+			public Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> next(Supplier<TryLifecycleContext> contextSupplier) {
 				Shrinkable<Object> shrinkable = Shrinkable.unshrinkable(valuesIterator.next());
 				index++;
-				return Collections.singletonList(shrinkable);
+				return Tuple.of(contextSupplier.get(), Collections.singletonList(shrinkable));
 			}
 
 			@Override
