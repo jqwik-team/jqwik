@@ -91,7 +91,6 @@ public class TestHelper {
 			propertyAttributes,
 			propertyAttributesDefaults(),
 			GenerationInfo.NULL,
-			null,
 			seed,
 			tries,
 			GenerationMode.AUTO

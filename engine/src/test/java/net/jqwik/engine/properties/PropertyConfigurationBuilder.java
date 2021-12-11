@@ -1,7 +1,5 @@
 package net.jqwik.engine.properties;
 
-import java.util.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
@@ -17,8 +15,6 @@ class PropertyConfigurationBuilder {
 
 	private String seed = null;
 	private GenerationInfo generationInfo = GenerationInfo.NULL;
-	private String previousSeed = null;
-	private List<Object> falsifiedSample = null;
 	private Integer tries = null;
 	private Integer maxDiscardRatio = null;
 	private ShrinkingMode shrinkingMode = null;
@@ -89,7 +85,6 @@ class PropertyConfigurationBuilder {
 			propertyAttributes,
 			TestHelper.propertyAttributesDefaults(),
 			generationInfo,
-			falsifiedSample,
 			seed,
 			tries,
 			generationMode
