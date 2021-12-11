@@ -237,10 +237,6 @@ public class CheckedProperty {
 		);
 	}
 
-	private ForAllParametersGenerator createSampleOnlyShrinkableGenerator(PropertyConfiguration configuration) {
-		return new SampleOnlyShrinkablesGenerator(forAllParameters, configuration.getFalsifiedSample());
-	}
-
 	private Optional<ExhaustiveShrinkablesGenerator> getOptionalExhaustive() {
 		//noinspection OptionalAssignedToNull
 		if (optionalExhaustive == null) {

@@ -1,7 +1,5 @@
 package net.jqwik.engine.descriptor;
 
-import java.util.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
@@ -12,14 +10,12 @@ public class PropertyConfiguration {
 	public static PropertyConfiguration from(
 		PropertyAttributes propertyAttributes,
 		PropertyAttributesDefaults propertyAttributesDefaults,
-		GenerationInfo generationInfo,
-		List<Object> falsifiedSample
+		GenerationInfo generationInfo
 	) {
 		return new PropertyConfiguration(
 			propertyAttributes,
 			propertyAttributesDefaults,
 			generationInfo,
-			falsifiedSample,
 			null,
 			null,
 			null
@@ -29,7 +25,6 @@ public class PropertyConfiguration {
 	private final PropertyAttributes propertyAttributes;
 	private final PropertyAttributesDefaults propertyAttributesDefaults;
 	private final GenerationInfo previousFailureGeneration;
-	private final List<Object> falsifiedSample;
 	private final String overriddenSeed;
 	private final Integer overriddenTries;
 	private final GenerationMode overriddenGenerationMode;
@@ -38,7 +33,6 @@ public class PropertyConfiguration {
 		PropertyAttributes propertyAttributes,
 		PropertyAttributesDefaults propertyAttributesDefaults,
 		GenerationInfo previousFailureGeneration,
-		List<Object> falsifiedSample,
 		String overriddenSeed,
 		Integer overriddenTries,
 		GenerationMode overriddenGenerationMode
@@ -47,7 +41,6 @@ public class PropertyConfiguration {
 		this.propertyAttributesDefaults = propertyAttributesDefaults;
 		this.overriddenSeed = overriddenSeed;
 		this.previousFailureGeneration = previousFailureGeneration;
-		this.falsifiedSample = falsifiedSample;
 		this.overriddenTries = overriddenTries;
 		this.overriddenGenerationMode = overriddenGenerationMode;
 	}
@@ -57,7 +50,6 @@ public class PropertyConfiguration {
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
 			this.previousFailureGeneration,
-			this.falsifiedSample,
 			changedSeed,
 			this.overriddenTries,
 			this.overriddenGenerationMode
@@ -69,7 +61,6 @@ public class PropertyConfiguration {
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
 			this.previousFailureGeneration,
-			this.falsifiedSample,
 			this.overriddenSeed,
 			this.overriddenTries,
 			changedGenerationMode
@@ -81,7 +72,6 @@ public class PropertyConfiguration {
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
 			this.previousFailureGeneration,
-			this.falsifiedSample,
 			this.overriddenSeed,
 			changedTries,
 			this.overriddenGenerationMode
@@ -115,10 +105,6 @@ public class PropertyConfiguration {
 
 	public GenerationInfo getPreviousFailureGeneration() {
 		return previousFailureGeneration;
-	}
-
-	public List<Object> getFalsifiedSample() {
-		return falsifiedSample;
 	}
 
 	public String getStereotype() {

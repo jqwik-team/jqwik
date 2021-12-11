@@ -40,7 +40,7 @@ public class TestRunDatabase {
 		}
 	}
 
-	private List<TestRun> readAllTestRuns(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+	private List<TestRun> readAllTestRuns(ObjectInputStream ois) throws ClassNotFoundException {
 		List<TestRun> testRuns = new ArrayList<>();
 		while (true) {
 			try {
@@ -89,30 +89,15 @@ public class TestRunDatabase {
 
 		@Override
 		public void record(TestRun testRun) {
-			record(testRun, false);
-		}
-
-		private void record(TestRun testRun, boolean secondTry) {
-			if (stopRecording)
+			if (stopRecording) {
 				return;
+			}
 			try {
-				checkSerializability(testRun);
 				objectOutputStream.writeObject(testRun);
-			} catch (NotSerializableException e) {
-				if (!secondTry) {
-					record(testRun.withoutFalsifiedSample(), true);
-				} else {
-					logWriteException(e);
-				}
 			} catch (IOException e) {
 				stopRecording = true;
 				logWriteException(e);
 			}
-		}
-
-		private void checkSerializability(TestRun testRun) throws IOException {
-			ObjectOutputStream testStream = new ObjectOutputStream(new ByteArrayOutputStream());
-			testStream.writeObject(testRun);
 		}
 
 		@Override

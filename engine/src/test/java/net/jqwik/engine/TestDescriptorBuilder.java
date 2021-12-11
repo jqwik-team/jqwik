@@ -108,8 +108,7 @@ public class TestDescriptorBuilder {
 					PropertyConfiguration.from(
 						attributes,
 						TestHelper.propertyAttributesDefaults(),
-						GenerationInfo.NULL,
-						null
+						GenerationInfo.NULL
 					);
 
 				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), propertyConfig);

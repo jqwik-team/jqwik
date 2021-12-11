@@ -86,13 +86,11 @@ class PropertyMethodResolver implements ElementResolver {
 			return new JqwikException(message);
 		});
 		GenerationInfo generationInfo = generationInfo(uniqueId);
-		List<Object> falsifiedSample = falsifiedSample(uniqueId, method);
 		PropertyAttributes attributes = DefaultPropertyAttributes.from(property);
 		PropertyConfiguration propertyConfig = PropertyConfiguration.from(
 			attributes,
 			propertyDefaultValues,
-			generationInfo,
-			falsifiedSample
+			generationInfo
 		);
 		return new PropertyMethodDescriptor(uniqueId, method, testClass, propertyConfig);
 	}
@@ -102,14 +100,6 @@ class PropertyMethodResolver implements ElementResolver {
 						  .filter(TestRun::isNotSuccessful)
 						  .map(TestRun::generationInfo)
 						  .orElse(GenerationInfo.NULL);
-	}
-
-	private List<Object> falsifiedSample(UniqueId uniqueId, Method method) {
-		return testRunData.byUniqueId(uniqueId)
-						  .filter(TestRun::isNotSuccessful)
-						  .filter(testRun -> testRun.getParametersHash().matchesMethod(method))
-						  .flatMap(TestRun::falsifiedSample)
-						  .orElse(null);
 	}
 
 	private String getSegmentType() {
