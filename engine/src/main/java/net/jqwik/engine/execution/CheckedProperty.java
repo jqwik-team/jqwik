@@ -149,7 +149,7 @@ public class CheckedProperty {
 			propertyLifecycleContext
 		);
 
-		if (effectiveConfiguration.previousFailureMustBeHandled()) {
+		if (effectiveConfiguration.previousFailureMustBeHandled() && !forAllParameters.isEmpty()) {
 			parametersGenerator = new AfterFailureParametersGenerator(
 				configuration.getAfterFailureMode(),
 				configuration.getPreviousFailureGeneration(),

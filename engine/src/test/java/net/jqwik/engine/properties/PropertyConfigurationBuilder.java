@@ -32,13 +32,8 @@ class PropertyConfigurationBuilder {
 		return this;
 	}
 
-	PropertyConfigurationBuilder withGenerationInfo(GenerationInfo generationInfo) {
+	PropertyConfigurationBuilder withPreviousFailureGeneration(GenerationInfo generationInfo) {
 		this.generationInfo = generationInfo;
-		return this;
-	}
-
-	PropertyConfigurationBuilder withFalsifiedSample(List<Object> sample) {
-		this.falsifiedSample = sample;
 		return this;
 	}
 

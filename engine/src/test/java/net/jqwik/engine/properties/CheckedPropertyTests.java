@@ -208,7 +208,7 @@ class CheckedPropertyTests {
 				Optional.empty(),
 				aConfig()
 					.withSeed("")
-					.withGenerationInfo(new GenerationInfo("101010"))
+					.withPreviousFailureGeneration(new GenerationInfo("101010"))
 					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build(),
 				lifecycleContextForMethod("prop1", int.class)
 			);
@@ -228,7 +228,7 @@ class CheckedPropertyTests {
 				Optional.empty(),
 				aConfig()
 					.withSeed("")
-					.withGenerationInfo(new GenerationInfo("101010"))
+					.withPreviousFailureGeneration(new GenerationInfo("101010"))
 					.withAfterFailure(AfterFailureMode.RANDOM_SEED).build(),
 				lifecycleContextForMethod("prop1", int.class)
 			);
@@ -248,7 +248,7 @@ class CheckedPropertyTests {
 				Optional.empty(),
 				aConfig()
 					.withSeed("4242")
-					.withGenerationInfo(new GenerationInfo("101010"))
+					.withPreviousFailureGeneration(new GenerationInfo("101010"))
 					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build(),
 				lifecycleContextForMethod("prop1", int.class)
 			);
@@ -256,6 +256,34 @@ class CheckedPropertyTests {
 			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 			assertThat(check.seed()).isEqualTo(Optional.of("4242"));
 		}
+
+		@Example
+		@Label("use previously failed generation info")
+		void usePreviouslyFailedGeneration() {
+			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 99);
+			GenerationInfo previousGenerationInfo = new GenerationInfo("41", 13);
+			// This is what's being generated from integers in the 13th attempt
+			List<Integer> previousSample = Arrays.asList(18, 97);
+
+			CheckedFunction checkSample = params -> params.equals(previousSample);
+
+			CheckedProperty checkedProperty = createCheckedProperty(
+				"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
+				p -> Collections.singleton(integers),
+				Optional.empty(),
+				aConfig()
+					.withPreviousFailureGeneration(previousGenerationInfo)
+					.withAfterFailure(AfterFailureMode.SAMPLE_ONLY).build(),
+				lifecycleContextForMethod("sampleProperty", int.class, int.class)
+			);
+
+			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
+			assertThat(check.countTries()).isEqualTo(1);
+			assertThat(check.seed()).isEqualTo(Optional.of("41"));
+			assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
+			assertThat(check.falsifiedParameters()).isEmpty();
+		}
+
 
 		@SuppressWarnings("unchecked")
 		@Group
@@ -455,47 +483,6 @@ class CheckedPropertyTests {
 
 		}
 
-		@Group
-		class WithSample {
-
-			@Example
-			@Label("run sample only when sample is provided")
-			void runWithSampleOnlyWhenSampleIsProvided() {
-				List<Object> sample = Arrays.asList(1, 2);
-				CheckedFunction checkSample = params -> params.equals(sample);
-				CheckedProperty checkedProperty = createCheckedProperty(
-					"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
-					p -> Collections.emptySet(),
-					Optional.empty(),
-					aConfig().withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_ONLY).build(),
-					lifecycleContextForMethod("sampleProperty", int.class, int.class)
-				);
-
-				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
-				assertThat(check.countTries()).isEqualTo(1);
-				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
-				assertThat(check.falsifiedParameters()).isEmpty();
-			}
-
-			@Example
-			@Label("run sample and then new random seed")
-			void runSampleAndRandomSeed() {
-				List<Object> sample = Arrays.asList(1, 2);
-				CheckedFunction checkSample = params -> true;
-				CheckedProperty checkedProperty = createCheckedProperty(
-					"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
-					p -> Collections.singleton(Arbitraries.integers().between(-100, 100).asGeneric()),
-					Optional.empty(),
-					aConfig().withTries(10).withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_FIRST).build(),
-					lifecycleContextForMethod("sampleProperty", int.class, int.class)
-				);
-
-				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
-				assertThat(check.countTries()).isEqualTo(10);
-				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
-				assertThat(check.falsifiedParameters()).isEmpty();
-			}
-		}
 	}
 
 	private CheckedProperty createCheckedProperty(
