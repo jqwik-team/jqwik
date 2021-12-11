@@ -28,7 +28,7 @@ public class PropertyConfiguration {
 
 	private final PropertyAttributes propertyAttributes;
 	private final PropertyAttributesDefaults propertyAttributesDefaults;
-	private final GenerationInfo generationInfo;
+	private final GenerationInfo previousFailureGeneration;
 	private final List<Object> falsifiedSample;
 	private final String overriddenSeed;
 	private final Integer overriddenTries;
@@ -37,7 +37,7 @@ public class PropertyConfiguration {
 	public PropertyConfiguration(
 		PropertyAttributes propertyAttributes,
 		PropertyAttributesDefaults propertyAttributesDefaults,
-		GenerationInfo generationInfo,
+		GenerationInfo previousFailureGeneration,
 		List<Object> falsifiedSample,
 		String overriddenSeed,
 		Integer overriddenTries,
@@ -46,7 +46,7 @@ public class PropertyConfiguration {
 		this.propertyAttributes = propertyAttributes;
 		this.propertyAttributesDefaults = propertyAttributesDefaults;
 		this.overriddenSeed = overriddenSeed;
-		this.generationInfo = generationInfo;
+		this.previousFailureGeneration = previousFailureGeneration;
 		this.falsifiedSample = falsifiedSample;
 		this.overriddenTries = overriddenTries;
 		this.overriddenGenerationMode = overriddenGenerationMode;
@@ -56,7 +56,7 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
-			this.generationInfo,
+			this.previousFailureGeneration,
 			this.falsifiedSample,
 			changedSeed,
 			this.overriddenTries,
@@ -68,7 +68,7 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
-			this.generationInfo,
+			this.previousFailureGeneration,
 			this.falsifiedSample,
 			this.overriddenSeed,
 			this.overriddenTries,
@@ -80,7 +80,7 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
-			this.generationInfo,
+			this.previousFailureGeneration,
 			this.falsifiedSample,
 			this.overriddenSeed,
 			changedTries,
@@ -113,8 +113,8 @@ public class PropertyConfiguration {
 		return propertyAttributes.generation().orElse(propertyAttributesDefaults.generation());
 	}
 
-	public GenerationInfo getPreviousGeneration() {
-		return generationInfo;
+	public GenerationInfo getPreviousFailureGeneration() {
+		return previousFailureGeneration;
 	}
 
 	public List<Object> getFalsifiedSample() {
@@ -145,8 +145,27 @@ public class PropertyConfiguration {
 	public int boundedShrinkingSeconds() {
 		return propertyAttributesDefaults.boundedShrinkingSeconds();
 	}
-
 	public FixedSeedMode getFixedSeedMode() {
 		return propertyAttributes.whenFixedSeed().orElse(propertyAttributesDefaults.whenFixedSeed());
+	}
+
+	public boolean hasFixedSeed() {
+		return !getSeed().equals(Property.SEED_NOT_SET);
+	}
+
+	public boolean previousFailureMustBeHandled() {
+		return previousRunFailed() && this.getAfterFailureMode() != AfterFailureMode.RANDOM_SEED;
+	}
+
+	private boolean previousRunFailed() {
+		return previousFailureGeneration.randomSeed().isPresent();
+	}
+
+	public PropertyConfiguration withPreviousGenerationSeed() {
+		return previousFailureGeneration.randomSeed().map(this::withSeed).orElse(this);
+	}
+
+	public PropertyConfiguration withFixedSeed() {
+		return withSeed(getSeed());
 	}
 }
