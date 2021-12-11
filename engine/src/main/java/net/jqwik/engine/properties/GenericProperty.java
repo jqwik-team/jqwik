@@ -60,7 +60,7 @@ public class GenericProperty {
 				// Mostly TooManyFilterMissesException gets here
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 
-				return exhaustedCheckResult(maxTries, countChecks, throwable);
+				return exhaustedCheckResult(countTries, countChecks, throwable);
 			}
 
 			List<Object> sample = extractParams(shrinkableParams);
@@ -139,11 +139,11 @@ public class GenericProperty {
 		);
 	}
 
-	private PropertyCheckResult exhaustedCheckResult(int maxTries, int countChecks, Throwable throwable) {
+	private PropertyCheckResult exhaustedCheckResult(int countTries, int countChecks, Throwable throwable) {
 		return PropertyCheckResult.exhausted(
 			configuration.getStereotype(),
 			name,
-			maxTries,
+			countTries,
 			countChecks,
 			configuration.getSeed(),
 			configuration.getGenerationMode(),

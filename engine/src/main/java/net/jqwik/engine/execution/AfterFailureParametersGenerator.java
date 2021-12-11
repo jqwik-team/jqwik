@@ -25,18 +25,22 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 		ParametersGenerator parametersGenerator
 	) {
 		logAfterFailureHandling(afterFailureMode, previousFailureGeneration);
-		initializeRunningState(afterFailureMode);
+		initializeRunningState(afterFailureMode, previousFailureGeneration);
 		this.afterFailureMode = afterFailureMode;
 		this.previousFailureGeneration = previousFailureGeneration;
 		this.parametersGenerator = parametersGenerator;
 	}
 
-	private void initializeRunningState(AfterFailureMode afterFailureMode) {
+	private void initializeRunningState(
+		AfterFailureMode afterFailureMode,
+		GenerationInfo previousFailureGeneration
+	) {
+		if (previousFailureGeneration.generationIndex() > 0
+				&& (afterFailureMode == AfterFailureMode.SAMPLE_FIRST || afterFailureMode == AfterFailureMode.SAMPLE_ONLY)) {
+			this.runWithPreviousSample = true;
+		}
 		if (afterFailureMode == AfterFailureMode.SAMPLE_FIRST || afterFailureMode == AfterFailureMode.PREVIOUS_SEED) {
 			this.continueWithSeed = true;
-		}
-		if (afterFailureMode == AfterFailureMode.SAMPLE_FIRST || afterFailureMode == AfterFailureMode.SAMPLE_ONLY) {
-			this.runWithPreviousSample = true;
 		}
 	}
 
@@ -62,9 +66,11 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 			Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> previousSample = generatePreviousSample(contextSupplier);
 			runWithPreviousSample = false;
 			if (previousSample == null) {
-				String message = String.format("Cannot generated previous falsified sample <%s>.", previousFailureGeneration);
-				// LOG.warning(message);
-				throw new JqwikException(message);
+				String message = String.format("Cannot generate previous falsified sample <%s>.%n" +
+												   "\tUsing previous seed instead.", previousFailureGeneration);
+				LOG.warning(message);
+				continueWithSeed = true;
+				return next(contextSupplier);
 			}
 			return previousSample;
 		}
@@ -74,8 +80,16 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 		return null;
 	}
 
-	private Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> generatePreviousSample(Supplier<TryLifecycleContext> context) {
-		return null;
+	private Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> generatePreviousSample(Supplier<TryLifecycleContext> contextSupplier) {
+		Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> sample = null;
+		for (int i = 0; i < previousFailureGeneration.generationIndex(); i++) {
+			if (parametersGenerator.hasNext()) {
+				sample = parametersGenerator.next(contextSupplier);
+			} else {
+				break;
+			}
+		}
+		return sample;
 	}
 
 	@Override
