@@ -50,11 +50,12 @@ public class GenericProperty {
 			}
 			countTries++;
 
-			TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
-
 			List<Shrinkable<Object>> shrinkableParams;
+			TryLifecycleContext tryLifecycleContext;
 			try {
-				shrinkableParams = parametersGenerator.next(tryLifecycleContext);
+				Tuple.Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> pair = parametersGenerator.next(tryLifecycleContextSupplier);
+				tryLifecycleContext = pair.get1();
+				shrinkableParams = pair.get2();
 			} catch (Throwable throwable) {
 				// Mostly TooManyFilterMissesException gets here
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
