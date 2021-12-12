@@ -9,7 +9,6 @@ import org.opentest4j.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
@@ -519,12 +518,12 @@ class GenericPropertyTests {
 			}
 
 			@Override
-			public Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> next(Supplier<TryLifecycleContext> contextSupplier) {
-				return Tuple.of(contextSupplier.get(), generators
+			public List<Shrinkable<Object>> next(TryLifecycleContext context) {
+				return generators
 					.stream()
 					.map(generator -> generator.next(random))
 					.peek(ignore -> index++)
-					.collect(Collectors.toList()));
+					.collect(Collectors.toList());
 			}
 
 			@Override
@@ -552,8 +551,8 @@ class GenericPropertyTests {
 			}
 
 			@Override
-			public Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> next(Supplier<TryLifecycleContext> contextSupplier) {
-				return Tuple.of(contextSupplier.get(), new ArrayList<>());
+			public List<Shrinkable<Object>> next(TryLifecycleContext context) {
+				return new ArrayList<>();
 			}
 
 			@Override
@@ -585,10 +584,10 @@ class GenericPropertyTests {
 			}
 
 			@Override
-			public Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> next(Supplier<TryLifecycleContext> contextSupplier) {
+			public List<Shrinkable<Object>> next(TryLifecycleContext context) {
 				Shrinkable<Object> shrinkable = Shrinkable.unshrinkable(valuesIterator.next());
 				index++;
-				return Tuple.of(contextSupplier.get(), Collections.singletonList(shrinkable));
+				return Collections.singletonList(shrinkable);
 			}
 
 			@Override

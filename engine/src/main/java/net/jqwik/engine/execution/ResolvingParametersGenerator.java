@@ -1,7 +1,6 @@
 package net.jqwik.engine.execution;
 
 import java.util.*;
-import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
@@ -32,8 +31,7 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 	}
 
 	@Override
-	public Tuple.Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> next(Supplier<TryLifecycleContext> contextSupplier) {
-		TryLifecycleContext tryLifecycleContext = contextSupplier.get();
+	public List<Shrinkable<Object>> next(TryLifecycleContext context) {
 		List<Shrinkable<Object>> next = new ArrayList<>();
 		List<Shrinkable<Object>> forAllShrinkables = new ArrayList<>(forAllParametersGenerator.next());
 
@@ -42,12 +40,12 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 				next.add(forAllShrinkables.get(0));
 				forAllShrinkables.remove(0);
 			} else {
-				next.add(findResolvableParameter(parameter, tryLifecycleContext));
+				next.add(findResolvableParameter(parameter, context));
 			}
 		}
 
 		generationIndex++;
-		return Tuple.of(tryLifecycleContext, next);
+		return next;
 	}
 
 	@Override

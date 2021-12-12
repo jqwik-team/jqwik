@@ -1,11 +1,9 @@
 package net.jqwik.engine.execution;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.logging.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 
 public class AfterFailureParametersGenerator implements ParametersGenerator {
@@ -61,30 +59,32 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 	}
 
 	@Override
-	public Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> next(Supplier<TryLifecycleContext> contextSupplier) {
+	public List<Shrinkable<Object>> next(TryLifecycleContext context) {
 		if (runWithPreviousSample) {
-			Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> previousSample = generatePreviousSample(contextSupplier);
+			List<Shrinkable<Object>> previousSample = generatePreviousSample(context);
 			runWithPreviousSample = false;
 			if (previousSample == null) {
-				String message = String.format("Cannot generate previous falsified sample <%s>.%n" +
-												   "\tUsing previous seed instead.", previousFailureGeneration);
+				String message = String.format(
+					"Cannot generate previous falsified sample <%s>.%n" +
+						"\tUsing previous seed instead.", previousFailureGeneration
+				);
 				LOG.warning(message);
 				continueWithSeed = true;
-				return next(contextSupplier);
+				return next(context);
 			}
 			return previousSample;
 		}
 		if (continueWithSeed) {
-			return parametersGenerator.next(contextSupplier);
+			return parametersGenerator.next(context);
 		}
 		return null;
 	}
 
-	private Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> generatePreviousSample(Supplier<TryLifecycleContext> contextSupplier) {
-		Tuple2<TryLifecycleContext, List<Shrinkable<Object>>> sample = null;
+	private List<Shrinkable<Object>> generatePreviousSample(TryLifecycleContext context) {
+		List<Shrinkable<Object>> sample = null;
 		for (int i = 0; i < previousFailureGeneration.generationIndex(); i++) {
 			if (parametersGenerator.hasNext()) {
-				sample = parametersGenerator.next(contextSupplier);
+				sample = parametersGenerator.next(context);
 			} else {
 				break;
 			}
