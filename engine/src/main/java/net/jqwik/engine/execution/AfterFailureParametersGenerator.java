@@ -16,6 +16,7 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 
 	private boolean continueWithSeed = false;
 	private boolean runWithPreviousSample = false;
+	private boolean previousSampleHasJustRun = false;
 
 	public AfterFailureParametersGenerator(
 		AfterFailureMode afterFailureMode,
@@ -63,6 +64,7 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 		if (runWithPreviousSample) {
 			List<Shrinkable<Object>> previousSample = generatePreviousSample(context);
 			runWithPreviousSample = false;
+			parametersGenerator.reset();
 			if (previousSample == null) {
 				String message = String.format(
 					"Cannot generate previous falsified sample <%s>.%n" +
@@ -71,10 +73,13 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 				LOG.warning(message);
 				continueWithSeed = true;
 				return next(context);
+			} else {
+				previousSampleHasJustRun = true;
 			}
 			return previousSample;
 		}
 		if (continueWithSeed) {
+			previousSampleHasJustRun = false;
 			return parametersGenerator.next(context);
 		}
 		return null;
@@ -104,6 +109,14 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 
 	@Override
 	public GenerationInfo generationInfo(String randomSeed) {
+		if (previousSampleHasJustRun) {
+			return previousFailureGeneration;
+		}
 		return parametersGenerator.generationInfo(randomSeed);
+	}
+
+	@Override
+	public void reset() {
+		// do nothing
 	}
 }

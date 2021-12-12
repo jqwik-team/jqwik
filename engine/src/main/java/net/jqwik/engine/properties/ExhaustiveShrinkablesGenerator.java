@@ -46,8 +46,9 @@ public class ExhaustiveShrinkablesGenerator implements ForAllParametersGenerator
 
 	}
 
-	private final Iterator<List<Shrinkable<Object>>> combinatorialIterator;
+	private final List<List<ExhaustiveGenerator<Object>>> generators;
 	private final long maxCount;
+	private Iterator<List<Shrinkable<Object>>> combinatorialIterator;
 
 	private ExhaustiveShrinkablesGenerator(List<List<ExhaustiveGenerator<Object>>> generators) {
 		this.maxCount = generators
@@ -55,8 +56,8 @@ public class ExhaustiveShrinkablesGenerator implements ForAllParametersGenerator
 							.mapToLong(set -> set.stream().mapToLong(ExhaustiveGenerator::maxCount).sum())
 							.reduce((product, count) -> product * count)
 							.orElse(1L);
-
-		this.combinatorialIterator = combine(generators);
+		this.generators = generators;
+		this.reset();
 	}
 
 	private Iterator<List<Shrinkable<Object>>> combine(List<List<ExhaustiveGenerator<Object>>> generators) {
@@ -100,6 +101,11 @@ public class ExhaustiveShrinkablesGenerator implements ForAllParametersGenerator
 	@Override
 	public List<Shrinkable<Object>> next() {
 		return combinatorialIterator.next();
+	}
+
+	@Override
+	public void reset() {
+		this.combinatorialIterator = combine(generators);
 	}
 
 	public long maxCount() {

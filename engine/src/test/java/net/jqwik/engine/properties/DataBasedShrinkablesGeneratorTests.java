@@ -17,9 +17,22 @@ class DataBasedShrinkablesGeneratorTests {
 		Iterable<Tuple.Tuple2<String, Integer>> data = Table.of(Tuple.of("a", 1), Tuple.of("b", 2));
 		DataBasedShrinkablesGenerator shrinkablesGenerator = generator("stringAndInt", data);
 
-		assertThat(nextValues(shrinkablesGenerator)).containsExactly("a", 1);
-		assertThat(nextValues(shrinkablesGenerator)).containsExactly("b", 2);
+		assertThat(values(shrinkablesGenerator.next())).containsExactly("a", 1);
+		assertThat(values(shrinkablesGenerator.next())).containsExactly("b", 2);
 		assertThat(shrinkablesGenerator.hasNext()).isFalse();
+	}
+
+	@Example
+	void resetting() {
+		Iterable<Tuple.Tuple2<String, Integer>> data = Table.of(Tuple.of("a", 1), Tuple.of("b", 2));
+		DataBasedShrinkablesGenerator shrinkablesGenerator = generator("stringAndInt", data);
+
+		shrinkablesGenerator.next();
+		shrinkablesGenerator.next();
+
+		shrinkablesGenerator.reset();
+		assertThat(shrinkablesGenerator.hasNext()).isTrue();
+		assertThat(values(shrinkablesGenerator.next())).containsExactly("a", 1);
 	}
 
 	@Example
@@ -44,10 +57,6 @@ class DataBasedShrinkablesGeneratorTests {
 		DataBasedShrinkablesGenerator shrinkablesGenerator = generator("stringAndInt", data);
 
 		assertThatThrownBy(shrinkablesGenerator::next).isInstanceOf(IncompatibleDataException.class);
-	}
-
-	private List<Object> nextValues(DataBasedShrinkablesGenerator shrinkablesGenerator) {
-		return values(shrinkablesGenerator.next());
 	}
 
 	private List<Object> values(List<Shrinkable<Object>> shrinkables) {

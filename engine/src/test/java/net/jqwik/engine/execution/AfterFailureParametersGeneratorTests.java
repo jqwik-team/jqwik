@@ -33,6 +33,10 @@ class AfterFailureParametersGeneratorTests {
 		public GenerationInfo generationInfo(String randomSeed) {
 			return new GenerationInfo(randomSeed, index);
 		}
+		@Override
+		public void reset() {
+			index = 0;
+		}
 	};
 
 	TryLifecycleContext context = Mockito.mock(TryLifecycleContext.class);
@@ -81,7 +85,6 @@ class AfterFailureParametersGeneratorTests {
 		assertThat(afterFailureGenerator.next(context).get(0).value()).isEqualTo(13);
 		assertThat(afterFailureGenerator.generationInfo("42"))
 			.isEqualTo(new GenerationInfo("42", 13));
-
 
 		assertThat(afterFailureGenerator.hasNext()).isTrue();
 		assertThat(afterFailureGenerator.next(context).get(0).value()).isEqualTo(1);
