@@ -28,6 +28,19 @@ public class GenerationInfo implements Serializable {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		GenerationInfo that = (GenerationInfo) o;
+		return generationIndex == that.generationIndex && Objects.equals(randomSeed, that.randomSeed);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(randomSeed, generationIndex);
+	}
+
+	@Override
 	public String toString() {
 		return String.format("GenerationInfo(seed=%s,index=%s)", randomSeed, generationIndex);
 	}
