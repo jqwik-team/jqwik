@@ -38,6 +38,7 @@ class PropertyShrinkerTests {
 			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 			verifyNoInteractions(falsifiedSampleReporter);
+			assertThat(shrinker.shrinkingSequence()).isEmpty();
 		}
 
 		@Example
@@ -52,6 +53,7 @@ class PropertyShrinkerTests {
 			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 			verifyNoInteractions(falsifiedSampleReporter);
+			assertThat(shrinker.shrinkingSequence()).isEmpty();
 		}
 
 		@Example
@@ -68,6 +70,7 @@ class PropertyShrinkerTests {
 			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 			verifyNoInteractions(falsifiedSampleReporter);
+			assertThat(shrinker.shrinkingSequence()).isEmpty();
 		}
 
 		@Example
@@ -84,21 +87,9 @@ class PropertyShrinkerTests {
 			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 			verifyNoInteractions(falsifiedSampleReporter);
+			assertThat(shrinker.shrinkingSequence()).isEmpty();
 		}
 
-		@Example
-		void allowShrinkingWithSameDistance() {
-			ShrinkWithFixedDistance shrinkableToLarger = new ShrinkWithFixedDistance(10);
-			List<Shrinkable<Object>> parameters = asList(shrinkableToLarger.asGeneric());
-			FalsifiedSample originalSample = toFalsifiedSample(parameters, null);
-			PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
-
-			Falsifier<List<Object>> falsifier = ignore -> TryExecutionResult.falsified(null);
-			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
-
-			assertThat(sample.parameters()).isEqualTo(asList(0));
-			assertThat(sample.countShrinkingSteps()).isEqualTo(10);
-		}
 	}
 
 	@Group
@@ -116,6 +107,9 @@ class PropertyShrinkerTests {
 			assertThat(sample.parameters()).isEqualTo(asList(2));
 			assertThat(sample.falsifyingError()).isNotPresent();
 			assertThat(sample.countShrinkingSteps()).isEqualTo(8);
+
+			assertThat(shrinker.shrinkingSequence()).hasSize(8);
+			assertThat(shrinker.shrinkingSequence()).containsOnly(TryExecutionResult.Status.FALSIFIED);
 		}
 
 		@Example
@@ -148,6 +142,12 @@ class PropertyShrinkerTests {
 			assertThat(sample.parameters()).isEqualTo(asList(2));
 			assertThat(sample.falsifyingError()).isNotPresent();
 			assertThat(sample.countShrinkingSteps()).isEqualTo(4);
+
+			assertThat(shrinker.shrinkingSequence()).hasSize(8);
+			assertThat(shrinker.shrinkingSequence()).containsOnly(
+				TryExecutionResult.Status.FALSIFIED,
+				TryExecutionResult.Status.INVALID
+			);
 		}
 
 		@Example
@@ -185,7 +185,24 @@ class PropertyShrinkerTests {
 			assertThat(sample.parameters()).isEqualTo(asList(0));
 		}
 
+		@Example
+		void allowShrinkingWithSameDistance() {
+			ShrinkWithFixedDistance shrinkableToLarger = new ShrinkWithFixedDistance(10);
+			List<Shrinkable<Object>> parameters = asList(shrinkableToLarger.asGeneric());
+			FalsifiedSample originalSample = toFalsifiedSample(parameters, null);
+			PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
 
+			Falsifier<List<Object>> falsifier = ignore -> TryExecutionResult.falsified(null);
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.parameters()).isEqualTo(asList(0));
+			assertThat(sample.countShrinkingSteps()).isEqualTo(10);
+
+			assertThat(shrinker.shrinkingSequence()).hasSize(10);
+			assertThat(shrinker.shrinkingSequence()).containsOnly(
+				TryExecutionResult.Status.FALSIFIED
+			);
+		}
 	}
 
 	@Group
@@ -206,6 +223,11 @@ class PropertyShrinkerTests {
 			assertThat(sample.falsifyingError()).isNotPresent();
 			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
 			assertThat(createValues(sample)).containsExactly(1, 2);
+
+			int sequenceSize = shrinker.shrinkingSequence().size();
+			assertThat(sequenceSize).isGreaterThan(0);
+			assertThat(shrinker.shrinkingSequence().get(sequenceSize - 1))
+				.isEqualTo(TryExecutionResult.Status.FALSIFIED);
 		}
 
 		@Example
