@@ -73,4 +73,8 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 		return new ShrinkableResolvedParameter(parameterSupplier, parameterContext, tryLifecycleContext);
 	}
 
+	@Override
+	public void reset() {
+		forAllParametersGenerator.reset();
+	}
 }

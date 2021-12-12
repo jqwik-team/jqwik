@@ -33,6 +33,22 @@ class ExhaustiveShrinkablesGeneratorTests {
 	}
 
 	@Example
+	void resetting() {
+		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("intFrom0to5");
+
+		shrinkablesGenerator.next();
+		shrinkablesGenerator.next();
+		shrinkablesGenerator.next();
+
+		shrinkablesGenerator.reset();
+		assertThat(shrinkablesGenerator.hasNext()).isTrue();
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(0));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(1));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(2));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(3));
+	}
+
+	@Example
 	@Label("ambiguous Arbitrary resolution generates sum of arbitraries")
 	void ambiguousArbitraryResolution() {
 		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("iterables");

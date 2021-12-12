@@ -540,6 +540,11 @@ class GenericPropertyTests {
 			public GenerationInfo generationInfo(String randomSeed) {
 				return new GenerationInfo(randomSeed, index);
 			}
+
+			@Override
+			public void reset() {
+				index = 0;
+			}
 		};
 	}
 
@@ -570,6 +575,9 @@ class GenericPropertyTests {
 				return new GenerationInfo(randomSeed, 0);
 			}
 
+			@Override
+			public void reset() {
+			}
 		};
 	}
 
@@ -606,6 +614,10 @@ class GenericPropertyTests {
 				return new GenerationInfo(randomSeed, index);
 			}
 
+			@Override
+			public void reset() {
+				index = 0;
+			}
 		};
 	}
 

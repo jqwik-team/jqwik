@@ -4,8 +4,6 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.engine.*;
@@ -22,8 +20,22 @@ class RandomizedShrinkablesGeneratorTests {
 		RandomizedShrinkablesGenerator shrinkablesGenerator = createGenerator(random, "simpleParameters");
 		List<Shrinkable<Object>> shrinkables = shrinkablesGenerator.next();
 
-		Assertions.assertThat(shrinkables.get(0).value()).isInstanceOf(String.class);
-		Assertions.assertThat(shrinkables.get(1).value()).isInstanceOf(Integer.class);
+		assertThat(shrinkables.get(0).value()).isInstanceOf(String.class);
+		assertThat(shrinkables.get(1).value()).isInstanceOf(Integer.class);
+	}
+
+	@Example
+	void resetting(@ForAll Random random) {
+		RandomizedShrinkablesGenerator shrinkablesGenerator = createGenerator(random, "simpleParameters");
+
+		List<Object> values1 = values(shrinkablesGenerator.next());
+		List<Object> values2 = values(shrinkablesGenerator.next());
+		List<Object> values3 = values(shrinkablesGenerator.next());
+
+		shrinkablesGenerator.reset();
+		assertThat(values(shrinkablesGenerator.next())).isEqualTo(values1);
+		assertThat(values(shrinkablesGenerator.next())).isEqualTo(values2);
+		assertThat(values(shrinkablesGenerator.next())).isEqualTo(values3);
 	}
 
 	@Example

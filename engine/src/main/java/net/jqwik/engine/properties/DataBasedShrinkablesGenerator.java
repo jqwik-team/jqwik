@@ -11,11 +11,13 @@ import net.jqwik.engine.support.types.*;
 public class DataBasedShrinkablesGenerator implements ForAllParametersGenerator {
 
 	private final List<MethodParameter> forAllParameters;
-	private final Iterator<? extends Tuple> iterator;
+	private final Iterable<? extends Tuple> data;
+	private Iterator<? extends Tuple> iterator;
 
 	public DataBasedShrinkablesGenerator(List<MethodParameter> forAllParameters, Iterable<? extends Tuple> data) {
 		this.forAllParameters = forAllParameters;
-		this.iterator = data.iterator();
+		this.data = data;
+		this.reset();
 	}
 
 	@Override
@@ -28,6 +30,11 @@ public class DataBasedShrinkablesGenerator implements ForAllParametersGenerator 
 		Tuple tuple = iterator.next();
 		checkCompatibility(tuple);
 		return tuple.items().stream().map(Shrinkable::unshrinkable).collect(Collectors.toList());
+	}
+
+	@Override
+	public void reset() {
+		this.iterator = this.data.iterator();
 	}
 
 	private void checkCompatibility(Tuple tuple) {

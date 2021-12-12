@@ -5,6 +5,7 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
@@ -34,7 +35,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 			edgeCasesMode,
 			edgeCasesTotal,
 			calculateBaseToEdgeCaseRatio(listOfEdgeCases, genSize),
-			random
+			random.nextLong()
 		);
 	}
 
@@ -152,7 +153,8 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	private final EdgeCasesMode edgeCasesMode;
 	private final int edgeCasesTotal;
 	private final int baseToEdgeCaseRatio;
-	private final Random random;
+	private final long baseRandomSeed;
+	private Random random;
 
 	private boolean allEdgeCasesGenerated = false;
 	private int edgeCasesTried = 0;
@@ -163,14 +165,15 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
 		int baseToEdgeCaseRatio,
-		Random random
+		long baseRandomSeed
 	) {
 		this.randomGenerator = randomGenerator;
 		this.edgeCasesGenerator = edgeCasesGenerator;
 		this.edgeCasesMode = edgeCasesMode;
 		this.edgeCasesTotal = edgeCasesTotal;
 		this.baseToEdgeCaseRatio = baseToEdgeCaseRatio;
-		this.random = random;
+		this.baseRandomSeed = baseRandomSeed;
+		this.random = SourceOfRandomness.newRandom(baseRandomSeed);
 	}
 
 	@Override
@@ -212,6 +215,11 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	@Override
 	public int edgeCasesTried() {
 		return edgeCasesTried;
+	}
+
+	@Override
+	public void reset() {
+		random = SourceOfRandomness.newRandom(baseRandomSeed);
 	}
 
 	private boolean shouldGenerateEdgeCase(Random localRandom) {

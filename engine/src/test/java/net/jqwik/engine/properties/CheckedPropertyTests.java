@@ -35,8 +35,8 @@ class CheckedPropertyTests {
 		void createCheckedPropertyWithoutParameters() {
 			PropertyMethodDescriptor descriptor =
 				(PropertyMethodDescriptor) TestDescriptorBuilder
-											   .forMethod(CheckingExamples.class, "propertyWithoutParameters", int.class)
-											   .build();
+					.forMethod(CheckingExamples.class, "propertyWithoutParameters", int.class)
+					.build();
 			CheckedProperty checkedProperty = createCheckedProperty(descriptor);
 
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(PropertyAttributesDefaults.DEFAULT_STEREOTYPE);
@@ -50,8 +50,8 @@ class CheckedPropertyTests {
 		void createCheckedPropertyWithTriesParameter() {
 			PropertyMethodDescriptor descriptor =
 				(PropertyMethodDescriptor) TestDescriptorBuilder
-											   .forMethod(CheckingExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class)
-											   .build();
+					.forMethod(CheckingExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class)
+					.build();
 			CheckedProperty checkedProperty = createCheckedProperty(descriptor);
 
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo("OtherStereotype");
@@ -263,7 +263,7 @@ class CheckedPropertyTests {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 99);
 			GenerationInfo previousGenerationInfo = new GenerationInfo("41", 13);
 			// This is what's being generated from integers in the 13th attempt
-			List<Integer> previousSample = Arrays.asList(18, 97);
+			List<Integer> previousSample = Arrays.asList(99, 97);
 
 			CheckedFunction checkSample = params -> params.equals(previousSample);
 
@@ -283,7 +283,6 @@ class CheckedPropertyTests {
 			assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 			assertThat(check.falsifiedParameters()).isEmpty();
 		}
-
 
 		@SuppressWarnings("unchecked")
 		@Group
@@ -314,7 +313,7 @@ class CheckedPropertyTests {
 			void runWithGenerationModeDataDriven() {
 				List<Tuple.Tuple2<Integer, String>> allGeneratedParameters = new ArrayList<>();
 				CheckedFunction rememberParameters = params -> allGeneratedParameters
-																   .add(Tuple.of((int) params.get(0), (String) params.get(1)));
+					.add(Tuple.of((int) params.get(0), (String) params.get(1)));
 				CheckedProperty checkedProperty = createCheckedProperty(
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),

@@ -14,4 +14,5 @@ public interface ForAllParametersGenerator extends Iterator<List<Shrinkable<Obje
 		return 0;
 	}
 
+    void reset();
 }
