@@ -27,6 +27,8 @@ public class PropertyShrinker {
 
 	private final AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
 
+	private final List<TryExecutionResult.Status> shrinkingSequence = new LinkedList<>();
+
 	private Optional<FalsifiedSample> currentBest = Optional.empty();
 
 	public PropertyShrinker(
@@ -70,6 +72,11 @@ public class PropertyShrinker {
 		return shrink(allowOnlyEquivalentErrorsFalsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
+	public List<TryExecutionResult.Status> shrinkingSequence() {
+		int indexOfLastFalsified = shrinkingSequence.lastIndexOf(TryExecutionResult.Status.FALSIFIED);
+		return shrinkingSequence.subList(0, indexOfLastFalsified + 1);
+	}
+
 	private ShrunkFalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
@@ -104,12 +111,19 @@ public class PropertyShrinker {
 		final Consumer<FalsifiedSample> shrinkSampleConsumer,
 		final Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
+		Falsifier<List<Object>> recordingFalsifier = params -> {
+			TryExecutionResult executionResult = falsifier.execute(params);
+			shrinkingSequence.add(executionResult.status());
+			return executionResult;
+		};
+
 		PlainShrinker plainShrinker = new PlainShrinker(
 			originalSample,
 			shrinkSampleConsumer,
 			shrinkAttemptConsumer
 		);
-		return plainShrinker.shrink(falsifier);
+
+		return plainShrinker.shrink(recordingFalsifier);
 	}
 
 	private ShrunkFalsifiedSample unshrunkOriginalSample() {
