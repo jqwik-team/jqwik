@@ -423,8 +423,7 @@ class PropertyShrinkerTests {
 			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
 		}
 
-		@Disabled("Later optimization")
-		// @Example
+		@Example
 		void shrinkingPairSumShiftsTowardsRight() {
 			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(10, 10);
 
