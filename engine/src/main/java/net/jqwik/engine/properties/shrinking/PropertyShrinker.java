@@ -26,7 +26,6 @@ public class PropertyShrinker {
 	private final Method targetMethod;
 
 	private final AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
-	private final Map<List<Object>, TryExecutionResult> falsificationCache = new HashMap<>();
 
 	private Optional<FalsifiedSample> currentBest = Optional.empty();
 
@@ -71,7 +70,7 @@ public class PropertyShrinker {
 		return shrink(allowOnlyEquivalentErrorsFalsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
-	public ShrunkFalsifiedSample shrink(
+	private ShrunkFalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
@@ -100,54 +99,17 @@ public class PropertyShrinker {
 		}
 	}
 
-	public FalsifiedSample shrinkAsLongAsSampleImproves(
+	private FalsifiedSample shrinkAsLongAsSampleImproves(
 		final Falsifier<List<Object>> falsifier,
 		final Consumer<FalsifiedSample> shrinkSampleConsumer,
 		final Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		FalsifiedSample after = originalSample;
-		FalsifiedSample before;
-		do {
-			before = after;
-			after = shrinkOneParameterAfterTheOther(falsifier, before, shrinkSampleConsumer, shrinkAttemptConsumer);
-			if (!after.equals(before)) {
-				continue;
-			}
-			after = shrinkParametersPairwise(falsifier, after, shrinkSampleConsumer, shrinkAttemptConsumer);
-			if (!after.equals(before)) {
-				continue;
-			}
-			after = shrinkAndGrow(falsifier, after, shrinkSampleConsumer, shrinkAttemptConsumer);
-		} while (!after.equals(before));
-		return after;
-	}
-
-	private FalsifiedSample shrinkOneParameterAfterTheOther(
-		Falsifier<List<Object>> falsifier,
-		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
-		Consumer<FalsifiedSample> shrinkAttemptConsumer
-	) {
-		return new OneAfterTheOtherParameterShrinker(falsificationCache)
-				   .shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
-	}
-
-	private FalsifiedSample shrinkParametersPairwise(
-		Falsifier<List<Object>> falsifier,
-		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
-		Consumer<FalsifiedSample> shrinkAttemptConsumer
-	) {
-		return new PairwiseParameterShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
-	}
-
-	private FalsifiedSample shrinkAndGrow(
-		Falsifier<List<Object>> falsifier,
-		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
-		Consumer<FalsifiedSample> shrinkAttemptConsumer
-	) {
-		return new ShrinkAndGrowShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+		PlainShrinker plainShrinker = new PlainShrinker(
+			originalSample,
+			shrinkSampleConsumer,
+			shrinkAttemptConsumer
+		);
+		return plainShrinker.shrink(falsifier);
 	}
 
 	private ShrunkFalsifiedSample unshrunkOriginalSample() {
