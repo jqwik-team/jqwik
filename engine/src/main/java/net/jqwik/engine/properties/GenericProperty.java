@@ -112,7 +112,7 @@ public class GenericProperty {
 					Optional.of(throwable),
 					Collections.emptyList()
 				);
-				GenerationInfo generationInfo = new GenerationInfo(configuration.getSeed(), parametersGenerator.generationIndex());
+				GenerationInfo generationInfo = parametersGenerator.generationInfo(configuration.getSeed());
 				return PropertyCheckResult.failed(
 					configuration.getStereotype(), name, countTries, countChecks, generationInfo,
 					configuration.getGenerationMode(),
@@ -180,7 +180,7 @@ public class GenericProperty {
 		Method targetMethod
 	) {
 		ShrunkFalsifiedSample shrunkSample = shrink(reporter, reporting, originalSample, targetMethod);
-		GenerationInfo generationInfo = new GenerationInfo(configuration.getSeed(), parametersGenerator.generationIndex());
+		GenerationInfo generationInfo = parametersGenerator.generationInfo(configuration.getSeed());
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, generationInfo, configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
