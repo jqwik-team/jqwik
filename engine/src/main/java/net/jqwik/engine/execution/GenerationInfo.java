@@ -3,6 +3,9 @@ package net.jqwik.engine.execution;
 import java.io.*;
 import java.util.*;
 
+import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
+
 public class GenerationInfo implements Serializable {
 
 	public final static GenerationInfo NULL = new GenerationInfo(null);
@@ -25,6 +28,18 @@ public class GenerationInfo implements Serializable {
 
 	public int generationIndex() {
 		return generationIndex;
+	}
+
+	public List<Shrinkable<Object>> generateOn(ParametersGenerator generator, TryLifecycleContext context) {
+		List<Shrinkable<Object>> sample = null;
+		for (int i = 0; i < generationIndex; i++) {
+			if (generator.hasNext()) {
+				sample = generator.next(context);
+			} else {
+				return null;
+			}
+		}
+		return sample;
 	}
 
 	@Override

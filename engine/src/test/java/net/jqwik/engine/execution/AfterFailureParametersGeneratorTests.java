@@ -6,16 +6,18 @@ import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressLogging
 class AfterFailureParametersGeneratorTests {
 
 	ParametersGenerator generator = new ParametersGenerator() {
 		int index = 0;
 		@Override
 		public boolean hasNext() {
-			return true;
+			return index < 25;
 		}
 		@Override
 		public List<Shrinkable<Object>> next(TryLifecycleContext context) {
@@ -90,6 +92,38 @@ class AfterFailureParametersGeneratorTests {
 		assertThat(afterFailureGenerator.next(context).get(0).value()).isEqualTo(1);
 		assertThat(afterFailureGenerator.generationInfo("42"))
 			.isEqualTo(new GenerationInfo("42", 1));
+	}
+
+	@Example
+	void afterFailureMode_SampleOnly_generateSampleOnly() {
+		ParametersGenerator afterFailureGenerator = new AfterFailureParametersGenerator(
+			AfterFailureMode.SAMPLE_ONLY,
+			new GenerationInfo("42", 13),
+			generator
+		);
+
+		assertThat(afterFailureGenerator.hasNext()).isTrue();
+		assertThat(afterFailureGenerator.next(context).get(0).value()).isEqualTo(13);
+		assertThat(afterFailureGenerator.generationInfo("42"))
+			.isEqualTo(new GenerationInfo("42", 13));
+
+		assertThat(afterFailureGenerator.hasNext()).isFalse();
+	}
+
+	@Example
+	void afterFailureMode_SampleCannotBeGenerated_thenUsePlainGenerator() {
+		ParametersGenerator afterFailureGenerator = new AfterFailureParametersGenerator(
+			AfterFailureMode.SAMPLE_ONLY,
+			new GenerationInfo("42", 33),
+			generator
+		);
+
+		assertThat(afterFailureGenerator.hasNext()).isTrue();
+		assertThat(afterFailureGenerator.next(context).get(0).value()).isEqualTo(1);
+		assertThat(afterFailureGenerator.generationInfo("42"))
+			.isEqualTo(new GenerationInfo("42", 1));
+
+		assertThat(afterFailureGenerator.hasNext()).isTrue();
 	}
 
 }

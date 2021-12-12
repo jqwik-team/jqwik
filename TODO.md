@@ -1,7 +1,6 @@
 - 1.6.2
 
     - Make falsified samples reproducible in other way than serialization
-      - Add AfterFailureParametersGeneratorTests
       - Add shrinking sequence to GeneratorInfo and previous sample generation
 
 - 1.6.x
