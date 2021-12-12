@@ -59,8 +59,8 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 	}
 
 	@Override
-	public int generationIndex() {
-		return generationIndex;
+	public GenerationInfo generationInfo(String randomSeed) {
+		return new GenerationInfo(randomSeed, generationIndex);
 	}
 
 	private Shrinkable<Object> findResolvableParameter(MethodParameter parameter, TryLifecycleContext tryLifecycleContext) {

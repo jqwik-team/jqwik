@@ -537,8 +537,8 @@ class GenericPropertyTests {
 			}
 
 			@Override
-			public int generationIndex() {
-				return index;
+			public GenerationInfo generationInfo(String randomSeed) {
+				return new GenerationInfo(randomSeed, index);
 			}
 		};
 	}
@@ -566,9 +566,10 @@ class GenericPropertyTests {
 			}
 
 			@Override
-			public int generationIndex() {
-				return 0;
+			public GenerationInfo generationInfo(String randomSeed) {
+				return new GenerationInfo(randomSeed, 0);
 			}
+
 		};
 	}
 
@@ -601,9 +602,10 @@ class GenericPropertyTests {
 			}
 
 			@Override
-			public int generationIndex() {
-				return index;
+			public GenerationInfo generationInfo(String randomSeed) {
+				return new GenerationInfo(randomSeed, index);
 			}
+
 		};
 	}
 

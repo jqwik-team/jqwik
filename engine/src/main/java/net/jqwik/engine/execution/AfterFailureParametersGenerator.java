@@ -103,7 +103,7 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 	}
 
 	@Override
-	public int generationIndex() {
-		return parametersGenerator.generationIndex();
+	public GenerationInfo generationInfo(String randomSeed) {
+		return parametersGenerator.generationInfo(randomSeed);
 	}
 }

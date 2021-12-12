@@ -15,5 +15,5 @@ public interface ParametersGenerator {
 
 	int edgeCasesTried();
 
-	int generationIndex();
+	GenerationInfo generationInfo(String randomSeed);
 }
