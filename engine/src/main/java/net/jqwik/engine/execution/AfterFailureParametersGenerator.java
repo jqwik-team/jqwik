@@ -34,13 +34,21 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 		AfterFailureMode afterFailureMode,
 		GenerationInfo previousFailureGeneration
 	) {
-		if (previousFailureGeneration.generationIndex() > 0
-				&& (afterFailureMode == AfterFailureMode.SAMPLE_FIRST || afterFailureMode == AfterFailureMode.SAMPLE_ONLY)) {
+		if (shouldRunWithPreviousSample(afterFailureMode, previousFailureGeneration)) {
 			this.runWithPreviousSample = true;
 		}
-		if (afterFailureMode == AfterFailureMode.SAMPLE_FIRST || afterFailureMode == AfterFailureMode.PREVIOUS_SEED) {
+		if (shouldContiueWithPreviousSeed(afterFailureMode)) {
 			this.continueWithSeed = true;
 		}
+	}
+
+	private boolean shouldContiueWithPreviousSeed(AfterFailureMode afterFailureMode) {
+		return afterFailureMode == AfterFailureMode.SAMPLE_FIRST || afterFailureMode == AfterFailureMode.PREVIOUS_SEED;
+	}
+
+	private boolean shouldRunWithPreviousSample(AfterFailureMode afterFailureMode, GenerationInfo previousFailureGeneration) {
+		return previousFailureGeneration.generationIndex() > 0
+				&& (afterFailureMode == AfterFailureMode.SAMPLE_FIRST || afterFailureMode == AfterFailureMode.SAMPLE_ONLY);
 	}
 
 	private void logAfterFailureHandling(AfterFailureMode afterFailureMode, GenerationInfo previousFailureGeneration) {
@@ -66,11 +74,7 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 			runWithPreviousSample = false;
 			parametersGenerator.reset();
 			if (previousSample == null) {
-				String message = String.format(
-					"Cannot generate previous falsified sample <%s>.%n" +
-						"\tUsing previous seed instead.", previousFailureGeneration
-				);
-				LOG.warning(message);
+				logFailingOfPreviousSampleGeneration();
 				continueWithSeed = true;
 				return next(context);
 			} else {
@@ -85,16 +89,16 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 		return null;
 	}
 
+	private void logFailingOfPreviousSampleGeneration() {
+		String message = String.format(
+			"Cannot generate previous falsified sample <%s>.%n" +
+				"\tUsing previous seed instead.", previousFailureGeneration
+		);
+		LOG.warning(message);
+	}
+
 	private List<Shrinkable<Object>> generatePreviousSample(TryLifecycleContext context) {
-		List<Shrinkable<Object>> sample = null;
-		for (int i = 0; i < previousFailureGeneration.generationIndex(); i++) {
-			if (parametersGenerator.hasNext()) {
-				sample = parametersGenerator.next(context);
-			} else {
-				break;
-			}
-		}
-		return sample;
+		return previousFailureGeneration.generateOn(parametersGenerator, context);
 	}
 
 	@Override
@@ -117,6 +121,6 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 
 	@Override
 	public void reset() {
-		// do nothing
+		throw new UnsupportedOperationException("Should only be used on delegate generators");
 	}
 }
