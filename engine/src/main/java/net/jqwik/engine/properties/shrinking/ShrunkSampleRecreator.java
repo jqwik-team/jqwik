@@ -14,7 +14,7 @@ public class ShrunkSampleRecreator {
 		this.originalSample = originalSample;
 	}
 
-	public ShrunkFalsifiedSample recreateFrom(List<TryExecutionResult.Status> shrinkingSequence) {
+	public Optional<ShrunkFalsifiedSample> recreateFrom(List<TryExecutionResult.Status> shrinkingSequence) {
 		List<TryExecutionResult.Status> recreatingSequence = new ArrayList<>(shrinkingSequence);
 		Falsifier<List<Object>> recreatingFalsifier = falsifier(recreatingSequence);
 
@@ -27,7 +27,11 @@ public class ShrunkSampleRecreator {
 
 		FalsifiedSample recreatedSample = plainShrinker.shrink(recreatingFalsifier);
 
-		return new ShrunkFalsifiedSampleImpl(recreatedSample, shrinkingSteps.get());
+		if (recreatingSequence.isEmpty()) {
+			return Optional.of(new ShrunkFalsifiedSampleImpl(recreatedSample, shrinkingSteps.get()));
+		} else {
+			return Optional.empty();
+		}
 	}
 
 	private Falsifier<List<Object>> falsifier(List<TryExecutionResult.Status> recreatingSequence) {

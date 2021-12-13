@@ -26,10 +26,10 @@ public class PropertyShrinker {
 	private final Method targetMethod;
 
 	private final AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
-
 	private final List<TryExecutionResult.Status> shrinkingSequence = new LinkedList<>();
 
 	private Optional<FalsifiedSample> currentBest = Optional.empty();
+	private volatile boolean shrinkingInterrupted = false;
 
 	public PropertyShrinker(
 		FalsifiedSample originalSample,
@@ -101,6 +101,7 @@ public class PropertyShrinker {
 		} catch (InterruptedException | ExecutionException e) {
 			return JqwikExceptionSupport.throwAsUncheckedException(e);
 		} catch (TimeoutException e) {
+			shrinkingInterrupted = true;
 			logShrinkingBoundReached();
 			return currentBest.orElse(originalSample);
 		}
@@ -113,7 +114,9 @@ public class PropertyShrinker {
 	) {
 		Falsifier<List<Object>> recordingFalsifier = params -> {
 			TryExecutionResult executionResult = falsifier.execute(params);
-			shrinkingSequence.add(executionResult.status());
+			if (!shrinkingInterrupted) {
+				shrinkingSequence.add(executionResult.status());
+			}
 			return executionResult;
 		};
 
