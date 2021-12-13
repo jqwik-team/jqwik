@@ -6,14 +6,14 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
-public class PlainShrinker {
+class ShrinkingAlgorithm {
 
 	private final Map<List<Object>, TryExecutionResult> falsificationCache = new HashMap<>();
 	private final FalsifiedSample originalSample;
 	private final Consumer<FalsifiedSample> shrinkSampleConsumer;
 	private final Consumer<FalsifiedSample> shrinkAttemptConsumer;
 
-	public PlainShrinker(
+	ShrinkingAlgorithm(
 		FalsifiedSample originalSample,
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
@@ -24,7 +24,7 @@ public class PlainShrinker {
 		this.shrinkAttemptConsumer = shrinkAttemptConsumer;
 	}
 
-	public FalsifiedSample shrink(final Falsifier<List<Object>> falsifier) {
+	FalsifiedSample shrink(final Falsifier<List<Object>> falsifier) {
 		FalsifiedSample after = originalSample;
 		FalsifiedSample before;
 		do {
