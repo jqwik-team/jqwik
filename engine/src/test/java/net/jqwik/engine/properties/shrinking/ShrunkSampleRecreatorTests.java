@@ -19,6 +19,119 @@ import static org.assertj.core.api.Assertions.*;
 @Group
 class ShrunkSampleRecreatorTests {
 
+	@Property(tries = 10)
+	void recreateSingleParameter(
+		@ForAll @IntRange(min = 2, max = 1000) int initialValue,
+		@ForAll @IntRange(min = 1, max = 1000) int shrinkingResult
+	) {
+		Assume.that(initialValue > shrinkingResult);
+
+		List<Shrinkable<Object>> shrinkables = listOfShrinkableInts(initialValue);
+		FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
+		PropertyShrinker shrinker = createPropertyShrinker(originalSample, ShrinkingMode.FULL, 10);
+
+		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i < shrinkingResult);
+		ShrunkFalsifiedSample shrunkSample = shrinker.shrink(falsifier);
+
+		assertThat(shrunkSample.parameters()).isEqualTo(asList(shrinkingResult));
+		assertThat(shrinker.shrinkingSequence()).hasSizeGreaterThan(0);
+
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
+		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
+		assertThat(recreatedSample).hasValue(shrunkSample);
+	}
+
+	@Example
+	void emptyShrinkingSequenceReturnsOriginalSample() {
+		List<Shrinkable<Object>> shrinkables = listOfShrinkableInts(42);
+		FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
+		PropertyShrinker shrinker = createPropertyShrinker(originalSample, ShrinkingMode.OFF, 0);
+
+		ShrunkFalsifiedSample shrunkSample = shrinker.shrink(null);
+		assertThat(shrunkSample.parameters()).isEqualTo(asList(42));
+		assertThat(shrunkSample.countShrinkingSteps()).isEqualTo(0);
+
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
+		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(Collections.emptyList());
+		assertThat(recreatedSample).hasValue(shrunkSample);
+	}
+
+	@Example
+	void returnsNullIfShrinkingSequenceCannotBeFullyUsed() {
+		List<Shrinkable<Object>> shrinkables = listOfShrinkableInts(0);
+		FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
+		PropertyShrinker shrinker = createPropertyShrinker(originalSample, ShrinkingMode.OFF, 0);
+
+		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> false);
+		ShrunkFalsifiedSample shrunkSample = shrinker.shrink(falsifier);
+		assertThat(shrunkSample.parameters()).isEqualTo(asList(0));
+		assertThat(shrunkSample.countShrinkingSteps()).isEqualTo(0);
+
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
+		List<TryExecutionResult.Status> shrinkingSequence = Arrays.asList(
+			TryExecutionResult.Status.SATISFIED,
+			TryExecutionResult.Status.SATISFIED,
+			TryExecutionResult.Status.FALSIFIED
+		);
+		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinkingSequence);
+		assertThat(recreatedSample).isEmpty();
+	}
+
+	@Property(tries = 10)
+	void recreateSeveralParameters(
+		@ForAll @IntRange(min = 2, max = 1000) int initialValue,
+		@ForAll @IntRange(min = 1, max = 1000) int shrinkingResult
+	) {
+		Assume.that(initialValue > shrinkingResult);
+
+		List<Shrinkable<Object>> shrinkables = listOfShrinkableInts(initialValue, 99, 999);
+		FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
+		PropertyShrinker shrinker = createPropertyShrinker(originalSample, ShrinkingMode.FULL, 0);
+
+		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i < shrinkingResult);
+		ShrunkFalsifiedSample shrunkSample = shrinker.shrink(falsifier);
+
+		assertThat(shrunkSample.parameters()).isEqualTo(asList(shrinkingResult, 0, 0));
+		assertThat(shrinker.shrinkingSequence()).hasSizeGreaterThan(0);
+
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
+		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
+		assertThat(recreatedSample).hasValue(shrunkSample);
+	}
+
+	@SuppressLogging
+	@Property(tries = 5, edgeCases = EdgeCasesMode.NONE)
+	void recreationWorksIfShrinkingBoundIsExceeded(@ForAll("sleepTime") int sleepMs) {
+		List<Shrinkable<Object>> shrinkables = listOfShrinkableInts(999);
+		FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
+		PropertyShrinker shrinker = createPropertyShrinker(originalSample, ShrinkingMode.BOUNDED, 1);
+
+		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> {
+			try {
+				Thread.sleep(sleepMs);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return i < 99;
+		});
+		ShrunkFalsifiedSample shrunkSample = shrinker.shrink(falsifier);
+		// System.out.println(shrunkSample.shrinkables().get(0).value());
+
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
+		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
+		assertThat(recreatedSample).hasValue(shrunkSample);
+	}
+
+	@Provide
+	private Arbitrary<Integer> sleepTime() {
+		return Arbitraries.integers().between(30, 100).withDistribution(RandomDistribution.uniform()).withoutEdgeCases();
+	}
+
+	private FalsifiedSample toFalsifiedSample(List<Shrinkable<Object>> shrinkables, Throwable originalError) {
+		List<Object> parameters = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+		return new FalsifiedSampleImpl(parameters, shrinkables, Optional.ofNullable(originalError), Collections.emptyList());
+	}
+
 	private List<Shrinkable<Object>> listOfShrinkableInts(int... args) {
 		Range<BigInteger> range = Range.of(BigInteger.ZERO, BigInteger.valueOf(1000));
 		return Arrays.stream(args).mapToObj(i -> {
@@ -27,11 +140,6 @@ class ShrunkSampleRecreatorTests {
 				.map(BigInteger::intValueExact)
 				.asGeneric();
 		}).collect(Collectors.toList());
-	}
-
-	private FalsifiedSample toFalsifiedSample(List<Shrinkable<Object>> shrinkables, Throwable originalError) {
-		List<Object> parameters = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
-		return new FalsifiedSampleImpl(parameters, shrinkables, Optional.ofNullable(originalError), Collections.emptyList());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -43,32 +151,17 @@ class ShrunkSampleRecreatorTests {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Property(tries = 10)
-	void singleParameter(
-		@ForAll @IntRange(min = 2, max = 1000) int initialValue,
-		@ForAll @IntRange(min = 1, max = 1000) int shrinkingResult
+	private PropertyShrinker createPropertyShrinker(
+		FalsifiedSample originalSample,
+		ShrinkingMode shrinkingMode, int boundedShrinkingSeconds
 	) {
-		Assume.that(initialValue > shrinkingResult);
-
-		List<Shrinkable<Object>> shrinkables = listOfShrinkableInts(initialValue);
-		FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
-		PropertyShrinker shrinker = new PropertyShrinker(
+		return new PropertyShrinker(
 			originalSample,
-			ShrinkingMode.FULL,
-			10,
+			shrinkingMode,
+			boundedShrinkingSeconds,
 			Mockito.mock(Consumer.class),
 			null
 		);
-
-		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i < shrinkingResult);
-		ShrunkFalsifiedSample shrunkSample = shrinker.shrink(falsifier);
-
-		assertThat(shrunkSample.parameters()).isEqualTo(asList(shrinkingResult));
-		assertThat(shrinker.shrinkingSequence()).hasSizeGreaterThan(0);
-
-		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
-		ShrunkFalsifiedSample recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
-		assertThat(recreatedSample).isEqualTo(shrunkSample);
 	}
 
 }
