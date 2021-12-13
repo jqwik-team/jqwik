@@ -117,7 +117,7 @@ public class PropertyShrinker {
 			return executionResult;
 		};
 
-		PlainShrinker plainShrinker = new PlainShrinker(
+		ShrinkingAlgorithm plainShrinker = new ShrinkingAlgorithm(
 			originalSample,
 			shrinkSampleConsumer,
 			shrinkAttemptConsumer

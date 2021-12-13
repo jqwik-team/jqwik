@@ -1,5 +1,7 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.math.*;
+import java.util.ArrayList;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -480,52 +482,6 @@ class PropertyShrinkerTests {
 		@ForAll @IntRange(min = 0, max = 100) int size
 	) {
 		return list.size() < size;
-	}
-
-	@Group
-	class RecreatingShrinkResultsFromShrinkingSequence {
-
-		@Property(tries = 10)
-		void singleParameter(@ForAll @IntRange(min = 1, max = 1000) int initialValue, @ForAll @IntRange(max = 1000) int shrinkingResult) {
-			Assume.that(initialValue > shrinkingResult);
-
-			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(initialValue);
-			FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
-			PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
-
-			Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i < shrinkingResult);
-			ShrunkFalsifiedSample shrunkSample = shrinker.shrink(falsifier);
-
-			assertThat(shrunkSample.parameters()).isEqualTo(asList(shrinkingResult));
-			assertThat(shrinker.shrinkingSequence()).hasSizeGreaterThan(0);
-
-			List<TryExecutionResult.Status> recreatingSequence = new ArrayList<>(shrinker.shrinkingSequence());
-			Falsifier<List<Object>> recreatingFalsifier = ignore -> {
-				if (!recreatingSequence.isEmpty()) {
-					TryExecutionResult.Status next = recreatingSequence.remove(0);
-					switch (next) {
-						case SATISFIED:
-							return TryExecutionResult.satisfied();
-						case INVALID:
-							return TryExecutionResult.invalid();
-						case FALSIFIED:
-							return TryExecutionResult.falsified(null);
-					}
-				}
-				return TryExecutionResult.satisfied();
-			};
-
-			PlainShrinker plainShrinker = new PlainShrinker(
-				originalSample,
-				ignore -> {},
-				ignore -> {}
-			);
-
-			FalsifiedSample recreatedSample = plainShrinker.shrink(recreatingFalsifier);
-
-			assertThat(recreatedSample.shrinkables()).isEqualTo(recreatedSample.shrinkables());
-		}
-
 	}
 
 	private class ShrinkToEmptyList0 extends ShrinkToChecker {
