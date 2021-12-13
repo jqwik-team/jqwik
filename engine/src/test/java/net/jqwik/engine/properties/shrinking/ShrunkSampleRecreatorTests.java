@@ -77,6 +77,39 @@ class ShrunkSampleRecreatorTests {
 		assertThat(recreatedSample).isEmpty();
 	}
 
+	@Example
+	void recreateWithInvalidResultsInShrinkingSequence() {
+
+		List<Shrinkable<Object>> shrinkables = listOfShrinkableInts(100);
+		FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
+		PropertyShrinker shrinker = createPropertyShrinker(originalSample, ShrinkingMode.FULL, 10);
+
+		Falsifier<List<Object>> falsifier = params -> {
+			Integer value = (Integer) params.get(0);
+			if (value % 2 != 0) {
+				return TryExecutionResult.invalid();
+			}
+			if (value > 41) {
+				return TryExecutionResult.falsified(null);
+			}
+			return TryExecutionResult.satisfied();
+		};
+		ShrunkFalsifiedSample shrunkSample = shrinker.shrink(falsifier);
+
+		assertThat(shrunkSample.parameters()).isEqualTo(asList(42));
+		assertThat(shrinker.shrinkingSequence()).hasSizeGreaterThan(0);
+		assertThat(shrinker.shrinkingSequence()).contains(
+			TryExecutionResult.Status.INVALID,
+			TryExecutionResult.Status.FALSIFIED,
+			TryExecutionResult.Status.SATISFIED
+		);
+
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
+		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
+		assertThat(recreatedSample).hasValue(shrunkSample);
+	}
+
+
 	@Property(tries = 10)
 	void recreateSeveralParameters(
 		@ForAll @IntRange(min = 2, max = 1000) int initialValue,
@@ -99,6 +132,7 @@ class ShrunkSampleRecreatorTests {
 		assertThat(recreatedSample).hasValue(shrunkSample);
 	}
 
+	// Takes >= 5 seconds due to sleeps in shrinking
 	@SuppressLogging
 	@Property(tries = 5, edgeCases = EdgeCasesMode.NONE)
 	void recreationWorksIfShrinkingBoundIsExceeded(@ForAll("sleepTime") int sleepMs) {
