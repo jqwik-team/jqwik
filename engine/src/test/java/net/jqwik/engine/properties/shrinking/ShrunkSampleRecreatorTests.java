@@ -36,9 +36,9 @@ class ShrunkSampleRecreatorTests {
 		assertThat(shrunkSample.parameters()).isEqualTo(asList(shrinkingResult));
 		assertThat(shrinker.shrinkingSequence()).hasSizeGreaterThan(0);
 
-		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
-		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
-		assertThat(recreatedSample).hasValue(shrunkSample);
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample.shrinkables());
+		Optional<List<Shrinkable<Object>>> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
+		assertThat(recreatedSample).hasValue(shrunkSample.shrinkables());
 	}
 
 	@Example
@@ -51,9 +51,9 @@ class ShrunkSampleRecreatorTests {
 		assertThat(shrunkSample.parameters()).isEqualTo(asList(42));
 		assertThat(shrunkSample.countShrinkingSteps()).isEqualTo(0);
 
-		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
-		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(Collections.emptyList());
-		assertThat(recreatedSample).hasValue(shrunkSample);
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample.shrinkables());
+		Optional<List<Shrinkable<Object>>> recreatedSample = recreator.recreateFrom(Collections.emptyList());
+		assertThat(recreatedSample).hasValue(shrunkSample.shrinkables());
 	}
 
 	@Example
@@ -67,13 +67,13 @@ class ShrunkSampleRecreatorTests {
 		assertThat(shrunkSample.parameters()).isEqualTo(asList(0));
 		assertThat(shrunkSample.countShrinkingSteps()).isEqualTo(0);
 
-		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample.shrinkables());
 		List<TryExecutionResult.Status> shrinkingSequence = Arrays.asList(
 			TryExecutionResult.Status.SATISFIED,
 			TryExecutionResult.Status.SATISFIED,
 			TryExecutionResult.Status.FALSIFIED
 		);
-		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinkingSequence);
+		Optional<List<Shrinkable<Object>>> recreatedSample = recreator.recreateFrom(shrinkingSequence);
 		assertThat(recreatedSample).isEmpty();
 	}
 
@@ -104,9 +104,9 @@ class ShrunkSampleRecreatorTests {
 			TryExecutionResult.Status.SATISFIED
 		);
 
-		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
-		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
-		assertThat(recreatedSample).hasValue(shrunkSample);
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample.shrinkables());
+		Optional<List<Shrinkable<Object>>> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
+		assertThat(recreatedSample).hasValue(shrunkSample.shrinkables());
 	}
 
 
@@ -127,9 +127,9 @@ class ShrunkSampleRecreatorTests {
 		assertThat(shrunkSample.parameters()).isEqualTo(asList(shrinkingResult, 0, 0));
 		assertThat(shrinker.shrinkingSequence()).hasSizeGreaterThan(0);
 
-		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
-		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
-		assertThat(recreatedSample).hasValue(shrunkSample);
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample.shrinkables());
+		Optional<List<Shrinkable<Object>>> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
+		assertThat(recreatedSample).hasValue(shrunkSample.shrinkables());
 	}
 
 	// Takes >= 5 seconds due to sleeps in shrinking
@@ -151,9 +151,9 @@ class ShrunkSampleRecreatorTests {
 		ShrunkFalsifiedSample shrunkSample = shrinker.shrink(falsifier);
 		// System.out.println(shrunkSample.shrinkables().get(0).value());
 
-		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample);
-		Optional<ShrunkFalsifiedSample> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
-		assertThat(recreatedSample).hasValue(shrunkSample);
+		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(originalSample.shrinkables());
+		Optional<List<Shrinkable<Object>>> recreatedSample = recreator.recreateFrom(shrinker.shrinkingSequence());
+		assertThat(recreatedSample).hasValue(shrunkSample.shrinkables());
 	}
 
 	@Provide
