@@ -6,6 +6,8 @@
 
 - 1.6.x
 
+    - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
+
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 

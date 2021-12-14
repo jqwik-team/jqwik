@@ -2,6 +2,7 @@ package net.jqwik.engine.execution;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
@@ -13,7 +14,10 @@ public class GenerationInfo implements Serializable {
 
 	private final String randomSeed;
 	private final int generationIndex;
-	private final List<TryExecutionResult.Status> shrinkingSequence;
+
+	// Store ordinals instead of enum objects so that serialization
+	// in jqwik.database uses less disk space
+	private final List<Byte> byteSequence;
 
 	public GenerationInfo(String randomSeed) {
 		this(randomSeed, 0);
@@ -23,16 +27,20 @@ public class GenerationInfo implements Serializable {
 		this(randomSeed, generationIndex, Collections.emptyList());
 	}
 
-	private GenerationInfo(String randomSeed, int generationIndex, List<TryExecutionResult.Status> shrinkingSequence) {
+	private GenerationInfo(String randomSeed, int generationIndex, List<Byte> byteSequence) {
 		this.randomSeed = randomSeed != null ? (randomSeed.isEmpty() ? null : randomSeed) : null;
 		this.generationIndex = generationIndex;
-		this.shrinkingSequence = shrinkingSequence;
+		this.byteSequence = byteSequence;
+	}
+
+	private List<Byte> toByteSequence(List<TryExecutionResult.Status> shrinkingSequence) {
+		return shrinkingSequence.stream().map(status -> (byte) status.ordinal()).collect(Collectors.toList());
 	}
 
 	public GenerationInfo appendShrinkingSequence(List<TryExecutionResult.Status> toAppend) {
-		List<TryExecutionResult.Status> newShrinkingSequence = new ArrayList<>(shrinkingSequence);
-		newShrinkingSequence.addAll(toAppend);
-		return new GenerationInfo(randomSeed, generationIndex, newShrinkingSequence);
+		List<Byte> newByteSequence = new ArrayList<>(byteSequence);
+		newByteSequence.addAll(toByteSequence(toAppend));
+		return new GenerationInfo(randomSeed, generationIndex, newByteSequence);
 	}
 
 	public Optional<String> randomSeed() {
@@ -53,7 +61,7 @@ public class GenerationInfo implements Serializable {
 
 	private Optional<List<Shrinkable<Object>>> useShrinkingSequence(List<Shrinkable<Object>> sample) {
 		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(sample);
-		return recreator.recreateFrom(shrinkingSequence);
+		return recreator.recreateFrom(shrinkingSequence());
 	}
 
 	private List<Shrinkable<Object>> useGenerationIndex(ParametersGenerator generator, TryLifecycleContext context) {
@@ -72,17 +80,27 @@ public class GenerationInfo implements Serializable {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
+
 		GenerationInfo that = (GenerationInfo) o;
-		return generationIndex == that.generationIndex && Objects.equals(randomSeed, that.randomSeed);
+		if (generationIndex != that.generationIndex) return false;
+		if (!Objects.equals(randomSeed, that.randomSeed)) return false;
+		return byteSequence.equals(that.byteSequence);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(randomSeed, generationIndex);
+		int result = randomSeed != null ? randomSeed.hashCode() : 0;
+		result = 31 * result + generationIndex;
+		return result;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("GenerationInfo(seed=%s,index=%s,shrinkingSequence.size=%s)", randomSeed, generationIndex, shrinkingSequence.size());
+		return String.format("GenerationInfo(seed=%s,index=%s,shrinkingSequence.size=%s)", randomSeed, generationIndex, byteSequence.size());
 	}
+
+	public List<TryExecutionResult.Status> shrinkingSequence() {
+		return byteSequence.stream().map(ordinal -> TryExecutionResult.Status.values()[ordinal]).collect(Collectors.toList());
+	}
+
 }
