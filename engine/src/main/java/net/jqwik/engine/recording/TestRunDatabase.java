@@ -7,6 +7,9 @@ import java.util.logging.*;
 
 public class TestRunDatabase {
 
+	// Only record failing test runs, the others are currently not needed anywhere
+	private static final Boolean RECORD_SUCCESSFUL_RUNS = false;
+
 	private static final Logger LOG = Logger.getLogger(TestRunDatabase.class.getName());
 
 	private final Path databasePath;
@@ -93,7 +96,9 @@ public class TestRunDatabase {
 				return;
 			}
 			try {
-				objectOutputStream.writeObject(testRun);
+				if (testRun.isNotSuccessful() || RECORD_SUCCESSFUL_RUNS) {
+					objectOutputStream.writeObject(testRun);
+				}
 			} catch (IOException e) {
 				stopRecording = true;
 				logWriteException(e);
