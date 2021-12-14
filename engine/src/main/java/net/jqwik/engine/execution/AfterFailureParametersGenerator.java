@@ -10,7 +10,6 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 
 	private static final Logger LOG = Logger.getLogger(AfterFailureParametersGenerator.class.getName());
 
-	private final AfterFailureMode afterFailureMode;
 	private final GenerationInfo previousFailureGeneration;
 	private final ParametersGenerator parametersGenerator;
 
@@ -25,7 +24,6 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 	) {
 		logAfterFailureHandling(afterFailureMode, previousFailureGeneration);
 		initializeRunningState(afterFailureMode, previousFailureGeneration);
-		this.afterFailureMode = afterFailureMode;
 		this.previousFailureGeneration = previousFailureGeneration;
 		this.parametersGenerator = parametersGenerator;
 	}

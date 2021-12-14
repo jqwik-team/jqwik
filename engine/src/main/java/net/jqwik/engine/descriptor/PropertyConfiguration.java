@@ -154,4 +154,8 @@ public class PropertyConfiguration {
 	public PropertyConfiguration withFixedSeed() {
 		return withSeed(getSeed());
 	}
+
+	public boolean seedHasNotChanged() {
+		return getSeed().equals(getPreviousFailureGeneration().randomSeed().orElse(null));
+	}
 }
