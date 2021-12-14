@@ -70,17 +70,17 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 	@Override
 	public List<Shrinkable<Object>> next(TryLifecycleContext context) {
 		if (runWithPreviousSample) {
-			List<Shrinkable<Object>> previousSample = generatePreviousSample(context);
+			Optional<List<Shrinkable<Object>>> previousSample = generatePreviousSample(context);
 			runWithPreviousSample = false;
 			parametersGenerator.reset();
-			if (previousSample == null) {
+			if (previousSample.isPresent()) {
+				previousSampleHasJustRun = true;
+				return previousSample.get();
+			} else {
 				logFailingOfPreviousSampleGeneration();
 				continueWithSeed = true;
 				return next(context);
-			} else {
-				previousSampleHasJustRun = true;
 			}
-			return previousSample;
 		}
 		if (continueWithSeed) {
 			previousSampleHasJustRun = false;
@@ -97,7 +97,7 @@ public class AfterFailureParametersGenerator implements ParametersGenerator {
 		LOG.warning(message);
 	}
 
-	private List<Shrinkable<Object>> generatePreviousSample(TryLifecycleContext context) {
+	private Optional<List<Shrinkable<Object>>> generatePreviousSample(TryLifecycleContext context) {
 		return previousFailureGeneration.generateOn(parametersGenerator, context);
 	}
 

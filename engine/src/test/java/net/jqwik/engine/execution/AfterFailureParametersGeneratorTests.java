@@ -1,40 +1,59 @@
 package net.jqwik.engine.execution;
 
+import java.math.*;
 import java.util.*;
 
 import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.properties.*;
+import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.api.lifecycle.TryExecutionResult.Status.*;
 
 @SuppressLogging
 class AfterFailureParametersGeneratorTests {
 
 	ParametersGenerator generator = new ParametersGenerator() {
 		int index = 0;
+
 		@Override
 		public boolean hasNext() {
 			return index < 25;
 		}
+
 		@Override
 		public List<Shrinkable<Object>> next(TryLifecycleContext context) {
-			return Arrays.asList(Shrinkable.unshrinkable(++index));
+			return Arrays.asList(shrinkableInt(++index));
 		}
+
+		private Shrinkable<Object> shrinkableInt(int anInt) {
+			Range<BigInteger> range = Range.of(BigInteger.ZERO, BigInteger.valueOf(1000));
+			BigInteger value = BigInteger.valueOf(anInt);
+			return new ShrinkableBigInteger(value, range, BigInteger.ZERO)
+				.map(BigInteger::intValueExact)
+				.asGeneric();
+		}
+
 		@Override
 		public int edgeCasesTotal() {
 			return 0;
 		}
+
 		@Override
 		public int edgeCasesTried() {
 			return 0;
 		}
+
 		@Override
 		public GenerationInfo generationInfo(String randomSeed) {
 			return new GenerationInfo(randomSeed, index);
 		}
+
 		@Override
 		public void reset() {
 			index = 0;
@@ -96,16 +115,20 @@ class AfterFailureParametersGeneratorTests {
 
 	@Example
 	void afterFailureMode_SampleOnly_generateSampleOnly() {
+		// Generate 13, then shrink to 2
+		GenerationInfo generationInfo = new GenerationInfo("42", 13)
+			.appendShrinkingSequence(Arrays.asList(SATISFIED, SATISFIED, FALSIFIED));
+
 		ParametersGenerator afterFailureGenerator = new AfterFailureParametersGenerator(
 			AfterFailureMode.SAMPLE_ONLY,
-			new GenerationInfo("42", 13),
+			generationInfo,
 			generator
 		);
 
 		assertThat(afterFailureGenerator.hasNext()).isTrue();
-		assertThat(afterFailureGenerator.next(context).get(0).value()).isEqualTo(13);
+		assertThat(afterFailureGenerator.next(context).get(0).value()).isEqualTo(2);
 		assertThat(afterFailureGenerator.generationInfo("42"))
-			.isEqualTo(new GenerationInfo("42", 13));
+			.isEqualTo(generationInfo);
 
 		assertThat(afterFailureGenerator.hasNext()).isFalse();
 	}
@@ -114,7 +137,7 @@ class AfterFailureParametersGeneratorTests {
 	void afterFailureMode_SampleCannotBeGenerated_thenUsePlainGenerator() {
 		ParametersGenerator afterFailureGenerator = new AfterFailureParametersGenerator(
 			AfterFailureMode.SAMPLE_ONLY,
-			new GenerationInfo("42", 33),
+			new GenerationInfo("42", 133),
 			generator
 		);
 
