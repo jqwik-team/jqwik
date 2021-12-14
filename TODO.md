@@ -2,7 +2,6 @@
 
     - Make falsified samples reproducible in other way than serialization
       - Add shrinking sequence to GeneratorInfo and previous sample generation
-      - Test and optimize serialization of TestRun/GeneratorInfo with up to 1500 elements in shrinking sequence
 
 - 1.6.x
 

@@ -43,6 +43,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Parameter annotations on array types (e.g. `@WithNull String[]`) 
   [are no longer applied to the component type](/docs/snapshot/user-guide.html#constraining-array-types).
 
+- The jqwik database now only stores data of failing tests and properties.
+
 #### Bug Fixes
 
 - Using `@WithNull` on primitive array types no longer leads to an `IllegalArgumentException`.
