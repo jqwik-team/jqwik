@@ -38,6 +38,12 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - Added `PropertyDefaults.maxDiscardRatio`
 
+- Complete Rework of after-failure handling:
+  - `AfterFailureMode.SAMPLE_FIRST` and `AfterFailureMode.SAMPLE_ONLY` no longer depends on serializability of generated parameters.
+  - If random seed is manually changed after a failing test run using `Property.seed=<new random seed>`
+    the configured after-failure-mode does not apply for the next test run.
+  - `SAMPLE_FIRST` and `SAMPLE_ONLY` now also work for data-driven properties and exhaustive generation.
+
 #### Breaking Changes
 
 - Parameter annotations on array types (e.g. `@WithNull String[]`) 
@@ -51,6 +57,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
   See https://github.com/jlink/jqwik/issues/270.
 
 - Generic array types in parameters can now be properly resolved
+
+- After-failure handling now (hopefully) works as expected
 
 ## 1.6.1
 

@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.*;
@@ -179,8 +180,10 @@ public class GenericProperty {
 		int countTries, FalsifiedSample originalSample,
 		Method targetMethod
 	) {
-		ShrunkFalsifiedSample shrunkSample = shrink(reporter, reporting, originalSample, targetMethod);
-		GenerationInfo generationInfo = parametersGenerator.generationInfo(configuration.getSeed());
+		Tuple2<ShrunkFalsifiedSample, List<TryExecutionResult.Status>> tuple = shrink(reporter, reporting, originalSample, targetMethod);
+		ShrunkFalsifiedSample shrunkSample = tuple.get1();
+		GenerationInfo generationInfo = parametersGenerator.generationInfo(configuration.getSeed())
+														   .appendShrinkingSequence(tuple.get2());
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, generationInfo, configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
@@ -188,7 +191,7 @@ public class GenericProperty {
 		);
 	}
 
-	private ShrunkFalsifiedSample shrink(
+	private Tuple2<ShrunkFalsifiedSample, List<TryExecutionResult.Status>> shrink(
 		Reporter reporter,
 		Reporting[] reporting,
 		FalsifiedSample originalSample,
@@ -208,7 +211,8 @@ public class GenericProperty {
 		);
 
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
-		return shrinker.shrink(forAllFalsifier);
+		ShrunkFalsifiedSample falsifiedSample = shrinker.shrink(forAllFalsifier);
+		return Tuple.of(falsifiedSample, shrinker.shrinkingSequence());
 	}
 
 	private Consumer<FalsifiedSample> createFalsifiedSampleReporter(Reporter reporter, Reporting[] reporting) {

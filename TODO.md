@@ -1,8 +1,5 @@
 - 1.6.2
 
-    - Make falsified samples reproducible in other way than serialization
-      - Add shrinking sequence to GeneratorInfo and previous sample generation
-
 - 1.6.x
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
