@@ -180,7 +180,7 @@ public class EmailsTests {
 
 	@Group
 	@PropertyDefaults(tries = 10)
-	class Shrinking {
+	class ShrinkingTests {
 
 		@Property
 		void defaultShrinking(@ForAll Random random) {
