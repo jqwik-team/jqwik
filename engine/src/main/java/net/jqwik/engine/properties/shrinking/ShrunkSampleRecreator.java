@@ -2,21 +2,25 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 
 public class ShrunkSampleRecreator {
-	private final FalsifiedSample originalSample;
 
-	public ShrunkSampleRecreator(FalsifiedSample originalSample) {
-		this.originalSample = originalSample;
+	private final List<Shrinkable<Object>> shrinkables;
+
+	public ShrunkSampleRecreator(List<Shrinkable<Object>> shrinkables) {
+		this.shrinkables = shrinkables;
 	}
 
-	public Optional<ShrunkFalsifiedSample> recreateFrom(List<TryExecutionResult.Status> shrinkingSequence) {
+	public Optional<List<Shrinkable<Object>>> recreateFrom(List<TryExecutionResult.Status> shrinkingSequence) {
 		List<TryExecutionResult.Status> recreatingSequence = new ArrayList<>(shrinkingSequence);
 		Falsifier<List<Object>> recreatingFalsifier = falsifier(recreatingSequence);
+
+		FalsifiedSample originalSample = createFalsifiedSample();
 
 		AtomicInteger shrinkingSteps = new AtomicInteger(0);
 		ShrinkingAlgorithm plainShrinker = new ShrinkingAlgorithm(
@@ -28,10 +32,20 @@ public class ShrunkSampleRecreator {
 		FalsifiedSample recreatedSample = plainShrinker.shrink(recreatingFalsifier);
 
 		if (recreatingSequence.isEmpty()) {
-			return Optional.of(new ShrunkFalsifiedSampleImpl(recreatedSample, shrinkingSteps.get()));
+			return Optional.of(recreatedSample.shrinkables());
 		} else {
 			return Optional.empty();
 		}
+	}
+
+	private FalsifiedSample createFalsifiedSample() {
+		List<Object> parameters = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+		return new FalsifiedSampleImpl(
+			parameters,
+			shrinkables,
+			null,
+			Collections.emptyList()
+		);
 	}
 
 	private Falsifier<List<Object>> falsifier(List<TryExecutionResult.Status> recreatingSequence) {
