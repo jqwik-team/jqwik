@@ -12,7 +12,7 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 	private final List<MethodParameter> propertyParameters;
 	private final ForAllParametersGenerator forAllParametersGenerator;
 	private final ParameterSupplierResolver parameterSupplierResolver;
-	private int generationIndex = 0;
+	private int currentGenerationIndex = 0;
 
 	public ResolvingParametersGenerator(
 		List<MethodParameter> propertyParameters,
@@ -44,7 +44,7 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 			}
 		}
 
-		generationIndex++;
+		currentGenerationIndex++;
 		return next;
 	}
 
@@ -60,7 +60,7 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 
 	@Override
 	public GenerationInfo generationInfo(String randomSeed) {
-		return new GenerationInfo(randomSeed, generationIndex);
+		return new GenerationInfo(randomSeed, currentGenerationIndex);
 	}
 
 	private Shrinkable<Object> findResolvableParameter(MethodParameter parameter, TryLifecycleContext tryLifecycleContext) {
@@ -75,6 +75,7 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 
 	@Override
 	public void reset() {
+		currentGenerationIndex = 0;
 		forAllParametersGenerator.reset();
 	}
 }

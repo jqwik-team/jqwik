@@ -17,7 +17,7 @@ public class GenerationInfo implements Serializable {
 
 	// Store ordinals instead of enum objects so that serialization
 	// in jqwik.database uses less disk space
-	private final List<Byte> byteSequence;
+	private final List<List<Byte>> byteSequences;
 
 	public GenerationInfo(String randomSeed) {
 		this(randomSeed, 0);
@@ -27,10 +27,10 @@ public class GenerationInfo implements Serializable {
 		this(randomSeed, generationIndex, Collections.emptyList());
 	}
 
-	private GenerationInfo(String randomSeed, int generationIndex, List<Byte> byteSequence) {
+	private GenerationInfo(String randomSeed, int generationIndex, List<List<Byte>> byteSequences) {
 		this.randomSeed = randomSeed != null ? (randomSeed.isEmpty() ? null : randomSeed) : null;
 		this.generationIndex = generationIndex;
-		this.byteSequence = byteSequence;
+		this.byteSequences = byteSequences;
 	}
 
 	private List<Byte> toByteSequence(List<TryExecutionResult.Status> shrinkingSequence) {
@@ -38,9 +38,12 @@ public class GenerationInfo implements Serializable {
 	}
 
 	public GenerationInfo appendShrinkingSequence(List<TryExecutionResult.Status> toAppend) {
-		List<Byte> newByteSequence = new ArrayList<>(byteSequence);
-		newByteSequence.addAll(toByteSequence(toAppend));
-		return new GenerationInfo(randomSeed, generationIndex, newByteSequence);
+		if (toAppend.isEmpty()) {
+			return this;
+		}
+		List<List<Byte>> newByteSequences = new ArrayList<>(byteSequences);
+		newByteSequences.add(toByteSequence(toAppend));
+		return new GenerationInfo(randomSeed, generationIndex, newByteSequences);
 	}
 
 	public Optional<String> randomSeed() {
@@ -53,15 +56,26 @@ public class GenerationInfo implements Serializable {
 
 	public Optional<List<Shrinkable<Object>>> generateOn(ParametersGenerator generator, TryLifecycleContext context) {
 		List<Shrinkable<Object>> sample = useGenerationIndex(generator, context);
-		if (sample == null) {
-			return Optional.empty();
-		}
-		return useShrinkingSequence(sample);
+		return useShrinkingSequences(sample);
 	}
 
-	private Optional<List<Shrinkable<Object>>> useShrinkingSequence(List<Shrinkable<Object>> sample) {
+	private Optional<List<Shrinkable<Object>>> useShrinkingSequences(List<Shrinkable<Object>> sample) {
+		Optional<List<Shrinkable<Object>>> shrunkSample = Optional.ofNullable(sample);
+		for (List<TryExecutionResult.Status> shrinkingSequence : shrinkingSequences()) {
+			if (!shrunkSample.isPresent()) {
+				break;
+			}
+			shrunkSample = shrink(shrunkSample.get(), shrinkingSequence);
+		}
+		return shrunkSample;
+	}
+
+	private Optional<List<Shrinkable<Object>>> shrink(
+		List<Shrinkable<Object>> sample,
+		List<TryExecutionResult.Status> shrinkingSequence
+	) {
 		ShrunkSampleRecreator recreator = new ShrunkSampleRecreator(sample);
-		return recreator.recreateFrom(shrinkingSequence());
+		return recreator.recreateFrom(shrinkingSequence);
 	}
 
 	private List<Shrinkable<Object>> useGenerationIndex(ParametersGenerator generator, TryLifecycleContext context) {
@@ -76,6 +90,16 @@ public class GenerationInfo implements Serializable {
 		return sample;
 	}
 
+	public List<List<TryExecutionResult.Status>> shrinkingSequences() {
+		return byteSequences.stream()
+							.map(this::toShrinkingSequence)
+							.collect(Collectors.toList());
+	}
+
+	private List<TryExecutionResult.Status> toShrinkingSequence(List<Byte> sequence) {
+		return sequence.stream().map(ordinal -> TryExecutionResult.Status.values()[ordinal]).collect(Collectors.toList());
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -84,7 +108,7 @@ public class GenerationInfo implements Serializable {
 		GenerationInfo that = (GenerationInfo) o;
 		if (generationIndex != that.generationIndex) return false;
 		if (!Objects.equals(randomSeed, that.randomSeed)) return false;
-		return byteSequence.equals(that.byteSequence);
+		return byteSequences.equals(that.byteSequences);
 	}
 
 	@Override
@@ -96,11 +120,8 @@ public class GenerationInfo implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("GenerationInfo(seed=%s,index=%s,shrinkingSequence.size=%s)", randomSeed, generationIndex, byteSequence.size());
+		List<String> sizes = byteSequences.stream().map(bytes -> "size=" + bytes.size()).collect(Collectors.toList());
+		Tuple.Tuple3<String, Integer, List<String>> tuple = Tuple.of(randomSeed, generationIndex, sizes);
+		return String.format("GenerationInfo%s", tuple);
 	}
-
-	public List<TryExecutionResult.Status> shrinkingSequence() {
-		return byteSequence.stream().map(ordinal -> TryExecutionResult.Status.values()[ordinal]).collect(Collectors.toList());
-	}
-
 }

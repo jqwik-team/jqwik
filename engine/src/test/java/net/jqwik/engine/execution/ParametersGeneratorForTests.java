@@ -8,13 +8,13 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-class ParametersGeneratorForTests implements ParametersGenerator{
+class ParametersGeneratorForTests implements ParametersGenerator {
 
 	int index = 0;
 
 	@Override
 	public boolean hasNext() {
-		return index < 25;
+		return index < 200;
 	}
 
 	@Override

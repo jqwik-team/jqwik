@@ -1,14 +1,11 @@
 package net.jqwik.engine.execution;
 
-import java.math.*;
 import java.util.*;
 
 import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -97,7 +94,7 @@ class AfterFailureParametersGeneratorTests {
 	void afterFailureMode_SampleCannotBeGenerated_thenUsePlainGenerator() {
 		ParametersGenerator afterFailureGenerator = new AfterFailureParametersGenerator(
 			AfterFailureMode.SAMPLE_ONLY,
-			new GenerationInfo("42", 133),
+			new GenerationInfo("42", 233),
 			generator
 		);
 

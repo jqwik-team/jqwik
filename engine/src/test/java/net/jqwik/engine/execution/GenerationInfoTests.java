@@ -21,7 +21,7 @@ class GenerationInfoTests {
 		GenerationInfo generationInfo = new GenerationInfo("4242");
 		assertThat(generationInfo.randomSeed()).hasValue("4242");
 		assertThat(generationInfo.generationIndex()).isEqualTo(0);
-		assertThat(generationInfo.shrinkingSequence()).isEmpty();
+		assertThat(generationInfo.shrinkingSequences()).isEmpty();
 	}
 
 	@Example
@@ -32,13 +32,24 @@ class GenerationInfoTests {
 	}
 
 	@Example
-	void appendShrinkingSequence() {
+	void appendShrinkingSequences() {
 		GenerationInfo generationInfo = new GenerationInfo("4242", 41)
 			.appendShrinkingSequence(Arrays.asList(SATISFIED, FALSIFIED));
-		assertThat(generationInfo.shrinkingSequence()).containsExactly(SATISFIED, FALSIFIED);
+		assertThat(generationInfo.shrinkingSequences()).containsExactly(
+			Arrays.asList(SATISFIED, FALSIFIED)
+		);
 
 		generationInfo = generationInfo.appendShrinkingSequence(Arrays.asList(INVALID, FALSIFIED));
-		assertThat(generationInfo.shrinkingSequence()).containsExactly(SATISFIED, FALSIFIED, INVALID, FALSIFIED);
+		assertThat(generationInfo.shrinkingSequences()).containsExactly(
+			Arrays.asList(SATISFIED, FALSIFIED),
+			Arrays.asList(INVALID, FALSIFIED)
+		);
+
+		generationInfo = generationInfo.appendShrinkingSequence(Arrays.asList());
+		assertThat(generationInfo.shrinkingSequences()).containsExactly(
+			Arrays.asList(SATISFIED, FALSIFIED),
+			Arrays.asList(INVALID, FALSIFIED)
+		);
 	}
 
 	@Group
@@ -62,6 +73,21 @@ class GenerationInfoTests {
 		@Example
 		void generateWithShrinkingSequence() {
 			GenerationInfo generationInfo = new GenerationInfo("4242", 23)
+				.appendShrinkingSequence(Arrays.asList(SATISFIED, SATISFIED, FALSIFIED));
+
+			Optional<List<Shrinkable<Object>>> sample = generationInfo.generateOn(generator, context);
+			assertThat(sample).isPresent();
+			sample.ifPresent(shrinkables -> {
+				Object value = shrinkables.get(0).value();
+				assertThat(value).isEqualTo(2);
+			});
+		}
+
+		@Example
+		void generateWithSeveralShrinkingSequences() {
+			// Shrink 199 to 13, then shrink 13 to 2.
+			GenerationInfo generationInfo = new GenerationInfo("4242", 199)
+				.appendShrinkingSequence(Arrays.asList(SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, FALSIFIED))
 				.appendShrinkingSequence(Arrays.asList(SATISFIED, SATISFIED, FALSIFIED));
 
 			Optional<List<Shrinkable<Object>>> sample = generationInfo.generateOn(generator, context);
@@ -116,6 +142,21 @@ class GenerationInfoTests {
 		void serializeWithShortShrinkingSequence(@ForAll("shrinkingSequence") @Size(max = 10) List<Status> sequence) throws Exception {
 			GenerationInfo generationInfo = new GenerationInfo("4242", 41)
 				.appendShrinkingSequence(sequence);
+
+			outputStream().writeObject(generationInfo);
+
+			// System.out.println("### size: " + byteArrayOutputStream.toByteArray().length);
+
+			GenerationInfo read = (GenerationInfo) inputStream().readObject();
+			assertThat(read).isEqualTo(generationInfo);
+		}
+
+		@Property(tries = 10)
+		void serializeWithSeveralShrinkingSequences(@ForAll @Size(3) List<@Size(max = 10) @From("shrinkingSequence") List<Status>> sequences) throws Exception {
+			GenerationInfo generationInfo = new GenerationInfo("4242", 41);
+			for (List<Status> sequence : sequences) {
+				generationInfo = generationInfo.appendShrinkingSequence(sequence);
+			}
 
 			outputStream().writeObject(generationInfo);
 
