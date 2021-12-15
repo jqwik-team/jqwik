@@ -34,6 +34,6 @@ The `afterFailure` property can have one of four values:
 
 
 You can also determine the default behaviour of all properties by setting
-the `jqwik.failures.after.default` parameter in the [configuration file](jqwik-configuration)
+the `jqwik.failures.after.default` parameter in the [configuration file](#jqwik-configuration)
 to one of those enum values.
 

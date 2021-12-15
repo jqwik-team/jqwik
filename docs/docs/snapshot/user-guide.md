@@ -4381,7 +4381,7 @@ This is exactly what _jqwik_ will do:
   all combinations will be generated.
 - You can also enforce an exhaustive or randomized generation mode by using the
   [Property.generation attribute](#optional-property-attributes).
-  The default generation mode can be set in the [configuration file](jqwik-configuration).
+  The default generation mode can be set in the [configuration file](#jqwik-configuration).
 - If _jqwik_ cannot figure out how to do exhaustive generation for one of the
   participating arbitraries it will switch to randomized generation if in auto mode
   or throw an exception if in exhaustive mode.
@@ -4497,7 +4497,7 @@ The `afterFailure` property can have one of four values:
 
 
 You can also determine the default behaviour of all properties by setting
-the `jqwik.failures.after.default` parameter in the [configuration file](jqwik-configuration)
+the `jqwik.failures.after.default` parameter in the [configuration file](#jqwik-configuration)
 to one of those enum values.
 
 
