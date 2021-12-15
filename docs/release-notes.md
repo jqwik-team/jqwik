@@ -33,23 +33,25 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 </p>
 
 
-
 #### New and Enhanced Features
 
-- Added `PropertyDefaults.maxDiscardRatio`
-
-- Complete Rework of after-failure handling:
+- Complete Rework of [after-failure handling](/docs/snapshot/user-guide.html#rerunning-falsified-properties):
   - `AfterFailureMode.SAMPLE_FIRST` and `AfterFailureMode.SAMPLE_ONLY` no longer depends on serializability of generated parameters.
   - If random seed is manually changed after a failing test run using `Property.seed=<new random seed>`
     the configured after-failure-mode does not apply for the next test run.
   - `SAMPLE_FIRST` and `SAMPLE_ONLY` now also work for data-driven properties and exhaustive generation.
+    I recommend now to use `SAMPLE_FIRST` as 
+    [default configuration value](/docs/snapshot/user-guide.html#jqwik-configuration) for most projects. 
+
+- Added `PropertyDefaults.maxDiscardRatio`
 
 #### Breaking Changes
 
 - Parameter annotations on array types (e.g. `@WithNull String[]`) 
   [are no longer applied to the component type](/docs/snapshot/user-guide.html#constraining-array-types).
 
-- The jqwik database now only stores data of failing tests and properties.
+- The jqwik database no longer stores test run data for succeeding tests and properties.
+  This means that the file `.jqwik-database` in now much smaller in most cases.
 
 #### Bug Fixes
 
