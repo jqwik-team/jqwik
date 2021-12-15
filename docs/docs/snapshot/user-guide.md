@@ -646,16 +646,16 @@ annotation has a few optional values:
       for more information.
 
 - `AfterFailureMode afterFailure`: Determines how jqwik will generate values of a property
-  that has failed in the previous run.
+  that has [failed in the previous run](#rerunning-falsified-properties).
 
     - `AfterFailureMode.PREVIOUS_SEED` is the default. jqwik will use the same seed and thereby generate
       the same sequence of parameters as in the previous, failing run.
-    - `AfterFailureMode.SAMPLE_ONLY` means that jqwik will only use the last shrunk example of parameters.
-      This requires that all parameters can be serialized.
-    - `AfterFailureMode.SAMPLE_FIRST` means that jqwik will use the last shrunk example of parameters first
+    - `AfterFailureMode.SAMPLE_ONLY` means that jqwik will only use the last _shrunk set of parameters_.
+    - `AfterFailureMode.SAMPLE_FIRST` means that jqwik will use the last shrunk set of parameters first
       and then, if successful, go for a new randomly generated set of parameters.
     - `AfterFailureMode.RANDOM_SEED` makes jqwik use a new random seed even directly after a failure.
       This might lead to a "flaky" property that sometimes fails and sometimes succeeds.
+      If the seed for this property has been fixed, the fixed seed will always be used.
 
 - `EdgeCasesMode edgeCases`: Determines if and when jqwik will generate
   the permutation of [edge cases](#generation-of-edge-cases).
