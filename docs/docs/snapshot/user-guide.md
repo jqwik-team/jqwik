@@ -308,7 +308,7 @@ There is also a comprehensive
 Since Gradle does not yet support JUnit platform reporting --
 [see this Github issue](https://github.com/gradle/gradle/issues/4605) --
 jqwik has switched to do its own reporting by default. This behaviour
-[can be configured](#jqwik-configuration) through parameter `useJunitPlatformReporter`
+[can be configured](#jqwik-configuration) through parameter `jqwik.reporting.usejunitplatform`
 (default: `false`).
 
 If you want to see jqwik's reports in the output use Gradle's command line option `--info`:
@@ -1309,7 +1309,7 @@ as well as for elements in the array.
 
 This behaviour __has changed with version `1.6.2` in an incompatible way__:
 Annotations are only applied to the array itself.
-The reason is that there was no way to specify if an annotation should be applied the array type, the component type or both.
+The reason is that there was no way to specify if an annotation should be applied to the array type, the component type or both.
 Therefore, the example above must be re-written as:
 
 ```java
@@ -4463,14 +4463,14 @@ the external data was conceived or generated.
 
 When you rerun properties after they failed, they will - by default - use
 the previous random seed so that the next run will generate the exact same
-parameter data and thereby expose the same failing behaviour. This simplifies
-debugging and regression testing since it makes a property's falsification
+sequence of parameter data and thereby expose the same failing behaviour. 
+This simplifies debugging and regression testing since it makes a property's falsification
 stick until the problem has been fixed.
 
 If you want to, you can change this behaviour for a given property like this:
 
 ```java
-@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+@Property(afterFailure = AfterFailureMode.PREVIOUS_SEED)
 void myProperty() { ... }
 ```
 
@@ -4488,16 +4488,16 @@ The `afterFailure` property can have one of four values:
   void myProperty() { ... }
   ```
 
-- `AfterFailureMode.SAMPLE_ONLY`: Only run the property with just the last falsified (and shrunk)
-  generated sample set of parameters. This only works if all parameters could
-  be serialized. Look into your test run log to check out if a serialization problem occurred.
+- `AfterFailureMode.SAMPLE_ONLY`: Only run the property with just the last falsified (and shrunk) generated sample set of parameters. 
+  This only works if generation and shrinking will still lead to the same results as in the previous failing run.
+  If the previous sample cannot be reproduced the property will restart with the previous run's random seed.
 
 - `AfterFailureMode.SAMPLE_FIRST`: Same as `SAMPLE_ONLY` but generate additional examples if the
-  property no longer fails with the recorded sample.
+  property no longer fails with the previous sample.
 
 
 You can also determine the default behaviour of all properties by setting
-the `defaultAfterFailure` property in the [configuration file](jqwik-configuration)
+the `jqwik.failures.after.default` parameter in the [configuration file](jqwik-configuration)
 to one of those enum values.
 
 
