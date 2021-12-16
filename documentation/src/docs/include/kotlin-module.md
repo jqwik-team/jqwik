@@ -417,6 +417,8 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
   `Builders.BuilderCombinator.use(arbitrary).in(combinator)` which requires backticks
   in Kotlin because "in" is a keyword.
 
+- `frequency(vararg frequencies: Pair<Int, T>)` can replace `Arbitraries.frequency(vararg Tuple.Tuple2<Int, T>)`
+
 
 #### Quirks and Bugs
 

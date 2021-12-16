@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import net.jqwik.api.Arbitraries
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.Functions
+import net.jqwik.api.Tuple
 import net.jqwik.api.arbitraries.FunctionArbitrary
 import net.jqwik.api.arbitraries.TypeArbitrary
 import org.apiguardian.api.API
@@ -105,6 +106,19 @@ inline fun <reified T> anyForType(): TypeArbitrary<T> {
  * This is a Kotlin convenience for [Arbitraries.of] which requires the Java class of the enum instead.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-inline fun <reified T:Enum<T>> Enum.Companion.any(): Arbitrary<T> {
+inline fun <reified T : Enum<T>> Enum.Companion.any(): Arbitrary<T> {
     return Arbitraries.of(T::class.java)
+}
+
+/**
+ * Function to create a one of the provided values with a given frequency.
+ *
+ * This is a Kotlin convenience for [Arbitraries.frequency] which takes [Pair]s instead of jqwik tuples.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.2")
+fun <T> frequency(vararg frequencies: Pair<Int, T>): Arbitrary<T> {
+    val listOfFrequencies: List<Tuple.Tuple2<Int, T>> = frequencies
+        .map { pair -> Tuple.of(pair.first, pair.second) }
+        .toList()
+    return Arbitraries.frequency(listOfFrequencies)
 }
