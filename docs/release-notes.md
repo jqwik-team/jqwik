@@ -45,6 +45,10 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - Added `PropertyDefaults.maxDiscardRatio`
 
+- Added two Kotlin convenience functions:
+  - `fun <T> frequency(vararg frequencies: Pair<Int, T>)` 
+  - `fun <T> frequencyOf(vararg frequencies: Pair<Int, Arbitrary<out T>>)` 
+
 #### Breaking Changes
 
 - Parameter annotations on array types (e.g. `@WithNull String[]`) 
