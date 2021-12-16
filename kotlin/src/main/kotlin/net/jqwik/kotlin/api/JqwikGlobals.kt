@@ -111,7 +111,7 @@ inline fun <reified T : Enum<T>> Enum.Companion.any(): Arbitrary<T> {
 }
 
 /**
- * Function to create a one of the provided values with a given frequency.
+ * Function to create arbitrary that generates one of the provided values with a given frequency.
  *
  * This is a Kotlin convenience for [Arbitraries.frequency] which takes [Pair]s instead of jqwik tuples.
  */
@@ -121,4 +121,18 @@ fun <T> frequency(vararg frequencies: Pair<Int, T>): Arbitrary<T> {
         .map { pair -> Tuple.of(pair.first, pair.second) }
         .toList()
     return Arbitraries.frequency(listOfFrequencies)
+}
+
+/**
+ * Function to choose from one of the provided arbitraries with a given frequency.
+ *
+ * This is a Kotlin convenience for [Arbitraries.frequencyOf] which takes [Pair]s instead of jqwik tuples.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.6.2")
+fun <T> frequencyOf(vararg frequencies: Pair<Int, Arbitrary<out T>>): Arbitrary<T> {
+    @Suppress("UNCHECKED_CAST")
+    val listOfFrequencies: List<Tuple.Tuple2<Int, Arbitrary<T>>> = frequencies
+        .map { pair -> Tuple.of(pair.first, pair.second as Arbitrary<T>) }
+        .toList()
+    return Arbitraries.frequencyOf(listOfFrequencies)
 }

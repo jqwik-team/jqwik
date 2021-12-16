@@ -1,14 +1,12 @@
 - 1.6.2
 
-    - Kotlin convenience:
-      - Arbitraries.frequency/frequencyOf: Allow Pair instead of Tuple
-    
+    - Generate edge cases for the length of collections,
+      e.g. @ForAll @Size(max=100) should generate at least one list of size 100.
+
+
 - 1.6.x
 
     - Arbitraries.recursive with depthMin and depthMax for better shrinking        
-
-    - Generate edge cases for the length of collections, 
-      e.g. @ForAll @Size(max=100) should generate at least one list of size 100.
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
 

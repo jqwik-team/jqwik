@@ -419,6 +419,9 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
 
 - `frequency(vararg frequencies: Pair<Int, T>)` can replace `Arbitraries.frequency(vararg Tuple.Tuple2<Int, T>)`
 
+- `frequencyOf(vararg frequencies: Pair<Int, Arbitrary<out T>>)` can replace 
+  `Arbitraries.frequencyOf(vararg Tuple.Tuple2<Int, Arbitrary<out T>>)`
+
 
 #### Quirks and Bugs
 
@@ -468,14 +471,6 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
   ```
   
   However, if you build your own arbitraries for inline classes 
-  you have to generate the inlined class instead.
+  you have to generate values of the _inlined class_ instead, 
+  which would be `String` in the example above.
   [Create an issue](https://github.com/jlink/jqwik/issues/new) if that bothers you too much.
-
-- Kotlin class names can have special characters just like Kotlin function names:
-  ```kotlin
-  class `My Special Tests` {...}
-  ```
-  This works in principle but in yet unknown circumstances IntelliJ's test runner cannot handle this.
-  See https://youtrack.jetbrains.com/issue/IDEA-280536.
-  
-  
