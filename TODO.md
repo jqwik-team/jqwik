@@ -47,3 +47,6 @@
         - Add ParameterResolver for combined contexts
           see https://www.47deg.com/blog/effects-contexts/
 
+1.7.0
+
+    - Make `AfterFailureMode.SAMPLE_FIRST` the default
