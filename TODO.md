@@ -1,9 +1,5 @@
 - 1.6.2
 
-    - Generate edge cases for the length of collections,
-      e.g. @ForAll @Size(max=100) should generate at least one list of size 100.
-
-
 - 1.6.x
 
     - Arbitraries.recursive with depthMin and depthMax for better shrinking        

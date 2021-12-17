@@ -38,11 +38,16 @@ class SizeGenerator {
 		if (cutoffSize >= maxSize)
 			return random -> randomSize(random, minSize, maxSize);
 		// Choose size below cutoffSize with probability of 0.9
+		double maxSizeProbability = Math.min(0.02, 1.0 / (genSize / 10.0));
+		double cutoffProbability = 0.1;
 		return random -> {
-			if (random.nextDouble() > 0.1)
-				return randomSize(random, minSize, cutoffSize);
-			else
+			if (random.nextDouble() <= maxSizeProbability) {
+				return maxSize;
+			} else if (random.nextDouble() <= (cutoffProbability + maxSizeProbability)) {
 				return randomSize(random, cutoffSize + 1, maxSize);
+			} else {
+				return randomSize(random, minSize, cutoffSize);
+			}
 		};
 	}
 

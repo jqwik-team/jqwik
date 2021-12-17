@@ -161,45 +161,71 @@ class ListArbitraryTests {
 		});
 	}
 
-	@Example
-	void withSizeDistribution(@ForAll Random random) {
-		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
-		ListArbitrary<Integer> arbitrary =
-			integerArbitrary.list().ofMaxSize(100)
-							.withSizeDistribution(RandomDistribution.uniform());
+	@Group
+	class SizeDistribution {
 
-		RandomGenerator<List<Integer>> generator = arbitrary.generator(1, false);
+		@Example
+		void use_explicit_size_distribution(@ForAll Random random) {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
+			ListArbitrary<Integer> arbitrary =
+				integerArbitrary.list().ofMaxSize(100)
+								.withSizeDistribution(RandomDistribution.uniform());
 
-		for (int i = 0; i < 5000; i++) {
-			List<Integer> list = generator.next(random).value();
-			Statistics.collect(list.size());
+			RandomGenerator<List<Integer>> generator = arbitrary.generator(1, false);
+
+			for (int i = 0; i < 5000; i++) {
+				List<Integer> list = generator.next(random).value();
+				Statistics.collect(list.size());
+			}
+
+			Statistics.coverage(checker -> {
+				for (int size = 0; size <= 100; size++) {
+					checker.check(size).percentage(p -> p >= 0.4);
+				}
+			});
 		}
 
-		Statistics.coverage(checker -> {
-			for (int size = 0; size <= 100; size++) {
-				checker.check(size).percentage(p -> p >= 0.4);
+		@Example
+		void without_explicit_size_distribution_each_possible_size_should_be_generated(@ForAll Random random) {
+			int maxSize = 50;
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
+			ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(maxSize);
+
+			RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, false);
+
+			for (int i = 0; i < 5000; i++) {
+				List<Integer> list = generator.next(random).value();
+				Statistics.collect(list.size());
 			}
-		});
-	}
 
-	@Example
-	void withoutSizeDistribution(@ForAll Random random) {
-		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
-		ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(50);
-
-		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1, false);
-
-		for (int i = 0; i < 5000; i++) {
-			List<Integer> list = generator.next(random).value();
-			Statistics.collect(list.size());
+			Statistics.coverage(checker -> {
+				for (int size = 0; size <= maxSize; size++) {
+					checker.check(size).count(c -> c >= 1);
+				}
+			});
 		}
 
-		Statistics.coverage(checker -> {
-			for (int size = 0; size <= 50; size++) {
-				checker.check(size).count(p -> p >= 1);
+		@Example
+		void without_explicit_size_distribution_max_size_should_be_generated_regularly(@ForAll Random random) {
+			int maxSize = 1000;
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
+			ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(maxSize);
+
+			RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, false);
+
+			for (int i = 0; i < 5000; i++) {
+				List<Integer> list = generator.next(random).value();
+				Statistics.collect(list.size());
 			}
-		});
+
+			Statistics.coverage(checker -> {
+				// With genSize 1000, calculated probability for size = maxSize is 1%
+				checker.check(maxSize).percentage(p -> p >= 0.5);
+			});
+		}
+
 	}
+
 
 	private boolean isUniqueModulo(List<Integer> list, int modulo) {
 		List<Integer> moduloList = list.stream().map(i -> {

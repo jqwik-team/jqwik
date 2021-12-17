@@ -49,6 +49,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
   - `fun <T> frequency(vararg frequencies: Pair<Int, T>)` 
   - `fun <T> frequencyOf(vararg frequencies: Pair<Int, Arbitrary<out T>>)` 
 
+- Maximum size of generated collections and arrays is now generated regularly, if no size distribution is specified
+
 #### Breaking Changes
 
 - Parameter annotations on array types (e.g. `@WithNull String[]`) 
