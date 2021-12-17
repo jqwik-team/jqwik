@@ -21,10 +21,10 @@ class ShrunkSampleRecreatorTests {
 
 	@Property(tries = 10)
 	void recreateSingleParameter(
-		@ForAll @IntRange(min = 2, max = 1000) int initialValue,
-		@ForAll @IntRange(min = 1, max = 1000) int shrinkingResult
+		@ForAll @IntRange(min = 1, max = 1000) int shrinkingResult,
+		@ForAll @IntRange(min = 1, max = 100) int diff
 	) {
-		Assume.that(initialValue > shrinkingResult);
+		int initialValue = shrinkingResult + diff;
 
 		List<Shrinkable<Object>> shrinkables = listOfShrinkableInts(initialValue);
 		FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
@@ -112,11 +112,10 @@ class ShrunkSampleRecreatorTests {
 
 	@Property(tries = 10)
 	void recreateSeveralParameters(
-		@ForAll @IntRange(min = 2, max = 1000) int initialValue,
-		@ForAll @IntRange(min = 1, max = 1000) int shrinkingResult
+		@ForAll @IntRange(min = 1, max = 1000) int shrinkingResult,
+		@ForAll @IntRange(min = 1, max = 100) int diff
 	) {
-		Assume.that(initialValue > shrinkingResult);
-
+		int initialValue = shrinkingResult + diff;
 		List<Shrinkable<Object>> shrinkables = listOfShrinkableInts(initialValue, 99, 999);
 		FalsifiedSample originalSample = toFalsifiedSample(shrinkables, null);
 		PropertyShrinker shrinker = createPropertyShrinker(originalSample, ShrinkingMode.FULL, 0);
@@ -167,7 +166,7 @@ class ShrunkSampleRecreatorTests {
 	}
 
 	private List<Shrinkable<Object>> listOfShrinkableInts(int... args) {
-		Range<BigInteger> range = Range.of(BigInteger.ZERO, BigInteger.valueOf(1000));
+		Range<BigInteger> range = Range.of(BigInteger.ZERO, BigInteger.valueOf(2000));
 		return Arrays.stream(args).mapToObj(i -> {
 			BigInteger value = BigInteger.valueOf(i);
 			return new ShrinkableBigInteger(value, range, BigInteger.ZERO)
