@@ -16,8 +16,6 @@
     - Maybe change AroundTryHook to allow replacement of `Random` source
     - Or: Introduce ProvideGenerationSourceHook
     
-- `@Repeat(42)`: Repeat a property 42 times
-
 - Use TestDiscovery from JUnit platform 1.5:
 https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discovery/package-summary.html
 
@@ -47,23 +45,8 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 - @AddExample[s] annotation like @FromData but additional to generated data
 
-- Store regressions (samples once failed) in dedicated database
-  https://hypothesis.readthedocs.io/en/latest/database.html
-
 - Automatically generate nulls for types annotated as nullable
   See https://github.com/pholser/junit-quickcheck/pull/210
-
-- Lifecycle Hooks
-    - ProvideArbitraryHook
-        - Let domains use that hook
-        - Let ArbitraryProviders use that hook
-
-    - PerProperty.Lifecycle
-        - void beforeTry(TryLifecycleContext, parameters)
-        - void afterTry(TryLifecycleContext, TryExecutionResult)
-        - void onSatisfiedTry()
-        - TryExecutionResult onFalsifiedTry(TryExecutionResult)
-
 
 - Parallel test execution:
   - Across single property with annotation @Parallel
@@ -71,6 +54,22 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   
 - Concurrent execution of ActionSequences. 
   See https://www.youtube.com/watch?v=r5i_OiZw6Sw for inspiration
+
+### Lifecycle Hooks
+
+- Make ProvidePropertyInstanceHook a useful hook for other purposes.
+  Implementors should be able to wrap default hook.
+  Implementors should be able to resolve potential parameters.
+
+- ProvideArbitraryHook
+    - Let domains use that hook
+    - Let ArbitraryProviders use that hook
+
+- PerProperty.Lifecycle
+    - void beforeTry(TryLifecycleContext, parameters)
+    - void afterTry(TryLifecycleContext, TryExecutionResult)
+    - void onSatisfiedTry()
+    - TryExecutionResult onFalsifiedTry(TryExecutionResult)
 
 ### Reporting
 
@@ -87,11 +86,30 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 ### Properties
 
+- Add capability to easily generate java beans with Builders
+  (if that really makes sense).
+  ```
+  Builders.forBeanType(...)
+       .excludeProperties(...)
+       .use().forProperties(...)
+  ```
+
+- Time Module:
+    - <timebased>Arbitrary.shrinkTowards(date|time|dateTime)
+    - Generate java.util.Date
+    - Generate java.util.Calendar
+
+- Web Module:
+    - Web.ipv4Addresses()|ipv6Addresses()|urls()
+
+- EdgeCases.Configuration.withProbability(double injectProbability)
+
 - Allow to add frequency to chars for String and Character arbitraries eg.
   StringArbitrary.alpha(5).numeric(5).withChars("-", 1)
 
 - Lib to generate Json from JsonSchema as in
   https://github.com/Zac-HD/hypothesis-jsonschema
+  - https://github.com/schemathesis/schemathesis 
 
 - Arbitraries.random(): Generate an  instrumentalized Random subclass which uses
   jqwik generators for methods like Random.nextDouble() etc. 
@@ -103,18 +121,16 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   shrinkables of being added and removed (e.g. Shrinkable.addedTo(), Shrinkable.removedFrom())
     
 - Generator / value sharing:
-    - `Arbitrary.shareGenerator()`:
-      To share same generator across multiple usages of an arbitrary. Important
-      e.g. for `unique`
+
     - Arbitrary.shareValue(Arbitrary, String key)
       [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
 
-    - Support more RandomDistribution modes, e.g. Log, PowerLaw
-        https://en.wikipedia.org/wiki/Inverse_transform_sampling
-        https://en.wikipedia.org/wiki/Ziggurat_algorithm
-        https://github.com/jeffhain/jafaran/blob/master/src/main/java/net/jafaran/Ziggurat.java
+- Support more RandomDistribution modes, e.g. Log, PowerLaw
+    https://en.wikipedia.org/wiki/Inverse_transform_sampling
+    https://en.wikipedia.org/wiki/Ziggurat_algorithm
+    https://github.com/jeffhain/jafaran/blob/master/src/main/java/net/jafaran/Ziggurat.java
 
-- Statefull Properties:
+- Stateful Properties:
   - see https://github.com/jlink/jqwik/issues/80
   - Let action generation access the model state?
     E.g. to use a name that’s already been added to a store.
@@ -125,10 +141,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - Parallel execution of action sequences (see Proper book)
   - Special support for FSMs (finite state machines)
 
-- Arbitraries.series(n -> prime(n)[, maxN])
-
-- Arbitraries.fromStream(aStream[, maxLength])
-
 - @Property(timeout=500) msecs to timeout a property run
 
 - Guided data generation
@@ -136,7 +148,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - also see: Targeted generation, Simulated annealing with an additional target
     function in property (see Proper book)
 
-- Shrinking targets
+- Shrinking targets in annotations
     - @[Number]Range(shrinkingTarget=target)
 
 - Reimplement String generation based on Unicode codepoints, not on characters
@@ -153,10 +165,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
     Tell when the number of combinations is too high
     or which arbitrary does not provide exhaustive generation
   - Decimal generation with restricted scale
-
-- Automatic Provider detection/loading
-  - E.g. as in junit-quickcheck. If there is a
-    mypackage.MyDomainArbitraryProvider for mypackage.MyDomain then load it
 
 - Default Arbitraries, Generators and Shrinking for
   - Tuples.Tuple1/2/3/4/5/6/7/8
