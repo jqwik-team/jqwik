@@ -23,3 +23,5 @@
 1.7.0
 
     - Make `AfterFailureMode.SAMPLE_FIRST` the default
+
+    - Remove web and time from jqwik default dependencies
