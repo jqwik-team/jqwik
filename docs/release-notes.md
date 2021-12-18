@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.6.2-SNAPSHOT](#162-snapshot)
+- [1.6.2](#162)
 - [1.6.1](#161)
 - [1.6.0](#160)
 - [1.5.x](#15x)
@@ -24,24 +24,24 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.6.2-SNAPSHOT
+## 1.6.2
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>,
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
-and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
+<a href="/docs/1.6.2/user-guide.html">User guide</a>,
+<a href="/docs/1.6.2/javadoc/index.html">javadoc</a>
+and <a href="/docs/1.6.2/kdoc/index.html">kdoc</a>
 </p>
 
 
 #### New and Enhanced Features
 
-- Complete Rework of [after-failure handling](/docs/snapshot/user-guide.html#rerunning-falsified-properties):
+- Complete Rework of [after-failure handling](/docs/1.6.2/user-guide.html#rerunning-falsified-properties):
   - `AfterFailureMode.SAMPLE_FIRST` and `AfterFailureMode.SAMPLE_ONLY` no longer depends on serializability of generated parameters.
   - If random seed is manually changed after a failing test run using `Property.seed=<new random seed>`
     the configured after-failure-mode does not apply for the next test run.
   - `SAMPLE_FIRST` and `SAMPLE_ONLY` now also work for data-driven properties and exhaustive generation.
     I recommend now to use `SAMPLE_FIRST` as 
-    [default configuration value](/docs/snapshot/user-guide.html#jqwik-configuration) for most projects. 
+    [default configuration value](/docs/1.6.2/user-guide.html#jqwik-configuration) for most projects. 
 
 - Added `PropertyDefaults.maxDiscardRatio`
 
@@ -54,7 +54,7 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 #### Breaking Changes
 
 - Parameter annotations on array types (e.g. `@WithNull String[]`) 
-  [are no longer applied to the component type](/docs/snapshot/user-guide.html#constraining-array-types).
+  [are no longer applied to the component type](/docs/1.6.2/user-guide.html#constraining-array-types).
 
 - The jqwik database no longer stores test run data for succeeding tests and properties.
   This means that the file `.jqwik-database` in now much smaller in most cases.
