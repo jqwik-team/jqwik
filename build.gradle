@@ -20,7 +20,7 @@ ext {
 	kotlinVersion = '1.6.0'
 	kotlinxVersion = '1.6.0-RC2'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.6.2'
+	jqwikVersion = '1.6.3-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
 

@@ -1,14 +1,14 @@
-- 1.6.2
-
-- 1.6.x
-
-    - Arbitraries.recursive with depthMin and depthMax for better shrinking        
+- 1.6.3
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
-      - Alternative: New annotation @InitBeforeTry
+        - Alternative: New annotation @InitBeforeTry
 
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
+
+    - Arbitraries.recursive with depthMin and depthMax for better shrinking
+
+- 1.6.x
 
     - JqwikSession:
         - setRandomSessionSeed(), getRandomSessionSeed()
