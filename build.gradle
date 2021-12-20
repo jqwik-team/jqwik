@@ -15,7 +15,7 @@ ext {
 	opentest4jVersion = '1.2.0'
 	archunitVersion = '0.22.0'
 	assertJVersion = '3.21.0'
-	mockitoVersion = '4.1.0'
+	mockitoVersion = '4.2.0'
 	systemLambdaVersion = '1.2.0'
 	kotlinVersion = '1.6.0'
 	kotlinxVersion = '1.6.0-RC3'
