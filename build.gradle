@@ -18,7 +18,7 @@ ext {
 	mockitoVersion = '4.1.0'
 	systemLambdaVersion = '1.2.0'
 	kotlinVersion = '1.6.0'
-	kotlinxVersion = '1.6.0-RC2'
+	kotlinxVersion = '1.6.0-RC3'
 	moduleName = 'net.jqwik'
 	jqwikVersion = '1.6.3-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
