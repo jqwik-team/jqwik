@@ -1,5 +1,9 @@
 - 1.6.3
 
+    - Migrate to kotlinx.coroutines 1.6.0 
+      https://blog.jetbrains.com/kotlin/2021/12/introducing-kotlinx-coroutines-1-6-0/#kotlinx-coroutines-test-update
+      - Make module provided, i.e. must explicitly being added when used in tests
+
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
         - Alternative: New annotation @InitBeforeTry
 
