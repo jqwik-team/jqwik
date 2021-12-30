@@ -1,4 +1,8 @@
 plugins {
+	id 'jqwik.common-configuration'
+}
+
+plugins {
 	id 'org.jetbrains.kotlin.jvm'
 }
 

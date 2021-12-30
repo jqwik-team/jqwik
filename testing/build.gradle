@@ -1,3 +1,7 @@
+plugins {
+	id 'jqwik.common-configuration'
+}
+
 description = "Jqwik Testing support module"
 
 jar {

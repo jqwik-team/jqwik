@@ -1,0 +1,35 @@
+
+/*
+ * This file essentially extracts the versions of external dependencies.
+ * With its name "dependencies.gradle", it should be detected and processed by Dependabot.
+ * See https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates
+ * also https://dev.to/cricketsamya/gradle-with-dependabot-1o47
+ *
+ * Keeping the extra properties in the root 'build.gradle' file does not work as some
+ * properties are required by our pre-compiled plugin before we had a chance to define them
+ * (no regular code is allowed before 'buildscript'/'plugins').
+ *
+ * Since Gradle 7.0 there is a new (better option to centralize dependency versions with a version catalog
+ * (see https://docs.gradle.org/current/userguide/platforms.html#sec:sharing-catalogs), but
+ * it is not (yet) supported by Dependabot, renovate, etc.
+ */
+
+static def isSnapshotRelease(versionString) {
+	versionString.endsWith('SNAPSHOT')
+}
+
+ext {
+	junitPlatformVersion = '1.8.2'
+	junitJupiterVersion = '5.8.2'
+	apiGuardianVersion = '1.1.2'
+	opentest4jVersion = '1.2.0'
+	archunitVersion = '0.22.0'
+	assertJVersion = '3.21.0'
+	mockitoVersion = '4.2.0'
+	systemLambdaVersion = '1.2.0'
+	kotlinVersion = '1.6.0'
+	kotlinxVersion = '1.6.0'
+	moduleName = 'net.jqwik'
+	jqwikVersion = '1.6.3-SNAPSHOT'
+	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
+}

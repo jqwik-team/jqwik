@@ -1,0 +1,66 @@
+repositories {
+	mavenCentral()
+	//maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
+}
+
+group = moduleName
+version = jqwikVersion
+
+project.plugins.apply('java-library')
+project.plugins.apply('maven-publish')
+project.plugins.apply('signing')
+project.plugins.apply('org.beryx.jar')
+
+tasks['publish'].dependsOn(build)
+
+publishing {
+	repositories {
+		maven {
+			// hint: credentials are in ~/.gradle/gradle.properties
+			def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
+			def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
+
+			credentials {
+				username = ossrhUsername
+				password = ossrhPassword
+			}
+
+			// change URLs to point to your repos, e.g. http://my.org/repo
+			def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+			def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+			// def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+			// def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+			url = isSnapshotRelease ? snapshotsRepoUrl : releasesRepoUrl
+		}
+	}
+}
+
+java {
+	withJavadocJar()
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+compileTestJava {
+	options.compilerArgs += '-parameters'
+	options.encoding = 'UTF-8'
+}
+
+dependencies {
+	api("org.apiguardian:apiguardian-api:${apiGuardianVersion}")
+	compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+	compileOnly 'org.jetbrains:annotations:23.0.0'
+	// compileOnly "org.jetbrains.kotlin:kotlin-annotations-jvm:${kotlinVersion}"
+	testCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+}
+
+tasks.withType(Javadoc) {
+	options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+// Enable to get more compiler warnings.
+//	tasks.withType(JavaCompile) {
+//		options.compilerArgs << '-Xlint:unchecked'
+//		options.deprecation = true
+//	}
