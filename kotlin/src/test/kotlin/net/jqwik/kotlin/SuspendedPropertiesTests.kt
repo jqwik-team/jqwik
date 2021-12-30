@@ -1,6 +1,8 @@
 package net.jqwik.kotlin
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.runTest
 import net.jqwik.api.Example
 import net.jqwik.api.ForAll
 import net.jqwik.api.Group
@@ -82,6 +84,23 @@ class SuspendedPropertiesTests {
         ) {
             assertThat(echo(string1)).isEqualTo(echo(string2))
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Group
+    inner class CheckCompatibilityWithCoroutineTestModule {
+
+        @Example
+        @ExpectFailure
+        fun `fail with suspend assertion`() = runTest {
+            assertThat(echo("sausage")).isEqualTo("soy")
+        }
+
+        @Property(tries = 10)
+        fun `succeed with suspend assertion`(@ForAll string: String) = runTest {
+            assertThat(echo(string)).isEqualTo(string)
+        }
+
     }
 
     private suspend fun echo(string: String?): String? {

@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.6.3-SNAPSHOT](#163-snapshot)
 - [1.6.2](#162)
 - [1.6.1](#161)
 - [1.6.0](#160)
@@ -22,6 +23,21 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+## 1.6.3-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Upgraded `kotlinx` to version `1.6.0`
+
+#### Breaking Changes
+
+- `kotlinx-coroutine-test` replaced `runBlockingTest` with `runTest`
+
+#### Bug Fixes
+
+_No known bugs_
 
 
 ## 1.6.2
