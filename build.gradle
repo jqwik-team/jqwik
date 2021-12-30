@@ -1,100 +1,14 @@
-static isSnapshotRelease(versionString) {
-	versionString.endsWith('SNAPSHOT')
+buildscript {
+	apply from: 'dependencies.gradle'
 }
 
 plugins {
+	id 'jqwik.common-configuration'
 	id 'org.jetbrains.kotlin.jvm' version "1.6.10" apply false
 	id 'org.jetbrains.dokka' version "1.6.10" apply false
 	id 'org.beryx.jar' version "2.0.0-rc-5" apply false
 }
 
-ext {
-	junitPlatformVersion = '1.8.2'
-	junitJupiterVersion = '5.8.2'
-	apiGuardianVersion = '1.1.2'
-	opentest4jVersion = '1.2.0'
-	archunitVersion = '0.22.0'
-	assertJVersion = '3.22.0'
-	mockitoVersion = '4.2.0'
-	systemLambdaVersion = '1.2.1'
-	kotlinVersion = '1.6.0'
-	kotlinxVersion = '1.6.0'
-	moduleName = 'net.jqwik'
-	jqwikVersion = '1.6.3-SNAPSHOT'
-	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
-}
-
-allprojects {
-	repositories {
-		mavenCentral()
-		//maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
-	}
-
-	group = moduleName
-	version = jqwikVersion
-
-	apply plugin: 'java-library'
-	apply plugin: 'maven-publish'
-	apply plugin: 'signing'
-	apply plugin: 'org.beryx.jar'
-
-	tasks['publish'].dependsOn(build)
-
-	publishing {
-		repositories {
-			maven {
-				// hint: credentials are in ~/.gradle/gradle.properties
-				def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
-				def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
-
-				credentials {
-					username = ossrhUsername
-					password = ossrhPassword
-				}
-
-				// change URLs to point to your repos, e.g. http://my.org/repo
-				def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-				def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-				// def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-				// def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-				url = isSnapshotRelease ? snapshotsRepoUrl : releasesRepoUrl
-			}
-		}
-	}
-
-	java {
-		withJavadocJar()
-		withSourcesJar()
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
-	}
-
-	compileTestJava {
-		options.compilerArgs += '-parameters'
-		options.encoding = 'UTF-8'
-	}
-
-	dependencies {
-		api("org.apiguardian:apiguardian-api:${apiGuardianVersion}")
-		compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
-		compileOnly 'org.jetbrains:annotations:23.0.0'
-		// compileOnly "org.jetbrains.kotlin:kotlin-annotations-jvm:${kotlinVersion}"
-		testCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
-	}
-
-	tasks.withType(Javadoc) {
-		options.addStringOption('Xdoclint:none', '-quiet')
-	}
-
-	// Enable to get more compiler warnings.
-	//	tasks.withType(JavaCompile) {
-	//		options.compilerArgs << '-Xlint:unchecked'
-	//		options.deprecation = true
-	//	}
-
-}
-
 wrapper {
 	gradleVersion = '7.3.2'
 }
-
