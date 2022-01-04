@@ -1,5 +1,6 @@
 plugins {
 	id 'jqwik.common-configuration'
+	id 'jqwik.module-configuration'
 }
 
 description = "Jqwik Time module"
@@ -7,12 +8,6 @@ description = "Jqwik Time module"
 jar {
 	archiveBaseName.set('jqwik-time')
 	archiveVersion.set("${jqwikVersion}")
-}
-
-moduleConfig {
-	moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
-	version = "${jqwikVersion}"
-	neverCompileModuleInfo = true
 }
 
 task publishTimeJavadoc(type: Javadoc) {
