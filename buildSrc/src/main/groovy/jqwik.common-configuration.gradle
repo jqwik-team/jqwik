@@ -9,7 +9,6 @@ version = jqwikVersion
 project.plugins.apply('java-library')
 project.plugins.apply('maven-publish')
 project.plugins.apply('signing')
-project.plugins.apply('org.beryx.jar')
 
 tasks['publish'].dependsOn(build)
 

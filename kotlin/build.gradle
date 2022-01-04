@@ -1,5 +1,6 @@
 plugins {
 	id 'jqwik.common-configuration'
+	id 'jqwik.module-configuration'
 	id 'org.jetbrains.kotlin.jvm'
 	id 'org.jetbrains.dokka'
 }
@@ -9,12 +10,6 @@ description = "Jqwik Kotlin module"
 jar {
 	archiveBaseName.set('jqwik-kotlin')
 	archiveVersion.set("${jqwikVersion}")
-}
-
-moduleConfig {
-	moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
-	version = "${jqwikVersion}"
-	neverCompileModuleInfo = true
 }
 
 // Should this be replaced by a dokkaJavadoc?
