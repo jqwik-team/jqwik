@@ -35,6 +35,11 @@ class ErrorEquivalenceChecker {
 
 	private Optional<StackTraceElement> firstRelevantStackTraceElement(Throwable error) {
 		StackTraceElement[] stackTrace = error.getStackTrace();
+		if (stackTrace == null) {
+			// Although you might think this cannot happen, it can.
+			// See https://github.com/jlink/jqwik/issues/283 for the discussion
+			return Optional.empty();
+		}
 		return Arrays.stream(stackTrace)
 					 .filter(this::belongsToTargetPropertyMethod)
 					 .findFirst();

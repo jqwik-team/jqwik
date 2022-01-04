@@ -37,7 +37,8 @@ title: jqwik Release Notes
 
 #### Bug Fixes
 
-_No known bugs_
+- Shrinking now still works when thrown exception has no stacktrace.
+  See https://github.com/jlink/jqwik/issues/283.
 
 
 ## 1.6.2
