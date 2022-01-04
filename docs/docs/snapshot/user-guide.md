@@ -220,7 +220,7 @@ All you have to do is add all needed engines to your `testImplementation` depend
 
 The latest release of __jqwik__ is deployed to [Maven Central](https://search.maven.org/search?q=g:net.jqwik).
 Snapshot releases are created on a regular basis and can be fetched from 
-[Sonatype's snapshot repository](https://oss.sonatype.org/content/repositories/snapshots). 
+[Sonatype's snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots). 
 
 ### Required Version of JUnit Platform
 
@@ -239,7 +239,7 @@ repositories {
     mavenCentral()
 
     # For snapshot releases only:
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
 
 }
 
@@ -357,12 +357,12 @@ In jqwik's samples repository you can find a rather minimal
 ### Snapshot Releases
 
 Snapshot releases are available through Sonatype's
-[snapshot repositories](#https://oss.sonatype.org/content/repositories/snapshots).
+[snapshot repositories](#https://s01.oss.sonatype.org/content/repositories/snapshots).
 
 Adding
 
 ```
-https://oss.sonatype.org/content/repositories/snapshots
+https://s01.oss.sonatype.org/content/repositories/snapshots
 ``` 
 
 as a maven repository
