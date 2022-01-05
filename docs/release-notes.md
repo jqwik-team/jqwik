@@ -31,6 +31,8 @@ title: jqwik Release Notes
 
 - Upgraded `kotlinx` to version `1.6.0`
 
+- Upgraded to Kotlin 1.6.10.
+
 #### Breaking Changes
 
 - `kotlinx-coroutine-test` replaced `runBlockingTest` with `runTest`
