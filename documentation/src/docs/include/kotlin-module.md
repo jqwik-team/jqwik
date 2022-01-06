@@ -49,16 +49,16 @@ dependencies {
     testImplementation("net.jqwik:jqwik-kotlin:${version}")
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf(
-			"-Xjsr305=strict", // Required for strict interpretation of
-			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
-		)
+            "-Xjsr305=strict", // Required for strict interpretation of
+            "-Xemit-jvm-type-annotations" // Required for annotations on type variables
+        )
         jvmTarget = "11" // 1.8 or above
         javaParameters = true // Required to get correct parameter names in reporting
     }
@@ -121,7 +121,7 @@ Here are a few of those which I noticed to be relevant for jqwik:
               fun propertyInInnerGroup(@ForAll anInt: Int) {}
           }
       }
-  }  
+  }
   ```
 
 - Just like abstract classes and interfaces Kotlin's _sealed_ classes

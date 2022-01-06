@@ -32,7 +32,7 @@ public class Person {
 ```
 
 A first step to use arbitrarily generated `Person` objects without having
-to write a lot of _jqwik_-specific boiler plat code could look like that:
+to write a lot of _jqwik_-specific boiler plate code could look like that:
 
 ```java
 @Property
