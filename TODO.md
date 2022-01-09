@@ -1,5 +1,8 @@
 - 1.6.3
 
+    - Rework Store.onClose because it's inherently a confusing API.
+      See https://github.com/jlink/jqwik/issues/290
+
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
