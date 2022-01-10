@@ -240,9 +240,25 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void findGeneratorBySupplier() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingBySupplier");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			assertThingArbitrary(arbitraries.iterator().next());
+		}
+
+		@Example
 		void findGeneratorByNameInFromAnnotation() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFrom");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			assertThingArbitrary(arbitraries.iterator().next());
+		}
+
+		@Example
+		void findGeneratorBySupplierInFromAnnotation() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFromSupplier");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
 			assertThingArbitrary(arbitraries.iterator().next());
 		}
@@ -320,6 +336,13 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void moreThanOneGeneratorSpecifiedFails() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFromEverything");
+			assertThatThrownBy(() -> provider.forParameter(parameter)).isInstanceOf(JqwikException.class);
+		}
+
+		@Example
 		void namedGeneratorNotFound() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "otherThing");
@@ -374,6 +397,18 @@ class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Property
+			boolean thingBySupplier(@ForAll(supplier = ThingSupplier.class) Thing aThing) {
+				return true;
+			}
+
+			class ThingSupplier implements ArbitrarySupplier<Thing> {
+				@Override
+				public Arbitrary<Thing> get() {
+					return Arbitraries.just(new Thing());
+				}
+			}
+
+			@Property
 			boolean otherThing(@ForAll("unknown ref") Thing aThing) {
 				return true;
 			}
@@ -391,6 +426,15 @@ class PropertyMethodArbitraryResolverTests {
 			@Provide
 			Arbitrary<Thing> byMethodName() {
 				return Arbitraries.just(new Thing());
+			}
+
+			@Property
+			boolean thingFromEverything(
+				@ForAll(value = "aThingy", supplier = ThingSupplier.class)
+				@From(value = "aThingy", supplier = ThingSupplier.class)
+					Thing aThing
+			) {
+				return true;
 			}
 
 			@Property
@@ -425,6 +469,11 @@ class PropertyMethodArbitraryResolverTests {
 
 			@Property
 			boolean thingFrom(@ForAll @From("aThing") Thing t) {
+				return true;
+			}
+
+			@Property
+			boolean thingFromSupplier(@ForAll @From(supplier = ThingSupplier.class) Thing t) {
 				return true;
 			}
 

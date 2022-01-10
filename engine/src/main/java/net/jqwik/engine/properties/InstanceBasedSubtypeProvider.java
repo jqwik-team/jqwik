@@ -21,39 +21,85 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 
 	@Override
 	public Set<Arbitrary<?>> apply(TypeUsage targetType) {
-		Optional<String> optionalForAllValue =
-			targetType
-				.findAnnotation(ForAll.class)
-				.map(ForAll::value).filter(name -> !name.equals(ForAll.NO_VALUE));
+		Optional<ForAll> optionalForAll = targetType.findAnnotation(ForAll.class);
+		Optional<String> optionalForAllValue = optionalForAll
+			.map(ForAll::value).filter(name -> !name.equals(ForAll.NO_VALUE));
 
-		Optional<String> optionalFromValue =
-			targetType
-				.findAnnotation(From.class)
-				.map(From::value);
-
-		if (optionalForAllValue.isPresent() && optionalFromValue.isPresent()) {
-			String message = String.format(
-				"You cannot have both @ForAll(\"%s\") and @From(\"%s\") in parameter %s",
-				optionalForAllValue.get(),
-				optionalFromValue.get(),
-				targetType
-			);
-			throw new JqwikException(message);
+		// Using Optional and map and filter for that destroys the type for some reason
+		Optional<Class<? extends ArbitrarySupplier<?>>> optionalForAllSupplier = Optional.empty();
+		if (optionalForAll.isPresent()) {
+			Class<? extends ArbitrarySupplier<?>> supplier = optionalForAll.get().supplier();
+			if (!supplier.equals(ArbitrarySupplier.NONE.class)) {
+				optionalForAllSupplier = Optional.of(supplier);
+			}
 		}
 
-		String generatorName = optionalForAllValue.orElseGet(() -> optionalFromValue.orElse(ForAll.NO_VALUE));
-		final Set<Arbitrary<?>> resolvedArbitraries =
-			findArbitraryGeneratorByName(targetType, generatorName)
-				.map(providerMethod -> invokeProviderMethod(providerMethod, targetType))
-				.orElseGet(() -> generatorName.equals(ForAll.NO_VALUE)
-									 ? resolve(targetType)
-									 : Collections.emptySet());
+		Optional<From> optionalFrom = targetType.findAnnotation(From.class);
+		Optional<String> optionalFromValue = optionalFrom
+			.map(From::value).filter(name -> !name.equals(ForAll.NO_VALUE));
+
+		// Using Optional and map and filter for that destroys the type for some reason
+		Optional<Class<? extends ArbitrarySupplier<?>>> optionalFromSupplier = Optional.empty();
+		if (optionalFrom.isPresent()) {
+			Class<? extends ArbitrarySupplier<?>> supplier = optionalFrom.get().supplier();
+			if (!supplier.equals(ArbitrarySupplier.NONE.class)) {
+				optionalFromSupplier = Optional.of(supplier);
+			}
+		}
+
+		long countSpecs = Stream.of(optionalForAllValue, optionalForAllSupplier, optionalFromValue, optionalFromSupplier)
+								.filter(Optional::isPresent)
+								.map(Optional::get).count();
+
+		Set<Arbitrary<?>> resolvedArbitraries;
+		if (countSpecs == 0) {
+			resolvedArbitraries = resolve(targetType);
+		} else if (countSpecs == 1) {
+			if (optionalForAllValue.isPresent() || optionalFromValue.isPresent()) {
+				resolvedArbitraries = resolveFromGeneratorName(targetType, optionalForAllValue, optionalFromValue);
+			} else {
+				resolvedArbitraries = resolveFromSupplier(targetType, optionalForAllSupplier, optionalFromSupplier);
+			}
+		} else {
+			return onlyOneSpecAllowedError(targetType, countSpecs);
+		}
 
 		return resolvedArbitraries
-				   .stream()
-				   .map(arbitrary -> configure(arbitrary, targetType))
-				   .filter(Objects::nonNull)
-				   .collect(Collectors.toSet());
+			.stream()
+			.map(arbitrary -> configure(arbitrary, targetType))
+			.filter(Objects::nonNull)
+			.collect(Collectors.toSet());
+	}
+
+	private Set<Arbitrary<?>> resolveFromSupplier(
+		TypeUsage targetType,
+		Optional<Class<? extends ArbitrarySupplier<?>>> optionalForAllSupplier,
+		Optional<? extends Class<? extends ArbitrarySupplier<?>>> optionalFromSupplier
+	) {
+		Class<? extends ArbitrarySupplier<?>> supplierClass =
+			optionalForAllSupplier.orElseGet(() -> optionalFromSupplier.orElseThrow(() -> new JqwikException("Should never happen")));
+		ArbitrarySupplier<?> supplier = newInstanceInTestContext(supplierClass, instance);
+		return Collections.singleton(supplier.supplyFor(targetType));
+	}
+
+	private Set<Arbitrary<?>> resolveFromGeneratorName(
+		TypeUsage targetType,
+		Optional<String> optionalForAllValue,
+		Optional<String> optionalFromValue
+	) {
+		String generatorName = optionalForAllValue.orElseGet(() -> optionalFromValue.orElseThrow(() -> new JqwikException("Should never happen")));
+		return findArbitraryGeneratorByName(targetType, generatorName)
+			.map(providerMethod -> invokeProviderMethod(providerMethod, targetType))
+			.orElse(Collections.emptySet());
+	}
+
+	private Set<Arbitrary<?>> onlyOneSpecAllowedError(TypeUsage targetType, long countSpecs) {
+		String message = String.format(
+			"You can only have one arbitrary specification per parameter, but you have %s:%n%s",
+			countSpecs,
+			targetType
+		);
+		throw new JqwikException(message);
 	}
 
 	private Set<Arbitrary<?>> invokeProviderMethod(Method providerMethod, TypeUsage targetType) {
