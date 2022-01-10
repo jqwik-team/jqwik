@@ -116,10 +116,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   This will allow shrinking of provided pseudo-random values.
   See PR for this feature in Hypothesis: https://github.com/HypothesisWorks/hypothesis/pull/2472
 
-- UniqueShrinkable should be able to shrink to previously tried values.
-  This would probably require a mechanism for containers to notify contained
-  shrinkables of being added and removed (e.g. Shrinkable.addedTo(), Shrinkable.removedFrom())
-    
 - Generator / value sharing:
 
     - Arbitrary.shareValue(Arbitrary, String key)
