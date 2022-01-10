@@ -3,15 +3,12 @@
     - Rework Store.onClose because it's inherently a confusing API.
       See https://github.com/jlink/jqwik/issues/290
 
-    - Allow specification of provider class in `@ForAll` and `@From`
-      see https://github.com/jlink/jqwik/issues/91
+- 1.6.x
 
     - Arbitraries.recursive with depthMin and depthMax for better shrinking
 
-- 1.6.x
-
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
-        - Alternative: New annotation @InitBeforeTry
+      - Alternative: New annotation @InitBeforeTry
 
     - JqwikSession:
       - setRandomSessionSeed(), getRandomSessionSeed()

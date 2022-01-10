@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.6.2-SNAPSHOT
+title: jqwik User Guide - 1.6.3-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.6.2-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.6.3-SNAPSHOT</span>
 </h1>
 
 <h3>Table of Contents
@@ -82,8 +82,9 @@ title: jqwik User Guide - 1.6.2-SNAPSHOT
   - [Providing variable types](#providing-variable-types)
   - [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
-  - [Parameter Provider Methods](#parameter-provider-methods)
-  - [Provider Methods with Parameters](#provider-methods-with-parameters)
+  - [Arbitrary Provider Methods](#arbitrary-provider-methods)
+    - [Provider Methods with Parameters](#provider-methods-with-parameters)
+  - [Arbitrary Suppliers](#arbitrary-suppliers)
   - [Providing Arbitraries for Embedded Types](#providing-arbitraries-for-embedded-types)
   - [Static `Arbitraries` methods](#static-arbitraries-methods)
     - [Generate values yourself](#generate-values-yourself)
@@ -220,7 +221,7 @@ All you have to do is add all needed engines to your `testImplementation` depend
 
 The latest release of __jqwik__ is deployed to [Maven Central](https://search.maven.org/search?q=g:net.jqwik).
 Snapshot releases are created on a regular basis and can be fetched from 
-[Sonatype's snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots). 
+[jqwik's snapshot repository](https://s01.oss.sonatype.org/content/repositories/snapshots). 
 
 ### Required Version of JUnit Platform
 
@@ -246,7 +247,7 @@ repositories {
 ext.junitPlatformVersion = '1.8.2'
 ext.junitJupiterVersion = '5.8.2'
 
-ext.jqwikVersion = '1.6.2-SNAPSHOT'
+ext.jqwikVersion = '1.6.3-SNAPSHOT'
 
 compileTestJava {
     // To enable argument names in reporting and debugging
@@ -345,7 +346,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.6.2-SNAPSHOT</version>
+        <version>1.6.3-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -356,7 +357,7 @@ In jqwik's samples repository you can find a rather minimal
 
 ### Snapshot Releases
 
-Snapshot releases are available through Sonatype's
+Snapshot releases are available through jqwik's
 [snapshot repositories](#https://s01.oss.sonatype.org/content/repositories/snapshots).
 
 Adding
@@ -373,15 +374,15 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-api-1.6.2-SNAPSHOT.jar`
-- `jqwik-engine-1.6.2-SNAPSHOT.jar`
+- `jqwik-api-1.6.3-SNAPSHOT.jar`
+- `jqwik-engine-1.6.3-SNAPSHOT.jar`
 - `junit-platform-engine-1.8.2.jar`
 - `junit-platform-commons-1.8.2.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
-- `jqwik-web-1.6.2-SNAPSHOT.jar`
-- `jqwik-time-1.6.2-SNAPSHOT.jar`
+- `jqwik-web-1.6.3-SNAPSHOT.jar`
+- `jqwik-time-1.6.3-SNAPSHOT.jar`
 
 
 
@@ -396,7 +397,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html).
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with
-[`@ForAll`](/docs/1.6.2-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.6.3-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -1147,7 +1148,9 @@ jqwik will use default generation for the following types:
 If you use [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html)
 with a value, e.g. `@ForAll("aMethodName")`, the method
 referenced by `"aMethodName"` will be called to provide an Arbitrary of the
-required type (see [Parameter Provider Methods](#parameter-provider-methods)).
+required type (see [Arbitrary Provider Methods](#arbitrary-provider-methods)).
+Also, when you use it with a `supplier` attribute, e.g. `@ForAll(supplier=MySupplier.class)`,
+an [arbitrary supplier implementation](#arbitrary-suppliers) is invoked. 
 
 ### Constraining Default Generation
 
@@ -1400,7 +1403,7 @@ Sometimes the possibilities of adjusting default parameter generation
 through annotations is not enough. You want to control the creation
 of values programmatically. The means to do that are _provider methods_.
 
-### Parameter Provider Methods
+### Arbitrary Provider Methods
 
 Look at the
 [following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/ProvideMethodExamples.java):
@@ -1437,25 +1440,22 @@ The providing method has to return an object of type
 [`@Arbitrary<T>`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html)
 where `T` is the static type of the parameter to be provided.
 
-Parameter provision usually starts with a
+Arbitrary provision usually starts with a
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
 by one or more [filtering](#filtering), [mapping](#mapping) or
 [combining](#combining-arbitraries) actions.
 
-### Provider Methods with Parameters
+#### Provider Methods with Parameters
 
 The examples of [provider methods](#parameter-provider-methods) you've seen so far
 had no parameters. In more complicated scenarios, however, you may want to tune
 an arbitrary depending on the concrete parameter to be generated.
 
-The provider method can take a few optional parameters:
+The provider method can have a few optional parameters:
 
 - a parameter of type `TypeUsage`
   that describes the details of the target parameter to be provided,
   like annotations and type variables.
-
-- a parameter of type `ArbitraryProvider.SubtypeProvider`
-  which is needed in case of variable subtypes that require their own dynamic resolution.
 
 - any parameter annotated with `@ForAll`: This parameter will be generated using
   the current context and then be used to create or configure the arbitrary to return.
@@ -1498,6 +1498,49 @@ Arbitrary<?> favouritePrimes(TypeUsage targetType) {
 Mind that Java's type system now forces you to use a wildcard in the return type.
 
 
+### Arbitrary Suppliers
+
+Similar to [provider methods](#arbitrary-provider-methods) you can specify an
+`ArbitrarySupplier` implementation in the `@ForAll` annotation:
+
+```java
+@Property
+boolean concatenatingStringWithInt(
+	@ForAll(supplier = ShortStrings.class) String aShortString,
+	@ForAll(supplier = TenTo99.class) int aNumber
+) {
+	String concatenated = aShortString + aNumber;
+	return concatenated.length() > 2 && concatenated.length() < 11;
+}
+
+class ShortStrings implements ArbitrarySupplier<String> {
+	@Override
+	public Arbitrary<String> get() {
+		return Arbitraries.strings().withCharRange('a', 'z')
+						  .ofMinLength(1).ofMaxLength(8);
+	}
+}
+
+class TenTo99 implements ArbitrarySupplier<Integer> {
+	@Override
+	public Arbitrary<Integer> get() {
+		return Arbitraries.integers().between(10, 99);
+	}
+}
+```
+
+Although this is a bit more verbose than using a provider method, it has two advantages:
+- The IDE let's you directly navigate from the supplier attribute to the implementing class
+- `ArbitrarySupplier` implementations can be shared across test container classes.
+
+
+The [`ArbitrarySupplier`](/docs/snapshot/javadoc/net/jqwik/api/ArbitrarySupplier.html) 
+interface requires to override exactly one of two methods:
+
+- `get()` as you have seen above
+- `supplyFor(TypeUsage targeType)` if you need more information about the parameter,
+  e.g. about annotations or type parameters. 
+
 ### Providing Arbitraries for Embedded Types
 
 There is an alternative syntax to `@ForAll("methodRef")` using a `From` annotation:
@@ -1523,6 +1566,17 @@ boolean joiningListOfStrings(@ForAll List<@From("shortStrings") String> listOfSt
 
 Here, the list is created using the default list arbitrary, but the
 String elements are generated using the arbitrary from the method `shortStrings`.
+
+Alternatively, you can also use a `supplier` attribute in `@From`:
+
+```java
+@Property
+boolean joiningListOfStrings(@ForAll List<@From(supplier=ShortStrings.class) String> listOfStrings) {
+    String concatenated = String.join("", listOfStrings);
+    return concatenated.length() <= 8 * listOfStrings.size();
+}
+```
+
 
 ### Static `Arbitraries` methods
 
@@ -4174,7 +4228,7 @@ public class Person {
 ```
 
 A first step to use arbitrarily generated `Person` objects without having
-to write a lot of _jqwik_-specific boiler plat code could look like that:
+to write a lot of _jqwik_-specific boiler plate code could look like that:
 
 ```java
 @Property
@@ -5046,19 +5100,19 @@ Here's the jqwik-related part of the Gradle build file for a Kotlin project:
 ```kotlin
 dependencies {
     ...
-    testImplementation("net.jqwik:jqwik-kotlin:1.6.2-SNAPSHOT")
+    testImplementation("net.jqwik:jqwik-kotlin:1.6.3-SNAPSHOT")
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf(
-			"-Xjsr305=strict", // Required for strict interpretation of
-			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
-		)
+            "-Xjsr305=strict", // Required for strict interpretation of
+            "-Xemit-jvm-type-annotations" // Required for annotations on type variables
+        )
         jvmTarget = "11" // 1.8 or above
         javaParameters = true // Required to get correct parameter names in reporting
     }
@@ -5121,7 +5175,7 @@ Here are a few of those which I noticed to be relevant for jqwik:
               fun propertyInInnerGroup(@ForAll anInt: Int) {}
           }
       }
-  }  
+  }
   ```
 
 - Just like abstract classes and interfaces Kotlin's _sealed_ classes
@@ -5417,6 +5471,11 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
   `Builders.BuilderCombinator.use(arbitrary).in(combinator)` which requires backticks
   in Kotlin because "in" is a keyword.
 
+- `frequency(vararg frequencies: Pair<Int, T>)` can replace `Arbitraries.frequency(vararg Tuple.Tuple2<Int, T>)`
+
+- `frequencyOf(vararg frequencies: Pair<Int, Arbitrary<out T>>)` can replace 
+  `Arbitraries.frequencyOf(vararg Tuple.Tuple2<Int, Arbitrary<out T>>)`
+
 
 #### Quirks and Bugs
 
@@ -5466,17 +5525,9 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
   ```
   
   However, if you build your own arbitraries for inline classes 
-  you have to generate the inlined class instead.
+  you have to generate values of the _inlined class_ instead, 
+  which would be `String` in the example above.
   [Create an issue](https://github.com/jlink/jqwik/issues/new) if that bothers you too much.
-
-- Kotlin class names can have special characters just like Kotlin function names:
-  ```kotlin
-  class `My Special Tests` {...}
-  ```
-  This works in principle but in yet unknown circumstances IntelliJ's test runner cannot handle this.
-  See https://youtrack.jetbrains.com/issue/IDEA-280536.
-  
-  
 
 
 ### Testing Module
@@ -6068,4 +6119,4 @@ If a certain element, e.g. a method, is not annotated itself, then it carries th
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#162-snapshot).
+Read this version's [release notes](/release-notes.html#163-snapshot).
