@@ -26,7 +26,7 @@ ext {
 	archunitVersion = '0.22.0'
 	assertJVersion = '3.21.0'
 	mockitoVersion = '4.2.0'
-	systemLambdaVersion = '1.2.0'
+	systemLambdaVersion = '1.2.1'
 	kotlinVersion = '1.6.10'
 	kotlinxVersion = '1.6.0'
 	moduleName = 'net.jqwik'
