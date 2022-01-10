@@ -20,5 +20,11 @@ import static org.apiguardian.api.API.Status.*;
 @Documented
 @API(status = MAINTAINED, since = "1.3.0")
 public @interface From {
-	String value();
+	@API(status = INTERNAL, since = "1.6.3")
+	String NO_VALUE = "";
+
+	String value() default NO_VALUE;
+
+	@API(status = EXPERIMENTAL, since = "1.6.3")
+	Class<? extends ArbitrarySupplier<?>> supplier() default ArbitrarySupplier.NONE.class;
 }

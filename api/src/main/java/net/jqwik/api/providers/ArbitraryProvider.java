@@ -12,7 +12,7 @@ import net.jqwik.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Implementation of this class are used to provide default arbitraries to
+ * Implementations of this class are used to provide default arbitraries to
  * {@code ForAll} parameters without an explicit provider reference.
  * <p>
  * Implementations must be registered in <code>/META-INF/services/net.jqwik.api.providers.ArbitraryProvider</code>
