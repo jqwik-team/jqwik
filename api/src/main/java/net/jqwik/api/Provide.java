@@ -6,7 +6,6 @@ import java.util.function.*;
 import org.apiguardian.api.*;
 
 import net.jqwik.api.providers.*;
-import net.jqwik.api.providers.ArbitraryProvider.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -25,8 +24,8 @@ import static org.apiguardian.api.API.Status.*;
  * </p>
  *
  * <p>
- *     Those methods can have optional parameters of type {@linkplain TypeUsage},
- *     of type {@linkplain SubtypeProvider} or with annotation {@linkplain ForAll}.
+ *     Those methods can have optional parameters of type {@linkplain TypeUsage}
+ *     or with annotation {@linkplain ForAll}.
  *     The latter will be used to {@linkplain Arbitrary#flatMap(Function) flatMap} over them.
  * </p>
  *

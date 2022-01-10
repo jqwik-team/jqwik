@@ -96,8 +96,6 @@ class ProviderMethodInvoker {
 	protected Object resolvePlainParameter(Parameter parameter) {
 		if (parameter.getType().isAssignableFrom(TypeUsage.class)) {
 			return targetType;
-		} else if (parameter.getType().isAssignableFrom(SubtypeProvider.class)) {
-			return subtypeProvider;
 		} else {
 			String message = String.format(
 				"Parameter [%s] cannot be resolved in @Provide method [%s]." +

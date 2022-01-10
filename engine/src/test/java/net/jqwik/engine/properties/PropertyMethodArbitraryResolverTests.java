@@ -9,7 +9,6 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
@@ -207,14 +206,6 @@ class PropertyMethodArbitraryResolverTests {
 			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
-		@Example
-		void providerMethodCanHaveTypeUsageAndSubtypeProviderParameters() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingWithTypeUsageAndSubtypeProvider");
-			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			assertThingArbitrary(arbitraries.iterator().next());
-		}
-
 		@SuppressWarnings("unchecked")
 		@Example
 		void providerMethodCanHaveForAllParameters(@ForAll Random random) {
@@ -372,21 +363,6 @@ class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Property
-			boolean thingWithTypeUsageAndSubtypeProvider(@ForAll("thingProviderWithTypeUsageAndSubtypeProvider") Thing aThing) {
-				return true;
-			}
-
-			@Provide
-			Arbitrary<Thing> thingProviderWithTypeUsageAndSubtypeProvider(
-				TypeUsage parameter,
-				SubtypeProvider subtypeProvider
-			) {
-				assertThat(parameter.isOfType(Thing.class));
-				assertThat(SubtypeProvider.class.isAssignableFrom(subtypeProvider.getClass()));
-				return Arbitraries.just(new Thing());
-			}
-
-			@Property
 			boolean thing(@ForAll("aThingByValue") Thing aThing) {
 				return true;
 			}
@@ -508,12 +484,10 @@ class PropertyMethodArbitraryResolverTests {
 
 			@Provide
 			Arbitrary<Tuple2<Thing, String>> tuple2WithThingAndStringProvider(
-				SubtypeProvider subtypeProvider,
 				@ForAll("aThing") Thing aThing,
 				@ForAll @StringLength(2) String aString,
 				TypeUsage targetType
 			) {
-				assertThat(subtypeProvider).isInstanceOf(SubtypeProvider.class);
 				assertThat(targetType.isOfType(Tuple2.class)).isTrue();
 				return Arbitraries.just(Tuple.of(aThing, aString));
 			}

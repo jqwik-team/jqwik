@@ -50,14 +50,11 @@ The examples of [provider methods](#parameter-provider-methods) you've seen so f
 had no parameters. In more complicated scenarios, however, you may want to tune
 an arbitrary depending on the concrete parameter to be generated.
 
-The provider method can take a few optional parameters:
+The provider method can have a few optional parameters:
 
 - a parameter of type `TypeUsage`
   that describes the details of the target parameter to be provided,
   like annotations and type variables.
-
-- a parameter of type `ArbitraryProvider.SubtypeProvider`
-  which is needed in case of variable subtypes that require their own dynamic resolution.
 
 - any parameter annotated with `@ForAll`: This parameter will be generated using
   the current context and then be used to create or configure the arbitrary to return.

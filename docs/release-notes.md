@@ -45,7 +45,9 @@ and <a href="/docs/1.6.2/kdoc/index.html">kdoc</a>
 
 #### Breaking Changes
 
-- `kotlinx-coroutine-test` replaced `runBlockingTest` with `runTest`
+- `kotlinx-coroutine-test` replaced `runBlockingTest` with `runTest`.
+
+- Arbitrary provider methods can no longer have a `SubtypeProvider` parameter.
 
 #### Bug Fixes
 

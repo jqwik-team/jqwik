@@ -45,7 +45,7 @@ class ProvideMethodExamples {
 	}
 
 	@Provide
-	Arbitrary<?> favouritePrimes(TypeUsage targetType, ArbitraryProvider.SubtypeProvider subtypeProvider) {
+	Arbitrary<?> favouritePrimes(TypeUsage targetType) {
 		Arbitrary<Integer> ints = Arbitraries.of(3, 5, 7, 13, 17, 23, 41);
 		if (targetType.getRawType().equals(BigInteger.class)) {
 			return ints.map(BigInteger::valueOf);

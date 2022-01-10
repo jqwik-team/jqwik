@@ -36,7 +36,7 @@ class DomainContextBaseTests {
 
 		@Property
 		@Domain(ContextWithProviderMethods.class)
-		void useProviderFromMethodWithTargetTypeAndSubtypeProvider(@ForAll List<String> listOfStrings) {
+		void useProviderFromMethodWithTargetType(@ForAll List<String> listOfStrings) {
 			assertThat(listOfStrings).hasSize(3);
 			listOfStrings.forEach(aString -> {
 				assertThat(aString).isInstanceOf(String.class);

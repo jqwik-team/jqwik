@@ -20,7 +20,7 @@ import static org.apiguardian.api.API.Status.*;
  *          	Add methods annotated with {@linkplain Provide} and a return type of {@linkplain Arbitrary Arbitrary&lt;T&gt;}.
  *         		The result of an annotated method will then be used as an {@linkplain ArbitraryProvider arbitrary provider} for type {@code T}.
  *         		<br/>Those methods follow the same rules as provider methods in container classes,
- *         		i.e. they have optional parameters of type {@linkplain TypeUsage}, of type {@linkplain net.jqwik.api.providers.ArbitraryProvider.SubtypeProvider}
+ *         		i.e. they have an optional parameters of type {@linkplain TypeUsage}
  *         	    or with annotation {@linkplain ForAll}.
  *         	</li>
  *         <li>
