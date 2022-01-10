@@ -27,11 +27,21 @@ title: jqwik Release Notes
 
 ## 1.6.3-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>,
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+and <a href="/docs/1.6.2/kdoc/index.html">kdoc</a>
+</p>
+
 #### New and Enhanced Features
 
 - Upgraded `kotlinx` to version `1.6.0`
 
 - Upgraded to Kotlin 1.6.10.
+
+- `@ForAll` and `@From` now support 
+  [arbitrary suppliers](/docs/snapshot/user-guide.html#arbitrary-suppliers) 
+  through a `supplier` attribute.
 
 #### Breaking Changes
 
