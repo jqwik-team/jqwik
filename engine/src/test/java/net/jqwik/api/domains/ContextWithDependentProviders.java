@@ -34,4 +34,16 @@ class ContextWithDependentProviders extends DomainContextBase {
 		return Arbitraries.just(base + "" + base);
 	}
 
+	@Provide
+	Arbitrary<Double> doubles(@ForAll(supplier = MinValues.class) double min) {
+		Assertions.assertThat(min).isBetween(10.0, 100.0);
+		return Arbitraries.doubles().greaterOrEqual(min);
+	}
+
+	class MinValues implements ArbitrarySupplier<Double> {
+		@Override
+		public Arbitrary<Double> get() {
+			return Arbitraries.doubles().between(10.0, 100.0);
+		}
+	}
 }

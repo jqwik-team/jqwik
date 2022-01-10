@@ -65,6 +65,12 @@ class DomainContextBaseTests {
 		void flatmapOverInjectedForAllParameterWithValue(@ForAll String aString) {
 			assertThat(aString).isEqualTo("aa");
 		}
+
+		@Property
+		@Domain(ContextWithDependentProviders.class)
+		void flatmapOverInjectedForAllParameterWithSupplier(@ForAll double value) {
+			assertThat(value).isGreaterThanOrEqualTo(10.0);
+		}
 	}
 
 	@Group
