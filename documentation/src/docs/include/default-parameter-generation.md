@@ -24,7 +24,9 @@ jqwik will use default generation for the following types:
 If you use [`@ForAll`](/docs/${docsVersion}/javadoc/net/jqwik/api/ForAll.html)
 with a value, e.g. `@ForAll("aMethodName")`, the method
 referenced by `"aMethodName"` will be called to provide an Arbitrary of the
-required type (see [Parameter Provider Methods](#parameter-provider-methods)).
+required type (see [Arbitrary Provider Methods](#arbitrary-provider-methods)).
+Also, when you use it with a `supplier` attribute, e.g. `@ForAll(supplier=MySupplier.class)`,
+an [arbitrary supplier implementation](#arbitrary-suppliers) is invoked. 
 
 ### Constraining Default Generation
 

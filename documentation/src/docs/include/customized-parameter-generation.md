@@ -2,7 +2,7 @@ Sometimes the possibilities of adjusting default parameter generation
 through annotations is not enough. You want to control the creation
 of values programmatically. The means to do that are _provider methods_.
 
-### Parameter Provider Methods
+### Arbitrary Provider Methods
 
 Look at the
 [following example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ProvideMethodExamples.java):
@@ -39,12 +39,12 @@ The providing method has to return an object of type
 [`@Arbitrary<T>`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html)
 where `T` is the static type of the parameter to be provided.
 
-Parameter provision usually starts with a
+Arbitrary provision usually starts with a
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
 by one or more [filtering](#filtering), [mapping](#mapping) or
 [combining](#combining-arbitraries) actions.
 
-### Provider Methods with Parameters
+#### Provider Methods with Parameters
 
 The examples of [provider methods](#parameter-provider-methods) you've seen so far
 had no parameters. In more complicated scenarios, however, you may want to tune
@@ -100,6 +100,49 @@ Arbitrary<?> favouritePrimes(TypeUsage targetType) {
 Mind that Java's type system now forces you to use a wildcard in the return type.
 
 
+### Arbitrary Suppliers
+
+Similar to [provider methods](#arbitrary-provider-methods) you can specify an
+`ArbitrarySupplier` implementation in the `@ForAll` annotation:
+
+```java
+@Property
+boolean concatenatingStringWithInt(
+	@ForAll(supplier = ShortStrings.class) String aShortString,
+	@ForAll(supplier = TenTo99.class) int aNumber
+) {
+	String concatenated = aShortString + aNumber;
+	return concatenated.length() > 2 && concatenated.length() < 11;
+}
+
+class ShortStrings implements ArbitrarySupplier<String> {
+	@Override
+	public Arbitrary<String> get() {
+		return Arbitraries.strings().withCharRange('a', 'z')
+						  .ofMinLength(1).ofMaxLength(8);
+	}
+}
+
+class TenTo99 implements ArbitrarySupplier<Integer> {
+	@Override
+	public Arbitrary<Integer> get() {
+		return Arbitraries.integers().between(10, 99);
+	}
+}
+```
+
+Although this is a bit more verbose than using a provider method, it has two advantages:
+- The IDE let's you directly navigate from the supplier attribute to the implementing class
+- `ArbitrarySupplier` implementations can be shared across test container classes.
+
+
+The [`ArbitrarySupplier`](/docs/${docsVersion}/javadoc/net/jqwik/api/ArbitrarySupplier.html) 
+interface requires to override exactly one of two methods:
+
+- `get()` as you have seen above
+- `supplyFor(TypeUsage targeType)` if you need more information about the parameter,
+  e.g. about annotations or type parameters. 
+
 ### Providing Arbitraries for Embedded Types
 
 There is an alternative syntax to `@ForAll("methodRef")` using a `From` annotation:
@@ -125,6 +168,17 @@ boolean joiningListOfStrings(@ForAll List<@From("shortStrings") String> listOfSt
 
 Here, the list is created using the default list arbitrary, but the
 String elements are generated using the arbitrary from the method `shortStrings`.
+
+Alternatively, you can also use a `supplier` attribute in `@From`:
+
+```java
+@Property
+boolean joiningListOfStrings(@ForAll List<@From(supplier=ShortStrings.class) String> listOfStrings) {
+    String concatenated = String.join("", listOfStrings);
+    return concatenated.length() <= 8 * listOfStrings.size();
+}
+```
+
 
 ### Static `Arbitraries` methods
 
