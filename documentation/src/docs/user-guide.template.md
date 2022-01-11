@@ -169,8 +169,9 @@ ${new File("src/docs/include/testing-module.md").text}
 
 ## Advanced Topics
 
-${new File("src/docs/include/advanced-topics.md").text}
+${new File("src/docs/include/implement-your-own.md").text}
 
+${new File("src/docs/include/lifecycle-hooks.md").text}
 
 ## API Evolution
 
