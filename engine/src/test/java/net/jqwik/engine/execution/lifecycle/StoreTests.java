@@ -72,14 +72,20 @@ class StoreTests {
 		Consumer<String> onClose1 = Mockito.mock(Consumer.class);
 		Consumer<String> onClose2 = Mockito.mock(Consumer.class);
 		Store<String> store = Store
-								  .create("aString", Lifespan.PROPERTY, () -> "value")
-								  .onClose(onClose1)
-								  .onClose(onClose2);
+			.create("aString", Lifespan.PROPERTY,
+					initializer -> initializer.onClose(onClose1)
+											  .onClose(onClose2)
+											  .initialValue("value")
+			);
 		store.get(); // to invoke initialization
 		store.reset();
 
-		Mockito.verify(onClose1, Mockito.times(1)).accept("value");
-		Mockito.verify(onClose2, Mockito.times(1)).accept("value");
+		Mockito.verify(onClose1, Mockito.times(1)).
+
+			   accept("value");
+		Mockito.verify(onClose2, Mockito.times(1)).
+
+			   accept("value");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -90,9 +96,11 @@ class StoreTests {
 		Mockito.doThrow(new RuntimeException("for testing")).when(onClose1).accept("value");
 		Consumer<String> onClose2 = Mockito.mock(Consumer.class);
 		Store<String> store = Store
-								  .create("aString", Lifespan.PROPERTY, () -> "value")
-								  .onClose(onClose1)
-								  .onClose(onClose2);
+			.create("aString", Lifespan.PROPERTY,
+					initializer -> initializer.onClose(onClose1)
+											  .onClose(onClose2)
+											  .initialValue("value")
+			);
 		store.get(); // to invoke initialization
 		store.reset();
 

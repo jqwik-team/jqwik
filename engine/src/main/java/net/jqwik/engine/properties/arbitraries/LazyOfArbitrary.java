@@ -17,7 +17,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	// Cached arbitraries only have to survive one property
 	private static Store<Map<Integer, LazyOfArbitrary<?>>> arbitrariesStore() {
 		try {
-			return Store.getOrCreate(Tuple.of(LazyOfShrinkable.class, "arbitraries"), Lifespan.PROPERTY, HashMap::new);
+			return Store.getOrCreate(Tuple.of(LazyOfShrinkable.class, "arbitraries"), Lifespan.PROPERTY, () -> new HashMap<>());
 		} catch (OutsideJqwikException outsideJqwikException) {
 			return Store.free(HashMap::new);
 		}
@@ -39,7 +39,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	private Store<Map<Integer, RandomGenerator<T>>> createGeneratorsStore() {
 		try {
-			return Store.getOrCreate(Tuple.of(this, "generators"), Lifespan.TRY, HashMap::new);
+			return Store.getOrCreate(Tuple.of(this, "generators"), Lifespan.TRY, () -> new HashMap<>());
 		} catch (OutsideJqwikException outsideJqwikException) {
 			return Store.free(HashMap::new);
 		}

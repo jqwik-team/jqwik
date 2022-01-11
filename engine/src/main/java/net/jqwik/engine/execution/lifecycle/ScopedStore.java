@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
+import org.jetbrains.annotations.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
@@ -18,23 +19,25 @@ public class ScopedStore<T> implements Store<T> {
 	private final Object identifier;
 	private final Lifespan lifespan;
 	private final TestDescriptor scope;
-	private final Supplier<T> initializer;
+	private final Consumer<Initializer<T>>  initialize;
 
-	private final Set<Consumer<T>> onCloseCallbacks = new HashSet<>();
+	private final List<Consumer<T>> onCloseCallbacks = new ArrayList<>();
 	private T value;
 	private boolean initialized = false;
 
-	public ScopedStore(Object identifier, Lifespan lifespan, TestDescriptor scope, Supplier<T> initializer) {
+	public ScopedStore(Object identifier, Lifespan lifespan, TestDescriptor scope, Consumer<Initializer<T>> initialize) {
 		this.identifier = identifier;
 		this.lifespan = lifespan;
 		this.scope = scope;
-		this.initializer = initializer;
+		this.initialize = initialize;
 	}
 
 	@Override
 	public synchronized T get() {
 		if (!initialized) {
-			value = initializer.get();
+			StoreInitializer initializer = new StoreInitializer();
+			initialize.accept(initializer);
+			value = initializer.initialValue();
 			initialized = true;
 		}
 		return value;
@@ -54,12 +57,6 @@ public class ScopedStore<T> implements Store<T> {
 	public synchronized void reset() {
 		close();
 		initialized = false;
-	}
-
-	@Override
-	public ScopedStore<T> onClose(Consumer<T> onCloseCallback) {
-		onCloseCallbacks.add(onCloseCallback);
-		return this;
 	}
 
 	public Object getIdentifier() {
@@ -104,6 +101,30 @@ public class ScopedStore<T> implements Store<T> {
 				String message = String.format("Exception while closing store [%s]", this);
 				LOG.log(Level.SEVERE, message, throwable);
 			}
+		}
+	}
+
+	private class StoreInitializer implements Store.Initializer<T> {
+		private T value = null;
+		private boolean initialValueCalled = false;
+
+		@Override
+		public Store.Initializer<T> onClose(Consumer<T> onCloseCallback) {
+			onCloseCallbacks.add(onCloseCallback);
+			return this;
+		}
+
+		@Override
+		public void initialValue(T value) {
+			if (initialValueCalled) {
+				throw new IllegalArgumentException("Store.Initializer.initialValue(value) may only be called once.");
+			}
+			this.value = value;
+			this.initialValueCalled = true;
+		}
+
+		@Nullable T initialValue() {
+			return value;
 		}
 	}
 }

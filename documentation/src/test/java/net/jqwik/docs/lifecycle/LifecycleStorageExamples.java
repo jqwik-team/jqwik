@@ -45,8 +45,12 @@ class TemporaryFileHook implements ResolveParameterHook {
 	}
 
 	private File getTemporaryFileForTry() {
-		Store<File> tempFileStore = Store.getOrCreate(STORE_IDENTIFIER, Lifespan.TRY, this::createTempFile);
-		tempFileStore.onClose(file -> file.delete());
+		Store<File> tempFileStore =
+			Store.getOrCreate(
+				STORE_IDENTIFIER, Lifespan.TRY,
+				initializer -> initializer.onClose(File::delete)
+										  .initialValue(createTempFile())
+			);
 		return tempFileStore.get();
 	}
 

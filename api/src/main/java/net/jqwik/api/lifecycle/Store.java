@@ -20,10 +20,14 @@ public interface Store<T> {
 
 	void update(Function<T, T> updater);
 
+	@API(status = INTERNAL, since = "1.6.3")
 	void reset();
 
-	@API(status = EXPERIMENTAL, since = "1.2.4")
-	Store<T> onClose(Consumer<T> onCloseCallback);
+	@API(status = EXPERIMENTAL, since = "1.6.3")
+	interface Initializer<T> {
+		Initializer<T> onClose(Consumer<T> onCloseCallback);
+		void initialValue(T value);
+	}
 
 	@API(status = INTERNAL)
 	abstract class StoreFacade {
@@ -33,11 +37,11 @@ public interface Store<T> {
 			implementation = FacadeLoader.load(Store.StoreFacade.class);
 		}
 
-		public abstract <T> Store<T> create(Object identifier, Lifespan visibility, Supplier<T> initializer);
+		public abstract <T> Store<T> create(Object identifier, Lifespan visibility, Consumer<Initializer<T>> initialize);
 
 		public abstract <T> Store<T> get(Object identifier);
 
-		public abstract <T> Store<T> free(Supplier<T> initializer);
+		public abstract <T> Store<T> free(Supplier<T> initialValueSupplier);
 	}
 
 	/**
@@ -53,11 +57,32 @@ public interface Store<T> {
 	 * @param <T>         The type of object to store
 	 * @param identifier  Any object to identify a store. Must be globally unique and stable, i.e. hashCode and equals must not change.
 	 * @param lifespan    A stored object's lifespan
-	 * @param initializer Supplies the value to be used for initializing the store depending on its lifespan
+	 * @param initialValueSupplier Supplies the value to be used for initializing the store depending on its lifespan
 	 * @return New store instance
 	 */
-	static <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initializer) {
-		return StoreFacade.implementation.create(identifier, lifespan, initializer);
+	static <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier) {
+		return create(identifier, lifespan, initializer -> initializer.initialValue(initialValueSupplier.get()));
+	}
+
+	/**
+	 * Create a new store for storing and retrieving values and objects in lifecycle
+	 * hooks and lifecycle-dependent methods.
+	 *
+	 * <p>
+	 *     Stores are created with respect to the current test / property.
+	 *     Therefore you _must not save created stores in member variables_,
+	 *     unless the containing object is unique per test / property.
+	 * </p>
+	 *
+	 * @param <T>         The type of object to store
+	 * @param identifier  Any object to identify a store. Must be globally unique and stable, i.e. hashCode and equals must not change.
+	 * @param lifespan    A stored object's lifespan
+	 * @param initialize  Consumer that takes a {@linkplain Store.Initializer} instance for setting onClose callbacks and setting the initial value
+	 * @return New store instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.3")
+	static <T> Store<T> create(Object identifier, Lifespan lifespan, Consumer<Initializer<T>> initialize) {
+		return StoreFacade.implementation.create(identifier, lifespan, initialize);
 	}
 
 	/**
@@ -71,11 +96,16 @@ public interface Store<T> {
 	 *
 	 * @param <T>         The type of object to store
 	 * @param identifier  Any object to identify a store. Must be globally unique and stable, i.e. hashCode and equals must not change.
-	 * @param lifespan
-	 * @param initializer Supplies the value to be used for initializing the store depending on its lifespan
+	 * @param lifespan A stored object's lifespan
+	 * @param initialValueSupplier Supplies the value to be used for initializing the store depending on its lifespan
 	 * @return New or existing store instance
 	 */
-	static <T> Store<T> getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initializer) {
+	static <T> Store<T> getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier) {
+		return getOrCreate(identifier, lifespan, initializer -> initializer.initialValue(initialValueSupplier.get()));
+	}
+
+	@API(status = EXPERIMENTAL, since = "1.6.3")
+	static <T> Store<T> getOrCreate(Object identifier, Lifespan lifespan, Consumer<Initializer<T>>  initialize) {
 		try {
 			Store<T> store = Store.get(identifier);
 			if (!store.lifespan().equals(lifespan)) {
@@ -88,7 +118,7 @@ public interface Store<T> {
 			}
 			return store;
 		} catch (CannotFindStoreException cannotFindStore) {
-			return Store.create(identifier, lifespan, initializer);
+			return Store.create(identifier, lifespan, initialize);
 		}
 	}
 

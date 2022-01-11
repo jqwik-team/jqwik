@@ -33,13 +33,13 @@ public class StoreRepository {
 		TestDescriptor scope,
 		Object identifier,
 		Lifespan lifespan,
-		Supplier<T> initializer
+		Consumer<Store.Initializer<T>> initialize
 	) {
 		if (scope == null) {
 			throw new IllegalArgumentException("scope must not be null");
 		}
-		if (initializer == null) {
-			throw new IllegalArgumentException("initializer must not be null");
+		if (initialize == null) {
+			throw new IllegalArgumentException("initialize code must not be null");
 		}
 		if (lifespan == null) {
 			throw new IllegalArgumentException("lifespan must not be null");
@@ -47,7 +47,7 @@ public class StoreRepository {
 		if (identifier == null) {
 			throw new IllegalArgumentException("identifier must not be null");
 		}
-		ScopedStore<T> store = new ScopedStore<>(identifier, lifespan, scope, initializer);
+		ScopedStore<T> store = new ScopedStore<>(identifier, lifespan, scope, initialize);
 		addStore(identifier, store);
 		return store;
 	}

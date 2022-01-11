@@ -6,6 +6,7 @@ import java.util.function.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.Store.*;
 import net.jqwik.engine.execution.lifecycle.*;
 
 /**
@@ -14,9 +15,9 @@ import net.jqwik.engine.execution.lifecycle.*;
 public class StoreFacadeImpl extends Store.StoreFacade {
 
 	@Override
-	public <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initializer) {
+	public <T> Store<T> create(Object identifier, Lifespan lifespan, Consumer<Initializer<T>> initialize) {
 		TestDescriptor scope = CurrentTestDescriptor.get();
-		return StoreRepository.getCurrent().create(scope, identifier, lifespan, initializer);
+		return StoreRepository.getCurrent().create(scope, identifier, lifespan, initialize);
 	}
 
 	@Override
@@ -27,9 +28,9 @@ public class StoreFacadeImpl extends Store.StoreFacade {
 	}
 
 	@Override
-	public <T> Store<T> free(Supplier<T> initializer) {
+	public <T> Store<T> free(Supplier<T> initialValueSupplier) {
 		return new Store<T>() {
-			T t = initializer.get();
+			T t = initialValueSupplier.get();
 
 			@Override
 			public T get() {
@@ -48,14 +49,8 @@ public class StoreFacadeImpl extends Store.StoreFacade {
 
 			@Override
 			public void reset() {
-				t = initializer.get();
+				t = initialValueSupplier.get();
 			}
-
-			@Override
-			public Store<T> onClose(Consumer<T> onCloseCallback) {
-				return this;
-			}
-
 		};
 	}
 }
