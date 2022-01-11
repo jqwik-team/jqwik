@@ -1,7 +1,6 @@
 - 1.6.3
 
-    - Rework Store.onClose because it's inherently a confusing API.
-      See https://github.com/jlink/jqwik/issues/290
+    - Kotlin module: New convenience function createLifecycleStore(...)
 
 - 1.6.x
 
