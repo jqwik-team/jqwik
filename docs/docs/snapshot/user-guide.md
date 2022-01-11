@@ -5611,6 +5611,7 @@ If you get stuck figuring out how to create an arbitrary with the desired behavi
 either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
 or [open a Github issue](https://github.com/jlink/jqwik/issues).
 
+
 ### Lifecycle Hooks
 
 Similar to [Jupiter's Extension Model](https://junit.org/junit5/docs/current/user-guide/#extensions)
@@ -5992,17 +5993,33 @@ You create a store like this:
 Store<MyObject> myObjectStore = Store.create("myObjectStore", Lifespan.PROPERTY, () -> new MyObject());
 ```
 
+or - if you need to handle store clean up explicitly - like this:
+
+```java
+Store<MyObject> myObjectStore = 
+    Store.create("myObjectStore", Lifespan.PROPERTY,
+        initializer -> initializer.onClose(my -> my.cleanUp()).initialValue(new MyObject())                    
+    );
+```
+
+
 And you retrieve a store similarly:
 
 ```java
 Store<MyObject> myObjectStore = Store.get("myObjectStore");
 ```
 
-A store with the same identifier can only be created once, that's why there is also a convenience
-method for creating or retrieving it:
+A store with the same identifier can only be created once, that's why there are also convenience
+methods for creating or retrieving it:
 
 ```java
 Store<MyObject> myObjectStore = Store.getOrCreate("myObjectStore", Lifespan.PROPERTY, () -> new MyObject());
+```
+```java
+Store<MyObject> myObjectStore = 
+    Store.getOrCreate("myObjectStore", Lifespan.PROPERTY,
+        initializer -> initializer.onClose(my -> my.cleanUp()).initialValue(new MyObject())                    
+    );
 ```
 
 You now have the choice to use or update the shared state:
@@ -6036,10 +6053,13 @@ class TemporaryFileHook implements ResolveParameterHook {
         }
         return Optional.empty();
     }
-  
+
     private File getTemporaryFileForTry() {
-        Store<File> tempFileStore = Store.getOrCreate(STORE_IDENTIFIER, Lifespan.TRY, this::createTempFile);
-        tempFileStore.onClose(file -> file.delete());
+        Store<File> tempFileStore =
+            Store.getOrCreate(
+                STORE_IDENTIFIER, Lifespan.TRY,
+                initializer -> initializer.onClose(File::delete).initialValue(createTempFile())
+            );
         return tempFileStore.get();
     }
   
@@ -6060,7 +6080,7 @@ There are a few interesting things going on:
 - The temporary file is created only once per try.
   That means that all parameters in the scope of this try will contain _the same file_.
 - A callback is added through
-  [`onClose(..)`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/Store.html#onClose(java.util.function.Consumer))
+  [`onClose(..)`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/Store.Initializer.html#onClose(java.util.function.Consumer))
   which takes care of deleting the file as soon as the lifespan's scope (the try) is finished.
 
 With this information you can probably figure out how the following test container works --
@@ -6088,7 +6108,6 @@ class TemporaryFilesExample {
     }
 }
 ```
-
 
 
 
