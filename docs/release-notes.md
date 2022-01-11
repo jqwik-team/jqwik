@@ -43,7 +43,7 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
   [arbitrary suppliers](/docs/snapshot/user-guide.html#arbitrary-suppliers) 
   through a `supplier` attribute.
 
-- Enhanced Lifecycle Storage initialization API with two methods:
+- Enhanced [Lifecycle Storage API](/docs/snapshot/user-guide.html#lifecycle-storage) with two methods:
   - `Store.create(Object identifier, Lifespan lifespan, Consumer<Initializer<T>> initialize)`
   - `Store.getOrCreate(Object identifier, Lifespan lifespan, Consumer<Initializer<T>> initialize)`
 
