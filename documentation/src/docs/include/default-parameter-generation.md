@@ -18,6 +18,7 @@ jqwik will use default generation for the following types:
 - `HashMap<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `Map.Entry<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `java.util.Random`
+- `Arbitrary<T>` will be resolved to _an instance of the arbitrary_ for default resolution of type T.
 - [Functional Types](#functional-types)
 - Most types of package `java.time` are handled in the [Time Module](#time-module)
 
