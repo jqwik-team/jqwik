@@ -322,9 +322,21 @@ class RegisteredArbitraryProvidersTests {
 		}
 
 		@Property
+		void nestedArbitrary(@ForAll Arbitrary<@Size(5) List<Integer>> lists) {
+			assertThat(lists).isNotNull();
+			assertThat(lists.sampleStream().limit(10)).allMatch(l -> l.size() == 5);
+		}
+
+		@Property
 		void moreThanOneArbitrary(@ForAll Arbitrary<Serializable> serializables) {
 			assertThat(serializables).isNotNull();
 			assertThat(serializables.sampleStream().limit(10)).allMatch(s -> s instanceof Serializable);
+		}
+
+		@Property
+		void allPossibleBaseArbitraries(@ForAll Arbitrary<?> arbitrary) {
+			assertThat(arbitrary).isNotNull();
+			assertThat(arbitrary.sample()).isNotNull();
 		}
 
 		@Property
