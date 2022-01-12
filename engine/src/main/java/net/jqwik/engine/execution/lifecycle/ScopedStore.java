@@ -1,10 +1,8 @@
 package net.jqwik.engine.execution.lifecycle;
 
-import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
-import org.jetbrains.annotations.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
@@ -19,25 +17,30 @@ public class ScopedStore<T> implements Store<T> {
 	private final Object identifier;
 	private final Lifespan lifespan;
 	private final TestDescriptor scope;
-	private final Consumer<Initializer<T>>  initialize;
+	private final Supplier<T> initialValueSupplier;
+	private final Consumer<T> onClose;
 
-	private final List<Consumer<T>> onCloseCallbacks = new ArrayList<>();
 	private T value;
 	private boolean initialized = false;
 
-	public ScopedStore(Object identifier, Lifespan lifespan, TestDescriptor scope, Consumer<Initializer<T>> initialize) {
+	public ScopedStore(
+		Object identifier,
+		Lifespan lifespan,
+		TestDescriptor scope,
+		Supplier<T> initialValueSupplier,
+		Consumer<T> onClose
+	) {
 		this.identifier = identifier;
 		this.lifespan = lifespan;
 		this.scope = scope;
-		this.initialize = initialize;
+		this.initialValueSupplier = initialValueSupplier;
+		this.onClose = onClose;
 	}
 
 	@Override
 	public synchronized T get() {
 		if (!initialized) {
-			StoreInitializer initializer = new StoreInitializer();
-			initialize.accept(initializer);
-			value = initializer.initialValue();
+			value = initialValueSupplier.get();
 			initialized = true;
 		}
 		return value;
@@ -93,39 +96,14 @@ public class ScopedStore<T> implements Store<T> {
 		if (!initialized) {
 			return;
 		}
-		for (Consumer<T> onCloseCallback : onCloseCallbacks) {
-			try {
-				onCloseCallback.accept(value);
-			} catch (Throwable throwable) {
-				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
-				String message = String.format("Exception while closing store [%s]", this);
-				LOG.log(Level.SEVERE, message, throwable);
-			}
+		try {
+			onClose.accept(value);
+		} catch (Throwable throwable) {
+			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+			String message = String.format("Exception while closing store [%s]", this);
+			LOG.log(Level.SEVERE, message, throwable);
 		}
 	}
 
-	private class StoreInitializer implements Store.Initializer<T> {
-		private T value = null;
-		private boolean initialValueCalled = false;
-
-		@Override
-		public Store.Initializer<T> onClose(Consumer<T> onCloseCallback) {
-			onCloseCallbacks.add(onCloseCallback);
-			return this;
-		}
-
-		@Override
-		public void initialValue(T value) {
-			if (initialValueCalled) {
-				throw new IllegalArgumentException("Store.Initializer.initialValue(value) may only be called once.");
-			}
-			this.value = value;
-			this.initialValueCalled = true;
-		}
-
-		@Nullable T initialValue() {
-			return value;
-		}
-	}
 }
 

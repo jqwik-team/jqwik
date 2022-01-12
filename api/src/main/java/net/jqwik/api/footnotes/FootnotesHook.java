@@ -49,7 +49,7 @@ class FootnotesHook implements ResolveParameterHook, AroundTryHook {
 	private Store<List<String>> getFootnotesStore() {
 		return Store.getOrCreate(
 			Tuple.of(FootnotesHook.class, "footnotes"),
-			Lifespan.TRY, initializer -> initializer.initialValue(new ArrayList<>())
+			Lifespan.TRY, ArrayList::new
 		);
 	}
 

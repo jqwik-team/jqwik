@@ -48,8 +48,8 @@ class TemporaryFileHook implements ResolveParameterHook {
 		Store<File> tempFileStore =
 			Store.getOrCreate(
 				STORE_IDENTIFIER, Lifespan.TRY,
-				initializer -> initializer.onClose(File::delete)
-										  .initialValue(createTempFile())
+				this::createTempFile,
+				File::delete
 			);
 		return tempFileStore.get();
 	}

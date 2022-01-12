@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 @SuppressLogging
 class AroundPropertyHookTests {
 
-	static Store<List<String>> calls = Store.create("calls", Lifespan.PROPERTY, () -> new ArrayList<>());
+	static Store<List<String>> calls = Store.create("calls", Lifespan.PROPERTY, ArrayList::new);
 
 	@Example
 	@AddLifecycleHook(Outer.class)

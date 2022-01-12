@@ -9,7 +9,6 @@ import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.lifecycle.Store.*;
 import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -27,41 +26,38 @@ class StoreRepositoryTests {
 
 		@Example
 		void cannotCreateStoreWithNullScope() {
-			Consumer<Initializer<String>> initializer = i -> i.initialValue("a String");
-
-			assertThatThrownBy(() -> repository.create(null, "name", Lifespan.PROPERTY, initializer))
+			Supplier<String> initializer = () -> "a String";
+			assertThatThrownBy(() -> repository.create(null, "name", Lifespan.PROPERTY, initializer, null))
 				.isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void cannotCreateStoreWithNullIdentifier() {
-			Consumer<Initializer<String>> initializer = i -> i.initialValue("a String");
-
-			assertThatThrownBy(() -> repository.create(engine, null, Lifespan.PROPERTY, initializer))
+			Supplier<String> initializer = () -> "a String";
+			assertThatThrownBy(() -> repository.create(engine, null, Lifespan.PROPERTY, initializer, null))
 				.isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void cannotCreateStoreWithNullLifespan() {
-			Consumer<Initializer<String>> initializer = i -> i.initialValue("a String");
-
-			assertThatThrownBy(() -> repository.create(engine, "store", null, initializer))
+			Supplier<String> initializer = () -> "a String";
+			assertThatThrownBy(() -> repository.create(engine, "store", null, initializer, null))
 				.isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void cannotCreateStoreWithNullInitializer() {
-			assertThatThrownBy(() -> repository.create(engine, "name", Lifespan.PROPERTY, null))
+			assertThatThrownBy(() -> repository.create(engine, "name", Lifespan.PROPERTY, null, null))
 				.isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
 		void canCreateTwoStoresWithSameNameInDifferentScopes() {
 			TestDescriptor container1 = TestDescriptorBuilder.forClass(Container1.class).build();
-			repository.create(container1, "aString", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			repository.create(container1, "aString", Lifespan.PROPERTY, () -> "initial", null);
 
 			TestDescriptor container2 = TestDescriptorBuilder.forClass(Container2.class).build();
-			repository.create(container2, "aString", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			repository.create(container2, "aString", Lifespan.PROPERTY, () -> "initial", null);
 
 			Optional<ScopedStore<String>> optionalStore1 = repository.get(container1, "aString");
 			assertThat(optionalStore1).isPresent();
@@ -75,10 +71,10 @@ class StoreRepositoryTests {
 		@Example
 		void cannotCreateTwoLocalStoresWithSameNameInSameScope() {
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
-			repository.create(container, "aStore", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			repository.create(container, "aStore", Lifespan.PROPERTY, () -> "initial", null);
 
 			assertThatThrownBy(() -> {
-				repository.create(container, "aStore", Lifespan.PROPERTY, i -> i.initialValue(42));
+				repository.create(container, "aStore", Lifespan.PROPERTY, () -> 42, null);
 			}).isInstanceOf(JqwikException.class);
 		}
 
@@ -87,10 +83,10 @@ class StoreRepositoryTests {
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
 			TestDescriptor method1 = container.getChildren().iterator().next();
 
-			repository.create(method1, "aStore", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			repository.create(method1, "aStore", Lifespan.PROPERTY, () -> "initial", null);
 
 			assertThatThrownBy(() -> {
-				repository.create(container, "aStore", Lifespan.PROPERTY, i -> i.initialValue(42));
+				repository.create(container, "aStore", Lifespan.PROPERTY, () -> 42, null);
 			}).isInstanceOf(JqwikException.class);
 		}
 	}
@@ -101,8 +97,8 @@ class StoreRepositoryTests {
 		@Example
 		void canBeRetrievedForSameScopeAndSameName() {
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
-			ScopedStore<String> store = repository.create(container, "aString", Lifespan.PROPERTY, i -> i.initialValue("initial"));
-			ScopedStore<String> otherStore = repository.create(container, "otherString", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			ScopedStore<String> store = repository.create(container, "aString", Lifespan.PROPERTY, () -> "initial", null);
+			ScopedStore<String> otherStore = repository.create(container, "otherString", Lifespan.PROPERTY, () -> "initial", null);
 
 			Optional<ScopedStore<String>> optionalStore = repository.get(container, "aString");
 			assertThat(optionalStore).isPresent();
@@ -116,7 +112,7 @@ class StoreRepositoryTests {
 		@Example
 		void canBeRetrievedForChildScopeAndSameName() {
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
-			ScopedStore<String> store = repository.create(container, "aString", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			ScopedStore<String> store = repository.create(container, "aString", Lifespan.PROPERTY, () -> "initial", null);
 
 			TestDescriptor method1 = container.getChildren().iterator().next();
 
@@ -128,7 +124,7 @@ class StoreRepositoryTests {
 		@Example
 		void cannotBeRetrievedForSameScopeAndDifferentName() {
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
-			repository.create(container, "aString", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			repository.create(container, "aString", Lifespan.PROPERTY, () -> "initial", null);
 
 			Optional<ScopedStore<String>> optionalStore = repository.get(container, "otherString");
 			assertThat(optionalStore).isNotPresent();
@@ -137,7 +133,7 @@ class StoreRepositoryTests {
 		@Example
 		void cannotBeRetrievedForUnrelatedScopeAndSameName() {
 			TestDescriptor owner = TestDescriptorBuilder.forClass(Container1.class).build();
-			repository.create(owner, "aString", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			repository.create(owner, "aString", Lifespan.PROPERTY, () -> "initial", null);
 
 			TestDescriptor otherOwner = TestDescriptorBuilder.forClass(Container2.class).build();
 
@@ -153,20 +149,20 @@ class StoreRepositoryTests {
 		@Example
 		void finishTry_resetsAllVisibleStoresWithLifespanTry() {
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
-			ScopedStore<String> containerStoreTry = repository.create(container, "containerStoreTry", Lifespan.TRY, i -> i.initialValue("initial"));
+			ScopedStore<String> containerStoreTry = repository.create(container, "containerStoreTry", Lifespan.TRY, () -> "initial", null);
 			containerStoreTry.update(s -> "changed");
-			ScopedStore<String> containerStoreRun = repository.create(container, "containerStoreRun", Lifespan.RUN, i -> i.initialValue("initial"));
+			ScopedStore<String> containerStoreRun = repository.create(container, "containerStoreRun", Lifespan.RUN, () -> "initial", null);
 			containerStoreRun.update(s -> "changed");
 
 			TestDescriptor method = container.getChildren().iterator().next();
-			ScopedStore<String> methodStoreTry = repository.create(method, "methodStoreTry", Lifespan.TRY, i -> i.initialValue("initial"));
+			ScopedStore<String> methodStoreTry = repository.create(method, "methodStoreTry", Lifespan.TRY, () -> "initial", null);
 			methodStoreTry.update(s -> "changed");
-			ScopedStore<String> methodStoreProperty = repository.create(method, "methodStoreProperty", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			ScopedStore<String> methodStoreProperty = repository.create(method, "methodStoreProperty", Lifespan.PROPERTY, () -> "initial", null);
 			methodStoreProperty.update(s -> "changed");
 
 			TestDescriptor otherContainer = TestDescriptorBuilder.forClass(Container2.class).build();
 			ScopedStore<String> otherContainerStoreTry = repository
-				.create(otherContainer, "otherContainerStoreTry", Lifespan.TRY, i -> i.initialValue("initial"));
+				.create(otherContainer, "otherContainerStoreTry", Lifespan.TRY, () -> "initial", null);
 			otherContainerStoreTry.update(s -> "changed");
 
 			repository.finishTry(method);
@@ -184,20 +180,20 @@ class StoreRepositoryTests {
 		void finishProperty_resetsAllVisibleStoresWithLifespanProperty() {
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
 			ScopedStore<String> containerStoreProperty = repository
-				.create(container, "containerStoreProperty", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+				.create(container, "containerStoreProperty", Lifespan.PROPERTY, () -> "initial", null);
 			containerStoreProperty.update(s -> "changed");
-			ScopedStore<String> containerStoreRun = repository.create(container, "containerStoreRun", Lifespan.RUN, i -> i.initialValue("initial"));
+			ScopedStore<String> containerStoreRun = repository.create(container, "containerStoreRun", Lifespan.RUN, () -> "initial", null);
 			containerStoreRun.update(s -> "changed");
 
 			TestDescriptor method = container.getChildren().iterator().next();
-			ScopedStore<String> methodStoreProperty = repository.create(method, "methodStoreProperty", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			ScopedStore<String> methodStoreProperty = repository.create(method, "methodStoreProperty", Lifespan.PROPERTY, () -> "initial", null);
 			methodStoreProperty.update(s -> "changed");
-			ScopedStore<String> methodStoreTry = repository.create(method, "methodStoreTry", Lifespan.TRY, i -> i.initialValue("initial"));
+			ScopedStore<String> methodStoreTry = repository.create(method, "methodStoreTry", Lifespan.TRY, () -> "initial", null);
 			methodStoreTry.update(s -> "changed");
 
 			TestDescriptor otherContainer = TestDescriptorBuilder.forClass(Container2.class).build();
 			ScopedStore<String> otherContainerStoreProperty = repository
-				.create(otherContainer, "otherContainerStoreProperty", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+				.create(otherContainer, "otherContainerStoreProperty", Lifespan.PROPERTY, () -> "initial", null);
 			otherContainerStoreProperty.update(s -> "changed");
 
 			repository.finishProperty(method);
@@ -216,14 +212,14 @@ class StoreRepositoryTests {
 			TestDescriptor container1 = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
 			TestDescriptor method1 = container1.getChildren().iterator().next();
 
-			ScopedStore<String> containerStore1 = repository.create(container1, "store1", Lifespan.PROPERTY, i -> i.initialValue("initial"));
-			ScopedStore<String> containerStore2 = repository.create(container1, "store2", Lifespan.PROPERTY, i -> i.initialValue("initial"));
-			ScopedStore<String> method1Store = repository.create(method1, "method1Store", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			ScopedStore<String> containerStore1 = repository.create(container1, "store1", Lifespan.PROPERTY, () -> "initial", null);
+			ScopedStore<String> containerStore2 = repository.create(container1, "store2", Lifespan.PROPERTY, () -> "initial", null);
+			ScopedStore<String> method1Store = repository.create(method1, "method1Store", Lifespan.PROPERTY, () -> "initial", null);
 
 			repository.finishScope(container1);
 
 			TestDescriptor container2 = TestDescriptorBuilder.forClass(Container2.class).build();
-			ScopedStore<String> container2Store = repository.create(container2, "container2store", Lifespan.PROPERTY, i -> i.initialValue("initial"));
+			ScopedStore<String> container2Store = repository.create(container2, "container2store", Lifespan.PROPERTY, () -> "initial", null);
 
 			assertThat(repository.get(container1, "store1")).isNotPresent();
 			assertThat(repository.get(container1, "store2")).isNotPresent();
@@ -244,28 +240,31 @@ class StoreRepositoryTests {
 			TestDescriptor otherMethod = methods.next();
 
 			ScopedStore<String> containerStore =
-				repository
-					.create(container, "containerStore", Lifespan.PROPERTY,
-							initializer -> initializer.onClose(onCloseContainerStore)
-													  .initialValue("container value")
-					);
+				repository.create(
+					container, "containerStore",
+					Lifespan.PROPERTY,
+					() -> "container value",
+					onCloseContainerStore
+				);
 
 			containerStore.get(); // to invoke initialization
 
 			ScopedStore<String> methodStore =
-				repository
-					.create(method, "methodStore", Lifespan.PROPERTY,
-							initializer -> initializer.onClose(onCloseMethodStore)
-													  .initialValue("method value")
-					);
+				repository.create(
+					method, "methodStore",
+					Lifespan.PROPERTY,
+					() -> "method value",
+					onCloseMethodStore
+				);
 			methodStore.get(); // to invoke initialization
 
 			ScopedStore<String> uninitializedMethodStore =
-				repository
-					.create(otherMethod, "uninitializedMethodStore", Lifespan.PROPERTY,
-							initializer -> initializer.onClose(onCloseUninitializedMethodStore)
-													  .initialValue("other method value")
-					);
+				repository.create(
+					otherMethod, "uninitializedMethodStore",
+					Lifespan.PROPERTY,
+					() -> "other method value",
+					onCloseUninitializedMethodStore
+				);
 
 			repository.finishScope(container);
 

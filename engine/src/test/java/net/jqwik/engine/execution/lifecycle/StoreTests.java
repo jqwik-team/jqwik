@@ -68,44 +68,32 @@ class StoreTests {
 
 	@SuppressWarnings("unchecked")
 	@Example
-	void resettingStoreCallsOnCloseCallbacks() {
-		Consumer<String> onClose1 = Mockito.mock(Consumer.class);
-		Consumer<String> onClose2 = Mockito.mock(Consumer.class);
-		Store<String> store = Store
-			.create("aString", Lifespan.PROPERTY,
-					initializer -> initializer.onClose(onClose1)
-											  .onClose(onClose2)
-											  .initialValue("value")
-			);
+	void resettingStoreCallsOnCloseCallback() {
+		Consumer<String> onClose = Mockito.mock(Consumer.class);
+		Store<String> store = Store.create(
+			"aString", Lifespan.PROPERTY,
+			() -> "value", onClose
+		);
 		store.get(); // to invoke initialization
 		store.reset();
 
-		Mockito.verify(onClose1, Mockito.times(1)).
-
-			   accept("value");
-		Mockito.verify(onClose2, Mockito.times(1)).
-
-			   accept("value");
+		Mockito.verify(onClose, Mockito.times(1)).accept("value");
 	}
 
 	@SuppressWarnings("unchecked")
 	@SuppressLogging("severe logging of exception expected")
 	@Example
-	void swallowExceptionsInOnCloseCallbacks() {
-		Consumer<String> onClose1 = Mockito.mock(Consumer.class);
-		Mockito.doThrow(new RuntimeException("for testing")).when(onClose1).accept("value");
-		Consumer<String> onClose2 = Mockito.mock(Consumer.class);
-		Store<String> store = Store
-			.create("aString", Lifespan.PROPERTY,
-					initializer -> initializer.onClose(onClose1)
-											  .onClose(onClose2)
-											  .initialValue("value")
-			);
+	void swallowExceptionsInOnCloseCallback() {
+		Consumer<String> onClose = Mockito.mock(Consumer.class);
+		Mockito.doThrow(new RuntimeException("for testing")).when(onClose).accept("value");
+		Store<String> store = Store.create(
+			"aString", Lifespan.PROPERTY,
+			() -> "value", onClose
+		);
 		store.get(); // to invoke initialization
 		store.reset();
 
-		Mockito.verify(onClose1, Mockito.times(1)).accept("value");
-		Mockito.verify(onClose2, Mockito.times(1)).accept("value");
+		Mockito.verify(onClose, Mockito.times(1)).accept("value");
 	}
 
 	class AssertCounter110 implements Lifecycle {

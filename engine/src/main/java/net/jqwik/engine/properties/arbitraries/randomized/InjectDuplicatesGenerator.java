@@ -19,7 +19,7 @@ public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
 	}
 
 	private Store<List<Long>> createPreviousSeedsStorePerTry() {
-		return Store.getOrCreate(this, Lifespan.TRY, () -> new ArrayList<>());
+		return Store.getOrCreate(this, Lifespan.TRY, ArrayList::new);
 	}
 
 	@Override
