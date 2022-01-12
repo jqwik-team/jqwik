@@ -379,13 +379,11 @@ You create a store like this:
 Store<MyObject> myObjectStore = Store.create("myObjectStore", Lifespan.PROPERTY, () -> new MyObject());
 ```
 
-or - if you need to handle store clean up explicitly - like this:
+or - if you need to handle store clean up explicitly there's an optional fourth parameter:
 
 ```java
 Store<MyObject> myObjectStore = 
-    Store.create("myObjectStore", Lifespan.PROPERTY,
-        initializer -> initializer.onClose(my -> my.cleanUp()).initialValue(new MyObject())                    
-    );
+    Store.create("myObjectStore", Lifespan.PROPERTY, MyObject::new, my -> my.cleanUp());
 ```
 
 
@@ -403,9 +401,7 @@ Store<MyObject> myObjectStore = Store.getOrCreate("myObjectStore", Lifespan.PROP
 ```
 ```java
 Store<MyObject> myObjectStore = 
-    Store.getOrCreate("myObjectStore", Lifespan.PROPERTY,
-        initializer -> initializer.onClose(my -> my.cleanUp()).initialValue(new MyObject())                    
-    );
+    Store.getOrCreate("myObjectStore", Lifespan.PROPERTY, MyObject::new, my -> my.cleanUp());
 ```
 
 You now have the choice to use or update the shared state:
@@ -444,7 +440,8 @@ class TemporaryFileHook implements ResolveParameterHook {
         Store<File> tempFileStore =
             Store.getOrCreate(
                 STORE_IDENTIFIER, Lifespan.TRY,
-                initializer -> initializer.onClose(File::delete).initialValue(createTempFile())
+                this::createTempFile,
+                File::delete
             );
         return tempFileStore.get();
     }
@@ -465,9 +462,7 @@ There are a few interesting things going on:
   This makes sure that no other hook will use the same identifier accidentally.
 - The temporary file is created only once per try.
   That means that all parameters in the scope of this try will contain _the same file_.
-- A callback is added through
-  [`onClose(..)`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Store.Initializer.html#onClose(java.util.function.Consumer))
-  which takes care of deleting the file as soon as the lifespan's scope (the try) is finished.
+- A callback is added which takes care of deleting the file as soon as the lifespan's scope (the try) is finished.
 
 With this information you can probably figure out how the following test container works --
 especially why the assertion in `@AfterTry`-method `assertFileNotEmpty()` succeeds.

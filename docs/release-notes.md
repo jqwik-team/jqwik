@@ -44,8 +44,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
   through a `supplier` attribute.
 
 - Enhanced [Lifecycle Storage API](/docs/snapshot/user-guide.html#lifecycle-storage) with two methods:
-  - `Store.create(Object identifier, Lifespan lifespan, Consumer<Initializer<T>> initialize)`
-  - `Store.getOrCreate(Object identifier, Lifespan lifespan, Consumer<Initializer<T>> initialize)`
+  - `Store.create(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier, Consumer<T> onClose)`
+  - `Store.getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier, Consumer<T> onClose)`
 
 #### Breaking Changes
 
