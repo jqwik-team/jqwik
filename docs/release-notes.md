@@ -47,6 +47,9 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
   - `Store.create(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier, Consumer<T> onClose)`
   - `Store.getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier, Consumer<T> onClose)`
 
+- Added capability to automatically resolve Arbitrary parameters.
+  This is an experimental feature.
+
 #### Breaking Changes
 
 - `kotlinx-coroutine-test` replaced `runBlockingTest` with `runTest`.
