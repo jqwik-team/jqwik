@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SuppressLogging
 @Group
+@PropertyDefaults(tries = 100)
 class RegisteredArbitraryProvidersTests {
 
 	private enum AnEnum {
@@ -302,6 +303,33 @@ class RegisteredArbitraryProvidersTests {
 		@Property
 		void entriesAreMutable(@ForAll Map.Entry<Integer, String> anEntry) {
 			anEntry.setValue("other");
+		}
+	}
+
+	@Group
+	class Arbitrary_Types {
+
+		@Property
+		void simpleArbitrary(@ForAll Arbitrary<String> strings) {
+			assertThat(strings).isNotNull();
+			assertThat(strings.sampleStream().limit(10)).allMatch(s -> s instanceof String);
+		}
+
+		@Property
+		void restrictedArbitrary(@ForAll Arbitrary<@IntRange(min = 1, max = 10) Integer> ints) {
+			assertThat(ints).isNotNull();
+			assertThat(ints.sampleStream().limit(10)).allMatch(i -> i >= 1 && i <= 10);
+		}
+
+		@Property
+		void moreThanOneArbitrary(@ForAll Arbitrary<Serializable> serializables) {
+			assertThat(serializables).isNotNull();
+			assertThat(serializables.sampleStream().limit(10)).allMatch(s -> s instanceof Serializable);
+		}
+
+		@Property
+		@ExpectFailure(failureType = CannotFindArbitraryException.class)
+		void unknownArbitraryType(@ForAll Arbitrary<RegisteredArbitraryProviders> arbitrary) {
 		}
 	}
 
