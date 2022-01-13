@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.time.api.testingSupport.ForDuration.*;
 
+@PropertyDefaults(tries = 100)
 public class InvalidConfigurationTests {
 
 	@Provide

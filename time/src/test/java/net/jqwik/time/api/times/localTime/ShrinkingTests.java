@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
 
+@PropertyDefaults(tries = 100)
 public class ShrinkingTests {
 
 	@Property
@@ -22,7 +23,7 @@ public class ShrinkingTests {
 		assertThat(value).isEqualTo(LocalTime.of(0, 0, 0, 0));
 	}
 
-	@Property(tries = 100)
+	@Property
 	void shrinksToSmallestFailingValue(@ForAll Random random) {
 		LocalTimeArbitrary times = Times.times().ofPrecision(SECONDS);
 		TestingFalsifier<LocalTime> falsifier = time -> time.isBefore(LocalTime.of(9, 13, 42, 143_921_111));

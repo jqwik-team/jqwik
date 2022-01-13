@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
 
+@PropertyDefaults(tries = 100)
 public class ShrinkingTests {
 
 	@Property

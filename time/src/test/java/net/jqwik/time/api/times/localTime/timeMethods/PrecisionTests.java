@@ -9,6 +9,7 @@ import static java.time.temporal.ChronoUnit.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
+@PropertyDefaults(tries = 100)
 public class PrecisionTests {
 
 	@Provide
