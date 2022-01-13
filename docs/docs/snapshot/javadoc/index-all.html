@@ -841,6 +841,8 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Execute a query for coverage checking.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.CloseOnReset.html#close()">close()</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.CloseOnReset.html" title="interface in net.jqwik.api.lifecycle">Store.CloseOnReset</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Histogram.html#cluster(java.util.List)">cluster(List&lt;StatisticsEntry&gt;)</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Histogram.html" title="class in net.jqwik.api.statistics">Histogram</a></dt>
 <dd>
 <div class="block">Cluster entries into <a href="net/jqwik/api/statistics/Histogram.Bucket.html" title="class in net.jqwik.api.statistics">buckets</a>.</div>
@@ -1069,18 +1071,13 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Perform coverage checking for successful property on statistics.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.html#create(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Consumer)">create(Object, Lifespan, Consumer&lt;Store.Initializer&lt;T&gt;&gt;)</a></span> - Static method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a></dt>
-<dd>
-<div class="block">Create a new store for storing and retrieving values and objects in lifecycle
- hooks and lifecycle-dependent methods.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.StoreFacade.html#create(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Consumer)">create(Object, Lifespan, Consumer&lt;Store.Initializer&lt;T&gt;&gt;)</a></span> - Method in class net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.StoreFacade.html" title="class in net.jqwik.api.lifecycle">Store.StoreFacade</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.html#create(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Supplier)">create(Object, Lifespan, Supplier&lt;T&gt;)</a></span> - Static method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a></dt>
 <dd>
 <div class="block">Create a new store for storing and retrieving values and objects in lifecycle
  hooks and lifecycle-dependent methods.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.StoreFacade.html#create(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Supplier)">create(Object, Lifespan, Supplier&lt;T&gt;)</a></span> - Method in class net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.StoreFacade.html" title="class in net.jqwik.api.lifecycle">Store.StoreFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.html#create(java.util.function.Supplier)">create(Supplier&lt;T&gt;)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.html" title="class in net.jqwik.api">Arbitraries</a></dt>
 <dd>
 <div class="block">Create an arbitrary that will use a supplier to generate a value.</div>
@@ -1893,8 +1890,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Get meta info for a certain key</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.html#getOrCreate(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Consumer)">getOrCreate(Object, Lifespan, Consumer&lt;Store.Initializer&lt;T&gt;&gt;)</a></span> - Static method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.html#getOrCreate(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Supplier)">getOrCreate(Object, Lifespan, Supplier&lt;T&gt;)</a></span> - Static method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a></dt>
 <dd>
 <div class="block">Find an existing store or create a new one if it doesn't exist.</div>
@@ -2092,8 +2087,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">This method will be called exactly once after instantiation of a given domain context class.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.Initializer.html#initialValue(T)">initialValue(T)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.Initializer.html" title="interface in net.jqwik.api.lifecycle">Store.Initializer</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#injectDuplicates(double)">injectDuplicates(double)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
 <div class="block">Create a new arbitrary of type <code>Iterable&lt;T&gt;</code> that will
@@ -3229,8 +3222,6 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <div class="block">Create an arbitrary that will randomly choose from a given array of value suppliers
  and then get the value from the supplier.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.Initializer.html#onClose(java.util.function.Consumer)">onClose(Consumer&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.Initializer.html" title="interface in net.jqwik.api.lifecycle">Store.Initializer</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#oneOf(java.util.Collection)">oneOf(Collection&lt;Arbitrary&lt;? extends T&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.html#oneOf(java.util.Collection)">oneOf(Collection&lt;Arbitrary&lt;? extends T&gt;&gt;)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.html" title="class in net.jqwik.api">Arbitraries</a></dt>
@@ -4086,8 +4077,10 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <dd>
 <div class="block">Experimental feature.</div>
 </dd>
-<dt><a href="net/jqwik/api/lifecycle/Store.Initializer.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Store.Initializer</span></a>&lt;<a href="net/jqwik/api/lifecycle/Store.Initializer.html" title="type parameter in Store.Initializer">T</a>&gt; - Interface in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="net/jqwik/api/lifecycle/Store.CloseOnReset.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Store.CloseOnReset</span></a> - Interface in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
+<dd>
+<div class="block">Any value that implements this interface will automatically be closed when its store goes out of scope.</div>
+</dd>
 <dt><a href="net/jqwik/api/lifecycle/Store.StoreFacade.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">Store.StoreFacade</span></a> - Class in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.StoreFacade.html#%3Cinit%3E()">StoreFacade()</a></span> - Constructor for class net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.StoreFacade.html" title="class in net.jqwik.api.lifecycle">Store.StoreFacade</a></dt>

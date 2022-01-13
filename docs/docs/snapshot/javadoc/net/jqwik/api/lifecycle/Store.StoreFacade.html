@@ -180,9 +180,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="Store.html" title="interface in net.jqwik.api.lifecycle">Store</a>&lt;T&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#create(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Consumer)">create</a></span>&#8203;(java.lang.Object&nbsp;identifier,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#create(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Supplier)">create</a></span>&#8203;(java.lang.Object&nbsp;identifier,
       <a href="Lifespan.html" title="enum in net.jqwik.api.lifecycle">Lifespan</a>&nbsp;visibility,
-      java.util.function.Consumer&lt;<a href="Store.Initializer.html" title="interface in net.jqwik.api.lifecycle">Store.Initializer</a>&lt;T&gt;&gt;&nbsp;initialize)</code></th>
+      java.util.function.Supplier&lt;T&gt;&nbsp;initialValueSupplier)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -238,7 +238,7 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="create(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Consumer)">
+<a id="create(java.lang.Object,net.jqwik.api.lifecycle.Lifespan,java.util.function.Supplier)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -246,7 +246,7 @@ extends java.lang.Object</pre>
 <h4>create</h4>
 <pre class="methodSignature">public abstract&nbsp;&lt;T&gt;&nbsp;<a href="Store.html" title="interface in net.jqwik.api.lifecycle">Store</a>&lt;T&gt;&nbsp;create&#8203;(java.lang.Object&nbsp;identifier,
                                     <a href="Lifespan.html" title="enum in net.jqwik.api.lifecycle">Lifespan</a>&nbsp;visibility,
-                                    java.util.function.Consumer&lt;<a href="Store.Initializer.html" title="interface in net.jqwik.api.lifecycle">Store.Initializer</a>&lt;T&gt;&gt;&nbsp;initialize)</pre>
+                                    java.util.function.Supplier&lt;T&gt;&nbsp;initialValueSupplier)</pre>
 </li>
 </ul>
 <a id="get(java.lang.Object)">
