@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @Group
+@PropertyDefaults(tries = 100)
 public class CalendarMethodsTests {
 
 	@Provide
@@ -233,6 +234,7 @@ public class CalendarMethodsTests {
 	}
 
 	@Group
+	@PropertyDefaults(tries = 100)
 	class DayOfMonthMethods {
 
 		@Property

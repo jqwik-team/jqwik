@@ -14,6 +14,7 @@ import static net.jqwik.testing.TestingSupport.*;
 import static net.jqwik.time.api.testingSupport.ForDate.*;
 
 @Group
+@PropertyDefaults(tries = 100)
 public class DateMethodsTests {
 
 	@Provide

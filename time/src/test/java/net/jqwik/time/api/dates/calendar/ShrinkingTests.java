@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.time.api.testingSupport.ForCalendar.*;
 
+@PropertyDefaults(tries = 100)
 public class ShrinkingTests {
 
 	@Property

@@ -13,6 +13,7 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.time.api.testingSupport.ForCalendar.*;
 import static net.jqwik.time.api.testingSupport.ForDate.*;
 
+@PropertyDefaults(tries = 100)
 public class ShrinkingTests {
 
 	@Property
