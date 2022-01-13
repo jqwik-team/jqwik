@@ -4932,7 +4932,7 @@ Here's the list of available methods:
 
 ##### Default Generation of DateTimes
 
-Default generation currently is supported for `LocalDateTime`, `Instant` and `OffsetDateTime`. 
+Default generation currently is supported for `LocalDateTime`, `Instant`, `OffsetDateTime` and `ZonedDateTime`. 
 Here's a small example:
 
 ```java
@@ -4990,9 +4990,10 @@ Arbitrary<LocalDateTime> dateTimes() {
 
 Here's the list of available methods:
 
-- [`LocalDateTimeArbitrary dateTimes()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#dateTimes())
-- [`InstantArbitrary instants()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#instants())
-- [`OffsetDateTimeArbitrary offsetDateTimes()`](/docs/snapshot/javadoc/net/jqwik/time/api/Dates.html#offsetDateTimes())
+- [`LocalDateTimeArbitrary dateTimes()`](/docs/snapshot/javadoc/net/jqwik/time/api/DateTimes.html#dateTimes())
+- [`InstantArbitrary instants()`](/docs/snapshot/javadoc/net/jqwik/time/api/DateTimes.html#instants())
+- [`OffsetDateTimeArbitrary offsetDateTimes()`](/docs/snapshot/javadoc/net/jqwik/time/api/DateTimes.html#offsetDateTimes())
+- [`ZonedDateTimeArbitrary zonedDateTimes()`](/docs/snapshot/javadoc/net/jqwik/time/api/DateTimes.html#zonedDateTimes())
 
 ###### LocalDateTimeArbitrary
 
@@ -5048,6 +5049,24 @@ Here's the list of available methods:
 - You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
 - You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
 - You can constrain the minimum and maximum value for offset using `offsetBetween(min, max)`.
+- You can constrain the precision using `ofPrecision(ofPrecision)`.
+
+###### ZonedDateTimeArbitrary
+
+- The target type is `ZonedDateTime`.
+- By default, only years between 1900 and 2500 are generated.
+- By default, precision is seconds. If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
+- You can constrain its minimum and maximum value for date times using `between(min, max)`, `atTheEarliest(min)` and `atTheLatest(max)`.
+- You can constrain its minimum and maximum value for dates using `dateBetween(min, max)`.
+- You can constrain the minimum and maximum value for years using `yearBetween(min, max)`.
+- You can constrain the minimum and maximum value for months using `monthBetween(min, max)`.
+- You can limit the generation of months to only a few months using `onlyMonths(months)`.
+- You can constrain the minimum and maximum value for days of month using `dayOfMonthBetween(min, max)`.
+- You can limit the generation of days of week to only a few days of week using `onlyDaysOfWeek(daysOfWeek)`.
+- You can constrain the minimum and maximum time value using `timeBetween(min, max)`.
+- You can constrain the minimum and maximum value for hours using `hourBetween(min, max)`.
+- You can constrain the minimum and maximum value for minutes using `minuteBetween(min, max)`.
+- You can constrain the minimum and maximum value for seconds using `secondBetween(min, max)`.
 - You can constrain the precision using `ofPrecision(ofPrecision)`.
 
 

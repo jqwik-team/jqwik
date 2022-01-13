@@ -1,7 +1,5 @@
 - 1.6.3
 
-    - Rebase and fix Time PR
-
     - Optimize flatMap(just(value)) and flatCombine(just(), just())
 
 - 1.6.x
