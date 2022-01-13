@@ -43,9 +43,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
   [arbitrary suppliers](/docs/snapshot/user-guide.html#arbitrary-suppliers) 
   through a `supplier` attribute.
 
-- Enhanced [Lifecycle Storage API](/docs/snapshot/user-guide.html#lifecycle-storage) with two methods:
-  - `Store.create(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier, Consumer<T> onClose)`
-  - `Store.getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier, Consumer<T> onClose)`
+- Changed [Lifecycle Storage API](/docs/snapshot/user-guide.html#lifecycle-storage so that
+  stored values can now implement `Store.CloseOnReset` if they need closing action.
 
 - Added capability to automatically resolve Arbitrary parameters.
   This is an experimental feature.
@@ -56,7 +55,7 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 - Arbitrary provider methods can no longer have a `SubtypeProvider` parameter.
 
-- Removed experimental API `Store.onClose()`. 
+- Removed experimental API `Store.onClose()`.
 
 #### Bug Fixes
 

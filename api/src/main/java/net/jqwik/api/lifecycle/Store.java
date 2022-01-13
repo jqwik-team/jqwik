@@ -24,11 +24,6 @@ public interface Store<T> {
 	@API(status = INTERNAL, since = "1.6.3")
 	void reset();
 
-	@API(status = EXPERIMENTAL, since = "1.6.3")
-	interface CloseOnReset {
-		void close() throws Exception;
-	}
-
 	@API(status = INTERNAL)
 	abstract class StoreFacade {
 		private static final Store.StoreFacade implementation;
@@ -42,6 +37,15 @@ public interface Store<T> {
 		public abstract <T> Store<T> get(Object identifier);
 
 		public abstract <T> Store<T> free(Supplier<T> initialValueSupplier);
+	}
+
+	/**
+	 * Any value that implements this interface will automatically be closed when its store goes out of scope.
+	 * That scope is defined by the store's {@linkplain #lifespan()}
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.3")
+	interface CloseOnReset {
+		void close() throws Exception;
 	}
 
 	/**

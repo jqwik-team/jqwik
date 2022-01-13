@@ -45,13 +45,12 @@ class TemporaryFileHook implements ResolveParameterHook {
 	}
 
 	private File getTemporaryFileForTry() {
-		Store<File> tempFileStore =
+		Store<ClosingFile> tempFileStore =
 			Store.getOrCreate(
 				STORE_IDENTIFIER, Lifespan.TRY,
-				this::createTempFile,
-				File::delete
+				() -> new ClosingFile(createTempFile())
 			);
-		return tempFileStore.get();
+		return tempFileStore.get().file;
 	}
 
 	private File createTempFile() {
@@ -61,4 +60,18 @@ class TemporaryFileHook implements ResolveParameterHook {
 			throw new RuntimeException(e);
 		}
 	}
+
+	private static class ClosingFile implements Store.CloseOnReset {
+		private final File file;
+
+		private ClosingFile(File file) {
+			this.file = file;
+		}
+
+		@Override
+		public void close() {
+			file.delete();
+		}
+	}
+
 }

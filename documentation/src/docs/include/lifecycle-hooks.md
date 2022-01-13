@@ -379,14 +379,6 @@ You create a store like this:
 Store<MyObject> myObjectStore = Store.create("myObjectStore", Lifespan.PROPERTY, () -> new MyObject());
 ```
 
-or - if you need to handle store clean up explicitly there's an optional fourth parameter:
-
-```java
-Store<MyObject> myObjectStore = 
-    Store.create("myObjectStore", Lifespan.PROPERTY, MyObject::new, my -> my.cleanUp());
-```
-
-
 And you retrieve a store similarly:
 
 ```java
@@ -398,10 +390,6 @@ methods for creating or retrieving it:
 
 ```java
 Store<MyObject> myObjectStore = Store.getOrCreate("myObjectStore", Lifespan.PROPERTY, () -> new MyObject());
-```
-```java
-Store<MyObject> myObjectStore = 
-    Store.getOrCreate("myObjectStore", Lifespan.PROPERTY, MyObject::new, my -> my.cleanUp());
 ```
 
 You now have the choice to use or update the shared state:
@@ -427,9 +415,12 @@ temporary file per try using [parameter resolution](#resolveparameterhook):
 class TemporaryFileHook implements ResolveParameterHook {
 
     public static final Tuple.Tuple2 STORE_IDENTIFIER = Tuple.of(TemporaryFileHook.class, "temporary files");
-  
+
     @Override
-    public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
+    public Optional<ParameterSupplier> resolve(
+        ParameterResolutionContext parameterContext,
+        LifecycleContext lifecycleContext
+    ) {
         if (parameterContext.typeUsage().isOfType(File.class)) {
             return Optional.of(ignoreTry -> getTemporaryFileForTry());
         }
@@ -437,20 +428,26 @@ class TemporaryFileHook implements ResolveParameterHook {
     }
 
     private File getTemporaryFileForTry() {
-        Store<File> tempFileStore =
+        Store<ClosingFile> tempFileStore =
             Store.getOrCreate(
                 STORE_IDENTIFIER, Lifespan.TRY,
-                this::createTempFile,
-                File::delete
+                () -> new ClosingFile(createTempFile())
             );
-        return tempFileStore.get();
+        return tempFileStore.get().file();
     }
-  
+
     private File createTempFile() {
         try {
             return File.createTempFile("temp", ".txt");
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private record ClosingFile(File file) implements Store.CloseOnReset {
+        @Override
+        public void close() {
+            file.delete();
         }
     }
 }
@@ -462,7 +459,9 @@ There are a few interesting things going on:
   This makes sure that no other hook will use the same identifier accidentally.
 - The temporary file is created only once per try.
   That means that all parameters in the scope of this try will contain _the same file_.
-- A callback is added which takes care of deleting the file as soon as the lifespan's scope (the try) is finished.
+- The file is wrapped in a class that implements `Store.CloseOnReset`.
+  We do this to make sure that the temporary file will be deleted
+  as soon as the store is going out of scope - in this case after each try.
 
 With this information you can probably figure out how the following test container works --
 especially why the assertion in `@AfterTry`-method `assertFileNotEmpty()` succeeds.
