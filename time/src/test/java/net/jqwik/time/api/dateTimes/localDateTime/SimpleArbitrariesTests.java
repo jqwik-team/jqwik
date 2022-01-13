@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
+@PropertyDefaults(tries = 100)
 public class SimpleArbitrariesTests {
 
 	@Provide

@@ -6,6 +6,7 @@ import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@PropertyDefaults(tries = 100)
 public class DefaultGenerationTests {
 
 	@Property

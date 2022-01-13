@@ -23,6 +23,7 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 		return dates.map(DefaultCalendarArbitrary::localDateToCalendar);
 	}
 
+	@SuppressWarnings("MagicConstant")
 	public static Calendar localDateToCalendar(LocalDate date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeZone(TimeZone.getTimeZone("GMT"));

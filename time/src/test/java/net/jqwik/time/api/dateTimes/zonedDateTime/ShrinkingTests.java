@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
 
+@PropertyDefaults(tries = 40)
 public class ShrinkingTests {
 
 	@Property
@@ -22,7 +23,7 @@ public class ShrinkingTests {
 		assertThat(value).isEqualTo(ZonedDateTime.of(1900, 1, 1, 0, 0, 0, 0, ZoneId.of("Etc/GMT-14")));
 	}
 
-	@Property(tries = 40)
+	@Property
 	void shrinksToSmallestFailingValue(@ForAll Random random) {
 		ZonedDateTimeArbitrary dateTimes = DateTimes.zonedDateTimes();
 		TestingFalsifier<ZonedDateTime> falsifier =

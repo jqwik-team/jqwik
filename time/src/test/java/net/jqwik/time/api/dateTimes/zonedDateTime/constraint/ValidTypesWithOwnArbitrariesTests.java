@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.api.Arbitraries.*;
 
 @Group
+@PropertyDefaults(tries = 100)
 public class ValidTypesWithOwnArbitrariesTests {
 
 	@Group

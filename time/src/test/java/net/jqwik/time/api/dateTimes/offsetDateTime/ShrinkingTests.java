@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
 
+@PropertyDefaults(tries = 40)
 public class ShrinkingTests {
 
 	@Property
@@ -22,7 +23,7 @@ public class ShrinkingTests {
 		assertThat(value).isEqualTo(OffsetDateTime.of(LocalDateTime.of(1900, JANUARY, 1, 0, 0, 0), ZoneOffset.UTC));
 	}
 
-	@Property(tries = 40)
+	@Property
 	void shrinksToSmallestFailingValue(@ForAll Random random) {
 		OffsetDateTimeArbitrary dateTimes = DateTimes.offsetDateTimes();
 		TestingFalsifier<OffsetDateTime> falsifier =
