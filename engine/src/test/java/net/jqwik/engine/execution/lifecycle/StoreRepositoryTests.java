@@ -228,8 +228,8 @@ class StoreRepositoryTests {
 		}
 
 		@Example
-		void finishScope_callsCloseOnAllAutoCloseableStoreValues() {
-			class MyCloseable implements AutoCloseable {
+		void finishScope_callsCloseOnReset() {
+			class MyCloseOnReset implements Store.CloseOnReset {
 				boolean closeCalled = false;
 
 				@Override
@@ -238,16 +238,16 @@ class StoreRepositoryTests {
 				}
 			}
 
-			MyCloseable containerValue = new MyCloseable();
-			MyCloseable methodValue = new MyCloseable();
-			MyCloseable otherMethodValue = new MyCloseable();
+			MyCloseOnReset containerValue = new MyCloseOnReset();
+			MyCloseOnReset methodValue = new MyCloseOnReset();
+			MyCloseOnReset otherMethodValue = new MyCloseOnReset();
 
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1", "method2").build();
 			Iterator<? extends TestDescriptor> methods = container.getChildren().iterator();
 			TestDescriptor method = methods.next();
 			TestDescriptor otherMethod = methods.next();
 
-			ScopedStore<MyCloseable> containerStore =
+			ScopedStore<MyCloseOnReset> containerStore =
 				repository.create(
 					container, "containerStore",
 					Lifespan.PROPERTY,
@@ -257,7 +257,7 @@ class StoreRepositoryTests {
 
 			containerStore.get(); // to invoke initialization
 
-			ScopedStore<MyCloseable> methodStore =
+			ScopedStore<MyCloseOnReset> methodStore =
 				repository.create(
 					method, "methodStore",
 					Lifespan.PROPERTY,
@@ -266,7 +266,7 @@ class StoreRepositoryTests {
 				);
 			methodStore.get(); // to invoke initialization
 
-			ScopedStore<MyCloseable> uninitializedMethodStore =
+			ScopedStore<MyCloseOnReset> uninitializedMethodStore =
 				repository.create(
 					otherMethod, "uninitializedMethodStore",
 					Lifespan.PROPERTY,

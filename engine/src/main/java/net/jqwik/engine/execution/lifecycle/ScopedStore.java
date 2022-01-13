@@ -99,7 +99,7 @@ public class ScopedStore<T> implements Store<T> {
 		if (!initialized) {
 			return;
 		}
-		closeAutocloseable();
+		closeOnReset();
 		try {
 			onClose.accept(value);
 		} catch (Throwable throwable) {
@@ -109,10 +109,10 @@ public class ScopedStore<T> implements Store<T> {
 		}
 	}
 
-	private void closeAutocloseable() {
-		if (value instanceof AutoCloseable) {
+	private void closeOnReset() {
+		if (value instanceof Store.CloseOnReset) {
 			try {
-				((AutoCloseable) value).close();
+				((Store.CloseOnReset) value).close();
 			} catch (Throwable throwable) {
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 				String message = String.format("Exception while closing store [%s]", this);

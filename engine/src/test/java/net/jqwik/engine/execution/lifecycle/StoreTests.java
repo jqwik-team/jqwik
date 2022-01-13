@@ -1,9 +1,7 @@
 package net.jqwik.engine.execution.lifecycle;
 
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-import org.assertj.core.api.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
@@ -69,46 +67,49 @@ class StoreTests {
 	}
 
 	@Example
-	void resettingStoreCallsCloseOnAutocloseableObjects() {
-		AtomicBoolean closeCalled = new AtomicBoolean(false);
-		class MyCloseable implements AutoCloseable {
+	void resettingStoreCallsCloseOnReset() {
+		class MyCloseOnReset implements Store.CloseOnReset {
+			boolean closeCalled = false;
+
 			@Override
 			public void close() throws Exception {
-				closeCalled.set(true);
+				closeCalled = true;
 			}
 		}
 
-		Store<MyCloseable> store = Store.create(
+		MyCloseOnReset value = new MyCloseOnReset();
+		Store<MyCloseOnReset> store = Store.create(
 			"aCloseable", Lifespan.PROPERTY,
-			MyCloseable::new
+			() -> value
 		);
 		store.get(); // to invoke initialization
 		store.reset();
 
-		assertThat(closeCalled).isTrue();
+		assertThat(value.closeCalled).isTrue();
 	}
 
 	@Example
 	void swallowExceptionsInAutocloseableClose() {
-		AtomicBoolean closeCalled = new AtomicBoolean(false);
-		class MyCloseable implements AutoCloseable {
+		class MyCloseOnResetWithException implements Store.CloseOnReset {
+			boolean closeCalled = false;
+
 			@Override
 			public void close() throws Exception {
-				closeCalled.set(true);
+				closeCalled = true;
 				throw new RuntimeException("in Autocloseable.close() call");
 			}
 		}
 
-		Store<MyCloseable> store = Store.create(
+		MyCloseOnResetWithException value = new MyCloseOnResetWithException();
+		Store<MyCloseOnResetWithException> store = Store.create(
 			"aCloseable", Lifespan.PROPERTY,
-			MyCloseable::new
+			() -> value
 		);
 		store.get(); // to invoke initialization
 		store.reset();
 
-		assertThat(closeCalled).isTrue();
+		assertThat(value.closeCalled).isTrue();
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Example

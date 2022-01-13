@@ -24,6 +24,11 @@ public interface Store<T> {
 	@API(status = INTERNAL, since = "1.6.3")
 	void reset();
 
+	@API(status = EXPERIMENTAL, since = "1.6.3")
+	interface CloseOnReset {
+		void close() throws Exception;
+	}
+
 	@API(status = INTERNAL)
 	abstract class StoreFacade {
 		private static final Store.StoreFacade implementation;
