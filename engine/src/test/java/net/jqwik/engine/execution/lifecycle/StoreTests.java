@@ -1,7 +1,9 @@
 package net.jqwik.engine.execution.lifecycle;
 
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
+import org.assertj.core.api.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
@@ -66,6 +68,48 @@ class StoreTests {
 		assertThat(store.get()).isEqualTo(null);
 	}
 
+	@Example
+	void resettingStoreCallsCloseOnAutocloseableObjects() {
+		AtomicBoolean closeCalled = new AtomicBoolean(false);
+		class MyCloseable implements AutoCloseable {
+			@Override
+			public void close() throws Exception {
+				closeCalled.set(true);
+			}
+		}
+
+		Store<MyCloseable> store = Store.create(
+			"aCloseable", Lifespan.PROPERTY,
+			MyCloseable::new
+		);
+		store.get(); // to invoke initialization
+		store.reset();
+
+		assertThat(closeCalled).isTrue();
+	}
+
+	@Example
+	void swallowExceptionsInAutocloseableClose() {
+		AtomicBoolean closeCalled = new AtomicBoolean(false);
+		class MyCloseable implements AutoCloseable {
+			@Override
+			public void close() throws Exception {
+				closeCalled.set(true);
+				throw new RuntimeException("in Autocloseable.close() call");
+			}
+		}
+
+		Store<MyCloseable> store = Store.create(
+			"aCloseable", Lifespan.PROPERTY,
+			MyCloseable::new
+		);
+		store.get(); // to invoke initialization
+		store.reset();
+
+		assertThat(closeCalled).isTrue();
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Example
 	void resettingStoreCallsOnCloseCallback() {
@@ -81,7 +125,6 @@ class StoreTests {
 	}
 
 	@SuppressWarnings("unchecked")
-	@SuppressLogging("severe logging of exception expected")
 	@Example
 	void swallowExceptionsInOnCloseCallback() {
 		Consumer<String> onClose = Mockito.mock(Consumer.class);

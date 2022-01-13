@@ -60,6 +60,9 @@ public class ScopedStore<T> implements Store<T> {
 	public synchronized void reset() {
 		close();
 		initialized = false;
+
+		// Free memory as soon as possible, the store object might go live on for a while:
+		value = null;
 	}
 
 	public Object getIdentifier() {
@@ -96,12 +99,25 @@ public class ScopedStore<T> implements Store<T> {
 		if (!initialized) {
 			return;
 		}
+		closeAutocloseable();
 		try {
 			onClose.accept(value);
 		} catch (Throwable throwable) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 			String message = String.format("Exception while closing store [%s]", this);
 			LOG.log(Level.SEVERE, message, throwable);
+		}
+	}
+
+	private void closeAutocloseable() {
+		if (value instanceof AutoCloseable) {
+			try {
+				((AutoCloseable) value).close();
+			} catch (Throwable throwable) {
+				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+				String message = String.format("Exception while closing store [%s]", this);
+				LOG.log(Level.SEVERE, message, throwable);
+			}
 		}
 	}
 

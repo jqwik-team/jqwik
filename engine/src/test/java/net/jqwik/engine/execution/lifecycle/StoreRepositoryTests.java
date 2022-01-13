@@ -227,6 +227,60 @@ class StoreRepositoryTests {
 			assertThat(repository.get(container2, "container2store")).isPresent();
 		}
 
+		@Example
+		void finishScope_callsCloseOnAllAutoCloseableStoreValues() {
+			class MyCloseable implements AutoCloseable {
+				boolean closeCalled = false;
+
+				@Override
+				public void close() throws Exception {
+					closeCalled = true;
+				}
+			}
+
+			MyCloseable containerValue = new MyCloseable();
+			MyCloseable methodValue = new MyCloseable();
+			MyCloseable otherMethodValue = new MyCloseable();
+
+			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1", "method2").build();
+			Iterator<? extends TestDescriptor> methods = container.getChildren().iterator();
+			TestDescriptor method = methods.next();
+			TestDescriptor otherMethod = methods.next();
+
+			ScopedStore<MyCloseable> containerStore =
+				repository.create(
+					container, "containerStore",
+					Lifespan.PROPERTY,
+					() -> containerValue,
+					null
+				);
+
+			containerStore.get(); // to invoke initialization
+
+			ScopedStore<MyCloseable> methodStore =
+				repository.create(
+					method, "methodStore",
+					Lifespan.PROPERTY,
+					() -> methodValue,
+					null
+				);
+			methodStore.get(); // to invoke initialization
+
+			ScopedStore<MyCloseable> uninitializedMethodStore =
+				repository.create(
+					otherMethod, "uninitializedMethodStore",
+					Lifespan.PROPERTY,
+					() -> otherMethodValue,
+					null
+				);
+
+			repository.finishScope(container);
+
+			assertThat(containerValue.closeCalled).isTrue();
+			assertThat(methodValue.closeCalled).isTrue();
+			assertThat(otherMethodValue.closeCalled).isFalse();
+		}
+
 		@SuppressWarnings("unchecked")
 		@Example
 		void finishScope_callsCloseOnAllRemovedStoreValues() {
