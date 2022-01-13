@@ -1,9 +1,5 @@
 package net.jqwik.engine.execution.lifecycle;
 
-import java.util.function.*;
-
-import org.mockito.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.PerProperty.*;
@@ -109,35 +105,6 @@ class StoreTests {
 		store.reset();
 
 		assertThat(value.closeCalled).isTrue();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Example
-	void resettingStoreCallsOnCloseCallback() {
-		Consumer<String> onClose = Mockito.mock(Consumer.class);
-		Store<String> store = Store.create(
-			"aString", Lifespan.PROPERTY,
-			() -> "value", onClose
-		);
-		store.get(); // to invoke initialization
-		store.reset();
-
-		Mockito.verify(onClose, Mockito.times(1)).accept("value");
-	}
-
-	@SuppressWarnings("unchecked")
-	@Example
-	void swallowExceptionsInOnCloseCallback() {
-		Consumer<String> onClose = Mockito.mock(Consumer.class);
-		Mockito.doThrow(new RuntimeException("for testing")).when(onClose).accept("value");
-		Store<String> store = Store.create(
-			"aString", Lifespan.PROPERTY,
-			() -> "value", onClose
-		);
-		store.get(); // to invoke initialization
-		store.reset();
-
-		Mockito.verify(onClose, Mockito.times(1)).accept("value");
 	}
 
 	class AssertCounter110 implements Lifecycle {

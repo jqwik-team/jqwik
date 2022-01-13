@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.jetbrains.annotations.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
@@ -34,8 +33,7 @@ public class StoreRepository {
 		TestDescriptor scope,
 		Object identifier,
 		Lifespan lifespan,
-		Supplier<T> initialValueSupplier,
-		@Nullable Consumer<T> onClose
+		Supplier<T> initialValueSupplier
 	) {
 		if (scope == null) {
 			throw new IllegalArgumentException("scope must not be null");
@@ -49,8 +47,7 @@ public class StoreRepository {
 		if (identifier == null) {
 			throw new IllegalArgumentException("identifier must not be null");
 		}
-		Consumer<T> onCloseHandler = onClose == null ? ignore -> {} : onClose;
-		ScopedStore<T> store = new ScopedStore<>(identifier, lifespan, scope, initialValueSupplier, onCloseHandler);
+		ScopedStore<T> store = new ScopedStore<>(identifier, lifespan, scope, initialValueSupplier);
 		addStore(identifier, store);
 		return store;
 	}

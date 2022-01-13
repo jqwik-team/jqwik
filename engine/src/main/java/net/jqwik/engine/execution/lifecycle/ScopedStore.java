@@ -18,7 +18,6 @@ public class ScopedStore<T> implements Store<T> {
 	private final Lifespan lifespan;
 	private final TestDescriptor scope;
 	private final Supplier<T> initialValueSupplier;
-	private final Consumer<T> onClose;
 
 	private T value;
 	private boolean initialized = false;
@@ -27,14 +26,12 @@ public class ScopedStore<T> implements Store<T> {
 		Object identifier,
 		Lifespan lifespan,
 		TestDescriptor scope,
-		Supplier<T> initialValueSupplier,
-		Consumer<T> onClose
+		Supplier<T> initialValueSupplier
 	) {
 		this.identifier = identifier;
 		this.lifespan = lifespan;
 		this.scope = scope;
 		this.initialValueSupplier = initialValueSupplier;
-		this.onClose = onClose;
 	}
 
 	@Override
@@ -100,13 +97,6 @@ public class ScopedStore<T> implements Store<T> {
 			return;
 		}
 		closeOnReset();
-		try {
-			onClose.accept(value);
-		} catch (Throwable throwable) {
-			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
-			String message = String.format("Exception while closing store [%s]", this);
-			LOG.log(Level.SEVERE, message, throwable);
-		}
 	}
 
 	private void closeOnReset() {

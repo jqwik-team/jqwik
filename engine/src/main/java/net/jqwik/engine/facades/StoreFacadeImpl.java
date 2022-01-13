@@ -3,7 +3,6 @@ package net.jqwik.engine.facades;
 import java.util.*;
 import java.util.function.*;
 
-import org.jetbrains.annotations.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
@@ -15,9 +14,9 @@ import net.jqwik.engine.execution.lifecycle.*;
 public class StoreFacadeImpl extends Store.StoreFacade {
 
 	@Override
-	public <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier, @Nullable Consumer<T> onClose) {
+	public <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier) {
 		TestDescriptor scope = CurrentTestDescriptor.get();
-		return StoreRepository.getCurrent().create(scope, identifier, lifespan, initialValueSupplier, onClose);
+		return StoreRepository.getCurrent().create(scope, identifier, lifespan, initialValueSupplier);
 	}
 
 	@Override
