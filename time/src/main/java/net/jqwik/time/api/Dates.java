@@ -30,6 +30,7 @@ public class Dates {
 
 	/**
 	 * Create an arbitrary that generates instances of {@linkplain java.util.Calendar}.
+	 * The time of a generated instance will always be 00:00 GMT.
 	 *
 	 * @return a new arbitrary instance
 	 */
@@ -39,6 +40,7 @@ public class Dates {
 
 	/**
 	 * Create an arbitrary that generates instances of {@linkplain java.util.Date}.
+	 * The time of a generated instance will always be 00:00 GMT.
 	 *
 	 * @return a new arbitrary instance
 	 */

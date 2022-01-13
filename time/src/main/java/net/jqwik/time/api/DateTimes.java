@@ -58,7 +58,7 @@ public class DateTimes {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.6.1")
+	@API(status = EXPERIMENTAL, since = "1.6.3")
 	public static ZonedDateTimeArbitrary zonedDateTimes() {
 		return new DefaultZonedDateTimeArbitrary();
 	}

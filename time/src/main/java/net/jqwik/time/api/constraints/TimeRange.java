@@ -1,6 +1,7 @@
 package net.jqwik.time.api.constraints;
 
 import java.lang.annotation.*;
+import java.time.format.*;
 
 import org.apiguardian.api.*;
 
@@ -8,8 +9,9 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Constrain the range of generated time parameters.
+ * Only strings of format {@linkplain DateTimeFormatter#ISO_LOCAL_TIME} are supported.
  * <p>
- * Applies to LocalDateTime, Instant, OffsetDateTime, LocalTime and OffsetTime parameters which are also annotated with {@code @ForAll}.
+ * Applies to LocalDateTime, Instant, OffsetDateTime, ZonedDateTime, LocalTime, OffsetTime parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  * @see OffsetRange

@@ -14,11 +14,11 @@ import static org.apiguardian.api.API.Status.*;
  * All generated zoned date times use the Gregorian Calendar, even if they are before October 15, 1582.
  * By default, zoned date times with years between 1900 and 2500 are generated.
  */
-@API(status = EXPERIMENTAL, since = "1.6.1")
+@API(status = EXPERIMENTAL, since = "1.6.3")
 public interface ZonedDateTimeArbitrary extends Arbitrary<ZonedDateTime> {
 
 	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated zoned date time values.
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of the local part of generated zoned date time values.
 	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	default ZonedDateTimeArbitrary between(LocalDateTime min, LocalDateTime max) {
@@ -29,13 +29,13 @@ public interface ZonedDateTimeArbitrary extends Arbitrary<ZonedDateTime> {
 	}
 
 	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated zoned date time values.
+	 * Set the allowed lower {@code min} (included) bounder of the local part of generated zoned date time values.
 	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	ZonedDateTimeArbitrary atTheEarliest(LocalDateTime min);
 
 	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated zoned date time values.
+	 * Set the allowed upper {@code max} (included) bounder of the local part of generated zoned date time values.
 	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	ZonedDateTimeArbitrary atTheLatest(LocalDateTime max);

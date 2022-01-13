@@ -18,7 +18,7 @@ import static org.apiguardian.api.API.Status.*;
 public interface OffsetDateTimeArbitrary extends Arbitrary<OffsetDateTime> {
 
 	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated offset date time values.
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of the local part of generated offset date time values.
 	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	default OffsetDateTimeArbitrary between(LocalDateTime min, LocalDateTime max) {
@@ -29,13 +29,13 @@ public interface OffsetDateTimeArbitrary extends Arbitrary<OffsetDateTime> {
 	}
 
 	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated offset date time values.
+	 * Set the allowed lower {@code min} (included) bounder of the local part of generated offset date time values.
 	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	OffsetDateTimeArbitrary atTheEarliest(LocalDateTime min);
 
 	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated offset date time values.
+	 * Set the allowed upper {@code max} (included) bounder of the local part of generated offset date time values.
 	 * If you don't explicitly set the precision and use min/max values with precision milliseconds/microseconds/nanoseconds, the precision of your min/max value is implicitly set.
 	 */
 	OffsetDateTimeArbitrary atTheLatest(LocalDateTime max);
