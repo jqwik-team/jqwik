@@ -22,8 +22,9 @@ public class DefaultDateArbitrary extends ArbitraryDecorator<Date> implements Da
 		return calendars.map(Calendar::getTime);
 	}
 
-	private Calendar dateToCalendar(Date date) {
+	public static Calendar dateToCalendar(Date date) {
 		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
 		calendar.setTime(date);
 		return calendar;
 	}

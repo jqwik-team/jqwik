@@ -15,6 +15,7 @@ import static java.util.Calendar.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.Arbitraries.*;
+import static net.jqwik.time.api.testingSupport.ForCalendar.*;
 import static net.jqwik.time.api.testingSupport.ForDate.*;
 
 @Group
@@ -113,8 +114,8 @@ public class ConstraintTests {
 
 		@Property
 		void dateRange(@ForAll("dates") @DateRange(min = "2021-02-15", max = "2021-02-19") Date date) {
-			Date start = new Builder().setDate(2021, FEBRUARY, 15).build().getTime();
-			Date end = new Builder().setDate(2021, FEBRUARY, 19).build().getTime();
+			Date start = getCalendar(2021, FEBRUARY, 15).getTime();
+			Date end = getCalendar(2021, FEBRUARY, 19).getTime();
 			assertThat(date).isAfterOrEqualTo(start);
 			assertThat(date).isBeforeOrEqualTo(end);
 		}
@@ -158,32 +159,32 @@ public class ConstraintTests {
 		@Provide
 		Arbitrary<Date> dates() {
 			return of(
-				new Builder().setDate(2021, FEBRUARY, 14).build().getTime(),
-				new Builder().setDate(2021, FEBRUARY, 15).build().getTime(),
-				new Builder().setDate(2021, FEBRUARY, 16).build().getTime(),
-				new Builder().setDate(2021, FEBRUARY, 17).build().getTime(),
-				new Builder().setDate(2021, FEBRUARY, 18).build().getTime(),
-				new Builder().setDate(2021, FEBRUARY, 19).build().getTime(),
-				new Builder().setDate(2021, FEBRUARY, 20).build().getTime(),
-				new Builder().setDate(2022, MARCH, 15).build().getTime(),
-				new Builder().setDate(2023, APRIL, 16).build().getTime(),
-				new Builder().setDate(2024, MAY, 17).build().getTime(),
-				new Builder().setDate(2025, JUNE, 18).build().getTime(),
-				new Builder().setDate(2026, JULY, 19).build().getTime(),
-				new Builder().setDate(2027, AUGUST, 20).build().getTime()
+				getCalendar(2021, FEBRUARY, 14).getTime(),
+				getCalendar(2021, FEBRUARY, 15).getTime(),
+				getCalendar(2021, FEBRUARY, 16).getTime(),
+				getCalendar(2021, FEBRUARY, 17).getTime(),
+				getCalendar(2021, FEBRUARY, 18).getTime(),
+				getCalendar(2021, FEBRUARY, 19).getTime(),
+				getCalendar(2021, FEBRUARY, 20).getTime(),
+				getCalendar(2022, MARCH, 15).getTime(),
+				getCalendar(2023, APRIL, 16).getTime(),
+				getCalendar(2024, MAY, 17).getTime(),
+				getCalendar(2025, JUNE, 18).getTime(),
+				getCalendar(2026, JULY, 19).getTime(),
+				getCalendar(2027, AUGUST, 20).getTime()
 			);
 		}
 
 		@Provide
 		Arbitrary<Date> datesNegative() {
 			return of(
-				new Builder().setDate(-2021, MARCH, 1).build().getTime(),
-				new Builder().setDate(-2022, MARCH, 1).build().getTime(),
-				new Builder().setDate(-2023, MARCH, 1).build().getTime(),
-				new Builder().setDate(-2024, MARCH, 1).build().getTime(),
-				new Builder().setDate(-2025, MARCH, 1).build().getTime(),
-				new Builder().setDate(-2026, MARCH, 1).build().getTime(),
-				new Builder().setDate(-2027, MARCH, 1).build().getTime()
+				getCalendar(-2021, MARCH, 1).getTime(),
+				getCalendar(-2022, MARCH, 1).getTime(),
+				getCalendar(-2023, MARCH, 1).getTime(),
+				getCalendar(-2024, MARCH, 1).getTime(),
+				getCalendar(-2025, MARCH, 1).getTime(),
+				getCalendar(-2026, MARCH, 1).getTime(),
+				getCalendar(-2027, MARCH, 1).getTime()
 			);
 		}
 

@@ -12,6 +12,9 @@ import net.jqwik.time.internal.properties.arbitraries.*;
 import static java.time.Month.*;
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.time.api.testingSupport.ForCalendar.*;
+import static net.jqwik.time.api.testingSupport.ForDate.*;
+
 public class InvalidConfigurationTests {
 
 	@Property
@@ -30,9 +33,7 @@ public class InvalidConfigurationTests {
 
 	@Example
 	void atTheEarliestYearTooHigh() {
-		Calendar calendar = new Calendar.Builder().setDate(292_278_994, DefaultCalendarArbitrary.monthToCalendarMonth(JANUARY), 1)
-												  .build();
-		Date date = calendar.getTime();
+		Date date = getDate(292_278_994, DefaultCalendarArbitrary.monthToCalendarMonth(JANUARY), 1);
 		assertThatThrownBy(
 			() -> Dates.datesAsDate().atTheEarliest(date)
 		).isInstanceOf(IllegalArgumentException.class);
@@ -54,9 +55,7 @@ public class InvalidConfigurationTests {
 
 	@Example
 	void atTheLatestYearTooHigh() {
-		Calendar calendar = new Calendar.Builder().setDate(292_278_994, DefaultCalendarArbitrary.monthToCalendarMonth(JANUARY), 1)
-												  .build();
-		Date date = calendar.getTime();
+		Date date = getDate(292_278_994, DefaultCalendarArbitrary.monthToCalendarMonth(JANUARY), 1);
 		assertThatThrownBy(
 			() -> Dates.datesAsDate().atTheLatest(date)
 		).isInstanceOf(IllegalArgumentException.class);

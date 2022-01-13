@@ -106,8 +106,9 @@ public class ConstraintTests {
 
 		@Property
 		void dateRange(@ForAll("calendars") @DateRange(min = "2021-02-15", max = "2021-02-19") Calendar date) {
-			Calendar start = new Builder().setDate(2021, FEBRUARY, 15).build();
-			Calendar end = new Builder().setDate(2021, FEBRUARY, 19).build();
+			Calendar start = getCalendar(2021, FEBRUARY, 15);
+			Calendar end = getCalendar(2021, FEBRUARY, 19);
+
 			assertThat(date).isBetween(start, end);
 		}
 
@@ -140,19 +141,19 @@ public class ConstraintTests {
 		@Provide
 		Arbitrary<Calendar> calendars() {
 			return of(
-				new Builder().setDate(2021, FEBRUARY, 14).build(),
-				new Builder().setDate(2021, FEBRUARY, 15).build(),
-				new Builder().setDate(2021, FEBRUARY, 16).build(),
-				new Builder().setDate(2021, FEBRUARY, 17).build(),
-				new Builder().setDate(2021, FEBRUARY, 18).build(),
-				new Builder().setDate(2021, FEBRUARY, 19).build(),
-				new Builder().setDate(2021, FEBRUARY, 20).build(),
-				new Builder().setDate(2022, MARCH, 15).build(),
-				new Builder().setDate(2023, APRIL, 16).build(),
-				new Builder().setDate(2024, MAY, 17).build(),
-				new Builder().setDate(2025, JUNE, 18).build(),
-				new Builder().setDate(2026, JULY, 19).build(),
-				new Builder().setDate(2027, AUGUST, 20).build()
+				getCalendar(2021, FEBRUARY, 14),
+				getCalendar(2021, FEBRUARY, 15),
+				getCalendar(2021, FEBRUARY, 16),
+				getCalendar(2021, FEBRUARY, 17),
+				getCalendar(2021, FEBRUARY, 18),
+				getCalendar(2021, FEBRUARY, 19),
+				getCalendar(2021, FEBRUARY, 20),
+				getCalendar(2022, MARCH, 15),
+				getCalendar(2023, APRIL, 16),
+				getCalendar(2024, MAY, 17),
+				getCalendar(2025, JUNE, 18),
+				getCalendar(2026, JULY, 19),
+				getCalendar(2027, AUGUST, 20)
 			);
 		}
 

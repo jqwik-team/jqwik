@@ -310,6 +310,7 @@ public class DateMethodTests {
 	}
 
 	@Group
+	@PropertyDefaults(tries = 50)
 	class MultipleCombinations {
 
 		@Property

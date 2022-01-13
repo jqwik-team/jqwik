@@ -1,4 +1,4 @@
-net.jqwik.time.internal.properties.providers.DateArbitraryProvider
+net.jqwik.time.internal.properties.providers.LocalDateArbitraryProvider
 net.jqwik.time.internal.properties.providers.MonthDayArbitraryProvider
 net.jqwik.time.internal.properties.providers.YearArbitraryProvider
 net.jqwik.time.internal.properties.providers.YearMonthArbitraryProvider
