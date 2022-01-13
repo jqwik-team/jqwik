@@ -49,7 +49,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Added capability to automatically resolve Arbitrary parameters.
   This is an experimental feature.
 
-- Module `time` has added the capability to generate `ZonedDateTime` objects.
+- Module `time` has added the capability to 
+  [generate `ZonedDateTime` objects](/docs/snapshot/user-guide.html#zoneddatetimearbitrary). 
   Many thanks to https://github.com/zinki97 for his continued support with this module!
 
 #### Breaking Changes
