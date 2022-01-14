@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.jetbrains.annotations.*;
 
 import net.jqwik.api.Tuple.*;
 
@@ -63,23 +64,34 @@ public class Builders {
 		 * @return arbitrary of target object
 		 */
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
+
+			class Holder {
+				@Nullable final Object value;
+
+				Holder(@Nullable Object value) {
+					this.value = value;
+				}
+			}
+
 			// Doing it in a single combine instead of flatMapping over all arbitraries
 			// leads to better performance and forgoes some problems with stateful builders
-			List<Arbitrary<Optional<Object>>> arbitraries =
+			List<Arbitrary<Optional<Holder>>> arbitraries =
 				mutators.stream()
 					.map(mutator -> {
 						double presenceProbability = mutator.get1();
-						return mutator.get2().asGeneric().optional(presenceProbability);
+						Arbitrary<Holder> nullable = mutator.get2().map(Holder::new);
+						return nullable.optional(presenceProbability);
 					})
 					.collect(Collectors.toList());
 
 			Arbitrary<B> aBuilder = Combinators.combine(arbitraries).as(values -> {
 				B builder = starter.get();
 				for (int i = 0; i < values.size(); i++) {
-					Optional<Object> optional = values.get(i);
+					Optional<Holder> optional = values.get(i);
 					if (optional.isPresent()) {
-						Object value = optional.get();
+						Object value = optional.get().value;
 						BiFunction<B, Object, B> mutator = mutators.get(i).get3();
+						//noinspection ConstantConditions
 						builder = mutator.apply(builder, value);
 					}
 				}

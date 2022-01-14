@@ -66,6 +66,9 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Shrinking now still works when thrown exception has no stacktrace.
   See https://github.com/jlink/jqwik/issues/283.
 
+- Builders can now use nullable arbitraries.
+  See https://github.com/jlink/jqwik/issues/295.
+
 
 ## 1.6.2
 
