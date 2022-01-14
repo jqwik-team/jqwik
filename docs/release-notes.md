@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.6.3-SNAPSHOT](#163-snapshot)
+- [1.6.3](#163)
 - [1.6.2](#162)
 - [1.6.1](#161)
 - [1.6.0](#160)
@@ -25,12 +25,12 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.6.3-SNAPSHOT
+## 1.6.3
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>,
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
-and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
+<a href="/docs/1.6.3/user-guide.html">User guide</a>,
+<a href="/docs/1.6.3/javadoc/index.html">javadoc</a>
+and <a href="/docs/1.6.3/kdoc/index.html">kdoc</a>
 </p>
 
 #### New and Enhanced Features
@@ -40,17 +40,17 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - Upgraded to Kotlin 1.6.10.
 
 - `@ForAll` and `@From` now support 
-  [arbitrary suppliers](/docs/snapshot/user-guide.html#arbitrary-suppliers) 
+  [arbitrary suppliers](/docs/1.6.3/user-guide.html#arbitrary-suppliers) 
   through a `supplier` attribute.
 
-- Changed [Lifecycle Storage API](/docs/snapshot/user-guide.html#lifecycle-storage so that
-  stored values can now implement `Store.CloseOnReset` if they need closing action.
+- Changed [Lifecycle Storage API](/docs/1.6.3/user-guide.html#lifecycle-storage) 
+  so that stored values can now implement `Store.CloseOnReset` if they need closing action.
 
 - Added capability to automatically resolve Arbitrary parameters.
   This is an experimental feature.
 
 - Module `time` has added the capability to 
-  [generate `ZonedDateTime` objects](/docs/snapshot/user-guide.html#zoneddatetimearbitrary). 
+  [generate `ZonedDateTime` objects](/docs/1.6.3/user-guide.html#zoneddatetimearbitrary). 
   Many thanks to https://github.com/zinki97 for his continued support with this module!
 
 #### Breaking Changes

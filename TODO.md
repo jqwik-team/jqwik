@@ -1,7 +1,3 @@
-- 1.6.3
-
-    - Generate release documentation. 
-
 - 1.6.x
 
     - SharedArbitrary
