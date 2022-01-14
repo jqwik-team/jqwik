@@ -1,8 +1,12 @@
 - 1.6.3
 
-    - Optimize flatMap(just(value)) and flatCombine(just(), just())
+    - Generate release documentation. 
 
 - 1.6.x
+
+    - SharedArbitrary
+      - See https://github.com/jlink/jqwik/issues/294
+      - See SharedArbitraryExperiments
 
     - Arbitraries.recursive with depthMin and depthMax for better shrinking
 
