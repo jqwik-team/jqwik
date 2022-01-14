@@ -79,7 +79,7 @@ public class Builders {
 				mutators.stream()
 					.map(mutator -> {
 						double presenceProbability = mutator.get1();
-						Arbitrary<Holder> nullable = mutator.get2().map(Holder::new);
+						Arbitrary<Holder> nullable = mutator.get2().map(value -> new Holder(value)); // Java 8 does not allow Holder::new here
 						return nullable.optional(presenceProbability);
 					})
 					.collect(Collectors.toList());
@@ -88,10 +88,11 @@ public class Builders {
 				B builder = starter.get();
 				for (int i = 0; i < values.size(); i++) {
 					Optional<Holder> optional = values.get(i);
+					// optional.ifPresent does not work b/c builder is reassigned
 					if (optional.isPresent()) {
 						Object value = optional.get().value;
 						BiFunction<B, Object, B> mutator = mutators.get(i).get3();
-						//noinspection ConstantConditions
+						//noinspection ConstantConditions: value is allowed to be null
 						builder = mutator.apply(builder, value);
 					}
 				}
