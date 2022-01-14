@@ -1,8 +1,10 @@
-- 1.6.x
+1.6.4
 
     - SharedArbitrary
-      - See https://github.com/jlink/jqwik/issues/294
-      - See SharedArbitraryExperiments
+      See https://github.com/jlink/jqwik/issues/294 & SharedArbitraryExperiments
+        - Allow @ForAll on member variables of test container class
+
+1.6.x
 
     - Arbitraries.recursive with depthMin and depthMax for better shrinking
 
