@@ -51,6 +51,7 @@ dependencies {
 	compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 	compileOnly 'org.jetbrains:annotations:23.0.0'
 	// compileOnly "org.jetbrains.kotlin:kotlin-annotations-jvm:${kotlinVersion}"
+	testCompileOnly 'org.jetbrains:annotations:23.0.0'
 	testCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 }
 

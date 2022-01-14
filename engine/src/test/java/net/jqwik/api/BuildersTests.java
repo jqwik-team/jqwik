@@ -2,6 +2,8 @@ package net.jqwik.api;
 
 import java.util.*;
 
+import org.jetbrains.annotations.*;
+
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.testing.*;
@@ -56,6 +58,23 @@ class BuildersTests {
 
 		Person value = generateFirst(personArbitrary, random);
 		assertThat(value.name).hasSize(10);
+		assertThat(value.age).isBetween(0, 15);
+	}
+
+	@Property
+	void useNullableArbitraryInBuilderMethods(@ForAll Random random) {
+		Arbitrary<String> name = Arbitraries.strings().injectNull(1.0);
+		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
+
+		Arbitrary<Person> personArbitrary =
+			Builders
+				.withBuilder(PersonBuilder::new)
+				.use(name).in(PersonBuilder::withName)
+				.use(age).in(PersonBuilder::withAge)
+				.build(PersonBuilder::build);
+
+		Person value = generateFirst(personArbitrary, random);
+		assertThat(value.name).isNull();
 		assertThat(value.age).isBetween(0, 15);
 	}
 
@@ -402,10 +421,10 @@ class BuildersTests {
 
 	private static class Person {
 
-		private String name;
+		@Nullable private String name;
 		private int age;
 
-		Person(String name, int age) {
+		Person(@Nullable String name, int age) {
 			this.name = name;
 			this.age = age;
 		}
@@ -426,14 +445,12 @@ class BuildersTests {
 			Person person = (Person) o;
 
 			if (age != person.age) return false;
-			if (!name.equals(person.name)) return false;
-
-			return true;
+			return Objects.equals(name, person.name);
 		}
 
 		@Override
 		public int hashCode() {
-			int result = name.hashCode();
+			int result = Objects.hash(name);
 			result = 31 * result + age;
 			return result;
 		}
@@ -452,10 +469,10 @@ class BuildersTests {
 
 		static final int DEFAULT_AGE = 42;
 		static final String DEFAULT_NAME = "A name";
-		private String name = DEFAULT_NAME;
+		@Nullable private String name = DEFAULT_NAME;
 		private int age = DEFAULT_AGE;
 
-		public PersonBuilder withName(String name) {
+		public PersonBuilder withName(@Nullable String name) {
 			this.name = name;
 			return this;
 		}
