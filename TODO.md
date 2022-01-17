@@ -1,5 +1,7 @@
 1.6.4
 
+    - WithNullConfigurator should always be last to apply
+
     - SharedArbitrary
       See https://github.com/jlink/jqwik/issues/294 & SharedArbitraryExperiments
         - Allow @ForAll on member variables of test container class
