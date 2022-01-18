@@ -1,15 +1,23 @@
 1.6.4
 
-    - SharedArbitrary
-      See https://github.com/jlink/jqwik/issues/294 & SharedArbitraryExperiments
-        - Allow @ForAll on member variables of test container class
+    - Arbitraries.recursive with depthMin and depthMax for better shrinking
 
 1.6.x
 
-    - Arbitraries.recursive with depthMin and depthMax for better shrinking
-
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
       - Alternative: New annotation @InitBeforeTry
+
+    - JqwikSession:
+      - setRandomSessionSeed(), getRandomSessionSeed()
+
+    - Allow state machine / model specification with temporal logic.
+      See https://wickstrom.tech/programming/2021/05/03/specifying-state-machines-with-temporal-logic.html
+
+1.7.0
+
+    - Make `AfterFailureMode.SAMPLE_FIRST` the default
+
+    - Remove web and time from jqwik default dependencies
 
     - NullableArbitraryProvider should always be last to apply.
       This will probably require a new parameter based lifecycle hook, similar to:
@@ -20,18 +28,9 @@
       }
       ```
 
-    - JqwikSession:
-      - setRandomSessionSeed(), getRandomSessionSeed()
+    - SharedArbitrary
+      See https://github.com/jlink/jqwik/issues/294 & SharedArbitraryExperiments
+      This probably requires major refactoring and change of structure.
 
-    - Allow state machine / model specification with temporal logic.
-      See https://wickstrom.tech/programming/2021/05/03/specifying-state-machines-with-temporal-logic.html
+        - Allow @ForAll on member variables of test container class
 
-    - Kotlin:
-        - Add ParameterResolver for combined contexts
-          see https://www.47deg.com/blog/effects-contexts/
-
-1.7.0
-
-    - Make `AfterFailureMode.SAMPLE_FIRST` the default
-
-    - Remove web and time from jqwik default dependencies

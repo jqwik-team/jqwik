@@ -179,6 +179,12 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
     - CollectShrinkable: grow each element
 
 
+### Kotlin
+
+- Add ParameterResolver for combined contexts
+  see https://www.47deg.com/blog/effects-contexts/
+
+
 ### Contracts / Specifications / Domain objects
 
 see example in package `net.jqwik.docs.contracts.eurocalc`
