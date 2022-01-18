@@ -1,7 +1,5 @@
 1.6.4
 
-    - WithNullConfigurator should always be last to apply
-
     - SharedArbitrary
       See https://github.com/jlink/jqwik/issues/294 & SharedArbitraryExperiments
         - Allow @ForAll on member variables of test container class
@@ -12,6 +10,15 @@
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
       - Alternative: New annotation @InitBeforeTry
+
+    - NullableArbitraryProvider should always be last to apply.
+      This will probably require a new parameter based lifecycle hook, similar to:
+
+      ```
+      interface WrapArbitrary extends Lifecycle Hook {
+        <T> Arbitrary<T> wrap(ForAllParameterContext parameterContext, Arbitrary<T> arbitrary);
+      }
+      ```
 
     - JqwikSession:
       - setRandomSessionSeed(), getRandomSessionSeed()
