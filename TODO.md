@@ -2,6 +2,10 @@
 
     - Arbitraries.recursive with depthMin and depthMax for better shrinking
 
+    - Kotlin convenience functions:
+        - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)
+        - Collection<Arbitrary<T>>.chooseOne() -> Arbitraries.oneOf(..)
+
 1.6.x
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
