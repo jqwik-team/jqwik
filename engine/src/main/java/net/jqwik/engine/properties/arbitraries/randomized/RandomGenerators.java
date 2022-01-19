@@ -100,6 +100,10 @@ public class RandomGenerators {
 		int minSize, int maxSize, int genSize, RandomDistribution sizeDistribution,
 		Set<FeatureExtractor<T>> uniquenessExtractors
 	) {
+		if (minSize > maxSize) {
+			String message = String.format("minSize <%s> must not be larger than maxSize <%s>.", minSize, maxSize);
+			throw new JqwikException(message);
+		}
 		return new ContainerGenerator<>(elementGenerator, createShrinkable, minSize, maxSize, genSize, sizeDistribution, uniquenessExtractors);
 	}
 
