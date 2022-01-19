@@ -1,9 +1,5 @@
 1.6.4
 
-    - Arbitraries.subSet(elements, minSize, maxSize) is this can be implemented more efficiently than:
-
-			Arbitraries.of(elements).set().ofMinSize(min).ofMaxSize(max)
-
     - Arbitraries.recursive with depthMin and depthMax for better shrinking
 
 1.6.x

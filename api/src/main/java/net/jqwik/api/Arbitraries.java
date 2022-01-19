@@ -750,4 +750,27 @@ public class Arbitraries {
 		return just(null);
 	}
 
+
+	/**
+	 * Create a new arbitrary of element type {@code Set<T>} using the handed in values as elements of the set.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.4")
+	public static <T> SetArbitrary<T> subsetOf(Collection<T> values) {
+		Set<T> valueSet = (values instanceof Set) ? (Set<T>) values : new LinkedHashSet<>(values);
+		return of(valueSet).set();
+	}
+
+	/**
+	 * Create a new arbitrary of element type {@code Set<T>} using the handed in values as elements of the set.
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.4")
+	public static <T> SetArbitrary<T> subsetOf(T...values) {
+		return subsetOf(Arrays.asList(values));
+	}
+
+
 }

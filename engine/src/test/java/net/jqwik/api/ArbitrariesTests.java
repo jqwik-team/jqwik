@@ -909,6 +909,28 @@ class ArbitrariesTests {
 
 	}
 
+	@Group
+	class SubsetOf {
+		@Example
+		void subsetOf(@ForAll Random random) {
+			SetArbitrary<String> subsets = Arbitraries.subsetOf("One", "Two", "Three").ofMinSize(1);
+			assertAllGenerated(subsets, random, value -> {
+				assertThat(value).isInstanceOf(Set.class);
+				assertThat(value).hasSizeBetween(1, 3);
+			});
+		}
+
+		@Example
+		void subsetOfListOfValues(@ForAll Random random) {
+			List<String> values = Arrays.asList("One", "Two", "Three", "One");
+			SetArbitrary<String> subsets = Arbitraries.subsetOf(values).ofMinSize(1);
+			assertAllGenerated(subsets, random, value -> {
+				assertThat(value).isInstanceOf(Set.class);
+				assertThat(value).hasSizeBetween(1, 3);
+			});
+		}
+	}
+
 	private void assertGeneratedString(RandomGenerator<String> generator, Random random, int minLength, int maxLength) {
 		checkAllGenerated(generator, random, value -> value.length() >= minLength && value.length() <= maxLength);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
