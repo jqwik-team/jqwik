@@ -116,11 +116,11 @@ class ArbitraryTests {
 			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
 			RandomGenerator<Integer> generator = arbitrary.generator(10, true);
 
-			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == -1000);
-			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == -1);
-			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == 0);
-			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == 1);
-			TestingSupport.checkAtLeastOneGenerated(generator, random, i -> i == 1000);
+			checkAtLeastOneGenerated(generator, random, i -> i == -1000);
+			checkAtLeastOneGenerated(generator, random, i -> i == -1);
+			checkAtLeastOneGenerated(generator, random, i -> i == 0);
+			checkAtLeastOneGenerated(generator, random, i -> i == 1);
+			checkAtLeastOneGenerated(generator, random, i -> i == 1000);
 			checkAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
 		}
 
@@ -343,6 +343,17 @@ class ArbitraryTests {
 			assertThat(generator.next(random).value()).isEqualTo("value=1");
 		}
 
+		// To ensure optimization of just(value).map(..) works
+		@Example
+		void mapJust(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary = Arbitraries.just(5);
+			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
+
+			RandomGenerator<String> generator = mapped.generator(10, true);
+
+			checkAllGenerated(generator, random, s -> s.equals("value=5"));
+		}
+
 	}
 
 	@Group
@@ -363,11 +374,31 @@ class ArbitraryTests {
 			assertThat(generator.next(random).value()).hasSize(4);
 			assertThat(generator.next(random).value()).hasSize(5);
 
-			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("a"));
-			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("b"));
-			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("c"));
-			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("d"));
-			TestingSupport.checkAtLeastOneGenerated(generator, random, s -> s.startsWith("e"));
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("a"));
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("b"));
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("c"));
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("d"));
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("e"));
+		}
+
+		// To ensure optimization of just(value).flatMap(..) works
+		@Example
+		void flatMapJust(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary = Arbitraries.just(5);
+			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings()
+																			 .withCharRange('a', 'e')
+																			 .ofMinLength(anInt).ofMaxLength(anInt));
+
+			RandomGenerator<String> generator = mapped.generator(10, true);
+
+
+			checkAllGenerated(generator, random, s -> s.length() == 5);
+
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("a"));
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("b"));
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("c"));
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("d"));
+			checkAtLeastOneGenerated(generator, random, s -> s.startsWith("e"));
 		}
 
 	}

@@ -459,8 +459,8 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
-	@Label("Arbitraries.constant() returns the constant once")
-	void constant() {
+	@Label("Arbitraries.just() returns the constant once")
+	void just() {
 		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.just("abc").exhaustive();
 		assertThat(optionalGenerator).isPresent();
 

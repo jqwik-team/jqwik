@@ -52,6 +52,8 @@ public class Arbitraries {
 
 		public abstract <T> Arbitrary<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies);
 
+		public abstract <@NullableType T> Arbitrary<T> just(@Nullable T value);
+
 		public abstract IntegerArbitrary integers();
 
 		public abstract LongArbitrary longs();
@@ -445,11 +447,7 @@ public class Arbitraries {
 	 */
 	@API(status = MAINTAINED, since = "1.3.2")
 	public static <@NullableType T> Arbitrary<T> just(@Nullable T value) {
-		return fromGenerators(
-			random -> Shrinkable.unshrinkable(value),
-			max -> ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(value), max),
-			maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(value))
-		);
+		return ArbitrariesFacade.implementation.just(value);
 	}
 
 	/**
