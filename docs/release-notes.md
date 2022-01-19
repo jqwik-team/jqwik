@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.6.4-SNAPSHOT](#164-snapshot)
 - [1.6.3](#163)
 - [1.6.2](#162)
 - [1.6.1](#161)
@@ -23,6 +24,23 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+## 1.6.4-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Added `Arbitraries.subsetOf(T...values)` and `Arbitraries.subsetOf(Collection<? extends T> values)`
+
+- Added Kotlin convenience function `Collection<T>.anySubset() : SetArbitrary<T>`
+
+#### Breaking Changes
+
+No breaking changes.
+
+#### Bug Fixes
+
+No known bugs.
 
 
 ## 1.6.3
