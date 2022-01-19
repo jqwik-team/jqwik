@@ -101,16 +101,6 @@ inline fun <reified T> anyForType(): TypeArbitrary<T> {
 }
 
 /**
- * Function to create arbitrary for all values of an enum type.
- *
- * This is a Kotlin convenience for [Arbitraries.of] which requires the Java class of the enum instead.
- */
-@API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-inline fun <reified T : Enum<T>> Enum.Companion.any(): Arbitrary<T> {
-    return Arbitraries.of(T::class.java)
-}
-
-/**
  * Function to create arbitrary that generates one of the provided values with a given frequency.
  *
  * This is a Kotlin convenience for [Arbitraries.frequency] which takes [Pair]s instead of jqwik tuples.
