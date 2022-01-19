@@ -758,8 +758,7 @@ public class Arbitraries {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.4")
 	public static <T> SetArbitrary<T> subsetOf(Collection<T> values) {
-		Set<T> valueSet = (values instanceof Set) ? (Set<T>) values : new LinkedHashSet<>(values);
-		return of(valueSet).set();
+		return of(values).set();
 	}
 
 	/**
