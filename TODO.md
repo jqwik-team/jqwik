@@ -1,5 +1,7 @@
 1.6.4
 
+    - Allow to define SampleReportingFormat implementations in domains.
+
     - Arbitraries.recursive with depthMin and depthMax for better shrinking
 
     - Kotlin convenience functions:
