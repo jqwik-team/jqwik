@@ -314,7 +314,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					}
 
 					// TODO: Add formats from current context bast
-					List<SampleReportingFormat> reportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
+					Collection<SampleReportingFormat> reportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
 
 					String sampleString = ValueReport.of(sampleMap, reportingFormats).singleLineReport();
 					return sampleParams.isEmpty() ? "" : String.format(" with sample %s", sampleString);

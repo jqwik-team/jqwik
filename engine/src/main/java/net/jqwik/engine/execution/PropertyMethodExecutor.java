@@ -10,13 +10,10 @@ import org.junit.platform.engine.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
-import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.reporting.*;
-import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
@@ -41,64 +38,9 @@ public class PropertyMethodExecutor {
 
 	public PropertyExecutionResult execute(LifecycleHooksSupplier lifecycleSupplier) {
 		try {
-			DomainContext domainContext = combineDomainContexts(methodDescriptor.getDomains());
-			DomainContextFacadeImpl.setCurrentContext(domainContext);
 			return executePropertyMethod(lifecycleSupplier);
 		} finally {
 			StoreRepository.getCurrent().finishScope(methodDescriptor);
-			DomainContextFacadeImpl.removeCurrentContext();
-		}
-	}
-
-	private DomainContext combineDomainContexts(Set<Domain> domainAnnotations) {
-		if (domainAnnotations.isEmpty()) {
-			return DomainContext.global();
-		}
-		Set<DomainContext> domainContexts =
-			domainAnnotations
-				.stream()
-				.flatMap(this::expandDomain)
-				.map(this::annotationToTuple)
-				.distinct()
-				.map(this::createDomainContext)
-				.peek(domainContext -> {
-					domainContext.initialize(propertyLifecycleContext);
-				})
-				.collect(Collectors.toSet());
-		return new CombinedDomainContext(domainContexts);
-	}
-
-	// Use this transformation to make distinct() call on stream meaningful
-	private Tuple2<Class<? extends DomainContext>, Integer> annotationToTuple(Domain domain) {
-		return Tuple.of(domain.value(), domain.priority());
-	}
-
-	private Stream<Domain> expandDomain(Domain domain) {
-		Stream<Domain> inheritedDomains =
-			JqwikAnnotationSupport.findContainerAnnotations(domain.value(), Domain.class).stream();
-		return Stream.concat(
-			Stream.of(domain),
-			inheritedDomains
-		);
-	}
-
-	private DomainContext createDomainContext(Tuple2<Class<? extends DomainContext>, Integer> domainSpec) {
-		Class<? extends DomainContext> domainContextClass = domainSpec.get1();
-		int domainPriority = domainSpec.get2();
-		try {
-			DomainContext domainContext =
-				JqwikReflectionSupport.newInstanceInTestContext(domainContextClass, propertyLifecycleContext.testInstance());
-
-			if (domainPriority != Domain.PRIORITY_NOT_SET) {
-				domainContext.setDefaultPriority(domainPriority);
-			}
-			return domainContext;
-		} catch (Throwable throwable) {
-			String message = String.format(
-				"Cannot instantiate domain context @Domain(\"%s\") on [%s].",
-				domainContextClass, methodDescriptor.getTargetMethod()
-			);
-			throw new JqwikException(message);
 		}
 	}
 

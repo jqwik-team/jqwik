@@ -48,9 +48,9 @@ public class SampleReporter {
 
 	private final String headline;
 	private final Map<String, Object> reports;
-	private final List<SampleReportingFormat> sampleReportingFormats;
+	private final Collection<SampleReportingFormat> sampleReportingFormats;
 
-	SampleReporter(String headline, Map<String, Object> reports, List<SampleReportingFormat> sampleReportingFormats) {
+	SampleReporter(String headline, Map<String, Object> reports, Collection<SampleReportingFormat> sampleReportingFormats) {
 		this.reports = reports;
 		this.headline = headline;
 		this.sampleReportingFormats = sampleReportingFormats;

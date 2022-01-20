@@ -12,16 +12,10 @@ public class DefaultReporter implements Reporter {
 
 	private final BiConsumer<TestDescriptor, ReportEntry> listener;
 	private final TestDescriptor descriptor;
-	private final List<SampleReportingFormat> sampleReportingFormats;
 
-	public DefaultReporter(
-		BiConsumer<TestDescriptor, ReportEntry> listener,
-		TestDescriptor descriptor,
-		List<SampleReportingFormat> sampleReportingFormats
-	) {
+	public DefaultReporter(BiConsumer<TestDescriptor, ReportEntry> listener, TestDescriptor descriptor) {
 		this.listener = listener;
 		this.descriptor = descriptor;
-		this.sampleReportingFormats = sampleReportingFormats;
 	}
 
 	@Override
@@ -37,7 +31,7 @@ public class DefaultReporter implements Reporter {
 	private String buildReport(Object object) {
 		StringBuilder stringBuilder = new StringBuilder();
 
-		ValueReport sampleReport = ValueReport.of(object);
+		ValueReport sampleReport = ValueReport.of(object, getSampleReportingFormats());
 		int lengthOfTimestamp = 35;
 		if (sampleReport.singleLineLength() < SampleReporter.MAX_LINE_LENGTH - lengthOfTimestamp) {
 			String line = sampleReport.singleLineReport();
@@ -53,11 +47,16 @@ public class DefaultReporter implements Reporter {
 
 	@Override
 	public void publishReports(String key, Map<String, Object> objects) {
-		publish(ReportEntry.from(key, buildReports(objects, sampleReportingFormats)));
+		publish(ReportEntry.from(key, buildReports(objects)));
 	}
 
-	private String buildReports(Map<String, Object> reports, List<SampleReportingFormat> sampleReportingFormats) {
-		SampleReporter sampleReporter = new SampleReporter(null, reports, sampleReportingFormats);
+	private Collection<SampleReportingFormat> getSampleReportingFormats() {
+		// TODO: add formats from current domain context
+		return RegisteredSampleReportingFormats.getReportingFormats();
+	}
+
+	private String buildReports(Map<String, Object> reports) {
+		SampleReporter sampleReporter = new SampleReporter(null, reports, getSampleReportingFormats());
 		StringBuilder stringBuilder = new StringBuilder();
 		LineReporter lineReporter = new BuilderBasedLineReporter(stringBuilder, 0);
 		sampleReporter.reportTo(lineReporter);

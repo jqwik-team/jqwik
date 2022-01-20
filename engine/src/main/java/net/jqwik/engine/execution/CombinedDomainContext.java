@@ -7,6 +7,7 @@ import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
 
 class CombinedDomainContext implements DomainContext {
+
 	private final List<ArbitraryProvider> providers = new ArrayList<>();
 	private final List<ArbitraryConfigurator> configurators = new ArrayList<>();
 

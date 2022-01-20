@@ -1,15 +1,16 @@
 package net.jqwik.engine.execution;
 
 import java.lang.reflect.*;
-import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.SkipExecutionHook.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;
 import net.jqwik.engine.execution.reporting.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
 class PropertyTaskCreator {
@@ -31,14 +32,7 @@ class PropertyTaskCreator {
 				PropertyLifecycleContext propertyLifecycleContext;
 
 				try {
-					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(methodDescriptor);
-
-					// TODO: add formats from current domain context
-					List<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
-
-					Reporter reporter = new DefaultReporter(listener::reportingEntryPublished, methodDescriptor, sampleReportingFormats);
-					Object testInstance = createTestInstance(methodDescriptor, lifecycleSupplier, reporter);
-					propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter, resolveParameterHook);
+					propertyLifecycleContext = createLifecycleContext(methodDescriptor, lifecycleSupplier, listener);
 
 					SkipResult skipResult = CurrentTestDescriptor.runWithDescriptor(methodDescriptor, () -> {
 						SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(methodDescriptor);
@@ -49,22 +43,51 @@ class PropertyTaskCreator {
 						listener.executionSkipped(methodDescriptor, skipResult.reason().orElse(null));
 						return TaskExecutionResult.success();
 					}
-				} catch (Throwable throwable) {
-					handleExceptionDuringTestInstanceCreation(methodDescriptor, listener, throwable);
-					return TaskExecutionResult.success();
-				}
 
-				listener.executionStarted(methodDescriptor);
-				PropertyExecutionResult executionResult = executeTestMethod(
-					methodDescriptor, propertyLifecycleContext, lifecycleSupplier, reportOnlyFailures
-				);
-				listener.executionFinished(methodDescriptor, executionResult);
+					listener.executionStarted(methodDescriptor);
+
+					DomainContext domainContext = createDomainContext(methodDescriptor, propertyLifecycleContext);
+					try {
+						DomainContextFacadeImpl.setCurrentContext(domainContext);
+						PropertyExecutionResult executionResult = executeTestMethod(
+							methodDescriptor, propertyLifecycleContext, lifecycleSupplier, reportOnlyFailures
+						);
+						listener.executionFinished(methodDescriptor, executionResult);
+					} finally {
+						DomainContextFacadeImpl.removeCurrentContext();
+					}
+
+				} catch (Throwable throwable) {
+					JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+					handleExceptionDuringTestInstanceCreation(methodDescriptor, listener, throwable);
+				}
 
 				return TaskExecutionResult.success();
 			},
 			methodDescriptor,
 			"executing " + methodDescriptor.getDisplayName()
 		);
+	}
+
+	private DomainContext createDomainContext(
+		PropertyMethodDescriptor methodDescriptor,
+		PropertyLifecycleContext propertyLifecycleContext
+	) {
+		DomainContextFactory domainContextFactory = new DomainContextFactory(propertyLifecycleContext, methodDescriptor);
+		return domainContextFactory.createCombinedDomainContext();
+	}
+
+	private PropertyLifecycleContext createLifecycleContext(
+		PropertyMethodDescriptor methodDescriptor,
+		LifecycleHooksSupplier lifecycleSupplier,
+		PropertyExecutionListener listener
+	) {
+		PropertyLifecycleContext propertyLifecycleContext;
+		ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(methodDescriptor);
+		Reporter reporter = new DefaultReporter(listener::reportingEntryPublished, methodDescriptor);
+		Object testInstance = createTestInstance(methodDescriptor, lifecycleSupplier, reporter);
+		propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter, resolveParameterHook);
+		return propertyLifecycleContext;
 	}
 
 	private void handleExceptionDuringTestInstanceCreation(

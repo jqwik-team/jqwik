@@ -24,12 +24,7 @@ class ContainerTaskCreator {
 		PropertyExecutionListener propertyExecutionListener
 	) {
 
-		Reporter reporter = new DefaultReporter(
-			propertyExecutionListener::reportingEntryPublished,
-			containerDescriptor,
-			RegisteredSampleReportingFormats.getReportingFormats()
-		);
-
+		Reporter reporter = new DefaultReporter(propertyExecutionListener::reportingEntryPublished, containerDescriptor);
 		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor, reporter, lifecycleSupplier);
 
 		SkipExecutionHook.SkipResult skipResult = CurrentTestDescriptor.runWithDescriptor(containerDescriptor, () -> {

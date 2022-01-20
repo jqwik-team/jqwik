@@ -51,13 +51,10 @@ public class TestHelper {
 			(PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(containerClass, methodName, parameterTypes).build();
 		Object instance = JqwikReflectionSupport.newInstanceWithDefaultConstructor(containerClass);
 
-		// TODO: Add formats from current domain context
-		List<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
-
 		return new DefaultPropertyLifecycleContext(
 			methodDescriptor,
 			instance,
-			new DefaultReporter((key, value) -> {}, methodDescriptor, sampleReportingFormats),
+			new DefaultReporter((key, value) -> {}, methodDescriptor),
 			ResolveParameterHook.DO_NOT_RESOLVE
 		);
 	}
