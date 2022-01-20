@@ -51,7 +51,6 @@ public class DefaultReporter implements Reporter {
 	}
 
 	private Collection<SampleReportingFormat> getSampleReportingFormats() {
-		// TODO: add formats from current domain context
 		return RegisteredSampleReportingFormats.getReportingFormats();
 	}
 

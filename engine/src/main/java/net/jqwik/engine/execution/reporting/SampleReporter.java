@@ -16,7 +16,7 @@ public class SampleReporter {
 		List<Object> sample,
 		String headline,
 		int indentLevel,
-		List<SampleReportingFormat> sampleReportingFormats
+		Collection<SampleReportingFormat> sampleReportingFormats
 	) {
 		Map<String, Object> reports = createSampleReports(propertyMethod, sample);
 		SampleReporter sampleReporter = new SampleReporter(headline, reports, sampleReportingFormats);

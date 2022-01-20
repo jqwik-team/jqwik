@@ -30,7 +30,7 @@ public class ExecutionResultReport {
 	public static String from(
 		PropertyMethodDescriptor methodDescriptor,
 		ExtendedPropertyExecutionResult executionResult,
-		List<SampleReportingFormat> reportingFormats
+		Collection<SampleReportingFormat> reportingFormats
 	) {
 		return buildJqwikReport(
 			methodDescriptor.getConfiguration().getAfterFailureMode(),
@@ -46,7 +46,7 @@ public class ExecutionResultReport {
 		FixedSeedMode fixedSeedMode,
 		Method propertyMethod,
 		ExtendedPropertyExecutionResult executionResult,
-		List<SampleReportingFormat> sampleReportingFormats
+		Collection<SampleReportingFormat> sampleReportingFormats
 	) {
 		StringBuilder reportLines = new StringBuilder();
 
@@ -61,7 +61,7 @@ public class ExecutionResultReport {
 		StringBuilder reportLines,
 		Method propertyMethod,
 		PropertyExecutionResult executionResult,
-		List<SampleReportingFormat> sampleReportingFormats
+		Collection<SampleReportingFormat> sampleReportingFormats
 	) {
 		executionResult.shrunkSample().ifPresent(shrunkSample -> {
 			List<Object> parameters = shrunkSample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
@@ -107,7 +107,7 @@ public class ExecutionResultReport {
 		Method propertyMethod,
 		List<Object> parameters,
 		List<Object> parametersAfterRun,
-		List<SampleReportingFormat> sampleReportingFormats
+		Collection<SampleReportingFormat> sampleReportingFormats
 	) {
 		if (ParameterChangesDetector.haveParametersChanged(parameters, parametersAfterRun)) {
 			String changesSampleHeadline = "After Execution";

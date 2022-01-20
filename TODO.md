@@ -4,6 +4,8 @@
 
     - Arbitraries.recursive with depthMin and depthMax for better shrinking
 
+    - Merge CurrentTestDescriptor and DomainContextFacadeImpl.getCurrent() in a common RunContext object
+
     - Kotlin convenience functions:
         - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)
         - Collection<Arbitrary<T>>.chooseOne() -> Arbitraries.oneOf(..)

@@ -36,7 +36,6 @@ public class TestingSupportFacadeImpl extends TestingSupportFacade {
 	}
 
 	private Collection<SampleReportingFormat> getSampleReportingFormats() {
-		// TODO: Add formats from current domain context
 		return RegisteredSampleReportingFormats.getReportingFormats();
 	}
 

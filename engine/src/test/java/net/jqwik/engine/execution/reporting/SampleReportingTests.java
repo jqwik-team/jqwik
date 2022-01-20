@@ -19,7 +19,7 @@ class SampleReportingTests {
 	@Group
 	class SampleReporterTests {
 
-		private final List<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
+		private final Collection<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
 
 		@Example
 		void sampleReporterReportsParametersIndividually() {
@@ -563,6 +563,7 @@ class SampleReportingTests {
 				);
 			}
 
+			@SuppressWarnings("unchecked")
 			@Example
 			void arrayOfLists() {
 				List<String>[] list = new List[]{
