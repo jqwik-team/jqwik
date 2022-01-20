@@ -162,10 +162,15 @@ public class PropertyMethodExecutor {
 		}
 
 		if (executionResult instanceof ExtendedPropertyExecutionResult) {
+
+			// TODO: Add formats from current domain context
+			List<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
+
 			if (isReportWorthy((ExtendedPropertyExecutionResult) executionResult)) {
 				String reportEntry = ExecutionResultReport.from(
 					methodDescriptor,
-					(ExtendedPropertyExecutionResult) executionResult
+					(ExtendedPropertyExecutionResult) executionResult,
+					sampleReportingFormats
 				);
 				reporter.publishValue(buildResultReportKey(), reportEntry);
 			}

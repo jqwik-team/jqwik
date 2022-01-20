@@ -24,7 +24,11 @@ class ContainerTaskCreator {
 		PropertyExecutionListener propertyExecutionListener
 	) {
 
-		Reporter reporter = new DefaultReporter(propertyExecutionListener::reportingEntryPublished, containerDescriptor);
+		Reporter reporter = new DefaultReporter(
+			propertyExecutionListener::reportingEntryPublished,
+			containerDescriptor,
+			RegisteredSampleReportingFormats.getReportingFormats()
+		);
 
 		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor, reporter, lifecycleSupplier);
 

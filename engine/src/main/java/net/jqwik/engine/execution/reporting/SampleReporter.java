@@ -4,28 +4,22 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.api.*;
+
 public class SampleReporter {
 
 	public static final int MAX_LINE_LENGTH = 100;
-
-	static void reportSampleWithoutIndentation(
-		StringBuilder reportLines,
-		Method propertyMethod,
-		List<Object> sample,
-		String headline
-	) {
-		reportSample(reportLines, propertyMethod, sample, headline, 0);
-	}
 
 	static void reportSample(
 		StringBuilder reportLines,
 		Method propertyMethod,
 		List<Object> sample,
 		String headline,
-		int indentLevel
+		int indentLevel,
+		List<SampleReportingFormat> sampleReportingFormats
 	) {
 		Map<String, Object> reports = createSampleReports(propertyMethod, sample);
-		SampleReporter sampleReporter = new SampleReporter(headline, reports);
+		SampleReporter sampleReporter = new SampleReporter(headline, reports, sampleReportingFormats);
 		LineReporter lineReporter = new BuilderBasedLineReporter(reportLines, indentLevel);
 		sampleReporter.reportTo(lineReporter);
 	}
@@ -52,13 +46,14 @@ public class SampleReporter {
 		return samples;
 	}
 
-
 	private final String headline;
 	private final Map<String, Object> reports;
+	private final List<SampleReportingFormat> sampleReportingFormats;
 
-	public SampleReporter(String headline, Map<String, Object> reports) {
+	SampleReporter(String headline, Map<String, Object> reports, List<SampleReportingFormat> sampleReportingFormats) {
 		this.reports = reports;
 		this.headline = headline;
+		this.sampleReportingFormats = sampleReportingFormats;
 	}
 
 	void reportTo(LineReporter lineReporter) {
@@ -71,7 +66,7 @@ public class SampleReporter {
 		for (Map.Entry<String, Object> nameAndValue : reports.entrySet()) {
 			String parameterName = nameAndValue.getKey();
 			Object parameterValue = nameAndValue.getValue();
-			ValueReport sampleReport = ValueReport.of(parameterValue);
+			ValueReport sampleReport = ValueReport.of(parameterValue, sampleReportingFormats);
 			if (sampleReport.singleLineLength() + parameterName.length() < MAX_LINE_LENGTH) {
 				String line = String.format("%s: %s", parameterName, sampleReport.singleLineReport());
 				lineReporter.addLine(1, line);

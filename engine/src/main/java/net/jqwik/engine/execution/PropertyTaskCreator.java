@@ -1,6 +1,7 @@
 package net.jqwik.engine.execution;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
@@ -31,7 +32,11 @@ class PropertyTaskCreator {
 
 				try {
 					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(methodDescriptor);
-					Reporter reporter = new DefaultReporter(listener::reportingEntryPublished, methodDescriptor);
+
+					// TODO: add formats from current domain context
+					List<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
+
+					Reporter reporter = new DefaultReporter(listener::reportingEntryPublished, methodDescriptor, sampleReportingFormats);
 					Object testInstance = createTestInstance(methodDescriptor, lifecycleSupplier, reporter);
 					propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter, resolveParameterHook);
 

@@ -12,10 +12,16 @@ public class DefaultReporter implements Reporter {
 
 	private final BiConsumer<TestDescriptor, ReportEntry> listener;
 	private final TestDescriptor descriptor;
+	private final List<SampleReportingFormat> sampleReportingFormats;
 
-	public DefaultReporter(BiConsumer<TestDescriptor, ReportEntry> listener, TestDescriptor descriptor) {
+	public DefaultReporter(
+		BiConsumer<TestDescriptor, ReportEntry> listener,
+		TestDescriptor descriptor,
+		List<SampleReportingFormat> sampleReportingFormats
+	) {
 		this.listener = listener;
 		this.descriptor = descriptor;
+		this.sampleReportingFormats = sampleReportingFormats;
 	}
 
 	@Override
@@ -47,11 +53,11 @@ public class DefaultReporter implements Reporter {
 
 	@Override
 	public void publishReports(String key, Map<String, Object> objects) {
-		publish(ReportEntry.from(key, buildReports(objects)));
+		publish(ReportEntry.from(key, buildReports(objects, sampleReportingFormats)));
 	}
 
-	private String buildReports(Map<String, Object> reports) {
-		SampleReporter sampleReporter = new SampleReporter(null, reports);
+	private String buildReports(Map<String, Object> reports, List<SampleReportingFormat> sampleReportingFormats) {
+		SampleReporter sampleReporter = new SampleReporter(null, reports, sampleReportingFormats);
 		StringBuilder stringBuilder = new StringBuilder();
 		LineReporter lineReporter = new BuilderBasedLineReporter(stringBuilder, 0);
 		sampleReporter.reportTo(lineReporter);

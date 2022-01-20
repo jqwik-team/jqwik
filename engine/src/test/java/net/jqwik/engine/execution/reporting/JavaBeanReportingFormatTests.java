@@ -1,9 +1,11 @@
 package net.jqwik.engine.execution.reporting;
 
+import java.util.ArrayList;
 import java.util.*;
 
 import net.jqwik.api.*;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 class JavaBeanReportingFormatTests {
@@ -15,7 +17,7 @@ class JavaBeanReportingFormatTests {
 		SampleReportingFormat myObjectFormat = new JavaBeanReportingFormat() {
 			@Override
 			protected Collection<Class<?>> beanTypes() {
-				return Arrays.asList(MyBean.class, OtherBean.class);
+				return asList(MyBean.class, OtherBean.class);
 			}
 
 			@Override
@@ -24,19 +26,17 @@ class JavaBeanReportingFormatTests {
 			}
 		};
 
-		ValueReport.ReportingFormatFinder finder = formatFinder(myObjectFormat);
-
-		ValueReport report = ValueReport.of(new MyBean(), finder);
+		ValueReport report = ValueReport.of(new MyBean(), asList(myObjectFormat));
 
 		report.report(lineReporter, 2, ",");
 		assertThat(lineReporter.lines).containsSequence(
-				"    MyBean{",
-				"      age=17,",
-				"      name=\"name\",",
-				"      notEmpty=Optional[not empty],",
-				"      young=true,",
-				"      yourObjects=[OtherBean{hallo=\"hello\"}]",
-				"    },"
+			"    MyBean{",
+			"      age=17,",
+			"      name=\"name\",",
+			"      notEmpty=Optional[not empty],",
+			"      young=true,",
+			"      yourObjects=[OtherBean{hallo=\"hello\"}]",
+			"    },"
 		);
 	}
 
@@ -45,7 +45,7 @@ class JavaBeanReportingFormatTests {
 		SampleReportingFormat myObjectFormat = new JavaBeanReportingFormat() {
 			@Override
 			protected Collection<Class<?>> beanTypes() {
-				return Arrays.asList(MyBean.class);
+				return asList(MyBean.class);
 			}
 
 			@Override
@@ -55,24 +55,22 @@ class JavaBeanReportingFormatTests {
 
 			@Override
 			protected Collection<String> excludeProperties() {
-				return Arrays.asList("yourObjects", "toIgnore");
+				return asList("yourObjects", "toIgnore");
 			}
 		};
 
-		ValueReport.ReportingFormatFinder finder = formatFinder(myObjectFormat);
-
-		ValueReport report = ValueReport.of(new MyBean(), finder);
+		ValueReport report = ValueReport.of(new MyBean(), asList(myObjectFormat));
 
 		report.report(lineReporter, 2, ",");
 		assertThat(lineReporter.lines).containsSequence(
-				"    MyBean{",
-				"      age=17,",
-				"      doNotShowEmpty=Optional.empty,",
-				"      doNotShowNull=null,",
-				"      name=\"name\",",
-				"      notEmpty=Optional[not empty],",
-				"      young=true",
-				"    },"
+			"    MyBean{",
+			"      age=17,",
+			"      doNotShowEmpty=Optional.empty,",
+			"      doNotShowNull=null,",
+			"      name=\"name\",",
+			"      notEmpty=Optional[not empty],",
+			"      young=true",
+			"    },"
 		);
 	}
 
@@ -81,7 +79,7 @@ class JavaBeanReportingFormatTests {
 		SampleReportingFormat myObjectFormat = new JavaBeanReportingFormat() {
 			@Override
 			protected Collection<Class<?>> beanTypes() {
-				return Arrays.asList(MyBean.class);
+				return asList(MyBean.class);
 			}
 
 			@Override
@@ -97,29 +95,21 @@ class JavaBeanReportingFormatTests {
 
 			@Override
 			protected Collection<String> excludeProperties() {
-				return Arrays.asList("yourObjects", "toIgnore");
+				return asList("yourObjects", "toIgnore");
 			}
 		};
 
-		ValueReport.ReportingFormatFinder finder = formatFinder(myObjectFormat);
-
-		ValueReport report = ValueReport.of(new MyBean(), finder);
+		ValueReport report = ValueReport.of(new MyBean(), asList(myObjectFormat));
 
 		report.report(lineReporter, 2, ",");
 		assertThat(lineReporter.lines).containsSequence(
-				"    MyBean{",
-				"      young=true,",
-				"      notEmpty=Optional[not empty],",
-				"      age=17,",
-				"      name=\"name\"",
-				"    },"
+			"    MyBean{",
+			"      young=true,",
+			"      notEmpty=Optional[not empty],",
+			"      age=17,",
+			"      name=\"name\"",
+			"    },"
 		);
-	}
-
-	private ValueReport.ReportingFormatFinder formatFinder(SampleReportingFormat... formats) {
-		return value -> Arrays.stream(formats)
-							  .filter(format -> format.appliesTo(value))
-							  .findFirst().orElse(new NullReportingFormat());
 	}
 
 	private static class OtherBean {

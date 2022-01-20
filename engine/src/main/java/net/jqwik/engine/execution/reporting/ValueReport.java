@@ -11,12 +11,18 @@ public abstract class ValueReport {
 		SampleReportingFormat find(Object value);
 	}
 
-	public static ValueReport of(Object value) {
-		ReportingFormatFinder formatFinder = reportingFormatFinder();
+	// For Testing only
+	static ValueReport of(Object value) {
+		List<SampleReportingFormat> availableFormats = RegisteredSampleReportingFormats.getReportingFormats();
+		return of(value, availableFormats);
+	}
+
+	public static ValueReport of(Object value, Collection<SampleReportingFormat> availableFormats) {
+		ReportingFormatFinder formatFinder = formatFinder(availableFormats);
 		return of(value, formatFinder);
 	}
 
-	static ValueReport of(Object value, ReportingFormatFinder formatFinder) {
+	private static ValueReport of(Object value, ReportingFormatFinder formatFinder) {
 		final Set<Object> visited = visitedSet(Collections.emptySet());
 		return of(value, formatFinder, visited);
 	}
@@ -111,8 +117,8 @@ public abstract class ValueReport {
 		return new CollectionValueReport(label, reportCollection);
 	}
 
-	private static ReportingFormatFinder reportingFormatFinder() {
-		List<SampleReportingFormat> formats = new ArrayList<>(RegisteredSampleReportingFormats.getReportingFormats());
+	private static ReportingFormatFinder formatFinder(Collection<SampleReportingFormat> unsortedFormats) {
+		List<SampleReportingFormat> formats = new ArrayList<>(unsortedFormats);
 		Collections.sort(formats);
 		return targetValue ->
 				   formats.stream()

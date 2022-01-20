@@ -18,12 +18,15 @@ class SampleReportingTests {
 
 	@Group
 	class SampleReporterTests {
+
+		private final List<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
+
 		@Example
 		void sampleReporterReportsParametersIndividually() {
 			Map<String, Object> reports = new LinkedHashMap<>();
 			reports.put("aString", "this is a string");
 			reports.put("aNumber", 42);
-			SampleReporter sampleReporter = new SampleReporter("Headline", reports);
+			SampleReporter sampleReporter = new SampleReporter("Headline", reports, sampleReportingFormats);
 
 			sampleReporter.reportTo(lineReporter);
 
@@ -39,7 +42,7 @@ class SampleReportingTests {
 		void headlineCanBeSkipped() {
 			Map<String, Object> reports = new LinkedHashMap<>();
 			reports.put("aString", "this is a string");
-			SampleReporter sampleReporter = new SampleReporter(null, reports);
+			SampleReporter sampleReporter = new SampleReporter(null, reports, sampleReportingFormats);
 
 			sampleReporter.reportTo(lineReporter);
 
@@ -55,7 +58,7 @@ class SampleReportingTests {
 											"This is a long string. This is a long string. This is a long string. This is a long string.";
 			Map<String, Object> reports = new LinkedHashMap<>();
 			reports.put("aVeryLongString", parameterValue);
-			SampleReporter sampleReporter = new SampleReporter("Headline", reports);
+			SampleReporter sampleReporter = new SampleReporter("Headline", reports, sampleReportingFormats);
 
 			sampleReporter.reportTo(lineReporter);
 
@@ -83,7 +86,7 @@ class SampleReportingTests {
 			reports.put("list1", listOfObject);
 			reports.put("list2", listOfObject);
 
-			SampleReporter sampleReporter = new SampleReporter("Headline", reports);
+			SampleReporter sampleReporter = new SampleReporter("Headline", reports, sampleReportingFormats);
 
 			sampleReporter.reportTo(lineReporter);
 
@@ -133,7 +136,7 @@ class SampleReportingTests {
 			Assertions.assertThat(report.singleLineReport()).isEqualTo(object.toString());
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
-					"    " + object.toString()
+					"    " + object
 			);
 		}
 
@@ -201,14 +204,14 @@ class SampleReportingTests {
 
 		@Example
 		void stringWithLabelAndAppendix() {
-			ValueReport.ReportingFormatFinder finder = value -> new NullReportingFormat() {
+			SampleReportingFormat format = new NullReportingFormat() {
 				@Override
 				public Optional<String> label(Object value) {
 					return Optional.of("java.lang.String:");
 				}
 			};
 
-			ValueReport report = ValueReport.of("this is a string", finder);
+			ValueReport report = ValueReport.of("this is a string", asList(format));
 
 			Assertions.assertThat(report.singleLineLength()).isEqualTo(17 + 18);
 			Assertions.assertThat(report.singleLineReport()).isEqualTo("java.lang.String:\"this is a string\"");
@@ -290,10 +293,9 @@ class SampleReportingTests {
 						return Optional.of("java.lang.List");
 					}
 				};
-				ValueReport.ReportingFormatFinder finder = formatFinder(collectionFormat);
 
 				List<String> list = asList("string 1", "string 2");
-				ValueReport report = ValueReport.of(list, finder);
+				ValueReport report = ValueReport.of(list, asList(collectionFormat));
 
 				String expectedCompact = "java.lang.List[\"string 1\", \"string 2\"]";
 				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
@@ -370,11 +372,10 @@ class SampleReportingTests {
 						return Optional.of("java.lang.Map");
 					}
 				};
-				ValueReport.ReportingFormatFinder finder = formatFinder(collectionFormat);
 
 				Map<String, Integer> map = new HashMap<>();
 				map.put("key1", 1);
-				ValueReport report = ValueReport.of(map, finder);
+				ValueReport report = ValueReport.of(map, asList(collectionFormat));
 
 				String expectedCompact = "java.lang.Map{\"key1\"=1}";
 				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
@@ -452,10 +453,9 @@ class SampleReportingTests {
 						return Optional.of("Tuple");
 					}
 				};
-				ValueReport.ReportingFormatFinder finder = formatFinder(tupleFormat);
 
 				Tuple.Tuple2<String, Integer> tuple = Tuple.of("one", 2, 3.0);
-				ValueReport report = ValueReport.of(tuple, finder);
+				ValueReport report = ValueReport.of(tuple, asList(tupleFormat));
 
 				String expectedCompact = "Tuple(\"one\", 2, 3.0)";
 				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
@@ -612,12 +612,5 @@ class SampleReportingTests {
 			}
 
 		}
-
-		private ValueReport.ReportingFormatFinder formatFinder(SampleReportingFormat... formats) {
-			return value -> Arrays.stream(formats)
-								  .filter(format -> format.appliesTo(value))
-								  .findFirst().orElse(new NullReportingFormat());
-		}
-
 	}
 }

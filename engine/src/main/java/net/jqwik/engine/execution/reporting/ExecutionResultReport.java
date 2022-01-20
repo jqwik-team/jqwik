@@ -29,27 +29,30 @@ public class ExecutionResultReport {
 
 	public static String from(
 		PropertyMethodDescriptor methodDescriptor,
-		ExtendedPropertyExecutionResult executionResult
+		ExtendedPropertyExecutionResult executionResult,
+		List<SampleReportingFormat> reportingFormats
 	) {
 		return buildJqwikReport(
-				methodDescriptor.getConfiguration().getAfterFailureMode(),
-				methodDescriptor.getConfiguration().getFixedSeedMode(),
-				methodDescriptor.getTargetMethod(),
-				executionResult
+			methodDescriptor.getConfiguration().getAfterFailureMode(),
+			methodDescriptor.getConfiguration().getFixedSeedMode(),
+			methodDescriptor.getTargetMethod(),
+			executionResult,
+			reportingFormats
 		);
 	}
 
 	private static String buildJqwikReport(
-			AfterFailureMode afterFailureMode,
-			FixedSeedMode fixedSeedMode,
-			Method propertyMethod,
-			ExtendedPropertyExecutionResult executionResult
+		AfterFailureMode afterFailureMode,
+		FixedSeedMode fixedSeedMode,
+		Method propertyMethod,
+		ExtendedPropertyExecutionResult executionResult,
+		List<SampleReportingFormat> sampleReportingFormats
 	) {
 		StringBuilder reportLines = new StringBuilder();
 
 		appendThrowableMessage(reportLines, executionResult);
 		appendFixedSizedProperties(reportLines, executionResult, afterFailureMode, fixedSeedMode);
-		appendSamples(reportLines, propertyMethod, executionResult);
+		appendSamples(reportLines, propertyMethod, executionResult, sampleReportingFormats);
 
 		return reportLines.toString();
 	}
@@ -57,15 +60,16 @@ public class ExecutionResultReport {
 	private static void appendSamples(
 		StringBuilder reportLines,
 		Method propertyMethod,
-		PropertyExecutionResult executionResult
+		PropertyExecutionResult executionResult,
+		List<SampleReportingFormat> sampleReportingFormats
 	) {
 		executionResult.shrunkSample().ifPresent(shrunkSample -> {
 			List<Object> parameters = shrunkSample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
 			List<Object> parametersAfterRun = shrunkSample.parameters();
 			if (!parameters.isEmpty()) {
 				String shrunkSampleHeadline = String.format("%s (%s steps)", SHRUNK_SAMPLE_HEADLINE, shrunkSample.countShrinkingSteps());
-				SampleReporter.reportSampleWithoutIndentation(reportLines, propertyMethod, parameters, shrunkSampleHeadline);
-				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun);
+				SampleReporter.reportSample(reportLines, propertyMethod, parameters, shrunkSampleHeadline, 0, sampleReportingFormats);
+				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun, sampleReportingFormats);
 			}
 			reportFootnotes(reportLines, shrunkSample.footnotes());
 		});
@@ -75,8 +79,8 @@ public class ExecutionResultReport {
 			List<Object> parameters = originalSample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
 			List<Object> parametersAfterRun = originalSample.parameters();
 			if (!parameters.isEmpty()) {
-				SampleReporter.reportSampleWithoutIndentation(reportLines, propertyMethod, parameters, originalSampleHeadline);
-				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun);
+				SampleReporter.reportSample(reportLines, propertyMethod, parameters, originalSampleHeadline, 0, sampleReportingFormats);
+				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun, sampleReportingFormats);
 			}
 			reportFootnotes(reportLines, originalSample.footnotes());
 			if (!parameters.isEmpty() && executionResult.shrunkSample().isPresent()) {
@@ -102,11 +106,12 @@ public class ExecutionResultReport {
 		StringBuilder reportLines,
 		Method propertyMethod,
 		List<Object> parameters,
-		List<Object> parametersAfterRun
+		List<Object> parametersAfterRun,
+		List<SampleReportingFormat> sampleReportingFormats
 	) {
 		if (ParameterChangesDetector.haveParametersChanged(parameters, parametersAfterRun)) {
 			String changesSampleHeadline = "After Execution";
-			SampleReporter.reportSample(reportLines, propertyMethod, parametersAfterRun, changesSampleHeadline, 1);
+			SampleReporter.reportSample(reportLines, propertyMethod, parametersAfterRun, changesSampleHeadline, 1, sampleReportingFormats);
 		}
 	}
 

@@ -22,16 +22,25 @@ public class TestingSupportFacadeImpl extends TestingSupportFacade {
 
 	@Override
 	public String singleLineReport(Object any) {
-		ValueReport report = ValueReport.of(any);
+		List<SampleReportingFormat> sampleReportingFormats = getSampleReportingFormats();
+		ValueReport report = ValueReport.of(any, sampleReportingFormats);
 		return report.singleLineReport();
 	}
 
 	@Override
 	public List<String> multiLineReport(Object any) {
-		ValueReport report = ValueReport.of(any);
+		// TODO: Add formats from current domain context
+		List<SampleReportingFormat> sampleReportingFormats = getSampleReportingFormats();
+		ValueReport report = ValueReport.of(any, sampleReportingFormats);
 		SimpleLineReporter lineReporter = new SimpleLineReporter();
 		report.report(lineReporter, 0, "");
 		return lineReporter.lines;
+	}
+
+	private List<SampleReportingFormat> getSampleReportingFormats() {
+		// TODO: Add formats from current domain context
+		List<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
+		return sampleReportingFormats;
 	}
 
 	private static class SimpleLineReporter implements LineReporter {
