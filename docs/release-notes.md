@@ -36,7 +36,9 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
-No breaking changes.
+- Changed `DomainContext.getArbitraryProviders()` to return `Collection<ArbitraryProvider>`
+
+- Changed `DomainContext.getArbitraryConfigurators()` to return `Collection<ArbitraryConfigurator>`
 
 #### Bug Fixes
 

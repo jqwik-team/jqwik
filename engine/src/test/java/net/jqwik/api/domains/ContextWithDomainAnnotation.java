@@ -10,12 +10,12 @@ import net.jqwik.api.providers.*;
 public class ContextWithDomainAnnotation extends ParentDomainContext implements DomainContext {
 
 	@Override
-	public List<ArbitraryProvider> getArbitraryProviders() {
+	public Collection<ArbitraryProvider> getArbitraryProviders() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public List<ArbitraryConfigurator> getArbitraryConfigurators() {
+	public Collection<ArbitraryConfigurator> getArbitraryConfigurators() {
 		return Collections.emptyList();
 	}
 }

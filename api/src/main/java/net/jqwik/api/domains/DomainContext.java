@@ -44,12 +44,12 @@ public interface DomainContext {
 	@API(status = MAINTAINED, since = "1.1")
 	class Global implements DomainContext {
 		@Override
-		public List<ArbitraryProvider> getArbitraryProviders() {
+		public Collection<ArbitraryProvider> getArbitraryProviders() {
 			return global().getArbitraryProviders();
 		}
 
 		@Override
-		public List<ArbitraryConfigurator> getArbitraryConfigurators() {
+		public Collection<ArbitraryConfigurator> getArbitraryConfigurators() {
 			return global().getArbitraryConfigurators();
 		}
 	}
@@ -64,14 +64,25 @@ public interface DomainContext {
 
 		public abstract DomainContext global();
 
-		public abstract List<ArbitraryProvider> getArbitraryProviders(DomainContextBase base, int priority);
+		public abstract Collection<ArbitraryProvider> getArbitraryProviders(DomainContextBase base, int priority);
 
-		public abstract List<ArbitraryConfigurator> getArbitraryConfigurators(DomainContextBase base);
+		public abstract Collection<ArbitraryConfigurator> getArbitraryConfigurators(DomainContextBase base);
 	}
 
-	List<ArbitraryProvider> getArbitraryProviders();
+	Collection<ArbitraryProvider> getArbitraryProviders();
 
-	List<ArbitraryConfigurator> getArbitraryConfigurators();
+	Collection<ArbitraryConfigurator> getArbitraryConfigurators();
+
+	/**
+	 * Provide additional {@linkplain SampleReportingFormat reporting formats} that are used
+	 * to format objects that are reported in property results or when using a {@linkplain Reporter}.
+	 *
+	 * @return Collection of classes that implement interface {@linkplain SampleReportingFormat}
+	 */
+	@API(status = EXPERIMENTAL, since = "1.6.4")
+	default Collection<Class<? extends SampleReportingFormat>> getReportingFormats() {
+		return Collections.emptySet();
+	}
 
 	/**
 	 * This method will be called exactly once after instantiation of a given domain context class.

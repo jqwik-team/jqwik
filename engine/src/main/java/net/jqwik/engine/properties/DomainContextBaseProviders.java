@@ -20,7 +20,7 @@ public class DomainContextBaseProviders {
 
 	private static final Logger LOG = Logger.getLogger(DomainContextBaseProviders.class.getName());
 
-	static public List<ArbitraryProvider> forContextBase(DomainContextBase base, int priority) {
+	static public Collection<ArbitraryProvider> forContextBase(DomainContextBase base, int priority) {
 		return JqwikStreamSupport.concat(
 			providersFromProviderMethods(base, priority),
 			providersFromInnerClasses(base, priority),

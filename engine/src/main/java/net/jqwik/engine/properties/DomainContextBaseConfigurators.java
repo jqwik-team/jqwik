@@ -17,7 +17,7 @@ public class DomainContextBaseConfigurators {
 
 	private static final Logger LOG = Logger.getLogger(DomainContextBaseConfigurators.class.getName());
 
-	static public List<ArbitraryConfigurator> forContextBase(DomainContextBase base) {
+	static public Collection<ArbitraryConfigurator> forContextBase(DomainContextBase base) {
 		return Stream.concat(
 			configuratorsFromInnerClasses(base),
 			configuratorsFromBaseItself(base)

@@ -46,12 +46,12 @@ public abstract class DomainContextBase implements DomainContext {
 	private int defaultPriority = DEFAULT_PRIORITY;
 
 	@Override
-	public List<ArbitraryProvider> getArbitraryProviders() {
+	public Collection<ArbitraryProvider> getArbitraryProviders() {
 		return DomainContextFacade.implementation.getArbitraryProviders(this, defaultPriority);
 	}
 
 	@Override
-	public List<ArbitraryConfigurator> getArbitraryConfigurators() {
+	public Collection<ArbitraryConfigurator> getArbitraryConfigurators() {
 		return DomainContextFacade.implementation.getArbitraryConfigurators(this);
 	}
 

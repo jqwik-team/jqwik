@@ -18,15 +18,16 @@ class CombinedDomainContext implements DomainContext {
 			providers.addAll(domainContext.getArbitraryProviders());
 			configurators.addAll(domainContext.getArbitraryConfigurators());
 		}
+		Collections.sort(configurators);
 	}
 
 	@Override
-	public List<ArbitraryProvider> getArbitraryProviders() {
+	public Collection<ArbitraryProvider> getArbitraryProviders() {
 		return providers;
 	}
 
 	@Override
-	public List<ArbitraryConfigurator> getArbitraryConfigurators() {
+	public Collection<ArbitraryConfigurator> getArbitraryConfigurators() {
 		return configurators;
 	}
 }

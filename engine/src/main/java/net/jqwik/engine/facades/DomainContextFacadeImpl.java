@@ -16,12 +16,12 @@ public class DomainContextFacadeImpl extends DomainContext.DomainContextFacade {
 	}
 
 	@Override
-	public List<ArbitraryProvider> getArbitraryProviders(DomainContextBase base, int priority) {
+	public Collection<ArbitraryProvider> getArbitraryProviders(DomainContextBase base, int priority) {
 		return DomainContextBaseProviders.forContextBase(base, priority);
 	}
 
 	@Override
-	public List<ArbitraryConfigurator> getArbitraryConfigurators(DomainContextBase base) {
+	public Collection<ArbitraryConfigurator> getArbitraryConfigurators(DomainContextBase base) {
 		return DomainContextBaseConfigurators.forContextBase(base);
 	}
 

@@ -36,12 +36,12 @@ public class CurrentDomainContext {
 	private static class GlobalDomainContext implements DomainContext {
 
 		@Override
-		public List<ArbitraryProvider> getArbitraryProviders() {
+		public Collection<ArbitraryProvider> getArbitraryProviders() {
 			return RegisteredArbitraryProviders.getProviders();
 		}
 
 		@Override
-		public List<ArbitraryConfigurator> getArbitraryConfigurators() {
+		public Collection<ArbitraryConfigurator> getArbitraryConfigurators() {
 			return RegisteredArbitraryConfigurators.getConfigurators();
 		}
 	}

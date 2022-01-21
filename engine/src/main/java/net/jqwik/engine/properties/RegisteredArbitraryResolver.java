@@ -10,7 +10,7 @@ public class RegisteredArbitraryResolver {
 
 	private final List<ArbitraryProvider> registeredProviders = new ArrayList<>();
 
-	public RegisteredArbitraryResolver(List<ArbitraryProvider> registeredProviders) {
+	public RegisteredArbitraryResolver(Collection<ArbitraryProvider> registeredProviders) {
 		this.registeredProviders.addAll(registeredProviders);
 		this.registeredProviders.addAll(DefaultArbitraries.getDefaultProviders());
 	}

@@ -10,9 +10,10 @@ public class RegisteredArbitraryConfigurer {
 
 	private final List<ArbitraryConfigurator> registeredConfigurators = new ArrayList<>();
 
-	public RegisteredArbitraryConfigurer(List<ArbitraryConfigurator> registeredConfigurators) {
+	public RegisteredArbitraryConfigurer(Collection<ArbitraryConfigurator> registeredConfigurators) {
 		this.registeredConfigurators.addAll(registeredConfigurators);
 		this.registeredConfigurators.addAll(DefaultArbitraries.getDefaultConfigurators());
+		Collections.sort(this.registeredConfigurators);
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage targetType) {
