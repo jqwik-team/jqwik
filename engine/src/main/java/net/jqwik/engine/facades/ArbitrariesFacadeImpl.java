@@ -9,6 +9,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.stateful.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
@@ -259,7 +260,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver) {
-		DomainContext domainContext = DomainContextFacadeImpl.getCurrentContext();
+		DomainContext domainContext = CurrentDomainContext.get();
 		Set<Arbitrary<?>> unconfiguredArbitraries = createDefaultArbitraries(typeUsage, noDefaultResolver, domainContext);
 		return configureDefaultArbitraries(typeUsage, domainContext, unconfiguredArbitraries);
 	}

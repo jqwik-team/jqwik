@@ -37,14 +37,6 @@ public class PropertyMethodExecutor {
 	}
 
 	public PropertyExecutionResult execute(LifecycleHooksSupplier lifecycleSupplier) {
-		try {
-			return executePropertyMethod(lifecycleSupplier);
-		} finally {
-			StoreRepository.getCurrent().finishScope(methodDescriptor);
-		}
-	}
-
-	private PropertyExecutionResult executePropertyMethod(LifecycleHooksSupplier lifecycleSupplier) {
 		AroundPropertyHook aroundProperty = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		AroundTryHook aroundTry = lifecycleSupplier.aroundTryHook(methodDescriptor);
 		ResolveParameterHook resolveParameter = lifecycleSupplier.resolveParameterHook(methodDescriptor);

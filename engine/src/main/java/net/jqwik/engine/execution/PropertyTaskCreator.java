@@ -10,7 +10,6 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;
 import net.jqwik.engine.execution.reporting.*;
-import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
 class PropertyTaskCreator {
@@ -46,15 +45,17 @@ class PropertyTaskCreator {
 
 					listener.executionStarted(methodDescriptor);
 
-					DomainContext domainContext = createDomainContext(methodDescriptor, propertyLifecycleContext);
 					try {
-						DomainContextFacadeImpl.setCurrentContext(domainContext);
-						PropertyExecutionResult executionResult = executeTestMethod(
-							methodDescriptor, propertyLifecycleContext, lifecycleSupplier, reportOnlyFailures
-						);
-						listener.executionFinished(methodDescriptor, executionResult);
+						DomainContext domainContext = createDomainContext(methodDescriptor, propertyLifecycleContext);
+						CurrentDomainContext.runWithContext(domainContext, () -> {
+							PropertyExecutionResult executionResult = executeTestMethod(
+								methodDescriptor, propertyLifecycleContext, lifecycleSupplier, reportOnlyFailures
+							);
+							listener.executionFinished(methodDescriptor, executionResult);
+							return null;
+						});
 					} finally {
-						DomainContextFacadeImpl.removeCurrentContext();
+						StoreRepository.getCurrent().finishScope(methodDescriptor);
 					}
 
 				} catch (Throwable throwable) {

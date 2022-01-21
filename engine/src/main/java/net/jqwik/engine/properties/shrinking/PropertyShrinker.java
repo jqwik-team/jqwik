@@ -13,7 +13,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
-import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
@@ -97,15 +96,12 @@ public class PropertyShrinker {
 	private FalsifiedSample withTimeout(Supplier<FalsifiedSample> shrinkUntilDone) {
 		try {
 			TestDescriptor currentDescriptor = CurrentTestDescriptor.get();
-			DomainContext currentContext = DomainContextFacadeImpl.getCurrentContext();
-			Supplier<FalsifiedSample> shrinkWithTestDescriptor = () -> {
-				try {
-					DomainContextFacadeImpl.setCurrentContext(currentContext);
-					return CurrentTestDescriptor.runWithDescriptor(currentDescriptor, shrinkUntilDone);
-				} finally {
-					DomainContextFacadeImpl.removeCurrentContext();
-				}
-			};
+			DomainContext currentContext = CurrentDomainContext.get();
+			Supplier<FalsifiedSample> shrinkWithTestDescriptor =
+				() -> CurrentDomainContext.runWithContext(
+					currentContext,
+					() -> CurrentTestDescriptor.runWithDescriptor(currentDescriptor, shrinkUntilDone)
+				);
 			CompletableFuture<FalsifiedSample> falsifiedSampleFuture = CompletableFuture.supplyAsync(shrinkWithTestDescriptor);
 			return falsifiedSampleFuture.get(boundedShrinkingSeconds, TimeUnit.SECONDS);
 		} catch (InterruptedException | ExecutionException e) {

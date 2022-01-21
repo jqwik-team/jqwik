@@ -8,7 +8,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
-import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
@@ -31,7 +30,7 @@ public class CheckedPropertyFactory {
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
 			propertyLifecycleContext.testInstance(),
-			DomainContextFacadeImpl.getCurrentContext()
+			CurrentDomainContext.get()
 		);
 
 		Optional<Iterable<? extends Tuple>> optionalData =
