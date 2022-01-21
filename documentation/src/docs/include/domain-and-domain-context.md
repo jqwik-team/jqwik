@@ -15,7 +15,7 @@ As for ways to implement domain context classes have a look at
 and [DomainContextBase](/docs/${docsVersion}/javadoc/net/jqwik/api/domains/DomainContextBase.html).
 
 In subclasses of `DomainContextBase` you have several options to specify 
-arbitrary providers and configurators:
+arbitrary providers, arbitrary configurators and reporting formats:
 
 - Add methods annotated with `Provide` and a return type of `Arbitrary<T>`.
   The result of an annotated method will then be used as an arbitrary provider for type `T`.
@@ -37,6 +37,12 @@ arbitrary providers and configurators:
 
 - Additionally implement `ArbitraryConfigurator` and the domain context instance
   itself will be used as configurator.
+
+- Add inner classes (static or not static, but not private) that implement `SampleReportingFormat`.
+  An instance of this class will then be created and used for reporting values of your domain object.
+
+- Additionally implement `SampleReportingFormat` and the domain context instance
+  itself will be used for reporting values of your domain object.
 
 A `DomainContext` implementation class can itself have `@Domain` annotations,
 which are then used to add to the property's set of domains.

@@ -34,6 +34,8 @@ title: jqwik Release Notes
 
 - Added Kotlin convenience function `Collection<T>.anySubset() : SetArbitrary<T>`
 
+- `DomainContext` and `DomainContextBase` implementations can now provide `SampleReportingFormat` classes and instances. 
+
 #### Breaking Changes
 
 - Changed `DomainContext.getArbitraryProviders()` to return `Collection<ArbitraryProvider>`
