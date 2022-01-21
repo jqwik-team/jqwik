@@ -13,7 +13,7 @@ public abstract class ValueReport {
 
 	// For Testing only
 	static ValueReport of(Object value) {
-		return of(value, RegisteredSampleReportingFormats.getReportingFormats());
+		return of(value, SampleReportingFormats.getReportingFormats());
 	}
 
 	public static ValueReport of(Object value, Collection<SampleReportingFormat> availableFormats) {

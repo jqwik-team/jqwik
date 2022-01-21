@@ -19,7 +19,7 @@ class SampleReportingTests {
 	@Group
 	class SampleReporterTests {
 
-		private final Collection<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
+		private final Collection<SampleReportingFormat> sampleReportingFormats = SampleReportingFormats.getReportingFormats();
 
 		@Example
 		void sampleReporterReportsParametersIndividually() {

@@ -67,6 +67,8 @@ public interface DomainContext {
 		public abstract Collection<ArbitraryProvider> getArbitraryProviders(DomainContextBase base, int priority);
 
 		public abstract Collection<ArbitraryConfigurator> getArbitraryConfigurators(DomainContextBase base);
+
+		public abstract Collection<SampleReportingFormat> getReportingFormats(DomainContextBase base);
 	}
 
 	Collection<ArbitraryProvider> getArbitraryProviders();
@@ -77,10 +79,10 @@ public interface DomainContext {
 	 * Provide additional {@linkplain SampleReportingFormat reporting formats} that are used
 	 * to format objects that are reported in property results or when using a {@linkplain Reporter}.
 	 *
-	 * @return Collection of classes that implement interface {@linkplain SampleReportingFormat}
+	 * @return Collection of {@linkplain SampleReportingFormat} instances
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.4")
-	default Collection<Class<? extends SampleReportingFormat>> getReportingFormats() {
+	default Collection<SampleReportingFormat> getReportingFormats() {
 		return Collections.emptySet();
 	}
 

@@ -7,11 +7,13 @@ import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.testing.TestingSupport.*;
+
 @Group
+@PropertyDefaults(tries = 20)
 class DomainContextBaseTests {
 
 	@Group
-	@PropertyDefaults(tries = 20)
 	class ArbitraryProviderMethods {
 
 		@Property
@@ -74,7 +76,6 @@ class DomainContextBaseTests {
 	}
 
 	@Group
-	@PropertyDefaults(tries = 20)
 	class WithArbitraryProviderClasses {
 
 		@Property
@@ -118,7 +119,6 @@ class DomainContextBaseTests {
 	}
 
 	@Group
-	@PropertyDefaults(tries = 20)
 	class WithArbitraryConfiguratorClasses {
 
 		@Property
@@ -145,7 +145,6 @@ class DomainContextBaseTests {
 	}
 
 	@Group
-	@PropertyDefaults
 	class WithDomainAnnotations {
 
 		@Property
@@ -162,5 +161,33 @@ class DomainContextBaseTests {
 
 	}
 
+	@Group
+	class WithReportingFormatClasses {
+
+		@Property
+		@Domain(ContextWithInnerReportingFormatClasses.class)
+		void useReportingFormatFromInnerClass(@ForAll Instant instant) {
+			assertThat(singleLineReport(instant)).isEqualTo("\"Instant()\"");
+		}
+
+		@Property
+		@Domain(ContextWithInnerReportingFormatClasses.class)
+		void useContextItselfAsReportingFormat(@ForAll Date aDate) {
+			assertThat(singleLineReport(aDate)).isEqualTo("\"Date()\"");
+		}
+
+		@Property
+		@Domain(ContextWithInnerReportingFormatClasses.class)
+		void useReportingFormatFromStaticInnerClass(@ForAll LocalTime localTime) {
+			assertThat(singleLineReport(localTime)).isEqualTo("\"LocalTime()\"");
+		}
+
+		@Property
+		@Domain(ContextWithInnerReportingFormatClasses.class)
+		void dontUsePrivateReportingFormat(@ForAll LocalDate localDate) {
+			assertThat(singleLineReport(localDate)).isNotEqualTo("\"LocalDate()\"");
+		}
+
+	}
 }
 

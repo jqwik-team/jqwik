@@ -36,7 +36,7 @@ public class TestingSupportFacadeImpl extends TestingSupportFacade {
 	}
 
 	private Collection<SampleReportingFormat> getSampleReportingFormats() {
-		return RegisteredSampleReportingFormats.getReportingFormats();
+		return SampleReportingFormats.getReportingFormats();
 	}
 
 	private static class SimpleLineReporter implements LineReporter {

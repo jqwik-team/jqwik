@@ -97,7 +97,7 @@ public class PropertyMethodExecutor {
 
 		if (executionResult instanceof ExtendedPropertyExecutionResult) {
 
-			Collection<SampleReportingFormat> sampleReportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
+			Collection<SampleReportingFormat> sampleReportingFormats = SampleReportingFormats.getReportingFormats();
 			if (isReportWorthy((ExtendedPropertyExecutionResult) executionResult)) {
 				String reportEntry = ExecutionResultReport.from(
 					methodDescriptor,

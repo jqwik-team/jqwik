@@ -88,8 +88,9 @@ public class DomainContextBaseProviders {
 
 	private static void warnThatNoDefaultConstructorPresent(Class<?> aClass) {
 		String message = String.format(
-			"Class <%s> does not have a default constructor and cannot be instantiated as arbitrary provider.",
-			aClass.getName()
+			"Class <%s> does not have a default constructor and cannot be instantiated as %s.",
+			aClass.getName(),
+			ArbitraryProvider.class
 		);
 		LOG.warning(message);
 	}

@@ -46,8 +46,9 @@ public class DomainContextBaseConfigurators {
 			   .filter(aClass -> !hasFittingConstructor(aClass))
 			   .forEach(aClass -> {
 				   String message = String.format(
-					   "Class <%s> does not have a default constructor and cannot be instantiated as arbitrary configurator.",
-					   aClass.getName()
+					   "Class <%s> does not have a default constructor and cannot be instantiated as %s.",
+					   aClass.getName(),
+					   ArbitraryConfigurator.class
 				   );
 				   LOG.warning(message);
 			   });

@@ -51,7 +51,7 @@ public class DefaultReporter implements Reporter {
 	}
 
 	private Collection<SampleReportingFormat> getSampleReportingFormats() {
-		return RegisteredSampleReportingFormats.getReportingFormats();
+		return SampleReportingFormats.getReportingFormats();
 	}
 
 	private String buildReports(Map<String, Object> reports) {

@@ -313,7 +313,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 						sampleMap.put(i, parameter);
 					}
 
-					Collection<SampleReportingFormat> reportingFormats = RegisteredSampleReportingFormats.getReportingFormats();
+					Collection<SampleReportingFormat> reportingFormats = SampleReportingFormats.getReportingFormats();
 					String sampleString = ValueReport.of(sampleMap, reportingFormats).singleLineReport();
 					return sampleParams.isEmpty() ? "" : String.format(" with sample %s", sampleString);
 				}).orElse("");

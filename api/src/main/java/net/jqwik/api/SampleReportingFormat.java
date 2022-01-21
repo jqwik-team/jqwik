@@ -49,6 +49,8 @@ public interface SampleReportingFormat extends Comparable<SampleReportingFormat>
 	}
 
 	/**
+	 * Higher priorities have precedence.
+	 *
 	 * @return priority with which to apply this format
 	 */
 	default int priority() {

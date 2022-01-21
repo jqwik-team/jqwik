@@ -56,6 +56,11 @@ public abstract class DomainContextBase implements DomainContext {
 	}
 
 	@Override
+	public Collection<SampleReportingFormat> getReportingFormats() {
+		return DomainContextFacade.implementation.getReportingFormats(this);
+	}
+
+	@Override
 	public void setDefaultPriority(int priority) {
 		defaultPriority = priority;
 	}
