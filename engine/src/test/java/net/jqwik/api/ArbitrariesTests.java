@@ -328,20 +328,6 @@ class ArbitrariesTests {
 		}
 	}
 
-	@Example
-	void recursive(@ForAll Random random) {
-		Arbitrary<Integer> base = Arbitraries.integers().between(0, 5);
-		Arbitrary<Integer> integer = Arbitraries.recursive(
-				() -> base,
-				list -> list.map(i -> i + 1),
-				10
-		);
-
-		assertAllGenerated(integer.generator(1000, true), random, result -> {
-			assertThat(result).isBetween(10, 15);
-		});
-	}
-
 	@Group
 	class Lazy {
 

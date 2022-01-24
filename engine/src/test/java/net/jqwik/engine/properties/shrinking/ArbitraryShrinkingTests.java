@@ -105,21 +105,6 @@ class ArbitraryShrinkingTests {
 		return list.stream().mapToInt(i -> i).sum();
 	}
 
-	@Property(tries = 10)
-	void recursive(@ForAll Random random) {
-		Arbitrary<Integer> base = Arbitraries.integers().between(0, 10);
-		Arbitrary<Integer> integer = Arbitraries.recursive(
-			() -> base,
-			anInt -> Combinators.combine(anInt, base).as(Integer::sum),
-			10
-		);
-
-		RandomGenerator<Integer> generator = integer.generator(10, true);
-		Shrinkable<Integer> shrinkable = generator.next(random);
-		Integer shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
-		assertThat(shrunkValue).isEqualTo(0);
-	}
-
 	@Property(tries = 100)
 	void frequencyOf(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =

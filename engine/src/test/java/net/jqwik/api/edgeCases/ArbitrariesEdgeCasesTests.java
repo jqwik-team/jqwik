@@ -21,7 +21,6 @@ class ArbitrariesEdgeCasesTests implements GenericEdgeCasesProperties {
 			entriesArbitrary(),
 			Arbitraries.just("abc"),
 			Arbitraries.create(() -> "new string"),
-			recursiveArbitrary(),
 			Arbitraries.shuffle(1, 2, 3),
 			oneOfArbitrary(),
 			frequencyOfArbitrary(),
@@ -90,21 +89,6 @@ class ArbitrariesEdgeCasesTests implements GenericEdgeCasesProperties {
 		assertThat(collectEdgeCaseValues(edgeCases)).containsExactly("new string");
 		// make sure edge cases can be repeatedly generated
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(1);
-	}
-
-	@Example
-	@Label("Arbitraries.recursive()")
-	void recursive() {
-		Arbitrary<Integer> arbitrary = recursiveArbitrary();
-		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCaseValues(edgeCases)).containsExactly(8, 13);
-		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
-	}
-
-	private Arbitrary<Integer> recursiveArbitrary() {
-		Arbitrary<Integer> base = Arbitraries.of(5, 10);
-		return Arbitraries.recursive(() -> base, list -> list.map(i -> i + 1), 3);
 	}
 
 	@Example
