@@ -2,8 +2,10 @@ package net.jqwik.api;
 
 import java.util.*;
 
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.statistics.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -93,19 +95,9 @@ class ArbitrariesRecursiveTests {
 		return Arbitraries.recursive(() -> Arbitraries.just(0), ints -> ints.map(i -> i + 1), 0, 9);
 	}
 
-
-	private Arbitrary<Integer> fixedDepthRecursiveIntArbitrary() {
-		Arbitrary<Integer> base = Arbitraries.of(5, 10);
-		return Arbitraries.recursive(() -> base, ints -> ints.map(i -> i + 1), 3);
-	}
-
-	private Arbitrary<Integer> minMaxDepthRecursiveIntArbitrary() {
-		Arbitrary<Integer> base = Arbitraries.of(5, 10);
-		return Arbitraries.recursive(() -> base, ints -> ints.map(i -> i + 1), 2, 4);
-	}
-
 	@Group
 	class ExhaustiveGeneration {
+
 
 		@Example
 		void fixedDepthRecursion() {
@@ -195,6 +187,44 @@ class ArbitrariesRecursiveTests {
 			assertThat(shrunkValue).isEqualTo(5);
 		}
 
+		@Property
+		void complexShrinking(@ForAll Random random) {
+			Arbitrary<String> sentences = sentences(20);
+
+			TestingFalsifier<String> max10words = sentence -> sentence.split(" ").length <= 10;
+			String shrunkSentence = falsifyThenShrink(sentences, random, max10words);
+			assertThat(shrunkSentence).isEqualTo("AA AA AA AA AA AA AA AA AA AA AA.");
+		}
+
 	}
+
+	private Arbitrary<Integer> fixedDepthRecursiveIntArbitrary() {
+		Arbitrary<Integer> base = Arbitraries.of(5, 10);
+		return Arbitraries.recursive(() -> base, ints -> ints.map(i -> i + 1), 3);
+	}
+
+	private Arbitrary<Integer> minMaxDepthRecursiveIntArbitrary() {
+		Arbitrary<Integer> base = Arbitraries.of(5, 10);
+		return Arbitraries.recursive(() -> base, ints -> ints.map(i -> i + 1), 2, 4);
+	}
+
+	private Arbitrary<String> sentences(int maxWords) {
+		Arbitrary<String> lastWord = word().map(w -> w + ".");
+
+		return Arbitraries.recursive(
+			() -> lastWord,
+			this::prependWord,
+			0, maxWords - 1
+		);
+	}
+
+	private StringArbitrary word() {
+		return Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10);
+	}
+
+	private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
+		return Combinators.combine(word(), sentence).as((w, s) -> w + " " + s);
+	}
+
 
 }

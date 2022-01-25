@@ -424,12 +424,12 @@ class ArbitrariesTests {
 
 	}
 
-	class Tree {
+	private static class Tree {
 		final String name;
 		final Tree left;
 		final Tree right;
 
-		public Tree(final String name, final Tree left, final Tree right) {
+		private Tree(final String name, final Tree left, final Tree right) {
 			this.name = name;
 			this.left = left;
 			this.right = right;

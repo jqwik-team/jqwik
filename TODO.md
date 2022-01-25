@@ -1,6 +1,7 @@
 1.6.4
 
-    - Arbitraries.recursive with depthMin and depthMax for better shrinking
+    - Arbitraries.recursive with depthMin and depthMax for better shrinking:
+        - Implementation with better shrinking? Find badly shrinking example first.
 
     - Kotlin convenience functions:
         - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)
