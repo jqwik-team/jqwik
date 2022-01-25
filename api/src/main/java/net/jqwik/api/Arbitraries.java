@@ -86,7 +86,12 @@ public class Arbitraries {
 
 		public abstract <K, V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 
-		public abstract <T> Arbitrary<T> recursive(Supplier<Arbitrary<T>> base, Function<Arbitrary<T>, Arbitrary<T>> recur, int depth);
+		public abstract <T> Arbitrary<T> recursive(
+			Supplier<Arbitrary<T>> base,
+			Function<Arbitrary<T>, Arbitrary<T>> recur,
+			int minDepth,
+			int maxDepth
+		);
 
 		public abstract <T> Arbitrary<T> lazyOf(List<Supplier<Arbitrary<T>>> suppliers);
 
@@ -656,7 +661,32 @@ public class Arbitraries {
 		Function<Arbitrary<T>, Arbitrary<T>> recur,
 		int depth
 	) {
-		return ArbitrariesFacade.implementation.recursive(base, recur, depth);
+		return ArbitrariesFacade.implementation.recursive(base, recur, depth, depth);
+	}
+
+	/**
+	 * Create an arbitrary by deterministic recursion.
+	 * <p>
+	 * Mind that the arbitrary will be created by invoking recursion at arbitrary creation time.
+	 * Using {@linkplain #lazyOf(Supplier, Supplier[])} or {@linkplain #lazy(Supplier)} instead
+	 * will recur at value generation time.
+	 *
+	 * @param base  The supplier returning the recursion's base case
+	 * @param recur The function to extend the base case
+	 * @param minDepth The minimum number of times to invoke recursion
+	 * @param maxDepth The maximum number of times to invoke recursion
+	 * @param <T>   The type of values to generate
+	 * @return a new arbitrary instance
+	 * @see #lazy(Supplier)
+	 */
+	@API(status = MAINTAINED, since = "1.6.4")
+	public static <T> Arbitrary<T> recursive(
+		Supplier<Arbitrary<T>> base,
+		Function<Arbitrary<T>, Arbitrary<T>> recur,
+		int minDepth,
+		int maxDepth
+	) {
+		return ArbitrariesFacade.implementation.recursive(base, recur, minDepth, maxDepth);
 	}
 
 	/**

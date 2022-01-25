@@ -296,6 +296,28 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	public <T> Arbitrary<T> recursive(
 		Supplier<Arbitrary<T>> base,
 		Function<Arbitrary<T>, Arbitrary<T>> recur,
+		int minDepth,
+		int maxDepth
+	) {
+		if (minDepth < 0) {
+			String message = String.format("minDepth <%s> must be >= 0.", minDepth);
+			throw new IllegalArgumentException(message);
+		}
+		if (minDepth > maxDepth) {
+			String message = String.format("minDepth <%s> must not be > maxDepth <%s>", minDepth, maxDepth);
+			throw new IllegalArgumentException(message);
+		}
+
+		// TODO: Replace with implementation that shrinks better, i.e.: Shrink by taking last step off, then shrink base
+		Arbitrary<Integer> depths = Arbitraries.integers().between(minDepth, maxDepth)
+											   .withDistribution(RandomDistribution.uniform())
+											   .edgeCases(c -> c.includeOnly(minDepth, maxDepth));
+		return depths.flatMap(depth -> recursive(base, recur, depth));
+	}
+
+	private <T> Arbitrary<T> recursive(
+		Supplier<Arbitrary<T>> base,
+		Function<Arbitrary<T>, Arbitrary<T>> recur,
 		int depth
 	) {
 		if (depth == 0) {
