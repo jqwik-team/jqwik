@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.6.3-SNAPSHOT
+title: jqwik User Guide - 1.6.4-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.6.3-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.6.4-SNAPSHOT</span>
 </h1>
 
 <h3>Table of Contents
@@ -247,7 +247,7 @@ repositories {
 ext.junitPlatformVersion = '1.8.2'
 ext.junitJupiterVersion = '5.8.2'
 
-ext.jqwikVersion = '1.6.3-SNAPSHOT'
+ext.jqwikVersion = '1.6.4-SNAPSHOT'
 
 compileTestJava {
     // To enable argument names in reporting and debugging
@@ -346,7 +346,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.6.3-SNAPSHOT</version>
+        <version>1.6.4-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -374,15 +374,15 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-api-1.6.3-SNAPSHOT.jar`
-- `jqwik-engine-1.6.3-SNAPSHOT.jar`
+- `jqwik-api-1.6.4-SNAPSHOT.jar`
+- `jqwik-engine-1.6.4-SNAPSHOT.jar`
 - `junit-platform-engine-1.8.2.jar`
 - `junit-platform-commons-1.8.2.jar`
 - `opentest4j-1.2.0.jar`
 
 Optional jars are:
-- `jqwik-web-1.6.3-SNAPSHOT.jar`
-- `jqwik-time-1.6.3-SNAPSHOT.jar`
+- `jqwik-web-1.6.4-SNAPSHOT.jar`
+- `jqwik-time-1.6.4-SNAPSHOT.jar`
 
 
 
@@ -397,7 +397,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html).
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with
-[`@ForAll`](/docs/1.6.3-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.6.4-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -502,6 +502,8 @@ If you want to provide nice reporting for your own domain classes you can either
 - implement a potentially multiline `toString()` method or
 - register an implementation of [`net.jqwik.api.SampleReportingFormat`](/docs/snapshot/javadoc/net/jqwik/api/SampleReportingFormat.html)
   through Java’s `java.util.ServiceLoader` mechanism.
+- add an implementation of [`net.jqwik.api.SampleReportingFormat`](/docs/snapshot/javadoc/net/jqwik/api/SampleReportingFormat.html)
+  to a [`DomainContext`](#domain-and-domain-context).
 
 
 #### Additional Reporting Options
@@ -2771,7 +2773,7 @@ for the counter, the generated sentences will be very similar, and you can often
 using `Arbitraries.lazyOf()` or `Arbitraries.lazy()`:
 
 ```java
-@Property(tries = 10)
+@Property
 boolean sentencesEndWithAPoint(@ForAll("deterministic") String aSentence) {
     return aSentence.endsWith(".");
 }
@@ -2795,26 +2797,26 @@ Arbitrary<String> deterministic(int length, Arbitrary<String> sentence) {
 
 ### Deterministic Recursion with `recursive()`
 
-To further simplify this _jqwik_ provides a helper function:
-[`Arbitraries.recursive(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#recursive(java.util.function.Supplier,java.util.function.Function,int)).
-Using that further simplifies the example:
+To further simplify this _jqwik_ provides two helper functions:
+- [`Arbitraries.recursive(..., depth)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#recursive(java.util.function.Supplier,java.util.function.Function,int)).
+- [`Arbitraries.recursive(..., minDepth, maxDepth)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#recursive(java.util.function.Supplier,java.util.function.Function,int,int)).
+Using the latter further simplifies the example:
 
 ```java
-@Property(tries = 10)
+@Property
 boolean sentencesEndWithAPoint(@ForAll("deterministic") String aSentence) {
     return aSentence.endsWith(".");
 }
 
 @Provide
 Arbitrary<String> deterministic() {
-	Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
 	Arbitrary<String> lastWord = word().map(w -> w + ".");
 
-	return length.flatMap(depth -> Arbitraries.recursive(
+	return Arbitraries.recursive(
 		() -> lastWord,
 		this::prependWord,
-		depth
-	));
+		0, 10
+	);
 }
 
 private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
@@ -4074,7 +4076,7 @@ As for ways to implement domain context classes have a look at
 and [DomainContextBase](/docs/snapshot/javadoc/net/jqwik/api/domains/DomainContextBase.html).
 
 In subclasses of `DomainContextBase` you have several options to specify 
-arbitrary providers and configurators:
+arbitrary providers, arbitrary configurators and reporting formats:
 
 - Add methods annotated with `Provide` and a return type of `Arbitrary<T>`.
   The result of an annotated method will then be used as an arbitrary provider for type `T`.
@@ -4096,6 +4098,12 @@ arbitrary providers and configurators:
 
 - Additionally implement `ArbitraryConfigurator` and the domain context instance
   itself will be used as configurator.
+
+- Add inner classes (static or not static, but not private) that implement `SampleReportingFormat`.
+  An instance of this class will then be created and used for reporting values of your domain object.
+
+- Additionally implement `SampleReportingFormat` and the domain context instance
+  itself will be used for reporting values of your domain object.
 
 A `DomainContext` implementation class can itself have `@Domain` annotations,
 which are then used to add to the property's set of domains.
@@ -5120,7 +5128,7 @@ Here's the jqwik-related part of the Gradle build file for a Kotlin project:
 ```kotlin
 dependencies {
     ...
-    testImplementation("net.jqwik:jqwik-kotlin:1.6.3-SNAPSHOT")
+    testImplementation("net.jqwik:jqwik-kotlin:1.6.4-SNAPSHOT")
 }
 
 tasks.withType<Test>().configureEach {
@@ -6152,4 +6160,4 @@ If a certain element, e.g. a method, is not annotated itself, then it carries th
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#163-snapshot).
+Read this version's [release notes](/release-notes.html#164-snapshot).

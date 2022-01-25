@@ -28,13 +28,22 @@ title: jqwik Release Notes
 
 ## 1.6.4-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>,
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
+</p>
+
 #### New and Enhanced Features
 
 - Added `Arbitraries.subsetOf(T...values)` and `Arbitraries.subsetOf(Collection<? extends T> values)`
 
 - Added Kotlin convenience function `Collection<T>.anySubset() : SetArbitrary<T>`
 
-- `DomainContext` and `DomainContextBase` implementations can now provide `SampleReportingFormat` classes and instances. 
+- `DomainContext` and `DomainContextBase` implementations can now provide `SampleReportingFormat` classes and instances.
+
+- Added `Arbitraries.recursive(Supplier<Arbitrary<T>> base, Function<Arbitrary<T>, Arbitrary<T>> recur, int minDepth, int maxDepth)`.
+  You can find a usage example [here](https://jqwik.net/docs/snapshot/user-guide.html#deterministic-recursion-with-recursive)
 
 #### Breaking Changes
 

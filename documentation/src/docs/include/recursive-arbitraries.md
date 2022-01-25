@@ -100,7 +100,7 @@ for the counter, the generated sentences will be very similar, and you can often
 using `Arbitraries.lazyOf()` or `Arbitraries.lazy()`:
 
 ```java
-@Property(tries = 10)
+@Property
 boolean sentencesEndWithAPoint(@ForAll("deterministic") String aSentence) {
     return aSentence.endsWith(".");
 }
@@ -124,26 +124,26 @@ Arbitrary<String> deterministic(int length, Arbitrary<String> sentence) {
 
 ### Deterministic Recursion with `recursive()`
 
-To further simplify this _jqwik_ provides a helper function:
-[`Arbitraries.recursive(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#recursive(java.util.function.Supplier,java.util.function.Function,int)).
-Using that further simplifies the example:
+To further simplify this _jqwik_ provides two helper functions:
+- [`Arbitraries.recursive(..., depth)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#recursive(java.util.function.Supplier,java.util.function.Function,int)).
+- [`Arbitraries.recursive(..., minDepth, maxDepth)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#recursive(java.util.function.Supplier,java.util.function.Function,int,int)).
+Using the latter further simplifies the example:
 
 ```java
-@Property(tries = 10)
+@Property
 boolean sentencesEndWithAPoint(@ForAll("deterministic") String aSentence) {
     return aSentence.endsWith(".");
 }
 
 @Provide
 Arbitrary<String> deterministic() {
-	Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
 	Arbitrary<String> lastWord = word().map(w -> w + ".");
 
-	return length.flatMap(depth -> Arbitraries.recursive(
+	return Arbitraries.recursive(
 		() -> lastWord,
 		this::prependWord,
-		depth
-	));
+		0, 10
+	);
 }
 
 private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
