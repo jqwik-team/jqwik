@@ -320,9 +320,11 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		Function<Arbitrary<T>, Arbitrary<T>> recur,
 		int depth
 	) {
-		if (depth == 0) {
-			return base.get();
+		// Real recursion can blow the stack
+		Arbitrary<T> current = base.get();
+		for (int i = 0; i < depth; i++) {
+			current = recur.apply(current);
 		}
-		return recur.apply(recursive(base, recur, depth - 1));
+		return current;
 	}
 }
