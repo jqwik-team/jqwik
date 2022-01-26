@@ -98,7 +98,6 @@ class ArbitrariesRecursiveTests {
 	@Group
 	class ExhaustiveGeneration {
 
-
 		@Example
 		void fixedDepthRecursion() {
 			Optional<ExhaustiveGenerator<Integer>> optionalGenerator =
@@ -119,6 +118,14 @@ class ArbitrariesRecursiveTests {
 			ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(6);
 			assertThat(generator).containsExactlyInAnyOrder(7, 8, 9, 12, 13, 14);
+		}
+
+		@Example
+		void tooManyCombinations() {
+			Arbitrary<Integer> base = Arbitraries.integers();
+			Optional<ExhaustiveGenerator<Integer>> optionalGenerator =
+				Arbitraries.recursive(() -> base, ints -> ints.map(i -> i + 1), 1, 1000).exhaustive();
+			assertThat(optionalGenerator).isNotPresent();
 		}
 
 	}
@@ -149,6 +156,14 @@ class ArbitrariesRecursiveTests {
 			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(7, 9, 12, 14);
 			// make sure edge cases can be repeatedly generated
 			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
+		}
+
+		@Example
+		void noEdgeCasesForRecursionDepthAbove100() {
+			Arbitrary<Integer> base = Arbitraries.of(5, 10);
+			Arbitrary<Integer> arbitrary = Arbitraries.recursive(() -> base, ints -> ints.map(i -> i + 1), 101);
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases)).isEmpty();
 		}
 
 	}
@@ -225,6 +240,5 @@ class ArbitrariesRecursiveTests {
 	private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
 		return Combinators.combine(word(), sentence).as((w, s) -> w + " " + s);
 	}
-
 
 }
