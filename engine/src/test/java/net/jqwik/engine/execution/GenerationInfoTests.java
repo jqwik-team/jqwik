@@ -100,7 +100,7 @@ class GenerationInfoTests {
 
 		@Example
 		void generateWithMixedShrinkingSequence() {
-			// Shrink 100 to 29
+			// Shrink 100 to 34, then to 29
 			GenerationInfo generationInfo = new GenerationInfo("4242", 100)
 				.appendShrinkingSequence(Arrays.asList(
 					SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, FALSIFIED,

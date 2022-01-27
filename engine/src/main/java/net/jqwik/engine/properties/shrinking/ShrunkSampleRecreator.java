@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -23,16 +24,25 @@ public class ShrunkSampleRecreator {
 		FalsifiedSample originalSample = createFalsifiedSample();
 
 		AtomicInteger shrinkingSteps = new AtomicInteger(0);
+		FalsifiedSample[] currentBest = new FalsifiedSample[]{originalSample};
+		Consumer<FalsifiedSample> sampleShrunkConsumer = shrunkSample -> {
+			// Remember current best because shrinking can be interrupted with RecreationDone exception
+			currentBest[0] = shrunkSample;
+			shrinkingSteps.incrementAndGet();
+		};
 		ShrinkingAlgorithm plainShrinker = new ShrinkingAlgorithm(
 			originalSample,
-			ignore -> shrinkingSteps.incrementAndGet(),
+			sampleShrunkConsumer,
 			ignore -> {}
 		);
 
-		FalsifiedSample recreatedSample = plainShrinker.shrink(recreatingFalsifier);
+		try {
+			// Shrunk falsified sample has already been grabbed in sampleShrunkConsumer
+			FalsifiedSample ignore = plainShrinker.shrink(recreatingFalsifier);
+		} catch (RecreationDone ignore) {}
 
 		if (recreatingSequence.isEmpty()) {
-			return Optional.of(recreatedSample.shrinkables());
+			return Optional.of(currentBest[0].shrinkables());
 		} else {
 			return Optional.empty();
 		}
@@ -61,7 +71,9 @@ public class ShrunkSampleRecreator {
 						return TryExecutionResult.falsified(null);
 				}
 			}
-			return TryExecutionResult.satisfied();
+			throw new RecreationDone();
 		};
 	}
+
+	private static class RecreationDone extends RuntimeException {}
 }

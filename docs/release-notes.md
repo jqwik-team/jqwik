@@ -53,7 +53,8 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 
 #### Bug Fixes
 
-No known bugs.
+- With `AfterFailureMode` set to `SAMPLE_ONLY` or `SAMPLE_FIRST` recreating previous sample could sometimes
+  take VERY long. This has been fixed.
 
 
 ## 1.6.3
