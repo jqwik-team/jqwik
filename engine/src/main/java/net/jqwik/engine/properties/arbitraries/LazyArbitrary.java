@@ -23,6 +23,7 @@ public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<
 
 	@Override
 	public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
+		// This is actually right. Don't use getArbitrary().generatorWithEmbeddedEdgeCases() directly
 		return getArbitrary().generator(genSize, true);
 	}
 
