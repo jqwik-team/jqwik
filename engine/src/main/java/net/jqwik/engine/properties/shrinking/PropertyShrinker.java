@@ -59,7 +59,7 @@ public class PropertyShrinker {
 			return result;
 		};
 
-		Consumer<FalsifiedSample> shrinkSampleConsumer = sample -> {
+		Consumer<FalsifiedSample> sampleShrunkConsumer = sample -> {
 			shrinkingStepsCounter.incrementAndGet();
 			falsifiedSampleReporter.accept(sample);
 		};
@@ -70,7 +70,7 @@ public class PropertyShrinker {
 			}
 		};
 
-		return shrink(allowOnlyEquivalentErrorsFalsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
+		return shrink(allowOnlyEquivalentErrorsFalsifier, sampleShrunkConsumer, shrinkAttemptConsumer);
 	}
 
 	public List<TryExecutionResult.Status> shrinkingSequence() {
@@ -80,11 +80,11 @@ public class PropertyShrinker {
 
 	private ShrunkFalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		FalsifiedSample fullyShrunkSample;
-		Supplier<FalsifiedSample> shrinkUntilDone = () -> shrinkAsLongAsSampleImproves(falsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
+		Supplier<FalsifiedSample> shrinkUntilDone = () -> shrinkAsLongAsSampleImproves(falsifier, sampleShrunkConsumer, shrinkAttemptConsumer);
 		if (shrinkingMode == ShrinkingMode.FULL) {
 			fullyShrunkSample = shrinkUntilDone.get();
 		} else {
@@ -115,7 +115,7 @@ public class PropertyShrinker {
 
 	private FalsifiedSample shrinkAsLongAsSampleImproves(
 		final Falsifier<List<Object>> falsifier,
-		final Consumer<FalsifiedSample> shrinkSampleConsumer,
+		final Consumer<FalsifiedSample> sampleShrunkConsumer,
 		final Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		Falsifier<List<Object>> recordingFalsifier = params -> {
@@ -128,7 +128,7 @@ public class PropertyShrinker {
 
 		ShrinkingAlgorithm plainShrinker = new ShrinkingAlgorithm(
 			originalSample,
-			shrinkSampleConsumer,
+			sampleShrunkConsumer,
 			shrinkAttemptConsumer
 		);
 

@@ -31,7 +31,7 @@ abstract class AbstractSampleShrinker {
 	protected FalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer,
 		Function<List<Shrinkable<Object>>, Stream<List<Shrinkable<Object>>>> supplyShrinkCandidates
 	) {
@@ -71,7 +71,7 @@ abstract class AbstractSampleShrinker {
 					tryExecutionResult.throwable(),
 					tryExecutionResult.footnotes()
 				);
-				shrinkSampleConsumer.accept(falsifiedSample);
+				sampleShrunkConsumer.accept(falsifiedSample);
 				bestResult = Optional.of(falsifiedSample);
 				currentShrinkBase = falsifiedTry.get2();
 				filteredResults.clear();

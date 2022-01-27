@@ -18,14 +18,14 @@ class PairwiseParameterShrinker extends AbstractSampleShrinker {
 	public FalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		FalsifiedSample current = sample;
 		List<Tuple.Tuple2<Integer, Integer>> allPairs =
 			Combinatorics.distinctPairs(sample.shrinkables().size()).collect(Collectors.toList());
 		for (Tuple.Tuple2<Integer, Integer> pair : allPairs) {
-			current = shrinkPair(falsifier, current, shrinkSampleConsumer, shrinkAttemptConsumer, pair.get1(), pair.get2());
+			current = shrinkPair(falsifier, current, sampleShrunkConsumer, shrinkAttemptConsumer, pair.get1(), pair.get2());
 		}
 		return current;
 	}
@@ -33,7 +33,7 @@ class PairwiseParameterShrinker extends AbstractSampleShrinker {
 	private FalsifiedSample shrinkPair(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer,
 		int index1,
 		int index2
@@ -54,7 +54,7 @@ class PairwiseParameterShrinker extends AbstractSampleShrinker {
 		return shrink(
 			falsifier,
 			sample,
-			shrinkSampleConsumer,
+			sampleShrunkConsumer,
 			shrinkAttemptConsumer,
 			shrinker
 		);

@@ -10,17 +10,17 @@ class ShrinkingAlgorithm {
 
 	private final Map<List<Object>, TryExecutionResult> falsificationCache = new HashMap<>();
 	private final FalsifiedSample originalSample;
-	private final Consumer<FalsifiedSample> shrinkSampleConsumer;
+	private final Consumer<FalsifiedSample> sampleShrunkConsumer;
 	private final Consumer<FalsifiedSample> shrinkAttemptConsumer;
 
 	ShrinkingAlgorithm(
 		FalsifiedSample originalSample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 
 		this.originalSample = originalSample;
-		this.shrinkSampleConsumer = shrinkSampleConsumer;
+		this.sampleShrunkConsumer = sampleShrunkConsumer;
 		this.shrinkAttemptConsumer = shrinkAttemptConsumer;
 	}
 
@@ -29,15 +29,15 @@ class ShrinkingAlgorithm {
 		FalsifiedSample before;
 		do {
 			before = after;
-			after = shrinkOneParameterAfterTheOther(falsifier, before, shrinkSampleConsumer, shrinkAttemptConsumer);
+			after = shrinkOneParameterAfterTheOther(falsifier, before, sampleShrunkConsumer, shrinkAttemptConsumer);
 			if (!after.equals(before)) {
 				continue;
 			}
-			after = shrinkParametersPairwise(falsifier, after, shrinkSampleConsumer, shrinkAttemptConsumer);
+			after = shrinkParametersPairwise(falsifier, after, sampleShrunkConsumer, shrinkAttemptConsumer);
 			if (!after.equals(before)) {
 				continue;
 			}
-			after = shrinkAndGrow(falsifier, after, shrinkSampleConsumer, shrinkAttemptConsumer);
+			after = shrinkAndGrow(falsifier, after, sampleShrunkConsumer, shrinkAttemptConsumer);
 		} while (!after.equals(before));
 		return after;
 	}
@@ -45,29 +45,29 @@ class ShrinkingAlgorithm {
 	private FalsifiedSample shrinkOneParameterAfterTheOther(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		return new OneAfterTheOtherParameterShrinker(falsificationCache)
-				   .shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+				   .shrink(falsifier, sample, sampleShrunkConsumer, shrinkAttemptConsumer);
 	}
 
 	private FalsifiedSample shrinkParametersPairwise(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		return new PairwiseParameterShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+		return new PairwiseParameterShrinker(falsificationCache).shrink(falsifier, sample, sampleShrunkConsumer, shrinkAttemptConsumer);
 	}
 
 	private FalsifiedSample shrinkAndGrow(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		return new ShrinkAndGrowShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+		return new ShrinkAndGrowShrinker(falsificationCache).shrink(falsifier, sample, sampleShrunkConsumer, shrinkAttemptConsumer);
 	}
 
 }

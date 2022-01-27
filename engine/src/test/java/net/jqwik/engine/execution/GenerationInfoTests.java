@@ -72,6 +72,7 @@ class GenerationInfoTests {
 
 		@Example
 		void generateWithShrinkingSequence() {
+			// Shrink 23 to 2
 			GenerationInfo generationInfo = new GenerationInfo("4242", 23)
 				.appendShrinkingSequence(Arrays.asList(SATISFIED, SATISFIED, FALSIFIED));
 
@@ -80,6 +81,37 @@ class GenerationInfoTests {
 			sample.ifPresent(shrinkables -> {
 				Object value = shrinkables.get(0).value();
 				assertThat(value).isEqualTo(2);
+			});
+		}
+
+		@Example
+		void generateWithShrinkingSequenceWithInvalid() {
+			// Shrink 45 to 5
+			GenerationInfo generationInfo = new GenerationInfo("4242", 45)
+				.appendShrinkingSequence(Arrays.asList(SATISFIED, SATISFIED, INVALID, SATISFIED, FALSIFIED));
+
+			Optional<List<Shrinkable<Object>>> sample = generationInfo.generateOn(generator, context);
+			assertThat(sample).isPresent();
+			sample.ifPresent(shrinkables -> {
+				Object value = shrinkables.get(0).value();
+				assertThat(value).isEqualTo(5);
+			});
+		}
+
+		@Example
+		void generateWithMixedShrinkingSequence() {
+			// Shrink 100 to 29
+			GenerationInfo generationInfo = new GenerationInfo("4242", 100)
+				.appendShrinkingSequence(Arrays.asList(
+					SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, SATISFIED, FALSIFIED,
+					SATISFIED, FALSIFIED
+				));
+
+			Optional<List<Shrinkable<Object>>> sample = generationInfo.generateOn(generator, context);
+			assertThat(sample).isPresent();
+			sample.ifPresent(shrinkables -> {
+				Object value = shrinkables.get(0).value();
+				assertThat(value).isEqualTo(29);
 			});
 		}
 

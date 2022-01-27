@@ -17,12 +17,12 @@ class OneAfterTheOtherParameterShrinker extends AbstractSampleShrinker {
 	public FalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		FalsifiedSample current = sample;
 		for (int i = 0; i < sample.shrinkables().size(); i++) {
-			current = shrinkSingleParameter(falsifier, current, shrinkSampleConsumer, shrinkAttemptConsumer, i);
+			current = shrinkSingleParameter(falsifier, current, sampleShrunkConsumer, shrinkAttemptConsumer, i);
 		}
 		return current;
 	}
@@ -30,7 +30,7 @@ class OneAfterTheOtherParameterShrinker extends AbstractSampleShrinker {
 	private FalsifiedSample shrinkSingleParameter(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> sampleShrunkConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer,
 		int parameterIndex
 	) {
@@ -43,7 +43,7 @@ class OneAfterTheOtherParameterShrinker extends AbstractSampleShrinker {
 		return shrink(
 			falsifier,
 			sample,
-			shrinkSampleConsumer,
+			sampleShrunkConsumer,
 			shrinkAttemptConsumer,
 			shrinker
 		);
