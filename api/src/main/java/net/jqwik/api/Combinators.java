@@ -32,9 +32,9 @@ public class Combinators {
 		);
 
 		public abstract <R> EdgeCases<R> combineEdgeCases(
-				List<Arbitrary<Object>> arbitraries,
-				Function<List<Object>, R> combineFunction,
-				int maxEdgeCases
+			List<Arbitrary<Object>> arbitraries,
+			Function<List<Object>, R> combineFunction,
+			int maxEdgeCases
 		);
 	}
 
@@ -135,7 +135,6 @@ public class Combinators {
 	 *                        For exhaustive generation all supplied objects are
 	 *                        supposed to be identical.
 	 * @return BuilderCombinator instance
-	 *
 	 * @deprecated Use {@linkplain Builders#withBuilder(Supplier)} instead. Will be removed in 1.7.0.
 	 */
 	@API(status = DEPRECATED, since = "1.5.4")
@@ -149,7 +148,6 @@ public class Combinators {
 	 * @param builderArbitrary The arbitrary is used to generate a builder object
 	 *                         as starting point for building on each value generation.
 	 * @return BuilderCombinator instance
-	 *
 	 * @deprecated Use {@linkplain Builders#withBuilder(Supplier)} instead. Will be removed in 1.7.0.
 	 */
 	@API(status = DEPRECATED, since = "1.5.4")
@@ -160,64 +158,64 @@ public class Combinators {
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, R> Function<List<Object>, R> combineFunction(F2<T1, T2, R> combinator2) {
 		return params -> combinator2
-							 .apply((T1) params.get(0), (T2) params.get(1));
+			.apply((T1) params.get(0), (T2) params.get(1));
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, R> Function<List<Object>, R> combineFunction(F3<T1, T2, T3, R> combinator3) {
 		return params -> combinator3
-							 .apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
+			.apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, R> Function<List<Object>, R> combineFunction(F4<T1, T2, T3, T4, R> combinator4) {
 		return params -> combinator4
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, R> Function<List<Object>, R> combineFunction(F5<T1, T2, T3, T4, T5, R> combinator5) {
 		return params -> combinator5
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3),
+				(T5) params.get(4)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, R> Function<List<Object>, R> combineFunction(F6<T1, T2, T3, T4, T5, T6, R> combinator6) {
 		return params -> combinator6
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4), (T6) params.get(5)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3),
+				(T5) params.get(4), (T6) params.get(5)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, T7, R> Function<List<Object>, R> combineFunction(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator7) {
 		return params -> combinator7
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4), (T6) params.get(5),
-								 (T7) params.get(6)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3),
+				(T5) params.get(4), (T6) params.get(5),
+				(T7) params.get(6)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function<List<Object>, R> combineFunction(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator8) {
 		return params -> combinator8
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4), (T6) params.get(5),
-								 (T7) params.get(6), (T8) params.get(7)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3),
+				(T5) params.get(4), (T6) params.get(5),
+				(T7) params.get(6), (T8) params.get(7)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -225,6 +223,43 @@ public class Combinators {
 		List<T> list = new ArrayList<>();
 		for (Object object : objects) {
 			list.add((T) object);
+		}
+		return list;
+	}
+
+	private static <T> RandomGenerator<T> combineGenerator(
+		int genSize,
+		Function<List<Object>, T> combineFunction,
+		Arbitrary<?>... arbitraries
+	) {
+		List<RandomGenerator<?>> generators = Arrays.stream(arbitraries)
+													.map(a -> a.generator(genSize))
+													.collect(Collectors.toList());
+		return random -> {
+			List<Shrinkable<Object>> shrinkables = generateShrinkables(generators, random);
+			return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
+		};
+	}
+
+	private static <T> RandomGenerator<T> combineGeneratorWithEmbeddedEdgeCases(
+		int genSize,
+		Function<List<Object>, @NotNull T> combineFunction,
+		Arbitrary<?>... arbitraries
+	) {
+		List<RandomGenerator<?>> generators = Arrays.stream(arbitraries)
+													.map(a -> a.generatorWithEmbeddedEdgeCases(genSize))
+													.collect(Collectors.toList());
+		return random -> {
+			List<Shrinkable<Object>> shrinkables = generateShrinkables(generators, random);
+			return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
+		};
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> List<Shrinkable<T>> generateShrinkables(List<RandomGenerator<?>> generators, Random random) {
+		List<Shrinkable<T>> list = new ArrayList<>();
+		for (RandomGenerator<?> generator : generators) {
+			list.add((Shrinkable<T>) generator.next(random));
 		}
 		return list;
 	}
@@ -245,7 +280,7 @@ public class Combinators {
 		 * Combine two values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F2<T1, T2, @NotNull R> combinator) {
@@ -257,21 +292,12 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					return rawGenerator(genSize, false);
+					return combineGenerator(genSize, combineFunction(combinator), a1, a2);
 				}
 
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return rawGenerator(genSize, true);
-				}
-
-				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
-					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
-					return random -> {
-						List<Shrinkable<Object>> shrinkables = asTypedList(g1.next(random), g2.next(random));
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
-					};
+					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2);
 				}
 
 				@Override
@@ -318,33 +344,19 @@ public class Combinators {
 		 * Combine three values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F3<T1, T2, T3, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					return rawGenerator(genSize, false);
+					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3);
 				}
 
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return rawGenerator(genSize, true);
-				}
-
-				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
-					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
-					return random -> {
-						List<Shrinkable<Object>> shrinkables = asTypedList(
-							g1.next(random),
-							g2.next(random),
-							g3.next(random)
-						);
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
-					};
+					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3);
 				}
 
 				@Override
@@ -394,37 +406,19 @@ public class Combinators {
 		 * Combine four values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F4<T1, T2, T3, T4, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					return rawGenerator(genSize, false);
+					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4);
 				}
 
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return rawGenerator(genSize, true);
-				}
-
-				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
-					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
-
-					return random -> {
-						List<Shrinkable<Object>> shrinkables = asTypedList(
-							g1.next(random),
-							g2.next(random),
-							g3.next(random),
-							g4.next(random)
-						);
-
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
-					};
+					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4);
 				}
 
 				@Override
@@ -476,38 +470,19 @@ public class Combinators {
 		 * Combine five values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					return rawGenerator(genSize, false);
+					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4, a5);
 				}
 
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return rawGenerator(genSize, true);
-				}
-
-				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
-					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T5> g5 = a5.generator(genSize, withEmbeddedEdgeCases);
-
-					return random -> {
-						List<Shrinkable<Object>> shrinkables = asTypedList(
-							g1.next(random),
-							g2.next(random),
-							g3.next(random),
-							g4.next(random),
-							g5.next(random)
-						);
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
-					};
+					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5);
 				}
 
 				@Override
@@ -561,40 +536,19 @@ public class Combinators {
 		 * Combine six values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					return rawGenerator(genSize, false);
+					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6);
 				}
 
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return rawGenerator(genSize, true);
-				}
-
-				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
-					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T5> g5 = a5.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T6> g6 = a6.generator(genSize, withEmbeddedEdgeCases);
-
-					return random -> {
-						List<Shrinkable<Object>> shrinkables = asTypedList(
-							g1.next(random),
-							g2.next(random),
-							g3.next(random),
-							g4.next(random),
-							g5.next(random),
-							g6.next(random)
-						);
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
-					};
+					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6);
 				}
 
 				@Override
@@ -653,42 +607,19 @@ public class Combinators {
 		 * Combine seven values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					return rawGenerator(genSize, false);
+					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7);
 				}
 
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return rawGenerator(genSize, true);
-				}
-
-				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
-					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T5> g5 = a5.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T6> g6 = a6.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T7> g7 = a7.generator(genSize, withEmbeddedEdgeCases);
-
-					return random -> {
-						List<Shrinkable<Object>> shrinkables = asTypedList(
-							g1.next(random),
-							g2.next(random),
-							g3.next(random),
-							g4.next(random),
-							g5.next(random),
-							g6.next(random),
-							g7.next(random)
-						);
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
-					};
+					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7);
 				}
 
 				@Override
@@ -748,44 +679,19 @@ public class Combinators {
 		 * Combine eight values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					return rawGenerator(genSize, false);
+					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7, a8);
 				}
 
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return rawGenerator(genSize, true);
-				}
-
-				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
-					RandomGenerator<T1> g1 = a1.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T2> g2 = a2.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T3> g3 = a3.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T4> g4 = a4.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T5> g5 = a5.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T6> g6 = a6.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T7> g7 = a7.generator(genSize, withEmbeddedEdgeCases);
-					RandomGenerator<T8> g8 = a8.generator(genSize, withEmbeddedEdgeCases);
-
-					return random -> {
-						List<Shrinkable<Object>> shrinkables = asTypedList(
-							g1.next(random),
-							g2.next(random),
-							g3.next(random),
-							g4.next(random),
-							g5.next(random),
-							g6.next(random),
-							g7.next(random),
-							g8.next(random)
-						);
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
-					};
+					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7, a8);
 				}
 
 				@Override
@@ -827,7 +733,7 @@ public class Combinators {
 		 * Combine any number of values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		@SuppressWarnings("unchecked")
@@ -835,42 +741,25 @@ public class Combinators {
 			return new Arbitrary<R>() {
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
-					return rawGenerator(genSize, false);
+					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
+					Arbitrary[] arbitraries = listOfArbitraries.toArray(new Arbitrary[listOfArbitraries.size()]);
+					return combineGenerator(genSize, combinedFunction, arbitraries);
 				}
 
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return rawGenerator(genSize, true);
-				}
-
-				private RandomGenerator<R> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
-					List<RandomGenerator<T>> listOfGenerators =
-							listOfArbitraries
-									.stream()
-									.map(a -> a.generator(genSize, withEmbeddedEdgeCases))
-									.collect(Collectors.toList());
-
-					return random -> {
-						List<Shrinkable<Object>> shrinkables =
-								listOfGenerators
-										.stream()
-										.map(g -> g.next(random))
-										.map(s -> (Shrinkable<Object>) s)
-										.collect(Collectors.toList());
-
-						Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
-
-						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
-					};
+					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
+					Arbitrary[] arbitraries = listOfArbitraries.toArray(new Arbitrary[listOfArbitraries.size()]);
+					return combineGeneratorWithEmbeddedEdgeCases(genSize, combinedFunction, arbitraries);
 				}
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
 					return CombinatorsFacade.implementation.combineExhaustive(
-							asTypedList(listOfArbitraries.toArray()),
-							combinedFunction,
-							maxNumberOfSamples
+						asTypedList(listOfArbitraries.toArray()),
+						combinedFunction,
+						maxNumberOfSamples
 					);
 				}
 
@@ -878,9 +767,9 @@ public class Combinators {
 				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
 					return CombinatorsFacade.implementation.combineEdgeCases(
-							asTypedList(listOfArbitraries.toArray()),
-							combinedFunction,
-							maxEdgeCases
+						asTypedList(listOfArbitraries.toArray()),
+						combinedFunction,
+						maxEdgeCases
 					);
 				}
 			};
@@ -897,7 +786,6 @@ public class Combinators {
 	 * or {@linkplain #withBuilder(Arbitrary)}.
 	 *
 	 * @param <B> The builder's type
-	 *
 	 * @deprecated Will be removed in 1.7.0.
 	 */
 	@API(status = DEPRECATED, since = "1.5.4")
@@ -939,7 +827,6 @@ public class Combinators {
 	 * {@link BuilderCombinator#use(Arbitrary)}.
 	 *
 	 * @param <B> The builder's type
-	 *
 	 * @deprecated Will be removed in 1.7.0
 	 */
 	@API(status = DEPRECATED, since = "1.5.4")
