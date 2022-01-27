@@ -10,7 +10,7 @@ public class RecursiveArbitrary<T> implements Arbitrary<T> {
 	private final Function<Arbitrary<T>, Arbitrary<T>> recur;
 	private final int depth;
 
-	// Used only for edge cases
+	// Not used for exhaustive generation
 	private final Arbitrary<T> arbitrary;
 
 	public RecursiveArbitrary(Supplier<Arbitrary<T>> base, Function<Arbitrary<T>, Arbitrary<T>> recur, int depth) {
