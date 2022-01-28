@@ -73,6 +73,7 @@ class ArbitrariesRecursiveTests {
 	}
 
 	@Property(tries = 100, generation = GenerationMode.RANDOMIZED)
+	@StatisticsReport(onFailureOnly = true)
 	void recursionDepthDistribution(@ForAll("recursiveValue") int value) {
 		Statistics.label("recursion depth")
 				  .collect(value)

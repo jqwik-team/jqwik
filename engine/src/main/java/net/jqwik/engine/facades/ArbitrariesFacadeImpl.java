@@ -308,7 +308,6 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 			throw new IllegalArgumentException(message);
 		}
 
-		// TODO: Replace with implementation that shrinks better, i.e.: Shrink by taking last step off, then shrink base
 		Arbitrary<Integer> depths = Arbitraries.integers().between(minDepth, maxDepth)
 											   .withDistribution(RandomDistribution.uniform())
 											   .edgeCases(c -> c.includeOnly(minDepth, maxDepth));
