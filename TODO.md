@@ -1,5 +1,8 @@
 1.6.4
 
+    - Add meaningful toString() messages for lifecycle context objects.
+      See https://github.com/jlink/jqwik/issues/297
+
     - Kotlin convenience functions:
         - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)
         - Collection<Arbitrary<T>>.chooseOne() -> Arbitraries.oneOf(..)
