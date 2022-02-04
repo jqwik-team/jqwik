@@ -24,6 +24,8 @@
 
     - Remove web and time from jqwik default dependencies
 
+    - Introduce BOM
+
     - NullableArbitraryProvider should always be last to apply.
       This will probably require a new parameter based lifecycle hook, similar to:
 
