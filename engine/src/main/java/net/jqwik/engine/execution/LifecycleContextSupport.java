@@ -4,6 +4,8 @@ import java.util.*;
 
 import org.junit.platform.engine.*;
 
+import net.jqwik.engine.discovery.*;
+
 class LifecycleContextSupport {
 
 	static String formatUniqueId(UniqueId uniqueId) {
@@ -19,7 +21,9 @@ class LifecycleContextSupport {
 
 	private static String formatUniqueIdSegment(UniqueId.Segment segment, int index) {
 		String segmentValue = segment.getValue();
-		if (segment.getType().equals("class") && index > 1) {
+
+		// As long as there is no inbetween segment (eg for packages), normal class containers are on index 1
+		if (segment.getType().equals(JqwikUniqueIDs.CONTAINER_SEGMENT_TYPE) && index > 1) {
 			int indexOfDollar = segmentValue.lastIndexOf("$");
 			if (indexOfDollar > 0) {
 				segmentValue = segmentValue.substring(indexOfDollar + 1);

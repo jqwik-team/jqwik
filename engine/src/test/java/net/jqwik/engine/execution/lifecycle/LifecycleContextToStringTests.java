@@ -49,7 +49,7 @@ class LifecycleContextToStringTests {
 	void nestedContainerLifecycleDescriptor() {
 
 		ContainerClassDescriptor parent = (ContainerClassDescriptor) TestDescriptorBuilder.forClass(LifecycleContextToStringTests.class).build();
-		ContainerClassDescriptor containerDescriptor = (ContainerClassDescriptor) TestDescriptorBuilder.forClass(MyTests.class).build(parent);
+		ContainerClassDescriptor containerDescriptor = (ContainerClassDescriptor) TestDescriptorBuilder.forClass(InnerTests.class).build(parent);
 		DefaultContainerLifecycleContext lifecycleContext = new DefaultContainerLifecycleContext(
 			containerDescriptor,
 			reporter,
@@ -59,7 +59,7 @@ class LifecycleContextToStringTests {
 		Assertions.assertThat(lifecycleContext.toString())
 				  .isEqualTo("ContainerLifecycleContext([engine:jqwik]/" +
 								 "[class:net.jqwik.engine.execution.lifecycle.LifecycleContextToStringTests]/" +
-								 "[class:MyTests]" +
+								 "[class:InnerTests]" +
 								 ")");
 	}
 
@@ -67,11 +67,11 @@ class LifecycleContextToStringTests {
 	void propertyLifecycleDescriptor() {
 
 		PropertyMethodDescriptor engineDescriptor = (PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(
-			MyTests.class, "aProperty", String.class
+			InnerTests.class, "aProperty", String.class
 		).build();
 		DefaultPropertyLifecycleContext lifecycleContext = new DefaultPropertyLifecycleContext(
 			engineDescriptor,
-			new MyTests(),
+			new InnerTests(),
 			reporter,
 			resolveParameter
 		);
@@ -79,7 +79,7 @@ class LifecycleContextToStringTests {
 		Assertions.assertThat(lifecycleContext.toString())
 				  .isEqualTo("PropertyLifecycleContext([engine:jqwik]/" +
 								 "[class:net.jqwik.engine.execution.lifecycle.LifecycleContextToStringTests]/" +
-								 "[class:MyTests]/" +
+								 "[class:InnerTests]/" +
 								 "[property:aProperty(java.lang.String)]" +
 								 ")");
 	}
@@ -89,11 +89,11 @@ class LifecycleContextToStringTests {
 	void tryLifecycleDescriptor() {
 
 		PropertyMethodDescriptor engineDescriptor = (PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(
-			MyTests.class, "aProperty", String.class
+			InnerTests.class, "aProperty", String.class
 		).build();
 		DefaultPropertyLifecycleContext propertyLifecycleContext = new DefaultPropertyLifecycleContext(
 			engineDescriptor,
-			new MyTests(),
+			new InnerTests(),
 			reporter,
 			resolveParameter
 		);
@@ -102,13 +102,13 @@ class LifecycleContextToStringTests {
 		Assertions.assertThat(tryLifecycleContext.toString())
 				  .isEqualTo("TryLifecycleContext:PropertyLifecycleContext([engine:jqwik]/" +
 								 "[class:net.jqwik.engine.execution.lifecycle.LifecycleContextToStringTests]/" +
-								 "[class:MyTests]/" +
+								 "[class:InnerTests]/" +
 								 "[property:aProperty(java.lang.String)]" +
 								 ")");
 	}
 
 	@Group
-	private class MyTests {
+	private class InnerTests {
 		@Property
 		void aProperty(@ForAll String aString) {}
 	}
