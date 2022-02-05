@@ -13,7 +13,8 @@ import net.jqwik.engine.discovery.*;
 public class JqwikUniqueIdBuilder {
 
 	public static UniqueId uniqueIdForClassContainer(Class<?>... containerClasses) {
-		return uniqueIdForClasses(engineId(), new ArrayList<>(Arrays.asList(containerClasses)));
+		List<Class<?>> classes = Arrays.asList(containerClasses);
+		return uniqueIdForClasses(engineId(), new ArrayList<>(classes));
 	}
 
 	private static UniqueId uniqueIdForClasses(UniqueId parentId, List<Class<?>> containerClasses) {

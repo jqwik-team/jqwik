@@ -35,4 +35,9 @@ public class EngineLifecycleContext extends AbstractLifecycleContext implements 
 		return Optional.empty();
 	}
 
+	@Override
+	public String toString() {
+		return toString(ContainerLifecycleContext.class);
+	}
+
 }

@@ -44,4 +44,9 @@ public class DefaultContainerLifecycleContext extends AbstractLifecycleContext i
 		return optionalContainerClass().flatMap(containerClass -> parameterSupplierResolver.resolveParameter(executable, index, containerClass));
 	}
 
+	@Override
+	public String toString() {
+		return toString(ContainerLifecycleContext.class);
+	}
+
 }

@@ -76,4 +76,10 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 	public PropertyAttributes attributes() {
 		return methodDescriptor.getConfiguration().getPropertyAttributes();
 	}
+
+	@Override
+	public String toString() {
+		return toString(PropertyLifecycleContext.class);
+	}
+
 }

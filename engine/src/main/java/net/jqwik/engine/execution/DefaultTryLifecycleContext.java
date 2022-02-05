@@ -8,6 +8,8 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
+import static net.jqwik.engine.execution.LifecycleContextSupport.*;
+
 public class DefaultTryLifecycleContext implements TryLifecycleContext {
 	private final PropertyLifecycleContext propertyContext;
 
@@ -73,5 +75,10 @@ public class DefaultTryLifecycleContext implements TryLifecycleContext {
 	@Override
 	public <T extends Annotation> List<T> findAnnotationsInContainer(Class<T> annotationClass) {
 		return propertyContext.findAnnotationsInContainer(annotationClass);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("TryLifecycleContext:%s", propertyContext);
 	}
 }

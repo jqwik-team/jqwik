@@ -95,7 +95,8 @@ public class TestDescriptorBuilder {
 			return new JqwikEngineDescriptor(engineId(), null);
 		if (element instanceof Class) {
 			Class<?> containerClass = (Class<?>) this.element;
-			return new ContainerClassDescriptor(uniqueIdForClassContainer(containerClass), containerClass, false);
+			Class<?>[] containerClasses = findContainerClasses(containerClass);
+			return new ContainerClassDescriptor(uniqueIdForClassContainer(containerClasses), containerClass, false);
 		}
 		if (element instanceof Method) {
 			Method targetMethod = (Method) this.element;
@@ -115,5 +116,12 @@ public class TestDescriptorBuilder {
 			}
 		}
 		throw new JqwikException("Cannot build descriptor for " + element.toString());
+	}
+
+	private Class<?>[] findContainerClasses(Class<?> containerClass) {
+		if (containerClass.getDeclaringClass() != null && !JqwikReflectionSupport.isStatic(containerClass)) {
+			return new Class<?>[]{containerClass.getDeclaringClass(), containerClass};
+		}
+		return new Class<?>[]{containerClass};
 	}
 }

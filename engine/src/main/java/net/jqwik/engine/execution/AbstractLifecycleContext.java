@@ -12,14 +12,16 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.engine.execution.LifecycleContextSupport.*;
+
 abstract class AbstractLifecycleContext implements LifecycleContext {
 
 	private Reporter reporter;
-	private final TestDescriptor self;
+	private final TestDescriptor descriptor;
 
-	protected AbstractLifecycleContext(Reporter reporter, TestDescriptor self) {
+	protected AbstractLifecycleContext(Reporter reporter, TestDescriptor descriptor) {
 		this.reporter = reporter;
-		this.self = self;
+		this.descriptor = descriptor;
 	}
 
 	@Override
@@ -34,7 +36,7 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 
 	@Override
 	public String label() {
-		return self.getDisplayName();
+		return descriptor.getDisplayName();
 	}
 
 	@Override
@@ -55,7 +57,7 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 	}
 
 	private Optional<ContainerClassDescriptor> parentContainer() {
-		return parentContainer(self);
+		return parentContainer(descriptor);
 	}
 
 	private Optional<ContainerClassDescriptor> parentContainer(TestDescriptor descriptor) {
@@ -74,4 +76,10 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 			appendAnnotations(parentContainer(container), annotationClass, annotations);
 		});
 	}
+
+	protected String toString(Class<? extends LifecycleContext> contextType) {
+		String uniqueIdDescription = formatUniqueId(descriptor.getUniqueId());
+		return String.format("%s(%s)", contextType.getSimpleName(), uniqueIdDescription);
+	}
+
 }
