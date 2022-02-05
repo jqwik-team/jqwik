@@ -18,13 +18,13 @@ public class JqwikTestEngine implements TestEngine {
 	private static final Logger LOG = Logger.getLogger(JqwikTestEngine.class.getName());
 
 	private final LifecycleHooksRegistry lifecycleRegistry = new LifecycleHooksRegistry();
-	private final Function<ConfigurationParameters,JqwikConfiguration> configurationSupplier;
+	private final Function<ConfigurationParameters, JqwikConfiguration> configurationSupplier;
 
 	public JqwikTestEngine() {
 		this(DefaultJqwikConfiguration::new);
 	}
 
-	JqwikTestEngine(Function<ConfigurationParameters,JqwikConfiguration> configurationSupplier) {
+	JqwikTestEngine(Function<ConfigurationParameters, JqwikConfiguration> configurationSupplier) {
 		this.configurationSupplier = configurationSupplier;
 	}
 
