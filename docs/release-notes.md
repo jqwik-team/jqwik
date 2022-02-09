@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.6.4-SNAPSHOT](#164-snapshot)
+- [1.6.4](#164)
 - [1.6.3](#163)
 - [1.6.2](#162)
 - [1.6.1](#161)
@@ -26,12 +26,12 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.6.4-SNAPSHOT
+## 1.6.4
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>,
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
-and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
+<a href="/docs/1.6.4/user-guide.html">User guide</a>,
+<a href="/docs/1.6.4/javadoc/index.html">javadoc</a>
+and <a href="/docs/1.6.4/kdoc/index.html">kdoc</a>
 </p>
 
 #### New and Enhanced Features
@@ -43,7 +43,7 @@ and <a href="/docs/snapshot/kdoc/index.html">kdoc</a>
 - `DomainContext` and `DomainContextBase` implementations can now provide `SampleReportingFormat` classes and instances.
 
 - Added `Arbitraries.recursive(Supplier<Arbitrary<T>> base, Function<Arbitrary<T>, Arbitrary<T>> recur, int minDepth, int maxDepth)`.
-  You can find a usage example [here](https://jqwik.net/docs/snapshot/user-guide.html#deterministic-recursion-with-recursive)
+  You can find a usage example [here](https://jqwik.net/docs/1.6.4/user-guide.html#deterministic-recursion-with-recursive)
 
 #### Breaking Changes
 
