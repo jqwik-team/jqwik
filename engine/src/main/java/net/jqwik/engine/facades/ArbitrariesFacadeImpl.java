@@ -67,13 +67,13 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 			// Optimization: just(value).flatMap(mapper) -> mapper(value)
 			@Override
-			public <U> Arbitrary<U> flatMap(Function<T, Arbitrary<U>> mapper) {
-				return mapper.apply(value);
+			public <U> Arbitrary<U> flatMap(Function<? super T, ? extends Arbitrary<? extends U>> mapper) {
+				return (Arbitrary<U>) mapper.apply(value);
 			}
 
 			// Optimization: just(value).map(mapper) -> just(mapper(value))
 			@Override
-			public <U> Arbitrary<U> map(Function<T, U> mapper) {
+			public <U> Arbitrary<U> map(Function<? super T, ? extends U> mapper) {
 				return just(mapper.apply(value));
 			}
 

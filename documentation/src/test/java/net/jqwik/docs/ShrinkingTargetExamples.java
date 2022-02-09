@@ -14,7 +14,7 @@ class ShrinkingTargetExamples {
 	}
 
 	@Provide
-	Arbitrary<List<Signal>> signals() {
+	Arbitrary<List<? extends Signal>> signals() {
 		Arbitrary<Long> frequencies =
 			Arbitraries
 				.longs()

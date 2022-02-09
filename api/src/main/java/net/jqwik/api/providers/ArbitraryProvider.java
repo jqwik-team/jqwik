@@ -53,13 +53,16 @@ public interface ArbitraryProvider {
 							   Arbitraries.of(new ArrayList<>(this.apply(typeUsage))))
 					  .collect(Collectors.toList());
 
-			Optional<Stream<List<Arbitrary<?>>>> optionalArbitraries =
+			Optional<? extends Stream<List<Arbitrary<?>>>> optionalArbitraries =
 				Combinators
 					.combine(arbitraries)
 					.as(as -> as)
 					.allValues();
+			if (!optionalArbitraries.isPresent()) {
+				return Stream.empty();
+			}
 
-			return optionalArbitraries.orElse(Stream.empty());
+			return optionalArbitraries.get();
 		}
 
 		/**

@@ -32,7 +32,7 @@ class StringCaseInsensitiveProperties implements ComparatorContract<String> {
 
 	@Override
 	@Provide
-	public Arbitrary<List<String>> listOfT() {
+	public Arbitrary<List<? extends String>> listOfT() {
 		return anyT().list().ofMaxSize(10);
 	}
 }

@@ -86,7 +86,7 @@ public class DefaultEmailArbitrary extends ArbitraryDecorator<String> implements
 	}
 
 	private Arbitrary<String> hostIpv6() {
-		Arbitrary<List<String>> addressParts = ipv6Part().list().ofSize(8);
+		Arbitrary<List<? extends String>> addressParts = ipv6Part().list().ofSize(8);
 		Arbitrary<String> plainAddress = addressParts.map(parts -> String.join(":", parts));
 		return plainAddress
 			.map(this::removeThreeOrMoreColons)

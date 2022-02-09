@@ -12,7 +12,7 @@ class FluentConfigurationExamples {
 	}
 
 	@Provide
-	Arbitrary<List<Integer>> fixedSizedListOfPositiveIntegers() {
+	Arbitrary<List<? extends Integer>> fixedSizedListOfPositiveIntegers() {
 		return Arbitraries.integers().greaterOrEqual(0).list().ofSize(17);
 	}
 }

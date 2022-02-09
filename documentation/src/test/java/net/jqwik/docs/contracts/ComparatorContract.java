@@ -33,5 +33,5 @@ interface ComparatorContract<T> {
 	Arbitrary<T> anyT();
 
 	@Provide
-	Arbitrary<List<T>> listOfT();
+	Arbitrary<List<? extends T>> listOfT();
 }

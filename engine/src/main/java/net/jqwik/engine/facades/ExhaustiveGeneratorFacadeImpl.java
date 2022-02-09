@@ -10,22 +10,22 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
  */
 public class ExhaustiveGeneratorFacadeImpl extends ExhaustiveGenerator.ExhaustiveGeneratorFacade {
 	@Override
-	public <T, U> ExhaustiveGenerator<U> map(ExhaustiveGenerator<T> self, Function<T, U> mapper) {
+	public <T, U> ExhaustiveGenerator<U> map(ExhaustiveGenerator<? extends T> self, Function<? super T, ? extends U> mapper) {
 		return new MappedExhaustiveGenerator<>(self, mapper);
 	}
 
 	@Override
-	public <T> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<T> self, Predicate<T> filterPredicate, int maxMisses) {
+	public <T> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<? extends T> self, Predicate<? super T> filterPredicate, int maxMisses) {
 		return new FilteredExhaustiveGenerator<>(self, filterPredicate, maxMisses);
 	}
 
 	@Override
-	public <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<T> self) {
+	public <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<? extends T> self) {
 		return new WithNullExhaustiveGenerator<>(self);
 	}
 
 	@Override
-	public <T> ExhaustiveGenerator<T> ignoreException(final ExhaustiveGenerator<T> self, final Class<? extends Throwable> exceptionType) {
+	public <T> ExhaustiveGenerator<T> ignoreException(final ExhaustiveGenerator<? extends T> self, final Class<? extends Throwable> exceptionType) {
 		return new IgnoreExceptionExhaustiveGenerator<>(self, exceptionType);
 	}
 }

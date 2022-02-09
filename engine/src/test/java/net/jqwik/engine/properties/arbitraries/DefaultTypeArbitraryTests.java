@@ -445,7 +445,7 @@ class DefaultTypeArbitraryTests {
 		void exhaustiveCombinationOfUsedArbitraries() {
 			Arbitrary<Coordinates> arbitrary = new DefaultTypeArbitrary<>(Coordinates.class).usePublicConstructors();
 
-			Optional<ExhaustiveGenerator<Coordinates>> optionalGenerator = arbitrary.exhaustive();
+			Optional<? extends ExhaustiveGenerator<Coordinates>> optionalGenerator = arbitrary.exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Coordinates> generator = optionalGenerator.get();

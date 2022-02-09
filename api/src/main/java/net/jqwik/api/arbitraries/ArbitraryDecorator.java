@@ -48,7 +48,7 @@ public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> 
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+	public Optional<? extends ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 		return instance().exhaustive(maxNumberOfSamples);
 	}
 

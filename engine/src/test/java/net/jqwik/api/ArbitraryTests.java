@@ -11,7 +11,6 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
-import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 

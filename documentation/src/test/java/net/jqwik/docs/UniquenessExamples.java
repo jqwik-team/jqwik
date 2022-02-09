@@ -33,7 +33,7 @@ class UniquenessExamples {
 	}
 
 	@Provide
-	Arbitrary<List<String>> listOfUniqueStrings() {
+	Arbitrary<List<? extends String>> listOfUniqueStrings() {
 		return Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(10)
 						  .list().ofMaxSize(25).uniqueElements(s -> Character.toLowerCase(s.charAt(0)));
 	}
@@ -61,7 +61,7 @@ class UniquenessExamples {
 	}
 
 	@Provide
-	Arbitrary<List<Person>> people() {
+	Arbitrary<List<? extends Person>> people() {
 		Arbitrary<String> names = Arbitraries.strings().alpha().ofMinLength(3).ofMaxLength(20);
 		Arbitrary<Integer> ages = Arbitraries.integers().between(0, 120);
 

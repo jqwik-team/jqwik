@@ -11,7 +11,7 @@ public class MappedShrinkable<T, U> implements Shrinkable<U> {
 	private final Shrinkable<T> toMap;
 	private final Function<T, U> mapper;
 
-	public MappedShrinkable(Shrinkable<T> toMap, Function<T, U> mapper) {
+	public MappedShrinkable(Shrinkable<? extends T> toMap, Function<? super T, ? extends U> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
 	}

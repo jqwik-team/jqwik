@@ -6,10 +6,10 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
 
 public class IgnoreExceptionExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
-	private final ExhaustiveGenerator<T> toFilter;
+	private final ExhaustiveGenerator<? extends T> toFilter;
 	private final Class<? extends Throwable> exceptionType;
 
-	public IgnoreExceptionExhaustiveGenerator(ExhaustiveGenerator<T> toFilter, Class<? extends Throwable> exceptionType) {
+	public IgnoreExceptionExhaustiveGenerator(ExhaustiveGenerator<? extends T> toFilter, Class<? extends Throwable> exceptionType) {
 		this.toFilter = toFilter;
 		this.exceptionType = exceptionType;
 	}
@@ -21,7 +21,7 @@ public class IgnoreExceptionExhaustiveGenerator<T> implements ExhaustiveGenerato
 
 	@Override
 	public Iterator<T> iterator() {
-		final Iterator<T> mappedIterator = toFilter.iterator();
+		final Iterator<? extends T> mappedIterator = toFilter.iterator();
 		return new Iterator<T>() {
 
 			T next = findNext();

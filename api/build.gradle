@@ -1,6 +1,7 @@
 plugins {
 	id 'jqwik.common-configuration'
 	id 'jqwik.module-configuration'
+	id 'org.jetbrains.kotlin.jvm'
 }
 
 description = "Jqwik API module"
@@ -53,4 +54,12 @@ signing {
 dependencies {
 	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+	kotlinOptions {
+		// Generate default methods in interfaces
+		freeCompilerArgs = ['-Xjvm-default=all']
+		jvmTarget = "1.8"
+	}
 }

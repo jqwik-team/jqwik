@@ -41,7 +41,7 @@ class InjectDuplicateExamples {
 	}
 
 	@Provide
-	Arbitrary<Tuple2<String, String>> pair() {
+	Arbitrary<Tuple2<? extends String, ? extends String>> pair() {
 		return Arbitraries.strings().injectDuplicates(0.1).tuple2();
 	}
 }

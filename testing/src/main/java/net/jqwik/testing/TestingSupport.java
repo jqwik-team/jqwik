@@ -119,9 +119,9 @@ public class TestingSupport {
 		assertThat(generated).containsExactly(expectedValues);
 	}
 
-	public static <T> Set<Shrinkable<T>> collectEdgeCaseShrinkables(EdgeCases<T> edgeCases) {
-		Set<Shrinkable<T>> shrinkables = new HashSet<>();
-		for (Shrinkable<T> edgeCase : edgeCases) {
+	public static <T> Set<Shrinkable<? extends T>> collectEdgeCaseShrinkables(EdgeCases<T> edgeCases) {
+		Set<Shrinkable<? extends T>> shrinkables = new HashSet<>();
+		for (Shrinkable<? extends T> edgeCase : edgeCases) {
 			shrinkables.add(edgeCase);
 		}
 		return shrinkables;
@@ -129,7 +129,7 @@ public class TestingSupport {
 
 	public static <T> Set<T> collectEdgeCaseValues(EdgeCases<T> edgeCases) {
 		Set<T> values = new HashSet<>();
-		for (Shrinkable<T> edgeCase : edgeCases) {
+		for (Shrinkable<? extends T> edgeCase : edgeCases) {
 			values.add(edgeCase.value());
 		}
 		return values;

@@ -31,10 +31,10 @@ class FlatMappingExamples {
 	}
 
 	@Provide
-	Arbitrary<List<String>> listsOfEqualSizedStrings() {
+	Arbitrary<List<? extends String>> listsOfEqualSizedStrings() {
 		Arbitrary<Integer> integers2to5 = Arbitraries.integers().between(2, 5);
 		return integers2to5.flatMap(stringSize -> {
-			Arbitrary<String> strings = Arbitraries.strings()
+			Arbitrary<? extends String> strings = Arbitraries.strings()
 												   .withCharRange('a', 'z')
 												   .ofMinLength(stringSize).ofMaxLength(stringSize);
 			return strings.list();

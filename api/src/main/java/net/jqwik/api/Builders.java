@@ -75,7 +75,7 @@ public class Builders {
 
 			// Doing it in a single combine instead of flatMapping over all arbitraries
 			// leads to better performance and forgoes some problems with stateful builders
-			List<Arbitrary<Optional<Holder>>> arbitraries =
+			List<Arbitrary<Optional<? extends Holder>>> arbitraries =
 				mutators.stream()
 					.map(mutator -> {
 						double presenceProbability = mutator.get1();
@@ -87,7 +87,7 @@ public class Builders {
 			Arbitrary<B> aBuilder = Combinators.combine(arbitraries).as(values -> {
 				B builder = starter.get();
 				for (int i = 0; i < values.size(); i++) {
-					Optional<Holder> optional = values.get(i);
+					Optional<? extends Holder> optional = values.get(i);
 					// optional.ifPresent does not work b/c builder is reassigned
 					if (optional.isPresent()) {
 						Object value = optional.get().value;
