@@ -1,3 +1,7 @@
+1.6.5
+
+    - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
+
 1.6.x
 
     - Kotlin convenience functions:
