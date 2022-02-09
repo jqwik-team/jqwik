@@ -47,6 +47,7 @@ public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<
 
 	@Override
 	public EdgeCases<T> edgeCases(int maxEdgeCases) {
+		// Cannot be delegated to getArbitrary() due to possible recursion
 		return EdgeCases.none();
 	}
 
