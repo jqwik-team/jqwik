@@ -35,12 +35,19 @@ class ParameterChangesDetector {
 		if (before.getClass() != after.getClass()) {
 			return true;
 		}
+		if (before instanceof Tuple) {
+			return tupleValuesDiffer((Tuple) before, (Tuple) after);
+		}
 
 		if (hasOwnEqualsImplementation(before.getClass())) {
 			return !Objects.equals(before, after);
 		} else {
 			return false;
 		}
+	}
+
+	private static boolean tupleValuesDiffer(Tuple before, Tuple after) {
+		return atLeastOneParameterHasChanged(before.items(), after.items());
 	}
 
 	private static boolean hasOwnEqualsImplementation(Class<?> aClass) {

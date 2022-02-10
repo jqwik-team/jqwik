@@ -36,6 +36,13 @@ class ParameterChangesDetectorTests {
 	}
 
 	@Example
+	void changedObjectDoesNotCountAsChangeInTuple() {
+		List<Object> before = Arrays.asList(Tuple.of(new Object(), "a String"));
+		List<Object> after = Arrays.asList(Tuple.of(new Object(), "a String"));
+		assertThat(haveParametersChanged(before, after)).isFalse();
+	}
+
+	@Example
 	void oneParameterLess() {
 		List<Object> before = Arrays.asList(new Object(), "a String", 42, null);
 		List<Object> after = Arrays.asList(new Object(), "a String", 41);
@@ -47,6 +54,13 @@ class ParameterChangesDetectorTests {
 	void oneParameterChanged() {
 		List<Object> before = Arrays.asList(new Object(), "a String", 42);
 		List<Object> after = Arrays.asList(new Object(), "a String", 41);
+		assertThat(haveParametersChanged(before, after)).isTrue();
+	}
+
+	@Example
+	void oneParameterChangedInTuple() {
+		List<Object> before = Arrays.asList(Tuple.of(new Object(), "a String", 42));
+		List<Object> after = Arrays.asList(Tuple.of(new Object(), "a String", 41));
 		assertThat(haveParametersChanged(before, after)).isTrue();
 	}
 
