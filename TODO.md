@@ -2,6 +2,9 @@
 
     - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
 
+    - <T,S,U> SetArbitrary<E>.combineEach(Arbitrary<S>).as(BiFunction<T, E, U>): Arbitrary<Set<U>>
+        - For all collection arbitraries
+
 1.6.x
 
     - Kotlin convenience functions:
