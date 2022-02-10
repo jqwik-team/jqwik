@@ -459,9 +459,16 @@ public class Arbitraries {
 	 * Create an arbitrary that will use a supplier to generate a value.
 	 * The difference to {@linkplain Arbitraries#just(Object)} is that the value
 	 * is freshly generated for each try of a property.
+	 *
+	 * <p>
+	 * Mind that within a {@code supplier} you should never use other arbitraries
+	 * or do anything non-deterministic.
+	 * </p>
+	 *
 	 * <p>
 	 * For exhaustive shrinking all generated values are supposed to have identical behaviour,
 	 * i.e. that means that only one value is generated per combination.
+	 * </p>
 	 *
 	 * @param supplier The supplier use to generate a value
 	 * @param <T>      The type of values to generate
@@ -550,9 +557,9 @@ public class Arbitraries {
 	 * <p>The returned arbitrary is lazy, i.e. it be evaluated at generation time to allow
 	 * domain contexts to be used. Those </p>
 	 *
-	 * @param typeUsage The type of the value to find an arbitrary for
+	 * @param typeUsage         The type of the value to find an arbitrary for
 	 * @param noDefaultResolver Alternative resolution when no default arbitrary can be found at generation time
-	 * @param <T>       The type of values to generate
+	 * @param <T>               The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.1")
@@ -579,13 +586,13 @@ public class Arbitraries {
 	 * - and all types it is based on - given a {@linkplain Traverser} strategy.
 	 *
 	 * <p>
-	 *     By default recursion is disable, i.e. that parameters of creator functions
-	 *     can be resolved by the traverser, have a default arbitrary or generation fails at runtime.
-	 *     Use {@linkplain TraverseArbitrary#enableRecursion()} to switch on recursive traversal.
+	 * By default recursion is disable, i.e. that parameters of creator functions
+	 * can be resolved by the traverser, have a default arbitrary or generation fails at runtime.
+	 * Use {@linkplain TraverseArbitrary#enableRecursion()} to switch on recursive traversal.
 	 * </p>
 	 * <p>
-	 *     One usage of this traversing mechanism is {@linkplain #forType(Class)}
-	 *     which uses {@linkplain #traverse(Class, Traverser)} under the hood.
+	 * One usage of this traversing mechanism is {@linkplain #forType(Class)}
+	 * which uses {@linkplain #traverse(Class, Traverser)} under the hood.
 	 * </p>
 	 *
 	 * @param targetType The class of the type to create an arbitrary for
@@ -671,11 +678,11 @@ public class Arbitraries {
 	 * Using {@linkplain #lazyOf(Supplier, Supplier[])} or {@linkplain #lazy(Supplier)} instead
 	 * will recur at value generation time.
 	 *
-	 * @param base  The supplier returning the recursion's base case
-	 * @param recur The function to extend the base case
+	 * @param base     The supplier returning the recursion's base case
+	 * @param recur    The function to extend the base case
 	 * @param minDepth The minimum number of times to invoke recursion
 	 * @param maxDepth The maximum number of times to invoke recursion
-	 * @param <T>   The type of values to generate
+	 * @param <T>      The type of values to generate
 	 * @return a new arbitrary instance
 	 * @see #lazy(Supplier)
 	 */
@@ -780,7 +787,6 @@ public class Arbitraries {
 		return just(null);
 	}
 
-
 	/**
 	 * Create a new arbitrary of element type {@code Set<T>} using the handed in values as elements of the set.
 	 *
@@ -797,9 +803,8 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.4")
-	public static <T> SetArbitrary<T> subsetOf(T...values) {
+	public static <T> SetArbitrary<T> subsetOf(T... values) {
 		return subsetOf(Arrays.asList(values));
 	}
-
 
 }
