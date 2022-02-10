@@ -48,17 +48,17 @@ public class ExecutionResultReport {
 		ExtendedPropertyExecutionResult executionResult,
 		Collection<SampleReportingFormat> sampleReportingFormats
 	) {
-		StringBuilder reportLines = new StringBuilder();
+		StringBuilder reportBuilder = new StringBuilder();
 
-		appendThrowableMessage(reportLines, executionResult);
-		appendFixedSizedProperties(reportLines, executionResult, afterFailureMode, fixedSeedMode);
-		appendSamples(reportLines, propertyMethod, executionResult, sampleReportingFormats);
+		appendThrowableMessage(reportBuilder, executionResult);
+		appendFixedSizedProperties(reportBuilder, executionResult, afterFailureMode, fixedSeedMode);
+		appendSamples(reportBuilder, propertyMethod, executionResult, sampleReportingFormats);
 
-		return reportLines.toString();
+		return reportBuilder.toString();
 	}
 
 	private static void appendSamples(
-		StringBuilder reportLines,
+		StringBuilder reportBuilder,
 		Method propertyMethod,
 		PropertyExecutionResult executionResult,
 		Collection<SampleReportingFormat> sampleReportingFormats
@@ -68,10 +68,10 @@ public class ExecutionResultReport {
 			List<Object> parametersAfterRun = shrunkSample.parameters();
 			if (!parameters.isEmpty()) {
 				String shrunkSampleHeadline = String.format("%s (%s steps)", SHRUNK_SAMPLE_HEADLINE, shrunkSample.countShrinkingSteps());
-				SampleReporter.reportSample(reportLines, propertyMethod, parameters, shrunkSampleHeadline, 0, sampleReportingFormats);
-				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun, sampleReportingFormats);
+				SampleReporter.reportSample(reportBuilder, propertyMethod, parameters, shrunkSampleHeadline, 0, sampleReportingFormats);
+				reportParameterChanges(reportBuilder, propertyMethod, parameters, parametersAfterRun, sampleReportingFormats);
 			}
-			reportFootnotes(reportLines, shrunkSample.footnotes());
+			reportFootnotes(reportBuilder, shrunkSample.footnotes());
 		});
 
 		executionResult.originalSample().ifPresent(originalSample -> {
@@ -79,40 +79,65 @@ public class ExecutionResultReport {
 			List<Object> parameters = originalSample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
 			List<Object> parametersAfterRun = originalSample.parameters();
 			if (!parameters.isEmpty()) {
-				SampleReporter.reportSample(reportLines, propertyMethod, parameters, originalSampleHeadline, 0, sampleReportingFormats);
-				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun, sampleReportingFormats);
+				SampleReporter.reportSample(reportBuilder, propertyMethod, parameters, originalSampleHeadline, 0, sampleReportingFormats);
+				reportParameterChanges(reportBuilder, propertyMethod, parameters, parametersAfterRun, sampleReportingFormats);
 			}
-			reportFootnotes(reportLines, originalSample.footnotes());
+			reportFootnotes(reportBuilder, originalSample.footnotes());
 			if (!parameters.isEmpty() && executionResult.shrunkSample().isPresent()) {
 				originalSample.falsifyingError().ifPresent(error -> {
-					appendOriginalError(reportLines, error);
+					appendOriginalError(reportBuilder, error);
 				});
 			}
 		});
 	}
 
-	private static void reportFootnotes(StringBuilder reportLines, List<String> footnotes) {
+	private static void reportFootnotes(StringBuilder reportBuilder, List<String> footnotes) {
 		if (footnotes.isEmpty()) {
 			return;
 		}
 		for (int i = 0; i < footnotes.size(); i++) {
 			String footnote = footnotes.get(i);
-			reportLines.append(String.format("%n  #%s %s", i + 1, footnote));
+			reportBuilder.append(String.format("%n  #%s %s", i + 1, footnote));
 		}
-		reportLines.append(String.format("%n"));
+		reportBuilder.append(String.format("%n"));
 	}
 
 	private static void reportParameterChanges(
-		StringBuilder reportLines,
+		StringBuilder reportBuilder,
 		Method propertyMethod,
 		List<Object> parameters,
 		List<Object> parametersAfterRun,
 		Collection<SampleReportingFormat> sampleReportingFormats
 	) {
-		if (ParameterChangesDetector.haveParametersChanged(parameters, parametersAfterRun)) {
-			String changesSampleHeadline = "After Execution";
-			SampleReporter.reportSample(reportLines, propertyMethod, parametersAfterRun, changesSampleHeadline, 1, sampleReportingFormats);
+		if (!ParameterChangesDetector.haveParametersChanged(parameters, parametersAfterRun)) {
+			return;
 		}
+		if (!hasDifferentOutput(propertyMethod, parameters, parametersAfterRun, sampleReportingFormats)) {
+			return;
+		}
+		SampleReporter.reportSample(
+			reportBuilder,
+			propertyMethod,
+			parametersAfterRun,
+			"After Execution", 1,
+			sampleReportingFormats
+		);
+	}
+
+	private static boolean hasDifferentOutput(
+		Method propertyMethod,
+		List<Object> parameters,
+		List<Object> parametersAfterRun,
+		Collection<SampleReportingFormat> sampleReportingFormats
+	) {
+		StringBuilder beforeBuilder = new StringBuilder();
+		SampleReporter.reportSample(beforeBuilder, propertyMethod, parameters, "", 0, sampleReportingFormats);
+		String beforeString = beforeBuilder.toString();
+		StringBuilder afterBuilder = new StringBuilder();
+		SampleReporter.reportSample(afterBuilder, propertyMethod, parametersAfterRun, "", 0, sampleReportingFormats);
+		String afterString = afterBuilder.toString();
+		boolean outputDifference = !beforeString.equals(afterString);
+		return outputDifference;
 	}
 
 	private static void appendOriginalError(StringBuilder reportLines, Throwable error) {
@@ -121,10 +146,10 @@ public class ExecutionResultReport {
 	}
 
 	private static void appendFixedSizedProperties(
-			StringBuilder reportLines,
-			ExtendedPropertyExecutionResult executionResult,
-			AfterFailureMode afterFailureMode,
-			FixedSeedMode fixedSeedMode
+		StringBuilder reportBuilder,
+		ExtendedPropertyExecutionResult executionResult,
+		AfterFailureMode afterFailureMode,
+		FixedSeedMode fixedSeedMode
 	) {
 		List<String> propertiesLines = new ArrayList<>();
 		int countTries = 0;
@@ -162,38 +187,38 @@ public class ExecutionResultReport {
 		}
 		appendProperty(propertiesLines, SEED_KEY, randomSeed, "random seed to reproduce generated values");
 
-		prependFixedSizedPropertiesHeader(reportLines, propertiesLines);
-		propertiesLines.forEach(reportLines::append);
+		prependFixedSizedPropertiesHeader(reportBuilder, propertiesLines);
+		propertiesLines.forEach(reportBuilder::append);
 
 	}
 
-	private static void prependFixedSizedPropertiesHeader(StringBuilder reportLines, List<String> propertiesLines) {
+	private static void prependFixedSizedPropertiesHeader(StringBuilder reportBuilder, List<String> propertiesLines) {
 		int halfBorderLength =
 			(propertiesLines.stream().mapToInt(String::length).max().orElse(50) - 37) / 2 + 1;
 		String halfBorder = String.join("", Collections.nCopies(halfBorderLength, "-"));
 
-		reportLines.append(String.format("%n"));
-		reportLines.append(buildLine("", "|" + halfBorder + "jqwik" + halfBorder));
+		reportBuilder.append(String.format("%n"));
+		reportBuilder.append(buildLine("", "|" + halfBorder + "jqwik" + halfBorder));
 	}
 
-	private static void appendThrowableMessage(StringBuilder reportLines, ExtendedPropertyExecutionResult executionResult) {
+	private static void appendThrowableMessage(StringBuilder reportBuilder, ExtendedPropertyExecutionResult executionResult) {
 		if (executionResult.status() != PropertyExecutionResult.Status.SUCCESSFUL) {
 			Throwable throwable = executionResult.throwable().orElse(new AssertionFailedError(null));
-			appendThrowable(reportLines, throwable);
+			appendThrowable(reportBuilder, throwable);
 		}
 	}
 
-	private static void appendThrowable(StringBuilder reportLines, Throwable throwable) {
+	private static void appendThrowable(StringBuilder reportBuilder, Throwable throwable) {
 		String assertionClass = throwable.getClass().getName();
-		reportLines.append(String.format("%n  %s", assertionClass));
+		reportBuilder.append(String.format("%n  %s", assertionClass));
 		List<String> assertionMessageLines = JqwikStringSupport.toLines(throwable.getMessage());
 		if (!assertionMessageLines.isEmpty()) {
-			reportLines.append(":");
+			reportBuilder.append(":");
 			for (String line : assertionMessageLines) {
-				reportLines.append(String.format("%n    %s", line));
+				reportBuilder.append(String.format("%n    %s", line));
 			}
 		}
-		reportLines.append(String.format("%n"));
+		reportBuilder.append(String.format("%n"));
 	}
 
 	private static String helpAfterFailureMode(AfterFailureMode afterFailureMode) {

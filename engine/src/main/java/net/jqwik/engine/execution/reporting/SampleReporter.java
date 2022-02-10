@@ -11,7 +11,7 @@ public class SampleReporter {
 	public static final int MAX_LINE_LENGTH = 100;
 
 	static void reportSample(
-		StringBuilder reportLines,
+		StringBuilder stringBuilder,
 		Method propertyMethod,
 		List<Object> sample,
 		String headline,
@@ -20,7 +20,7 @@ public class SampleReporter {
 	) {
 		Map<String, Object> reports = createSampleReports(propertyMethod, sample);
 		SampleReporter sampleReporter = new SampleReporter(headline, reports, sampleReportingFormats);
-		LineReporter lineReporter = new BuilderBasedLineReporter(reportLines, indentLevel);
+		LineReporter lineReporter = new BuilderBasedLineReporter(stringBuilder, indentLevel);
 		sampleReporter.reportTo(lineReporter);
 	}
 
