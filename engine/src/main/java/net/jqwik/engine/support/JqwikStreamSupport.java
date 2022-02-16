@@ -57,6 +57,8 @@ public class JqwikStreamSupport {
 
 	public static <T> Stream<T> concat(List<Stream<T>> streams) {
 		return concat(Stream.empty(), new ArrayList<>(streams));
+		// The following implementation breaks in recursive scenarios, e.g. ArbitrariesRecursiveTests.ShrinkingTests.complexShrinking
+		// return streams.stream().flatMap(Function.identity());
 	}
 
 	private static <T> Stream<T> concat(Stream<T> head, List<Stream<T>> rest) {
