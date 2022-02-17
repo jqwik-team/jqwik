@@ -38,7 +38,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	}
 
 	@API(status = INTERNAL)
-	static <T> Shrinkable<T> supplyUnshrinkable(Supplier<T> supplier, boolean cacheImmutables) {
+	static <T> Shrinkable<T> supplyUnshrinkable(Supplier<T> supplier) {
 		return ShrinkableFacade.implementation.unshrinkable(supplier, ShrinkingDistance.of(0));
 	}
 

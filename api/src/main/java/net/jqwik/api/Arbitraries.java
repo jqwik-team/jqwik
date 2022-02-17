@@ -477,9 +477,9 @@ public class Arbitraries {
 	@API(status = MAINTAINED, since = "1.1.1")
 	public static <T> Arbitrary<T> create(Supplier<T> supplier) {
 		return fromGenerators(
-			random -> Shrinkable.supplyUnshrinkable(supplier, true),
+			random -> Shrinkable.supplyUnshrinkable(supplier),
 			max -> ArbitrariesFacade.implementation.exhaustiveCreate(supplier, max),
-			maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.supplyUnshrinkable(supplier, true))
+			maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.supplyUnshrinkable(supplier))
 		);
 	}
 
