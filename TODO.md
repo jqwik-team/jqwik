@@ -1,5 +1,7 @@
 1.6.5
 
+    - Fix TODO in line 413
+
     - Find a way to somehow clean-up generated objects after each try or property
 
     - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
