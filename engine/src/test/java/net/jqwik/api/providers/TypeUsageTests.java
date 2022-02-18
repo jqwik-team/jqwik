@@ -930,33 +930,34 @@ class TypeUsageTests {
 		@Example
 		void typedSuperTypes() throws NoSuchMethodException {
 			class LocalClass {
-				public ActionSequenceArbitrary<String> stringActionSequenceArbitrary() {
+				public ActionSequenceArbitrary<String> actionSequenceArbitraryString() {
 					return null;
 				}
 			}
 
-			Type stringActionSequenceArbitrary = LocalClass.class.getMethod("stringActionSequenceArbitrary")
+			Type stringActionSequenceArbitrary = LocalClass.class.getMethod("actionSequenceArbitraryString")
 																 .getAnnotatedReturnType()
 																 .getType();
-			TypeUsage actionSequenceStringArbitraryType = TypeUsage.forType(stringActionSequenceArbitrary);
-			TypeUsage actionSequenceArbitrary = TypeUsage.of(
+			TypeUsage actionSequenceArbitraryStringType = TypeUsage.forType(stringActionSequenceArbitrary);
+			TypeUsage arbitraryActionSequenceStringType = TypeUsage.of(
 				Arbitrary.class,
 				TypeUsage.of(
 					ActionSequence.class,
 					TypeUsage.of(String.class)
 				)
 			);
-			assertThat(actionSequenceStringArbitraryType.canBeAssignedTo(actionSequenceArbitrary)).isTrue();
+			assertThat(actionSequenceArbitraryStringType.canBeAssignedTo(arbitraryActionSequenceStringType)).isTrue();
 
-			TypeUsage actionSequenceIntegerArbitrary = TypeUsage.of(
+			TypeUsage arbitraryActionSequenceIntegerType = TypeUsage.of(
 				Arbitrary.class,
 				TypeUsage.of(
 					ActionSequence.class,
 					TypeUsage.of(Integer.class)
 				)
 			);
-			// TODO: jqwik is too loose here which might result in a class cast exception during property resolution
-			// assertThat(actionSequenceStringArbitraryType.canBeAssignedTo(actionSequenceIntegerArbitrary)).isFalse();
+			assertThat(actionSequenceArbitraryStringType.canBeAssignedTo(arbitraryActionSequenceIntegerType))
+				.describedAs("%s can be assigned to %s but should not", actionSequenceArbitraryStringType, arbitraryActionSequenceIntegerType)
+				.isFalse();
 		}
 	}
 

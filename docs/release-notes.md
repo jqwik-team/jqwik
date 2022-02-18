@@ -42,7 +42,7 @@ title: jqwik Release Notes
 
 #### Bug Fixes
 
-No known bugs.
+- Some false positive matching of provider method return types has been fixed.
 
 
 ## 1.6.4

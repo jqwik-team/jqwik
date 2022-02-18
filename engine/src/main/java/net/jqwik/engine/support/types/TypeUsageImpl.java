@@ -407,12 +407,11 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		if (boxedTypeMatches(this.rawType, targetType.getRawType()))
 			return true;
 		if (targetType.getRawType().isAssignableFrom(rawType)) {
+			// TODO: this is too loose, e.g. DefaultStringArbitrary can be assigned to Arbitrary<Integer>
 			if (allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments())) {
 				return true;
 			} else {
-				// TODO: This is too loose since it potentially allows not matching types
-				// which will lead to class cast exception during property execution
-				return findSuperType(targetType.getRawType()).isPresent();
+				return findMatchingSuperType(targetType).isPresent();
 			}
 		}
 		return false;
@@ -547,28 +546,49 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
 	}
 
-	private Optional<TypeUsageImpl> findSuperType(Class<?> typeToFind) {
-		return findSuperTypeIn(typeToFind, this.rawType);
+	private Optional<TypeUsage> findMatchingSuperType(TypeUsage typeToFind) {
+		return findMatchingSuperTypeIn(typeToFind, this);
 	}
 
-	private Optional<TypeUsageImpl> findSuperTypeIn(Class<?> typeToFind, Class<?> rawType) {
-		List<AnnotatedType> supertypes = new ArrayList<>();
-		if (rawType.getSuperclass() != null)
-			supertypes.add(rawType.getAnnotatedSuperclass());
-		supertypes.addAll(Arrays.asList(rawType.getAnnotatedInterfaces()));
-		for (AnnotatedType type : supertypes) {
-			if (extractRawType(type.getType()).equals(typeToFind))
-				return Optional.of(TypeUsageImpl.forAnnotatedType(type));
+	// TODO: This is implementation is certainly wrong but it covers the straightforward cases
+	// e.g. Arbitrary<ActionsSequence<String>> is found in ActionsSequenceArbitrary<String>
+	private Optional<TypeUsage> findMatchingSuperTypeIn(TypeUsage typeToFind, TypeUsage typeToSearch) {
+		List<TypeUsage> supertypes = new ArrayList<>();
+		typeToSearch.getSuperclass().ifPresent(supertypes::add);
+		supertypes.addAll(typeToSearch.getInterfaces());
+
+		for (TypeUsage supertype : supertypes) {
+			if (matchesWithTypeArguments(supertype, typeToFind, typeToSearch.getTypeArguments())) {
+				return Optional.of(supertype);
+			}
 		}
 
-		for (AnnotatedType type : supertypes) {
-			TypeUsageImpl typeUsage = TypeUsageImpl.forAnnotatedType(type);
-			Optional<TypeUsageImpl> nestedFound = typeUsage.findSuperType(typeToFind);
-			if (nestedFound.isPresent())
-				return nestedFound;
+		for (TypeUsage supertype : supertypes) {
+			Optional<TypeUsage> nestedFound = findMatchingSuperTypeIn(typeToFind, supertype);
+			if (nestedFound.isPresent()) return nestedFound;
 		}
 
 		return Optional.empty();
+	}
+
+	private boolean matchesWithTypeArguments(
+		TypeUsage type,
+		TypeUsage typeToFind,
+		List<TypeUsage> boundTypeArguments
+	) {
+		if (!type.getRawType().equals(typeToFind.getRawType())) {
+			return false;
+		}
+		List<TypeUsage> typeArguments = typeToFind.getTypeArguments();
+		if (allTypeArgumentsCanBeAssigned(typeArguments, boundTypeArguments)) {
+			return true;
+		}
+		if (typeArguments.size() == 1 && type.getTypeArguments().size() == 1) {
+			TypeUsage embeddedType = type.getTypeArgument(0);
+			TypeUsage embeddedTypeToFind = typeToFind.getTypeArgument(0);
+			return matchesWithTypeArguments(embeddedType, embeddedTypeToFind, boundTypeArguments);
+		}
+		return false;
 	}
 
 	private TypeUsageImpl cloneWith(Consumer<TypeUsageImpl> updater) {
