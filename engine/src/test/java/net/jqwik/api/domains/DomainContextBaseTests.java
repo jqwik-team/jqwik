@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -51,6 +52,16 @@ class DomainContextBaseTests {
 		@Domain(ContextWithProviderMethods.class)
 		void useProviderFromMethodWithPotentiallyConflictingType(@ForAll List<LocalDate> listOfDates) {
 			assertThat(listOfDates).hasSize(1);
+		}
+
+		@Property
+		@Domain(ContextWithProviderMethods.class)
+		void tuple2andTuple3doNotClash(
+			@ForAll Tuple2<Integer, Integer> tuple2,
+			@ForAll Tuple3<Integer, Integer, Integer> tuple3
+		) {
+			assertThat(tuple2).isInstanceOf(Tuple2.class);
+			assertThat(tuple3).isInstanceOf(Tuple3.class);
 		}
 
 		@Property

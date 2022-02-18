@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.6.5-SNAPSHOT](#165-SNAPSHOT)
 - [1.6.4](#164)
 - [1.6.3](#163)
 - [1.6.2](#162)
@@ -24,6 +25,24 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+## 1.6.5-SNAPSHOT
+
+#### New and Enhanced Features
+
+- After-execution sample will only be reported if there are _visible differences_ 
+  to the before-execution sample.
+
+#### Breaking Changes
+
+- The return type of `@Provide` methods in subclasses of `DomainContextBase` 
+  can no longer be supertypes of the target type to match.
+  For example `Arbitrary<List<?>>` will no longer match target type `List<String>``
+
+#### Bug Fixes
+
+No known bugs.
 
 
 ## 1.6.4

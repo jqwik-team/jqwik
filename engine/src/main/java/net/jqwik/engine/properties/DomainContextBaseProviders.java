@@ -191,8 +191,7 @@ public class DomainContextBaseProviders {
 
 		private boolean targetTypeFits(TypeUsage targetType) {
 			TypeUsage arbitraryReturnType = arbitraryReturnType();
-			// This can lead to arbitraries being applied where they don't fit due to parameterized inner types
-			return arbitraryReturnType.canBeAssignedTo(targetType) || targetType.canBeAssignedTo(arbitraryReturnType);
+			return arbitraryReturnType.canBeAssignedTo(targetType);
 		}
 
 		private TypeUsage arbitraryReturnType() {

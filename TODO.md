@@ -1,7 +1,5 @@
 1.6.5
 
-    - Bug: Tuple2 and Tuple3 should not be compatible return types for provider methods in domains
-
     - Find a way to somehow clean-up generated objects after each try or property
 
     - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
