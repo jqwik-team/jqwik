@@ -12,6 +12,6 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	/**
 	 * Set the intended number of steps of this chain.
 	 */
-	ChainArbitrary<T> ofSize(int size);
+	ChainArbitrary<T> ofMaxSize(int size);
 
 }

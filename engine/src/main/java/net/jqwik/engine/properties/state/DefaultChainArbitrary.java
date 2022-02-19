@@ -25,7 +25,7 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	}
 
 	@Override
-	public ChainArbitrary<T> ofSize(int size) {
+	public ChainArbitrary<T> ofMaxSize(int size) {
 		DefaultChainArbitrary<T> clone = typedClone();
 		clone.size = size;
 		return clone;

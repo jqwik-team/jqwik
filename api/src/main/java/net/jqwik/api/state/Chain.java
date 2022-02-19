@@ -2,11 +2,10 @@ package net.jqwik.api.state;
 
 import org.apiguardian.api.*;
 
-import java.util.Iterator;
+import java.util.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-@FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface Chain<T> extends Iterable<T> {
 
@@ -16,4 +15,8 @@ public interface Chain<T> extends Iterable<T> {
 	default Iterator<T> iterator() {
 		return start();
 	}
+
+	List<T> iterations();
+
+	int maxSize();
 }
