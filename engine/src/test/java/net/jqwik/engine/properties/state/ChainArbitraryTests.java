@@ -3,6 +3,8 @@ package net.jqwik.engine.properties.state;
 import net.jqwik.api.*;
 import net.jqwik.api.state.Chain;
 import net.jqwik.api.state.Chains;
+import net.jqwik.engine.*;
+import net.jqwik.testing.*;
 
 import java.util.*;
 
@@ -50,7 +52,7 @@ class ChainArbitraryTests {
 	void chainCanBeRerunWithSameValues(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
-			intSupplier -> Arbitraries.integers().between(0, 10).map(i -> t -> t + i)
+			ignore -> Arbitraries.integers().between(0, 10).map(i -> t -> t + i)
 		);
 
 		Shrinkable<Chain<Integer>> chainShrinkable = chains.generator(100).next(random);
@@ -71,26 +73,22 @@ class ChainArbitraryTests {
 		return values;
 	}
 
-	// @Example
-	// void shrinkChainToEnd(@ForAll Random random) {
-	// 	Arbitrary<Chain<Integer>> chains = Chains.chains(
-	// 		() -> 1,
-	// 		intSupplier -> {
-	// 			int last = intSupplier.get();
-	// 			return Arbitraries.integers().between(last, last + 10);
-	// 		}
-	// 	).ofMaxSize(5);
-	//
-	// 	TestingFalsifier<Chain<Integer>> falsifier = chain -> {
-	// 		for (Integer integer : chain) {
-	// 			// consume iterator
-	// 		}
-	// 		return false;
-	// 	};
-	// 	Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-	//
-	// 	assertThat(chain.iterations()).hasSize(5);
-	// 	assertThat(chain.iterations()).contains(1, 1, 1, 1, 1);
-	//
-	// }
+	@Example
+	void shrinkChainWithoutStateAccessToEnd(@ForAll Random random) {
+		Arbitrary<Chain<Integer>> chains = Chains.chains(
+			() -> 1,
+			ignore -> Arbitraries.integers().between(0, 10).map(i -> t -> t + i)
+		).ofMaxSize(5);
+
+		TestingFalsifier<Chain<Integer>> falsifier = chain -> {
+			for (Integer integer : chain) {
+				// consume iterator
+			}
+			return false;
+		};
+		Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+
+		assertThat(chain.countIterations()).isEqualTo(5);
+		assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
+	}
 }
