@@ -3,8 +3,6 @@ package net.jqwik.engine.properties.state;
 import net.jqwik.api.*;
 import net.jqwik.api.state.Chain;
 import net.jqwik.api.state.Chains;
-import net.jqwik.testing.ShrinkingSupport;
-import net.jqwik.testing.TestingFalsifier;
 
 import java.util.*;
 
@@ -18,76 +16,81 @@ class ChainArbitraryTests {
 			() -> 1,
 			intSupplier -> {
 				int last = intSupplier.get();
-				return Arbitraries.integers().between(last, last + 10);
+				if (last < 100) {
+					return Arbitraries.integers().between(0, 10).map(i -> t -> t + i);
+				} else {
+					return Arbitraries.integers().between(1, 10).map(i -> t -> t - i);
+				}
 			}
-		);
+		).ofMaxSize(50);
 
 		Shrinkable<Chain<Integer>> chainShrinkable = chains.generator(100).next(random);
 
 		Chain<Integer> chain = chainShrinkable.value();
 
-		assertThat(chain.maxSize()).isEqualTo(10);
-		assertThat(chain.iterations().size()).isEqualTo(0);
+		assertThat(chain.maxSize()).isEqualTo(50);
+		assertThat(chain.countIterations()).isEqualTo(0);
 
 		Iterator<Integer> iterator = chain.start();
 		int last = 1;
 		while (iterator.hasNext()) {
 			int next = iterator.next();
-			assertThat(next).isGreaterThanOrEqualTo(last);
+			if (last < 100) {
+				assertThat(next).isGreaterThanOrEqualTo(last);
+			} else {
+				assertThat(next).isLessThan(last);
+			}
 			last = next;
 		}
 
-		assertThat(chain.iterations().size()).isEqualTo(10);
+		assertThat(chain.countIterations()).isEqualTo(50);
 	}
 
 	@Example
 	void chainCanBeRerunWithSameValues(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
-			intSupplier -> {
-				int last = intSupplier.get();
-				return Arbitraries.integers().between(last, last + 10);
-			}
+			intSupplier -> Arbitraries.integers().between(0, 10).map(i -> t -> t + i)
 		);
 
 		Shrinkable<Chain<Integer>> chainShrinkable = chains.generator(100).next(random);
 
 		Chain<Integer> chain = chainShrinkable.value();
 
-		List<Integer> values1 = new ArrayList<>();
-		for (Integer i : chain) {
-			values1.add(i);
-		}
-		assertThat(chain.iterations()).isEqualTo(values1);
-
-		List<Integer> values2 = new ArrayList<>();
-		for (Integer i : chain) {
-			values2.add(i);
-		}
+		List<Integer> values1 = collectAllValues(chain);
+		List<Integer> values2 = collectAllValues(chain);
 		assertThat(values2).isEqualTo(values1);
 
 	}
 
-	@Example
-	void shrinkChainToEnd(@ForAll Random random) {
-		Arbitrary<Chain<Integer>> chains = Chains.chains(
-			() -> 1,
-			intSupplier -> {
-				int last = intSupplier.get();
-				return Arbitraries.integers().between(last, last + 10);
-			}
-		).ofMaxSize(5);
-
-		TestingFalsifier<Chain<Integer>> falsifier = chain -> {
-			for (Integer integer : chain) {
-				// consume iterator
-			}
-			return false;
-		};
-		Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-
-		assertThat(chain.iterations()).hasSize(5);
-		assertThat(chain.iterations()).contains(1, 1, 1, 1, 1);
-
+	private <T> List<T> collectAllValues(Chain<T> chain) {
+		List<T> values = new ArrayList<>();
+		for (T i : chain) {
+			values.add(i);
+		}
+		return values;
 	}
+
+	// @Example
+	// void shrinkChainToEnd(@ForAll Random random) {
+	// 	Arbitrary<Chain<Integer>> chains = Chains.chains(
+	// 		() -> 1,
+	// 		intSupplier -> {
+	// 			int last = intSupplier.get();
+	// 			return Arbitraries.integers().between(last, last + 10);
+	// 		}
+	// 	).ofMaxSize(5);
+	//
+	// 	TestingFalsifier<Chain<Integer>> falsifier = chain -> {
+	// 		for (Integer integer : chain) {
+	// 			// consume iterator
+	// 		}
+	// 		return false;
+	// 	};
+	// 	Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+	//
+	// 	assertThat(chain.iterations()).hasSize(5);
+	// 	assertThat(chain.iterations()).contains(1, 1, 1, 1, 1);
+	//
+	// }
 }

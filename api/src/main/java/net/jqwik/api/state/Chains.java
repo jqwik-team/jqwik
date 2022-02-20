@@ -1,18 +1,17 @@
 package net.jqwik.api.state;
 
-import net.jqwik.api.Arbitrary;
-import net.jqwik.api.FacadeLoader;
+import java.util.function.*;
 
-import org.apiguardian.api.API;
+import org.apiguardian.api.*;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
+import net.jqwik.api.*;
 
-import static org.apiguardian.api.API.Status.EXPERIMENTAL;
-import static org.apiguardian.api.API.Status.INTERNAL;
+import static org.apiguardian.api.API.Status.*;
 
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public class Chains {
+
+	public interface Mutator<T> extends Function<T, T> {}
 
 	@API(status = INTERNAL)
 	public static abstract class ChainsFacade {
@@ -22,13 +21,16 @@ public class Chains {
 			implementation = FacadeLoader.load(Chains.ChainsFacade.class);
 		}
 
-		public abstract  <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<T>> chainGenerator);
+		public abstract <T> ChainArbitrary<T> chains(
+			Supplier<T> initialSupplier,
+			Function<Supplier<T>, Arbitrary<Mutator<T>>> chainGenerator
+		);
 	}
 
 	private Chains() {
 	}
 
-	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<T>> chainGenerator) {
+	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<Mutator<T>>> chainGenerator) {
 		return ChainsFacade.implementation.chains(initialSupplier, chainGenerator);
 	}
 }

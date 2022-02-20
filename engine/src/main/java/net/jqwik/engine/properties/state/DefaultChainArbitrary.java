@@ -9,10 +9,10 @@ import net.jqwik.engine.properties.arbitraries.*;
 public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArbitrary<T> {
 
 	private int size = 0;
-	private Supplier<T> initialSupplier;
-	private Function<Supplier<T>, Arbitrary<T>> chainGenerator;
+	private final Supplier<T> initialSupplier;
+	private final Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator;
 
-	public DefaultChainArbitrary(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<T>> chainGenerator) {
+	public DefaultChainArbitrary(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator) {
 		this.initialSupplier = initialSupplier;
 		this.chainGenerator = chainGenerator;
 	}
@@ -21,7 +21,7 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	public RandomGenerator<Chain<T>> generator(int genSize) {
 		final int effectiveSize =
 			size != 0 ? size : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-		return random -> new ShrinkableChain(random.nextLong(), initialSupplier, chainGenerator, effectiveSize);
+		return random -> new ShrinkableChain<T>(random.nextLong(), initialSupplier, chainGenerator, effectiveSize);
 	}
 
 	@Override

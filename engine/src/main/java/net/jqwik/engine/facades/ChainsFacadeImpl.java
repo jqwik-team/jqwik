@@ -13,8 +13,11 @@ import java.util.function.Supplier;
  */
 public class ChainsFacadeImpl extends Chains.ChainsFacade {
 
-    @Override
-    public <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<T>> chainGenerator) {
-        return new DefaultChainArbitrary<>(initialSupplier, chainGenerator);
-    }
+	@Override
+	public <T> ChainArbitrary<T> chains(
+		Supplier<T> initialSupplier,
+		Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator
+	) {
+		return new DefaultChainArbitrary<>(initialSupplier, chainGenerator);
+	}
 }
