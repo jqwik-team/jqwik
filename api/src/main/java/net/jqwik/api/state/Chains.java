@@ -31,6 +31,7 @@ public class Chains {
 	private Chains() {
 	}
 
+	@SafeVarargs
 	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<Mutator<T>>> ... chainGenerators) {
 		List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> generatorsList = Arrays.asList(chainGenerators);
 		if (generatorsList.isEmpty()) {
