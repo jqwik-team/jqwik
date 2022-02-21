@@ -101,6 +101,47 @@ class ChainArbitraryTests {
 
 	}
 
+	@Example
+	void generatorThatReturnsNullIsIgnored(@ForAll Random random) {
+		Function<Supplier<List<Integer>>, Arbitrary<Chains.Mutator<List<Integer>>>> addRandomIntToList = ignore -> Arbitraries
+			.integers().between(0, 10).map(i -> l -> {
+				l.add(i);
+				return l;
+			});
+
+		Function<Supplier<List<Integer>>, Arbitrary<Chains.Mutator<List<Integer>>>> removeFirstElement = supplier -> {
+			List<Integer> last = supplier.get();
+			if (last.isEmpty()) {
+				return null;
+			}
+			return Arbitraries.just(l -> {
+				l.remove(0);
+				return l;
+			});
+		};
+
+		ChainArbitrary<List<Integer>> chains = Chains.chains(
+			ArrayList::new,
+			addRandomIntToList,
+			removeFirstElement
+		).ofMaxSize(13);
+
+		Shrinkable<Chain<List<Integer>>> chainShrinkable = chains.generator(100).next(random);
+
+		Chain<List<Integer>> chain = chainShrinkable.value();
+		Iterator<List<Integer>> iterator = chain.iterator();
+		List<Integer> last = new ArrayList<>();
+		while (iterator.hasNext()) {
+			int lastSize = last.size();
+			List<Integer> next = iterator.next();
+			assertThat(lastSize).isNotEqualTo(next.size());
+			last = next;
+		}
+		assertThat(chain.countIterations()).isEqualTo(13);
+	}
+
+
+
 	private <T> List<T> collectAllValues(Chain<T> chain) {
 		List<T> values = new ArrayList<>();
 		for (T i : chain) {
@@ -149,4 +190,5 @@ class ChainArbitraryTests {
 		assertThat(chain.countIterations()).isEqualTo(5);
 		assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
 	}
+
 }

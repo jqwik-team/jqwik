@@ -160,9 +160,13 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				return current;
 			};
 			Random random = SourceOfRandomness.newRandom(nextSeed);
-			int generatorIndex = random.nextInt(chainGenerators.size());
-			Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator = chainGenerators.get(generatorIndex);
-			RandomGenerator<Chains.Mutator<T>> generator = chainGenerator.apply(currentSupplier).generator(maxSize);
+			Arbitrary<Chains.Mutator<T>> arbitrary = null;
+			while (arbitrary == null) {
+				int generatorIndex = random.nextInt(chainGenerators.size());
+				Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator = chainGenerators.get(generatorIndex);
+				arbitrary = chainGenerator.apply(currentSupplier);
+			}
+			RandomGenerator<Chains.Mutator<T>> generator = arbitrary.generator(maxSize);
 			next = generator.next(random);
 			iterations.add(new Iteration<>(nextSeed, stateHasBeenAccessed.get(), next));
 			return next;
