@@ -9,33 +9,34 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.*;
+import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	private final long randomSeed;
 	private final Supplier<T> initialSupplier;
-	private final Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator;
+	private final List<Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>>> chainGenerators;
 	private final int maxSize;
-	private final List<Tuple3<Long, Boolean, Shrinkable<Chains.Mutator<T>>>> iterations;
+	private final List<Iteration<T>> iterations;
 
 	public ShrinkableChain(
 		long randomSeed,
 		Supplier<T> initialSupplier,
-		Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator,
+		List<Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>>> chainGenerators,
 		int maxSize
 	) {
-		this(randomSeed, initialSupplier, chainGenerator, maxSize, new ArrayList<>());
+		this(randomSeed, initialSupplier, chainGenerators, maxSize, new ArrayList<>());
 	}
 
 	private ShrinkableChain(
 		long randomSeed, Supplier<T> initialSupplier,
-		Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator,
+		List<Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>>> chainGenerators,
 		int maxSize,
-		List<Tuple3<Long, Boolean, Shrinkable<Chains.Mutator<T>>>> iterations
+		List<Iteration<T>> iterations
 	) {
 		this.randomSeed = randomSeed;
 		this.initialSupplier = initialSupplier;
-		this.chainGenerator = chainGenerator;
+		this.chainGenerators = chainGenerators;
 		this.maxSize = maxSize;
 		this.iterations = iterations;
 	}
@@ -57,28 +58,28 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	private Stream<Shrinkable<Chain<T>>> shrinkAllIterations() {
 		return IntStream.range(0, iterations.size())
-						.mapToObj(i -> i)
+						.boxed()
 						.flatMap(this::shrinkIteration);
 	}
 
 	private Stream<Shrinkable<Chain<T>>> shrinkIteration(int indexToShrink) {
-		Tuple3<Long, Boolean, Shrinkable<Chains.Mutator<T>>> iterationToShrink = iterations.get(indexToShrink);
-		Shrinkable<Chains.Mutator<T>> toShrink = iterationToShrink.get3();
+		Iteration<T> iterationToShrink = iterations.get(indexToShrink);
+		Shrinkable<Chains.Mutator<T>> toShrink = iterationToShrink.shrinkable;
 
 		return toShrink.shrink().map(shrunk -> {
-			List<Tuple3<Long, Boolean, Shrinkable<Chains.Mutator<T>>>> shrunkIterations = iterations.stream().limit(indexToShrink)
-																									.collect(Collectors.toList());
-			Tuple3<Long, Boolean, Shrinkable<Chains.Mutator<T>>> shrunkIteration = Tuple.of(iterationToShrink.get1(), iterationToShrink.get2(), shrunk);
+			List<Iteration<T>> shrunkIterations = iterations.stream().limit(indexToShrink)
+														 .collect(Collectors.toList());
+			Iteration<T> shrunkIteration = new Iteration<>(iterationToShrink.randomSeed, iterationToShrink.stateHasBeenAccessed, shrunk);
 			shrunkIterations.add(shrunkIteration);
 			return cloneWith(shrunkIterations);
 		});
 	}
 
-	private ShrinkableChain<T> cloneWith(List<Tuple3<Long, Boolean, Shrinkable<Chains.Mutator<T>>>> shrunkIterations) {
+	private ShrinkableChain<T> cloneWith(List<Iteration<T>> shrunkIterations) {
 		return new ShrinkableChain<>(
 			randomSeed,
 			initialSupplier,
-			chainGenerator,
+			chainGenerators,
 			maxSize,
 			shrunkIterations
 		);
@@ -141,9 +142,9 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 		private Shrinkable<Chains.Mutator<T>> rerunStep(long nextSeed) {
 			Shrinkable<Chains.Mutator<T>> next;
-			Tuple3<Long, Boolean, Shrinkable<Chains.Mutator<T>>> iteration = iterations.get(steps);
-			if (nextSeed == iteration.get1()) {
-				next = iteration.get3();
+			Iteration<T> iteration = iterations.get(steps);
+			if (nextSeed == iteration.randomSeed) {
+				next = iteration.shrinkable;
 			} else {
 				// TODO: Maybe this should delete rest of save iterations.
 				throw new RuntimeException("Generation mismatch while rerunning chain");
@@ -158,10 +159,29 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				stateHasBeenAccessed.set(true);
 				return current;
 			};
+			Random random = SourceOfRandomness.newRandom(nextSeed);
+			int generatorIndex = random.nextInt(chainGenerators.size());
+			Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator = chainGenerators.get(generatorIndex);
 			RandomGenerator<Chains.Mutator<T>> generator = chainGenerator.apply(currentSupplier).generator(maxSize);
-			next = generator.next(SourceOfRandomness.newRandom(nextSeed));
-			iterations.add(Tuple.of(nextSeed, stateHasBeenAccessed.get(), next));
+			next = generator.next(random);
+			iterations.add(new Iteration<>(nextSeed, stateHasBeenAccessed.get(), next));
 			return next;
+		}
+	}
+
+	private static class Iteration<T> {
+		final long randomSeed;
+		final boolean stateHasBeenAccessed;
+		final Shrinkable<Chains.Mutator<T>> shrinkable;
+
+		private Iteration(
+			long randomSeed,
+			boolean stateHasBeenAccessed,
+			Shrinkable<Chains.Mutator<T>> shrinkable
+		) {
+			this.randomSeed = randomSeed;
+			this.stateHasBeenAccessed = stateHasBeenAccessed;
+			this.shrinkable = shrinkable;
 		}
 	}
 }

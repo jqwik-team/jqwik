@@ -5,6 +5,7 @@ import net.jqwik.api.state.ChainArbitrary;
 import net.jqwik.api.state.Chains;
 import net.jqwik.engine.properties.state.*;
 
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -16,8 +17,8 @@ public class ChainsFacadeImpl extends Chains.ChainsFacade {
 	@Override
 	public <T> ChainArbitrary<T> chains(
 		Supplier<T> initialSupplier,
-		Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator
+		List<Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>>> chainGenerators
 	) {
-		return new DefaultChainArbitrary<>(initialSupplier, chainGenerator);
+		return new DefaultChainArbitrary<>(initialSupplier, chainGenerators);
 	}
 }

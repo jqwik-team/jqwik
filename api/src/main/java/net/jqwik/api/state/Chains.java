@@ -1,5 +1,6 @@
 package net.jqwik.api.state;
 
+import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
@@ -23,14 +24,18 @@ public class Chains {
 
 		public abstract <T> ChainArbitrary<T> chains(
 			Supplier<T> initialSupplier,
-			Function<Supplier<T>, Arbitrary<Mutator<T>>> chainGenerator
+			List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> generatorsList
 		);
 	}
 
 	private Chains() {
 	}
 
-	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<Mutator<T>>> chainGenerator) {
-		return ChainsFacade.implementation.chains(initialSupplier, chainGenerator);
+	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<Mutator<T>>> ... chainGenerators) {
+		List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> generatorsList = Arrays.asList(chainGenerators);
+		if (generatorsList.isEmpty()) {
+			throw new IllegalArgumentException("You must specify at least one chain generator");
+		}
+		return ChainsFacade.implementation.chains(initialSupplier, generatorsList);
 	}
 }
