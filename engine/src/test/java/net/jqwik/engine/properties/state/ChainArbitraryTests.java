@@ -140,7 +140,19 @@ class ChainArbitraryTests {
 		assertThat(chain.countIterations()).isEqualTo(13);
 	}
 
+	@Example
+	void stopGenerationIfOnlyNullArbitrariesAreAvailable(@ForAll Random random) {
+		Arbitrary<Chain<Integer>> chains = Chains.chains(
+			() -> 1,
+			ignore -> null
+		).ofMaxSize(50);
 
+		Chain<Integer> chain = chains.generator(100).next(random).value();
+
+		assertThatThrownBy(() -> {
+			chain.start().forEachRemaining(ignore -> {});
+		}).isInstanceOf(JqwikException.class);
+	}
 
 	private <T> List<T> collectAllValues(Chain<T> chain) {
 		List<T> values = new ArrayList<>();
@@ -191,4 +203,7 @@ class ChainArbitraryTests {
 		assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
 	}
 
+	// TODO: Test for mixed shrinking. Shrinking should only use same mutator arbitrary
+
+	// TODO: Test for exhaustive shrinking of iterations tail with no access to state
 }

@@ -6,10 +6,9 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.*;
-import net.jqwik.engine.properties.arbitraries.randomized.*;
+import net.jqwik.engine.properties.*;
 
 public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
@@ -68,7 +67,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 		return toShrink.shrink().map(shrunk -> {
 			List<Iteration<T>> shrunkIterations = iterations.stream().limit(indexToShrink)
-														 .collect(Collectors.toList());
+															.collect(Collectors.toList());
 			Iteration<T> shrunkIteration = new Iteration<>(iterationToShrink.randomSeed, iterationToShrink.stateHasBeenAccessed, shrunk);
 			shrunkIterations.add(shrunkIteration);
 			return cloneWith(shrunkIterations);
@@ -160,16 +159,31 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				return current;
 			};
 			Random random = SourceOfRandomness.newRandom(nextSeed);
-			Arbitrary<Chains.Mutator<T>> arbitrary = null;
-			while (arbitrary == null) {
-				int generatorIndex = random.nextInt(chainGenerators.size());
-				Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator = chainGenerators.get(generatorIndex);
-				arbitrary = chainGenerator.apply(currentSupplier);
-			}
+			Arbitrary<Chains.Mutator<T>> arbitrary = nextMutatorArbitrary(currentSupplier, random);
 			RandomGenerator<Chains.Mutator<T>> generator = arbitrary.generator(maxSize);
 			next = generator.next(random);
 			iterations.add(new Iteration<>(nextSeed, stateHasBeenAccessed.get(), next));
 			return next;
+		}
+
+		private Arbitrary<Chains.Mutator<T>> nextMutatorArbitrary(Supplier<T> currentSupplier, Random random) {
+			return MaxTriesLoop.loop(
+				() -> true,
+				arbitrary -> {
+					int generatorIndex = random.nextInt(chainGenerators.size());
+					Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>> chainGenerator = chainGenerators.get(generatorIndex);
+					arbitrary = chainGenerator.apply(currentSupplier);
+					if (arbitrary == null) {
+						return Tuple.of(false, arbitrary);
+					}
+					return Tuple.of(true, arbitrary);
+				},
+				maxMisses -> {
+					String message = String.format("Could not generate a mutator after %s tries.", maxMisses);
+					return new JqwikException(message);
+				},
+				1000
+			);
 		}
 	}
 
