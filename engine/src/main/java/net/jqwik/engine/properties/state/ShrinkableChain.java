@@ -70,11 +70,12 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 															.collect(Collectors.toList());
 			Iteration<T> shrunkIteration = new Iteration<>(iterationToShrink.randomSeed, iterationToShrink.stateHasBeenAccessed, shrunk);
 			shrunkIterations.add(shrunkIteration);
-			return cloneWith(shrunkIterations);
+			// A shrunk chain can never have more iterations than the unshrunk one
+			return newShrinkableChain(shrunkIterations, iterations.size());
 		});
 	}
 
-	private ShrinkableChain<T> cloneWith(List<Iteration<T>> shrunkIterations) {
+	private ShrinkableChain<T> newShrinkableChain(List<Iteration<T>> shrunkIterations, int maxSize) {
 		return new ShrinkableChain<>(
 			randomSeed,
 			initialSupplier,
@@ -86,7 +87,15 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	@Override
 	public ShrinkingDistance distance() {
-		return ShrinkingDistance.of(maxSize);
+		List<Shrinkable<Chains.Mutator<T>>> shrinkablesForDistance = new ArrayList<>();
+		for (int i = 0; i < maxSize; i++) {
+			if (i < iterations.size()) {
+				shrinkablesForDistance.add(iterations.get(i).shrinkable);
+			} else {
+				shrinkablesForDistance.add(Shrinkable.unshrinkable(t -> t));
+			}
+		}
+		return ShrinkingDistance.forCollection(shrinkablesForDistance);
 	}
 
 	private class ChainInstance implements Chain<T> {
