@@ -162,48 +162,94 @@ class ChainArbitraryTests {
 		return values;
 	}
 
-	@Example
-	void shrinkChainWithoutStateAccessToEnd(@ForAll Random random) {
-		Arbitrary<Chain<Integer>> chains = Chains.chains(
-			() -> 1,
-			ignore -> Arbitraries.integers().between(0, 10).map(i -> t -> t + i)
-		).ofMaxSize(5);
+	@Group
+	@PropertyDefaults(tries = 100)
+	class Shrinking {
 
-		TestingFalsifier<Chain<Integer>> falsifier = chain -> {
-			for (Integer integer : chain) {
-				// consume iterator
-			}
-			return false;
-		};
-		Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+		@Property
+		void shrinkChainWithoutStateAccessToEnd(@ForAll Random random) {
+			Arbitrary<Chain<Integer>> chains = Chains.chains(
+				() -> 1,
+				ignore -> Arbitraries.integers().between(0, 10).map(i -> t -> t + i)
+			).ofMaxSize(5);
 
-		assertThat(chain.countIterations()).isEqualTo(5);
-		assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
+			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
+				for (Integer integer : chain) {
+					// consume iterator
+				}
+				return false;
+			};
+			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
+		}
+
+		@Property
+		void removeNullMutatorsDuringShrinking(@ForAll Random random) {
+			Chains.Mutator<Integer> addOne = new Chains.Mutator<Integer>() {
+				@Override
+				public Integer apply(Integer t) {
+					return t + 1;
+				}
+
+				@Override
+				public String toString() {
+					return "addOne";
+				}
+			};
+			Chains.Mutator<Integer> doNothing = new Chains.Mutator<Integer>() {
+				@Override
+				public Integer apply(Integer t) {
+					return t;
+				}
+
+				@Override
+				public String toString() {
+					return "doNothing";
+				}
+			};
+
+			Arbitrary<Chain<Integer>> chains = Chains.chains(
+				() -> 1,
+				ignore -> Arbitraries.just(addOne),
+				ignore -> Arbitraries.just(doNothing)
+			).ofMaxSize(10);
+
+			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
+				int last = 1;
+				for (Integer value : chain) {
+					last = value;
+				}
+				return last < 1;
+			};
+			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			assertThat(collectAllValues(chain)).contains(2);
+		}
+
+		@Property
+		void shrinkChainWithStateAccessToEnd(@ForAll Random random) {
+			Arbitrary<Chain<Integer>> chains = Chains.chains(
+				() -> 1,
+				supplier -> {
+					supplier.get(); // To make shrinkable think the last value is being used
+					return Arbitraries.integers().between(0, 10).map(i -> t -> t + i);
+				}
+			).ofMaxSize(5);
+
+			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
+				for (Integer integer : chain) {
+					// consume iterator
+				}
+				return false;
+			};
+			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+
+			assertThat(chain.countIterations()).isEqualTo(5);
+			assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
+		}
+
+		// TODO: Test for mixed shrinking. Shrinking should only use same mutator arbitrary
+
+		// TODO: Test for exhaustive shrinking of iterations tail with no access to state
+
 	}
-
-	@Example
-	void shrinkChainWithStateAccessToEnd(@ForAll Random random) {
-		Arbitrary<Chain<Integer>> chains = Chains.chains(
-			() -> 1,
-			supplier -> {
-				supplier.get(); // To make shrinkable think the last value is being used
-				return Arbitraries.integers().between(0, 10).map(i -> t -> t + i);
-			}
-		).ofMaxSize(5);
-
-		TestingFalsifier<Chain<Integer>> falsifier = chain -> {
-			for (Integer integer : chain) {
-				// consume iterator
-			}
-			return false;
-		};
-		Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-
-		assertThat(chain.countIterations()).isEqualTo(5);
-		assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
-	}
-
-	// TODO: Test for mixed shrinking. Shrinking should only use same mutator arbitrary
-
-	// TODO: Test for exhaustive shrinking of iterations tail with no access to state
 }

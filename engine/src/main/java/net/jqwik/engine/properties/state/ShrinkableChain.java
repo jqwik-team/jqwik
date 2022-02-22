@@ -98,6 +98,11 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		return ShrinkingDistance.forCollection(shrinkablesForDistance);
 	}
 
+	@Override
+	public String toString() {
+		return String.format("ShrinkableChain[maxSize=%s, iterations=%s]", maxSize, iterations);
+	}
+
 	private class ChainInstance implements Chain<T> {
 
 		@Override
@@ -209,6 +214,11 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			this.randomSeed = randomSeed;
 			this.stateHasBeenAccessed = stateHasBeenAccessed;
 			this.shrinkable = shrinkable;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("Iteration[accessState=%s, mutator=%s]", stateHasBeenAccessed, shrinkable.value());
 		}
 	}
 }
