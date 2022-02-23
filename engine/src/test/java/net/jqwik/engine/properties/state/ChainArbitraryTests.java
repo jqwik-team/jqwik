@@ -183,7 +183,7 @@ class ChainArbitraryTests {
 			assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
 		}
 
-		@Property(seed = "-6202415070118667909")
+		@Property
 		void removeNullMutatorsDuringShrinking(@ForAll Random random) {
 			Chains.Mutator<Integer> addOne = Chains.Mutator.withName(t -> t + 1, "addOne");
 			Chains.Mutator<Integer> doNothing = Chains.Mutator.withName(t -> t, "doNothing");
@@ -199,7 +199,7 @@ class ChainArbitraryTests {
 				for (Integer value : chain) {
 					last = value;
 				}
-				return last < 1;
+				return last <= 1;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
 			assertThat(collectAllValues(chain)).contains(2);
