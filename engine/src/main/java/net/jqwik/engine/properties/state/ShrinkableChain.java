@@ -50,6 +50,21 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	@Override
 	public Stream<Shrinkable<Chain<T>>> shrink() {
+		return Stream.concat(
+			shrinkMaxSize(),
+			shrinkRanges()
+		);
+	}
+
+	private Stream<Shrinkable<Chain<T>>> shrinkMaxSize() {
+		if (iterations.size() < maxSize) {
+			return Stream.of(newShrinkableChain(iterations, iterations.size()));
+		} else {
+			return Stream.empty();
+		}
+	}
+
+	private Stream<Shrinkable<Chain<T>>> shrinkRanges() {
 		return splitIntoRanges().stream()
 								.flatMap(range -> shrinkIterationsRange(range.get1(), range.get2()));
 	}
@@ -136,12 +151,12 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		return ranges;
 	}
 
-	private ShrinkableChain<T> newShrinkableChain(List<Iteration<T>> shrunkIterations, int maxSize) {
+	private ShrinkableChain<T> newShrinkableChain(List<Iteration<T>> shrunkIterations, int newMaxSize) {
 		return new ShrinkableChain<>(
 			randomSeed,
 			initialSupplier,
 			chainGenerators,
-			maxSize,
+			newMaxSize,
 			shrunkIterations
 		);
 	}
