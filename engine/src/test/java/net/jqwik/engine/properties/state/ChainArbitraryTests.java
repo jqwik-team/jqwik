@@ -180,7 +180,7 @@ class ChainArbitraryTests {
 				return false;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-			assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
+			assertThat(collectAllValues(chain)).containsExactly(1, 1, 1, 1, 1);
 		}
 
 		@Property
@@ -202,7 +202,34 @@ class ChainArbitraryTests {
 				return last <= 1;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-			assertThat(collectAllValues(chain)).contains(2);
+			assertThat(collectAllValues(chain)).containsExactly(2);
+		}
+
+		//@Property
+		void fullyShrinkMutatorsWithoutStateAccess(@ForAll Random random) {
+			Arbitrary<Chain<Integer>> chains = Chains.chains(
+				() -> 0,
+				ignore -> Arbitraries.integers().between(1, 5).map(i -> Chains.Mutator.withName(t -> t + i, "add" + i))
+			).ofMaxSize(10);
+
+			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
+				int last = 1;
+				for (Integer value : chain) {
+					last = value;
+				}
+				return last <= 3;
+			};
+			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			// Shrinkable<Chain<Integer>> chainShrinkable = TestingSupport.generateUntil(
+			// 	chains.generator(1000),
+			// 	random,
+			// 	chain -> {
+			// 		chain.start().forEachRemaining(i -> {});
+			// 		return chain.countIterations() > 1;
+			// 	}
+			// );
+			// Chain<Integer> chain = ShrinkingSupport.shrink(chainShrinkable, falsifier, null);
+			assertThat(collectAllValues(chain)).containsExactly(3);
 		}
 
 		@Property
@@ -224,7 +251,7 @@ class ChainArbitraryTests {
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
 
 			assertThat(chain.countIterations()).isEqualTo(5);
-			assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
+			assertThat(collectAllValues(chain)).containsExactly(1, 1, 1, 1, 1);
 		}
 
 		// TODO: Test for mixed shrinking. Shrinking should only use same mutator arbitrary
