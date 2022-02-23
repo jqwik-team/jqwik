@@ -166,7 +166,6 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		private Shrinkable<Chains.Mutator<T>> runNewStep(long nextSeed) {
-			Shrinkable<Chains.Mutator<T>> next;
 			AtomicBoolean stateHasBeenAccessed = new AtomicBoolean(false);
 			Supplier<T> currentSupplier = () -> {
 				stateHasBeenAccessed.set(true);
@@ -175,7 +174,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			Random random = SourceOfRandomness.newRandom(nextSeed);
 			Arbitrary<Chains.Mutator<T>> arbitrary = nextMutatorArbitrary(currentSupplier, random);
 			RandomGenerator<Chains.Mutator<T>> generator = arbitrary.generator(maxSize);
-			next = generator.next(random);
+			Shrinkable<Chains.Mutator<T>> next = generator.next(random);
 			iterations.add(new Iteration<>(nextSeed, stateHasBeenAccessed.get(), next));
 			return next;
 		}
