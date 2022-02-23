@@ -6,9 +6,13 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
+import net.jqwik.api.stateful.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.engine.properties.shrinking.*;
+import net.jqwik.engine.support.*;
 
 public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
@@ -56,9 +60,70 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	}
 
 	private Stream<Shrinkable<Chain<T>>> shrinkAllIterations() {
+		List<Tuple2<Integer, Integer>> shrinkingRanges = splitIntoRanges();
+
+		// return shrinkingRanges.stream()
+		// 					  .flatMap(range -> shrinkIterationsRange(range.get1(), range.get2()));
 		return IntStream.range(0, iterations.size())
 						.boxed()
-						.flatMap(this::shrinkIteration);
+						.flatMap(indexToShrink -> shrinkIteration(indexToShrink));
+	}
+
+	// private Stream<Shrinkable<Chain<T>>> shrinkIterationsRange(int startIndex, int endIndex) {
+	// 	Iteration<T> iterationToShrink = iterations.get(indexToShrink);
+	// 	Shrinkable<Chains.Mutator<T>> toShrink = iterationToShrink.shrinkable;
+	//
+	// 	return toShrink.shrink().map(shrunk -> {
+	// 		List<Iteration<T>> shrunkIterations = iterations.stream().limit(indexToShrink)
+	// 														.collect(Collectors.toList());
+	// 		Iteration<T> shrunkIteration = new Iteration<>(iterationToShrink.randomSeed, iterationToShrink.stateHasBeenAccessed, shrunk);
+	// 		shrunkIterations.add(shrunkIteration);
+	// 		// A shrunk chain can never have more iterations than the unshrunk one
+	// 		return newShrinkableChain(shrunkIterations, iterations.size());
+	// 	});
+	// }
+
+	// private Stream<Shrinkable<Chain<T>>> shrinkSequenceOfIterations(List<Iteration<T>> iterations) {
+	// 	return new ComprehensiveSizeOfListShrinker()
+	// 		.shrink(iterations, 1)
+	// 		.map(this::createShrinkableActionSequence);
+	// }
+	//
+	// private Stream<Shrinkable<Chains.Mutator<T>>> shrinkIterationsOneAfterTheOther() {
+	// 	List<Shrinkable<Action<T>>> shrinkableActions = actionGenerator.generated();
+	// 	List<Stream<Shrinkable<ActionSequence<T>>>> shrinkPerElementStreams = new ArrayList<>();
+	// 	for (int i = 0; i < shrinkableActions.size(); i++) {
+	// 		int index = i;
+	// 		Shrinkable<Action<T>> element = shrinkableActions.get(i);
+	// 		Stream<Shrinkable<ActionSequence<T>>> shrinkElement = element.shrink().flatMap(shrunkElement -> {
+	// 			List<Shrinkable<Action<T>>> actionsCopy = new ArrayList<>(shrinkableActions);
+	// 			actionsCopy.set(index, shrunkElement);
+	// 			return Stream.of(createShrinkableActionSequence(actionsCopy));
+	// 		});
+	// 		shrinkPerElementStreams.add(shrinkElement);
+	// 	}
+	// 	return JqwikStreamSupport.concat(shrinkPerElementStreams);
+	// }
+
+
+	// A shrinking range comprise
+	private List<Tuple2<Integer, Integer>> splitIntoRanges() {
+		List<Tuple2<Integer, Integer>> ranges = new ArrayList<>();
+		// Move backwards to the next iteration with access to state
+		int end = 0;
+		for (int i = iterations.size() - 1; i >= 0; i--) {
+			end = i;
+			while (i >= 0) {
+				Iteration<T> current = iterations.get(i);
+				if (current.stateHasBeenAccessed || i == 0) {
+					ranges.add(Tuple.of(i, end));
+					break;
+				}
+				i--;
+			}
+		}
+		// ranges.add(Tuple.of(0, end));
+		return ranges;
 	}
 
 	private Stream<Shrinkable<Chain<T>>> shrinkIteration(int indexToShrink) {
