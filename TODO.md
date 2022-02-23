@@ -1,3 +1,11 @@
+new stateful:
+    - Best place for Mutator interface?
+        Mutator.withName -> test helper
+    - Chain toString() implementation
+    - Are there more shrinking opportunities in mixed state access chains?
+    - Introduce ActionChain
+    - Introduce ModelChain
+
 1.6.x
 
     - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
