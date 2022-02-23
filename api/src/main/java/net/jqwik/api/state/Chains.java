@@ -12,7 +12,22 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public class Chains {
 
-	public interface Mutator<T> extends Function<T, T> {}
+	public interface Mutator<T> extends Function<T, T> {
+		static <S> Mutator<S> withName(Function<S, S> mutator, String name) {
+			return new Mutator<S>() {
+				@Override
+				public S apply(S s) {
+					return mutator.apply(s);
+				}
+
+				@Override
+				public String toString() {
+					return name;
+				}
+			};
+
+		}
+	}
 
 	@API(status = INTERNAL)
 	public static abstract class ChainsFacade {

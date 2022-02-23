@@ -183,36 +183,16 @@ class ChainArbitraryTests {
 			assertThat(collectAllValues(chain)).contains(1, 1, 1, 1, 1);
 		}
 
-		@Property
+		@Property(seed = "-6202415070118667909")
 		void removeNullMutatorsDuringShrinking(@ForAll Random random) {
-			Chains.Mutator<Integer> addOne = new Chains.Mutator<Integer>() {
-				@Override
-				public Integer apply(Integer t) {
-					return t + 1;
-				}
-
-				@Override
-				public String toString() {
-					return "addOne";
-				}
-			};
-			Chains.Mutator<Integer> doNothing = new Chains.Mutator<Integer>() {
-				@Override
-				public Integer apply(Integer t) {
-					return t;
-				}
-
-				@Override
-				public String toString() {
-					return "doNothing";
-				}
-			};
+			Chains.Mutator<Integer> addOne = Chains.Mutator.withName(t -> t + 1, "addOne");
+			Chains.Mutator<Integer> doNothing = Chains.Mutator.withName(t -> t, "doNothing");
 
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 1,
 				ignore -> Arbitraries.just(addOne),
 				ignore -> Arbitraries.just(doNothing)
-			).ofMaxSize(10);
+			).ofMaxSize(20); // Size must be large enough to have at least a single addOne mutator
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				int last = 1;
