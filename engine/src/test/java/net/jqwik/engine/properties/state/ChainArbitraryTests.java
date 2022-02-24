@@ -1,7 +1,9 @@
 package net.jqwik.engine.properties.state;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
@@ -11,9 +13,10 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.Arbitraries.*;
 
+@PropertyDefaults(tries = 100)
 class ChainArbitraryTests {
 
-	@Example
+	@Property
 	void chainWithSingleGenerator(@ForAll Random random) {
 		Function<Supplier<Integer>, Arbitrary<Mutator<Integer>>> growBelow100OtherwiseShrink = intSupplier -> {
 			int last = intSupplier.get();
@@ -52,7 +55,7 @@ class ChainArbitraryTests {
 		assertThat(chain.appliedMutators()).hasSize(50);
 	}
 
-	@Example
+	@Property
 	void chainWithSeveralGenerators(@ForAll Random random) {
 		Function<Supplier<Integer>, Arbitrary<Mutator<Integer>>> growBelow100otherwiseShrink = intSupplier -> {
 			int last = intSupplier.get();
@@ -88,7 +91,7 @@ class ChainArbitraryTests {
 		assertThat(chain.countIterations()).isEqualTo(50);
 	}
 
-	@Example
+	@Property
 	void chainCanBeRerunWithSameValues(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
@@ -105,7 +108,7 @@ class ChainArbitraryTests {
 
 	}
 
-	@Example
+	@Property
 	void generatorThatReturnsNullIsIgnored(@ForAll Random random) {
 		Function<Supplier<List<Integer>>, Arbitrary<Mutator<List<Integer>>>> addRandomIntToList =
 			ignore -> integers().between(0, 10)
@@ -157,6 +160,38 @@ class ChainArbitraryTests {
 		assertThatThrownBy(() -> {
 			chain.start().forEachRemaining(ignore -> {});
 		}).isInstanceOf(JqwikException.class);
+	}
+
+	@Property(tries = 5)
+	void concurrentlyIteratingChainProducesSameResult(@ForAll Random random) throws Exception {
+		Arbitrary<Chain<Integer>> chains = Chains.chains(
+			() -> 1,
+			ignore -> Arbitraries.integers().between(1, 10).map(i -> t -> t + i)
+		).ofMaxSize(30);
+
+		Chain<Integer> chain = chains.generator(100).next(random).value();
+
+		Callable<List<Integer>> allValuesCallable = () -> {
+			List<Integer> values = new ArrayList<>();
+			for (Integer value : chain) {
+				Thread.sleep(random.nextInt(10));
+				values.add(value);
+			}
+			return values;
+		};
+
+		ExecutorService service = Executors.newFixedThreadPool(3);
+		List<Future<List<Integer>>> futures = service.invokeAll(
+			Arrays.asList(allValuesCallable, allValuesCallable, allValuesCallable)
+		);
+
+		List<Integer> values1 = futures.get(0).get();
+		List<Integer> values2 = futures.get(1).get();
+		List<Integer> values3 = futures.get(2).get();
+
+		assertThat(values1).hasSize(30);
+		assertThat(values1).isEqualTo(values2);
+		assertThat(values1).isEqualTo(values3);
 	}
 
 	private <T> List<T> collectAllValues(Chain<T> chain) {
