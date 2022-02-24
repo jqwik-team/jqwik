@@ -17,14 +17,14 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	private final long randomSeed;
 	private final Supplier<T> initialSupplier;
-	private final List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> chainGenerators;
+	private final List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators;
 	private final int maxSize;
 	private final List<Iteration<T>> iterations;
 
 	public ShrinkableChain(
 		long randomSeed,
 		Supplier<T> initialSupplier,
-		List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> chainGenerators,
+		List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators,
 		int maxSize
 	) {
 		this(randomSeed, initialSupplier, chainGenerators, maxSize, new ArrayList<>());
@@ -32,7 +32,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	private ShrinkableChain(
 		long randomSeed, Supplier<T> initialSupplier,
-		List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> chainGenerators,
+		List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators,
 		int maxSize,
 		List<Iteration<T>> iterations
 	) {
@@ -104,7 +104,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		for (int i = 0; i < iterationsRange.size(); i++) {
 			int index = i;
 			Iteration<T> iteration = iterationsRange.get(i);
-			Shrinkable<Mutator<T>> element = iteration.shrinkable;
+			Shrinkable<Step<T>> element = iteration.shrinkable;
 			Stream<List<Iteration<T>>> shrinkElement = element.shrink().flatMap(shrunkElement -> {
 				List<Iteration<T>> iterationsCopy = new ArrayList<>(iterationsRange);
 				iterationsCopy.set(index, new Iteration<>(iteration.randomSeed, iteration.stateHasBeenAccessed, shrunkElement));
@@ -163,7 +163,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	@Override
 	public ShrinkingDistance distance() {
-		List<Shrinkable<Mutator<T>>> shrinkablesForDistance = new ArrayList<>();
+		List<Shrinkable<Step<T>>> shrinkablesForDistance = new ArrayList<>();
 		for (int i = 0; i < maxSize; i++) {
 			if (i < iterations.size()) {
 				shrinkablesForDistance.add(iterations.get(i).shrinkable);
@@ -187,17 +187,17 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		@Override
-		public int countIterations() {
+		public int countSteps() {
 			return iterations.size();
 		}
 
 		@Override
-		public int maxSize() {
+		public int maxSteps() {
 			return maxSize;
 		}
 
 		@Override
-		public List<Mutator<T>> appliedMutators() {
+		public List<Step<T>> appliedSteps() {
 			return iterations.stream().map(i -> i.shrinkable.value()).collect(Collectors.toList());
 		}
 	}
@@ -223,7 +223,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			// Create deterministic random in order to reuse in shrinking
 			long nextSeed = random.nextLong();
 
-			Shrinkable<Mutator<T>> next = null;
+			Shrinkable<Step<T>> next = null;
 			if (steps < iterations.size()) {
 				next = rerunStep(nextSeed);
 			} else {
@@ -234,31 +234,31 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			return current;
 		}
 
-		private Shrinkable<Mutator<T>> rerunStep(long nextSeed) {
+		private Shrinkable<Step<T>> rerunStep(long nextSeed) {
 			Iteration<T> iteration = iterations.get(steps);
 			return iteration.shrinkable;
 		}
 
-		private Shrinkable<Mutator<T>> runNewStep(long nextSeed) {
+		private Shrinkable<Step<T>> runNewStep(long nextSeed) {
 			AtomicBoolean stateHasBeenAccessed = new AtomicBoolean(false);
 			Supplier<T> currentSupplier = () -> {
 				stateHasBeenAccessed.set(true);
 				return current;
 			};
 			Random random = SourceOfRandomness.newRandom(nextSeed);
-			Arbitrary<Mutator<T>> arbitrary = nextMutatorArbitrary(currentSupplier, random);
-			RandomGenerator<Mutator<T>> generator = arbitrary.generator(maxSize);
-			Shrinkable<Mutator<T>> next = generator.next(random);
+			Arbitrary<Step<T>> arbitrary = nextMutatorArbitrary(currentSupplier, random);
+			RandomGenerator<Step<T>> generator = arbitrary.generator(maxSize);
+			Shrinkable<Step<T>> next = generator.next(random);
 			iterations.add(new Iteration<>(nextSeed, stateHasBeenAccessed.get(), next));
 			return next;
 		}
 
-		private Arbitrary<Mutator<T>> nextMutatorArbitrary(Supplier<T> currentSupplier, Random random) {
+		private Arbitrary<Step<T>> nextMutatorArbitrary(Supplier<T> currentSupplier, Random random) {
 			return MaxTriesLoop.loop(
 				() -> true,
 				arbitrary -> {
 					int generatorIndex = random.nextInt(chainGenerators.size());
-					Function<Supplier<T>, Arbitrary<Mutator<T>>> chainGenerator = chainGenerators.get(generatorIndex);
+					Function<Supplier<T>, Arbitrary<Step<T>>> chainGenerator = chainGenerators.get(generatorIndex);
 					arbitrary = chainGenerator.apply(currentSupplier);
 					if (arbitrary == null) {
 						return Tuple.of(false, arbitrary);
@@ -277,12 +277,12 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	private static class Iteration<T> {
 		final long randomSeed;
 		final boolean stateHasBeenAccessed;
-		final Shrinkable<Mutator<T>> shrinkable;
+		final Shrinkable<Step<T>> shrinkable;
 
 		private Iteration(
 			long randomSeed,
 			boolean stateHasBeenAccessed,
-			Shrinkable<Mutator<T>> shrinkable
+			Shrinkable<Step<T>> shrinkable
 		) {
 			this.randomSeed = randomSeed;
 			this.stateHasBeenAccessed = stateHasBeenAccessed;

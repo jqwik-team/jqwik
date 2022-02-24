@@ -22,7 +22,7 @@ public class Chains {
 
 		public abstract <T> ChainArbitrary<T> chains(
 			Supplier<T> initialSupplier,
-			List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> generatorsList
+			List<Function<Supplier<T>, Arbitrary<Step<T>>>> generatorsList
 		);
 	}
 
@@ -30,8 +30,8 @@ public class Chains {
 	}
 
 	@SafeVarargs
-	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<Mutator<T>>> ... chainGenerators) {
-		List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> generatorsList = Arrays.asList(chainGenerators);
+	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<Step<T>>> ... chainGenerators) {
+		List<Function<Supplier<T>, Arbitrary<Step<T>>>> generatorsList = Arrays.asList(chainGenerators);
 		if (generatorsList.isEmpty()) {
 			throw new IllegalArgumentException("You must specify at least one chain generator");
 		}
