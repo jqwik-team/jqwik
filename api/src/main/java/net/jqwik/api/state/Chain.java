@@ -16,6 +16,8 @@ public interface Chain<T> extends Iterable<T> {
 		return start();
 	}
 
+	List<Mutator<T>> appliedMutators();
+
 	int countIterations();
 
 	int maxSize();

@@ -5,7 +5,6 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
-import net.jqwik.api.state.Chains.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -35,6 +34,7 @@ class ChainArbitraryTests {
 
 		assertThat(chain.maxSize()).isEqualTo(50);
 		assertThat(chain.countIterations()).isEqualTo(0);
+		assertThat(chain.appliedMutators()).hasSize(0);
 
 		Iterator<Integer> iterator = chain.start();
 		int last = 1;
@@ -49,6 +49,7 @@ class ChainArbitraryTests {
 		}
 
 		assertThat(chain.countIterations()).isEqualTo(50);
+		assertThat(chain.appliedMutators()).hasSize(50);
 	}
 
 	@Example
@@ -184,13 +185,14 @@ class ChainArbitraryTests {
 				return false;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			assertThat(chain.countIterations()).isEqualTo(chain.maxSize());
 			assertThat(collectAllValues(chain)).containsExactly(1);
 		}
 
 		@Property
 		void removeNullMutatorsDuringShrinking(@ForAll Random random) {
-			Mutator<Integer> addOne = Mutator.withName(t -> t + 1, "addOne");
-			Mutator<Integer> doNothing = Mutator.withName(t -> t, "doNothing");
+			Mutator<Integer> addOne = Mutators.withName(t -> t + 1, "addOne");
+			Mutator<Integer> doNothing = Mutators.withName(t -> t, "doNothing");
 
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 1,
@@ -206,6 +208,7 @@ class ChainArbitraryTests {
 				return last <= 1;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			assertThat(chain.countIterations()).isEqualTo(chain.maxSize());
 			assertThat(collectAllValues(chain)).containsExactly(2);
 		}
 
@@ -213,7 +216,7 @@ class ChainArbitraryTests {
 		void fullyShrinkMutatorsWithoutStateAccess(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
-				ignore -> integers().between(1, 5).map(i -> Mutator.withName(t -> t + i, "add" + i))
+				ignore -> integers().between(1, 5).map(i -> Mutators.withName(t -> t + i, "add" + i))
 			).ofMaxSize(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
@@ -257,6 +260,7 @@ class ChainArbitraryTests {
 				return true;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			assertThat(chain.countIterations()).isEqualTo(chain.maxSize());
 			assertThat(collectAllValues(chain)).containsExactly(1, 1, 1, 1);
 		}
 
@@ -267,16 +271,13 @@ class ChainArbitraryTests {
 				supplier -> {
 					int current = Math.abs(supplier.get());
 					if (current > 100) {
-						return just(Mutator.withName(t -> t / 2, "half"));
+						return just(Mutators.withName(t -> t / 2, "half"));
 					} else {
-						return integers().between(current, current * 2).map(i -> Mutator.withName(t -> t + i, "add-" + i));
+						return integers().between(current, current * 2).map(i -> Mutators.withName(t -> t + i, "add-" + i));
 					}
 				},
-				ignore -> Arbitraries.just(Mutator.withName(t -> t - 1, "minus-1"))
+				ignore -> Arbitraries.just(Mutators.withName(t -> t - 1, "minus-1"))
 			).ofMaxSize(10);
-
-			// Chain<Integer> chain = chains.generator(100).next(random).value();
-			// System.out.println(collectAllValues(chain));
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				for (Integer value : chain) {
@@ -287,10 +288,12 @@ class ChainArbitraryTests {
 				return true;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+
 			List<Integer> series = collectAllValues(chain);
+			assertThat(chain.countIterations()).isEqualTo(chain.maxSize());
 			assertThat(series.get(series.size() - 1))
 				.describedAs("Last element of %s", series)
-				.isGreaterThan(20);
+				.isBetween(21, 40); // It's either 21 or the double of the but-last value
 			assertThat(series.get(series.size() - 2))
 				.describedAs("But-last element of %s", series)
 				.isLessThanOrEqualTo(20);

@@ -11,11 +11,11 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 
 	private int size = 0;
 	private final Supplier<T> initialSupplier;
-	private final List<Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>>> chainGenerators;
+	private final List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> chainGenerators;
 
 	public DefaultChainArbitrary(
 		Supplier<T> initialSupplier,
-		List<Function<Supplier<T>, Arbitrary<Chains.Mutator<T>>>> chainGenerators
+		List<Function<Supplier<T>, Arbitrary<Mutator<T>>>> chainGenerators
 	) {
 		this.initialSupplier = initialSupplier;
 		this.chainGenerators = chainGenerators;
