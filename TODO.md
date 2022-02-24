@@ -1,5 +1,6 @@
 new stateful:
 
+    - Use frequencies to generate steps
     - Are there more shrinking opportunities in mixed state access chains?
     - Introduce ActionChain
     - Introduce ModelChain

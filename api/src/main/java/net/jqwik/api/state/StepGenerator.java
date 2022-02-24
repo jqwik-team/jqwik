@@ -4,9 +4,11 @@ import java.util.function.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 @FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface Step<T> extends Function<T, T> {
+public interface StepGenerator<T> extends Function<Supplier<T>, Arbitrary<Step<T>>> {
 }

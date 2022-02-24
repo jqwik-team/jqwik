@@ -17,28 +17,28 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	private final long randomSeed;
 	private final Supplier<T> initialSupplier;
-	private final List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators;
+	private final Function<Random, StepGenerator<T>> chooseStepGenerator;
 	private final int maxSize;
 	private final List<Iteration<T>> iterations;
 
 	public ShrinkableChain(
 		long randomSeed,
 		Supplier<T> initialSupplier,
-		List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators,
+		Function<Random, StepGenerator<T>> chooseStepGenerator,
 		int maxSize
 	) {
-		this(randomSeed, initialSupplier, chainGenerators, maxSize, new ArrayList<>());
+		this(randomSeed, initialSupplier, chooseStepGenerator, maxSize, new ArrayList<>());
 	}
 
 	private ShrinkableChain(
 		long randomSeed, Supplier<T> initialSupplier,
-		List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators,
+		Function<Random, StepGenerator<T>> chooseStepGenerator,
 		int maxSize,
 		List<Iteration<T>> iterations
 	) {
 		this.randomSeed = randomSeed;
 		this.initialSupplier = initialSupplier;
-		this.chainGenerators = chainGenerators;
+		this.chooseStepGenerator = chooseStepGenerator;
 		this.maxSize = maxSize;
 		this.iterations = iterations;
 	}
@@ -155,7 +155,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		return new ShrinkableChain<>(
 			randomSeed,
 			initialSupplier,
-			chainGenerators,
+			chooseStepGenerator,
 			newMaxSize,
 			shrunkIterations
 		);
@@ -222,14 +222,17 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 			// Create deterministic random in order to reuse in shrinking
 			long nextSeed = random.nextLong();
-
 			Shrinkable<Step<T>> next = null;
-			if (steps < iterations.size()) {
-				next = rerunStep(nextSeed);
-			} else {
-				next = runNewStep(nextSeed);
+
+			synchronized (ShrinkableChain.this) {
+				if (steps < iterations.size()) {
+					next = rerunStep(nextSeed);
+				} else {
+					next = runNewStep(nextSeed);
+				}
+				steps++;
 			}
-			steps++;
+
 			current = next.value().apply(current);
 			return current;
 		}
@@ -257,8 +260,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			return MaxTriesLoop.loop(
 				() -> true,
 				arbitrary -> {
-					int generatorIndex = random.nextInt(chainGenerators.size());
-					Function<Supplier<T>, Arbitrary<Step<T>>> chainGenerator = chainGenerators.get(generatorIndex);
+					Function<Supplier<T>, Arbitrary<Step<T>>> chainGenerator = chooseStepGenerator.apply(random);
 					arbitrary = chainGenerator.apply(currentSupplier);
 					if (arbitrary == null) {
 						return Tuple.of(false, arbitrary);

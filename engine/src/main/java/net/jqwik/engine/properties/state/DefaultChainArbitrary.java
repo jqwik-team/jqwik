@@ -6,26 +6,29 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.support.*;
 
 public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArbitrary<T> {
 
 	private int size = 0;
+	private final Function<Random, StepGenerator<T>> stepGenerator;
 	private final Supplier<T> initialSupplier;
-	private final List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators;
+	// private final List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators;
 
 	public DefaultChainArbitrary(
 		Supplier<T> initialSupplier,
-		List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators
+		List<Tuple.Tuple2<Integer, StepGenerator<T>>> stepGeneratorFrequencies
 	) {
 		this.initialSupplier = initialSupplier;
-		this.chainGenerators = chainGenerators;
+		this.stepGenerator = new ChooseRandomlyByFrequency<>(stepGeneratorFrequencies);
+		// this.chainGenerators = chainGenerators;
 	}
 
 	@Override
 	public RandomGenerator<Chain<T>> generator(int genSize) {
 		final int effectiveSize =
 			size != 0 ? size : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-		return random -> new ShrinkableChain<T>(random.nextLong(), initialSupplier, chainGenerators, effectiveSize);
+		return random -> new ShrinkableChain<T>(random.nextLong(), initialSupplier, stepGenerator, effectiveSize);
 	}
 
 	@Override

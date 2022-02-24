@@ -14,6 +14,6 @@ class FrequencyGenerator<T> extends ChooseRandomlyByFrequency<T> implements Rand
 
 	@Override
 	public Shrinkable<T> next(Random random) {
-		return new ChooseValueShrinkable<>(choose(random), possibleValues());
+		return new ChooseValueShrinkable<>(apply(random), possibleValues());
 	}
 }

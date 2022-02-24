@@ -1,10 +1,11 @@
 package net.jqwik.engine.support;
 
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public class ChooseRandomlyByFrequency<T> {
+public class ChooseRandomlyByFrequency<T> implements Function<Random, T> {
 
 	private final Map<T, Integer> upperBorders = new HashMap<>();
 	private int size = 0;
@@ -53,7 +54,7 @@ public class ChooseRandomlyByFrequency<T> {
 		return currentChoice;
 	}
 
-	public T choose(Random random) {
+	public T apply(Random random) {
 		return choose(random.nextInt(size));
 	}
 }
