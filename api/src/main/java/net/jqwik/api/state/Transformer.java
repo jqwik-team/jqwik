@@ -6,6 +6,15 @@ import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
+/**
+ * A transformer is used to transform a state of type {@code T} into another value of this type.
+ * Transformation can create a new object, or change the inner state of an object and return it.
+ *
+ * @param <T> The type of state to be transformed in a chain
+ *
+ * @see Chain
+ * @see TransformerProvider
+ */
 @FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface Transformer<T> extends Function<T, T> {

@@ -5,6 +5,7 @@ import java.util.concurrent.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -103,11 +104,39 @@ class ChainArbitraryTests {
 		List<Integer> values1 = collectAllValues(chain);
 		List<Integer> values2 = collectAllValues(chain);
 		assertThat(values2).isEqualTo(values1);
-
 	}
 
 	@Property
-	void generatorThatReturnsNullIsIgnored(@ForAll Random random) {
+	@StatisticsReport(onFailureOnly = true)
+	void useFrequenciesToChooseTransformers(@ForAll Random random) {
+
+		TransformerProvider<Integer> just0 = ignore -> Arbitraries.just(t -> 0);
+		TransformerProvider<Integer> just1 = ignore -> Arbitraries.just(t -> 1);
+		TransformerProvider<Integer> just2 = ignore -> Arbitraries.just(t -> 2);
+
+		Arbitrary<Chain<Integer>> chains = Chains.chains(
+			() -> 0,
+			Tuple.of(0, just0),
+			Tuple.of(1, just1),
+			Tuple.of(4, just2)
+		).ofMaxSize(10);
+
+		Shrinkable<Chain<Integer>> chainShrinkable = chains.generator(100).next(random);
+		Chain<Integer> chain = chainShrinkable.value();
+
+		for (Integer value : chain) {
+			Statistics.collect(value);
+		}
+
+		Statistics.coverage(checker -> {
+			checker.check(0).count(c -> c == 0);
+			checker.check(1).percentage(p -> p > 0 && p < 30);
+			checker.check(2).percentage(p -> p > 70);
+		});
+	}
+
+	@Property
+	void transformerThatReturnsNullIsIgnored(@ForAll Random random) {
 		TransformerProvider<List<Integer>> addRandomIntToList =
 			ignore -> integers().between(0, 10)
 								.map(i -> l -> {
