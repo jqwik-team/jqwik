@@ -6,16 +6,16 @@ import net.jqwik.api.state.*;
 
 class ChainsTestingHelper {
 
-	static <S> Step<S> withName(Function<S, S> mutator, String name) {
-		return new Step<S>() {
+	static <S> Transformer<S> transformer(Function<S, S> mutator, String description) {
+		return new Transformer<S>() {
 			@Override
 			public S apply(S s) {
 				return mutator.apply(s);
 			}
 
 			@Override
-			public String toString() {
-				return name;
+			public String transformation() {
+				return description;
 			}
 		};
 

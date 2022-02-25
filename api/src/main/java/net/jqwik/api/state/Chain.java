@@ -16,9 +16,9 @@ public interface Chain<T> extends Iterable<T> {
 		return start();
 	}
 
-	List<Step<T>> appliedSteps();
+	List<String> transformations();
 
-	int countSteps();
+	int countTransformations();
 
-	int maxSteps();
+	int maxTransformations();
 }

@@ -2,7 +2,6 @@ package net.jqwik.engine.properties.state;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
@@ -17,7 +16,7 @@ class ChainArbitraryTests {
 
 	@Property
 	void chainWithSingleGenerator(@ForAll Random random) {
-		Function<Supplier<Integer>, Arbitrary<Step<Integer>>> growBelow100OtherwiseShrink = intSupplier -> {
+		TransformerProvider<Integer> growBelow100OtherwiseShrink = intSupplier -> {
 			int last = intSupplier.get();
 			if (last < 100) {
 				return integers().between(0, 10).map(i -> t -> t + i);
@@ -34,9 +33,9 @@ class ChainArbitraryTests {
 
 		Chain<Integer> chain = chainShrinkable.value();
 
-		assertThat(chain.maxSteps()).isEqualTo(50);
-		assertThat(chain.countSteps()).isEqualTo(0);
-		assertThat(chain.appliedSteps()).hasSize(0);
+		assertThat(chain.maxTransformations()).isEqualTo(50);
+		assertThat(chain.countTransformations()).isEqualTo(0);
+		assertThat(chain.transformations()).hasSize(0);
 
 		Iterator<Integer> iterator = chain.start();
 		int last = 1;
@@ -50,13 +49,13 @@ class ChainArbitraryTests {
 			last = next;
 		}
 
-		assertThat(chain.countSteps()).isEqualTo(50);
-		assertThat(chain.appliedSteps()).hasSize(50);
+		assertThat(chain.countTransformations()).isEqualTo(50);
+		assertThat(chain.transformations()).hasSize(50);
 	}
 
 	@Property
 	void chainWithSeveralGenerators(@ForAll Random random) {
-		Function<Supplier<Integer>, Arbitrary<Step<Integer>>> growBelow100otherwiseShrink = intSupplier -> {
+		TransformerProvider<Integer> growBelow100otherwiseShrink = intSupplier -> {
 			int last = intSupplier.get();
 			if (last < 100) {
 				return integers().between(0, 10).map(i -> t -> t + i);
@@ -65,7 +64,7 @@ class ChainArbitraryTests {
 			}
 		};
 
-		Function<Supplier<Integer>, Arbitrary<Step<Integer>>> resetToValueBetween0andLastAbsolute = supplier -> {
+		TransformerProvider<Integer> resetToValueBetween0andLastAbsolute = supplier -> {
 			int last = supplier.get();
 			return integers().between(0, Math.abs(last)).map(value -> (ignore -> value));
 		};
@@ -81,13 +80,13 @@ class ChainArbitraryTests {
 
 		Chain<Integer> chain = chainShrinkable.value();
 
-		assertThat(chain.maxSteps()).isEqualTo(50);
-		assertThat(chain.countSteps()).isEqualTo(0);
+		assertThat(chain.maxTransformations()).isEqualTo(50);
+		assertThat(chain.countTransformations()).isEqualTo(0);
 
 		Iterator<Integer> iterator = chain.start();
 		iterator.forEachRemaining(ignore -> {});
 
-		assertThat(chain.countSteps()).isEqualTo(50);
+		assertThat(chain.countTransformations()).isEqualTo(50);
 	}
 
 	@Property
@@ -109,14 +108,14 @@ class ChainArbitraryTests {
 
 	@Property
 	void generatorThatReturnsNullIsIgnored(@ForAll Random random) {
-		Function<Supplier<List<Integer>>, Arbitrary<Step<List<Integer>>>> addRandomIntToList =
+		TransformerProvider<List<Integer>> addRandomIntToList =
 			ignore -> integers().between(0, 10)
 								.map(i -> l -> {
 									l.add(i);
 									return l;
 								});
 
-		Function<Supplier<List<Integer>>, Arbitrary<Step<List<Integer>>>> removeFirstElement = supplier -> {
+		TransformerProvider<List<Integer>> removeFirstElement = supplier -> {
 			List<Integer> last = supplier.get();
 			if (last.isEmpty()) {
 				return null;
@@ -144,7 +143,7 @@ class ChainArbitraryTests {
 			assertThat(lastSize).isNotEqualTo(next.size());
 			last = next;
 		}
-		assertThat(chain.countSteps()).isEqualTo(13);
+		assertThat(chain.countTransformations()).isEqualTo(13);
 	}
 
 	@Example
@@ -219,20 +218,20 @@ class ChainArbitraryTests {
 				return false;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-			assertThat(chain.countSteps()).isEqualTo(chain.maxSteps());
+			assertThat(chain.countTransformations()).isEqualTo(chain.maxTransformations());
 			assertThat(collectAllValues(chain)).containsExactly(1);
 		}
 
 		@Property
-		void removeNullMutatorsDuringShrinking(@ForAll Random random) {
-			Step<Integer> addOne = ChainsTestingHelper.withName(t -> t + 1, "addOne");
-			Step<Integer> doNothing = ChainsTestingHelper.withName(t -> t, "doNothing");
+		void removeNullTransformersDuringShrinking(@ForAll Random random) {
+			Transformer<Integer> addOne = ChainsTestingHelper.transformer(t -> t + 1, "addOne");
+			Transformer<Integer> doNothing = ChainsTestingHelper.transformer(t -> t, "doNothing");
 
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 1,
 				ignore -> Arbitraries.just(addOne),
 				ignore -> Arbitraries.just(doNothing)
-			).ofMaxSize(20); // Size must be large enough to have at least a single addOne mutator
+			).ofMaxSize(20); // Size must be large enough to have at least a single addOne transformer
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				int last = 1;
@@ -242,15 +241,15 @@ class ChainArbitraryTests {
 				return last <= 1;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-			assertThat(chain.countSteps()).isEqualTo(chain.maxSteps());
+			assertThat(chain.countTransformations()).isEqualTo(chain.maxTransformations());
 			assertThat(collectAllValues(chain)).containsExactly(2);
 		}
 
 		@Property
-		void fullyShrinkMutatorsWithoutStateAccess(@ForAll Random random) {
+		void fullyShrinkTransformersWithoutStateAccess(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
-				ignore -> integers().between(1, 5).map(i -> ChainsTestingHelper.withName(t -> t + i, "add" + i))
+				ignore -> integers().between(1, 5).map(i -> ChainsTestingHelper.transformer(t -> t + i, "add" + i))
 			).ofMaxSize(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
@@ -294,7 +293,7 @@ class ChainArbitraryTests {
 				return true;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-			assertThat(chain.countSteps()).isEqualTo(chain.maxSteps());
+			assertThat(chain.countTransformations()).isEqualTo(chain.maxTransformations());
 			assertThat(collectAllValues(chain)).containsExactly(1, 1, 1, 1);
 		}
 
@@ -305,12 +304,12 @@ class ChainArbitraryTests {
 				supplier -> {
 					int current = Math.abs(supplier.get());
 					if (current > 100) {
-						return just(ChainsTestingHelper.withName(t -> t / 2, "half"));
+						return just(ChainsTestingHelper.transformer(t -> t / 2, "half"));
 					} else {
-						return integers().between(current, current * 2).map(i -> ChainsTestingHelper.withName(t -> t + i, "add-" + i));
+						return integers().between(current, current * 2).map(i -> ChainsTestingHelper.transformer(t -> t + i, "add-" + i));
 					}
 				},
-				ignore -> Arbitraries.just(ChainsTestingHelper.withName(t -> t - 1, "minus-1"))
+				ignore -> Arbitraries.just(ChainsTestingHelper.transformer(t -> t - 1, "minus-1"))
 			).ofMaxSize(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
@@ -324,7 +323,7 @@ class ChainArbitraryTests {
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
 
 			List<Integer> series = collectAllValues(chain);
-			assertThat(chain.countSteps()).isEqualTo(chain.maxSteps());
+			assertThat(chain.countTransformations()).isEqualTo(chain.maxTransformations());
 			assertThat(series.get(series.size() - 1))
 				.describedAs("Last element of %s", series)
 				.isBetween(21, 40); // It's either 21 or the double of the but-last value

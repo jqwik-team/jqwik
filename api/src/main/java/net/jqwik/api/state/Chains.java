@@ -23,7 +23,7 @@ public class Chains {
 
 		public abstract <T> ChainArbitrary<T> chains(
 			Supplier<T> initialSupplier,
-			List<Tuple2<Integer, StepGenerator<T>>> generatorFrequencies
+			List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies
 		);
 	}
 
@@ -32,15 +32,15 @@ public class Chains {
 
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
-	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Function<Supplier<T>, Arbitrary<Step<T>>> ... stepGenerators) {
-		Tuple2<Integer, StepGenerator<T>>[] frequencies =
-			Arrays.stream(stepGenerators).map(stepGenerator -> Tuple.of(1, stepGenerator)).toArray(Tuple2[]::new);
+	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, TransformerProvider<T> ... providers) {
+		Tuple2<Integer, TransformerProvider<T>>[] frequencies =
+			Arrays.stream(providers).map(stepGenerator -> Tuple.of(1, stepGenerator)).toArray(Tuple2[]::new);
 		return chains(initialSupplier, frequencies);
 	}
 
 	@SafeVarargs
-	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Tuple2<Integer, StepGenerator<T>> ... stepGeneratorFrequencies) {
-		List<Tuple2<Integer, StepGenerator<T>>> generatorsFrequencies = Arrays.asList(stepGeneratorFrequencies);
+	public static <T> ChainArbitrary<T> chains(Supplier<T> initialSupplier, Tuple2<Integer, TransformerProvider<T>> ... providerFrequencies) {
+		List<Tuple2<Integer, TransformerProvider<T>>> generatorsFrequencies = Arrays.asList(providerFrequencies);
 		if (generatorsFrequencies.isEmpty()) {
 			throw new IllegalArgumentException("You must specify at least one step generator");
 		}

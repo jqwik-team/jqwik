@@ -11,24 +11,22 @@ import net.jqwik.engine.support.*;
 public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArbitrary<T> {
 
 	private int size = 0;
-	private final Function<Random, StepGenerator<T>> stepGenerator;
+	private final Function<Random, TransformerProvider<T>> providerGenerator;
 	private final Supplier<T> initialSupplier;
-	// private final List<Function<Supplier<T>, Arbitrary<Step<T>>>> chainGenerators;
 
 	public DefaultChainArbitrary(
 		Supplier<T> initialSupplier,
-		List<Tuple.Tuple2<Integer, StepGenerator<T>>> stepGeneratorFrequencies
+		List<Tuple.Tuple2<Integer, TransformerProvider<T>>> providerFrequencies
 	) {
 		this.initialSupplier = initialSupplier;
-		this.stepGenerator = new ChooseRandomlyByFrequency<>(stepGeneratorFrequencies);
-		// this.chainGenerators = chainGenerators;
+		this.providerGenerator = new ChooseRandomlyByFrequency<>(providerFrequencies);
 	}
 
 	@Override
 	public RandomGenerator<Chain<T>> generator(int genSize) {
 		final int effectiveSize =
 			size != 0 ? size : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-		return random -> new ShrinkableChain<T>(random.nextLong(), initialSupplier, stepGenerator, effectiveSize);
+		return random -> new ShrinkableChain<T>(random.nextLong(), initialSupplier, providerGenerator, effectiveSize);
 	}
 
 	@Override

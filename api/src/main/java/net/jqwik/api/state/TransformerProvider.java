@@ -10,5 +10,5 @@ import static org.apiguardian.api.API.Status.*;
 
 @FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface StepGenerator<T> extends Function<Supplier<T>, Arbitrary<Step<T>>> {
+public interface TransformerProvider<T> extends Function<Supplier<T>, Arbitrary<Transformer<T>>> {
 }
