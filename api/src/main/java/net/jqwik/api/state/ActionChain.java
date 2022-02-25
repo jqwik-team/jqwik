@@ -45,7 +45,7 @@ public interface ActionChain<S> {
 	 */
 	ActionChain<S> withInvariant(@Nullable String label, Consumer<S> invariant);
 
-	S finalModel();
+	S finalValue();
 
 	RunState runState();
 
