@@ -7,6 +7,7 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
+import net.jqwik.api.stateful.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -46,4 +47,19 @@ public class Chains {
 		}
 		return ChainsFacade.implementation.chains(initialSupplier, generatorsFrequencies);
 	}
+
+	public static <T> ActionChainArbitrary<T> actionChains(Supplier<T> initialSupplier, Arbitrary<? extends Action<T>> actionArbitrary) {
+		return null;
+	}
+
+	@SafeVarargs
+	public static <T> ActionChainArbitrary<T> actionChains(Supplier<T> initialSupplier, Action<T> ... actions) {
+		return null;
+	}
+
+	@SafeVarargs
+	public static <T> ActionChainArbitrary<T> actionChains(Supplier<T> initialSupplier, Tuple2<Integer, ? extends Action<T>> ... actionFrequencies) {
+		return null;
+	}
+
 }
