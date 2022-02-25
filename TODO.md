@@ -1,7 +1,6 @@
 new stateful:
 
-    - Are there more shrinking opportunities in mixed state access chains?
-    - Introduce ActionChain
+    - Introduce Action and ActionChain
     - Introduce ModelChain
     - Document
         - JavaDoc
