@@ -42,10 +42,17 @@ public class DataBasedShrinkablesGenerator implements ForAllParametersGenerator 
 			throw new IncompatibleDataException(createIncompatibilityMessage(tuple));
 		}
 		for (int i = 0; i < tuple.items().size(); i++) {
-			TypeUsage valueType = TypeUsage.of(tuple.items().get(i).getClass());
+			Object value = tuple.items().get(i);
 			TypeUsage parameterType = TypeUsageImpl.forParameter(forAllParameters.get(i));
-			if (!valueType.canBeAssignedTo(parameterType)) {
-				throw new IncompatibleDataException(createIncompatibilityMessage(tuple));
+			if (value == null) {
+				if (parameterType.getRawType().isPrimitive()) {
+					throw new IncompatibleDataException(createIncompatibilityMessage(tuple));
+				}
+			} else {
+				TypeUsage valueType = TypeUsage.of(value.getClass());
+				if (!valueType.canBeAssignedTo(parameterType)) {
+					throw new IncompatibleDataException(createIncompatibilityMessage(tuple));
+				}
 			}
 		}
 	}

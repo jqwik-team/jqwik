@@ -44,6 +44,9 @@ title: jqwik Release Notes
 
 - Some false positive matching of provider method return types has been fixed.
 
+- Data-driven properties now allow compatible null values.
+  See https://github.com/jlink/jqwik/issues/308.
+
 
 ## 1.6.4
 

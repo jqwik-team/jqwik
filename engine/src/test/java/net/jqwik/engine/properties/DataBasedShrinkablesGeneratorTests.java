@@ -23,6 +23,30 @@ class DataBasedShrinkablesGeneratorTests {
 	}
 
 	@Example
+	void nullValuesFitNonPrimitiveParameters() {
+		Iterable<Tuple.Tuple2<String, Integer>> data = Table.of(
+			Tuple.of(null, 1),
+			Tuple.of("b", null),
+			Tuple.of(null, null)
+		);
+		DataBasedShrinkablesGenerator shrinkablesGenerator = generator("stringAndInteger", data);
+
+		assertThat(values(shrinkablesGenerator.next())).containsExactly(null, Integer.valueOf(1));
+		assertThat(values(shrinkablesGenerator.next())).containsExactly("b", null);
+		assertThat(values(shrinkablesGenerator.next())).containsExactly(null, null);
+		assertThat(shrinkablesGenerator.hasNext()).isFalse();
+	}
+
+	@Example
+	void nullValuesDontFitPrimitiveParameters() {
+		Iterable<Tuple.Tuple2<String, Integer>> data = Table.of(
+			Tuple.of(null, null)
+		);
+		DataBasedShrinkablesGenerator shrinkablesGenerator = generator("stringAndInt", data);
+		assertThatThrownBy(shrinkablesGenerator::next).isInstanceOf(IncompatibleDataException.class);
+	}
+
+	@Example
 	void resetting() {
 		Iterable<Tuple.Tuple2<String, Integer>> data = Table.of(Tuple.of("a", 1), Tuple.of("b", 2));
 		DataBasedShrinkablesGenerator shrinkablesGenerator = generator("stringAndInt", data);
@@ -36,7 +60,7 @@ class DataBasedShrinkablesGeneratorTests {
 	}
 
 	@Example
-	void twoManyValues() {
+	void tooManyValues() {
 		Iterable<Tuple.Tuple3<String, Integer, Boolean>> data = Table.of(Tuple.of("a", 1, true), Tuple.of("b", 2, false));
 		DataBasedShrinkablesGenerator shrinkablesGenerator = generator("stringAndInt", data);
 
@@ -44,7 +68,7 @@ class DataBasedShrinkablesGeneratorTests {
 	}
 
 	@Example
-	void twoFewValues() {
+	void tooFewValues() {
 		Iterable<Tuple.Tuple1<String>> data = Table.of(Tuple.of("a"), Tuple.of("b"));
 		DataBasedShrinkablesGenerator shrinkablesGenerator = generator("stringAndInt", data);
 
@@ -77,5 +101,7 @@ class DataBasedShrinkablesGeneratorTests {
 	private static class MyProperties {
 
 		public void stringAndInt(@ForAll String aString, @ForAll int anInt) {}
+
+		public void stringAndInteger(@ForAll String aString, @ForAll Integer anInteger) {}
 	}
 }

@@ -1,6 +1,6 @@
 package net.jqwik.api;
 
-import javax.annotation.*;
+import org.jetbrains.annotations.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
@@ -18,7 +18,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 	int size();
 
-	default List<Object> items() {return Collections.emptyList();}
+	default List<@Nullable Object> items() {return Collections.emptyList();}
 
 	default String itemsToString() {
 		String items = items().stream().map(Objects::toString).collect(Collectors.joining(", "));
