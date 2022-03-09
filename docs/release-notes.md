@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.6.5-SNAPSHOT](#165-SNAPSHOT)
+- [1.6.5](#165)
 - [1.6.4](#164)
 - [1.6.3](#163)
 - [1.6.2](#162)
@@ -27,7 +27,13 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.6.5-SNAPSHOT
+## 1.6.5
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/1.6.5/user-guide.html">User guide</a>,
+<a href="/docs/1.6.5/javadoc/index.html">javadoc</a>
+and <a href="/docs/1.6.5/kdoc/index.html">kdoc</a>
+</p>
 
 #### New and Enhanced Features
 
