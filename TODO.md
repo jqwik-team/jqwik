@@ -1,12 +1,9 @@
 1.6.x
 
-    - Find a way to somehow clean-up generated objects after each try or property
+    - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
 
-        - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
-
-        - <T,S,U> SetArbitrary<E>.combineEach(Arbitrary<S>).as(BiFunction<T, E, U>): Arbitrary<Set<U>>
+    - <T,S,U> SetArbitrary<E>.combineEach(Arbitrary<S>).as(BiFunction<T, E, U>): Arbitrary<Set<U>>
             - For all collection arbitraries
-
 
     - Kotlin convenience functions:
         - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)

@@ -32,6 +32,6 @@ ext {
 	findbugsVersion = '3.0.2'
 	jetbrainsAnnotationsVersion = '23.0.0'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.6.5'
+	jqwikVersion = '1.6.6-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
