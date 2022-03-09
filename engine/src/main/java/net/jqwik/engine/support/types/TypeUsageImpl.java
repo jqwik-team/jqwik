@@ -408,6 +408,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 			return true;
 		if (targetType.getRawType().isAssignableFrom(rawType)) {
 			// TODO: this is too loose, e.g. DefaultStringArbitrary can be assigned to Arbitrary<Integer>
+			// In order to solve that nested type arguments of this and targetType must be considered
 			if (allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments())) {
 				return true;
 			} else {

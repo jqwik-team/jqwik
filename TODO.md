@@ -1,7 +1,3 @@
-1.6.5
-
-    - Fix TODO in TypeUsageImpl, line 410
-
 1.6.x
 
     - Find a way to somehow clean-up generated objects after each try or property
