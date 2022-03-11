@@ -6,6 +6,14 @@ import net.jqwik.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
+/**
+ * An action class represents a state transformation that can be preformed
+ * on an object of type {@code S}.
+ * Those objects can be either mutable, which means that the state changing method will return the same object,
+ * or immutable, which requires the method to return another object that represents the transformed state.
+ *
+ * @param <S> Type of the object to transform through an action
+ */
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface Action<S> {
 

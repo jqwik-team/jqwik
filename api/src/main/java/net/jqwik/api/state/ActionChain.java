@@ -9,9 +9,16 @@ import org.jetbrains.annotations.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * A chain of transforming Actions that can be run for values of type {@code S}
+ * A chain of transforming Actions that can be run for values of type {@code S}.
+ * Since the next action is usually created on demand, the current {@code runState}
+ * of a chain can be queried.
  *
- * @param <S> The type of the model
+ * <p>
+ *     By default any action chain instance is not thread safe,
+ *     i.e. you should not try to invoke {@linkplain #run()} concurrently.
+ * </p>
+ *
+ * @param <S> The type of the object going through state transformations
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface ActionChain<S> {
