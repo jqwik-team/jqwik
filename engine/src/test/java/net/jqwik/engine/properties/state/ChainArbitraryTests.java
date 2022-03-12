@@ -11,6 +11,7 @@ import net.jqwik.testing.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.Arbitraries.*;
+import static net.jqwik.engine.properties.state.ChainsTestingHelper.*;
 
 @PropertyDefaults(tries = 100)
 class ChainArbitraryTests {
@@ -253,8 +254,8 @@ class ChainArbitraryTests {
 
 		@Property
 		void removeNullTransformersDuringShrinking(@ForAll Random random) {
-			Transformer<Integer> addOne = ChainsTestingHelper.transformer(t -> t + 1, "addOne");
-			Transformer<Integer> doNothing = ChainsTestingHelper.transformer(t -> t, "doNothing");
+			Transformer<Integer> addOne = transformer(t -> t + 1, "addOne");
+			Transformer<Integer> doNothing = transformer(t -> t, "doNothing");
 
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 1,
@@ -278,7 +279,7 @@ class ChainArbitraryTests {
 		void fullyShrinkTransformersWithoutStateAccess(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
-				ignore -> integers().between(1, 5).map(i -> ChainsTestingHelper.transformer(t -> t + i, "add" + i))
+				ignore -> integers().between(1, 5).map(i -> transformer(t -> t + i, "add" + i))
 			).ofMaxSize(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
@@ -333,12 +334,12 @@ class ChainArbitraryTests {
 				supplier -> {
 					int current = Math.abs(supplier.get());
 					if (current > 100) {
-						return just(ChainsTestingHelper.transformer(t -> t / 2, "half"));
+						return just(transformer(t -> t / 2, "half"));
 					} else {
-						return integers().between(current, current * 2).map(i -> ChainsTestingHelper.transformer(t -> t + i, "add-" + i));
+						return integers().between(current, current * 2).map(i -> transformer(t -> t + i, "add-" + i));
 					}
 				},
-				ignore -> Arbitraries.just(ChainsTestingHelper.transformer(t -> t - 1, "minus-1"))
+				ignore -> Arbitraries.just(transformer(t -> t - 1, "minus-1"))
 			).ofMaxSize(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
@@ -359,6 +360,45 @@ class ChainArbitraryTests {
 			assertThat(series.get(series.size() - 2))
 				.describedAs("But-last element of %s", series)
 				.isLessThanOrEqualTo(20);
+		}
+
+		@Property
+		void whenShrinkingTryToRemoveTransformersWithStateAccess(@ForAll Random random) {
+			Arbitrary<Chain<Integer>> chains = Chains.chains(
+				() -> 0,
+				supplier -> {
+					int current = supplier.get(); // access state
+					return Arbitraries.just(transformer(ignore -> current + 1, "plus-1"));
+				},
+				ignore -> Arbitraries.just(transformer(t -> t + 2, "plus-2"))
+			).ofMaxSize(20);
+
+			RandomGenerator<Chain<Integer>> generator = chains.generator(100, false);
+			Shrinkable<Chain<Integer>> shrinkable = TestingSupport.generateUntil(
+				generator,
+				random,
+				this::hasAtLeastFivePlus2Transformers
+			);
+
+			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
+				for (Integer value : chain) {
+					if (value > 9) {
+						return false;
+					}
+				}
+				return true;
+			};
+			Chain<Integer> shrunkChain = ShrinkingSupport.shrink(shrinkable, falsifier, null);
+
+			List<Integer> series = collectAllValues(shrunkChain);
+			assertThat(series).containsExactly(2, 4, 6, 8, 10);
+			assertThat(shrunkChain.maxTransformations()).isEqualTo(5);
+		}
+
+		private boolean hasAtLeastFivePlus2Transformers(Chain<Integer> c) {
+			for (Integer value : c) {} // consume chain
+			long countPlusTwoBefore = c.transformations().stream().filter(s -> s.equals("plus-2")).count();
+			return countPlusTwoBefore >= 5;
 		}
 
 	}

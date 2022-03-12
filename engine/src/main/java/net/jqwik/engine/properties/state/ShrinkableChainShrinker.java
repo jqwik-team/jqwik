@@ -22,13 +22,14 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	public Stream<Shrinkable<Chain<T>>> shrink() {
-		return Stream.concat(
+		return JqwikStreamSupport.concat(
 			shrinkMaxTransformations(),
+			shrinkLastStateAccessingTransformer(),
 			shrinkRanges()
 		);
 	}
 
-	private Stream<ShrinkableChain<T>> shrinkMaxTransformations() {
+	private Stream<Shrinkable<Chain<T>>> shrinkMaxTransformations() {
 		if (iterations.size() < maxTransformations) {
 			return Stream.of(newShrinkableChain(iterations, iterations.size()));
 		} else {
@@ -36,7 +37,19 @@ class ShrinkableChainShrinker<T> {
 		}
 	}
 
-	private Stream<ShrinkableChain<T>> shrinkRanges() {
+	private Stream<Shrinkable<Chain<T>>> shrinkLastStateAccessingTransformer() {
+		for (int i = iterations.size() - 1; i >= 0; i--) {
+			ShrinkableChainIteration<T> iteration = iterations.get(i);
+			if (iteration.stateHasBeenAccessed) {
+				List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
+				shrunkIterations.remove(i);
+				return Stream.of(newShrinkableChain(shrunkIterations, shrunkIterations.size()));
+			}
+		}
+		return Stream.empty();
+	}
+
+	private Stream<Shrinkable<Chain<T>>> shrinkRanges() {
 		return splitIntoRanges().stream()
 								.flatMap(range -> shrinkIterationsRange(range.get1(), range.get2()));
 	}
@@ -87,7 +100,11 @@ class ShrinkableChainShrinker<T> {
 		return JqwikStreamSupport.concat(shrinkPerElementStreams);
 	}
 
-	private Stream<ShrinkableChain<T>> replaceRangeByShrunkRange(int startIndex, Stream<List<ShrinkableChainIteration<T>>> shrunkRange, int restSize) {
+	private Stream<ShrinkableChain<T>> replaceRangeByShrunkRange(
+		int startIndex,
+		Stream<List<ShrinkableChainIteration<T>>> shrunkRange,
+		int restSize
+	) {
 		return shrunkRange.map(shrunkIterationsRange -> {
 			List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>();
 			for (int i = 0; i < startIndex; i++) {
