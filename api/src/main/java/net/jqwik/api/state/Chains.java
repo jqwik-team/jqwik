@@ -28,7 +28,7 @@ public class Chains {
 
 		public abstract <T> ActionChainArbitrary<T> actionChains(
 			Supplier<? extends T> initialSupplier,
-			List<Tuple2<Integer,? extends Action<T>>> frequencies
+			List<Tuple2<Integer,? extends Action<T>>> actionFrequencies
 		);
 	}
 
