@@ -34,7 +34,7 @@ class ActionSequenceProperties {
 		assertThat(actions.runActions()).hasSize(5);
 	}
 
-	@SuppressWarnings("WeakerAccess")
+	@SuppressWarnings("unchecked")
 	@Provide
 	ActionSequenceArbitrary<String> xOrY() {
 		return Arbitraries.sequences(Arbitraries.oneOf(addX(), addY()));
