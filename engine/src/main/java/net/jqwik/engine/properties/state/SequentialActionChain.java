@@ -8,16 +8,26 @@ import org.jetbrains.annotations.*;
 import net.jqwik.api.state.*;
 
 public class SequentialActionChain<T> implements ActionChain<T> {
-	public SequentialActionChain(Chain<T> chain) {}
+	private final Chain<T> chain;
 
-	@Override
-	public List<String> runActions() {
-		return null;
+	// TODO: How to initialize with initial state
+	private volatile T currentValue = null;
+
+	public SequentialActionChain(Chain<T> chain) {
+		this.chain = chain;
 	}
 
 	@Override
-	public T run() {
-		return null;
+	public List<String> runActions() {
+		return chain.transformations();
+	}
+
+	@Override
+	public synchronized T run() {
+		for (T state : chain) {
+			currentValue = state;
+		}
+		return currentValue;
 	}
 
 	@Override
@@ -26,11 +36,13 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
-	public T finalValue() {
-		return null;
+	@Nullable
+	public synchronized T finalValue() {
+		return currentValue;
 	}
 
 	@Override
+	@NotNull
 	public RunState runState() {
 		return null;
 	}

@@ -25,6 +25,11 @@ public interface Action<S> {
 			public T run(T state) {
 				return transformer.apply(state);
 			}
+
+			@Override
+			public String toString() {
+				return transformer.transformation();
+			}
 		};
 	}
 

@@ -52,7 +52,11 @@ public interface ActionChain<S> {
 	 */
 	ActionChain<S> withInvariant(@Nullable String label, Consumer<S> invariant);
 
-	S finalValue();
+	/**
+	 * The final state value after running an action chain.
+	 * @return state or null if chain has not been run
+	 */
+	@Nullable S finalValue();
 
 	RunState runState();
 

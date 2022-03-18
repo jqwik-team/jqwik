@@ -7,17 +7,17 @@ import static org.assertj.core.api.Assertions.*;
 
 class ActionChainArbitraryTests {
 
-	@Disabled("implementation not finished")
-	@Property
-	void createdChainsDoTheirWork(@ForAll("xOrY") ActionChain<String> chain) {
+	@Property(tries = 10)
+	void generatedChainsCanBeRun(@ForAll("xOrY") ActionChain<String> chain) {
+		assertThat(chain.finalValue()).isNull();
 		String result = chain.run();
 
+		assertThat(chain.finalValue()).isEqualTo(result);
 		assertThat(chain.runActions().size()).isGreaterThanOrEqualTo(10);
 		assertThat(result).hasSize(chain.runActions().size());
 		assertThat(result.chars()).allMatch(c -> c == 'x' || c == 'y');
 	}
 
-	@SuppressWarnings("unchecked")
 	@Provide
 	ActionChainArbitrary<String> xOrY() {
 		return Chains.actionChains(() -> "", addX(), addY());

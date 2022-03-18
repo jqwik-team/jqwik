@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.state;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.jetbrains.annotations.*;
 
@@ -23,7 +24,15 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	}
 
 	private List<Tuple2<Integer, TransformerProvider<T>>> toProviderFrequencies(List<Tuple2<Integer, ? extends Action<T>>> actionFrequencies) {
-		return null;
+		return actionFrequencies
+			.stream()
+			.map(frequency -> {
+				Action<T> action = frequency.get2();
+				// TODO: handle preconditions and Action.provideTransformer and action.toString()
+				Transformer<T> transformer = action::run;
+				TransformerProvider<T> provider = ignore -> Arbitraries.just(transformer);
+				return Tuple.of(frequency.get1(), provider);
+			}).collect(Collectors.toList());
 	}
 
 	@Override
