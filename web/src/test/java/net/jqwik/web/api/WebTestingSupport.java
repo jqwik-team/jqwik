@@ -7,20 +7,13 @@ class WebTestingSupport {
 	public static final String ALLOWED_CHARS_DOMAIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.";
 	public static final String ALLOWED_CHARS_LOCALPART_UNQUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~";
 	public static final String ALLOWED_CHARS_LOCALPART_QUOTED = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.!#$%&'*+-/=?^_`{|}~\"(),:;<>@[\\] ";
-	public static final String ALLOWED_NOT_NUMERIC_CHARS_TLD = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-";
 
 	static boolean isIPAddress(String host) {
-		if (host.charAt(0) == '[' && host.charAt(host.length() - 1) == ']') {
-			return true;
-		}
-		return false;
+		return host.charAt(0) == '[' && host.charAt(host.length() - 1) == ']';
 	}
 
 	static boolean isQuoted(String localPart) {
-		if (localPart.length() >= 3 && localPart.charAt(0) == '"' && localPart.charAt(localPart.length() - 1) == '"') {
-			return true;
-		}
-		return false;
+		return localPart.length() >= 3 && localPart.charAt(0) == '"' && localPart.charAt(localPart.length() - 1) == '"';
 	}
 
 	static String getLocalPartOfEmail(String email) {
@@ -46,24 +39,30 @@ class WebTestingSupport {
 		}
 		String[] domainParts = domain.split("\\.");
 		for (String domainPart : domainParts) {
-			if (domainPart.length() > 63) {
+			if (!isValidDomainPart(domainPart)) {
 				return false;
 			}
 		}
 		String tld = domainParts[domainParts.length - 1];
-		if (!containsAtLeastOneOf(ALLOWED_NOT_NUMERIC_CHARS_TLD, tld)) {
-			return false;
-		}
-		return true;
+		return isValidTopLevelDomain(tld);
 	}
 
-	static boolean containsAtLeastOneOf(String string, String chars) {
-		for (char c : chars.toCharArray()) {
-			if (string.contains(String.valueOf(c))) {
-				return true;
-			}
-		}
-		return false;
+	private static boolean isValidDomainPart(String domainPart) {
+		return (domainPart.length() <= 63)
+				   && (!domainPart.startsWith("-"))
+				   && (!domainPart.endsWith("-"));
+	}
+
+	private static boolean isValidTopLevelDomain(String tld) {
+		return tld.length() >= 2 && doesNotStartWithDigit(tld);
+	}
+
+	static boolean doesNotStartWithDigit(String tld) {
+		return !doesStartWithDigit(tld);
+	}
+
+	private static boolean doesStartWithDigit(String tld) {
+		return Character.isDigit(tld.charAt(0));
 	}
 
 	static boolean isValidIPAddress(String address) {

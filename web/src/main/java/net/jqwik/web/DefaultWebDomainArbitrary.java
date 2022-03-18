@@ -2,7 +2,6 @@ package net.jqwik.web;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.web.api.*;
 
 public class DefaultWebDomainArbitrary extends ArbitraryDecorator<String> implements Arbitrary<String> {
 
@@ -21,16 +20,11 @@ public class DefaultWebDomainArbitrary extends ArbitraryDecorator<String> implem
 	}
 
 	private Arbitrary<String> topLevelDomain() {
-		return domainPart(2, 10).filter(this::notAllNumeric);
+		return domainPart(2, 10).filter(this::doesNotStartWithDigit);
 	}
 
-	private boolean notAllNumeric(String tld) {
-		for (char c : tld.toCharArray()) {
-			if (c < '0' || c > '9') {
-				return true;
-			}
-		}
-		return false;
+	private boolean doesNotStartWithDigit(String tld) {
+		return !Character.isDigit(tld.charAt(0));
 	}
 
 	private Arbitrary<String> domainPart(int minLength, int maxLength) {
@@ -43,8 +37,11 @@ public class DefaultWebDomainArbitrary extends ArbitraryDecorator<String> implem
 
 	private boolean validUseOfHyphensInDomainPart(String domainPart) {
 		boolean firstSignNotAHyphen = domainPart.charAt(0) != '-';
-		boolean lastSignNotAHyphen = domainPart.charAt(domainPart.length() - 1) != '-';
-		return firstSignNotAHyphen && lastSignNotAHyphen;
+		if (firstSignNotAHyphen) {
+			boolean lastSignNotAHyphen = domainPart.charAt(domainPart.length() - 1) != '-';
+			return lastSignNotAHyphen;
+		}
+		return false;
 	}
 
 }

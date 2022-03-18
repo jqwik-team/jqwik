@@ -113,11 +113,11 @@ class WebDomainTests {
 		}
 
 		@Property
-		void tldNotAllNumeric(@ForAll("webDomains") String domain) {
+		void tldMustNotStartWithNumber(@ForAll("webDomains") String domain) {
 			String[] domainParts = domain.split("\\.");
 			Assume.that(domainParts.length >= 2);
 			String tld = domainParts[domainParts.length - 1];
-			assertThat(containsAtLeastOneOf(tld, ALLOWED_NOT_NUMERIC_CHARS_TLD)).isTrue();
+			assertThat(doesNotStartWithDigit(tld)).isTrue();
 		}
 	}
 
