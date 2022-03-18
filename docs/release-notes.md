@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.6.6-SNAPSHOT](#166-snapshot)
 - [1.6.5](#165)
 - [1.6.4](#164)
 - [1.6.3](#163)
@@ -26,6 +27,17 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
+## 1.6.6-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+- Generated TLDs in `web-module` will no longer start with digit.
+  See https://github.com/jlink/jqwik/issues/316.
 
 ## 1.6.5
 

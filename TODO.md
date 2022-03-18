@@ -1,7 +1,5 @@
 1.6.x
 
-    - Fix top level domain bug in DefaultWebDomainArbitrary: https://github.com/jlink/jqwik/issues/316
-
     - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
 
     - <T,S,U> SetArbitrary<E>.combineEach(Arbitrary<S>).as(BiFunction<T, E, U>): Arbitrary<Set<U>>
