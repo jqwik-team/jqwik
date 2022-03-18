@@ -12,10 +12,10 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 
 	private int size = 0;
 	private final Function<Random, TransformerProvider<T>> providerGenerator;
-	private final Supplier<T> initialSupplier;
+	private final Supplier<? extends T> initialSupplier;
 
 	public DefaultChainArbitrary(
-		Supplier<T> initialSupplier,
+		Supplier<? extends T> initialSupplier,
 		List<Tuple.Tuple2<Integer, TransformerProvider<T>>> providerFrequencies
 	) {
 		this.initialSupplier = initialSupplier;

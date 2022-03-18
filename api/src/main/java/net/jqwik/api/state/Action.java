@@ -1,5 +1,7 @@
 package net.jqwik.api.state;
 
+import java.util.function.*;
+
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
@@ -16,6 +18,15 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface Action<S> {
+
+	static <T> Action<T> transform(Transformer<T> transformer) {
+		return new Action<T>() {
+			@Override
+			public T run(T state) {
+				return transformer.apply(state);
+			}
+		};
+	}
 
 	/**
 	 * If this method returns false, the action will not be performed.

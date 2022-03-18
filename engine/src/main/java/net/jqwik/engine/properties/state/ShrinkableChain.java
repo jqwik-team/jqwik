@@ -13,14 +13,14 @@ import net.jqwik.engine.properties.*;
 public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	private final long randomSeed;
-	private final Supplier<T> initialSupplier;
+	private final Supplier<? extends T> initialSupplier;
 	private final Function<Random, TransformerProvider<T>> providerGenerator;
 	private final int maxTransformations;
 	private final List<ShrinkableChainIteration<T>> iterations;
 
 	public ShrinkableChain(
 		long randomSeed,
-		Supplier<T> initialSupplier,
+		Supplier<? extends T> initialSupplier,
 		Function<Random, TransformerProvider<T>> providerGenerator,
 		int maxTransformations
 	) {
@@ -28,7 +28,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	}
 
 	private ShrinkableChain(
-		long randomSeed, Supplier<T> initialSupplier,
+		long randomSeed, Supplier<? extends T> initialSupplier,
 		Function<Random, TransformerProvider<T>> providerGenerator,
 		int maxTransformations,
 		List<ShrinkableChainIteration<T>> iterations
