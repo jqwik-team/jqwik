@@ -10,7 +10,6 @@ import net.jqwik.api.state.*;
 public class SequentialActionChain<T> implements ActionChain<T> {
 	private final Chain<T> chain;
 
-	// TODO: How to initialize with initial state
 	private volatile T currentValue = null;
 
 	public SequentialActionChain(Chain<T> chain) {
@@ -18,11 +17,13 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
+	@NotNull
 	public List<String> runActions() {
 		return chain.transformations();
 	}
 
 	@Override
+	@NotNull
 	public synchronized T run() {
 		for (T state : chain) {
 			currentValue = state;
@@ -31,24 +32,26 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
+	@NotNull
 	public ActionChain<T> withInvariant(@Nullable String label, Consumer<T> invariant) {
 		return null;
 	}
 
 	@Override
-	@Nullable
-	public synchronized T finalValue() {
-		return currentValue;
+	@NotNull
+	public synchronized Optional<T> finalState() {
+		return Optional.ofNullable(currentValue);
 	}
 
 	@Override
 	@NotNull
-	public RunState runState() {
+	public ActionChain.RunningState running() {
 		return null;
 	}
 
 	@Override
-	public ActionChain<T> peek(Consumer<T> peeker) {
+	@NotNull
+	public ActionChain<T> peek(@NotNull Consumer<T> peeker) {
 		return null;
 	}
 }

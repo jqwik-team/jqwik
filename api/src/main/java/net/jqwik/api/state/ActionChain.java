@@ -23,7 +23,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface ActionChain<S> {
 
-	enum RunState {
+	enum RunningState {
 		NOT_RUN, RUNNING, FAILED, SUCCEEDED
 	}
 
@@ -54,11 +54,11 @@ public interface ActionChain<S> {
 
 	/**
 	 * The final state value after running an action chain.
-	 * @return state or null if chain has not been run
+	 * @return state or {@linkplain Optional#empty()} if chain has not been run
 	 */
-	@Nullable S finalValue();
+	Optional<S> finalState();
 
-	RunState runState();
+	RunningState running();
 
 	/**
 	 * Peek into the model of a running chain.

@@ -1,6 +1,8 @@
+
 new stateful:
 
     - Introduce Action and ActionChain
+    - Make Chain and ActionChain objects reproducible with GenerationInfo
     - Introduce ModelChain
     - Document
         - JavaDoc

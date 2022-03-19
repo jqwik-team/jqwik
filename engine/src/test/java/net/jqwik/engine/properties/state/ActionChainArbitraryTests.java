@@ -7,12 +7,28 @@ import static org.assertj.core.api.Assertions.*;
 
 class ActionChainArbitraryTests {
 
-	@Property(tries = 10)
-	void generatedChainsCanBeRun(@ForAll("xOrY") ActionChain<String> chain) {
-		assertThat(chain.finalValue()).isNull();
+	@Example
+	void deterministicChainCanBeRun(@ForAll("x10") ActionChain<String> chain) {
+		assertThat(chain.finalState()).isNotPresent();
 		String result = chain.run();
 
-		assertThat(chain.finalValue()).isEqualTo(result);
+		assertThat(chain.finalState()).isPresent();
+		chain.finalState().ifPresent(s -> assertThat(s).isEqualTo(result));
+		assertThat(chain.runActions().size()).isEqualTo(10);
+		assertThat(result).isEqualTo("xxxxxxxxxx");
+	}
+
+	@Provide
+	ActionChainArbitrary<String> x10() {
+		return Chains.actionChains(() -> "", addX()).withMaxActions(10);
+	}
+
+	@Property(tries = 10)
+	void chainWithoutStateAccessCanBeRun(@ForAll("xOrY") ActionChain<String> chain) {
+		String result = chain.run();
+
+		assertThat(chain.finalState()).isPresent();
+		chain.finalState().ifPresent(s -> assertThat(s).isEqualTo(result));
 		assertThat(chain.runActions().size()).isGreaterThanOrEqualTo(10);
 		assertThat(result).hasSize(chain.runActions().size());
 		assertThat(result.chars()).allMatch(c -> c == 'x' || c == 'y');
