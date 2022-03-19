@@ -38,7 +38,7 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	@Override
 	public ActionChainArbitrary<T> ofMaxSize(int maxSize) {
 		DefaultActionChainArbitrary<T> clone = typedClone();
-		clone.chainArbitrary = clone.chainArbitrary.ofMaxSize(maxSize);
+		clone.chainArbitrary = clone.chainArbitrary.withMaxTransformations(maxSize);
 		return clone;
 	}
 

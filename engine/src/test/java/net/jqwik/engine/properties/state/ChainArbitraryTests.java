@@ -16,6 +16,21 @@ import static net.jqwik.engine.properties.state.ChainsTestingHelper.*;
 @PropertyDefaults(tries = 100)
 class ChainArbitraryTests {
 
+	@Example
+	void deterministicChain(@ForAll Random random) {
+		Arbitrary<Chain<Integer>> chains = Chains.chains(
+			() -> 0,
+			ignore -> just(ChainsTestingHelper.transformer(i -> i + 1, "+1"))
+		).withMaxTransformations(10);
+
+		Chain<Integer> chain = TestingSupport.generateFirst(chains, random);
+
+		assertThat(collectAllValues(chain)).containsExactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		assertThat(chain.transformations()).containsExactly(
+			"+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1", "+1"
+		);
+	}
+
 	@Property
 	void chainWithSingleGenerator(@ForAll Random random) {
 		TransformerProvider<Integer> growBelow100OtherwiseShrink = intSupplier -> {
@@ -29,14 +44,13 @@ class ChainArbitraryTests {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
 			growBelow100OtherwiseShrink
-		).ofMaxSize(50);
+		).withMaxTransformations(50);
 
 		Shrinkable<Chain<Integer>> chainShrinkable = chains.generator(100).next(random);
 
 		Chain<Integer> chain = chainShrinkable.value();
 
 		assertThat(chain.maxTransformations()).isEqualTo(50);
-		assertThat(chain.countTransformations()).isEqualTo(0);
 		assertThat(chain.transformations()).hasSize(0);
 
 		Iterator<Integer> iterator = chain.start();
@@ -51,7 +65,6 @@ class ChainArbitraryTests {
 			last = next;
 		}
 
-		assertThat(chain.countTransformations()).isEqualTo(50);
 		assertThat(chain.transformations()).hasSize(50);
 	}
 
@@ -76,19 +89,19 @@ class ChainArbitraryTests {
 			ignore -> Arbitraries.just(i -> i - 1),
 			growBelow100otherwiseShrink,
 			resetToValueBetween0andLastAbsolute
-		).ofMaxSize(50);
+		).withMaxTransformations(50);
 
 		Shrinkable<Chain<Integer>> chainShrinkable = chains.generator(100).next(random);
 
 		Chain<Integer> chain = chainShrinkable.value();
 
 		assertThat(chain.maxTransformations()).isEqualTo(50);
-		assertThat(chain.countTransformations()).isEqualTo(0);
+		assertThat(chain.transformations()).hasSize(0);
 
 		Iterator<Integer> iterator = chain.start();
 		iterator.forEachRemaining(ignore -> {});
 
-		assertThat(chain.countTransformations()).isEqualTo(50);
+		assertThat(chain.transformations()).hasSize(50);
 	}
 
 	@Property
@@ -111,16 +124,16 @@ class ChainArbitraryTests {
 	@StatisticsReport(onFailureOnly = true)
 	void useFrequenciesToChooseTransformers(@ForAll Random random) {
 
-		TransformerProvider<Integer> just0 = ignore -> Arbitraries.just(t -> 0);
+		TransformerProvider<Integer> just42 = ignore -> Arbitraries.just(t -> 42);
 		TransformerProvider<Integer> just1 = ignore -> Arbitraries.just(t -> 1);
 		TransformerProvider<Integer> just2 = ignore -> Arbitraries.just(t -> 2);
 
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 0,
-			Tuple.of(0, just0),
+			Tuple.of(0, just42),
 			Tuple.of(1, just1),
 			Tuple.of(4, just2)
-		).ofMaxSize(10);
+		).withMaxTransformations(10);
 
 		Shrinkable<Chain<Integer>> chainShrinkable = chains.generator(100).next(random);
 		Chain<Integer> chain = chainShrinkable.value();
@@ -130,7 +143,7 @@ class ChainArbitraryTests {
 		}
 
 		Statistics.coverage(checker -> {
-			checker.check(0).count(c -> c == 0);
+			checker.check(42).count(c -> c == 0);
 			checker.check(1).percentage(p -> p > 0 && p < 30);
 			checker.check(2).percentage(p -> p > 70);
 		});
@@ -160,12 +173,14 @@ class ChainArbitraryTests {
 			ArrayList::new,
 			addRandomIntToList,
 			removeFirstElement
-		).ofMaxSize(13);
+		).withMaxTransformations(13);
 
 		Shrinkable<Chain<List<Integer>>> chainShrinkable = chains.generator(100).next(random);
 
 		Chain<List<Integer>> chain = chainShrinkable.value();
 		Iterator<List<Integer>> iterator = chain.iterator();
+		iterator.next(); // Ignore initial state
+
 		List<Integer> last = new ArrayList<>();
 		while (iterator.hasNext()) {
 			int lastSize = last.size();
@@ -173,7 +188,7 @@ class ChainArbitraryTests {
 			assertThat(lastSize).isNotEqualTo(next.size());
 			last = next;
 		}
-		assertThat(chain.countTransformations()).isEqualTo(13);
+		assertThat(chain.transformations()).hasSize(13);
 	}
 
 	@Example
@@ -181,7 +196,7 @@ class ChainArbitraryTests {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
 			ignore -> null
-		).ofMaxSize(50);
+		).withMaxTransformations(50);
 
 		Chain<Integer> chain = chains.generator(100).next(random).value();
 
@@ -195,7 +210,7 @@ class ChainArbitraryTests {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
 			ignore -> Arbitraries.integers().between(1, 10).map(i -> t -> t + i)
-		).ofMaxSize(30);
+		).withMaxTransformations(30);
 
 		Chain<Integer> chain = chains.generator(100).next(random).value();
 
@@ -217,7 +232,7 @@ class ChainArbitraryTests {
 		List<Integer> values2 = futures.get(1).get();
 		List<Integer> values3 = futures.get(2).get();
 
-		assertThat(values1).hasSize(30);
+		assertThat(values1).hasSize(30 + 1);
 		assertThat(values1).isEqualTo(values2);
 		assertThat(values1).isEqualTo(values3);
 	}
@@ -239,7 +254,7 @@ class ChainArbitraryTests {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 1,
 				ignore -> integers().between(0, 10).map(i -> t -> t + i)
-			).ofMaxSize(5);
+			).withMaxTransformations(5);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				for (Integer integer : chain) {
@@ -248,8 +263,8 @@ class ChainArbitraryTests {
 				return false;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-			assertThat(chain.countTransformations()).isEqualTo(chain.maxTransformations());
-			assertThat(collectAllValues(chain)).containsExactly(1);
+			assertThat(chain.transformations()).hasSize(chain.maxTransformations());
+			assertThat(collectAllValues(chain)).containsExactly(1, 1);
 		}
 
 		@Property
@@ -261,7 +276,7 @@ class ChainArbitraryTests {
 				() -> 1,
 				ignore -> Arbitraries.just(addOne),
 				ignore -> Arbitraries.just(doNothing)
-			).ofMaxSize(20); // Size must be large enough to have at least a single addOne transformer
+			).withMaxTransformations(20); // Size must be large enough to have at least a single addOne transformer
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				int last = 1;
@@ -271,8 +286,8 @@ class ChainArbitraryTests {
 				return last <= 1;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-			assertThat(chain.countTransformations()).isEqualTo(chain.maxTransformations());
-			assertThat(collectAllValues(chain)).containsExactly(2);
+			assertThat(chain.transformations()).hasSize(chain.maxTransformations());
+			assertThat(collectAllValues(chain)).containsExactly(1, 2);
 		}
 
 		@Property
@@ -280,7 +295,7 @@ class ChainArbitraryTests {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
 				ignore -> integers().between(1, 5).map(i -> transformer(t -> t + i, "add" + i))
-			).ofMaxSize(10);
+			).withMaxTransformations(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				int last = 1;
@@ -293,10 +308,10 @@ class ChainArbitraryTests {
 
 			// There are 4 possible "smallest" chains
 			assertThat(collectAllValues(chain)).isIn(
-				Arrays.asList(3),
-				Arrays.asList(1, 3),
-				Arrays.asList(2, 3),
-				Arrays.asList(1, 2, 3)
+				Arrays.asList(0, 3),
+				Arrays.asList(0, 1, 3),
+				Arrays.asList(0, 2, 3),
+				Arrays.asList(0, 1, 2, 3)
 			);
 		}
 
@@ -308,7 +323,7 @@ class ChainArbitraryTests {
 					supplier.get(); // To make shrinkable think the last value is being used
 					return integers().between(0, 10).map(i -> t -> t + i);
 				}
-			).ofMaxSize(10);
+			).withMaxTransformations(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				int count = 0;
@@ -316,15 +331,15 @@ class ChainArbitraryTests {
 				for (Integer value : chain) {
 					sum += value;
 					count++;
-					if (count >= 4 && sum >= 4) {
+					if (count >= 5 && sum >= 5) {
 						return false;
 					}
 				}
 				return true;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-			assertThat(chain.countTransformations()).isEqualTo(chain.maxTransformations());
-			assertThat(collectAllValues(chain)).containsExactly(1, 1, 1, 1);
+			assertThat(chain.transformations()).hasSize(chain.maxTransformations());
+			assertThat(collectAllValues(chain)).containsExactly(1, 1, 1, 1, 1);
 		}
 
 		@Property
@@ -340,7 +355,7 @@ class ChainArbitraryTests {
 					}
 				},
 				ignore -> Arbitraries.just(transformer(t -> t - 1, "minus-1"))
-			).ofMaxSize(10);
+			).withMaxTransformations(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				for (Integer value : chain) {
@@ -353,7 +368,7 @@ class ChainArbitraryTests {
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
 
 			List<Integer> series = collectAllValues(chain);
-			assertThat(chain.countTransformations()).isEqualTo(chain.maxTransformations());
+			assertThat(chain.transformations()).hasSize(chain.maxTransformations());
 			assertThat(series.get(series.size() - 1))
 				.describedAs("Last element of %s", series)
 				.isBetween(21, 40); // It's either 21 or the double of the but-last value
@@ -371,7 +386,7 @@ class ChainArbitraryTests {
 					return Arbitraries.just(transformer(ignore -> current + 1, "plus-1"));
 				},
 				ignore -> Arbitraries.just(transformer(t -> t + 2, "plus-2"))
-			).ofMaxSize(20);
+			).withMaxTransformations(20);
 
 			RandomGenerator<Chain<Integer>> generator = chains.generator(100, false);
 			Shrinkable<Chain<Integer>> shrinkable = TestingSupport.generateUntil(
@@ -391,7 +406,7 @@ class ChainArbitraryTests {
 			Chain<Integer> shrunkChain = ShrinkingSupport.shrink(shrinkable, falsifier, null);
 
 			List<Integer> series = collectAllValues(shrunkChain);
-			assertThat(series).containsExactly(2, 4, 6, 8, 10);
+			assertThat(series).containsExactly(0, 2, 4, 6, 8, 10);
 			assertThat(shrunkChain.maxTransformations()).isEqualTo(5);
 		}
 

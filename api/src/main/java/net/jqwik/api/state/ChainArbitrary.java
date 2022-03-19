@@ -10,8 +10,8 @@ import static org.apiguardian.api.API.Status.EXPERIMENTAL;
 public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 
 	/**
-	 * Set the intended number of steps of this chain.
+	 * Set the intended number of transformations of generated chains.
 	 */
-	ChainArbitrary<T> ofMaxSize(int size);
+	ChainArbitrary<T> withMaxTransformations(int maxTransformations);
 
 }

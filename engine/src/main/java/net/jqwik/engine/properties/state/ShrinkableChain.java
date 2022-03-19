@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.jetbrains.annotations.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.*;
@@ -81,13 +83,9 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	private class ChainInstance implements Chain<T> {
 
 		@Override
+		@NotNull
 		public Iterator<T> start() {
 			return new ChainIterator(initialSupplier.get());
-		}
-
-		@Override
-		public int countTransformations() {
-			return iterations.size();
 		}
 
 		@Override
@@ -96,6 +94,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		@Override
+		@NotNull
 		public List<String> transformations() {
 			return iterations.stream().map(i -> i.shrinkable.value().transformation()).collect(Collectors.toList());
 		}
@@ -106,6 +105,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		private final Random random = SourceOfRandomness.newRandom(randomSeed);
 		private int steps = 0;
 		private T current;
+		private boolean initialSupplied = false;
 
 		private ChainIterator(T initial) {
 			this.current = initial;
@@ -113,11 +113,18 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 		@Override
 		public boolean hasNext() {
+			if (!initialSupplied) {
+				return true;
+			}
 			return steps < maxTransformations;
 		}
 
 		@Override
 		public T next() {
+			if (!initialSupplied) {
+				initialSupplied = true;
+				return current;
+			}
 
 			// Create deterministic random in order to reuse in shrinking
 			long nextSeed = random.nextLong();
