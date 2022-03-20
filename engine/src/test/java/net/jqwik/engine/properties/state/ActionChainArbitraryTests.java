@@ -1,17 +1,23 @@
 package net.jqwik.engine.properties.state;
 
+import java.util.*;
+import java.util.concurrent.atomic.*;
+
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 import net.jqwik.api.state.ActionChain.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 class ActionChainArbitraryTests {
 
 	@Example
-	void deterministicChainCanBeRun(@ForAll("x10") ActionChain<String> chain) {
+	void deterministicChainCanBeRun(@ForAll Random random) {
+		ActionChainArbitrary<String> chains = Chains.actionChains(() -> "", addX()).withMaxActions(10);
+		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 		assertThat(chain.running()).isEqualTo(RunningState.NOT_RUN);
 		assertThat(chain.finalState()).isNotPresent();
 		String result = chain.run();
@@ -23,12 +29,25 @@ class ActionChainArbitraryTests {
 		assertThat(result).isEqualTo("xxxxxxxxxx");
 	}
 
-	@Provide
-	ActionChainArbitrary<String> x10() {
-		return Chains.actionChains(() -> "", addX()).withMaxActions(10);
+	@Example
+	void peekingIntoChain(@ForAll Random random) {
+		ActionChainArbitrary<String> chains = Chains.actionChains(() -> "", addX()).withMaxActions(5);
+
+		AtomicInteger countPeeks = new AtomicInteger(0);
+
+		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
+		ActionChain<String> peekingChain = chain.peek(state -> {
+			assertThat(state).isIn("", "x", "xx", "xxx", "xxxx", "xxxxx", "xxxxxx");
+			assertThat(chain.running()).isEqualTo(RunningState.RUNNING);
+			countPeeks.incrementAndGet();
+		});
+
+		String result = peekingChain.run();
+		assertThat(result).isEqualTo("xxxxx");
+		assertThat(countPeeks).hasValue(6);
 	}
 
-	@Example
+	@Property(tries = 10)
 	void failingChain(@ForAll("xOrFailing") ActionChain<String> chain) {
 		assertThat(chain.running()).isEqualTo(RunningState.NOT_RUN);
 		assertThatThrownBy(

@@ -61,15 +61,15 @@ public interface ActionChain<S> {
 	RunningState running();
 
 	/**
-	 * Peek into the model of a running chain.
-	 * The {@code modelPeeker} will be called after each successful action
+	 * Observe the state transformations of a running chain by adding a peeker to an action chain.
+	 * The {@code peeker} will be called after each successful transformation
 	 * but before checking invariants.
 	 *
 	 * <p>
 	 * There can be more than one peeker.
 	 * </p>
 	 *
-	 * @param peeker
+	 * @param peeker A consumer of a state object
 	 * @return the same chain instance
 	 */
 	ActionChain<S> peek(Consumer<S> peeker);

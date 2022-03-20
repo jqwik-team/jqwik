@@ -15,6 +15,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 
 	private volatile T currentValue = null;
 	private volatile RunningState currentRunning = RunningState.NOT_RUN;
+	private final List<Consumer<T>> peekers = new ArrayList<>();
 
 	public SequentialActionChain(Chain<T> chain) {
 		this.chain = chain;
@@ -41,7 +42,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 		try {
 			T state = iterator.next();
 			currentValue = state;
-			// callModelPeekers();
+			callPeekers();
 			// checkInvariants();
 			// } catch (InvariantFailedError ife) {
 			// 	currentRunning = RunningState.FAILED;
@@ -54,12 +55,12 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 		}
 	}
 
-	// private void callModelPeekers() {
-	// 	for (Consumer<M> peeker : peekers) {
-	// 		peeker.accept(currentModel);
-	// 	}
-	// }
-	//
+	private void callPeekers() {
+		for (Consumer<T> peeker : peekers) {
+			peeker.accept(currentValue);
+		}
+	}
+
 	// private void checkInvariants() {
 	// 	for (Tuple.Tuple2<String, Invariant<M>> tuple : invariants) {
 	// 		String label = tuple.get1();
@@ -107,7 +108,8 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 
 	@Override
 	@NotNull
-	public ActionChain<T> peek(@NotNull Consumer<T> peeker) {
-		return null;
+	public synchronized ActionChain<T> peek(@NotNull Consumer<T> peeker) {
+		peekers.add(peeker);
+		return this;
 	}
 }
