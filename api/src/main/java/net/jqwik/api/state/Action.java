@@ -20,6 +20,10 @@ import static org.apiguardian.api.API.Status.*;
 public interface Action<S> {
 
 	static <T> Action<T> transform(Transformer<T> transformer) {
+		return transform(transformer, transformer.transformation());
+	}
+
+	static <T> Action<T> transform(Transformer<T> transformer, String description) {
 		return new Action<T>() {
 			@Override
 			public T run(T state) {
@@ -28,7 +32,7 @@ public interface Action<S> {
 
 			@Override
 			public String toString() {
-				return transformer.transformation();
+				return description;
 			}
 		};
 	}

@@ -29,7 +29,17 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 			.map(frequency -> {
 				Action<T> action = frequency.get2();
 				// TODO: handle preconditions and Action.provideTransformer and action.toString()
-				Transformer<T> transformer = action::run;
+				Transformer<T> transformer = new Transformer<T>() {
+					@Override
+					public @NotNull T apply(@NotNull T state) {
+						return action.run(state);
+					}
+
+					@Override
+					public String toString() {
+						return action.toString();
+					}
+				};
 				TransformerProvider<T> provider = ignore -> Arbitraries.just(transformer);
 				return Tuple.of(frequency.get1(), provider);
 			}).collect(Collectors.toList());
