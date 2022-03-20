@@ -24,19 +24,21 @@ class ActionChainArbitraryTests {
 	}
 
 	@Property(tries = 10)
-	void chainWithoutStateAccessCanBeRun(@ForAll("xOrY") ActionChain<String> chain) {
+	void chainChoosesBetween(@ForAll("xOrY") ActionChain<String> chain) {
 		String result = chain.run();
 
 		assertThat(chain.finalState()).isPresent();
 		chain.finalState().ifPresent(s -> assertThat(s).isEqualTo(result));
-		assertThat(chain.runActions().size()).isGreaterThanOrEqualTo(10);
+		assertThat(chain.runActions().size()).isGreaterThanOrEqualTo(30);
 		assertThat(result).hasSize(chain.runActions().size());
+		assertThat(result).contains("x");
+		assertThat(result).contains("y");
 		assertThat(result.chars()).allMatch(c -> c == 'x' || c == 'y');
 	}
 
 	@Provide
 	ActionChainArbitrary<String> xOrY() {
-		return Chains.actionChains(() -> "", addX(), addY());
+		return Chains.actionChains(() -> "", addX(), addY()).withMaxActions(30);
 	}
 
 	private Action<String> addX() {
