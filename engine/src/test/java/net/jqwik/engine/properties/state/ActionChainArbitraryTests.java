@@ -12,6 +12,8 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.Arbitraries.*;
+
 class ActionChainArbitraryTests {
 
 	@Example
@@ -65,7 +67,7 @@ class ActionChainArbitraryTests {
 	}
 
 	@Property(tries = 10)
-	void chainChoosesBetween(@ForAll("xOrY") ActionChain<String> chain) {
+	void chainChoosesBetweenTwoActions(@ForAll("xOrY") ActionChain<String> chain) {
 		String result = chain.run();
 
 		assertThat(chain.finalState()).isPresent();
@@ -82,19 +84,37 @@ class ActionChainArbitraryTests {
 		return Chains.actionChains(() -> "", addX(), addY()).withMaxActions(30);
 	}
 
-	private Action<String> addX() {
-		return Action.transform(model -> model + "x", "+x");
+	@Property(tries = 10)
+	void chainUsesRandomizedAction(@ForAll("anyAtoZ") ActionChain<String> chain) {
+		String result = chain.run();
+
+		assertThat(chain.finalState()).isPresent();
+		chain.finalState().ifPresent(s -> assertThat(s).isEqualTo(result));
+		assertThat(chain.runActions().size()).isGreaterThanOrEqualTo(30);
+		assertThat(result).hasSize(chain.runActions().size());
+		assertThat(result.chars()).allMatch(c -> c >= 'a' && c <= 'z');
 	}
 
-	private Action<String> failing() {
-		return Action.transform(
+	@Provide
+	ActionChainArbitrary<String> anyAtoZ() {
+		Arbitrary<Action<String>> anyAZ =
+			Arbitraries.chars().range('a', 'z').map(c -> Action.transform(s -> s + c));
+		return Chains.actionChains(() -> "", anyAZ).withMaxActions(30);
+	}
+
+	private Arbitrary<Action<String>> addX() {
+		return just(Action.transform(model -> model + "x", "+x"));
+	}
+
+	private Arbitrary<Action<String>> failing() {
+		return just(Action.transform(
 			model -> {throw new RuntimeException("failing");},
 			"failing"
-		);
+		));
 	}
 
-	private Action<String> addY() {
-		return Action.transform(model -> model + "y", "+y");
+	private Arbitrary<Action<String>> addY() {
+		return just(Action.transform(model -> model + "y", "+y"));
 	}
 
 }

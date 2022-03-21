@@ -1,5 +1,6 @@
 package net.jqwik.engine.facades;
 
+import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.properties.state.*;
@@ -23,8 +24,8 @@ public class ChainsFacadeImpl extends Chains.ChainsFacade {
 	@Override
 	public <T> ActionChainArbitrary<T> actionChains(
 		Supplier<? extends T> initialSupplier,
-		List<Tuple2<Integer, ? extends Action<T>>> actionFrequencies
+		List<Tuple2<Integer, Arbitrary<? extends Action<T>>>> actionArbitraryFrequencies
 	) {
-		return new DefaultActionChainArbitrary<>(initialSupplier, actionFrequencies);
+		return new DefaultActionChainArbitrary<>(initialSupplier, actionArbitraryFrequencies);
 	}
 }

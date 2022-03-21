@@ -28,7 +28,7 @@ public class Chains {
 
 		public abstract <T> ActionChainArbitrary<T> actionChains(
 			Supplier<? extends T> initialSupplier,
-			List<Tuple2<Integer,? extends Action<T>>> actionFrequencies
+			List<Tuple2<Integer, Arbitrary<? extends Action<T>>>> actionArbitraryFrequencies
 		);
 	}
 
@@ -57,18 +57,17 @@ public class Chains {
 
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
-	public static <T, A extends Action<T>> ActionChainArbitrary<T> actionChains(Supplier<? extends T> initialSupplier, A... actions) {
-		Tuple2<Integer, ? extends Action<T>>[] actionFrequencies =
-			Arrays.stream(actions).map(a -> Tuple.of(1, a)).toArray(Tuple2[]::new);
-		return actionChains(initialSupplier, actionFrequencies);
+	public static <T, A extends Action<T>> ActionChainArbitrary<T> actionChains(Supplier<? extends T> initialSupplier, Arbitrary<A>... actionArbitraries) {
+		Tuple2<Integer, Arbitrary<? extends Action<T>>>[] actionArbitraryFrequencies =
+			Arrays.stream(actionArbitraries).map(a -> Tuple.of(1, a)).toArray(Tuple2[]::new);
+		return actionChains(initialSupplier, actionArbitraryFrequencies);
 	}
 
-	@SafeVarargs
 	public static <T> ActionChainArbitrary<T> actionChains(
 		Supplier<? extends T> initialSupplier,
-		Tuple2<Integer, ? extends Action<T>>... actionFrequencies
+		Tuple2<Integer, Arbitrary<? extends Action<T>>>[] actionArbitraryFrequencies
 	) {
-		List<Tuple2<Integer, ? extends Action<T>>> frequencies = Arrays.asList(actionFrequencies);
+		List<Tuple2<Integer, Arbitrary<? extends Action<T>>>> frequencies = Arrays.asList(actionArbitraryFrequencies);
 		if (frequencies.isEmpty()) {
 			throw new IllegalArgumentException("You must specify at least one action");
 		}

@@ -17,30 +17,32 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 
 	public DefaultActionChainArbitrary(
 		Supplier<? extends T> initialSupplier,
-		List<Tuple2<Integer, ? extends Action<T>>> actionFrequencies
+		List<Tuple2<Integer, Arbitrary<? extends Action<T>>>> actionArbitraryFrequencies
 	) {
-		List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies = toProviderFrequencies(actionFrequencies);
+		List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies = toProviderFrequencies(actionArbitraryFrequencies);
 		chainArbitrary = new DefaultChainArbitrary<>(initialSupplier, providerFrequencies);
 	}
 
-	private List<Tuple2<Integer, TransformerProvider<T>>> toProviderFrequencies(List<Tuple2<Integer, ? extends Action<T>>> actionFrequencies) {
+	private List<Tuple2<Integer, TransformerProvider<T>>> toProviderFrequencies(List<Tuple2<Integer, Arbitrary<? extends Action<T>>>> actionFrequencies) {
 		return actionFrequencies
 			.stream()
 			.map(frequency -> {
-				Action<T> action = frequency.get2();
-				// TODO: handle preconditions and Action.provideTransformer and action.toString()
-				Transformer<T> transformer = new Transformer<T>() {
-					@Override
-					public @NotNull T apply(@NotNull T state) {
-						return action.run(state);
-					}
+				Arbitrary<? extends Action<T>> actionArbitrary = frequency.get2();
+				TransformerProvider<T> provider = ignoreSupplier -> actionArbitrary.map(action -> {
+					// TODO: handle preconditions and Action.provideTransformer and action.toString()
+					Transformer<T> transformer = new Transformer<T>() {
+						@Override
+						public @NotNull T apply(@NotNull T state) {
+							return action.run(state);
+						}
 
-					@Override
-					public String toString() {
-						return action.toString();
-					}
-				};
-				TransformerProvider<T> provider = ignore -> Arbitraries.just(transformer);
+						@Override
+						public String toString() {
+							return action.toString();
+						}
+					};
+					return transformer;
+				});
 				return Tuple.of(frequency.get1(), provider);
 			}).collect(Collectors.toList());
 	}
