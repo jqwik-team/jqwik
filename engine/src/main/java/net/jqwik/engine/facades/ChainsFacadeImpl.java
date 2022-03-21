@@ -24,7 +24,7 @@ public class ChainsFacadeImpl extends Chains.ChainsFacade {
 	@Override
 	public <T> ActionChainArbitrary<T> actionChains(
 		Supplier<? extends T> initialSupplier,
-		List<Tuple2<Integer, Arbitrary<? extends Action<T>>>> actionArbitraryFrequencies
+		List<Tuple2<Integer, Arbitrary<Action<T>>>> actionArbitraryFrequencies
 	) {
 		return new DefaultActionChainArbitrary<>(initialSupplier, actionArbitraryFrequencies);
 	}

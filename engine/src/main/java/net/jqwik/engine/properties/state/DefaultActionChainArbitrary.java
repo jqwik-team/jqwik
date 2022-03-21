@@ -17,13 +17,13 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 
 	public DefaultActionChainArbitrary(
 		Supplier<? extends T> initialSupplier,
-		List<Tuple2<Integer, Arbitrary<? extends Action<T>>>> actionArbitraryFrequencies
+		List<Tuple2<Integer, Arbitrary<Action<T>>>> actionArbitraryFrequencies
 	) {
 		List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies = toProviderFrequencies(actionArbitraryFrequencies);
 		chainArbitrary = new DefaultChainArbitrary<>(initialSupplier, providerFrequencies);
 	}
 
-	private List<Tuple2<Integer, TransformerProvider<T>>> toProviderFrequencies(List<Tuple2<Integer, Arbitrary<? extends Action<T>>>> actionFrequencies) {
+	private List<Tuple2<Integer, TransformerProvider<T>>> toProviderFrequencies(List<Tuple2<Integer, Arbitrary<Action<T>>>> actionFrequencies) {
 		return actionFrequencies
 			.stream()
 			.map(frequency -> {

@@ -144,8 +144,9 @@ class ChainArbitraryTests {
 
 		Statistics.coverage(checker -> {
 			checker.check(42).count(c -> c == 0);
-			checker.check(1).percentage(p -> p > 0 && p < 30);
-			checker.check(2).percentage(p -> p > 70);
+			checker.check(0).percentage(p -> p >= 9 && p <= 10); // Always 1 of 11
+			checker.check(1).percentage(p -> p > 0 && p < 25);
+			checker.check(2).percentage(p -> p > 65);
 		});
 	}
 
