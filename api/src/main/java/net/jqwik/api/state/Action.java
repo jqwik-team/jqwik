@@ -1,7 +1,5 @@
 package net.jqwik.api.state;
 
-import java.util.function.*;
-
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
@@ -65,19 +63,7 @@ public interface Action<S> {
 	 * @return an arbitrary of type {@linkplain Transformer Transformer<S>}.
 	 */
 	default Arbitrary<Transformer<S>> provideTransformer(S state) {
-		return Arbitraries.just(
-			new Transformer<S>() {
-				@Override
-				public S apply(S s) {
-					return Action.this.run(s);
-				}
-
-				@Override
-				public String transformation() {
-					return Action.this.toString();
-				}
-			}
-		);
+		throw new UnsupportedOperationException("You have to override either Action.run(state) or Action.provideTransformer(state).");
 	}
 
 	/**
