@@ -4,6 +4,7 @@ new stateful:
     - Introduce Action and ActionChain
         - Invariants
         - Consider Action.provideTransformer(..)
+    - Add SampleReportingFormat for Chain and ActionChain
     - Make Chain and ActionChain objects reproducible with GenerationInfo
     - Document
         - JavaDoc
