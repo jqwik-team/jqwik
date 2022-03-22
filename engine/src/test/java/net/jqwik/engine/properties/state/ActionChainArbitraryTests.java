@@ -106,28 +106,14 @@ class ActionChainArbitraryTests {
 
 	@Example
 	void preconditionsInSeparateActionsAreConsidered(@ForAll Random random) {
-		Action<String> x0to4 = new Action<String>() {
-			@Override
-			public boolean precondition(String state) {
-				return state.length() < 5;
-			}
-
-			@Override
-			public Arbitrary<Transformer<String>> transformer() {
-				return Arbitraries.just(s -> s + "x");
-			}
-		};
-		Action<String> y5to9 = new Action<String>() {
-			@Override
-			public boolean precondition(String state) {
-				return state.length() >= 5;
-			}
-
-			@Override
-			public Arbitrary<Transformer<String>> transformer() {
-				return Arbitraries.just(s -> s + "y");
-			}
-		};
+		Action<String> x0to4 = Action.just(
+			s -> s.length() < 5,
+			s -> s + "x"
+		);
+		Action<String> y5to9 = Action.just(
+			s -> s.length() >= 5,
+			s -> s + "y"
+		);
 
 		ActionChainArbitrary<String> chains = Chains.actionChains(
 				() -> "", x0to4, y5to9
@@ -139,18 +125,17 @@ class ActionChainArbitraryTests {
 	}
 
 	private Action<String> addX() {
-		return Action.just(model -> model + "x", "+x");
+		return Action.just("+x", model -> model + "x");
 	}
 
 	private Action<String> failing() {
 		return Action.just(
-				model -> {throw new RuntimeException("failing");},
-				"failing"
+			"failing", model -> {throw new RuntimeException("failing");}
 		);
 	}
 
 	private Action<String> addY() {
-		return Action.just(model -> model + "y", "+y");
+		return Action.just("+y", model -> model + "y");
 	}
 
 }

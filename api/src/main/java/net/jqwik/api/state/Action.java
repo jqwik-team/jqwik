@@ -1,5 +1,7 @@
 package net.jqwik.api.state;
 
+import java.util.function.*;
+
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
@@ -12,20 +14,61 @@ import static org.apiguardian.api.API.Status.*;
  * Those objects can be either mutable, which means that the state changing method will return the same object,
  * or immutable, which requires the method to return another object that represents the transformed state.
  *
+ * <p>
+ *     Mind that there is a deprecated class {@link net.jqwik.api.stateful.Action} which looks similar but is not.
+ *     Do not confuse those two.
+ * </p>
+ *
  * @param <S> Type of the object to transform through an action
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface Action<S> {
 
+	/**
+	 * Create an {@linkplain Action} without generated parts
+	 */
 	static <T> Action<T> just(Transformer<T> transformer) {
-		return just(transformer, transformer.transformation());
+		return just(transformer.transformation(), transformer);
 	}
 
-	static <T> Action<T> just(Transformer<T> transformer, String description) {
+	/**
+	 * Create an {@linkplain Action} without generated parts
+	 */
+	static <T> Action<T> just(String description, Transformer<T> transformer) {
 		return new Action<T>() {
 			@Override
 			public Arbitrary<Transformer<T>> transformer() {
 				return Arbitraries.just(transformer);
+			}
+
+			@Override
+			public String toString() {
+				return description;
+			}
+		};
+	}
+
+	/**
+	 * Create an {@linkplain Action} without generated parts
+	 */
+	static <T> Action<T> just(Predicate<T> precondition, Transformer<T> transformer) {
+		return just(transformer.transformation(), precondition, transformer);
+	}
+
+	/**
+	 * Create an {@linkplain Action} without generated parts
+	 */
+	static <T> Action<T> just(String description, Predicate<T> precondition, Transformer<T> transformer) {
+		// Do not merge implementation with Action.just(description, transformer) since dedicated implementation of precondition() changes shrinking behaviour
+		return new Action<T>() {
+			@Override
+			public Arbitrary<Transformer<T>> transformer() {
+				return Arbitraries.just(transformer);
+			}
+
+			@Override
+			public boolean precondition(T state) {
+				return precondition.test(state);
 			}
 
 			@Override

@@ -5,6 +5,8 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.junit.platform.commons.support.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
@@ -46,12 +48,10 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 			Method precondition = precondition(action.getClass());
 			if (!precondition.equals(precondition(Action.class))) {
 				try {
-					boolean isApplicable = (boolean) precondition.invoke(action, stateSupplier.get());
+					boolean isApplicable = (boolean) ReflectionSupport.invokeMethod(precondition, action, stateSupplier.get());
 					if (!isApplicable) {
 						return false;
 					}
-				} catch (InvocationTargetException invocationTargetException) {
-					JqwikExceptionSupport.throwAsUncheckedException(invocationTargetException.getTargetException());
 				} catch (Exception exception) {
 					JqwikExceptionSupport.throwAsUncheckedException(exception);
 				}
