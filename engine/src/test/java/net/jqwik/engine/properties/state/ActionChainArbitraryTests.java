@@ -3,10 +3,12 @@ package net.jqwik.engine.properties.state;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
+import org.assertj.core.api.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
+import net.jqwik.api.state.Action;
 import net.jqwik.api.state.ActionChain.*;
 import net.jqwik.testing.*;
 
@@ -124,6 +126,58 @@ class ActionChainArbitraryTests {
 		assertThat(result).isEqualTo("xxxxxyyyyy");
 	}
 
+	@Group
+	class Invariants {
+
+		@Example
+		boolean succeedingInvariant(@ForAll Random random) {
+			Arbitrary<ActionChain<MyModel>> arbitrary = Chains.actionChains(MyModel::new, changeValue());
+			ActionChain<MyModel> chainWithInvariant =
+				TestingSupport.generateFirst(arbitrary, random).withInvariant(model -> Assertions.assertThat(true).isTrue());
+
+			MyModel result = chainWithInvariant.run();
+			return result.value.length() > 0;
+		}
+
+		@Property(tries = 10)
+		void failingInvariant(@ForAll(supplier = MyModelChain.class) ActionChain<MyModel> chain) {
+			ActionChain<MyModel> chainWithInvariant =
+				chain.withInvariant(model -> Assertions.assertThat(model.value).isNotNull());
+
+			Assertions.assertThatThrownBy(() -> chainWithInvariant.run())
+					  .isInstanceOf(InvariantFailedError.class);
+		}
+
+		class MyModelChain implements ArbitrarySupplier<ActionChain<MyModel>> {
+			@Override
+			public Arbitrary<ActionChain<MyModel>> get() {
+				return 	Chains.actionChains(MyModel::new, changeValue(), nullify()).withMaxActions(20);
+			}
+		}
+
+		private Action<MyModel> changeValue() {
+			return new Action<MyModel>() {
+				@Override
+				public Arbitrary<Transformer<MyModel>> transformer() {
+					return Arbitraries.strings().alpha().ofMinLength(1).map(aString -> {
+						Transformer<MyModel> transformer = model -> model.setValue(aString);
+						return transformer.describe("setValue: " + aString);
+					});
+				}
+
+				@Override
+				public String toString() {
+					return "set value";
+				}
+			};
+		}
+
+		private Action<MyModel> nullify() {
+			return Action.just("nullify", model -> model.setValue(null));
+		}
+
+	}
+
 	private Action<String> addX() {
 		return Action.just("+x", model -> model + "x");
 	}
@@ -136,6 +190,17 @@ class ActionChainArbitraryTests {
 
 	private Action<String> addY() {
 		return Action.just("+y", model -> model + "y");
+	}
+
+	static class MyModel {
+
+		public String value = "";
+
+		MyModel setValue(String aString) {
+			this.value = aString;
+			return this;
+		}
+
 	}
 
 }

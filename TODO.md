@@ -2,7 +2,6 @@
 new stateful:
 
     - Introduce Action and ActionChain
-        - Preconditions
         - Invariants
         - Consider Action.provideTransformer(..)
     - Make Chain and ActionChain objects reproducible with GenerationInfo

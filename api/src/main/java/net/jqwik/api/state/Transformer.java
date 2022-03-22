@@ -27,4 +27,18 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	default String transformation() {
 		return toString();
 	}
+
+	default Transformer<T> describe(@NotNull String description) {
+		return new Transformer<T>() {
+			@Override
+			public @NotNull T apply(@NotNull T t) {
+				return Transformer.this.apply(t);
+			}
+
+			@Override
+			public String toString() {
+				return description;
+			}
+		};
+	}
 }

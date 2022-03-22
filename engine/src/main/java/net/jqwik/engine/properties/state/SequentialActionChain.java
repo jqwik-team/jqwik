@@ -91,7 +91,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	@Override
 	@NotNull
 	public ActionChain<T> withInvariant(@Nullable String label, Consumer<T> invariant) {
-		return null;
+		return this;
 	}
 
 	@Override
@@ -111,5 +111,28 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	public synchronized ActionChain<T> peek(@NotNull Consumer<T> peeker) {
 		peekers.add(peeker);
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		if (running() == RunningState.NOT_RUN) {
+			return String.format("ActionChain[%s]: %s max actions", running().name(), chain.maxTransformations());
+		}
+		String actionsString = JqwikStringSupport.displayString(runActions());
+		return String.format("ActionChain[%s]: %s", running().name(), actionsString);
+	}
+
+	// This implementation is there to enable jqwik's after execution reporting
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SequentialActionChain<?> that = (SequentialActionChain<?>) o;
+		return currentRunning == that.currentRunning;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(currentValue, currentRunning);
 	}
 }

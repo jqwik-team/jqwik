@@ -3,6 +3,7 @@ package net.jqwik.api.state;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jetbrains.annotations.*;
 
 import net.jqwik.api.*;
 
@@ -28,22 +29,18 @@ public interface Action<S> {
 	 * Create an {@linkplain Action} without generated parts
 	 */
 	static <T> Action<T> just(Transformer<T> transformer) {
-		return just(transformer.transformation(), transformer);
+		return just((String) null, transformer);
 	}
 
 	/**
 	 * Create an {@linkplain Action} without generated parts
 	 */
-	static <T> Action<T> just(String description, Transformer<T> transformer) {
+	static <T> Action<T> just(@Nullable String description, Transformer<T> transformer) {
 		return new Action<T>() {
 			@Override
 			public Arbitrary<Transformer<T>> transformer() {
-				return Arbitraries.just(transformer);
-			}
-
-			@Override
-			public String toString() {
-				return description;
+				Transformer<T> withDescription = description == null ? transformer : transformer.describe(description);
+				return Arbitraries.just(withDescription);
 			}
 		};
 	}
@@ -52,28 +49,24 @@ public interface Action<S> {
 	 * Create an {@linkplain Action} without generated parts
 	 */
 	static <T> Action<T> just(Predicate<T> precondition, Transformer<T> transformer) {
-		return just(transformer.transformation(), precondition, transformer);
+		return just(null, precondition, transformer);
 	}
 
 	/**
 	 * Create an {@linkplain Action} without generated parts
 	 */
-	static <T> Action<T> just(String description, Predicate<T> precondition, Transformer<T> transformer) {
+	static <T> Action<T> just(@Nullable String description, Predicate<T> precondition, Transformer<T> transformer) {
 		// Do not merge implementation with Action.just(description, transformer) since dedicated implementation of precondition() changes shrinking behaviour
 		return new Action<T>() {
 			@Override
 			public Arbitrary<Transformer<T>> transformer() {
-				return Arbitraries.just(transformer);
+				Transformer<T> withDescription = description == null ? transformer : transformer.describe(description);
+				return Arbitraries.just(withDescription);
 			}
 
 			@Override
 			public boolean precondition(T state) {
 				return precondition.test(state);
-			}
-
-			@Override
-			public String toString() {
-				return description;
 			}
 		};
 	}
