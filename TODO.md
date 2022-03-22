@@ -2,13 +2,17 @@
 new stateful:
 
     - Introduce Action and ActionChain
+        - Preconditions
+        - Invariants
+        - Consider Action.provideTransformer(..)
     - Make Chain and ActionChain objects reproducible with GenerationInfo
-    - Introduce ModelChain
     - Document
         - JavaDoc
         - User Guide
 
 1.6.x
+
+    - Introduce ModelChain. Should cover https://github.com/jlink/jqwik/issues/80.
 
     - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
 
