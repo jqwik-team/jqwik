@@ -45,7 +45,7 @@ public class Chains {
 
 		public abstract <T> ActionChainArbitrary<T> actionChains(
 			Supplier<? extends T> initialSupplier,
-			List<Tuple2<Integer, Arbitrary<Action<T>>>> actionArbitraryFrequencies
+			List<Tuple2<Integer,Action<T>>> actionFrequencies
 		);
 	}
 
@@ -94,7 +94,7 @@ public class Chains {
 	 * Create arbitrary for a {@linkplain ActionChain action chain) based on {@linkplain Action actions}.
 	 *
 	 * @param initialSupplier function to create the initial state object
-	 * @param actionArbitraries varargs of arbitraries for {@linkplain Action actions}
+	 * @param actions variable number of {@linkplain Action actions}. Weight determines the relative frequency of each action.
 	 * @param <T> The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
 	 */
@@ -102,26 +102,26 @@ public class Chains {
 	@SafeVarargs
 	public static <T> ActionChainArbitrary<T> actionChains(
 		Supplier<? extends T> initialSupplier,
-		Arbitrary<Action<T>>... actionArbitraries
+		Action<T>... actions
 	) {
-		Tuple2<Integer, Arbitrary<Action<T>>>[] actionArbitraryFrequencies =
-			Arrays.stream(actionArbitraries).map(a -> Tuple.of(1, a)).toArray(Tuple2[]::new);
-		return actionChains(initialSupplier, actionArbitraryFrequencies);
+		Tuple2<Integer, Action<T>>[] actionFrequencies =
+			Arrays.stream(actions).map(a -> Tuple.of(1, a)).toArray(Tuple2[]::new);
+		return actionChains(initialSupplier, actionFrequencies);
 	}
 
 	/**
 	 * Create arbitrary for a {@linkplain ActionChain action chain) based on {@linkplain Action actions}.
 	 *
 	 * @param initialSupplier function to create the initial state object
-	 * @param actionArbitraryFrequencies varargs of weighted arbitraries for {@linkplain Action actions}. Weight determines the relative frequency of each action.
+	 * @param actionFrequencies variable number of weighted {@linkplain Action actions}. Weight determines the relative frequency of each action.
 	 * @param <T> The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
 	 */
 	public static <T> ActionChainArbitrary<T> actionChains(
 		Supplier<? extends T> initialSupplier,
-		Tuple2<Integer, Arbitrary<Action<T>>>[] actionArbitraryFrequencies
+		Tuple2<Integer, Action<T>>[] actionFrequencies
 	) {
-		List<Tuple2<Integer, Arbitrary<Action<T>>>> frequencies = Arrays.asList(actionArbitraryFrequencies);
+		List<Tuple2<Integer, Action<T>>> frequencies = Arrays.asList(actionFrequencies);
 		if (frequencies.isEmpty()) {
 			throw new IllegalArgumentException("You must specify at least one action");
 		}

@@ -7,13 +7,10 @@ import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
-import net.jqwik.api.state.Action;
 import net.jqwik.api.state.ActionChain.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
-
-import static net.jqwik.api.Arbitraries.*;
 
 class ActionChainArbitraryTests {
 
@@ -54,7 +51,7 @@ class ActionChainArbitraryTests {
 	void failingChain(@ForAll("xOrFailing") ActionChain<String> chain) {
 		assertThat(chain.running()).isEqualTo(RunningState.NOT_RUN);
 		assertThatThrownBy(
-			() -> chain.run()
+				() -> chain.run()
 		).isInstanceOf(AssertionFailedError.class);
 
 		assertThat(chain.running()).isEqualTo(RunningState.FAILED);
@@ -98,8 +95,12 @@ class ActionChainArbitraryTests {
 
 	@Provide
 	ActionChainArbitrary<String> anyAtoZ() {
-		Arbitrary<Action<String>> anyAZ =
-			Arbitraries.chars().range('a', 'z').map(c -> Action.transform(s -> s + c));
+		Action<String> anyAZ = new Action<String>() {
+			@Override
+			public Arbitrary<Transformer<String>> transformer() {
+				return Arbitraries.chars().range('a', 'z').map(c -> s -> s + c);
+			}
+		};
 		return Chains.actionChains(() -> "", anyAZ).withMaxActions(30);
 	}
 
@@ -112,8 +113,8 @@ class ActionChainArbitraryTests {
 			}
 
 			@Override
-			public String run(String state) {
-				return state + "x";
+			public Arbitrary<Transformer<String>> transformer() {
+				return Arbitraries.just(s -> s + "x");
 			}
 		};
 		Action<String> y5to9 = new Action<String>() {
@@ -123,13 +124,13 @@ class ActionChainArbitraryTests {
 			}
 
 			@Override
-			public String run(String state) {
-				return state + "y";
+			public Arbitrary<Transformer<String>> transformer() {
+				return Arbitraries.just(s -> s + "y");
 			}
 		};
 
 		ActionChainArbitrary<String> chains = Chains.actionChains(
-			() -> "", just(x0to4), just(y5to9)
+				() -> "", x0to4, y5to9
 		).withMaxActions(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 
@@ -137,19 +138,19 @@ class ActionChainArbitraryTests {
 		assertThat(result).isEqualTo("xxxxxyyyyy");
 	}
 
-	private Arbitrary<Action<String>> addX() {
-		return just(Action.transform(model -> model + "x", "+x"));
+	private Action<String> addX() {
+		return Action.just(model -> model + "x", "+x");
 	}
 
-	private Arbitrary<Action<String>> failing() {
-		return just(Action.transform(
-			model -> {throw new RuntimeException("failing");},
-			"failing"
-		));
+	private Action<String> failing() {
+		return Action.just(
+				model -> {throw new RuntimeException("failing");},
+				"failing"
+		);
 	}
 
-	private Arbitrary<Action<String>> addY() {
-		return just(Action.transform(model -> model + "y", "+y"));
+	private Action<String> addY() {
+		return Action.just(model -> model + "y", "+y");
 	}
 
 }

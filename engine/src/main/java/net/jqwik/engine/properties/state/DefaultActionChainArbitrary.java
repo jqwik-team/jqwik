@@ -1,25 +1,15 @@
 package net.jqwik.engine.properties.state;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
-import org.jetbrains.annotations.NotNull;
-
-import net.jqwik.api.Arbitraries;
-import net.jqwik.api.Arbitrary;
-import net.jqwik.api.Tuple;
-import net.jqwik.api.Tuple.Tuple2;
-import net.jqwik.api.arbitraries.ArbitraryDecorator;
-import net.jqwik.api.state.Action;
-import net.jqwik.api.state.ActionChain;
-import net.jqwik.api.state.ActionChainArbitrary;
-import net.jqwik.api.state.ChainArbitrary;
-import net.jqwik.api.state.Transformer;
-import net.jqwik.api.state.TransformerProvider;
-import net.jqwik.engine.support.JqwikExceptionSupport;
+import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.state.*;
+import net.jqwik.engine.support.*;
 
 public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionChain<T>> implements ActionChainArbitrary<T> {
 
@@ -27,13 +17,13 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 
 	public DefaultActionChainArbitrary(
 		Supplier<? extends T> initialSupplier,
-		List<Tuple2<Integer, Arbitrary<Action<T>>>> actionArbitraryFrequencies
+		List<Tuple2<Integer, Action<T>>> actionFrequencies
 	) {
-		List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies = toProviderFrequencies(actionArbitraryFrequencies);
+		List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies = toProviderFrequencies(actionFrequencies);
 		chainArbitrary = new DefaultChainArbitrary<>(initialSupplier, providerFrequencies);
 	}
 
-	private List<Tuple2<Integer, TransformerProvider<T>>> toProviderFrequencies(List<Tuple2<Integer, Arbitrary<Action<T>>>> actionFrequencies) {
+	private List<Tuple2<Integer, TransformerProvider<T>>> toProviderFrequencies(List<Tuple2<Integer, Action<T>>> actionFrequencies) {
 		return actionFrequencies
 			.stream()
 			.map(frequency -> {
@@ -42,15 +32,13 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 			}).collect(Collectors.toList());
 	}
 
-	@NotNull
-	private TransformerProvider<T> createProvider(Arbitrary<? extends Action<T>> actionArbitrary) {
-		return stateSupplier -> actionArbitrary.flatMap(action -> {
-			// TODO: handle preconditions and Action.provideTransformer and action.toString()
+	private TransformerProvider<T> createProvider(Action<T> action) {
+		return stateSupplier -> {
 			if (!checkPrecondition(stateSupplier, action)) {
 				return null;
 			}
-			return Arbitraries.just(toTransformer(action));
-		});
+			return toTransformerArbitrary(action, stateSupplier);
+		};
 	}
 
 	private boolean checkPrecondition(Supplier<T> stateSupplier, Action<T> action) {
@@ -72,28 +60,16 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 		return true;
 	}
 
-	@NotNull
-	private Transformer<T> toTransformer(Action<T> action) {
-		return new Transformer<T>() {
-			@Override
-			public @NotNull T apply(@NotNull T state) {
-				return action.run(state);
-			}
-
-			@Override
-			public String toString() {
-				return action.toString();
-			}
-		};
+	private Arbitrary<Transformer<T>> toTransformerArbitrary(Action<T> action, Supplier<T> stateSupplier) {
+		// TODO: handle Action.transformer(state) and action.toString()
+		return action.transformer();
 	}
 
-	@NotNull
 	private Method precondition(Class<?> aClass) throws NoSuchMethodException {
 		return aClass.getMethod("precondition", Object.class);
 	}
 
 	@Override
-	@NotNull
 	public ActionChainArbitrary<T> withMaxActions(int maxSize) {
 		DefaultActionChainArbitrary<T> clone = typedClone();
 		clone.chainArbitrary = clone.chainArbitrary.withMaxTransformations(maxSize);
@@ -101,7 +77,6 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	}
 
 	@Override
-	@NotNull
 	protected Arbitrary<ActionChain<T>> arbitrary() {
 		return chainArbitrary.map(SequentialActionChain::new);
 	}
