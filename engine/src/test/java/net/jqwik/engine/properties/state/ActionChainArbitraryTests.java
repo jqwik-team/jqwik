@@ -7,6 +7,7 @@ import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
+import net.jqwik.api.state.Action;
 import net.jqwik.api.state.ActionChain.*;
 import net.jqwik.testing.*;
 
@@ -100,6 +101,40 @@ class ActionChainArbitraryTests {
 		Arbitrary<Action<String>> anyAZ =
 			Arbitraries.chars().range('a', 'z').map(c -> Action.transform(s -> s + c));
 		return Chains.actionChains(() -> "", anyAZ).withMaxActions(30);
+	}
+
+	@Example
+	void preconditionsInSeparateActionsAreConsidered(@ForAll Random random) {
+		Action<String> x0to4 = new Action<String>() {
+			@Override
+			public boolean precondition(String state) {
+				return state.length() < 5;
+			}
+
+			@Override
+			public String run(String state) {
+				return state + "x";
+			}
+		};
+		Action<String> y5to9 = new Action<String>() {
+			@Override
+			public boolean precondition(String state) {
+				return state.length() >= 5;
+			}
+
+			@Override
+			public String run(String state) {
+				return state + "y";
+			}
+		};
+
+		ActionChainArbitrary<String> chains = Chains.actionChains(
+			() -> "", just(x0to4), just(y5to9)
+		).withMaxActions(10);
+		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
+
+		String result = chain.run();
+		assertThat(result).isEqualTo("xxxxxyyyyy");
 	}
 
 	private Arbitrary<Action<String>> addX() {
