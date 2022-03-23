@@ -7,6 +7,7 @@ import java.util.stream.*;
 import org.jetbrains.annotations.*;
 import org.opentest4j.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.support.*;
 
@@ -16,6 +17,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	private volatile T currentValue = null;
 	private volatile RunningState currentRunning = RunningState.NOT_RUN;
 	private final List<Consumer<T>> peekers = new ArrayList<>();
+	private final List<Tuple.Tuple2<String, Consumer<T>>> invariants = new ArrayList<>();
 
 	public SequentialActionChain(Chain<T> chain) {
 		this.chain = chain;
@@ -43,10 +45,10 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 			T state = iterator.next();
 			currentValue = state;
 			callPeekers();
-			// checkInvariants();
-			// } catch (InvariantFailedError ife) {
-			// 	currentRunning = RunningState.FAILED;
-			// 	throw ife;
+			checkInvariants();
+		} catch (InvariantFailedError ife) {
+			currentRunning = RunningState.FAILED;
+			throw ife;
 		} catch (Throwable t) {
 			currentRunning = RunningState.FAILED;
 			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage("Run", t.getMessage()), t);
@@ -61,18 +63,17 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 		}
 	}
 
-	// private void checkInvariants() {
-	// 	for (Tuple.Tuple2<String, Invariant<M>> tuple : invariants) {
-	// 		String label = tuple.get1();
-	// 		Invariant<M> invariant = tuple.get2();
-	// 		try {
-	// 			invariant.check(currentModel);
-	// 		} catch (Throwable t) {
-	// 			String invariantLabel = label == null ? "Invariant" : String.format("Invariant '%s'", label);
-	// 			throw new InvariantFailedError(createErrorMessage(invariantLabel, t.getMessage()), t);
-	// 		}
-	// 	}
-	// }
+	private void checkInvariants() {
+		for (Tuple.Tuple2<String, Consumer<T>> tuple : invariants) {
+			String label = tuple.get1();
+			Consumer<T> invariant = tuple.get2();
+			try {
+				invariant.accept(currentValue);
+			} catch (Throwable t) {
+				throw new InvariantFailedError(createErrorMessage(label, t.getMessage()), t);
+			}
+		}
+	}
 
 	private String createErrorMessage(String name, String causeMessage) {
 		String actionsString = runActions()
@@ -91,6 +92,8 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	@Override
 	@NotNull
 	public ActionChain<T> withInvariant(@Nullable String label, Consumer<T> invariant) {
+		String invariantLabel = label == null ? "Invariant" : String.format("Invariant '%s'", label);
+		invariants.add(Tuple.of(invariantLabel, invariant));
 		return this;
 	}
 

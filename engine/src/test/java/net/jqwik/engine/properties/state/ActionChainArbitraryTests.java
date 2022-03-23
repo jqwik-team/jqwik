@@ -129,23 +129,21 @@ class ActionChainArbitraryTests {
 	@Group
 	class Invariants {
 
-		@Example
-		boolean succeedingInvariant(@ForAll Random random) {
-			Arbitrary<ActionChain<MyModel>> arbitrary = Chains.actionChains(MyModel::new, changeValue());
+		@Property(tries = 10)
+		boolean succeedingInvariant(@ForAll(supplier = MyModelChain.class) ActionChain<MyModel> chain) {
 			ActionChain<MyModel> chainWithInvariant =
-				TestingSupport.generateFirst(arbitrary, random).withInvariant(model -> Assertions.assertThat(true).isTrue());
+				chain.withInvariant(model -> Assertions.assertThat(true).isTrue());
 
 			MyModel result = chainWithInvariant.run();
-			return result.value.length() > 0;
+			return result.value == null || result.value.length() > 0;
 		}
 
 		@Property(tries = 10)
+		@ExpectFailure(failureType = InvariantFailedError.class)
 		void failingInvariant(@ForAll(supplier = MyModelChain.class) ActionChain<MyModel> chain) {
 			ActionChain<MyModel> chainWithInvariant =
-				chain.withInvariant(model -> Assertions.assertThat(model.value).isNotNull());
-
-			Assertions.assertThatThrownBy(() -> chainWithInvariant.run())
-					  .isInstanceOf(InvariantFailedError.class);
+				chain.withInvariant("never null", model -> Assertions.assertThat(model.value).isNotNull());
+			chainWithInvariant.run();
 		}
 
 		class MyModelChain implements ArbitrarySupplier<ActionChain<MyModel>> {
@@ -163,11 +161,6 @@ class ActionChainArbitraryTests {
 						Transformer<MyModel> transformer = model -> model.setValue(aString);
 						return transformer.describe("setValue: " + aString);
 					});
-				}
-
-				@Override
-				public String toString() {
-					return "set value";
 				}
 			};
 		}
