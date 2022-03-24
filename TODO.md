@@ -2,7 +2,6 @@
 new stateful:
 
     - Introduce Action and ActionChain
-        - Transformer.END_OF_CHAIN
         - Consider Action.provideTransformer(..)
     - Add SampleReportingFormat for Chain and ActionChain
     - Make Chain and ActionChain objects reproducible with GenerationInfo

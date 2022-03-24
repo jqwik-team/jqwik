@@ -31,6 +31,30 @@ class ChainArbitraryTests {
 		);
 	}
 
+	@Example
+	void endOfChainIsHonored(@ForAll Random random) {
+		Arbitrary<Chain<Integer>> chains = Chains.chains(
+			() -> 0,
+			supplier -> {
+				if (supplier.get() >= 5) {
+					return just(Transformer.endOfChain());
+				}
+				return just(ChainsTestingHelper.transformer(i -> i + 1, "+1"));
+			}
+		).withMaxTransformations(100);
+
+		Chain<Integer> chain = TestingSupport.generateFirst(chains, random);
+
+		List<Integer> valuesFirst = collectAllValues(chain);
+		assertThat(valuesFirst).containsExactly(0, 1, 2, 3, 4, 5, 5);
+		assertThat(chain.transformations()).containsExactly(
+			"+1", "+1", "+1", "+1", "+1", "End of Chain"
+		);
+
+		List<Integer> valuesRerun = collectAllValues(chain);
+		assertThat(valuesFirst).isEqualTo(valuesRerun);
+	}
+
 	@Property
 	void chainWithSingleGenerator(@ForAll Random random) {
 		TransformerProvider<Integer> growBelow100OtherwiseShrink = intSupplier -> {

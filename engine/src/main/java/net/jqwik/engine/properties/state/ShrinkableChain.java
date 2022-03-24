@@ -106,6 +106,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		private int steps = 0;
 		private T current;
 		private boolean initialSupplied = false;
+		private boolean endOfChain = false;
 
 		private ChainIterator(T initial) {
 			this.current = initial;
@@ -115,6 +116,9 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		public boolean hasNext() {
 			if (!initialSupplied) {
 				return true;
+			}
+			if (endOfChain) {
+				return false;
 			}
 			return steps < maxTransformations;
 		}
@@ -128,18 +132,23 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 			// Create deterministic random in order to reuse in shrinking
 			long nextSeed = random.nextLong();
-			Shrinkable<Transformer<T>> next = null;
+			Transformer<T> transformer = null;
 
 			synchronized (ShrinkableChain.this) {
+				Shrinkable<Transformer<T>> next = null;
 				if (steps < iterations.size()) {
 					next = rerunStep(nextSeed);
 				} else {
 					next = runNewStep(nextSeed);
 				}
 				steps++;
+				transformer = next.value();
+				if (transformer.equals(Transformer.END_OF_CHAIN)) {
+					endOfChain = true;
+				}
 			}
 
-			current = next.value().apply(current);
+			current = transformer.apply(current);
 			return current;
 		}
 
