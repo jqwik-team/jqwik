@@ -368,6 +368,29 @@ class ChainArbitraryTests {
 		}
 
 		@Property
+		void endOfChainIsBeingShrunkAway(@ForAll Random random) {
+			Arbitrary<Chain<Integer>> chains = Chains.chains(
+				() -> 0,
+				supplier -> {
+					if (supplier.get() >= 5) {
+						return just(Transformer.endOfChain());
+					}
+					return just(ChainsTestingHelper.transformer(i -> i + 1, "+1"));
+				}
+			).withMaxTransformations(100);
+
+			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
+				for (Integer value : chain) {
+					// consume iterator
+				}
+				return collectAllValues(chain).size() < 6;
+			};
+			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			assertThat(chain.transformations()).hasSize(5);
+			assertThat(collectAllValues(chain)).containsExactly(0, 1, 2, 3, 4, 5);
+		}
+
+		@Property
 		void shrinkChainWithMixedAccess(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
