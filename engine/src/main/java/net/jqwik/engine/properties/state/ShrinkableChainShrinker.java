@@ -22,6 +22,10 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	public Stream<Shrinkable<Chain<T>>> shrink() {
+		if (iterations.isEmpty()) {
+			// Do not try to shrink chains that have not run at all
+			return Stream.empty();
+		}
 		return JqwikStreamSupport.concat(
 			shrinkMaxTransformations(),
 			shrinkLastStateAccessingTransformer(),
