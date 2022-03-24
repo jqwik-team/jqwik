@@ -6,6 +6,9 @@ new stateful:
     - Add SampleReportingFormat for Chain and ActionChain
     - Make Chain and ActionChain objects reproducible with GenerationInfo
     - Document
+        - Samples for
+            - Plain Chain example
+            - Example for state-based transformer generator
         - JavaDoc
         - User Guide
 

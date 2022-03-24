@@ -1,11 +1,12 @@
 package net.jqwik.docs.state.mystack;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.state.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class MyStringStackProperties {
+class MyStringStackExamples {
 
 	@Property
 	void checkMyStack(@ForAll("myStackActions") ActionChain<MyStringStack> chain) {
@@ -63,17 +64,17 @@ class MyStringStackProperties {
 
 		@Override
 		public Arbitrary<Transformer<MyStringStack>> transformer() {
-			return Arbitraries.strings().alpha().ofLength(5)
-							  .map(element -> Transformer.transform(
-								  String.format("push(%s)", element),
-								  stack -> {
-									  int sizeBefore = stack.size();
-									  stack.push(element);
-									  assertThat(stack.isEmpty()).isFalse();
-									  assertThat(stack.size()).isEqualTo(sizeBefore + 1);
-									  return stack;
-								  }
-							  ));
+			StringArbitrary pushElements = Arbitraries.strings().alpha().ofLength(5);
+			return pushElements.map(element -> Transformer.transform(
+				String.format("push(%s)", element),
+				stack -> {
+					int sizeBefore = stack.size();
+					stack.push(element);
+					assertThat(stack.isEmpty()).isFalse();
+					assertThat(stack.size()).isEqualTo(sizeBefore + 1);
+					return stack;
+				}
+			));
 		}
 	}
 }
