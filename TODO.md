@@ -4,17 +4,18 @@ new stateful:
     - Introduce Action and ActionChain
         - Consider Action.provideTransformer(..)
     - Add SampleReportingFormat for Chain and ActionChain
-    - Make Chain and ActionChain objects reproducible with GenerationInfo
     - Document
         - Samples for
             - Plain Chain example
             - Example for state-based transformer generator
         - JavaDoc
         - User Guide
+            Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
 1.6.x
 
     - Introduce ModelChain. Should cover https://github.com/jlink/jqwik/issues/80.
+        - ModelChain can be generated before it's provided as parameter!
 
     - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
 
