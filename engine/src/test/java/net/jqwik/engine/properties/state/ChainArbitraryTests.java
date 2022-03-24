@@ -11,7 +11,6 @@ import net.jqwik.testing.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.Arbitraries.*;
-import static net.jqwik.engine.properties.state.ChainsTestingHelper.*;
 
 @PropertyDefaults(tries = 100)
 class ChainArbitraryTests {
@@ -20,7 +19,7 @@ class ChainArbitraryTests {
 	void deterministicChain(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 0,
-			ignore -> just(ChainsTestingHelper.transformer(i -> i + 1, "+1"))
+			ignore -> just(Transformer.transform("+1", i -> i + 1))
 		).withMaxTransformations(10);
 
 		Chain<Integer> chain = TestingSupport.generateFirst(chains, random);
@@ -39,7 +38,7 @@ class ChainArbitraryTests {
 				if (supplier.get() >= 5) {
 					return just(Transformer.endOfChain());
 				}
-				return just(ChainsTestingHelper.transformer(i -> i + 1, "+1"));
+				return just(Transformer.transform("+1", i -> i + 1));
 			}
 		).withMaxTransformations(100);
 
@@ -294,8 +293,8 @@ class ChainArbitraryTests {
 
 		@Property
 		void removeNullTransformersDuringShrinking(@ForAll Random random) {
-			Transformer<Integer> addOne = transformer(t -> t + 1, "addOne");
-			Transformer<Integer> doNothing = transformer(t -> t, "doNothing");
+			Transformer<Integer> addOne = Transformer.transform("addOne", t1 -> t1 + 1);
+			Transformer<Integer> doNothing = Transformer.transform("doNothing", t -> t);
 
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 1,
@@ -319,7 +318,7 @@ class ChainArbitraryTests {
 		void fullyShrinkTransformersWithoutStateAccess(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
-				ignore -> integers().between(1, 5).map(i -> transformer(t -> t + i, "add" + i))
+				ignore -> integers().between(1, 5).map(i -> Transformer.transform("add" + i, t -> t + i))
 			).withMaxTransformations(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
@@ -375,7 +374,7 @@ class ChainArbitraryTests {
 					if (supplier.get() >= 5) {
 						return just(Transformer.endOfChain());
 					}
-					return just(ChainsTestingHelper.transformer(i -> i + 1, "+1"));
+					return just(Transformer.transform("+1", i -> i + 1));
 				}
 			).withMaxTransformations(100);
 
@@ -397,12 +396,12 @@ class ChainArbitraryTests {
 				supplier -> {
 					int current = Math.abs(supplier.get());
 					if (current > 100) {
-						return just(transformer(t -> t / 2, "half"));
+						return just(Transformer.transform("half", t -> t / 2));
 					} else {
-						return integers().between(current, current * 2).map(i -> transformer(t -> t + i, "add-" + i));
+						return integers().between(current, current * 2).map(i -> Transformer.transform("add-" + i, t -> t + i));
 					}
 				},
-				ignore -> Arbitraries.just(transformer(t -> t - 1, "minus-1"))
+				ignore -> Arbitraries.just(Transformer.transform("minus-1", t -> t - 1))
 			).withMaxTransformations(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
@@ -431,9 +430,9 @@ class ChainArbitraryTests {
 				() -> 0,
 				supplier -> {
 					int current = supplier.get(); // access state
-					return Arbitraries.just(transformer(ignore -> current + 1, "plus-1"));
+					return Arbitraries.just(Transformer.transform("plus-1", ignore -> current + 1));
 				},
-				ignore -> Arbitraries.just(transformer(t -> t + 2, "plus-2"))
+				ignore -> Arbitraries.just(Transformer.transform("plus-2", t -> t + 2))
 			).withMaxTransformations(20);
 
 			RandomGenerator<Chain<Integer>> generator = chains.generator(100, false);

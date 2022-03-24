@@ -42,25 +42,33 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	}
 
 	/**
+	 * Create a transformer with a description
+	 *
+	 * @param description The text to describe what the transformer is doing
+	 * @param mutator The actual transforming function
+	 * @param <S> The type of the state to transform
+	 * @return a new instance of a transformer
+	 */
+	static <S> Transformer<S> transform(String description, Function<S, S> mutator) {
+		return new Transformer<S>() {
+			@Override
+			public S apply(S s) {
+				return mutator.apply(s);
+			}
+
+			@Override
+			public String transformation() {
+				return description;
+			}
+		};
+	}
+
+	/**
 	 * Describe the transformation this {@linkplain Transformer} is doing in a human understandable way
 	 *
 	 * @return non-empty String
 	 */
 	default String transformation() {
 		return toString();
-	}
-
-	default Transformer<T> describe(@NotNull String description) {
-		return new Transformer<T>() {
-			@Override
-			public @NotNull T apply(@NotNull T t) {
-				return Transformer.this.apply(t);
-			}
-
-			@Override
-			public String toString() {
-				return description;
-			}
-		};
 	}
 }

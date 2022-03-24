@@ -8,7 +8,6 @@ import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
-import net.jqwik.api.state.Action;
 import net.jqwik.api.state.ActionChain.*;
 import net.jqwik.testing.*;
 
@@ -53,7 +52,7 @@ class ActionChainArbitraryTests {
 	void failingChain(@ForAll("xOrFailing") ActionChain<String> chain) {
 		assertThat(chain.running()).isEqualTo(RunningState.NOT_RUN);
 		assertThatThrownBy(
-				() -> chain.run()
+			() -> chain.run()
 		).isInstanceOf(AssertionFailedError.class);
 
 		assertThat(chain.running()).isEqualTo(RunningState.FAILED);
@@ -118,7 +117,7 @@ class ActionChainArbitraryTests {
 		);
 
 		ActionChainArbitrary<String> chains = Chains.actionChains(
-				() -> "", x0to4, y5to9
+			() -> "", x0to4, y5to9
 		).withMaxActions(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 
@@ -149,7 +148,7 @@ class ActionChainArbitraryTests {
 		class MyModelChain implements ArbitrarySupplier<ActionChain<MyModel>> {
 			@Override
 			public Arbitrary<ActionChain<MyModel>> get() {
-				return 	Chains.actionChains(MyModel::new, changeValue(), nullify()).withMaxActions(20);
+				return Chains.actionChains(MyModel::new, changeValue(), nullify()).withMaxActions(20);
 			}
 		}
 
@@ -157,10 +156,11 @@ class ActionChainArbitraryTests {
 			return new Action<MyModel>() {
 				@Override
 				public Arbitrary<Transformer<MyModel>> transformer() {
-					return Arbitraries.strings().alpha().ofMinLength(1).map(aString -> {
-						Transformer<MyModel> transformer = model -> model.setValue(aString);
-						return transformer.describe("setValue: " + aString);
-					});
+					return Arbitraries.strings().alpha().ofMinLength(1)
+									  .map(aString -> Transformer.transform(
+										  "setValue: " + aString,
+										  model -> model.setValue(aString)
+									  ));
 				}
 			};
 		}
