@@ -51,16 +51,16 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	/**
 	 * Create a transformer with a description
 	 *
-	 * @param description The text to describe what the transformer is doing
-	 * @param mutator The actual transforming function
+	 * @param description The text to describe what the transform is doing
+	 * @param transform The actual transforming function
 	 * @param <S> The type of the state to transform
 	 * @return a new instance of a transformer
 	 */
-	static <S> Transformer<S> transform(String description, Function<S, S> mutator) {
+	static <S> Transformer<S> transform(String description, Function<S, S> transform) {
 		return new Transformer<S>() {
 			@Override
 			public S apply(S s) {
-				return mutator.apply(s);
+				return transform.apply(s);
 			}
 
 			@Override
@@ -68,6 +68,23 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 				return description;
 			}
 		};
+	}
+
+	/**
+	 * Convenience method to create a transformer with a description.
+	 * A mutator works on a mutable, stateful object which will always be returned.
+	 *
+	 * @param description The text to describe what the transformer is doing
+	 * @param mutate The actual mutating operation
+	 * @param <S> The type of the state to mutate
+	 * @return a new instance of a transformer
+	 */
+	static <S> Transformer<S> mutate(String description, Consumer<S> mutate) {
+		Function<S, S> transformer = s -> {
+			mutate.accept(s);
+			return s;
+		};
+		return Transformer.transform(description, transformer);
 	}
 
 	/**

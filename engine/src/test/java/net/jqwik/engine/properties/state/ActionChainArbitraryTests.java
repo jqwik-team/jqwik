@@ -139,12 +139,11 @@ class ActionChainArbitraryTests {
 			@Override
 			public Arbitrary<Transformer<List<Integer>>> transformer() {
 				return Arbitraries.integers()
-								  .map(i -> Transformer.transform(
+								  .map(i -> Transformer.mutate(
 									  "add " + i,
 									  l -> {
 										  l.add(i);
 										  assertThat(l).hasSizeLessThan(3);
-										  return l;
 									  }
 								  ));
 			}
@@ -192,21 +191,15 @@ class ActionChainArbitraryTests {
 					if (countOdds(state) > 0) {
 						return Arbitraries.integers().between(0, 50)
 										  .map(i -> i * 2)
-										  .map(i -> Transformer.transform(
+										  .map(i -> Transformer.mutate(
 											  "add " + i,
-											  (Set<Integer> set) -> {
-												  set.add(i);
-												  return set;
-											  }
+											  set -> set.add(i)
 										  ));
 					} else {
 						return Arbitraries.integers().between(0, 100)
-										  .map(i -> Transformer.transform(
+										  .map(i -> Transformer.mutate(
 											  "add " + i,
-											  (Set<Integer> set) -> {
-												  set.add(i);
-												  return set;
-											  }
+											  set -> set.add(i)
 										  ));
 					}
 				}
@@ -242,12 +235,9 @@ class ActionChainArbitraryTests {
 
 				@Override
 				public Arbitrary<Transformer<List<Integer>>> transformer() {
-					return Arbitraries.integers().between(100, 1000).map(i -> Transformer.transform(
+					return Arbitraries.integers().between(100, 1000).map(i -> Transformer.mutate(
 						"Initial " + i,
-						(List<Integer> l) -> {
-							l.add(i);
-							return l;
-						}
+						l -> l.add(i)
 					));
 				}
 			};
@@ -260,12 +250,9 @@ class ActionChainArbitraryTests {
 				@Override
 				public Arbitrary<Transformer<List<Integer>>> transformer(List<Integer> state) {
 					int last = state.get(state.size() - 1);
-					return Arbitraries.integers().between(0, last).map(i -> Transformer.transform(
+					return Arbitraries.integers().between(0, last).map(i -> Transformer.mutate(
 						"Add " + i,
-						(List<Integer> l) -> {
-							l.add(i);
-							return l;
-						}
+						l -> l.add(i)
 					));
 				}
 			};

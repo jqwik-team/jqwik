@@ -65,14 +65,13 @@ class MyStringStackExamples {
 		@Override
 		public Arbitrary<Transformer<MyStringStack>> transformer() {
 			StringArbitrary pushElements = Arbitraries.strings().alpha().ofLength(5);
-			return pushElements.map(element -> Transformer.transform(
+			return pushElements.map(element -> Transformer.mutate(
 				String.format("push(%s)", element),
 				stack -> {
 					int sizeBefore = stack.size();
 					stack.push(element);
 					assertThat(stack.isEmpty()).isFalse();
 					assertThat(stack.size()).isEqualTo(sizeBefore + 1);
-					return stack;
 				}
 			));
 		}
