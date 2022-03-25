@@ -27,7 +27,7 @@ class ActionChainArbitraryTests {
 		assertThat(chain.running()).isEqualTo(RunningState.SUCCEEDED);
 		assertThat(chain.finalState()).isPresent();
 		chain.finalState().ifPresent(s -> assertThat(s).isEqualTo(result));
-		assertThat(chain.runActions().size()).isEqualTo(10);
+		assertThat(chain.transformations().size()).isEqualTo(10);
 		assertThat(result).isEqualTo("xxxxxxxxxx");
 	}
 
@@ -72,8 +72,8 @@ class ActionChainArbitraryTests {
 
 		assertThat(chain.finalState()).isPresent();
 		chain.finalState().ifPresent(s -> assertThat(s).isEqualTo(result));
-		assertThat(chain.runActions().size()).isGreaterThanOrEqualTo(30);
-		assertThat(result).hasSize(chain.runActions().size());
+		assertThat(chain.transformations().size()).isGreaterThanOrEqualTo(30);
+		assertThat(result).hasSize(chain.transformations().size());
 		assertThat(result).contains("x");
 		assertThat(result).contains("y");
 		assertThat(result.chars()).allMatch(c -> c == 'x' || c == 'y');
@@ -90,8 +90,8 @@ class ActionChainArbitraryTests {
 
 		assertThat(chain.finalState()).isPresent();
 		chain.finalState().ifPresent(s -> assertThat(s).isEqualTo(result));
-		assertThat(chain.runActions().size()).isGreaterThanOrEqualTo(30);
-		assertThat(result).hasSize(chain.runActions().size());
+		assertThat(chain.transformations().size()).isGreaterThanOrEqualTo(30);
+		assertThat(result).hasSize(chain.transformations().size());
 		assertThat(result.chars()).allMatch(c -> c >= 'a' && c <= 'z');
 	}
 
@@ -124,6 +124,35 @@ class ActionChainArbitraryTests {
 
 		String result = chain.run();
 		assertThat(result).isEqualTo("xxxxxyyyyy");
+	}
+
+	@Example
+	void usingEndOfChain(@ForAll Random random) {
+		Action<String> x0to4 = Action.just(
+			"addX",
+			s -> s.length() < 5,
+			s -> s + "x"
+		);
+		Action<String> end = Action.just(
+			s -> s.length() >= 5,
+			Transformer.endOfChain()
+		);
+
+		ActionChainArbitrary<String> chains = Chains.actionChains(
+			() -> "", x0to4, end
+		).withMaxActions(10);
+		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
+
+		String result = chain.run();
+		assertThat(result).isEqualTo("xxxxx");
+		assertThat(chain.transformations()).containsExactly(
+			"addX",
+			"addX",
+			"addX",
+			"addX",
+			"addX",
+			Transformer.END_OF_CHAIN.transformation()
+		);
 	}
 
 	@Property
@@ -160,7 +189,7 @@ class ActionChainArbitraryTests {
 		};
 		ActionChain<List<Integer>> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
 
-		assertThat(chain.runActions()).containsExactly(
+		assertThat(chain.transformations()).containsExactly(
 			"add 0",
 			"add 0",
 			"add 0"
