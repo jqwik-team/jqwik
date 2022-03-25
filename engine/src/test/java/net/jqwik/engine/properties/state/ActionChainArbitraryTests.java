@@ -3,6 +3,7 @@ package net.jqwik.engine.properties.state;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
+import org.assertj.core.api.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -278,6 +279,37 @@ class ActionChainArbitraryTests {
 			return Action.just("nullify", model -> model.setValue(null));
 		}
 
+	}
+
+	@Group
+	class ConfigurationErrors {
+
+		@Example
+		void usingActionWithoutTransformerImplementationFails() {
+			Action<String> actionWithoutTransformerImplementation = new Action<String>() { };
+
+			Assertions.assertThatThrownBy(
+				() -> Chains.actionChains(() -> "", actionWithoutTransformerImplementation)
+			).isInstanceOf(JqwikException.class);
+		}
+
+		@Example
+		void usingActionWithTwoTransformerImplementationsFails() {
+			Action<String> actionWithoutTransformerImplementation = new Action<String>() {
+				@Override
+				public Arbitrary<Transformer<String>> transformer() {
+					return Arbitraries.just(s -> s);
+				}
+				@Override
+				public Arbitrary<Transformer<String>> transformer(String state) {
+					return Arbitraries.just(s -> s);
+				}
+			};
+
+			Assertions.assertThatThrownBy(
+				() -> Chains.actionChains(() -> "", actionWithoutTransformerImplementation)
+			).isInstanceOf(JqwikException.class);
+		}
 	}
 
 	private Action<String> addX() {

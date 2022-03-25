@@ -35,6 +35,7 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	}
 
 	private TransformerProvider<T> createProvider(Action<T> action) {
+		checkActionIsConsistent(action);
 		return stateSupplier -> {
 			if (!checkPrecondition(stateSupplier, action)) {
 				return null;
@@ -60,6 +61,18 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 		return true;
 	}
 
+	private void checkActionIsConsistent(Action<T> action) {
+		Optional<Method> transformer = transformerMethod(action.getClass());
+		Optional<Method> transformerWithStateAccess = transformerStateMethod(action.getClass());
+
+		boolean noTransformerMethodImplemented = !transformer.isPresent() && !transformerWithStateAccess.isPresent();
+		boolean bothTransformerMethodImplemented = transformer.isPresent() && transformerWithStateAccess.isPresent();
+		if (noTransformerMethodImplemented || bothTransformerMethodImplemented) {
+			String message = String.format("Action %s must implement exactly one of transformer() or transformer(state).", action);
+			throw new JqwikException(message);
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	private Arbitrary<Transformer<T>> toTransformerArbitrary(Action<T> action, Supplier<T> stateSupplier) {
 		Optional<Method> transformer = transformerMethod(action.getClass());
@@ -78,7 +91,7 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 			}
 		}
 
-		throw inconsistentActionError(action);
+		throw new RuntimeException("Should never get here. Should be caught before by checkActionIsConsistent()");
 	}
 
 	private JqwikException inconsistentActionError(Action<T> action) {
