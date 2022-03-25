@@ -13,6 +13,7 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@PropertyDefaults(tries = 100)
 class ActionChainArbitraryTests {
 
 	@Example
@@ -48,7 +49,7 @@ class ActionChainArbitraryTests {
 		assertThat(countPeeks).hasValue(6);
 	}
 
-	@Property(tries = 10)
+	@Property
 	void failingChain(@ForAll("xOrFailing") ActionChain<String> chain) {
 		assertThat(chain.running()).isEqualTo(RunningState.NOT_RUN);
 		assertThatThrownBy(
@@ -65,7 +66,7 @@ class ActionChainArbitraryTests {
 		return Chains.actionChains(() -> "", addX(), failing()).withMaxActions(30);
 	}
 
-	@Property(tries = 10)
+	@Property
 	void chainChoosesBetweenTwoActions(@ForAll("xOrY") ActionChain<String> chain) {
 		String result = chain.run();
 
@@ -83,7 +84,7 @@ class ActionChainArbitraryTests {
 		return Chains.actionChains(() -> "", addX(), addY()).withMaxActions(30);
 	}
 
-	@Property(tries = 10)
+	@Property
 	void chainUsesRandomizedAction(@ForAll("anyAtoZ") ActionChain<String> chain) {
 		String result = chain.run();
 
@@ -125,6 +126,48 @@ class ActionChainArbitraryTests {
 		assertThat(result).isEqualTo("xxxxxyyyyy");
 	}
 
+	@Property
+	void shrinkActionChain(@ForAll Random random) {
+		Action<List<Integer>> clear = Action.just(
+			"clear",
+			(List<Integer> l) -> {
+				l.clear();
+				return l;
+			}
+		);
+		Action<List<Integer>> add = new Action<List<Integer>>() {
+			@Override
+			public Arbitrary<Transformer<List<Integer>>> transformer() {
+				return Arbitraries.integers()
+								  .map(i -> Transformer.transform(
+									  "add " + i,
+									  l -> {
+										  l.add(i);
+										  assertThat(l).hasSizeLessThan(3);
+										  return l;
+									  }
+								  ));
+			}
+		};
+
+
+		ActionChainArbitrary<List<Integer>> chains = Chains.actionChains(
+			ArrayList::new, clear, add
+		).withMaxActions(10);
+
+		TestingFalsifier<ActionChain<List<Integer>>> falsifier = c -> {
+			c.run();
+			return true;
+		};
+		ActionChain<List<Integer>> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+
+		assertThat(chain.runActions()).containsExactly(
+			"add 0",
+			"add 0",
+			"add 0"
+		);
+	}
+
 	@Group
 	class StateAccess {
 
@@ -148,23 +191,23 @@ class ActionChainArbitraryTests {
 				public Arbitrary<Transformer<Set<Integer>>> transformer(Set<Integer> state) {
 					if (countOdds(state) > 0) {
 						return Arbitraries.integers().between(0, 50)
-								   .map(i -> i * 2)
-								   .map(i -> Transformer.transform(
-									   "add " + i,
-									   (Set<Integer> set) -> {
-										   set.add(i);
-										   return set;
-									   }
-								   ));
+										  .map(i -> i * 2)
+										  .map(i -> Transformer.transform(
+											  "add " + i,
+											  (Set<Integer> set) -> {
+												  set.add(i);
+												  return set;
+											  }
+										  ));
 					} else {
 						return Arbitraries.integers().between(0, 100)
-								   .map(i -> Transformer.transform(
-									   "add " + i,
-									   (Set<Integer> set) -> {
-										   set.add(i);
-										   return set;
-									   }
-								   ));
+										  .map(i -> Transformer.transform(
+											  "add " + i,
+											  (Set<Integer> set) -> {
+												  set.add(i);
+												  return set;
+											  }
+										  ));
 					}
 				}
 			};
@@ -178,7 +221,7 @@ class ActionChainArbitraryTests {
 			).withMaxActions(50);
 		}
 
-		@Property(tries = 10)
+		@Property
 		void combiningStateAccessAndPrecondition(@ForAll("shrinkingNumbers") ActionChain<List<Integer>> chain) {
 			List<Integer> result = chain.run();
 
@@ -238,7 +281,7 @@ class ActionChainArbitraryTests {
 	@Group
 	class Invariants {
 
-		@Property(tries = 10)
+		@Property
 		boolean succeedingInvariant(@ForAll(supplier = MyModelChain.class) ActionChain<MyModel> chain) {
 			ActionChain<MyModel> chainWithInvariant =
 				chain.withInvariant(model -> assertThat(true).isTrue());
@@ -247,7 +290,7 @@ class ActionChainArbitraryTests {
 			return result.value == null || result.value.length() > 0;
 		}
 
-		@Property(tries = 10)
+		@Property
 		@ExpectFailure(failureType = InvariantFailedError.class)
 		void failingInvariant(@ForAll(supplier = MyModelChain.class) ActionChain<MyModel> chain) {
 			ActionChain<MyModel> chainWithInvariant =
@@ -286,7 +329,7 @@ class ActionChainArbitraryTests {
 
 		@Example
 		void usingActionWithoutTransformerImplementationFails() {
-			Action<String> actionWithoutTransformerImplementation = new Action<String>() { };
+			Action<String> actionWithoutTransformerImplementation = new Action<String>() {};
 
 			Assertions.assertThatThrownBy(
 				() -> Chains.actionChains(() -> "", actionWithoutTransformerImplementation)
@@ -300,6 +343,7 @@ class ActionChainArbitraryTests {
 				public Arbitrary<Transformer<String>> transformer() {
 					return Arbitraries.just(s -> s);
 				}
+
 				@Override
 				public Arbitrary<Transformer<String>> transformer(String state) {
 					return Arbitraries.just(s -> s);
