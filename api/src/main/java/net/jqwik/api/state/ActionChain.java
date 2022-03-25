@@ -27,8 +27,24 @@ public interface ActionChain<S> {
 		NOT_RUN, RUNNING, FAILED, SUCCEEDED
 	}
 
-	List<String> runActions();
+	/**
+	 * Return list of all applied transformations.
+	 *
+	 * <p>
+	 *     For a chain that has not been run this list is always empty.
+	 * </p>
+	 *
+	 * @return list of describing strings
+	 */
+	List<String> transformations();
 
+	/**
+	 * Run the list through all transformations provided by the actions to create it.
+	 * Stop when either the maximum number of transformations is reached or if a
+	 * {@linkplain Transformer#END_OF_CHAIN} is being applied.
+	 *
+	 * @return the last resulting state of running through transformations
+	 */
 	S run();
 
 	/**
@@ -58,6 +74,11 @@ public interface ActionChain<S> {
 	 */
 	Optional<S> finalState();
 
+	/**
+	 * An action chain can be in different running states: NOT_RUN, RUNNING, FAILED, SUCEEDED
+	 *
+	 * @return a {@linkplain RunningState state} object
+	 */
 	RunningState running();
 
 	/**

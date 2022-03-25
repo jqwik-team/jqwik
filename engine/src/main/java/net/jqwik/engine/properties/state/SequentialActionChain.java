@@ -25,7 +25,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 
 	@Override
 	@NotNull
-	public List<String> runActions() {
+	public List<String> transformations() {
 		return chain.transformations();
 	}
 
@@ -76,7 +76,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	private String createErrorMessage(String name, String causeMessage) {
-		String actionsString = runActions()
+		String actionsString = transformations()
 			.stream()
 			.map(aTry -> "    " + aTry)
 			.collect(Collectors.joining(System.lineSeparator()));
@@ -121,7 +121,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 		if (running() == RunningState.NOT_RUN) {
 			return String.format("ActionChain[%s]: %s max actions", running().name(), chain.maxTransformations());
 		}
-		String actionsString = JqwikStringSupport.displayString(runActions());
+		String actionsString = JqwikStringSupport.displayString(transformations());
 		return String.format("ActionChain[%s]: %s", running().name(), actionsString);
 	}
 
