@@ -18,7 +18,7 @@ class ActionChainArbitraryTests {
 
 	@Example
 	void deterministicChainCanBeRun(@ForAll Random random) {
-		ActionChainArbitrary<String> chains = Chains.actionChains(() -> "", addX()).withMaxActions(10);
+		ActionChainArbitrary<String> chains = Chains.actionChains(() -> "", addX()).withMaxTransformations(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 		assertThat(chain.running()).isEqualTo(RunningState.NOT_RUN);
 		assertThat(chain.finalState()).isNotPresent();
@@ -33,7 +33,7 @@ class ActionChainArbitraryTests {
 
 	@Example
 	void peekingIntoChain(@ForAll Random random) {
-		ActionChainArbitrary<String> chains = Chains.actionChains(() -> "", addX()).withMaxActions(5);
+		ActionChainArbitrary<String> chains = Chains.actionChains(() -> "", addX()).withMaxTransformations(5);
 
 		AtomicInteger countPeeks = new AtomicInteger(0);
 
@@ -63,7 +63,7 @@ class ActionChainArbitraryTests {
 
 	@Provide
 	ActionChainArbitrary<String> xOrFailing() {
-		return Chains.actionChains(() -> "", addX(), failing()).withMaxActions(30);
+		return Chains.actionChains(() -> "", addX(), failing()).withMaxTransformations(30);
 	}
 
 	@Property
@@ -81,7 +81,7 @@ class ActionChainArbitraryTests {
 
 	@Provide
 	ActionChainArbitrary<String> xOrY() {
-		return Chains.actionChains(() -> "", addX(), addY()).withMaxActions(30);
+		return Chains.actionChains(() -> "", addX(), addY()).withMaxTransformations(30);
 	}
 
 	@Property
@@ -103,7 +103,7 @@ class ActionChainArbitraryTests {
 				return Arbitraries.chars().range('a', 'z').map(c -> s -> s + c);
 			}
 		};
-		return Chains.actionChains(() -> "", anyAZ).withMaxActions(30);
+		return Chains.actionChains(() -> "", anyAZ).withMaxTransformations(30);
 	}
 
 	@Example
@@ -119,7 +119,7 @@ class ActionChainArbitraryTests {
 
 		ActionChainArbitrary<String> chains = Chains.actionChains(
 			() -> "", x0to4, y5to9
-		).withMaxActions(10);
+		).withMaxTransformations(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 
 		String result = chain.run();
@@ -140,7 +140,7 @@ class ActionChainArbitraryTests {
 
 		ActionChainArbitrary<String> chains = Chains.actionChains(
 			() -> "", x0to4, end
-		).withMaxActions(10);
+		).withMaxTransformations(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 
 		String result = chain.run();
@@ -181,7 +181,7 @@ class ActionChainArbitraryTests {
 
 		ActionChainArbitrary<List<Integer>> chains = Chains.actionChains(
 			ArrayList::new, clear, add
-		).withMaxActions(10);
+		).withMaxTransformations(10);
 
 		TestingFalsifier<ActionChain<List<Integer>>> falsifier = c -> {
 			c.run();
@@ -240,7 +240,7 @@ class ActionChainArbitraryTests {
 					return set;
 				}),
 				addNumber
-			).withMaxActions(50);
+			).withMaxTransformations(50);
 		}
 
 		@Property
@@ -289,7 +289,7 @@ class ActionChainArbitraryTests {
 				ArrayList::new,
 				addInitialNumber,
 				addSmallerNumber
-			).withMaxActions(30);
+			).withMaxTransformations(30);
 		}
 
 	}
@@ -317,7 +317,7 @@ class ActionChainArbitraryTests {
 		class MyModelChain implements ArbitrarySupplier<ActionChain<MyModel>> {
 			@Override
 			public Arbitrary<ActionChain<MyModel>> get() {
-				return Chains.actionChains(MyModel::new, changeValue(), nullify()).withMaxActions(20);
+				return Chains.actionChains(MyModel::new, changeValue(), nullify()).withMaxTransformations(20);
 			}
 		}
 
