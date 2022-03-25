@@ -11,9 +11,16 @@ import static org.apiguardian.api.API.Status.*;
  * A transformer is used to transform a state of type {@code T} into another value of this type.
  * Transformation can create a new object, or change the inner state of an object and return it.
  *
+ * <p>
+ *     In addition to performing a state transformation the mutator function can also
+ *     check or assert conditions and invariants that should hold when doing the transformation.
+ *     This is especially useful for {@linkplain Action actions}.
+ * </p>
+ *
  * @param <T> The type of state to be transformed in a chain
  * @see Chain
  * @see TransformerProvider
+ * @see Action
  */
 @FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")

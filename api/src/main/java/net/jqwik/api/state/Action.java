@@ -87,9 +87,11 @@ public interface Action<S> {
 
 	/**
 	 * Implement this method if you want to have the action's transforming behaviour depend on the previous state.
+	 * You have to implement either this method or {@link this#transformer()}.
 	 *
 	 * <p>
-	 * You have to implement either this method or {@link this#transformer()}.
+	 *     In addition to performing a state transformation the mutator function
+	 *     can also check or assert post-conditions and invariants that should hold when doing the transformation.
 	 * </p>
 	 * <p>
 	 * Implementing this method instead of {@linkplain #transformer()} will make the chain of actions harder to shrink.
@@ -104,9 +106,11 @@ public interface Action<S> {
 
 	/**
 	 * Implement this method if you want to have the action's transforming behaviour not to depend on previous state.
+	 * You have to implement either this method or {@linkplain this#transformer(Object)}.
 	 *
 	 * <p>
-	 * You have to implement either this method or {@linkplain this#transformer(Object)}.
+	 *     In addition to performing a state transformation the mutator function
+	 *     can also check or assert post-conditions and invariants that should hold when doing the transformation.
 	 * </p>
 	 *
 	 * @return an arbitrary of type {@linkplain Transformer Transformer<S>}.
