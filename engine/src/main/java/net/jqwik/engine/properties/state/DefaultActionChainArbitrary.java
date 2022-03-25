@@ -45,8 +45,8 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 
 	private boolean checkPrecondition(Supplier<T> stateSupplier, Action<T> action) {
 		try {
-			Method precondition = precondition(action.getClass());
-			if (!precondition.equals(precondition(Action.class))) {
+			Method precondition = preconditionMethod(action.getClass());
+			if (!precondition.equals(preconditionMethod(Action.class))) {
 				try {
 					boolean isApplicable = (boolean) ReflectionSupport.invokeMethod(precondition, action, stateSupplier.get());
 					if (!isApplicable) {
@@ -60,12 +60,53 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Arbitrary<Transformer<T>> toTransformerArbitrary(Action<T> action, Supplier<T> stateSupplier) {
-		// TODO: handle Action.transformer(state) and action.toString()
-		return action.transformer();
+		Optional<Method> transformer = transformerMethod(action.getClass());
+		Optional<Method> transformerWithStateAccess = transformerStateMethod(action.getClass());
+
+		if (transformer.isPresent()) {
+			if (!transformerWithStateAccess.isPresent()) {
+				return (Arbitrary<Transformer<T>>) ReflectionSupport.invokeMethod(transformer.get(), action);
+			}
+		} else {
+			if (transformerWithStateAccess.isPresent()) {
+				return (Arbitrary<Transformer<T>>) ReflectionSupport.invokeMethod(
+					transformerWithStateAccess.get(), action,
+					stateSupplier.get()
+				);
+			}
+		}
+
+		throw inconsistentActionError(action);
 	}
 
-	private Method precondition(Class<?> aClass) throws NoSuchMethodException {
+	private JqwikException inconsistentActionError(Action<T> action) {
+		String message = String.format("Action %s must implement exactly one of transformer() or transformer(state).", action);
+		return new JqwikException(message);
+	}
+
+	private Optional<Method> transformerMethod(Class<?> aClass) {
+		try {
+			Method method = aClass.getMethod("transformer");
+			if (!method.equals(Action.class.getMethod("transformer"))) {
+				return Optional.of(method);
+			}
+		} catch (NoSuchMethodException ignore) {}
+		return Optional.empty();
+	}
+
+	private Optional<Method> transformerStateMethod(Class<?> aClass) {
+		try {
+			Method method = aClass.getMethod("transformer", Object.class);
+			if (!method.equals(Action.class.getMethod("transformer", Object.class))) {
+				return Optional.of(method);
+			}
+		} catch (NoSuchMethodException ignore) {}
+		return Optional.empty();
+	}
+
+	private Method preconditionMethod(Class<?> aClass) throws NoSuchMethodException {
 		return aClass.getMethod("precondition", Object.class);
 	}
 

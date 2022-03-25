@@ -3,7 +3,6 @@ package net.jqwik.engine.properties.state;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-import org.assertj.core.api.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -126,12 +125,122 @@ class ActionChainArbitraryTests {
 	}
 
 	@Group
+	class StateAccess {
+
+		@Property(tries = 10)
+		void actionsAccessStateForCreatingTransformer(@ForAll("numberSets") ActionChain<Set<Integer>> chain) {
+			Set<Integer> result = chain.run();
+
+			assertThat(countOdds(result))
+				.describedAs("counted odd numbers")
+				.isLessThanOrEqualTo(1);
+		}
+
+		private long countOdds(Set<Integer> set) {
+			return set.stream().filter(n -> n % 2 != 0).count();
+		}
+
+		@Provide
+		private Arbitrary<ActionChain<Set<Integer>>> numberSets() {
+			Action<Set<Integer>> addNumber = new Action<Set<Integer>>() {
+				@Override
+				public Arbitrary<Transformer<Set<Integer>>> transformer(Set<Integer> state) {
+					if (countOdds(state) > 0) {
+						return Arbitraries.integers().between(0, 50)
+								   .map(i -> i * 2)
+								   .map(i -> Transformer.transform(
+									   "add " + i,
+									   (Set<Integer> set) -> {
+										   set.add(i);
+										   return set;
+									   }
+								   ));
+					} else {
+						return Arbitraries.integers().between(0, 100)
+								   .map(i -> Transformer.transform(
+									   "add " + i,
+									   (Set<Integer> set) -> {
+										   set.add(i);
+										   return set;
+									   }
+								   ));
+					}
+				}
+			};
+			return Chains.actionChains(
+				HashSet::new,
+				Action.just("clear", set -> {
+					set.clear();
+					return set;
+				}),
+				addNumber
+			).withMaxActions(50);
+		}
+
+		@Property(tries = 10)
+		void combiningStateAccessAndPrecondition(@ForAll("shrinkingNumbers") ActionChain<List<Integer>> chain) {
+			List<Integer> result = chain.run();
+
+			assertThat(result).allMatch(i -> i >= 0 && i <= 1000);
+			for (int i = 1; i < result.size(); i++) {
+				int prev = result.get(i - 1);
+				assertThat(result.get(i)).isLessThanOrEqualTo(prev);
+			}
+		}
+
+		@Provide
+		private Arbitrary<ActionChain<List<Integer>>> shrinkingNumbers() {
+			Action<List<Integer>> addInitialNumber = new Action<List<Integer>>() {
+				@Override
+				public boolean precondition(List<Integer> state) {
+					return state.isEmpty();
+				}
+
+				@Override
+				public Arbitrary<Transformer<List<Integer>>> transformer() {
+					return Arbitraries.integers().between(100, 1000).map(i -> Transformer.transform(
+						"Initial " + i,
+						(List<Integer> l) -> {
+							l.add(i);
+							return l;
+						}
+					));
+				}
+			};
+			Action<List<Integer>> addSmallerNumber = new Action<List<Integer>>() {
+				@Override
+				public boolean precondition(List<Integer> state) {
+					return !state.isEmpty();
+				}
+
+				@Override
+				public Arbitrary<Transformer<List<Integer>>> transformer(List<Integer> state) {
+					int last = state.get(state.size() - 1);
+					return Arbitraries.integers().between(0, last).map(i -> Transformer.transform(
+						"Add " + i,
+						(List<Integer> l) -> {
+							l.add(i);
+							return l;
+						}
+					));
+				}
+			};
+			return Chains.actionChains(
+				ArrayList::new,
+				addInitialNumber,
+				addSmallerNumber
+			).withMaxActions(30);
+		}
+
+	}
+
+	@Group
 	class Invariants {
 
 		@Property(tries = 10)
 		boolean succeedingInvariant(@ForAll(supplier = MyModelChain.class) ActionChain<MyModel> chain) {
 			ActionChain<MyModel> chainWithInvariant =
-				chain.withInvariant(model -> Assertions.assertThat(true).isTrue());
+				chain.withInvariant(model -> assertThat(true).isTrue());
 
 			MyModel result = chainWithInvariant.run();
 			return result.value == null || result.value.length() > 0;
@@ -141,7 +250,7 @@ class ActionChainArbitraryTests {
 		@ExpectFailure(failureType = InvariantFailedError.class)
 		void failingInvariant(@ForAll(supplier = MyModelChain.class) ActionChain<MyModel> chain) {
 			ActionChain<MyModel> chainWithInvariant =
-				chain.withInvariant("never null", model -> Assertions.assertThat(model.value).isNotNull());
+				chain.withInvariant("never null", model -> assertThat(model.value).isNotNull());
 			chainWithInvariant.run();
 		}
 

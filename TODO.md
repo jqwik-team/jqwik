@@ -1,9 +1,6 @@
 
 new stateful:
 
-    - Introduce Action and ActionChain
-        - Consider Action.provideTransformer(..)
-    - Add SampleReportingFormat for Chain and ActionChain
     - Document
         - Samples for
             - Plain Chain example

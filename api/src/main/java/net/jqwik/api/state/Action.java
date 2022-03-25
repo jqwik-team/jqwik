@@ -101,7 +101,7 @@ public interface Action<S> {
 	 * @return an arbitrary of type {@linkplain Transformer Transformer<S>}.
 	 */
 	default Arbitrary<Transformer<S>> transformer(S state) {
-		throw new UnsupportedOperationException("You have to override either Action.run(state) or Action.provideTransformer(state).");
+		throw new UnsupportedOperationException("You have to override either Action.transformer() or Action.transformer(state).");
 	}
 
 	/**
@@ -116,6 +116,6 @@ public interface Action<S> {
 	 * @return an arbitrary of type {@linkplain Transformer Transformer<S>}.
 	 */
 	default Arbitrary<Transformer<S>> transformer() {
-		throw new UnsupportedOperationException("You have to override either Action.run(state) or Action.provideTransformer(state).");
+		throw new UnsupportedOperationException("You have to override either Action.transformer() or Action.transformer(state).");
 	}
 }
