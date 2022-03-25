@@ -119,7 +119,7 @@ public class Chains {
 	 */
 	public static <T> ActionChainArbitrary<T> actionChains(
 		Supplier<? extends T> initialSupplier,
-		Tuple2<Integer, Action<T>>[] actionFrequencies
+		Tuple2<Integer, Action<T>>... actionFrequencies
 	) {
 		List<Tuple2<Integer, Action<T>>> frequencies = Arrays.asList(actionFrequencies);
 		if (frequencies.isEmpty()) {

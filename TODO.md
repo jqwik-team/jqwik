@@ -1,10 +1,12 @@
 
 new stateful:
 
+    - Shrinking: Check MyStoreExamples if shrinking access state 
+                 could afterwards subsequent transformations try same seed
+
     - Document
         - Samples for
             - Plain Chain example
-            - Example for state-based transformer generator
         - JavaDoc
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
