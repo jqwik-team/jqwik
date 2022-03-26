@@ -1,9 +1,6 @@
 
 new stateful:
 
-    - Shrinking: Check MyStoreExamples if shrinking access state 
-                 could afterwards subsequent transformations try same seed
-
     - Document
         - Samples for
             - Plain Chain example

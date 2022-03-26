@@ -457,6 +457,40 @@ class ChainArbitraryTests {
 			assertThat(shrunkChain.maxTransformations()).isEqualTo(5);
 		}
 
+		@Property
+		void shrinkPairsOfIterations(@ForAll Random random) {
+			ChainArbitrary<List<Integer>> chains = Chains.chains(
+				() -> (List<Integer>) new ArrayList<Integer>(),
+				ignore -> integers().map(i -> Transformer.mutate("add " + i, l -> l.add(i))),
+				supplier -> {
+					List<Integer> list = supplier.get();
+					if (list.isEmpty()) {
+						return null;
+					}
+					return Arbitraries.of(list).map(i -> Transformer.mutate("duplicate " + i, l -> l.add(i)));
+				}
+			).withMaxTransformations(20);
+
+			TestingFalsifier<Chain<List<Integer>>> falsifier = chain -> {
+				for (List<Integer> list : chain) {
+					// Fail on duplicates
+					if (new HashSet<>(list).size() < list.size()) {
+						return false;
+					}
+				}
+				return true;
+			};
+			Chain<List<Integer>> shrunkChain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+
+			for (List<Integer> value : shrunkChain) {
+				// evaluate chain
+			}
+			assertThat(shrunkChain.transformations()).isIn(
+				Arrays.asList("add 0", "add 0"),
+				Arrays.asList("add 0", "duplicate 0")
+			);
+		}
+
 		private boolean hasAtLeastFivePlus2Transformers(Chain<Integer> c) {
 			for (Integer value : c) {} // consume chain
 			long countPlusTwoBefore = c.transformations().stream().filter(s -> s.equals("plus-2")).count();

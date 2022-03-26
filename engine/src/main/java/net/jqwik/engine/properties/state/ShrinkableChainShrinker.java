@@ -60,9 +60,10 @@ class ShrinkableChainShrinker<T> {
 
 	private Stream<ShrinkableChain<T>> shrinkIterationsRange(int startIndex, int endIndex) {
 		List<ShrinkableChainIteration<T>> iterationsRange = extractRange(startIndex, endIndex);
-		return Stream.concat(
+		return JqwikStreamSupport.concat(
 			shrinkAllSubRanges(startIndex, iterationsRange),
-			shrinkOneAfterTheOther(startIndex, iterationsRange)
+			shrinkOneAfterTheOther(startIndex, iterationsRange),
+			shrinkPairs(startIndex, iterationsRange)
 		);
 	}
 
@@ -74,6 +75,31 @@ class ShrinkableChainShrinker<T> {
 			}
 		}
 		return iterationsRange;
+	}
+
+	private Stream<ShrinkableChain<T>> shrinkPairs(int startIndex, List<ShrinkableChainIteration<T>> iterationsRange) {
+		Stream<List<ShrinkableChainIteration<T>>> shrunkRange = shrinkPairsOfIterations(iterationsRange);
+		int restSize = iterations.size() - iterationsRange.size();
+		return replaceRangeByShrunkRange(startIndex, shrunkRange, restSize);
+	}
+
+	private Stream<List<ShrinkableChainIteration<T>>> shrinkPairsOfIterations(List<ShrinkableChainIteration<T>> iterationsRange) {
+		return Combinatorics
+			.distinctPairs(iterationsRange.size())
+			.flatMap(pair -> {
+				ShrinkableChainIteration<T> first = iterationsRange.get(pair.get1());
+				ShrinkableChainIteration<T> second = iterationsRange.get(pair.get2());
+				return JqwikStreamSupport.zip(
+					first.shrinkable.shrink(),
+					second.shrinkable.shrink(),
+					(Shrinkable<Transformer<T>> s1, Shrinkable<Transformer<T>> s2) -> {
+						ArrayList<ShrinkableChainIteration<T>> newElements = new ArrayList<>(iterationsRange);
+						newElements.set(pair.get1(), first.withShrinkable(s1));
+						newElements.set(pair.get2(), second.withShrinkable(s2));
+						return newElements;
+					}
+				);
+			});
 	}
 
 	private Stream<ShrinkableChain<T>> shrinkOneAfterTheOther(int startIndex, List<ShrinkableChainIteration<T>> iterationsRange) {

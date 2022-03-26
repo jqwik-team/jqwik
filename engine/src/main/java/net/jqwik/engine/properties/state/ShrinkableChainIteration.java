@@ -22,4 +22,8 @@ class ShrinkableChainIteration<T> {
 	public String toString() {
 		return String.format("Iteration[accessState=%s, transformation=%s]", stateHasBeenAccessed, shrinkable.value().transformation());
 	}
+
+	ShrinkableChainIteration<T> withShrinkable(Shrinkable<Transformer<T>> shrinkable) {
+		return new ShrinkableChainIteration<>(randomSeed, stateHasBeenAccessed, shrinkable);
+	}
 }
