@@ -122,7 +122,7 @@ class ShrinkableChainShrinker<T> {
 			Shrinkable<Transformer<T>> element = iteration.shrinkable;
 			Stream<List<ShrinkableChainIteration<T>>> shrinkElement = element.shrink().flatMap(shrunkElement -> {
 				List<ShrinkableChainIteration<T>> iterationsCopy = new ArrayList<>(iterationsRange);
-				iterationsCopy.set(index, new ShrinkableChainIteration<>(iteration.randomSeed, iteration.stateHasBeenAccessed, shrunkElement));
+				iterationsCopy.set(index, iteration.withShrinkable(shrunkElement));
 				return Stream.of(iterationsCopy);
 			});
 			shrinkPerElementStreams.add(shrinkElement);
