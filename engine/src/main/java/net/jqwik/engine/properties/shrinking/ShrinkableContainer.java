@@ -134,23 +134,15 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	}
 
 	protected Stream<Shrinkable<C>> shrinkPairsOfElements() {
-		return Combinatorics
-					   .distinctPairs(elements.size())
-					   .flatMap(pair -> JqwikStreamSupport.zip(
-							   elements.get(pair.get1()).shrink(),
-							   elements.get(pair.get2()).shrink(),
-							   (Shrinkable<E> s1, Shrinkable<E> s2) -> {
-								   List<Shrinkable<E>> newElements = new ArrayList<>(elements);
-								   newElements.set(pair.get1(), s1);
-								   newElements.set(pair.get2(), s2);
-								   if (checkUniquenessOfShrinkables(uniquenessExtractors, newElements)) {
-									   return createShrinkable(newElements);
-								   } else {
-									   // null value will skip the entry in zipped stream
-									   return null;
-								   }
-							   }
-					   ));
+		ShrinkingCommons.ContainerCreator<C, E> createContainer = newElements -> {
+			if (checkUniquenessOfShrinkables(uniquenessExtractors, newElements)) {
+				return createShrinkable(newElements);
+			} else {
+				// null value will skip the entry in zipped stream
+				return null;
+			}
+		};
+		return ShrinkingCommons.shrinkPairsOfElements(elements, createContainer);
 	}
 
 	protected Stream<Shrinkable<C>> sortElements() {
