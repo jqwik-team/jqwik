@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 @PropertyDefaults(tries = 100)
 public class MyStoreExamples {
 
-	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	@Property(shrinking = ShrinkingMode.FULL, afterFailure = AfterFailureMode.RANDOM_SEED)
 	void storeWorksAsExpected(@ForAll("storeActions") ActionChain<MyStore<Integer, String>> storeChain) {
 		storeChain.run();
 		// System.out.println(storeChain.transformations());
