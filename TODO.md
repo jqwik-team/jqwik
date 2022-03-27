@@ -18,6 +18,12 @@ new stateful:
     - <T,S,U> SetArbitrary<E>.combineEach(Arbitrary<S>).as(BiFunction<T, E, U>): Arbitrary<Set<U>>
             - For all collection arbitraries
 
+    - Make `AfterFailureMode.SAMPLE_FIRST` the default
+
+    - Remove web and time from jqwik default dependencies
+
+    - Introduce BOM
+
 1.7.x
 
     - Kotlin convenience functions:
@@ -32,12 +38,6 @@ new stateful:
 
     - Allow state machine / model specification with temporal logic.
       See https://wickstrom.tech/programming/2021/05/03/specifying-state-machines-with-temporal-logic.html
-
-    - Make `AfterFailureMode.SAMPLE_FIRST` the default
-
-    - Remove web and time from jqwik default dependencies
-
-    - Introduce BOM
 
     - NullableArbitraryProvider should always be last to apply.
       This will probably require a new parameter based lifecycle hook, similar to:
