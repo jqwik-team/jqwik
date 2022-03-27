@@ -33,7 +33,7 @@ public interface Chain<T> extends Iterable<T> {
 	 * i.e. their number is one higher than the number of transformations applied to the initial state.
 	 *
 	 * <p>
-	 *     Mind that the next state element often depends on both randomness and the previous state.
+	 *     Mind that the next state element can depend on both the previous state and (pseudo-)randomness.
 	 *     Several iterators must always produce the same "chain" of states.
 	 *     Each iterator will start with a new instance of the initial state.
 	 * </p>
@@ -48,9 +48,13 @@ public interface Chain<T> extends Iterable<T> {
 	}
 
 	/**
-	 * A list of strings that represent the transformations performed on the initial state in a textual form.
+	 * Return list of all applied transformations as far as iterators have been used.
 	 *
-	 * @return list of strings
+	 * <p>
+	 *     For a chain that has not been iterated through this list is empty.
+	 * </p>
+	 *
+	 * @return list of describing strings
 	 */
 	List<String> transformations();
 

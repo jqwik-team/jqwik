@@ -4,11 +4,11 @@ new stateful:
     - Document
         - Samples for
             - Plain Chain example
-        - JavaDoc
+        - Release notes
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
-1.6.x
+1.7.1
 
     - Introduce ModelChain. Should cover https://github.com/jlink/jqwik/issues/80.
         - ModelChain can be generated before it's provided as parameter!
@@ -17,6 +17,8 @@ new stateful:
 
     - <T,S,U> SetArbitrary<E>.combineEach(Arbitrary<S>).as(BiFunction<T, E, U>): Arbitrary<Set<U>>
             - For all collection arbitraries
+
+1.7.x
 
     - Kotlin convenience functions:
         - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)
@@ -30,8 +32,6 @@ new stateful:
 
     - Allow state machine / model specification with temporal logic.
       See https://wickstrom.tech/programming/2021/05/03/specifying-state-machines-with-temporal-logic.html
-
-1.7.0
 
     - Make `AfterFailureMode.SAMPLE_FIRST` the default
 

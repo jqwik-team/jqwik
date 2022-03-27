@@ -23,7 +23,7 @@ import static org.apiguardian.api.API.Status.*;
  *     </li>
  *     <li>
  *         Chains based on {@linkplain Action actions}.
- *     	   See {@link #actionChains(Supplier, Arbitrary[])} and {@link #actionChains(Supplier, Tuple2[])}}.
+ *     	   See {@link #actionChains(Supplier, Action[])} (Supplier, Arbitrary[])} and {@link #actionChains(Supplier, Tuple2[])}}.
  *     </li>
  * </ul>
  */
@@ -45,7 +45,7 @@ public class Chains {
 
 		public abstract <T> ActionChainArbitrary<T> actionChains(
 			Supplier<? extends T> initialSupplier,
-			List<Tuple2<Integer,Action<T>>> actionFrequencies
+			List<Tuple2<Integer, Action<T>>> actionFrequencies
 		);
 	}
 
@@ -56,10 +56,9 @@ public class Chains {
 	 * Create arbitrary for a {@linkplain Chain chain) based on {@linkplain Transformer transformers}.
 	 *
 	 * @param initialSupplier function to create the initial state object
-	 * @param providers varargs of {@linkplain TransformerProvider providers}
-	 * @param <T> The type of state to be transformed through the chain.
+	 * @param providers       varargs of {@linkplain TransformerProvider providers}
+	 * @param <T>             The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
-	 *
 	 * @see Chain
 	 */
 	@SuppressWarnings("unchecked")
@@ -73,10 +72,12 @@ public class Chains {
 	/**
 	 * Create arbitrary for a {@linkplain Chain chain) based on {@linkplain Transformer transformers}.
 	 *
-	 * @param initialSupplier function to create the initial state object
-	 * @param providerFrequencies varargs of weighted {@linkplain TransformerProvider providers}. Weight determines the relative frequency of each transformer.
-	 * @param <T> The type of state to be transformed through the chain.
+	 * @param initialSupplier     function to create the initial state object
+	 * @param providerFrequencies variable number of Tuples with weight and {@linkplain TransformerProvider provider}.
+	 *                            The weight determines the relative probability of a transformer to be chosen.
+	 * @param <T>                 The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
+	 * @see Chain
 	 */
 	@SafeVarargs
 	public static <T> ChainArbitrary<T> chains(
@@ -94,8 +95,8 @@ public class Chains {
 	 * Create arbitrary for a {@linkplain ActionChain action chain) based on {@linkplain Action actions}.
 	 *
 	 * @param initialSupplier function to create the initial state object
-	 * @param actions variable number of {@linkplain Action actions}. Weight determines the relative frequency of each action.
-	 * @param <T> The type of state to be transformed through the chain.
+	 * @param actions         variable number of {@linkplain Action actions}. The actions are randomly chosen with equal probability.
+	 * @param <T>             The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
 	 */
 	@SuppressWarnings("unchecked")
@@ -112,11 +113,13 @@ public class Chains {
 	/**
 	 * Create arbitrary for a {@linkplain ActionChain action chain) based on {@linkplain Action actions}.
 	 *
-	 * @param initialSupplier function to create the initial state object
-	 * @param actionFrequencies variable number of weighted {@linkplain Action actions}. Weight determines the relative frequency of each action.
-	 * @param <T> The type of state to be transformed through the chain.
+	 * @param initialSupplier   function to create the initial state object
+	 * @param actionFrequencies variable number of Tuples with weight and {@linkplain Action action}.
+	 *                          The weight determines the relative probability of an action to be chosen.
+	 * @param <T>               The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
 	 */
+	@SafeVarargs
 	public static <T> ActionChainArbitrary<T> actionChains(
 		Supplier<? extends T> initialSupplier,
 		Tuple2<Integer, Action<T>>... actionFrequencies

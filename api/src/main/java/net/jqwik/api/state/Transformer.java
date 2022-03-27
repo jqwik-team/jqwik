@@ -12,6 +12,10 @@ import static org.apiguardian.api.API.Status.*;
  * Transformation can create a new object, or change the inner state of an object and return it.
  *
  * <p>
+ *     Whenever a {@linkplain Transformer#endOfChain()} is chosen by a chain,
+ *     the chain ends with the current state being provided (e.g. in the chain's iterator) for a last time.
+ * </p>
+ * <p>
  *     In addition to performing a state transformation the mutator function can also
  *     check or assert conditions and invariants that should hold when doing the transformation.
  *     This is especially useful for {@linkplain Action actions}.
@@ -26,6 +30,9 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 
+	/**
+	 * The singleton object used for all calls to {@linkplain #endOfChain()}.
+	 */
 	Transformer<?> END_OF_CHAIN = new Transformer<Object>() {
 		@Override
 		public @NotNull Object apply(@NotNull Object t) {
@@ -88,7 +95,7 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	}
 
 	/**
-	 * Describe the transformation this {@linkplain Transformer} is doing in a human understandable way
+	 * Describe the transformation this {@linkplain Transformer} is doing in a human understandable way.
 	 *
 	 * @return non-empty String
 	 */

@@ -16,8 +16,9 @@ import static org.apiguardian.api.API.Status.*;
  * or immutable, which requires the method to return another object that represents the transformed state.
  *
  * <p>
- *     Mind that there is a deprecated class {@link net.jqwik.api.stateful.Action} which looks similar but is not.
- *     Do not confuse those two.
+ *     Mind that there is a another interface {@link net.jqwik.api.stateful.Action} which looks similar
+ *     but refers to jqwik's old and deprecated style of state-based property testing.
+ *     The two interfaces CANNOT be used interchangeably.
  * </p>
  *
  * @param <S> Type of the object to transform through an action
