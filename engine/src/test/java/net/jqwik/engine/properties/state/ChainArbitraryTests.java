@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.state;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
@@ -488,6 +489,42 @@ class ChainArbitraryTests {
 			assertThat(shrunkChain.transformations()).isIn(
 				Arrays.asList("add 0", "add 0"),
 				Arrays.asList("add 0", "duplicate 0")
+			);
+		}
+
+		// @Property // If I only knew how to make that work w/o breaking state accessing transformers
+		void shrinkAwayPartsThatDontChangeState(@ForAll Random random) {
+			ChainArbitrary<String> chains = Chains.chains(
+				() -> "",
+				ignore -> chars().alpha().map(c -> Transformer.transform("append " + c, s -> s + c)),
+				ignore -> just(Transformer.transform("nothing", s -> s)),
+				supplier -> {
+					String value = supplier.get();
+					if (value.isEmpty()) {
+						return null;
+					}
+					return Arbitraries.of(value.toCharArray()).map(c -> Transformer.transform("duplicate " + c, s -> s + c));
+				}
+			).withMaxTransformations(20);
+
+			TestingFalsifier<Chain<String>> falsifier = chain -> {
+				for (String value : chain) {
+					// Fail on duplicate chars
+					long uniqueChars = value.chars().boxed().distinct().count();
+					if (uniqueChars < value.length()) {
+						return false;
+					}
+				}
+				return true;
+			};
+			Chain<String> shrunkChain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+
+			for (String value : shrunkChain) {
+				// evaluate chain
+			}
+			assertThat(shrunkChain.transformations()).isIn(
+				Arrays.asList("append A", "append A"),
+				Arrays.asList("append A", "duplicate A")
 			);
 		}
 
