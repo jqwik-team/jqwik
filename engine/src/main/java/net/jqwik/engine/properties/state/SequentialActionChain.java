@@ -49,6 +49,8 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 		} catch (InvariantFailedError ife) {
 			currentRunning = RunningState.FAILED;
 			throw ife;
+		} catch (TestAbortedException testAbortedException) {
+			throw testAbortedException;
 		} catch (Throwable t) {
 			currentRunning = RunningState.FAILED;
 			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage("Run", t.getMessage()), t);
