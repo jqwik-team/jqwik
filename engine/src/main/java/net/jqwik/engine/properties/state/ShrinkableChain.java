@@ -8,6 +8,7 @@ import java.util.stream.*;
 import org.jetbrains.annotations.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.*;
@@ -18,27 +19,31 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	private final Supplier<? extends T> initialSupplier;
 	private final Function<Random, TransformerProvider<T>> providerGenerator;
 	private final int maxTransformations;
+	private final int genSize;
 	private final List<ShrinkableChainIteration<T>> iterations;
 
 	public ShrinkableChain(
 		long randomSeed,
 		Supplier<? extends T> initialSupplier,
 		Function<Random, TransformerProvider<T>> providerGenerator,
-		int maxTransformations
+		int maxTransformations,
+		int genSize
 	) {
-		this(randomSeed, initialSupplier, providerGenerator, maxTransformations, new ArrayList<>());
+		this(randomSeed, initialSupplier, providerGenerator, maxTransformations, genSize, new ArrayList<>());
 	}
 
 	private ShrinkableChain(
 		long randomSeed, Supplier<? extends T> initialSupplier,
 		Function<Random, TransformerProvider<T>> providerGenerator,
 		int maxTransformations,
+		int genSize,
 		List<ShrinkableChainIteration<T>> iterations
 	) {
 		this.randomSeed = randomSeed;
 		this.initialSupplier = initialSupplier;
 		this.providerGenerator = providerGenerator;
 		this.maxTransformations = maxTransformations;
+		this.genSize = genSize;
 		this.iterations = iterations;
 	}
 
@@ -58,6 +63,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			initialSupplier,
 			providerGenerator,
 			newMaxSize,
+			genSize,
 			shrunkIterations
 		);
 	}
@@ -158,29 +164,33 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		private Shrinkable<Transformer<T>> runNewStep(long nextSeed) {
-			AtomicBoolean stateHasBeenAccessed = new AtomicBoolean(false);
-			Supplier<T> currentSupplier = () -> {
-				stateHasBeenAccessed.set(true);
-				return current;
-			};
 			Random random = SourceOfRandomness.newRandom(nextSeed);
-			Arbitrary<Transformer<T>> arbitrary = nextTransformerArbitrary(currentSupplier, random);
-			RandomGenerator<Transformer<T>> generator = arbitrary.generator(maxTransformations);
+			Tuple2<Arbitrary<Transformer<T>>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random);
+			Arbitrary<Transformer<T>> arbitrary = arbitraryAccessTuple.get1();
+			boolean stateHasBeenAccessed = arbitraryAccessTuple.get2();
+
+			RandomGenerator<Transformer<T>> generator = arbitrary.generator(genSize);
 			Shrinkable<Transformer<T>> next = generator.next(random);
-			iterations.add(new ShrinkableChainIteration<>(nextSeed, stateHasBeenAccessed.get(), next));
+			iterations.add(new ShrinkableChainIteration<>(nextSeed, stateHasBeenAccessed, next));
 			return next;
 		}
 
-		private Arbitrary<Transformer<T>> nextTransformerArbitrary(Supplier<T> currentStateSupplier, Random random) {
+		private Tuple2<Arbitrary<Transformer<T>>, Boolean> nextTransformerArbitrary(Random random) {
 			return MaxTriesLoop.loop(
 				() -> true,
-				arbitrary -> {
+				arbitraryAccessTuple -> {
 					Function<Supplier<T>, Arbitrary<Transformer<T>>> chainGenerator = providerGenerator.apply(random);
-					arbitrary = chainGenerator.apply(currentStateSupplier);
+					AtomicBoolean stateHasBeenAccessed = new AtomicBoolean(false);
+					Supplier<T> supplier = () -> {
+						stateHasBeenAccessed.set(true);
+						return current;
+					};
+
+					Arbitrary<Transformer<T>> arbitrary = chainGenerator.apply(supplier);
 					if (arbitrary == null) {
-						return Tuple.of(false, arbitrary);
+						return Tuple.of(false, null);
 					}
-					return Tuple.of(true, arbitrary);
+					return Tuple.of(true, Tuple.of(arbitrary, stateHasBeenAccessed.get()));
 				},
 				maxMisses -> {
 					String message = String.format("Could not generate a transformer after %s tries.", maxMisses);

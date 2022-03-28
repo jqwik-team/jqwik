@@ -24,9 +24,9 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 
 	@Override
 	public RandomGenerator<Chain<T>> generator(int genSize) {
-		final int effectiveSize =
+		final int maxTransformations =
 			size != 0 ? size : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-		return random -> new ShrinkableChain<T>(random.nextLong(), initialSupplier, providerGenerator, effectiveSize);
+		return random -> new ShrinkableChain<T>(random.nextLong(), initialSupplier, providerGenerator, maxTransformations, genSize);
 	}
 
 	@Override
