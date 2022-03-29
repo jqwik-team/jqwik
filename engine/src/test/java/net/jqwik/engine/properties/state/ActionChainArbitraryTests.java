@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.state;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 import org.assertj.core.api.*;
 import org.opentest4j.*;
@@ -155,45 +156,97 @@ class ActionChainArbitraryTests {
 		);
 	}
 
-	@Property
-	void shrinkActionChain(@ForAll Random random) {
-		Action<List<Integer>> clear = Action.just(
-			"clear",
-			(List<Integer> l) -> {
-				l.clear();
-				return l;
-			}
-		);
-		Action<List<Integer>> add = new Action<List<Integer>>() {
-			@Override
-			public Arbitrary<Transformer<List<Integer>>> transformer() {
-				return Arbitraries.integers()
-								  .map(i -> Transformer.mutate(
-									  "add " + i,
-									  l -> {
-										  l.add(i);
-										  assertThat(l).hasSizeLessThan(3);
-									  }
-								  ));
-			}
-		};
+	@Group
+	class Shrinking {
+
+		@Property
+		void shrinkActionChain(@ForAll Random random) {
+			Action<List<Integer>> clear = Action.just(
+				"clear",
+				(List<Integer> l) -> {
+					l.clear();
+					return l;
+				}
+			);
+			Action<List<Integer>> add = new Action<List<Integer>>() {
+				@Override
+				public Arbitrary<Transformer<List<Integer>>> transformer() {
+					return Arbitraries.integers()
+									  .map(i -> Transformer.mutate(
+										  "add " + i,
+										  l -> {
+											  l.add(i);
+											  assertThat(l).hasSizeLessThan(3);
+										  }
+									  ));
+				}
+			};
 
 
-		ActionChainArbitrary<List<Integer>> chains = Chains.actionChains(
-			ArrayList::new, clear, add
-		).withMaxTransformations(10);
+			ActionChainArbitrary<List<Integer>> chains = Chains.actionChains(
+				ArrayList::new, clear, add
+			).withMaxTransformations(10);
 
-		TestingFalsifier<ActionChain<List<Integer>>> falsifier = c -> {
-			c.run();
-			return true;
-		};
-		ActionChain<List<Integer>> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			TestingFalsifier<ActionChain<List<Integer>>> falsifier = c -> {
+				c.run();
+				return true;
+			};
+			ActionChain<List<Integer>> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
 
-		assertThat(chain.transformations()).containsExactly(
-			"add 0",
-			"add 0",
-			"add 0"
-		);
+			assertThat(chain.transformations()).containsExactly(
+				"add 0",
+				"add 0",
+				"add 0"
+			);
+		}
+
+		@Property
+		void shrinkWithChangeDetector(@ForAll Random random) {
+			Action<List<Integer>> nothing = Action.just(
+				"nothing", l -> l
+			);
+			Action<List<Integer>> add = new Action<List<Integer>>() {
+				@Override
+				public Arbitrary<Transformer<List<Integer>>> transformer(List<Integer> state) {
+					return Arbitraries.integers().greaterOrEqual(0)
+									  .filter(i -> !state.contains(i))
+									  .map(i -> Transformer.mutate(
+										  "add " + i,
+										  l -> l.add(i)
+									  ));
+				}
+			};
+
+			Supplier<ChangeDetector<List<Integer>>> changeOfListDetector = () -> new ChangeDetector<List<Integer>>() {
+				private List<Integer> before;
+
+				@Override
+				public void before(List<Integer> before) {
+					this.before = new ArrayList<>(before);
+				}
+
+				@Override
+				public boolean hasChanged(List<Integer> after) {
+					return !Objects.equals(before, after);
+				}
+			};
+
+			ActionChainArbitrary<List<Integer>> chains = Chains.actionChains(
+				ArrayList::new, nothing, add
+			).withMaxTransformations(10).detectChangesWith(changeOfListDetector);
+
+			TestingFalsifier<ActionChain<List<Integer>>> falsifier = chain -> {
+				chain.withInvariant(l -> assertThat(l).hasSizeLessThan(2)).run();
+				return true;
+			};
+			ActionChain<List<Integer>> shrunkChain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+
+			List<String> transformations = shrunkChain.transformations();
+			assertThat(transformations).isIn(
+				Arrays.asList("add 0", "add 1"),
+				Arrays.asList("add 1", "add 0")
+			);
+		}
 	}
 
 	@Group

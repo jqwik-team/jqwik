@@ -131,6 +131,13 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	}
 
 	@Override
+	public ActionChainArbitrary<T> detectChangesWith(Supplier<ChangeDetector<T>> changeDetectorSupplier) {
+		DefaultActionChainArbitrary<T> clone = typedClone();
+		clone.chainArbitrary = clone.chainArbitrary.detectChangesWith(changeDetectorSupplier);
+		return clone;
+	}
+
+	@Override
 	protected Arbitrary<ActionChain<T>> arbitrary() {
 		return chainArbitrary.map(SequentialActionChain::new);
 	}

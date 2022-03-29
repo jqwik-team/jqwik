@@ -11,7 +11,7 @@ import net.jqwik.engine.support.*;
 public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArbitrary<T> {
 
 	private int maxTransformations = 0;
-	private Supplier<ChangeDetector<T>> changeDetectorSupplier = () -> ChangeDetector.alwaysTrue();
+	private Supplier<ChangeDetector<T>> changeDetectorSupplier = ChangeDetector::alwaysTrue;
 	private final Function<Random, TransformerProvider<T>> providerGenerator;
 	private final Supplier<? extends T> initialSupplier;
 

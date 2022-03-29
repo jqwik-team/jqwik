@@ -491,8 +491,8 @@ class ChainArbitraryTests {
 			);
 		}
 
-		@Property // If I only knew how to make that work w/o breaking state accessing transformers
-		void shrinkAwayPartsThatDontChangeState(@ForAll Random random) {
+		@Property
+		void whenUsingChangeDetector_shrinkAwayPartsThatDontChangeState(@ForAll Random random) {
 			ChainArbitrary<String> chains = Chains.chains(
 				() -> "",
 				ignore -> chars().alpha().map(c -> Transformer.transform("append " + c, s -> s + c)),
