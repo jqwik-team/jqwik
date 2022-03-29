@@ -1,5 +1,7 @@
 package net.jqwik.api.state;
 
+import java.util.function.*;
+
 import net.jqwik.api.*;
 
 import org.apiguardian.api.API;
@@ -13,5 +15,7 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 * Set the intended number of transformations of generated chains.
 	 */
 	ChainArbitrary<T> withMaxTransformations(int maxTransformations);
+
+	ChainArbitrary<T> detectChangesWith(Supplier<ChangeDetector<T>> detectorSupplier);
 
 }

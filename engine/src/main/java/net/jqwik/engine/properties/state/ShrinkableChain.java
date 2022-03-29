@@ -21,20 +21,23 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	private final int maxTransformations;
 	private final int genSize;
 	private final List<ShrinkableChainIteration<T>> iterations;
+	private final Supplier<ChangeDetector<T>> changeDetectorSupplier;
 
 	public ShrinkableChain(
 		long randomSeed,
 		Supplier<? extends T> initialSupplier,
 		Function<Random, TransformerProvider<T>> providerGenerator,
+		Supplier<ChangeDetector<T>> changeDetectorSupplier,
 		int maxTransformations,
 		int genSize
 	) {
-		this(randomSeed, initialSupplier, providerGenerator, maxTransformations, genSize, new ArrayList<>());
+		this(randomSeed, initialSupplier, providerGenerator, changeDetectorSupplier, maxTransformations, genSize, new ArrayList<>());
 	}
 
 	private ShrinkableChain(
 		long randomSeed, Supplier<? extends T> initialSupplier,
 		Function<Random, TransformerProvider<T>> providerGenerator,
+		Supplier<ChangeDetector<T>> changeDetectorSupplier,
 		int maxTransformations,
 		int genSize,
 		List<ShrinkableChainIteration<T>> iterations
@@ -42,6 +45,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		this.randomSeed = randomSeed;
 		this.initialSupplier = initialSupplier;
 		this.providerGenerator = providerGenerator;
+		this.changeDetectorSupplier = changeDetectorSupplier;
 		this.maxTransformations = maxTransformations;
 		this.genSize = genSize;
 		this.iterations = iterations;
@@ -62,6 +66,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			randomSeed,
 			initialSupplier,
 			providerGenerator,
+			changeDetectorSupplier,
 			newMaxSize,
 			genSize,
 			shrunkIterations
@@ -147,15 +152,27 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				} else {
 					next = runNewStep(nextSeed);
 				}
-				steps++;
 				transformer = next.value();
 				if (transformer.equals(Transformer.END_OF_CHAIN)) {
 					endOfChain = true;
 				}
+
+				ChangeDetector<T> changeDetector = changeDetectorSupplier.get();
+				changeDetector.before(current);
+				try {
+					current = transformer.apply(current);
+					boolean hasChanged = changeDetector.hasChanged(current);
+					if (!hasChanged) {
+						ShrinkableChainIteration<T> currentIteration = iterations.get(steps);
+						iterations.set(steps, currentIteration.withoutStateChange());
+					}
+				} finally {
+					steps++;
+				}
+
+				return current;
 			}
 
-			current = transformer.apply(current);
-			return current;
 		}
 
 		private Shrinkable<Transformer<T>> rerunStep(long nextSeed) {

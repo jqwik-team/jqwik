@@ -2,7 +2,6 @@ package net.jqwik.engine.properties.state;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
@@ -492,7 +491,7 @@ class ChainArbitraryTests {
 			);
 		}
 
-		// @Property // If I only knew how to make that work w/o breaking state accessing transformers
+		@Property // If I only knew how to make that work w/o breaking state accessing transformers
 		void shrinkAwayPartsThatDontChangeState(@ForAll Random random) {
 			ChainArbitrary<String> chains = Chains.chains(
 				() -> "",
@@ -505,7 +504,7 @@ class ChainArbitraryTests {
 					}
 					return Arbitraries.of(value.toCharArray()).map(c -> Transformer.transform("duplicate " + c, s -> s + c));
 				}
-			).withMaxTransformations(20);
+			).withMaxTransformations(20).detectChangesWith(ChangeDetector::forImmutables);
 
 			TestingFalsifier<Chain<String>> falsifier = chain -> {
 				for (String value : chain) {

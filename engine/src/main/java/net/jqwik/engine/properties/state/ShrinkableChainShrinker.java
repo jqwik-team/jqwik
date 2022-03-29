@@ -29,8 +29,38 @@ class ShrinkableChainShrinker<T> {
 		return JqwikStreamSupport.concat(
 			shrinkMaxTransformations(),
 			shrinkLastStateAccessingTransformer(),
-			shrinkRanges()
+			shrinkRanges(),
+			shrinkTransformersWithoutStateChange()
 		);
+	}
+
+	private Stream<Shrinkable<Chain<T>>> shrinkTransformersWithoutStateChange() {
+		int indexLastIterationWithStateAccess = indexOfLastIterationWithStateAccess();
+		if (indexLastIterationWithStateAccess > 0) {
+			// Don't try to shrink the last transformation with state access itself,
+			// because it will be shrunk anyway
+			List<Shrinkable<Chain<T>>> shrunkChains = new ArrayList<>();
+			for (int i = 0; i < indexLastIterationWithStateAccess; i++) {
+				ShrinkableChainIteration<T> currentIteration = iterations.get(i);
+				if (!currentIteration.stateHasBeenChanged) {
+					ArrayList<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
+					shrunkIterations.remove(i);
+					shrunkChains.add(newShrinkableChain(shrunkIterations, maxTransformations - 1));
+				}
+			}
+			return shrunkChains.stream();
+		}
+		return Stream.empty();
+	}
+
+	private int indexOfLastIterationWithStateAccess() {
+		for (int i = iterations.size() - 1; i >= 0; i--) {
+			ShrinkableChainIteration<T> iteration = iterations.get(i);
+			if (iteration.stateHasBeenAccessed) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	private Stream<Shrinkable<Chain<T>>> shrinkMaxTransformations() {
@@ -42,13 +72,11 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	private Stream<Shrinkable<Chain<T>>> shrinkLastStateAccessingTransformer() {
-		for (int i = iterations.size() - 1; i >= 0; i--) {
-			ShrinkableChainIteration<T> iteration = iterations.get(i);
-			if (iteration.stateHasBeenAccessed) {
-				List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
-				shrunkIterations.remove(i);
-				return Stream.of(newShrinkableChain(shrunkIterations, shrunkIterations.size()));
-			}
+		int indexLastIterationWithStateAccess = indexOfLastIterationWithStateAccess();
+		if (indexLastIterationWithStateAccess >= 0) {
+			List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
+			shrunkIterations.remove(indexLastIterationWithStateAccess);
+			return Stream.of(newShrinkableChain(shrunkIterations, maxTransformations - 1));
 		}
 		return Stream.empty();
 	}
@@ -168,10 +196,10 @@ class ShrinkableChainShrinker<T> {
 		return ranges;
 	}
 
-	private ShrinkableChain<T> newShrinkableChain(List<ShrinkableChainIteration<T>> shrunkIterations, int newMaxSize) {
+	private ShrinkableChain<T> newShrinkableChain(List<ShrinkableChainIteration<T>> shrunkIterations, int newMaxTransformations) {
 		return shrinkable.cloneWith(
 			shrunkIterations,
-			newMaxSize
+			newMaxTransformations
 		);
 	}
 
