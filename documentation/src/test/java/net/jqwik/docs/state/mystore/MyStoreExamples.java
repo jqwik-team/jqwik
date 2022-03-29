@@ -1,6 +1,7 @@
 package net.jqwik.docs.state.mystore;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
@@ -10,10 +11,12 @@ import static org.assertj.core.api.Assertions.*;
 @PropertyDefaults(tries = 100)
 public class MyStoreExamples {
 
+	/**
+	 * This property should detect a bug that will occur when a key is updated and then deleted afterwards
+	 */
 	@Property(shrinking = ShrinkingMode.FULL, afterFailure = AfterFailureMode.RANDOM_SEED)
 	void storeWorksAsExpected(@ForAll("storeActions") ActionChain<MyStore<Integer, String>> storeChain) {
 		storeChain.run();
-		// System.out.println(storeChain.transformations());
 	}
 
 	@Provide
@@ -23,7 +26,7 @@ public class MyStoreExamples {
 			Tuple.of(3, new StoreAnyValue()),
 			Tuple.of(1, new UpdateValue()),
 			Tuple.of(1, new RemoveValue())
-		);
+		).detectChangesWith(StoreChangesDetector::new);
 	}
 
 	static class StoreAnyValue implements Action<MyStore<Integer, String>> {
@@ -87,5 +90,26 @@ public class MyStoreExamples {
 
 	private static Arbitrary<String> values() {
 		return Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(10);
+	}
+
+	private static class StoreChangesDetector<K, V> implements ChangeDetector<MyStore<K, V>> {
+
+		private Set<Tuple.Tuple2<K, V>> entries;
+
+		@Override
+		public void before(MyStore<K, V> before) {
+			this.entries = entries(before);
+		}
+
+		private Set<Tuple.Tuple2<K, V>> entries(MyStore<K, V> before) {
+			return before.keys().stream()
+						 .map(key -> Tuple.of(key, before.get(key).orElse(null)))
+						 .collect(Collectors.toSet());
+		}
+
+		@Override
+		public boolean hasChanged(MyStore<K, V> after) {
+			return this.entries.equals(entries(after));
+		}
 	}
 }
