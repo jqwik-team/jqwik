@@ -16,6 +16,11 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 */
 	ChainArbitrary<T> withMaxTransformations(int maxTransformations);
 
+	/**
+	 * Set supplier for the type specific {@linkplain ChangeDetector} which can make shrinking more effective.
+	 *
+	 * @param detectorSupplier A function to create a new {@linkplain ChangeDetector} instance.
+	 */
 	ChainArbitrary<T> detectChangesWith(Supplier<ChangeDetector<T>> detectorSupplier);
 
 }
