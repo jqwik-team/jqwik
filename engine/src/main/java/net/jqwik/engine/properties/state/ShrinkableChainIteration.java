@@ -42,7 +42,10 @@ class ShrinkableChainIteration<T> {
 		return new ShrinkableChainIteration<>(randomSeed, stateHasBeenAccessed, shrinkable, stateHasBeenChanged);
 	}
 
-	ShrinkableChainIteration<T> withoutStateChange() {
-		return new ShrinkableChainIteration<>(randomSeed, stateHasBeenAccessed, shrinkable, false);
+	ShrinkableChainIteration<T> withStateChange(boolean stateHasBeenChanged) {
+		if (this.stateHasBeenChanged == stateHasBeenChanged) {
+			return this;
+		}
+		return new ShrinkableChainIteration<>(randomSeed, stateHasBeenAccessed, shrinkable, stateHasBeenChanged);
 	}
 }

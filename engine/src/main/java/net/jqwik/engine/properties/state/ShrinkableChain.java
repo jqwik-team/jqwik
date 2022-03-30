@@ -52,11 +52,13 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	}
 
 	@Override
+	@NotNull
 	public Chain<T> value() {
 		return new ChainInstance();
 	}
 
 	@Override
+	@NotNull
 	public Stream<Shrinkable<Chain<T>>> shrink() {
 		return new ShrinkableChainShrinker<>(this, iterations, maxTransformations).shrink();
 	}
@@ -74,6 +76,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	}
 
 	@Override
+	@NotNull
 	public ShrinkingDistance distance() {
 		List<Shrinkable<Transformer<T>>> shrinkablesForDistance = new ArrayList<>();
 		for (int i = 0; i < maxTransformations; i++) {
@@ -157,22 +160,23 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 					endOfChain = true;
 				}
 
-				ChangeDetector<T> changeDetector = changeDetectorSupplier.get();
-				changeDetector.before(current);
-				try {
-					current = transformer.apply(current);
-					boolean hasChanged = changeDetector.hasChanged(current);
-					if (!hasChanged) {
-						ShrinkableChainIteration<T> currentIteration = iterations.get(steps);
-						iterations.set(steps, currentIteration.withoutStateChange());
-					}
-				} finally {
-					steps++;
-				}
-
+				current = transformState(transformer, current);
 				return current;
 			}
+		}
 
+		private T transformState(Transformer<T> transformer, T before) {
+			ChangeDetector<T> changeDetector = changeDetectorSupplier.get();
+			changeDetector.before(before);
+			try {
+				T after = transformer.apply(before);
+				boolean stateHasChanged = changeDetector.hasChanged(after);
+				ShrinkableChainIteration<T> currentIteration = iterations.get(steps);
+				iterations.set(steps, currentIteration.withStateChange(stateHasChanged));
+				return after;
+			} finally {
+				steps++;
+			}
 		}
 
 		private Shrinkable<Transformer<T>> rerunStep(long nextSeed) {
