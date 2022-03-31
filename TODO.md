@@ -1,6 +1,8 @@
 
 new stateful:
 
+    - Chains: 
+        - Force them to run until END_OF_CHAIN
     - Document
         - Samples for
             - Plain Chain example
