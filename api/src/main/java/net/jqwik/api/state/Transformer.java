@@ -43,6 +43,11 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 		public String transformation() {
 			return "End of Chain";
 		}
+
+		@Override
+		public boolean isEndOfChain() {
+			return true;
+		}
 	};
 
 	/**
@@ -101,5 +106,9 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	 */
 	default String transformation() {
 		return toString();
+	}
+
+	default boolean isEndOfChain() {
+		return false;
 	}
 }

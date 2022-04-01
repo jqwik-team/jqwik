@@ -131,20 +131,16 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			if (!initialSupplied) {
 				return true;
 			}
-			nextTransformer = nextTransformer();
-			if (nextTransformer.equals(Transformer.END_OF_CHAIN)) {
-				return false;
-			}
-			// For infinite chains
-			if (steps < 0) {
-				return true;
-			}
-			if (steps < maxTransformations) {
-				return true;
+			if (isInfinite()) {
+				nextTransformer = nextTransformer();
+				return !nextTransformer.isEndOfChain();
 			} else {
-				// Remove what's been added when calling nextTransformer()
-				iterations.remove(iterations.size() - 1);
-				return false;
+				if (steps < maxTransformations) {
+					nextTransformer = nextTransformer();
+					return !nextTransformer.isEndOfChain();
+				} else {
+					return false;
+				}
 			}
 		}
 
@@ -234,6 +230,10 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				1000
 			);
 		}
+	}
+
+	private boolean isInfinite() {
+		return maxTransformations < 0;
 	}
 
 }

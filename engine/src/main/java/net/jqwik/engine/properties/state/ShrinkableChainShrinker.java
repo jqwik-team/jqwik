@@ -210,9 +210,10 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	private ShrinkableChain<T> newShrinkableChain(List<ShrinkableChainIteration<T>> shrunkIterations, int newMaxTransformations) {
+		int effectiveNewMax = maxTransformations < 0 ? -1 : newMaxTransformations;
 		return shrinkable.cloneWith(
 			shrunkIterations,
-			newMaxTransformations
+			effectiveNewMax
 		);
 	}
 
