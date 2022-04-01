@@ -437,8 +437,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		@Disabled
-		void shrinkInfiniteChain(@ForAll Random random) {
+		void shrinkInfiniteChainWithStateAccess(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
 				supplier -> {
@@ -450,12 +449,22 @@ class ChainArbitraryTests {
 				ignore -> just(Transformer.transform("+1", i -> i + 1))
 			).infinite();
 
-			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
-				for (Integer value : chain) {
-					// consume iterator
-				}
-				return collectAllValues(chain).size() < 6;
-			};
+			TestingFalsifier<Chain<Integer>> falsifier = chain -> collectAllValues(chain).size() < 6;
+			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			assertThat(chain.transformations()).hasSize(6);
+			assertThat(chain.transformations()).endsWith(Transformer.END_OF_CHAIN.transformation());
+			assertThat(collectAllValues(chain)).containsExactly(0, 1, 2, 3, 4, 5);
+		}
+
+		@Property
+		void shrinkInfiniteChainWithoutStateAccess(@ForAll Random random) {
+			Arbitrary<Chain<Integer>> chains = Chains.chains(
+				() -> 0,
+				ignore -> just(Transformer.transform("+1", i -> i + 1)),
+				ignore -> just(Transformer.endOfChain())
+			).infinite();
+
+			TestingFalsifier<Chain<Integer>> falsifier = chain -> collectAllValues(chain).size() < 6;
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
 			assertThat(chain.transformations()).hasSize(6);
 			assertThat(chain.transformations()).endsWith(Transformer.END_OF_CHAIN.transformation());

@@ -73,13 +73,9 @@ class ShrinkableChainShrinker<T> {
 	private Stream<Shrinkable<Chain<T>>> shrinkLastStateAccessingTransformer() {
 		int indexLastIterationWithStateAccess = indexOfLastIterationWithStateAccess();
 		if (indexLastIterationWithStateAccess >= 0) {
-			boolean isEndOfChain = false;
-			// boolean isEndOfChain = iterations.get(indexLastIterationWithStateAccess).isEndOfChain();
-			if (!isEndOfChain) {
-				List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
-				shrunkIterations.remove(indexLastIterationWithStateAccess);
-				return Stream.of(newShrinkableChain(shrunkIterations, maxTransformations - 1));
-			}
+			List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
+			shrunkIterations.remove(indexLastIterationWithStateAccess);
+			return Stream.of(newShrinkableChain(shrunkIterations, maxTransformations - 1));
 		}
 		return Stream.empty();
 	}
@@ -180,13 +176,17 @@ class ShrinkableChainShrinker<T> {
 	private Stream<List<ShrinkableChainIteration<T>>> shrinkToAllSubLists(List<ShrinkableChainIteration<T>> iterations) {
 		Set<List<ShrinkableChainIteration<T>>> setOfSequences = new HashSet<>();
 		for (int i = 0; i < iterations.size(); i++) {
-			// if (!iterations.get(i).isEndOfChain()) {
+			if (!isUnshrinkableEndOfChain(iterations.get(i))) {
 				ArrayList<ShrinkableChainIteration<T>> newCandidate = new ArrayList<>(iterations);
 				newCandidate.remove(i);
 				setOfSequences.add(newCandidate);
-			// }
+			}
 		}
 		return setOfSequences.stream();
+	}
+
+	private boolean isUnshrinkableEndOfChain(ShrinkableChainIteration<T> iteration) {
+		return isInfinite() && iteration.isEndOfChain();
 	}
 
 	private List<Tuple2<Integer, Integer>> splitIntoRanges() {
@@ -208,11 +208,20 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	private ShrinkableChain<T> newShrinkableChain(List<ShrinkableChainIteration<T>> shrunkIterations, int newMaxTransformations) {
-		int effectiveNewMax = maxTransformations < 0 ? -1 : newMaxTransformations;
+		int effectiveNewMax = isInfinite() ? -1 : newMaxTransformations;
+
+		if (isInfinite() && !shrunkIterations.get(shrunkIterations.size() - 1).isEndOfChain()) {
+			shrunkIterations.add(new ShrinkableChainIteration<>(1L, false, Shrinkable.unshrinkable(Transformer.endOfChain())));
+		}
+
 		return shrinkable.cloneWith(
 			shrunkIterations,
 			effectiveNewMax
 		);
+	}
+
+	private boolean isInfinite() {
+		return maxTransformations < 0;
 	}
 
 }
