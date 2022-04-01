@@ -73,7 +73,8 @@ class ShrinkableChainShrinker<T> {
 	private Stream<Shrinkable<Chain<T>>> shrinkLastStateAccessingTransformer() {
 		int indexLastIterationWithStateAccess = indexOfLastIterationWithStateAccess();
 		if (indexLastIterationWithStateAccess >= 0) {
-			boolean isEndOfChain = iterations.get(indexLastIterationWithStateAccess).isEndOfChain();
+			boolean isEndOfChain = false;
+			// boolean isEndOfChain = iterations.get(indexLastIterationWithStateAccess).isEndOfChain();
 			if (!isEndOfChain) {
 				List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
 				shrunkIterations.remove(indexLastIterationWithStateAccess);
@@ -177,16 +178,13 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	private Stream<List<ShrinkableChainIteration<T>>> shrinkToAllSubLists(List<ShrinkableChainIteration<T>> iterations) {
-		if (iterations.size() <= 1) {
-			return Stream.empty();
-		}
 		Set<List<ShrinkableChainIteration<T>>> setOfSequences = new HashSet<>();
 		for (int i = 0; i < iterations.size(); i++) {
-			if (!iterations.get(i).isEndOfChain()) {
+			// if (!iterations.get(i).isEndOfChain()) {
 				ArrayList<ShrinkableChainIteration<T>> newCandidate = new ArrayList<>(iterations);
 				newCandidate.remove(i);
 				setOfSequences.add(newCandidate);
-			}
+			// }
 		}
 		return setOfSequences.stream();
 	}

@@ -80,12 +80,12 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	private String createErrorMessage(String name, String causeMessage) {
 		String actionsString = transformations()
 			.stream()
-			.map(aTry -> "    " + aTry)
+			.map(transformation -> "    " + transformation)
 			.collect(Collectors.joining(System.lineSeparator()));
 		return String.format(
-			"%s failed after following actions:%n%s%n  final state: %s%n%s",
+			"%s failed after the following actions: [%s]%nfinal state: %s%n%s",
 			name,
-			actionsString,
+			actionsString.isEmpty() ? "" : String.format("%n%s  %n", actionsString),
 			JqwikStringSupport.displayString(currentValue),
 			causeMessage
 		);

@@ -367,6 +367,14 @@ class ActionChainArbitraryTests {
 			chainWithInvariant.run();
 		}
 
+		@Property
+		@ExpectFailure(failureType = InvariantFailedError.class)
+		void failInvariantOnInitialState(@ForAll(supplier = MyModelChain.class) ActionChain<MyModel> chain) {
+			ActionChain<MyModel> chainWithInvariant =
+				chain.withInvariant("never null", model -> assertThat(model.value).isEqualTo("oops"));
+			chainWithInvariant.run();
+		}
+
 		class MyModelChain implements ArbitrarySupplier<ActionChain<MyModel>> {
 			@Override
 			public Arbitrary<ActionChain<MyModel>> get() {
@@ -448,6 +456,10 @@ class ActionChainArbitraryTests {
 			return this;
 		}
 
+		@Override
+		public String toString() {
+			return String.format("MyModel[value=%S]", value);
+		}
 	}
 
 }
