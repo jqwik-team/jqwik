@@ -6,7 +6,6 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
-import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
 class ShrinkableChainShrinker<T> {
@@ -74,9 +73,12 @@ class ShrinkableChainShrinker<T> {
 	private Stream<Shrinkable<Chain<T>>> shrinkLastStateAccessingTransformer() {
 		int indexLastIterationWithStateAccess = indexOfLastIterationWithStateAccess();
 		if (indexLastIterationWithStateAccess >= 0) {
-			List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
-			shrunkIterations.remove(indexLastIterationWithStateAccess);
-			return Stream.of(newShrinkableChain(shrunkIterations, maxTransformations - 1));
+			boolean isEndOfChain = iterations.get(indexLastIterationWithStateAccess).isEndOfChain();
+			if (!isEndOfChain) {
+				List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
+				shrunkIterations.remove(indexLastIterationWithStateAccess);
+				return Stream.of(newShrinkableChain(shrunkIterations, maxTransformations - 1));
+			}
 		}
 		return Stream.empty();
 	}
@@ -175,7 +177,18 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	private Stream<List<ShrinkableChainIteration<T>>> shrinkToAllSubLists(List<ShrinkableChainIteration<T>> iterations) {
-		return new ComprehensiveSizeOfListShrinker().shrink(iterations, 1);
+		if (iterations.size() <= 1) {
+			return Stream.empty();
+		}
+		Set<List<ShrinkableChainIteration<T>>> setOfSequences = new HashSet<>();
+		for (int i = 0; i < iterations.size(); i++) {
+			if (!iterations.get(i).isEndOfChain()) {
+				ArrayList<ShrinkableChainIteration<T>> newCandidate = new ArrayList<>(iterations);
+				newCandidate.remove(i);
+				setOfSequences.add(newCandidate);
+			}
+		}
+		return setOfSequences.stream();
 	}
 
 	private List<Tuple2<Integer, Integer>> splitIntoRanges() {

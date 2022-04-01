@@ -1,11 +1,11 @@
-package net.jqwik.engine.properties.shrinking;
+package net.jqwik.engine.properties.stateful;
 
 import java.util.*;
 import java.util.stream.*;
 
-public class ComprehensiveSizeOfListShrinker {
+class ComprehensiveSizeOfListShrinker {
 
-	public <T> Stream<List<T>> shrink(List<T> toShrink, int minSize) {
+	<T> Stream<List<T>> shrink(List<T> toShrink, int minSize) {
 		if (toShrink.size() <= minSize) {
 			return Stream.empty();
 		}

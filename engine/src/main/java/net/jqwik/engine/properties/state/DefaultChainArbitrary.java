@@ -10,7 +10,7 @@ import net.jqwik.engine.support.*;
 
 public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArbitrary<T> {
 
-	private int maxTransformations = 0;
+	private int maxTransformations = Integer.MIN_VALUE;
 	private Supplier<ChangeDetector<T>> changeDetectorSupplier = ChangeDetector::alwaysTrue;
 	private final Function<Random, TransformerProvider<T>> providerGenerator;
 	private final Supplier<? extends T> initialSupplier;
@@ -26,7 +26,7 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	@Override
 	public RandomGenerator<Chain<T>> generator(int genSize) {
 		final int effectiveMaxTransformations =
-			this.maxTransformations != 0 ? this.maxTransformations : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
+			this.maxTransformations != Integer.MIN_VALUE ? this.maxTransformations : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
 		return random -> new ShrinkableChain<T>(
 			random.nextLong(),
 			initialSupplier,

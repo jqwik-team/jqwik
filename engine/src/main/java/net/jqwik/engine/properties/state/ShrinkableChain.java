@@ -120,21 +120,32 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		private int steps = 0;
 		private T current;
 		private boolean initialSupplied = false;
-		private boolean endOfChain = false;
+		private Transformer<T> nextTransformer = null;
 
 		private ChainIterator(T initial) {
 			this.current = initial;
 		}
 
 		@Override
-		public boolean hasNext() {
+		public synchronized boolean hasNext() {
 			if (!initialSupplied) {
 				return true;
 			}
-			if (endOfChain) {
+			nextTransformer = nextTransformer();
+			if (nextTransformer.equals(Transformer.END_OF_CHAIN)) {
 				return false;
 			}
-			return steps < maxTransformations;
+			// For infinite chains
+			if (steps < 0) {
+				return true;
+			}
+			if (steps < maxTransformations) {
+				return true;
+			} else {
+				// Remove what's been added when calling nextTransformer()
+				iterations.remove(iterations.size() - 1);
+				return false;
+			}
 		}
 
 		@Override
@@ -149,20 +160,23 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			Transformer<T> transformer = null;
 
 			synchronized (ShrinkableChain.this) {
-				Shrinkable<Transformer<T>> next = null;
-				if (steps < iterations.size()) {
-					next = rerunStep(nextSeed);
-				} else {
-					next = runNewStep(nextSeed);
-				}
-				transformer = next.value();
-				if (transformer.equals(Transformer.END_OF_CHAIN)) {
-					endOfChain = true;
-				}
-
+				transformer = nextTransformer;
 				current = transformState(transformer, current);
 				return current;
 			}
+		}
+
+		private Transformer<T> nextTransformer() {
+			// Create deterministic random in order to reuse in shrinking
+			long nextSeed = random.nextLong();
+
+			Shrinkable<Transformer<T>> next = null;
+			if (steps < iterations.size()) {
+				next = rerunStep(nextSeed);
+			} else {
+				next = runNewStep(nextSeed);
+			}
+			return next.value();
 		}
 
 		private T transformState(Transformer<T> transformer, T before) {

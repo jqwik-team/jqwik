@@ -38,6 +38,10 @@ class ShrinkableChainIteration<T> {
 		);
 	}
 
+	boolean isEndOfChain() {
+		return shrinkable.value().equals(Transformer.END_OF_CHAIN);
+	}
+
 	ShrinkableChainIteration<T> withShrinkable(Shrinkable<Transformer<T>> shrinkable) {
 		return new ShrinkableChainIteration<>(randomSeed, stateHasBeenAccessed, shrinkable, stateHasBeenChanged);
 	}

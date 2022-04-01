@@ -31,6 +31,19 @@ class ChainArbitraryTests {
 	}
 
 	@Example
+	void chainWithZeroMaxTransformations(@ForAll Random random) {
+		Arbitrary<Chain<Integer>> chains = Chains.chains(
+			() -> 0,
+			ignore -> just(Transformer.transform("+1", i -> i + 1))
+		).withMaxTransformations(0);
+
+		Chain<Integer> chain = TestingSupport.generateFirst(chains, random);
+
+		assertThat(collectAllValues(chain)).containsExactly(0);
+		assertThat(chain.transformations()).isEmpty();
+	}
+
+	@Example
 	void endOfChainIsHonored(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 0,
@@ -45,9 +58,9 @@ class ChainArbitraryTests {
 		Chain<Integer> chain = TestingSupport.generateFirst(chains, random);
 
 		List<Integer> valuesFirst = collectAllValues(chain);
-		assertThat(valuesFirst).containsExactly(0, 1, 2, 3, 4, 5, 5);
+		assertThat(valuesFirst).containsExactly(0, 1, 2, 3, 4, 5);
 		assertThat(chain.transformations()).containsExactly(
-			"+1", "+1", "+1", "+1", "+1", "End of Chain"
+			"+1", "+1", "+1", "+1", "+1", Transformer.END_OF_CHAIN.transformation()
 		);
 
 		List<Integer> valuesRerun = collectAllValues(chain);
@@ -367,7 +380,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void endOfChainIsBeingShrunkAway(@ForAll Random random) {
+		void stateAccessingEndOfChainIsNeverBeingShrunkAway(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
 				supplier -> {
@@ -385,8 +398,29 @@ class ChainArbitraryTests {
 				return collectAllValues(chain).size() < 6;
 			};
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
-			assertThat(chain.transformations()).hasSize(5);
+			assertThat(chain.transformations()).hasSize(6);
+			assertThat(chain.transformations()).endsWith(Transformer.END_OF_CHAIN.transformation());
 			assertThat(collectAllValues(chain)).containsExactly(0, 1, 2, 3, 4, 5);
+		}
+
+		@Property
+		void nonStateAccessingEndOfChainIsNeverBeingShrunkAway(@ForAll Random random) {
+			Arbitrary<Chain<Integer>> chains = Chains.chains(
+				() -> 0,
+				ignore -> just(Transformer.transform("+1", i -> i + 1)),
+				ignore -> just(Transformer.endOfChain())
+			).withMaxTransformations(100);
+
+			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
+				for (Integer value : chain) {
+					// consume iterator
+				}
+				return false;
+			};
+			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
+			assertThat(chain.transformations()).hasSize(1);
+			assertThat(chain.transformations()).endsWith(Transformer.END_OF_CHAIN.transformation());
+			assertThat(collectAllValues(chain)).containsExactly(0);
 		}
 
 		@Property

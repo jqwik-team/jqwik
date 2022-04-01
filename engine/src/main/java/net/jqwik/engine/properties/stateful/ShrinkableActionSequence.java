@@ -5,7 +5,6 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
-import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
 class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
