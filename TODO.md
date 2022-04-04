@@ -1,8 +1,9 @@
 
 new stateful:
 
-    - Chains: 
-        - Infinite chains that run until END_OF_CHAIN
+    - Chains: Make precondition a required part of transformations, which will make shrinking simpler in some cases
+
+    - Kotlin: Any obvious convenience methods or extensions for chains?
 
     - Document
         - Samples for
