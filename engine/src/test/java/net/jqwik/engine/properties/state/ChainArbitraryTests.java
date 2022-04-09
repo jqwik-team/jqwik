@@ -2,8 +2,7 @@ package net.jqwik.engine.properties.state;
 
 import java.util.*;
 import java.util.concurrent.*;
-
-import org.assertj.core.api.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
@@ -192,15 +191,19 @@ class ChainArbitraryTests {
 									return l;
 								});
 
-		TransformerProvider<List<Integer>> removeFirstElement = supplier -> {
-			List<Integer> last = supplier.get();
-			if (last.isEmpty()) {
-				return null;
+		TransformerProvider<List<Integer>> removeFirstElement = new TransformerProvider<List<Integer>>() {
+			@Override
+			public Predicate<List<Integer>> precondition() {
+				return last -> !last.isEmpty();
 			}
-			return Arbitraries.just(l -> {
-				l.remove(0);
-				return l;
-			});
+
+			@Override
+			public Arbitrary<Transformer<List<Integer>>> apply(Supplier<List<Integer>> supplier) {
+				return Arbitraries.just(l -> {
+					l.remove(0);
+					return l;
+				});
+			}
 		};
 
 		ChainArbitrary<List<Integer>> chains = Chains.chains(
@@ -401,11 +404,16 @@ class ChainArbitraryTests {
 		void stateAccessingEndOfChainCanBeShrunkAway(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
-				supplier -> {
-					if (supplier.get() >= 5) {
+				new TransformerProvider<Integer>() {
+					@Override
+					public Predicate<Integer> precondition() {
+						return value -> value >= 5;
+					}
+
+					@Override
+					public Arbitrary<Transformer<Integer>> apply(Supplier<Integer> supplier) {
 						return just(Transformer.endOfChain());
 					}
-					return null;
 				},
 				ignore -> just(Transformer.transform("+1", i -> i + 1))
 			).withMaxTransformations(100);
@@ -440,11 +448,16 @@ class ChainArbitraryTests {
 		void shrinkInfiniteChainWithStateAccess(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
-				supplier -> {
-					if (supplier.get() >= 5) {
+				new TransformerProvider<Integer>() {
+					@Override
+					public Predicate<Integer> precondition() {
+						return value -> value >= 5;
+					}
+
+					@Override
+					public Arbitrary<Transformer<Integer>> apply(Supplier<Integer> supplier) {
 						return just(Transformer.endOfChain());
 					}
-					return null;
 				},
 				ignore -> just(Transformer.transform("+1", i -> i + 1))
 			).infinite();
@@ -542,14 +555,19 @@ class ChainArbitraryTests {
 		@Property
 		void shrinkPairsOfIterations(@ForAll Random random) {
 			ChainArbitrary<List<Integer>> chains = Chains.chains(
-				() -> (List<Integer>) new ArrayList<Integer>(),
+				ArrayList::new,
 				ignore -> integers().map(i -> Transformer.mutate("add " + i, l -> l.add(i))),
-				supplier -> {
-					List<Integer> list = supplier.get();
-					if (list.isEmpty()) {
-						return null;
+				new TransformerProvider<List<Integer>>() {
+					@Override
+					public Predicate<List<Integer>> precondition() {
+						return list -> !list.isEmpty();
 					}
-					return Arbitraries.of(list).map(i -> Transformer.mutate("duplicate " + i, l -> l.add(i)));
+
+					@Override
+					public Arbitrary<Transformer<List<Integer>>> apply(Supplier<List<Integer>> supplier) {
+						List<Integer> list = supplier.get();
+						return Arbitraries.of(list).map(i -> Transformer.mutate("duplicate " + i, l -> l.add(i)));
+					}
 				}
 			).withMaxTransformations(20);
 
@@ -579,12 +597,17 @@ class ChainArbitraryTests {
 				() -> "",
 				ignore -> chars().alpha().map(c -> Transformer.transform("append " + c, s -> s + c)),
 				ignore -> just(Transformer.transform("nothing", s -> s)),
-				supplier -> {
-					String value = supplier.get();
-					if (value.isEmpty()) {
-						return null;
+				new TransformerProvider<String>() {
+					@Override
+					public Predicate<String> precondition() {
+						return string -> !string.isEmpty();
 					}
-					return Arbitraries.of(value.toCharArray()).map(c -> Transformer.transform("duplicate " + c, s -> s + c));
+
+					@Override
+					public Arbitrary<Transformer<String>> apply(Supplier<String> supplier) {
+						String value = supplier.get();
+						return Arbitraries.of(value.toCharArray()).map(c -> Transformer.transform("duplicate " + c, s -> s + c));
+					}
 				}
 			).withMaxTransformations(20).detectChangesWith(ChangeDetector::forImmutables);
 

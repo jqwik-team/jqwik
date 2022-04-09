@@ -22,4 +22,11 @@ import static org.apiguardian.api.API.Status.*;
 @FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface TransformerProvider<T> extends Function<Supplier<T>, @Nullable Arbitrary<Transformer<T>>> {
+
+	Predicate<?> NO_PRECONDITION = ignore -> false;
+
+	@SuppressWarnings("unchecked")
+	default Predicate<T> precondition() {
+		return (Predicate<T>) NO_PRECONDITION;
+	}
 }

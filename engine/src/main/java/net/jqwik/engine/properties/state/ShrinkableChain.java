@@ -210,12 +210,19 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			return MaxTriesLoop.loop(
 				() -> true,
 				arbitraryAccessTuple -> {
-					Function<Supplier<T>, Arbitrary<Transformer<T>>> chainGenerator = providerGenerator.apply(random);
+					TransformerProvider<T> chainGenerator = providerGenerator.apply(random);
 					AtomicBoolean stateHasBeenAccessed = new AtomicBoolean(false);
 					Supplier<T> supplier = () -> {
 						stateHasBeenAccessed.set(true);
 						return current;
 					};
+
+					Predicate<T> precondition = chainGenerator.precondition();
+					if (precondition != TransformerProvider.NO_PRECONDITION) {
+						if (!precondition.test(supplier.get())) {
+							return Tuple.of(false, null);
+						}
+					}
 
 					Arbitrary<Transformer<T>> arbitrary = chainGenerator.apply(supplier);
 					if (arbitrary == null) {
