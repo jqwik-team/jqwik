@@ -225,9 +225,6 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 					}
 
 					Arbitrary<Transformer<T>> arbitrary = chainGenerator.apply(supplier);
-					if (arbitrary == null) {
-						return Tuple.of(false, null);
-					}
 					return Tuple.of(true, Tuple.of(arbitrary, stateHasBeenAccessed.get()));
 				},
 				maxMisses -> {

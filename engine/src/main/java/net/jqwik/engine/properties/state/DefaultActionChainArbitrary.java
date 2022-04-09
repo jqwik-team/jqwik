@@ -36,29 +36,39 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 
 	private TransformerProvider<T> createProvider(Action<T> action) {
 		checkActionIsConsistent(action);
-		return stateSupplier -> {
-			if (!checkPrecondition(stateSupplier, action)) {
-				return null;
-			}
-			return toTransformerArbitrary(action, stateSupplier);
-		};
+		Optional<Predicate<T>> optionalPrecondition = precondition(action);
+		if (optionalPrecondition.isPresent()) {
+			return new TransformerProvider<T>() {
+				@Override
+				public Predicate<T> precondition() {
+					return optionalPrecondition.get();
+				}
+
+				@Override
+				public Arbitrary<Transformer<T>> apply(Supplier<T> supplier) {
+					return toTransformerArbitrary(action, supplier);
+				}
+			};
+		} else {
+			return supplier -> toTransformerArbitrary(action, supplier);
+		}
 	}
 
-	private boolean checkPrecondition(Supplier<T> stateSupplier, Action<T> action) {
+	private Optional<Predicate<T>> precondition(Action<T> action) {
 		try {
 			Method precondition = preconditionMethod(action.getClass());
 			if (!precondition.equals(preconditionMethod(Action.class))) {
-				try {
-					boolean isApplicable = (boolean) ReflectionSupport.invokeMethod(precondition, action, stateSupplier.get());
-					if (!isApplicable) {
-						return false;
-					}
-				} catch (Exception exception) {
-					JqwikExceptionSupport.throwAsUncheckedException(exception);
-				}
+				return Optional.of(
+					state -> {
+						try {
+							return (boolean) ReflectionSupport.invokeMethod(precondition, action, state);
+						} catch (Exception exception) {
+							return JqwikExceptionSupport.throwAsUncheckedException(exception);
+						}
+					});
 			}
 		} catch (NoSuchMethodException ignore) {}
-		return true;
+		return Optional.empty();
 	}
 
 	private void checkActionIsConsistent(Action<T> action) {
@@ -92,11 +102,6 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 		}
 
 		throw new RuntimeException("Should never get here. Should be caught before by checkActionIsConsistent()");
-	}
-
-	private JqwikException inconsistentActionError(Action<T> action) {
-		String message = String.format("Action %s must implement exactly one of transformer() or transformer(state).", action);
-		return new JqwikException(message);
 	}
 
 	private Optional<Method> transformerMethod(Class<?> aClass) {

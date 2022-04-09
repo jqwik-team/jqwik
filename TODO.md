@@ -1,7 +1,8 @@
 
 new stateful:
 
-    - Chains: Make precondition a required part of transformations, which will make shrinking simpler in some cases
+    - Chains: Use TransformerProvider.precondition() to improve shrinking.
+              Rework RegexChainExample.
 
     - Kotlin: Any obvious convenience methods or extensions for chains?
 

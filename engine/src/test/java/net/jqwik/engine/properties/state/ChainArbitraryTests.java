@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
+import org.jetbrains.annotations.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 import net.jqwik.api.statistics.*;
@@ -229,10 +231,20 @@ class ChainArbitraryTests {
 	}
 
 	@Example
-	void stopGenerationIfOnlyNullArbitrariesAreAvailable(@ForAll Random random) {
+	void stopGenerationIfNoArbitrariesAreAvailable(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
-			ignore -> null
+			new TransformerProvider<Integer>() {
+				@Override
+				public Predicate<Integer> precondition() {
+					return ignore -> false;
+				}
+
+				@Override
+				public @Nullable Arbitrary<Transformer<Integer>> apply(Supplier<Integer> supplier) {
+					throw new UnsupportedOperationException("Should never get here");
+				}
+			}
 		).withMaxTransformations(50);
 
 		Chain<Integer> chain = chains.generator(100).next(random).value();
