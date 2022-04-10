@@ -61,8 +61,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	@Override
 	@NotNull
 	public Stream<Shrinkable<Chain<T>>> shrink() {
-		return new ShrinkableChainShrinker_NEW<>(this, iterations, maxTransformations).shrink();
-		// return new ShrinkableChainShrinker<>(this, iterations, maxTransformations).shrink();
+		return new ShrinkableChainShrinker<>(this, iterations, maxTransformations).shrink();
 	}
 
 	ShrinkableChain<T> cloneWith(List<ShrinkableChainIteration<T>> shrunkIterations, int newMaxSize) {
@@ -203,19 +202,18 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 		private Shrinkable<Transformer<T>> runNewStep(long nextSeed) {
 			Random random = SourceOfRandomness.newRandom(nextSeed);
-			Tuple4<Arbitrary<Transformer<T>>, Boolean, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random);
+			Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random);
 			Arbitrary<Transformer<T>> arbitrary = arbitraryAccessTuple.get1();
-			boolean stateHasBeenAccessed = arbitraryAccessTuple.get2();
-			Predicate<T> precondition = arbitraryAccessTuple.get3();
-			boolean accessState = arbitraryAccessTuple.get4();
+			Predicate<T> precondition = arbitraryAccessTuple.get2();
+			boolean accessState = arbitraryAccessTuple.get3();
 
 			RandomGenerator<Transformer<T>> generator = arbitrary.generator(genSize);
 			Shrinkable<Transformer<T>> next = generator.next(random);
-			iterations.add(new ShrinkableChainIteration<>(nextSeed, stateHasBeenAccessed, precondition, accessState, next));
+			iterations.add(new ShrinkableChainIteration<>(nextSeed, precondition, accessState, next));
 			return next;
 		}
 
-		private Tuple4<Arbitrary<Transformer<T>>, Boolean, Predicate<T>, Boolean> nextTransformerArbitrary(Random random) {
+		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(Random random) {
 			return MaxTriesLoop.loop(
 				() -> true,
 				arbitraryAccessTuple -> {
@@ -235,10 +233,9 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 					}
 
 					Arbitrary<Transformer<T>> arbitrary = chainGenerator.apply(supplier);
-					boolean stateHasBeenAccessed_OLD = accessState.get() || hasPrecondition;
 					return Tuple.of(
 						true,
-						Tuple.of(arbitrary, stateHasBeenAccessed_OLD, hasPrecondition ? precondition : null, accessState.get())
+						Tuple.of(arbitrary, hasPrecondition ? precondition : null, accessState.get())
 					);
 				},
 				maxMisses -> {

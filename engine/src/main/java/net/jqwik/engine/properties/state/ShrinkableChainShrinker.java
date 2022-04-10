@@ -34,12 +34,12 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	private Stream<Shrinkable<Chain<T>>> shrinkTransformersWithoutStateChange() {
-		int indexLastIterationWithStateAccess = indexOfLastIterationWithStateAccess();
-		if (indexLastIterationWithStateAccess > 0) {
+		int indexLastStateAccess = indexOfLastIterationWithStateAccess();
+		if (indexLastStateAccess > 0) {
 			// Don't try to shrink the last transformation with state access itself,
 			// because it will be shrunk anyway
 			List<Shrinkable<Chain<T>>> shrunkChains = new ArrayList<>();
-			for (int i = 0; i < indexLastIterationWithStateAccess; i++) {
+			for (int i = 0; i < indexLastStateAccess; i++) {
 				ShrinkableChainIteration<T> currentIteration = iterations.get(i);
 				if (!currentIteration.changeState) {
 					ArrayList<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>(iterations);
@@ -55,7 +55,7 @@ class ShrinkableChainShrinker<T> {
 	private int indexOfLastIterationWithStateAccess() {
 		for (int i = iterations.size() - 1; i >= 0; i--) {
 			ShrinkableChainIteration<T> iteration = iterations.get(i);
-			if (iteration.stateHasBeenAccessed_OLD) {
+			if (iteration.accessState) {
 				return i;
 			}
 		}
@@ -197,7 +197,7 @@ class ShrinkableChainShrinker<T> {
 			end = i;
 			while (i >= 0) {
 				ShrinkableChainIteration<T> current = iterations.get(i);
-				if (current.stateHasBeenAccessed_OLD || i == 0) {
+				if (current.accessState || i == 0) {
 					ranges.add(Tuple.of(i, end));
 					break;
 				}
@@ -212,7 +212,7 @@ class ShrinkableChainShrinker<T> {
 
 		if (isInfinite() && !shrunkIterations.get(shrunkIterations.size() - 1).isEndOfChain()) {
 			shrunkIterations.add(
-				new ShrinkableChainIteration<>(1L, false, null, false, Shrinkable.unshrinkable(Transformer.endOfChain()))
+				new ShrinkableChainIteration<>(1L, null, false, Shrinkable.unshrinkable(Transformer.endOfChain()))
 			);
 		}
 
