@@ -53,7 +53,7 @@ public class Chains {
 	}
 
 	/**
-	 * Create arbitrary for a {@linkplain Chain chain) based on {@linkplain Transformer transformers}.
+	 * Create arbitrary for a {@linkplain Chain chain} based on {@linkplain Transformer transformers}.
 	 *
 	 * @param initialSupplier function to create the initial state object
 	 * @param providers       varargs of {@linkplain TransformerProvider providers}
@@ -70,7 +70,7 @@ public class Chains {
 	}
 
 	/**
-	 * Create arbitrary for a {@linkplain Chain chain) based on {@linkplain Transformer transformers}.
+	 * Create arbitrary for a {@linkplain Chain chain} based on {@linkplain Transformer transformers}.
 	 *
 	 * @param initialSupplier     function to create the initial state object
 	 * @param providerFrequencies variable number of Tuples with weight and {@linkplain TransformerProvider provider}.
