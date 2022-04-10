@@ -164,12 +164,12 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		private Transformer<T> nextTransformer() {
-			// Create deterministic random in order to reuse in shrinking
+			// Fix random seed for same random sequence in re-runs
 			long nextSeed = random.nextLong();
 
 			Shrinkable<Transformer<T>> next = null;
 			if (steps < iterations.size()) {
-				next = rerunStep(nextSeed);
+				next = rerunStep();
 			} else {
 				next = runNewStep(nextSeed);
 			}
@@ -190,7 +190,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			}
 		}
 
-		private Shrinkable<Transformer<T>> rerunStep(long nextSeed) {
+		private Shrinkable<Transformer<T>> rerunStep() {
 			ShrinkableChainIteration<T> iteration = iterations.get(steps);
 			iteration.precondition().ifPresent(predicate -> {
 				if (!predicate.test(current)) {
@@ -209,7 +209,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 			RandomGenerator<Transformer<T>> generator = arbitrary.generator(genSize);
 			Shrinkable<Transformer<T>> next = generator.next(random);
-			iterations.add(new ShrinkableChainIteration<>(nextSeed, precondition, accessState, next));
+			iterations.add(new ShrinkableChainIteration<>(precondition, accessState, next));
 			return next;
 		}
 

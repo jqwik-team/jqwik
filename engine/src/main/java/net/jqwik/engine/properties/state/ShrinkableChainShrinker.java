@@ -212,7 +212,7 @@ class ShrinkableChainShrinker<T> {
 
 		if (isInfinite() && !shrunkIterations.get(shrunkIterations.size() - 1).isEndOfChain()) {
 			shrunkIterations.add(
-				new ShrinkableChainIteration<>(1L, null, false, Shrinkable.unshrinkable(Transformer.endOfChain()))
+				new ShrinkableChainIteration<>(null, false, Shrinkable.unshrinkable(Transformer.endOfChain()))
 			);
 		}
 

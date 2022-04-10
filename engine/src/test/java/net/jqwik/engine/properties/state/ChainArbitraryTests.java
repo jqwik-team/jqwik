@@ -413,7 +413,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void stateAccessingEndOfChainCanBeShrunkAway(@ForAll Random random) {
+		void preconditionedEndOfChainCanBeShrunkAwayInFiniteChain(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
 				new TransformerProvider<Integer>() {
@@ -438,7 +438,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void endOfChainCanBeShrunkAway(@ForAll Random random) {
+		void endOfChainCanBeShrunkAwayInFiniteChain(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
 				ignore -> just(Transformer.transform("+1", i -> i + 1)),
@@ -457,7 +457,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void shrinkInfiniteChainWithStateAccess(@ForAll Random random) {
+		void shrinkInfiniteChainWithPrecondition(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
 				new TransformerProvider<Integer>() {
