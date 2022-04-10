@@ -92,7 +92,7 @@ public class Chains {
 	}
 
 	/**
-	 * Create arbitrary for a {@linkplain ActionChain action chain) based on {@linkplain Action actions}.
+	 * Create arbitrary for a {@linkplain ActionChain chain} based on {@linkplain Action actions}.
 	 *
 	 * @param initialSupplier function to create the initial state object
 	 * @param actions         variable number of {@linkplain Action actions}. The actions are randomly chosen with equal probability.
@@ -111,7 +111,7 @@ public class Chains {
 	}
 
 	/**
-	 * Create arbitrary for a {@linkplain ActionChain action chain) based on {@linkplain Action actions}.
+	 * Create arbitrary for a {@linkplain ActionChain action chain} based on {@linkplain Action actions}.
 	 *
 	 * @param initialSupplier   function to create the initial state object
 	 * @param actionFrequencies variable number of Tuples with weight and {@linkplain Action action}.
