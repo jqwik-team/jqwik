@@ -8,13 +8,13 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.support.*;
 
-class ShrinkableChainShrinker<T> {
+class ShrinkableChainShrinker_NEW<T> {
 
 	private final ShrinkableChain<T> shrinkable;
 	private final List<ShrinkableChainIteration<T>> iterations;
 	private final int maxTransformations;
 
-	ShrinkableChainShrinker(ShrinkableChain<T> shrinkableChain, List<ShrinkableChainIteration<T>> iterations, int maxTransformations) {
+	ShrinkableChainShrinker_NEW(ShrinkableChain<T> shrinkableChain, List<ShrinkableChainIteration<T>> iterations, int maxTransformations) {
 		this.shrinkable = shrinkableChain;
 		this.iterations = iterations;
 		this.maxTransformations = maxTransformations;
@@ -27,10 +27,15 @@ class ShrinkableChainShrinker<T> {
 		}
 		return JqwikStreamSupport.concat(
 			shrinkMaxTransformations(),
-			shrinkLastStateAccessingTransformer(),
-			shrinkRanges(),
-			shrinkTransformersWithoutStateChange()
+			shrinkBackwards()
+		// 	shrinkLastStateAccessingTransformer(),
+		// 	shrinkRanges(),
+		// 	shrinkTransformersWithoutStateChange()
 		);
+	}
+
+	private Stream<Shrinkable<Chain<T>>> shrinkBackwards() {
+		return Stream.empty();
 	}
 
 	private Stream<Shrinkable<Chain<T>>> shrinkTransformersWithoutStateChange() {

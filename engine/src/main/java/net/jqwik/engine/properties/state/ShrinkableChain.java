@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import org.jetbrains.annotations.*;
+import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
@@ -60,7 +61,8 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	@Override
 	@NotNull
 	public Stream<Shrinkable<Chain<T>>> shrink() {
-		return new ShrinkableChainShrinker<>(this, iterations, maxTransformations).shrink();
+		return new ShrinkableChainShrinker_NEW<>(this, iterations, maxTransformations).shrink();
+		// return new ShrinkableChainShrinker<>(this, iterations, maxTransformations).shrink();
 	}
 
 	ShrinkableChain<T> cloneWith(List<ShrinkableChainIteration<T>> shrunkIterations, int newMaxSize) {
@@ -191,41 +193,53 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 		private Shrinkable<Transformer<T>> rerunStep(long nextSeed) {
 			ShrinkableChainIteration<T> iteration = iterations.get(steps);
+			iteration.precondition().ifPresent(predicate -> {
+				if (!predicate.test(current)) {
+					throw new TestAbortedException("Precondition no longer valid");
+				}
+			});
 			return iteration.shrinkable;
 		}
 
 		private Shrinkable<Transformer<T>> runNewStep(long nextSeed) {
 			Random random = SourceOfRandomness.newRandom(nextSeed);
-			Tuple2<Arbitrary<Transformer<T>>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random);
+			Tuple4<Arbitrary<Transformer<T>>, Boolean, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random);
 			Arbitrary<Transformer<T>> arbitrary = arbitraryAccessTuple.get1();
 			boolean stateHasBeenAccessed = arbitraryAccessTuple.get2();
+			Predicate<T> precondition = arbitraryAccessTuple.get3();
+			boolean accessState = arbitraryAccessTuple.get4();
 
 			RandomGenerator<Transformer<T>> generator = arbitrary.generator(genSize);
 			Shrinkable<Transformer<T>> next = generator.next(random);
-			iterations.add(new ShrinkableChainIteration<>(nextSeed, stateHasBeenAccessed, next));
+			iterations.add(new ShrinkableChainIteration<>(nextSeed, stateHasBeenAccessed, precondition, accessState, next));
 			return next;
 		}
 
-		private Tuple2<Arbitrary<Transformer<T>>, Boolean> nextTransformerArbitrary(Random random) {
+		private Tuple4<Arbitrary<Transformer<T>>, Boolean, Predicate<T>, Boolean> nextTransformerArbitrary(Random random) {
 			return MaxTriesLoop.loop(
 				() -> true,
 				arbitraryAccessTuple -> {
 					TransformerProvider<T> chainGenerator = providerGenerator.apply(random);
-					AtomicBoolean stateHasBeenAccessed = new AtomicBoolean(false);
+					AtomicBoolean accessState = new AtomicBoolean(false);
 					Supplier<T> supplier = () -> {
-						stateHasBeenAccessed.set(true);
+						accessState.set(true);
 						return current;
 					};
 
 					Predicate<T> precondition = chainGenerator.precondition();
-					if (precondition != TransformerProvider.NO_PRECONDITION) {
-						if (!precondition.test(supplier.get())) {
+					boolean hasPrecondition = precondition != TransformerProvider.NO_PRECONDITION;
+					if (hasPrecondition) {
+						if (!precondition.test(current)) {
 							return Tuple.of(false, null);
 						}
 					}
 
 					Arbitrary<Transformer<T>> arbitrary = chainGenerator.apply(supplier);
-					return Tuple.of(true, Tuple.of(arbitrary, stateHasBeenAccessed.get()));
+					boolean stateHasBeenAccessed_OLD = accessState.get() || hasPrecondition;
+					return Tuple.of(
+						true,
+						Tuple.of(arbitrary, stateHasBeenAccessed_OLD, hasPrecondition ? precondition : null, accessState.get())
+					);
 				},
 				maxMisses -> {
 					String message = String.format("Could not generate a transformer after %s tries.", maxMisses);
