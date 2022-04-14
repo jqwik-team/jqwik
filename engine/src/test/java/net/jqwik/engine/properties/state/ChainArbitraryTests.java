@@ -226,7 +226,7 @@ class ChainArbitraryTests {
 	void stopGenerationIfNoArbitrariesAreAvailable(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
-			TransformerProvider.<Integer>when(ignore -> false).provide(null /* never gets here */)
+			TransformerProvider.<Integer>when(ignore -> false).provide((Arbitrary<Transformer<Integer>>) null /* never gets here */)
 		).withMaxTransformations(50);
 
 		Chain<Integer> chain = chains.generator(100).next(random).value();
@@ -531,18 +531,11 @@ class ChainArbitraryTests {
 			ChainArbitrary<List<Integer>> chains = Chains.chains(
 				ArrayList::new,
 				ignore -> integers().map(i -> Transformer.mutate("add " + i, l -> l.add(i))),
-				new TransformerProvider<List<Integer>>() {
-					@Override
-					public Predicate<List<Integer>> precondition() {
-						return list -> !list.isEmpty();
-					}
-
-					@Override
-					public Arbitrary<Transformer<List<Integer>>> apply(Supplier<List<Integer>> supplier) {
-						List<Integer> list = supplier.get();
-						return Arbitraries.of(list).map(i -> Transformer.mutate("duplicate " + i, l -> l.add(i)));
-					}
-				}
+				TransformerProvider.<List<Integer>>when(list -> !list.isEmpty())
+								   .provide(
+									   list -> Arbitraries.of(list)
+														  .map(i -> Transformer.mutate("duplicate " + i, l -> l.add(i)))
+								   )
 			).withMaxTransformations(20);
 
 			TestingFalsifier<Chain<List<Integer>>> falsifier = chain -> {
@@ -571,18 +564,11 @@ class ChainArbitraryTests {
 				() -> "",
 				ignore -> chars().alpha().map(c -> Transformer.transform("append " + c, s -> s + c)),
 				ignore -> just(Transformer.transform("nothing", s -> s)),
-				new TransformerProvider<String>() {
-					@Override
-					public Predicate<String> precondition() {
-						return string -> !string.isEmpty();
-					}
-
-					@Override
-					public Arbitrary<Transformer<String>> apply(Supplier<String> supplier) {
-						String value = supplier.get();
-						return Arbitraries.of(value.toCharArray()).map(c -> Transformer.transform("duplicate " + c, s -> s + c));
-					}
-				}
+				TransformerProvider.<String>when(string -> !string.isEmpty())
+								   .provide(
+									   value -> Arbitraries.of(value.toCharArray())
+														  .map(c -> Transformer.transform("duplicate " + c, s -> s + c))
+								   )
 			).withMaxTransformations(20).detectChangesWith(ChangeDetector::forImmutables);
 
 			TestingFalsifier<Chain<String>> falsifier = chain -> {

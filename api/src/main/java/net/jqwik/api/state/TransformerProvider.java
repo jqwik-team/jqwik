@@ -43,6 +43,20 @@ public interface TransformerProvider<T> extends Function<Supplier<T>, Arbitrary<
 				}
 			};
 		}
+
+		public TransformerProvider<T> provide(Function<T, Arbitrary<Transformer<T>>> arbitraryCreator) {
+			return new TransformerProvider<T>() {
+				@Override
+				public Predicate<T> precondition() {
+					return precondition;
+				}
+
+				@Override
+				public Arbitrary<Transformer<T>> apply(Supplier<T> supplier) {
+					return arbitraryCreator.apply(supplier.get());
+				}
+			};
+		}
 	}
 
 	/**
