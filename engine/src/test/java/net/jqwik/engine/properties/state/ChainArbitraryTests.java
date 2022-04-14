@@ -254,7 +254,7 @@ class ChainArbitraryTests {
 		}).isInstanceOf(JqwikException.class);
 	}
 
-	@Property(tries = 5, seed = "-387365694610281349")
+	@Property(tries = 5)
 	void concurrentlyIteratingChainProducesSameResult(@ForAll Random random) throws Exception {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
