@@ -193,20 +193,12 @@ class ChainArbitraryTests {
 									return l;
 								});
 
-		TransformerProvider<List<Integer>> removeFirstElement = new TransformerProvider<List<Integer>>() {
-			@Override
-			public Predicate<List<Integer>> precondition() {
-				return last -> !last.isEmpty();
-			}
-
-			@Override
-			public Arbitrary<Transformer<List<Integer>>> apply(Supplier<List<Integer>> supplier) {
-				return Arbitraries.just(l -> {
-					l.remove(0);
-					return l;
-				});
-			}
-		};
+		TransformerProvider<List<Integer>> removeFirstElement =
+			TransformerProvider.<List<Integer>>when(last -> !last.isEmpty())
+							   .provide(just(l -> {
+											l.remove(0);
+											return l;
+										}));
 
 		ChainArbitrary<List<Integer>> chains = Chains.chains(
 			ArrayList::new,
@@ -234,17 +226,7 @@ class ChainArbitraryTests {
 	void stopGenerationIfNoArbitrariesAreAvailable(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
-			new TransformerProvider<Integer>() {
-				@Override
-				public Predicate<Integer> precondition() {
-					return ignore -> false;
-				}
-
-				@Override
-				public @Nullable Arbitrary<Transformer<Integer>> apply(Supplier<Integer> supplier) {
-					throw new UnsupportedOperationException("Should never get here");
-				}
-			}
+			TransformerProvider.<Integer>when(ignore -> false).provide(null /* never gets here */)
 		).withMaxTransformations(50);
 
 		Chain<Integer> chain = chains.generator(100).next(random).value();
@@ -416,17 +398,7 @@ class ChainArbitraryTests {
 		void preconditionedEndOfChainCanBeShrunkAwayInFiniteChain(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
-				new TransformerProvider<Integer>() {
-					@Override
-					public Predicate<Integer> precondition() {
-						return value -> value >= 5;
-					}
-
-					@Override
-					public Arbitrary<Transformer<Integer>> apply(Supplier<Integer> supplier) {
-						return just(Transformer.endOfChain());
-					}
-				},
+				TransformerProvider.<Integer>when(i -> i >= 5).provide(just(Transformer.endOfChain())),
 				ignore -> just(Transformer.transform("+1", i -> i + 1))
 			).withMaxTransformations(100);
 
@@ -460,17 +432,7 @@ class ChainArbitraryTests {
 		void shrinkInfiniteChainWithPrecondition(@ForAll Random random) {
 			Arbitrary<Chain<Integer>> chains = Chains.chains(
 				() -> 0,
-				new TransformerProvider<Integer>() {
-					@Override
-					public Predicate<Integer> precondition() {
-						return value -> value >= 5;
-					}
-
-					@Override
-					public Arbitrary<Transformer<Integer>> apply(Supplier<Integer> supplier) {
-						return just(Transformer.endOfChain());
-					}
-				},
+				TransformerProvider.<Integer>when(i -> i >= 5).provide(just(Transformer.endOfChain())),
 				ignore -> just(Transformer.transform("+1", i -> i + 1))
 			).infinite();
 
