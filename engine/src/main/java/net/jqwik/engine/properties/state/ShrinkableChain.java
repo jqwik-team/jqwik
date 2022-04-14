@@ -128,19 +128,21 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		@Override
-		public synchronized boolean hasNext() {
+		public boolean hasNext() {
 			if (!initialSupplied) {
 				return true;
 			}
-			if (isInfinite()) {
-				nextTransformer = nextTransformer();
-				return !nextTransformer.isEndOfChain();
-			} else {
-				if (steps < maxTransformations) {
+			synchronized (ShrinkableChain.this) {
+				if (isInfinite()) {
 					nextTransformer = nextTransformer();
 					return !nextTransformer.isEndOfChain();
 				} else {
-					return false;
+					if (steps < maxTransformations) {
+						nextTransformer = nextTransformer();
+						return !nextTransformer.isEndOfChain();
+					} else {
+						return false;
+					}
 				}
 			}
 		}
@@ -152,12 +154,8 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				return current;
 			}
 
-			// Create deterministic random in order to reuse in shrinking
-			long nextSeed = random.nextLong();
-			Transformer<T> transformer = null;
-
 			synchronized (ShrinkableChain.this) {
-				transformer = nextTransformer;
+				Transformer<T> transformer = nextTransformer;
 				current = transformState(transformer, current);
 				return current;
 			}

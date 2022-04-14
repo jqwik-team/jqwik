@@ -1,8 +1,6 @@
 
 new stateful:
 
-    - Fix sporadic error in ChainArbitraryTests.concurrentlyIteratingChainProducesSameResult
-
     - Chains: Rework RegexChainExample to use preconditions.
 
     - Kotlin: Any obvious convenience methods or extensions for chains?
