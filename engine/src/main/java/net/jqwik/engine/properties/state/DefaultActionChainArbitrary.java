@@ -37,23 +37,12 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	private TransformerProvider<T> createProvider(Action<T> action) {
 		checkActionIsConsistent(action);
 		Optional<Predicate<T>> optionalPrecondition = precondition(action);
-		if (optionalPrecondition.isPresent()) {
-			return new TransformerProvider<T>() {
-				@Override
-				public Predicate<T> precondition() {
-					return optionalPrecondition.get();
-				}
-
-				@Override
-				public Arbitrary<Transformer<T>> apply(Supplier<T> supplier) {
-					return toTransformerArbitrary(action, supplier);
-				}
-			};
-		} else {
-			return supplier -> toTransformerArbitrary(action, supplier);
-		}
+		return optionalPrecondition.map(precondition -> TransformerProvider.when(precondition)
+																		   .provide(state -> toTransformerArbitrary(action, () -> state)))
+								   .orElseGet(() -> supplier -> toTransformerArbitrary(action, supplier));
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	private Optional<Predicate<T>> precondition(Action<T> action) {
 		try {
 			Method precondition = preconditionMethod(action.getClass());
