@@ -1,7 +1,7 @@
 
 new stateful:
 
-    - Chains: Rework RegexChainExample to use preconditions.
+    - Chains: Fluent API for TransformerProvider creation.
 
     - Kotlin: Any obvious convenience methods or extensions for chains?
 

@@ -1,5 +1,7 @@
 package net.jqwik.docs.state;
 
+import java.util.function.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 
@@ -23,21 +25,52 @@ class RegexChainExample {
 	Arbitrary<Chain<String>> abplusc() {
 		return Chains.chains(
 			() -> "",
-			stringSupplier -> {
-				String value = stringSupplier.get();
-				if (value.isEmpty()) {
+			new TransformerProvider<String>() {
+				@Override
+				public Predicate<String> precondition() {
+					return s -> s.isEmpty();
+				}
+
+				@Override
+				public Arbitrary<Transformer<String>> apply(Supplier<String> stringSupplier) {
 					return just(s -> s + "a");
 				}
-				if (value.endsWith("a")) {
+			},
+			new TransformerProvider<String>() {
+				@Override
+				public Predicate<String> precondition() {
+					return s -> s.endsWith("a");
+				}
+
+				@Override
+				public Arbitrary<Transformer<String>> apply(Supplier<String> stringSupplier) {
 					return just(s -> s + "b");
 				}
-				if (value.endsWith("b")) {
+			},
+			new TransformerProvider<String>() {
+				@Override
+				public Predicate<String> precondition() {
+					return s -> s.endsWith("b");
+				}
+
+				@Override
+				public Arbitrary<Transformer<String>> apply(Supplier<String> stringSupplier) {
 					return frequency(
 						Tuple.of(5, s -> s + "b"),
 						Tuple.of(1, s -> s + "c")
 					);
 				}
-				return just(Transformer.endOfChain());
+			},
+			new TransformerProvider<String>() {
+				@Override
+				public Predicate<String> precondition() {
+					return s -> s.endsWith("c");
+				}
+
+				@Override
+				public Arbitrary<Transformer<String>> apply(Supplier<String> stringSupplier) {
+					return just(Transformer.endOfChain());
+				}
 			}
 		).infinite().dontShrink();
 	}
