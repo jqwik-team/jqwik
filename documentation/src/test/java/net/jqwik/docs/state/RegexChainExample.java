@@ -25,53 +25,15 @@ class RegexChainExample {
 	Arbitrary<Chain<String>> abplusc() {
 		return Chains.chains(
 			() -> "",
-			new TransformerProvider<String>() {
-				@Override
-				public Predicate<String> precondition() {
-					return s -> s.isEmpty();
-				}
-
-				@Override
-				public Arbitrary<Transformer<String>> apply(Supplier<String> stringSupplier) {
-					return just(s -> s + "a");
-				}
-			},
-			new TransformerProvider<String>() {
-				@Override
-				public Predicate<String> precondition() {
-					return s -> s.endsWith("a");
-				}
-
-				@Override
-				public Arbitrary<Transformer<String>> apply(Supplier<String> stringSupplier) {
-					return just(s -> s + "b");
-				}
-			},
-			new TransformerProvider<String>() {
-				@Override
-				public Predicate<String> precondition() {
-					return s -> s.endsWith("b");
-				}
-
-				@Override
-				public Arbitrary<Transformer<String>> apply(Supplier<String> stringSupplier) {
-					return frequency(
-						Tuple.of(5, s -> s + "b"),
-						Tuple.of(1, s -> s + "c")
-					);
-				}
-			},
-			new TransformerProvider<String>() {
-				@Override
-				public Predicate<String> precondition() {
-					return s -> s.endsWith("c");
-				}
-
-				@Override
-				public Arbitrary<Transformer<String>> apply(Supplier<String> stringSupplier) {
-					return just(Transformer.endOfChain());
-				}
-			}
+			TransformerProvider.when(String::isEmpty).provide(just(s -> s + "a")),
+			TransformerProvider.<String>when(s -> s.endsWith("a")).provide(just(s -> s + "b")),
+			TransformerProvider.<String>when(s -> s.endsWith("b")).provide(
+				frequency(
+					Tuple.of(5, s -> s + "b"),
+					Tuple.of(1, s -> s + "c")
+				)
+			),
+			TransformerProvider.<String>when(s -> s.endsWith("c")).provide(just(Transformer.endOfChain()))
 		).infinite().dontShrink();
 	}
 

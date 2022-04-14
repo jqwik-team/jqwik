@@ -3,7 +3,6 @@ package net.jqwik.api.state;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
 
 import net.jqwik.api.*;
 
@@ -15,7 +14,6 @@ import static org.apiguardian.api.API.Status.*;
  * which can be retrieved using the first {@linkplain Supplier supplier} argument of the function.
  *
  * @param <T> The type of state to be transformed in a chain
- *
  * @see Chain
  * @see Transformer
  */
@@ -24,6 +22,35 @@ import static org.apiguardian.api.API.Status.*;
 public interface TransformerProvider<T> extends Function<Supplier<T>, Arbitrary<Transformer<T>>> {
 
 	Predicate<?> NO_PRECONDITION = ignore -> false;
+
+	class Builder<T> {
+		final private Predicate<T> precondition;
+
+		private Builder(Predicate<T> precondition) {
+			this.precondition = precondition;
+		}
+
+		public TransformerProvider<T> provide(Arbitrary<Transformer<T>> arbitrary) {
+			return new TransformerProvider<T>() {
+				@Override
+				public Predicate<T> precondition() {
+					return precondition;
+				}
+
+				@Override
+				public Arbitrary<Transformer<T>> apply(Supplier<T> ignore) {
+					return arbitrary;
+				}
+			};
+		}
+	}
+
+	/**
+	 * Create a TransformerProvider with a precondition
+	 */
+	static <T> Builder<T> when(Predicate<T> precondition) {
+		return new Builder<T>(precondition);
+	}
 
 	/**
 	 * Override this method if the applicability of the provided transformers depends on the previous state
