@@ -1,18 +1,16 @@
 
-new stateful:
+1.7.0
 
-    - Chains: Fluent API for TransformerProvider creation.
-
-    - Kotlin: Any obvious convenience methods or extensions for chains?
+    - Chains: Implement Fluent API for Chains and Action chains
 
     - Document
-        - Samples for
-            - Plain Chain example
         - Release notes
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
 1.7.1
+
+    - Kotlin: Convenience methods and extensions for chains
 
     - Introduce ModelChain. Should cover https://github.com/jlink/jqwik/issues/80.
         - ModelChain can be generated before it's provided as parameter!
