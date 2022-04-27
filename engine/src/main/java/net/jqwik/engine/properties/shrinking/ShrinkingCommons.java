@@ -7,10 +7,36 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.engine.properties.UniquenessChecker.*;
+
 class ShrinkingCommons {
 
 	@FunctionalInterface
 	interface ContainerCreator<C, E> extends Function<List<Shrinkable<E>>, Shrinkable<C>> {}
+
+	/**
+	 * Shrink elements of a container pairwise
+	 *
+	 * @param elements container elements
+	 * @param createContainer function to create shrinkable container
+	 * @param <C>             type of container
+	 * @param <E>             type of elements
+	 * @return stream of shrunk containers
+	 */
+	static  <C, E> Stream<Shrinkable<C>> shrinkPairsOfElements(List<Shrinkable<E>> elements, ContainerCreator<C, E> createContainer) {
+		return Combinatorics
+			.distinctPairs(elements.size())
+			.flatMap(pair -> JqwikStreamSupport.zip(
+				elements.get(pair.get1()).shrink(),
+				elements.get(pair.get2()).shrink(),
+				(Shrinkable<E> s1, Shrinkable<E> s2) -> {
+					List<Shrinkable<E>> newElements = new ArrayList<>(elements);
+					newElements.set(pair.get1(), s1);
+					newElements.set(pair.get2(), s2);
+					return createContainer.apply(newElements);
+				}
+			));
+	}
 
 	/**
 	 * Sort elements of container pairwise

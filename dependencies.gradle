@@ -25,13 +25,13 @@ ext {
 	opentest4jVersion = '1.2.0'
 	archunitVersion = '0.23.1'
 	assertJVersion = '3.22.0'
-	mockitoVersion = '4.4.0'
+	mockitoVersion = '4.5.1'
 	systemLambdaVersion = '1.2.1'
 	kotlinVersion = '1.6.10'
 	kotlinxVersion = '1.6.1'
 	findbugsVersion = '3.0.2'
 	jetbrainsAnnotationsVersion = '23.0.0'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.6.6-SNAPSHOT'
+	jqwikVersion = '1.7.0-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
