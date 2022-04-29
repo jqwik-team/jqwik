@@ -12,21 +12,28 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 
 	private int maxTransformations = Integer.MIN_VALUE;
 	private Supplier<ChangeDetector<T>> changeDetectorSupplier = ChangeDetector::alwaysTrue;
-	private final Function<Random, TransformerProvider<T>> providerGenerator;
+	private List<Tuple.Tuple2<Integer, TransformerProvider<T>>> weightedProviders;
 	private final Supplier<? extends T> initialSupplier;
 
-	public DefaultChainArbitrary(
+	public DefaultChainArbitrary(Supplier<? extends T> initialSupplier) {
+		this.initialSupplier = initialSupplier;
+		this.weightedProviders = new ArrayList<>();
+	}
+
+	// TODO: Change users to use other constructor
+	DefaultChainArbitrary(
 		Supplier<? extends T> initialSupplier,
 		List<Tuple.Tuple2<Integer, TransformerProvider<T>>> providerFrequencies
 	) {
 		this.initialSupplier = initialSupplier;
-		this.providerGenerator = new ChooseRandomlyByFrequency<>(providerFrequencies);
+		this.weightedProviders = providerFrequencies;
 	}
 
 	@Override
 	public RandomGenerator<Chain<T>> generator(int genSize) {
 		final int effectiveMaxTransformations =
 			this.maxTransformations != Integer.MIN_VALUE ? this.maxTransformations : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
+		Function<Random, TransformerProvider<T>> providerGenerator = new ChooseRandomlyByFrequency<>(weightedProviders);
 		return random -> new ShrinkableChain<T>(
 			random.nextLong(),
 			initialSupplier,
@@ -35,6 +42,15 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 			effectiveMaxTransformations,
 			genSize
 		);
+	}
+
+	@Override
+	public ChainArbitrary<T> provideWeightedTransformer(int weight, TransformerProvider<T> provider) {
+		DefaultChainArbitrary<T> clone = typedClone();
+		List<Tuple.Tuple2<Integer, TransformerProvider<T>>> newWeightedTransformers = new ArrayList<>(weightedProviders);
+		newWeightedTransformers.add(Tuple.of(weight, provider));
+		clone.weightedProviders = newWeightedTransformers;
+		return clone;
 	}
 
 	@Override

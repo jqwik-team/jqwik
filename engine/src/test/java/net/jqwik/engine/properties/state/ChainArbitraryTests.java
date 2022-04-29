@@ -66,7 +66,7 @@ class ChainArbitraryTests {
 	}
 
 	@Property
-	void chainWithSingleGenerator(@ForAll Random random) {
+	void chainWithSingleProvider(@ForAll Random random) {
 		TransformerProvider<Integer> growBelow100OtherwiseShrink = intSupplier -> {
 			int last = intSupplier.get();
 			if (last < 100) {
@@ -103,7 +103,7 @@ class ChainArbitraryTests {
 	}
 
 	@Property
-	void chainWithSeveralGenerators(@ForAll Random random) {
+	void chainWithSeveralProviders(@ForAll Random random) {
 		TransformerProvider<Integer> growBelow100otherwiseShrink = intSupplier -> {
 			int last = intSupplier.get();
 			if (last < 100) {
@@ -223,7 +223,7 @@ class ChainArbitraryTests {
 	}
 
 	@Example
-	void stopGenerationIfNoArbitrariesAreAvailable(@ForAll Random random) {
+	void stopGenerationIfNoTransformersAreAvailable(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains = Chains.chains(
 			() -> 1,
 			TransformerProvider.<Integer>when(ignore -> false).provide((Arbitrary<Transformer<Integer>>) null /* never gets here */)
@@ -233,6 +233,15 @@ class ChainArbitraryTests {
 
 		assertThatThrownBy(() -> {
 			chain.start().forEachRemaining(ignore -> {});
+		}).isInstanceOf(JqwikException.class);
+	}
+
+	@Example
+	void failToCreateGeneratorIfNoTransformersAreProvided(@ForAll Random random) {
+		Arbitrary<Chain<Integer>> chains = Chains.chains(() -> 1).withMaxTransformations(50);
+
+		assertThatThrownBy(() -> {
+			chains.generator(100).next(random).value();
 		}).isInstanceOf(JqwikException.class);
 	}
 

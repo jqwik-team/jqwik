@@ -38,10 +38,7 @@ public class Chains {
 			implementation = FacadeLoader.load(Chains.ChainsFacade.class);
 		}
 
-		public abstract <T> ChainArbitrary<T> chains(
-			Supplier<? extends T> initialSupplier,
-			List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies
-		);
+		public abstract <T> ChainArbitrary<T> chains(Supplier<? extends T> initialSupplier);
 
 		public abstract <T> ActionChainArbitrary<T> actionChains(
 			Supplier<? extends T> initialSupplier,
@@ -50,6 +47,18 @@ public class Chains {
 	}
 
 	private Chains() {
+	}
+
+	/**
+	 * Create arbitrary for a {@linkplain Chain chain}.
+	 *
+	 * @param initialSupplier function to create the initial state object
+	 * @param <T>             The type of state to be transformed through the chain.
+	 * @return new arbitrary instance
+	 * @see Chain
+	 */
+	public static <T> ChainArbitrary<T> chains(Supplier<? extends T> initialSupplier) {
+		return ChainsFacade.implementation.chains(initialSupplier);
 	}
 
 	/**
@@ -84,11 +93,12 @@ public class Chains {
 		Supplier<? extends T> initialSupplier,
 		Tuple2<Integer, TransformerProvider<T>>... providerFrequencies
 	) {
-		List<Tuple2<Integer, TransformerProvider<T>>> generatorsFrequencies = Arrays.asList(providerFrequencies);
-		if (generatorsFrequencies.isEmpty()) {
-			throw new IllegalArgumentException("You must specify at least one step generator");
+		Tuple2<Integer, TransformerProvider<T>>[] generatorsFrequencies = providerFrequencies;
+		ChainArbitrary<T> arbitrary = chains(initialSupplier);
+		for (Tuple2<Integer, TransformerProvider<T>> frequency : generatorsFrequencies) {
+			arbitrary = arbitrary.provideWeightedTransformer(frequency.get1(), frequency.get2());
 		}
-		return ChainsFacade.implementation.chains(initialSupplier, generatorsFrequencies);
+		return arbitrary;
 	}
 
 	/**

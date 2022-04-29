@@ -13,11 +13,8 @@ import net.jqwik.engine.properties.state.*;
 public class ChainsFacadeImpl extends Chains.ChainsFacade {
 
 	@Override
-	public <T> ChainArbitrary<T> chains(
-		Supplier<? extends T> initialSupplier,
-		List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies
-	) {
-		return new DefaultChainArbitrary<>(initialSupplier, providerFrequencies);
+	public <T> ChainArbitrary<T> chains(Supplier<? extends T> initialSupplier) {
+		return new DefaultChainArbitrary<>(initialSupplier);
 	}
 
 	@Override
