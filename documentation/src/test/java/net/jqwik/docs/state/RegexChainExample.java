@@ -1,7 +1,5 @@
 package net.jqwik.docs.state;
 
-import java.util.function.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 
@@ -23,18 +21,17 @@ class RegexChainExample {
 
 	@Provide
 	Arbitrary<Chain<String>> abplusc() {
-		return Chains.chains(
-			() -> "",
-			TransformerProvider.when(String::isEmpty).provide(just(s -> s + "a")),
-			TransformerProvider.<String>when(s -> s.endsWith("a")).provide(just(s -> s + "b")),
-			TransformerProvider.<String>when(s -> s.endsWith("b")).provide(
-				frequency(
-					Tuple.of(5, s -> s + "b"),
-					Tuple.of(1, s -> s + "c")
-				)
-			),
-			TransformerProvider.<String>when(s -> s.endsWith("c")).provide(just(Transformer.endOfChain()))
-		).infinite().dontShrink();
+		return Chains.chains(() -> "")
+					 .provideTransformer(TransformerProvider.when(String::isEmpty).provide(just(s -> s + "a")))
+					 .provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("a")).provide(just(s -> s + "b")))
+					 .provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("b")).provide(
+						 frequency(
+							 Tuple.of(5, s -> s + "b"),
+							 Tuple.of(1, s -> s + "c")
+						 )
+					 ))
+					 .provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("c")).provide(just(Transformer.endOfChain())))
+					 .infinite().dontShrink();
 	}
 
 }
