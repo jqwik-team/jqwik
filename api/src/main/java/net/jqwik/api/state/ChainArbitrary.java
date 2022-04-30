@@ -53,6 +53,6 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 *
 	 * @param detectorSupplier A function to create a new {@linkplain ChangeDetector} instance.
 	 */
-	ChainArbitrary<T> detectChangesWith(Supplier<ChangeDetector<T>> detectorSupplier);
+	ChainArbitrary<T> improveShrinkingWith(Supplier<ChangeDetector<T>> detectorSupplier);
 
 }

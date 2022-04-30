@@ -18,10 +18,6 @@ import static org.apiguardian.api.API.Status.*;
  * </p>
  * <ul>
  *     <li>
- *         Chains based on {@linkplain Transformer transformers}.
- *     	   See {@link #chains(Supplier, TransformerProvider[])} and {@link #chains(Supplier, Tuple2[])}.
- *     </li>
- *     <li>
  *         Chains based on {@linkplain Action actions}.
  *     	   See {@link #actionChains(Supplier, Action[])} (Supplier, Arbitrary[])} and {@link #actionChains(Supplier, Tuple2[])}}.
  *     </li>
@@ -31,46 +27,6 @@ import static org.apiguardian.api.API.Status.*;
 public class Chains {
 
 	private Chains() {
-	}
-
-	/**
-	 * Create arbitrary for a {@linkplain Chain chain} based on {@linkplain Transformer transformers}.
-	 *
-	 * @param initialSupplier function to create the initial state object
-	 * @param providers       varargs of {@linkplain TransformerProvider providers}
-	 * @param <T>             The type of state to be transformed through the chain.
-	 * @return new arbitrary instance
-	 * @see Chain
-	 */
-	@SuppressWarnings("unchecked")
-	@SafeVarargs
-	public static <T> ChainArbitrary<T> chains(Supplier<? extends T> initialSupplier, TransformerProvider<T>... providers) {
-		Tuple2<Integer, TransformerProvider<T>>[] frequencies =
-			Arrays.stream(providers).map(stepGenerator -> Tuple.of(1, stepGenerator)).toArray(Tuple2[]::new);
-		return chains(initialSupplier, frequencies);
-	}
-
-	/**
-	 * Create arbitrary for a {@linkplain Chain chain} based on {@linkplain Transformer transformers}.
-	 *
-	 * @param initialSupplier     function to create the initial state object
-	 * @param providerFrequencies variable number of Tuples with weight and {@linkplain TransformerProvider provider}.
-	 *                            The weight determines the relative probability of a transformer to be chosen.
-	 * @param <T>                 The type of state to be transformed through the chain.
-	 * @return new arbitrary instance
-	 * @see Chain
-	 */
-	@SafeVarargs
-	public static <T> ChainArbitrary<T> chains(
-		Supplier<? extends T> initialSupplier,
-		Tuple2<Integer, TransformerProvider<T>>... providerFrequencies
-	) {
-		Tuple2<Integer, TransformerProvider<T>>[] generatorsFrequencies = providerFrequencies;
-		ChainArbitrary<T> arbitrary = Chain.initializeWith(initialSupplier);
-		for (Tuple2<Integer, TransformerProvider<T>> frequency : generatorsFrequencies) {
-			arbitrary = arbitrary.provideWeightedTransformer(frequency.get1(), frequency.get2());
-		}
-		return arbitrary;
 	}
 
 	/**

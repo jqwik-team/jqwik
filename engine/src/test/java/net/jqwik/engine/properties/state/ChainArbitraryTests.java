@@ -222,9 +222,9 @@ class ChainArbitraryTests {
 		Arbitrary<Chain<Integer>> chains =
 			Chain.initializeWith(() -> 1)
 				 .provideTransformer(
-					  TransformerProvider.<Integer>when(ignore -> false)
-										 .provide((Arbitrary<Transformer<Integer>>) null /* never gets here */)
-				  )
+					 TransformerProvider.<Integer>when(ignore -> false)
+										.provide((Arbitrary<Transformer<Integer>>) null /* never gets here */)
+				 )
 				 .withMaxTransformations(50);
 
 		Chain<Integer> chain = chains.generator(100).next(random).value();
@@ -288,10 +288,10 @@ class ChainArbitraryTests {
 
 		@Property
 		void shrinkChainWithoutStateAccessToEnd(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 0,
-				ignore -> integers().between(0, 10).map(i -> t -> t + i)
-			).withMaxTransformations(5);
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 0)
+					 .provideTransformer(ignore -> integers().between(0, 10).map(i -> t -> t + i))
+					 .withMaxTransformations(5);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				for (Integer integer : chain) {
@@ -306,13 +306,14 @@ class ChainArbitraryTests {
 
 		@Property
 		void shrinkChainWithStateAccessToEnd(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 0,
-				supplier -> {
-					supplier.get(); // To signal state access
-					return integers().between(0, 10).map(i -> t -> t + i);
-				}
-			).withMaxTransformations(5);
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 0)
+					 .provideTransformer(
+						 supplier -> {
+							 supplier.get(); // To signal state access
+							 return integers().between(0, 10).map(i -> t -> t + i);
+						 }
+					 ).withMaxTransformations(5);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				for (Integer integer : chain) {
@@ -330,11 +331,11 @@ class ChainArbitraryTests {
 			Transformer<Integer> addOne = Transformer.transform("addOne", t1 -> t1 + 1);
 			Transformer<Integer> doNothing = Transformer.transform("doNothing", t -> t);
 
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 1,
-				ignore -> Arbitraries.just(addOne),
-				ignore -> Arbitraries.just(doNothing)
-			).withMaxTransformations(20); // Size must be large enough to have at least a single addOne transformer
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 1)
+					 .provideTransformer(ignore -> Arbitraries.just(addOne))
+					 .provideTransformer(ignore -> Arbitraries.just(doNothing))
+					 .withMaxTransformations(20); // Size must be large enough to have at least a single addOne transformer
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				int last = 1;
@@ -350,10 +351,10 @@ class ChainArbitraryTests {
 
 		@Property
 		void fullyShrinkTransformersWithoutStateAccess(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 0,
-				ignore -> integers().between(1, 5).map(i -> Transformer.transform("add" + i, t -> t + i))
-			).withMaxTransformations(10);
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 0)
+					 .provideTransformer(ignore -> integers().between(1, 5).map(i -> Transformer.transform("add" + i, t -> t + i)))
+					 .withMaxTransformations(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				int last = 1;
@@ -375,13 +376,14 @@ class ChainArbitraryTests {
 
 		@Property
 		void shrinkChainWithStateAccess(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 1,
-				supplier -> {
-					supplier.get(); // To make shrinkable think the last value is being used
-					return integers().between(0, 10).map(i -> t -> t + i);
-				}
-			).withMaxTransformations(10);
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 1)
+					 .provideTransformer(
+						 supplier -> {
+							 supplier.get(); // To make shrinkable think the last value is being used
+							 return integers().between(0, 10).map(i -> t -> t + i);
+						 }
+					 ).withMaxTransformations(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				int count = 0;
@@ -402,11 +404,11 @@ class ChainArbitraryTests {
 
 		@Property
 		void preconditionedEndOfChainCanBeShrunkAwayInFiniteChain(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 0,
-				TransformerProvider.<Integer>when(i -> i >= 5).provide(just(Transformer.endOfChain())),
-				ignore -> just(Transformer.transform("+1", i -> i + 1))
-			).withMaxTransformations(100);
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 0)
+					 .provideTransformer(TransformerProvider.<Integer>when(i -> i >= 5).provide(just(Transformer.endOfChain())))
+					 .provideTransformer(ignore -> just(Transformer.transform("+1", i -> i + 1)))
+					 .withMaxTransformations(100);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> collectAllValues(chain).size() < 6;
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
@@ -417,11 +419,11 @@ class ChainArbitraryTests {
 
 		@Property
 		void endOfChainCanBeShrunkAwayInFiniteChain(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 0,
-				ignore -> just(Transformer.transform("+1", i -> i + 1)),
-				ignore -> just(Transformer.endOfChain())
-			).withMaxTransformations(100);
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 0)
+					 .provideTransformer(ignore -> just(Transformer.transform("+1", i -> i + 1)))
+					 .provideTransformer(ignore -> just(Transformer.endOfChain()))
+					 .withMaxTransformations(100);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				for (Integer value : chain) {
@@ -436,11 +438,11 @@ class ChainArbitraryTests {
 
 		@Property
 		void shrinkInfiniteChainWithPrecondition(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 0,
-				TransformerProvider.<Integer>when(i -> i >= 5).provide(just(Transformer.endOfChain())),
-				ignore -> just(Transformer.transform("+1", i -> i + 1))
-			).infinite();
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 0)
+					 .provideTransformer(TransformerProvider.<Integer>when(i -> i >= 5).provide(just(Transformer.endOfChain())))
+					 .provideTransformer(ignore -> just(Transformer.transform("+1", i -> i + 1)))
+					 .infinite();
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> collectAllValues(chain).size() < 6;
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
@@ -451,11 +453,11 @@ class ChainArbitraryTests {
 
 		@Property
 		void shrinkInfiniteChainWithoutStateAccess(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 0,
-				ignore -> just(Transformer.transform("+1", i -> i + 1)),
-				ignore -> just(Transformer.endOfChain())
-			).infinite();
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 0)
+					 .provideTransformer(ignore -> just(Transformer.transform("+1", i -> i + 1)))
+					 .provideTransformer(ignore -> just(Transformer.endOfChain()))
+					 .infinite();
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> collectAllValues(chain).size() < 6;
 			Chain<Integer> chain = ShrinkingSupport.falsifyThenShrink(chains, random, falsifier);
@@ -466,18 +468,19 @@ class ChainArbitraryTests {
 
 		@Property
 		void shrinkChainWithMixedAccess(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 0,
-				supplier -> {
-					int current = Math.abs(supplier.get());
-					if (current > 100) {
-						return just(Transformer.transform("half", t -> t / 2));
-					} else {
-						return integers().between(current, current * 2).map(i -> Transformer.transform("add-" + i, t -> t + i));
-					}
-				},
-				ignore -> Arbitraries.just(Transformer.transform("minus-1", t -> t - 1))
-			).withMaxTransformations(10);
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 0)
+					 .provideTransformer(
+						 supplier -> {
+							 int current = Math.abs(supplier.get());
+							 if (current > 100) {
+								 return just(Transformer.transform("half", t -> t / 2));
+							 } else {
+								 return integers().between(current, current * 2).map(i -> Transformer.transform("add-" + i, t -> t + i));
+							 }
+						 })
+					 .provideTransformer(ignore -> Arbitraries.just(Transformer.transform("minus-1", t -> t - 1)))
+					 .withMaxTransformations(10);
 
 			TestingFalsifier<Chain<Integer>> falsifier = chain -> {
 				for (Integer value : chain) {
@@ -501,14 +504,14 @@ class ChainArbitraryTests {
 
 		@Property
 		void whenShrinkingTryToRemoveTransformersWithStateAccess(@ForAll Random random) {
-			Arbitrary<Chain<Integer>> chains = Chains.chains(
-				() -> 0,
-				supplier -> {
-					int current = supplier.get(); // access state
-					return Arbitraries.just(Transformer.transform("plus-1", ignore -> current + 1));
-				},
-				ignore -> Arbitraries.just(Transformer.transform("plus-2", t -> t + 2))
-			).withMaxTransformations(20);
+			Arbitrary<Chain<Integer>> chains =
+				Chain.initializeWith(() -> 0)
+					 .provideTransformer(supplier -> {
+						 int current = supplier.get(); // access state
+						 return Arbitraries.just(Transformer.transform("plus-1", ignore -> current + 1));
+					 })
+					 .provideTransformer(ignore -> Arbitraries.just(Transformer.transform("plus-2", t -> t + 2)))
+					 .withMaxTransformations(20);
 
 			RandomGenerator<Chain<Integer>> generator = chains.generator(100, false);
 			Shrinkable<Chain<Integer>> shrinkable = TestingSupport.generateUntil(
@@ -534,15 +537,16 @@ class ChainArbitraryTests {
 
 		@Property
 		void shrinkPairsOfIterations(@ForAll Random random) {
-			ChainArbitrary<List<Integer>> chains = Chains.chains(
-				ArrayList::new,
-				ignore -> integers().map(i -> Transformer.mutate("add " + i, l -> l.add(i))),
-				TransformerProvider.<List<Integer>>when(list -> !list.isEmpty())
-								   .provide(
-									   list -> Arbitraries.of(list)
-														  .map(i -> Transformer.mutate("duplicate " + i, l -> l.add(i)))
-								   )
-			).withMaxTransformations(20);
+			ChainArbitrary<List<Integer>> chains =
+				Chain.initializeWith(() -> (List<Integer>) new ArrayList<Integer>())
+					 .provideTransformer(ignore -> integers().map(i -> Transformer.mutate("add " + i, l -> l.add(i))))
+					 .provideTransformer(
+						 TransformerProvider.<List<Integer>>when(list -> !list.isEmpty())
+											.provide(
+												list -> Arbitraries.of(list)
+																   .map(i -> Transformer.mutate("duplicate " + i, l -> l.add(i)))
+											))
+					 .withMaxTransformations(20);
 
 			TestingFalsifier<Chain<List<Integer>>> falsifier = chain -> {
 				for (List<Integer> list : chain) {
@@ -566,16 +570,17 @@ class ChainArbitraryTests {
 
 		@Property
 		void whenUsingChangeDetector_shrinkAwayPartsThatDontChangeState(@ForAll Random random) {
-			ChainArbitrary<String> chains = Chains.chains(
-				() -> "",
-				ignore -> chars().alpha().map(c -> Transformer.transform("append " + c, s -> s + c)),
-				ignore -> just(Transformer.transform("nothing", s -> s)),
-				TransformerProvider.<String>when(string -> !string.isEmpty())
-								   .provide(
-									   value -> Arbitraries.of(value.toCharArray())
-														   .map(c -> Transformer.transform("duplicate " + c, s -> s + c))
-								   )
-			).withMaxTransformations(20).detectChangesWith(ChangeDetector::forImmutables);
+			ChainArbitrary<String> chains =
+				Chain.initializeWith(() -> "")
+					 .provideTransformer(ignore -> chars().alpha().map(c -> Transformer.transform("append " + c, s -> s + c)))
+					 .provideTransformer(ignore -> just(Transformer.transform("nothing", s -> s)))
+					 .provideTransformer(TransformerProvider.<String>when(string -> !string.isEmpty())
+															.provide(
+																value -> Arbitraries.of(value.toCharArray())
+																					.map(c -> Transformer.transform("duplicate " + c, s -> s + c))
+															))
+					 .withMaxTransformations(20)
+					 .improveShrinkingWith(ChangeDetector::forImmutables);
 
 			TestingFalsifier<Chain<String>> falsifier = chain -> {
 				for (String value : chain) {

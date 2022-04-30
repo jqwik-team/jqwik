@@ -61,7 +61,7 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	}
 
 	@Override
-	public ChainArbitrary<T> detectChangesWith(Supplier<ChangeDetector<T>> changeDetectorSupplier) {
+	public ChainArbitrary<T> improveShrinkingWith(Supplier<ChangeDetector<T>> changeDetectorSupplier) {
 		DefaultChainArbitrary<T> clone = typedClone();
 		clone.changeDetectorSupplier = changeDetectorSupplier;
 		return clone;
