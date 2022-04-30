@@ -30,35 +30,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public class Chains {
 
-	@API(status = INTERNAL)
-	public static abstract class ChainsFacade {
-		private static final Chains.ChainsFacade implementation;
-
-		static {
-			implementation = FacadeLoader.load(Chains.ChainsFacade.class);
-		}
-
-		public abstract <T> ChainArbitrary<T> chains(Supplier<? extends T> initialSupplier);
-
-		public abstract <T> ActionChainArbitrary<T> actionChains(
-			Supplier<? extends T> initialSupplier,
-			List<Tuple2<Integer, Action<T>>> actionFrequencies
-		);
-	}
-
 	private Chains() {
-	}
-
-	/**
-	 * Create arbitrary for a {@linkplain Chain chain}.
-	 *
-	 * @param initialSupplier function to create the initial state object
-	 * @param <T>             The type of state to be transformed through the chain.
-	 * @return new arbitrary instance
-	 * @see Chain
-	 */
-	public static <T> ChainArbitrary<T> chains(Supplier<? extends T> initialSupplier) {
-		return ChainsFacade.implementation.chains(initialSupplier);
 	}
 
 	/**
@@ -94,7 +66,7 @@ public class Chains {
 		Tuple2<Integer, TransformerProvider<T>>... providerFrequencies
 	) {
 		Tuple2<Integer, TransformerProvider<T>>[] generatorsFrequencies = providerFrequencies;
-		ChainArbitrary<T> arbitrary = chains(initialSupplier);
+		ChainArbitrary<T> arbitrary = Chain.initializeWith(initialSupplier);
 		for (Tuple2<Integer, TransformerProvider<T>> frequency : generatorsFrequencies) {
 			arbitrary = arbitrary.provideWeightedTransformer(frequency.get1(), frequency.get2());
 		}
@@ -138,7 +110,7 @@ public class Chains {
 		if (frequencies.isEmpty()) {
 			throw new IllegalArgumentException("You must specify at least one action");
 		}
-		return ChainsFacade.implementation.actionChains(initialSupplier, frequencies);
+		return Chain.ChainFacade.implementation.actionChains(initialSupplier, frequencies);
 	}
 
 }

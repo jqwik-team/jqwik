@@ -3,6 +3,9 @@ package net.jqwik.api.state;
 import org.apiguardian.api.*;
 
 import java.util.*;
+import java.util.function.*;
+
+import net.jqwik.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -17,16 +20,42 @@ import static org.apiguardian.api.API.Status.*;
  * </p>
  *
  * <p>
- *     Chains can be generated through methods on class {@linkplain Chains}.
+ *     Chains can be generated through {@linkplain Chain#initializeWith(Supplier)}.
  * </p>
  *
- * @see Chains
  * @see Transformer
  *
  * @param <T> The type of state to be transformed in a chain
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface Chain<T> extends Iterable<T> {
+
+	@API(status = INTERNAL)
+	abstract class ChainFacade {
+		static final ChainFacade implementation;
+
+		static {
+			implementation = FacadeLoader.load(ChainFacade.class);
+		}
+
+		public abstract <T> ChainArbitrary<T> initializeChainWith(Supplier<? extends T> initialSupplier);
+
+		public abstract <T> ActionChainArbitrary<T> actionChains(
+			Supplier<? extends T> initialSupplier,
+			List<Tuple.Tuple2<Integer, Action<T>>> actionFrequencies
+		);
+	}
+
+	/**
+	 * Create arbitrary for {@linkplain Chain chains}.
+	 *
+	 * @param initialSupplier function to create the initial state object
+	 * @param <T>             The type of state to be transformed through the chain.
+	 * @return new arbitrary instance
+	 */
+	static <T> ChainArbitrary<T> initializeWith(Supplier<? extends T> initialSupplier) {
+		return ChainFacade.implementation.initializeChainWith(initialSupplier);
+	}
 
 	/**
 	 * The {@linkplain Iterator} will iterate through elements representing states in order,

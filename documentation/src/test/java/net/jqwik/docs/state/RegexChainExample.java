@@ -21,17 +21,17 @@ class RegexChainExample {
 
 	@Provide
 	Arbitrary<Chain<String>> abplusc() {
-		return Chains.chains(() -> "")
-					 .provideTransformer(TransformerProvider.when(String::isEmpty).provide(just(s -> s + "a")))
-					 .provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("a")).provide(just(s -> s + "b")))
-					 .provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("b")).provide(
+		return Chain.initializeWith(() -> "")
+					.provideTransformer(TransformerProvider.when(String::isEmpty).provide(just(s -> s + "a")))
+					.provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("a")).provide(just(s -> s + "b")))
+					.provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("b")).provide(
 						 frequency(
 							 Tuple.of(5, s -> s + "b"),
 							 Tuple.of(1, s -> s + "c")
 						 )
 					 ))
-					 .provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("c")).provide(just(Transformer.endOfChain())))
-					 .infinite().dontShrink();
+					.provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("c")).provide(just(Transformer.endOfChain())))
+					.infinite().dontShrink();
 	}
 
 }

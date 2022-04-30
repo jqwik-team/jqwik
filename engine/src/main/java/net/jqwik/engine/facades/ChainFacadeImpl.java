@@ -10,10 +10,10 @@ import net.jqwik.engine.properties.state.*;
 /**
  * Is loaded through reflection in api module
  */
-public class ChainsFacadeImpl extends Chains.ChainsFacade {
+public class ChainFacadeImpl extends Chain.ChainFacade {
 
 	@Override
-	public <T> ChainArbitrary<T> chains(Supplier<? extends T> initialSupplier) {
+	public <T> ChainArbitrary<T> initializeChainWith(Supplier<? extends T> initialSupplier) {
 		return new DefaultChainArbitrary<>(initialSupplier);
 	}
 
