@@ -24,6 +24,8 @@ class TypeUsageTests {
 
 	interface Recursive<E extends Recursive<E>> {}
 
+	interface OtherRecursive<E extends OtherRecursive<E>> {}
+
 	@Example
 	void isAssignable() {
 		assertThat(TypeUsage.of(CharSequence.class).isAssignableFrom(String.class)).isTrue();
@@ -680,6 +682,30 @@ class TypeUsageTests {
 
 			assertThat(recursiveType1.equals(recursiveType1)).isTrue();
 			assertThat(recursiveType1.equals(recursiveType2)).isFalse();
+		}
+
+		@Example
+		void recursiveTypeAsBounds() throws NoSuchMethodException {
+
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public <E extends Recursive<E>, F extends OtherRecursive<F>> void withRecursiveTypes(
+					List<E> one, List<E> two, List<F> three
+				) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withRecursiveTypes", List.class, List.class, List.class);
+			MethodParameter parameter1 = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage recursiveType1 = TypeUsageImpl.forParameter(parameter1);
+			MethodParameter parameter2 = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(1);
+			TypeUsage recursiveType2 = TypeUsageImpl.forParameter(parameter2);
+			MethodParameter parameter3 = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(2);
+			TypeUsage recursiveType3 = TypeUsageImpl.forParameter(parameter3);
+
+			assertThat(recursiveType1.equals(recursiveType1)).isTrue();
+			assertThat(recursiveType1.equals(recursiveType2)).isTrue();
+			assertThat(recursiveType1.equals(recursiveType3)).isFalse();
+			assertThat(recursiveType3.equals(recursiveType1)).isFalse();
 		}
 
 	}

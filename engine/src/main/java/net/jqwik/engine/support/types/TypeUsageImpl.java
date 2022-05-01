@@ -587,6 +587,14 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		if (typeArguments.size() == 1 && type.getTypeArguments().size() == 1) {
 			TypeUsage embeddedType = type.getTypeArgument(0);
 			TypeUsage embeddedTypeToFind = typeToFind.getTypeArgument(0);
+			if (Objects.equals(embeddedType, type)
+					&& Objects.equals(embeddedTypeToFind, typeToFind)) {
+				// To prevent stack overflow on recursive parameterized types
+				// This is looser than it should be
+				// In response to https://github.com/jlink/jqwik/issues/327
+				// Not covered by unit test, b/c I wasn't able to create one :-(
+				return true;
+			}
 			return matchesWithTypeArguments(embeddedType, embeddedTypeToFind, boundTypeArguments);
 		}
 		return false;
