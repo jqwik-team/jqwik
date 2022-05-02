@@ -9,13 +9,8 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.6.6-SNAPSHOT](#166-snapshot)
-- [1.6.5](#165)
-- [1.6.4](#164)
-- [1.6.3](#163)
-- [1.6.2](#162)
-- [1.6.1](#161)
-- [1.6.0](#160)
+- [1.7.0-SNAPSHOT](#170-snapshot)
+- [1.6.x](#16x)
 - [1.5.x](#15x)
 - [1.4.0](#140)
 - [1.3.x](#13x)
@@ -28,7 +23,7 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.6.6-SNAPSHOT
+## 1.7.0-SNAPSHOT
 
 #### New and Enhanced Features
 
@@ -39,7 +34,13 @@ title: jqwik Release Notes
 - Generated TLDs in `web-module` will no longer start with digit.
   See https://github.com/jlink/jqwik/issues/316.
 
-## 1.6.5
+- Fixed potential stack overflow when dealing with recursive types.
+  See https://github.com/jlink/jqwik/issues/327.
+
+
+## 1.6.x
+
+### 1.6.5
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.6.5/user-guide.html">User guide</a>,
@@ -66,7 +67,7 @@ and <a href="/docs/1.6.5/kdoc/index.html">kdoc</a>
   See https://github.com/jlink/jqwik/issues/308.
 
 
-## 1.6.4
+### 1.6.4
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.6.4/user-guide.html">User guide</a>,
@@ -97,7 +98,7 @@ and <a href="/docs/1.6.4/kdoc/index.html">kdoc</a>
   take VERY long. This has been fixed.
 
 
-## 1.6.3
+### 1.6.3
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.6.3/user-guide.html">User guide</a>,
@@ -142,7 +143,7 @@ and <a href="/docs/1.6.3/kdoc/index.html">kdoc</a>
   See https://github.com/jlink/jqwik/issues/295.
 
 
-## 1.6.2
+### 1.6.2
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.6.2/user-guide.html">User guide</a>,
@@ -186,7 +187,7 @@ and <a href="/docs/1.6.2/kdoc/index.html">kdoc</a>
 
 - After-failure handling now (hopefully) works as expected
 
-## 1.6.1
+### 1.6.1
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.6.1/user-guide.html">User guide</a>,
@@ -253,7 +254,7 @@ and <a href="/docs/1.6.1/kdoc/index.html">kdoc</a>
 
 - Kotlin provider methods can now have `internal` modifier
 
-## 1.6.0
+### 1.6.0
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.6.0/user-guide.html">User guide</a>,

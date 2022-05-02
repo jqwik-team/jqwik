@@ -4,6 +4,7 @@
     - Chains: Implement Fluent API for Chains and Action chains
 
     - Document
+        - Remove Deprecations
         - Release notes
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
