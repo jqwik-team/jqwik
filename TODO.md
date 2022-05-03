@@ -3,6 +3,8 @@
 
     - Chains: Implement Fluent API for Chains and Action chains
 
+    - Kotlin: Check internal name resolution with latest Kotlin version
+
     - Document
         - Remove Deprecations
         - Release notes
