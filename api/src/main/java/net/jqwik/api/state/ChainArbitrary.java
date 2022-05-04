@@ -18,7 +18,7 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 * @param provider The {@linkplain TransformerProvider provider} to add.
 	 * @return instance of arbitrary
 	 */
-	ChainArbitrary<T> provideWeightedTransformer(int weight, TransformerProvider<T> provider);
+	ChainArbitrary<T> provideTransformer(int weight, TransformerProvider<T> provider);
 
 	/**
 	 * Add an additional {@linkplain TransformerProvider} with a default weight of 1.
@@ -27,7 +27,7 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 * @return instance of arbitrary
 	 */
 	default ChainArbitrary<T> provideTransformer(TransformerProvider<T> provider) {
-		return provideWeightedTransformer(1, provider);
+		return provideTransformer(1, provider);
 	}
 
 	/**

@@ -159,9 +159,9 @@ class ChainArbitraryTests {
 
 		Arbitrary<Chain<Integer>> chains =
 			Chain.initializeWith(() -> 0)
-				 .provideWeightedTransformer(0, just42)
-				 .provideWeightedTransformer(1, just1)
-				 .provideWeightedTransformer(4, just2)
+				 .provideTransformer(0, just42)
+				 .provideTransformer(1, just1)
+				 .provideTransformer(4, just2)
 				 .withMaxTransformations(10);
 
 		Shrinkable<Chain<Integer>> chainShrinkable = chains.generator(100).next(random);
