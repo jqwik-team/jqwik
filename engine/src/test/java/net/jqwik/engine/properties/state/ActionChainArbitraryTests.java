@@ -19,7 +19,7 @@ class ActionChainArbitraryTests {
 
 	@Example
 	void deterministicChainCanBeRun(@ForAll Random random) {
-		ActionChainArbitrary<String> chains = Chains.actionChains(() -> "", addX()).withMaxTransformations(10);
+		ActionChainArbitrary<String> chains = ActionChain.actionChains(() -> "", addX()).withMaxTransformations(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 		assertThat(chain.running()).isEqualTo(RunningState.NOT_RUN);
 		assertThat(chain.finalState()).isNotPresent();
@@ -34,7 +34,7 @@ class ActionChainArbitraryTests {
 
 	@Example
 	void peekingIntoChain(@ForAll Random random) {
-		ActionChainArbitrary<String> chains = Chains.actionChains(() -> "", addX()).withMaxTransformations(5);
+		ActionChainArbitrary<String> chains = ActionChain.actionChains(() -> "", addX()).withMaxTransformations(5);
 
 		AtomicInteger countPeeks = new AtomicInteger(0);
 
@@ -64,7 +64,7 @@ class ActionChainArbitraryTests {
 
 	@Provide
 	ActionChainArbitrary<String> xOrFailing() {
-		return Chains.actionChains(() -> "", addX(), failing()).withMaxTransformations(30);
+		return ActionChain.actionChains(() -> "", addX(), failing()).withMaxTransformations(30);
 	}
 
 	@Property
@@ -82,7 +82,7 @@ class ActionChainArbitraryTests {
 
 	@Provide
 	ActionChainArbitrary<String> xOrY() {
-		return Chains.actionChains(() -> "", addX(), addY()).withMaxTransformations(30);
+		return ActionChain.actionChains(() -> "", addX(), addY()).withMaxTransformations(30);
 	}
 
 	@Property
@@ -104,7 +104,7 @@ class ActionChainArbitraryTests {
 				return Arbitraries.chars().range('a', 'z').map(c -> s -> s + c);
 			}
 		};
-		return Chains.actionChains(() -> "", anyAZ).withMaxTransformations(30);
+		return ActionChain.actionChains(() -> "", anyAZ).withMaxTransformations(30);
 	}
 
 	@Example
@@ -118,7 +118,7 @@ class ActionChainArbitraryTests {
 			s -> s + "y"
 		);
 
-		ActionChainArbitrary<String> chains = Chains.actionChains(
+		ActionChainArbitrary<String> chains = ActionChain.actionChains(
 			() -> "", x0to4, y5to9
 		).withMaxTransformations(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
@@ -139,7 +139,7 @@ class ActionChainArbitraryTests {
 			Transformer.endOfChain()
 		);
 
-		ActionChainArbitrary<String> chains = Chains.actionChains(
+		ActionChainArbitrary<String> chains = ActionChain.actionChains(
 			() -> "", x0to4, end
 		).withMaxTransformations(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
@@ -183,7 +183,7 @@ class ActionChainArbitraryTests {
 			};
 
 
-			ActionChainArbitrary<List<Integer>> chains = Chains.actionChains(
+			ActionChainArbitrary<List<Integer>> chains = ActionChain.actionChains(
 				ArrayList::new, clear, add
 			).withMaxTransformations(10);
 
@@ -231,7 +231,7 @@ class ActionChainArbitraryTests {
 				}
 			};
 
-			ActionChainArbitrary<List<Integer>> chains = Chains.actionChains(
+			ActionChainArbitrary<List<Integer>> chains = ActionChain.actionChains(
 				ArrayList::new, nothing, add
 			).withMaxTransformations(10).detectChangesWith(changeOfListDetector);
 
@@ -286,7 +286,7 @@ class ActionChainArbitraryTests {
 					}
 				}
 			};
-			return Chains.actionChains(
+			return ActionChain.actionChains(
 				HashSet::new,
 				Action.just("clear", set -> {
 					set.clear();
@@ -338,7 +338,7 @@ class ActionChainArbitraryTests {
 					));
 				}
 			};
-			return Chains.actionChains(
+			return ActionChain.actionChains(
 				ArrayList::new,
 				addInitialNumber,
 				addSmallerNumber
@@ -378,7 +378,7 @@ class ActionChainArbitraryTests {
 		class MyModelChain implements ArbitrarySupplier<ActionChain<MyModel>> {
 			@Override
 			public Arbitrary<ActionChain<MyModel>> get() {
-				return Chains.actionChains(MyModel::new, changeValue(), nullify()).withMaxTransformations(20);
+				return ActionChain.actionChains(MyModel::new, changeValue(), nullify()).withMaxTransformations(20);
 			}
 		}
 
@@ -409,7 +409,7 @@ class ActionChainArbitraryTests {
 			Action<String> actionWithoutTransformerImplementation = new Action<String>() {};
 
 			Assertions.assertThatThrownBy(
-				() -> Chains.actionChains(() -> "", actionWithoutTransformerImplementation)
+				() -> ActionChain.actionChains(() -> "", actionWithoutTransformerImplementation)
 			).isInstanceOf(JqwikException.class);
 		}
 
@@ -428,7 +428,7 @@ class ActionChainArbitraryTests {
 			};
 
 			Assertions.assertThatThrownBy(
-				() -> Chains.actionChains(() -> "", actionWithoutTransformerImplementation)
+				() -> ActionChain.actionChains(() -> "", actionWithoutTransformerImplementation)
 			).isInstanceOf(JqwikException.class);
 		}
 	}

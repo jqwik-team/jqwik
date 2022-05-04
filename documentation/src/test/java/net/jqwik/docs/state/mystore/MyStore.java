@@ -6,8 +6,6 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 
-import static net.jqwik.api.statistics.Statistics.*;
-
 public class MyStore<K, V> {
 
 	private final List<Tuple2<K, V>> tuples = new ArrayList<>();

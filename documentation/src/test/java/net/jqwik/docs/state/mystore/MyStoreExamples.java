@@ -21,7 +21,7 @@ public class MyStoreExamples {
 
 	@Provide
 	ActionChainArbitrary<MyStore<Integer, String>> storeActions() {
-		return Chains.actionChains(
+		return ActionChain.actionChains(
 			MyStore::new,
 			Tuple.of(3, new StoreAnyValue()),
 			Tuple.of(1, new UpdateValue()),

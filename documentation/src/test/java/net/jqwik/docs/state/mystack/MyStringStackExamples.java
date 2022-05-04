@@ -15,7 +15,7 @@ class MyStringStackExamples {
 
 	@Provide
 	Arbitrary<ActionChain<MyStringStack>> myStackActions() {
-		return Chains.actionChains(
+		return ActionChain.actionChains(
 			MyStringStack::new,
 			push(), pop(), clear()
 		);
