@@ -66,7 +66,7 @@ public class Chains {
 		if (frequencies.isEmpty()) {
 			throw new IllegalArgumentException("You must specify at least one action");
 		}
-		return Chain.ChainFacade.implementation.actionChains(initialSupplier, frequencies);
+		return ActionChain.ActionChainFacade.implementation.actionChains(initialSupplier, frequencies);
 	}
 
 }

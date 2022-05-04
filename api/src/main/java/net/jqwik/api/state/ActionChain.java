@@ -6,6 +6,8 @@ import java.util.function.*;
 import org.apiguardian.api.*;
 import org.jetbrains.annotations.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -22,6 +24,60 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface ActionChain<S> {
+
+	@API(status = INTERNAL)
+	abstract class ActionChainFacade {
+		static final ActionChainFacade implementation;
+
+		static {
+			implementation = FacadeLoader.load(ActionChainFacade.class);
+		}
+
+		public abstract <T> ActionChainArbitrary<T> actionChains(
+			Supplier<? extends T> initialSupplier,
+			List<Tuple.Tuple2<Integer, Action<T>>> actionFrequencies
+		);
+	}
+
+	/**
+	 * Create arbitrary for a {@linkplain ActionChain chain} based on {@linkplain Action actions}.
+	 *
+	 * @param initialSupplier function to create the initial state object
+	 * @param actions         variable number of {@linkplain Action actions}. The actions are randomly chosen with equal probability.
+	 * @param <T>             The type of state to be transformed through the chain.
+	 * @return new arbitrary instance
+	 */
+	@SuppressWarnings("unchecked")
+	@SafeVarargs
+	static <T> ActionChainArbitrary<T> actionChains(
+		Supplier<? extends T> initialSupplier,
+		Action<T>... actions
+	) {
+		Tuple.Tuple2<Integer, Action<T>>[] actionFrequencies =
+			Arrays.stream(actions).map(a -> Tuple.of(1, a)).toArray(Tuple.Tuple2[]::new);
+		return actionChains(initialSupplier, actionFrequencies);
+	}
+
+	/**
+	 * Create arbitrary for a {@linkplain ActionChain action chain} based on {@linkplain Action actions}.
+	 *
+	 * @param initialSupplier   function to create the initial state object
+	 * @param actionFrequencies variable number of Tuples with weight and {@linkplain Action action}.
+	 *                          The weight determines the relative probability of an action to be chosen.
+	 * @param <T>               The type of state to be transformed through the chain.
+	 * @return new arbitrary instance
+	 */
+	@SafeVarargs
+	static <T> ActionChainArbitrary<T> actionChains(
+		Supplier<? extends T> initialSupplier,
+		Tuple.Tuple2<Integer, Action<T>>... actionFrequencies
+	) {
+		List<Tuple.Tuple2<Integer, Action<T>>> frequencies = Arrays.asList(actionFrequencies);
+		if (frequencies.isEmpty()) {
+			throw new IllegalArgumentException("You must specify at least one action");
+		}
+		return ActionChainFacade.implementation.actionChains(initialSupplier, frequencies);
+	}
 
 	enum RunningState {
 		NOT_RUN, RUNNING, FAILED, SUCCEEDED

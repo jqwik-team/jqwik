@@ -32,18 +32,13 @@ public interface Chain<T> extends Iterable<T> {
 
 	@API(status = INTERNAL)
 	abstract class ChainFacade {
-		static final ChainFacade implementation;
+		private static final ChainFacade implementation;
 
 		static {
 			implementation = FacadeLoader.load(ChainFacade.class);
 		}
 
 		public abstract <T> ChainArbitrary<T> initializeChainWith(Supplier<? extends T> initialSupplier);
-
-		public abstract <T> ActionChainArbitrary<T> actionChains(
-			Supplier<? extends T> initialSupplier,
-			List<Tuple.Tuple2<Integer, Action<T>>> actionFrequencies
-		);
 	}
 
 	/**
