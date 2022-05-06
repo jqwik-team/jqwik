@@ -4,11 +4,11 @@
     - Chains: Implement Fluent API for Chains and Action chains
 
     - Kotlin: 
-        - Check internal name resolution with latest Kotlin version
         - value classes as parameter in type-based generation
 
     - Document
         - Remove Deprecations
+        - Set default config afterFailure = SAMPLE_FIRST
         - Release notes
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 

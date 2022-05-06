@@ -37,6 +37,7 @@ title: jqwik Release Notes
 - Fixed potential stack overflow when dealing with recursive types.
   See https://github.com/jlink/jqwik/issues/327.
 
+- Property methods in Kotlin with `internal` modifier get now their correct name.
 
 ## 1.6.x
 

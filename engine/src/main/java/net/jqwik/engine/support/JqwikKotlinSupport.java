@@ -22,8 +22,10 @@ public class JqwikKotlinSupport {
 		if ((method.getModifiers() & Modifier.PUBLIC) == 0) {
 			return false;
 		}
-		// Kotlin appends "$kotlin" to internal method names in Java bytecode
-		return method.getName().endsWith("$kotlin");
+		// Kotlin appends "$<module-name>" to internal method names in Java bytecode
+		// However, it's not necessarily the module name available from Class.getModule().getName() in java
+		int lastDollarIndex = method.getName().lastIndexOf('$');
+		return lastDollarIndex > 0 && lastDollarIndex < (method.getName().length() - 1);
 	}
 
 	private static boolean isKotlinSpecial(Method method) {

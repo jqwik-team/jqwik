@@ -16,8 +16,9 @@ internal class InternalModifierTests {
 
         @JvmStatic
         @AfterContainer
+        // Will fail if tests are run in isolation
         fun threePropertiesRun() {
-            assert(count == 4)
+            assert(count == 5)
         }
     }
 
@@ -29,6 +30,10 @@ internal class InternalModifierTests {
 
     @Property
     fun publicPropertyInInternalClass() {
+    }
+
+    @Property
+    fun `public property will have its name cut $ at dollar sign`() {
     }
 
     @Property
