@@ -3,7 +3,9 @@
 
     - Chains: Implement Fluent API for Chains and Action chains
 
-    - Kotlin: Check internal name resolution with latest Kotlin version
+    - Kotlin: 
+        - Check internal name resolution with latest Kotlin version
+        - value classes as parameter in type-based generation
 
     - Document
         - Remove Deprecations
