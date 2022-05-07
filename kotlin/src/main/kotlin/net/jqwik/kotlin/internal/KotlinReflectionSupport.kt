@@ -24,6 +24,10 @@ val Parameter.kotlinParameter: KParameter?
         val parameters = kotlinFunction?.parameters ?: return null
         val isFirstNotAValue = parameters[0].name == null
         val kotlinIndex: Int = if (isFirstNotAValue) index + 1 else index
+        if (kotlinIndex >= parameters.size) {
+            // A generated parameter e.g. DefaultConstructorMarker
+            return null
+        }
         return parameters.get(kotlinIndex)
     }
 

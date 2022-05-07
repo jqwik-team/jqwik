@@ -11,8 +11,8 @@ public class JqwikKotlinSupport {
 			if (isKotlinInternal(targetMethod)) {
 				name = nameWithoutInternalPart(name);
 			}
-			if (isKotlinSpecial(targetMethod)) {
-				name = nameWithoutSpecialPart(name);
+			if (hasMangledName(targetMethod)) {
+				name = nameWithoutInlinedParameterHashes(name);
 			}
 		}
 		return name;
@@ -28,11 +28,15 @@ public class JqwikKotlinSupport {
 		return lastDollarIndex > 0 && lastDollarIndex < (method.getName().length() - 1);
 	}
 
-	private static boolean isKotlinSpecial(Method method) {
-		// Kotlin appends a 7-char-extension separated by a hyphen to method names in special cases
-		// e.g. when method has UInt parameter, the original method is appended with '-WZ4Q5Ns'
-		// TODO: Find out what's really happening here
+	private static boolean hasMangledName(Method method) {
 		String name = isKotlinInternal(method) ? nameWithoutInternalPart(method.getName()): method.getName();
+		return hasInlinedParameters(name);
+	}
+
+	private static boolean hasInlinedParameters(String name) {
+		// Kotlin appends a 7-char-hash separated by a hyphen to method names
+		// whenever the underlying Kotlin method uses inlined parameter type, e.g. UInt
+		// See https://ncorti.com/blog/name-mangling-in-kotlin
 		int lastIndexOfHyphen = name.lastIndexOf('-');
 		return lastIndexOfHyphen >= 0 && lastIndexOfHyphen == (name.length() - 8);
 	}
@@ -52,21 +56,8 @@ public class JqwikKotlinSupport {
 		return name.substring(0, lastDollarPosition);
 	}
 
-	private static String nameWithoutSpecialPart(String name) {
+	private static String nameWithoutInlinedParameterHashes(String name) {
 		int lastDollarPosition = name.lastIndexOf('-');
 		return name.substring(0, lastDollarPosition);
-	}
-
-	// Kotlin constructor parameters can have default values.
-	// Those will generate overloaded constructors for this class.
-	// In version 1.5.31 this means that there is a parameter present of type
-	// kotlin.jvm.internal.DefaultConstructorMarker
-	public static boolean isOverloadedConstructor(Constructor<?> constructor) {
-		for (Class<?> parameterType : constructor.getParameterTypes()) {
-			if (parameterType.getName().contains("DefaultConstructorMarker")) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

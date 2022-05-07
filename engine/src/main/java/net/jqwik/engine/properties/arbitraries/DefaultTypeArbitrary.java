@@ -12,8 +12,6 @@ import net.jqwik.api.providers.*;
 
 import static org.junit.platform.commons.support.ModifierSupport.*;
 
-import static net.jqwik.engine.support.JqwikKotlinSupport.*;
-
 public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements TypeArbitrary<T> {
 
 	private final Class<T> targetType;
@@ -157,7 +155,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 				return;
 			}
 			Arrays.stream(target.getRawType().getDeclaredConstructors())
-				  .filter(constructor -> !isOverloadedConstructor(constructor))
 				  .filter(filter)
 				  .forEach(creators::add);
 

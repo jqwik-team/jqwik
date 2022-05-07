@@ -4,7 +4,8 @@
     - Chains: Implement Fluent API for Chains and Action chains
 
     - Kotlin: 
-        - value classes as parameter in type-based generation
+        - value classes as parameter in type-based generation 
+          should consider parameter annotations in constructors
 
     - Document
         - Remove Deprecations
