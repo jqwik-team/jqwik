@@ -2,6 +2,8 @@
 1.7.0
 
     - Chains: Implement Fluent API for Chains and Action chains
+        - User Guide
+            Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
     - Kotlin: 
         - value classes as parameter in type-based generation 
@@ -10,9 +12,8 @@
     - Document
         - Remove Deprecations
         - Set default config afterFailure = SAMPLE_FIRST
+        - Remove web and time from jqwik default dependencies
         - Release notes
-        - User Guide
-            Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
 1.7.1
 
@@ -27,8 +28,6 @@
             - For all collection arbitraries
 
     - Make `AfterFailureMode.SAMPLE_FIRST` the default
-
-    - Remove web and time from jqwik default dependencies
 
     - Introduce BOM
 
