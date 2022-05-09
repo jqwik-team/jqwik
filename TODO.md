@@ -5,10 +5,6 @@
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
-    - Kotlin: 
-        - value classes as parameter in type-based generation 
-          should consider parameter annotations in constructors
-
     - Document
         - Remove Deprecations
         - Set default config afterFailure = SAMPLE_FIRST

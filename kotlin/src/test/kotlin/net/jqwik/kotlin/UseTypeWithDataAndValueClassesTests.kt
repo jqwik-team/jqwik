@@ -5,27 +5,26 @@ import net.jqwik.api.Property
 import net.jqwik.api.Report
 import net.jqwik.api.Reporting
 import net.jqwik.api.constraints.AlphaChars
-import net.jqwik.api.constraints.Size
+import net.jqwik.api.constraints.StringLength
 import net.jqwik.api.constraints.UseType
 
 class UseTypeWithDataAndValueClassesTests {
 
-    @Property(tries = 20)
-    @Report(Reporting.GENERATED)
+    @Property(tries = 100)
     fun personsWillBeGeneratedAccordingToConstraints(@ForAll @UseType person: Person) {
         assert(person is Person)
-        //person.firstName?.also { name ->
-        //    assert(name.value.isNotEmpty())
-        //    assert(name.value.length <= 20)
-        //}
-        //assert(person.lastName.value.isNotEmpty())
-        //assert(person.lastName.value.length <= 20)
+        person.firstName?.also { name ->
+            assert(name.value.isNotEmpty())
+            assert(name.value.length <= 20)
+        }
+        assert(person.lastName.value.isNotEmpty())
+        assert(person.lastName.value.length <= 20)
     }
 }
 
 data class Person(val firstName: Name?, val lastName: Name, val age: Age)
 
-data class Name(val value: @Size(min = 1, max = 20) @AlphaChars String) {
+data class Name(val value: @StringLength(min = 1, max = 20) @AlphaChars String) {
     override fun toString() = value
 }
 
