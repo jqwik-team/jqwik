@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.api.constraints.UseTypeMode.*;
 
 @Group
+@PropertyDefaults(tries = 100)
 class UseTypeProperties {
 	@Property
 	boolean simpleType(@ForAll @UseType Person aPerson) {
@@ -22,6 +23,20 @@ class UseTypeProperties {
 		@ForAll @UseType({CONSTRUCTORS, FACTORIES}) Person aPerson
 	) {
 		return aPerson != null;
+	}
+
+	@Property
+	boolean constructorParameterAnnotationsAreConsidered(
+		@ForAll @UseType({PUBLIC_CONSTRUCTORS}) Person aPerson
+	) {
+		return aPerson.name.length() == 5;
+	}
+
+	@Property
+	boolean factoryParameterAnnotationsAreConsidered(
+		@ForAll @UseType({PUBLIC_FACTORIES}) Person aPerson
+	) {
+		return aPerson.name.length() == 9 + 7;
 	}
 
 	@Property
@@ -67,7 +82,7 @@ class UseTypeProperties {
 	private static class Person {
 		private final String name;
 
-		public static Person create(String name) {
+		public static Person create(@StringLength(7) String name) {
 			return new Person("factory: " + name);
 		}
 
@@ -75,7 +90,7 @@ class UseTypeProperties {
 			return new Person("private factory: " + name);
 		}
 
-		public Person(String name) {
+		public Person(@StringLength(5) String name) {
 			this.name = name;
 		}
 
