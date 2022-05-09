@@ -11,8 +11,8 @@ jqwik.maxdiscardratio.default = 5            # The default ratio before assumpti
 jqwik.reporting.onlyfailures = false         # Set to true if only falsified properties should be reported
 jqwik.reporting.usejunitplatform = false     # Set to true if you want to use platform reporting
 jqwik.failures.runfirst = false              # Set to true if you want to run the failing tests from the previous run first
-jqwik.failures.after.default = PREVIOUS_SEED # Set default behaviour for falsified properties:
-                                             # PREVIOUS_SEED, SAMPLE_ONLY or SAMPLE_FIRST
+jqwik.failures.after.default = SAMPLE_FIRST  # Set default behaviour for falsified properties:
+                                             # PREVIOUS_SEED, SAMPLE_ONLY, SAMPLE_FIRST or RANDOM_SEED
 jqwik.generation.default = AUTO              # Set default behaviour for generation:
                                              # AUTO, RANDOMIZED, or EXHAUSTIVE
 jqwik.edgecases.default = MIXIN              # Set default behaviour for edge cases generation:

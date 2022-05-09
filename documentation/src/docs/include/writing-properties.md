@@ -261,11 +261,11 @@ annotation has a few optional values:
 - `AfterFailureMode afterFailure`: Determines how jqwik will generate values of a property
   that has [failed in the previous run](#rerunning-falsified-properties).
 
-    - `AfterFailureMode.PREVIOUS_SEED` is the default. jqwik will use the same seed and thereby generate
-      the same sequence of parameters as in the previous, failing run.
-    - `AfterFailureMode.SAMPLE_ONLY` means that jqwik will only use the last _shrunk set of parameters_.
-    - `AfterFailureMode.SAMPLE_FIRST` means that jqwik will use the last shrunk set of parameters first
+    - `AfterFailureMode.SAMPLE_FIRST` is the default. It means that jqwik will use the last shrunk set of parameters first
       and then, if successful, go for a new randomly generated set of parameters.
+    - `AfterFailureMode.SAMPLE_ONLY` means that jqwik will only use the last _shrunk set of parameters_.
+    - `AfterFailureMode.PREVIOUS_SEED` means that jqwik will use the same seed and thereby generate
+      the same sequence of parameters as in the previous, failing run.
     - `AfterFailureMode.RANDOM_SEED` makes jqwik use a new random seed even directly after a failure.
       This might lead to a "flaky" property that sometimes fails and sometimes succeeds.
       If the seed for this property has been fixed, the fixed seed will always be used.
@@ -287,7 +287,7 @@ and edge cases numbers are reported after each run property:
 tries = 10 
 checks = 10 
 generation = EXHAUSTIVE
-after-failure = PREVIOUS_SEED
+after-failure = SAMPLE_FIRST
 when-fixed-seed = ALLOW
 edge-cases#mode = MIXIN 
 edge-cases#total = 2 

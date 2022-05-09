@@ -45,7 +45,7 @@ org.opentest4j.AssertionFailedError:
 tries = 1000 
 checks = 20 
 generation = RANDOMIZED
-after-failure = PREVIOUS_SEED
+after-failure = SAMPLE_FIRST
 when-fixed-seed = ALLOW
 edge-cases#mode = MIXIN 
 seed = 1066117555581106850

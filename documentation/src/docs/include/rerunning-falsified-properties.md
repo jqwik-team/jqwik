@@ -32,7 +32,6 @@ The `afterFailure` property can have one of four values:
 - `AfterFailureMode.SAMPLE_FIRST`: Same as `SAMPLE_ONLY` but generate additional examples if the
   property no longer fails with the previous sample.
 
-
 You can also determine the default behaviour of all properties by setting
 the `jqwik.failures.after.default` parameter in the [configuration file](#jqwik-configuration)
 to one of those enum values.

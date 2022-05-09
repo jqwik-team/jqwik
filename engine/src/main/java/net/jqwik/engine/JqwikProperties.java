@@ -21,7 +21,7 @@ public class JqwikProperties {
 	private static final String DEFAULT_DATABASE_PATH = ".jqwik-database";
 	private static final boolean DEFAULT_RERUN_FAILURES_FIRST = false;
 	private static final int DEFAULT_MAX_DISCARD_RATIO = 5;
-	private static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
+	private static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.SAMPLE_FIRST;
 	private static final boolean DEFAULT_REPORT_ONLY_FAILURES = false;
 	private static final GenerationMode DEFAULT_GENERATION = GenerationMode.AUTO;
 	private static final EdgeCasesMode DEFAULT_EDGE_CASES = EdgeCasesMode.MIXIN;

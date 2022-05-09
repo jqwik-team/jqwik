@@ -29,6 +29,10 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- [Default configuration](https://jqwik.net/docs/current/user-guide.html#jqwik-configuration) 
+  for `jqwik.failures.after.default` is now `SAMPLE_FIRST`.
+  Set it to `PREVIOUS_SEED` if you want the behaviour of jqwik < 1.7.
+
 #### Bug Fixes
 
 - Generated TLDs in `web-module` will no longer start with digit.

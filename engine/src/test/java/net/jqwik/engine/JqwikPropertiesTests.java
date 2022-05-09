@@ -39,7 +39,7 @@ class JqwikPropertiesTests {
 
 		assertThat(properties.useJunitPlatformReporter()).isEqualTo(false);
 
-		assertThat(properties.defaultAfterFailure()).isEqualTo(AfterFailureMode.PREVIOUS_SEED);
+		assertThat(properties.defaultAfterFailure()).isEqualTo(AfterFailureMode.SAMPLE_FIRST);
 
 		assertThat(properties.reportOnlyFailures()).isEqualTo(false);
 

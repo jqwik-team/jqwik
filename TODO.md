@@ -7,7 +7,6 @@
 
     - Document
         - Remove Deprecations
-        - Set default config afterFailure = SAMPLE_FIRST
         - Remove web and time from jqwik default dependencies
         - Release notes
 
