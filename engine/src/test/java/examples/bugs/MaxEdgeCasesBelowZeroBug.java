@@ -17,7 +17,7 @@ public class MaxEdgeCasesBelowZeroBug {
 	@Provide("edgeCases")
 	Arbitrary<Object> generate() {
 		return
-			Combinators.withBuilder(Object::new)
+			Builders.withBuilder(Object::new)
 					   .use(Arbitraries.strings()
 									   .edgeCases(c -> c.add(IntStream.range(0, 1000) // generate lots of edge cases
 																	  .mapToObj(String::valueOf)

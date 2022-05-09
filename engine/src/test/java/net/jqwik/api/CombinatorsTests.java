@@ -262,24 +262,6 @@ class CombinatorsTests {
 			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(8);
 		}
 
-		@Example
-		void combineWithBuilder() {
-			Arbitrary<Integer> numbers = Arbitraries.integers().between(10, 100);
-
-			Supplier<AdditionBuilder> additionBuilderSupplier = AdditionBuilder::new;
-			Arbitrary<Integer> sum = Combinators
-				.withBuilder(additionBuilderSupplier)
-				.use(numbers).in((b, n) -> b.addNumber(n))
-				.use(numbers).in((b, n) -> b.addNumber(n))
-				.build(AdditionBuilder::sum);
-
-			EdgeCases<Integer> edgeCases = sum.edgeCases();
-			assertThat(collectEdgeCaseValues(edgeCases))
-				.containsExactlyInAnyOrder(20, 21, 22, 198, 199, 200, 109, 110, 111);
-			// make sure edge cases can be repeatedly generated
-			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(9);
-		}
-
 		class AdditionBuilder {
 
 			private final List<Integer> numbers = new ArrayList<>();
@@ -463,24 +445,6 @@ class CombinatorsTests {
 			ExhaustiveGenerator<Integer> generator = plus.exhaustive().get();
 			assertThat(generator.maxCount()).isEqualTo(12);
 			assertThat(generator).containsOnly(111, 112, 113, 121, 122, 123, 211, 212, 213, 221, 222, 223);
-		}
-
-		@Example
-		void combineWithBuilder() {
-			Arbitrary<Integer> numbers = Arbitraries.integers().between(1, 4);
-
-			Supplier<ExhaustiveGenerationTests.AdditionBuilder> additionBuilderSupplier = ExhaustiveGenerationTests.AdditionBuilder::new;
-			Arbitrary<Integer> sum = Combinators
-				.withBuilder(additionBuilderSupplier)
-				.use(numbers).in((b, n) -> b.addNumber(n))
-				.use(numbers).in((b, n) -> b.addNumber(n))
-				.build(ExhaustiveGenerationTests.AdditionBuilder::sum);
-
-			assertThat(sum.exhaustive()).isPresent();
-
-			ExhaustiveGenerator<Integer> generator = sum.exhaustive().get();
-			assertThat(generator.maxCount()).isEqualTo(16);
-			assertThat(generator).containsOnly(2, 3, 4, 5, 6, 7, 8);
 		}
 	}
 

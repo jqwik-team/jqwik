@@ -33,6 +33,18 @@ title: jqwik Release Notes
   for `jqwik.failures.after.default` is now `SAMPLE_FIRST`.
   Set it to `PREVIOUS_SEED` if you want the behaviour of jqwik < 1.7.
 
+- Removed method `ActionSequenceArbitrary.ofMinSize(int)` which had been deprecated in 1.5.3
+
+- Removed method `ActionSequenceArbitrary.ofMaxSize(int)` which had been deprecated in 1.5.3
+
+- Removed method `Combinators.withBuilder(Supplier)` which had been deprecated in 1.5.4
+
+- Removed method `Combinators.withBuilder(Arbitrary)` which had been deprecated in 1.5.4
+
+- Removed type `Combinators.BuilderCombinator` which had been deprecated in 1.5.4
+
+- Removed type `Combinators.CombinableBuilder` which had been deprecated in 1.5.4
+
 #### Bug Fixes
 
 - Generated TLDs in `web-module` will no longer start with digit.

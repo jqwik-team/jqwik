@@ -13,7 +13,7 @@ class JqwikHeapBust {
 
 	@Provide
 	public Arbitrary<Thing> things() {
-		return Combinators.withBuilder(Thing.Builder::new)
+		return Builders.withBuilder(Thing.Builder::new)
 						  .use(Arbitraries.integers()).in(Thing.Builder::setA)
 						  .use(Arbitraries.integers()).in(Thing.Builder::setB)
 						  .use(Arbitraries.integers()).in(Thing.Builder::setC)

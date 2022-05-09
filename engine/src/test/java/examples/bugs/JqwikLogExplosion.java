@@ -16,7 +16,7 @@ class JqwikLogExplosion {
 
 	@Provide
 	public Arbitrary<List<Thing2>> things() {
-		return Combinators.withBuilder(Thing2.Builder::new)
+		return Builders.withBuilder(Thing2.Builder::new)
 						  .use(Arbitraries.integers()).in(Thing2.Builder::setA)
 						  .use(Arbitraries.integers()).in(Thing2.Builder::setB)
 						  .use(Arbitraries.integers()).in(Thing2.Builder::setC)
