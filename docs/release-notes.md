@@ -45,6 +45,8 @@ title: jqwik Release Notes
 
 - Removed type `Combinators.CombinableBuilder` which had been deprecated in 1.5.4
 
+- Removed method `Functions.FunctionWrapper.returns(Arbitrary)` which had been deprecated in 1.6.0
+
 #### Bug Fixes
 
 - Generated TLDs in `web-module` will no longer start with digit.

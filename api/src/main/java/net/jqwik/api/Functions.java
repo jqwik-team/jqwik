@@ -53,14 +53,6 @@ public class Functions {
 		}
 
 		/**
-		 * @deprecated Use {@linkplain #returning(Arbitrary)} instead. Will be removed in 1.7.0.
-		 */
-		@API(status = DEPRECATED, since = "1.6.0")
-		public <F, R> FunctionArbitrary<F, R> returns(Arbitrary<R> resultArbitrary) {
-			return returning(resultArbitrary);
-		}
-
-		/**
 		 * Create an arbitrary to create instances of functions represented by this wrapper.
 		 * The generated functions are guaranteed to return the same result
 		 * given the same input values.
