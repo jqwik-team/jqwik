@@ -27,6 +27,16 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`:
+    - `net.jqwik.api.Arbitraries.subsetOf(Collection<T>)`
+    - `net.jqwik.api.Arbitraries.subsetOf(T...)`
+    - `net.jqwik.api.JavaBeanReportingFormat`
+    - `net.jqwik.api.arbitraries.StringArbitrary.repeatChars(double)`
+    - `net.jqwik.api.domains.DomainContext.initialize(PropertyLifecycleContext)`
+    - `net.jqwik.api.footnotes.EnableFootnotes`
+    - `net.jqwik.api.footnotes.Footnotes`
+    - Most types and methods in package `net.jqwik.api.lifecycle`
+
 #### Breaking Changes
 
 - [Default configuration](https://jqwik.net/docs/current/user-guide.html#jqwik-configuration) 

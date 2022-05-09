@@ -48,7 +48,7 @@ public interface PropertyLifecycleContext extends LifecycleContext {
 	 *
 	 * @return List of instances starting from outer-most to inner-most class
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.4")
+	@API(status = MAINTAINED, since = "1.5.4")
 	List<Object> testInstances();
 
 	/**
@@ -56,7 +56,7 @@ public interface PropertyLifecycleContext extends LifecycleContext {
 	 *
 	 * @return a String
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
+	@API(status = MAINTAINED, since = "1.2.3")
 	String extendedLabel();
 
 	/**
@@ -64,7 +64,7 @@ public interface PropertyLifecycleContext extends LifecycleContext {
 	 *
 	 * @return the attributes holder
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.4")
+	@API(status = MAINTAINED, since = "1.3.4")
 	PropertyAttributes attributes();
 
 }

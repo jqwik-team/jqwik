@@ -176,7 +176,7 @@ public interface TryExecutionResult {
 	 *
 	 * @return list of Strings
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.5")
+	@API(status = MAINTAINED, since = "1.5.5")
 	default List<String> footnotes() {
 		return Collections.emptyList();
 	}
@@ -186,7 +186,7 @@ public interface TryExecutionResult {
 	 *
 	 * @param otherFootnotes a list of footnotes to add
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.5")
+	@API(status = MAINTAINED, since = "1.5.5")
 	default TryExecutionResult withFootnotes(Collection<String> otherFootnotes) {
 		TryExecutionResult self = this;
 		List<String> footnotes = new ArrayList<>(this.footnotes());

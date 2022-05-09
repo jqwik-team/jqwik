@@ -93,7 +93,7 @@ public interface PropertyExecutionResult {
 	 *
 	 * @return an optional falsified sample
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.5")
+	@API(status = MAINTAINED, since = "1.3.5")
 	Optional<FalsifiedSample> originalSample();
 
 	/**
@@ -101,7 +101,7 @@ public interface PropertyExecutionResult {
 	 *
 	 * @return an optional falsified sample
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.5")
+	@API(status = MAINTAINED, since = "1.3.5")
 	Optional<ShrunkFalsifiedSample> shrunkSample();
 
 	/**

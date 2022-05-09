@@ -95,7 +95,7 @@ public interface DomainContext {
 	 * {@linkplain PropertyLifecycleContext context of a property}.
 	 * </p>
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.4")
+	@API(status = MAINTAINED, since = "1.5.4")
 	default void initialize(PropertyLifecycleContext context) {
 	}
 

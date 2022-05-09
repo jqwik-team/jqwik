@@ -6,7 +6,6 @@
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
     - Document
-        - Remove Deprecations
         - Remove web and time from jqwik default dependencies
         - Release notes
 

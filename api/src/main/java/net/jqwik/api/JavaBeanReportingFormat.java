@@ -7,7 +7,7 @@ import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-@API(status = EXPERIMENTAL, since = "1.3.10")
+@API(status = MAINTAINED, since = "1.3.10")
 public abstract class JavaBeanReportingFormat implements SampleReportingFormat {
 
 	@API(status = INTERNAL)

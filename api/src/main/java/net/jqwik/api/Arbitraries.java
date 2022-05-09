@@ -792,7 +792,7 @@ public class Arbitraries {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.6.4")
+	@API(status = MAINTAINED, since = "1.6.4")
 	public static <T> SetArbitrary<T> subsetOf(Collection<T> values) {
 		return of(values).set();
 	}
@@ -802,7 +802,7 @@ public class Arbitraries {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.6.4")
+	@API(status = MAINTAINED, since = "1.6.4")
 	public static <T> SetArbitrary<T> subsetOf(T... values) {
 		return subsetOf(Arrays.asList(values));
 	}

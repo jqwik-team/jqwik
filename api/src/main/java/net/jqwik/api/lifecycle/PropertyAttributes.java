@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
  * during the {@linkplain AroundPropertyHook} lifecycle hook.
  * </p>
  */
-@API(status = EXPERIMENTAL, since = "1.3.4")
+@API(status = MAINTAINED, since = "1.3.4")
 public interface PropertyAttributes {
 
 	/**
@@ -104,7 +104,7 @@ public interface PropertyAttributes {
 	 *
 	 * @return optional fixed seed mode
 	 */
-	@API(status = EXPERIMENTAL, since = "1.4.0")
+	@API(status = MAINTAINED, since = "1.4.0")
 	Optional<FixedSeedMode> whenFixedSeed();
 
 	void setTries(Integer tries);

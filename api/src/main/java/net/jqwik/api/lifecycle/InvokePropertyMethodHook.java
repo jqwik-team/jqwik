@@ -16,7 +16,7 @@ import static org.apiguardian.api.API.Status.*;
  * Caveat: Only one hook per property method is possible.
  * </p>
  */
-@API(status = EXPERIMENTAL, since = "1.6.0")
+@API(status = MAINTAINED, since = "1.6.0")
 @FunctionalInterface
 public interface InvokePropertyMethodHook extends LifecycleHook {
 

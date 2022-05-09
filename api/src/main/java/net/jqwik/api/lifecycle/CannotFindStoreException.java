@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Experimental feature. Not ready for public usage yet.
  */
-@API(status = EXPERIMENTAL, since = "1.2.3")
+@API(status = MAINTAINED, since = "1.2.3")
 public class CannotFindStoreException extends JqwikException {
 	public CannotFindStoreException(Object identifier, String retrieverId) {
 		super(createMessage(identifier, retrieverId));
@@ -18,7 +18,7 @@ public class CannotFindStoreException extends JqwikException {
 	private static String createMessage(Object identifier, String retrieverId) {
 		return String.format(
 			"Cannot find store with identifier [%s] for [%s]",
-			identifier.toString(),
+			identifier,
 			retrieverId
 		);
 	}

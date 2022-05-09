@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @AddLifecycleHook(FootnotesHook.class)
-@API(status = EXPERIMENTAL, since = "1.5.5")
+@API(status = MAINTAINED, since = "1.5.5")
 public @interface EnableFootnotes {
 
 }

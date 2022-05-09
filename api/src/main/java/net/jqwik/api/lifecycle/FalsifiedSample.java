@@ -15,7 +15,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see ShrunkFalsifiedSample
  * @see PropertyExecutionResult#shrunkSample()
  */
-@API(status = EXPERIMENTAL, since = "1.3.5")
+@API(status = MAINTAINED, since = "1.3.5")
 public interface FalsifiedSample {
 
 	/**
@@ -57,7 +57,7 @@ public interface FalsifiedSample {
 	 *
 	 * @return list of strings
 	 */
-	@API(status = EXPERIMENTAL, since = "1.5.5")
+	@API(status = MAINTAINED, since = "1.5.5")
 	List<String> footnotes();
 
 }

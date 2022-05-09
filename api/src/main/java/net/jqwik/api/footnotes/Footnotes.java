@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * to the property method or any lifecycle method.
  * </p>
  */
-@API(status = EXPERIMENTAL, since = "1.5.5")
+@API(status = MAINTAINED, since = "1.5.5")
 public interface Footnotes {
 
 	/**
