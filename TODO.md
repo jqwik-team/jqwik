@@ -16,7 +16,7 @@
 
 1.7.1
 
-    - Kotlin: Convenience methods and extensions for chains
+    - Kotlin: Convenience methods and extensions for chains and action chains
 
     - Introduce ModelChain. Should cover https://github.com/jlink/jqwik/issues/80.
         - ModelChain can be generated before it's provided as parameter!
@@ -37,6 +37,9 @@
     - Kotlin convenience functions:
         - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)
         - Collection<Arbitrary<T>>.chooseOne() -> Arbitraries.oneOf(..)
+
+    - Combinators.combine(..).filter(..)
+      See https://github.com/jlink/jqwik/issues/329.
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
       - Alternative: New annotation @InitBeforeTry
