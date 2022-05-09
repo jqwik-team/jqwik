@@ -75,22 +75,6 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	CharacterArbitrary ascii();
 
 	/**
-	 * Allow all numeric chars (digits) to show up in generated values.
-	 *
-	 * <p>
-	 * Adds to all already allowed chars.
-	 * </p>
-	 *
-	 * @return new instance of arbitrary
-	 *
-	 * @deprecated Use {@linkplain #numeric()} instead. Will be removed in 1.7.0.
-	 */
-	@Deprecated
-	default CharacterArbitrary digit() {
-		return numeric();
-	}
-
-	/**
 	 * Allow all numeric chars to show up in generated values.
 	 *
 	 * <p>
