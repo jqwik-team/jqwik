@@ -16,11 +16,6 @@ public class DefaultActionSequenceArbitrary<M> extends TypedCloneable implements
 	}
 
 	@Override
-	public ActionSequenceArbitrary<M> ofMinSize(int minSize) {
-		return this;
-	}
-
-	@Override
 	public ActionSequenceArbitrary<M> ofSize(int size) {
 		DefaultActionSequenceArbitrary<M> clone = typedClone();
 		clone.size = size;
