@@ -2,6 +2,13 @@
 1.7.0
 
     - Chains: Implement Fluent API for Chains and Action chains
+        - Action -> StatefulAction | StatelessAction
+        - Transformer.noop()
+            - Optimize shrinking for that
+        - ActionChain.builder(initializer) instead of ActionChainArbitrary?
+        - ActionChainArbitrary
+            - infinite()
+            - improveShrinkingWith(Supplier<ChangeDetector<T>> detectorSupplier)
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
