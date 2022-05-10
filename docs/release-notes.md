@@ -35,7 +35,7 @@ title: jqwik Release Notes
     - `net.jqwik.api.domains.DomainContext.initialize(PropertyLifecycleContext)`
     - `net.jqwik.api.footnotes.EnableFootnotes`
     - `net.jqwik.api.footnotes.Footnotes`
-    - Most types and methods in package `net.jqwik.api.lifecycle`
+    - Large chunks of the hooks and extension API in package `net.jqwik.api.lifecycle`
 
 #### Breaking Changes
 
