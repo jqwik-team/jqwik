@@ -2,11 +2,12 @@
 1.7.0
 
     - Chains: Implement Fluent API for Chains and Action chains
-        - Action -> StatefulAction | StatelessAction
         - Transformer.noop()
             - Optimize shrinking for that
-        - ActionChain.builder(initializer) instead of ActionChainArbitrary?
+        - Action -> Action.Dependent | Action.Independent
+        - Action.builder() instead of Action factory methods?
         - ActionChainArbitrary
+            - addAction(Function<Action.Builder, Action.Builder>)
             - infinite()
             - improveShrinkingWith(Supplier<ChangeDetector<T>> detectorSupplier)
         - User Guide
