@@ -1,0 +1,10 @@
+# See https://github.com/policeman-tools/forbidden-apis/wiki/SignaturesSyntax
+# forbidden-apis fails in case it can't resolve a signature (e.g. method not found),
+# so we have to split configurations for signatures introduced in newer Jave versions
+
+@defaultMessage Prefer Collections.toCollection(LinkedHashSet::new) for reproducible order of the results
+java.util.stream.Collectors#toUnmodifiableSet()
+
+@defaultMessage Prefer Collections.toMap(.., LinkedHashMap::new) for reproducible order of the results
+java.util.stream.Collectors#toUnmodifiableMap(java.util.function.Function, java.util.function.Function)
+java.util.stream.Collectors#toUnmodifiableMap(java.util.function.Function, java.util.function.Function, java.util.function.BinaryOperator)

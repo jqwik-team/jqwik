@@ -1,0 +1,14 @@
+# See https://github.com/policeman-tools/forbidden-apis/wiki/SignaturesSyntax
+
+@defaultMessage Prefer Collections.toCollection(LinkedHashSet::new) for reproducible order of the results
+java.util.stream.Collectors#toSet()
+
+@defaultMessage Prefer Collections.toMap(.., LinkedHashMap::new) for reproducible order of the results
+java.util.stream.Collectors#toMap(java.util.function.Function, java.util.function.Function)
+java.util.stream.Collectors#toMap(java.util.function.Function, java.util.function.Function, java.util.function.BinaryOperator)
+
+@defaultMessage Prefer LinkedHashSet() for reproducible order of the results
+java.util.HashSet#<init>(**)
+
+@defaultMessage Prefer LinkedHashMap() for reproducible order of the results
+java.util.HashMap#<init>(**)

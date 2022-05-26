@@ -4,6 +4,7 @@ plugins {
 	id 'signing'
 	// See https://github.com/vlsi/vlsi-release-plugins/blob/master/plugins/gradle-extensions-plugin/README.md
 	id 'com.github.vlsi.gradle-extensions'
+	id 'jqwik.forbidden-apis'
 }
 
 repositories {

@@ -1,0 +1,17 @@
+plugins {
+	id 'de.thetaphi.forbiddenapis'
+}
+
+// See https://github.com/policeman-tools/forbidden-apis/wiki/GradleUsage
+project.forbiddenApis {
+	project.java.toolchain
+	def configDir = rootProject.layout.projectDirectory.dir("config")
+	signaturesFiles.from({
+		def sourceVersion = project.java.sourceCompatibility
+		def res = [configDir.file("forbidden-apis.txt")]
+		if (sourceVersion.isJava10Compatible()) {
+			res += configDir.file("forbidden-apis-jdk10.txt")
+		}
+		res
+	})
+}

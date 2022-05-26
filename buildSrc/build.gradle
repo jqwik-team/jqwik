@@ -14,4 +14,5 @@ repositories {
 
 dependencies {
 	implementation 'com.github.vlsi.gradle-extensions:com.github.vlsi.gradle-extensions.gradle.plugin:1.78'
+	implementation("de.thetaphi.forbiddenapis:de.thetaphi.forbiddenapis.gradle.plugin:3.3")
 }
