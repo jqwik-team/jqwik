@@ -20,12 +20,17 @@ public interface FeatureExtractor<T> extends Function<T, Object> {
 	}
 
 	default boolean isUniqueIn(T value, Collection<T> elements) {
-		Set<Object> elementFeatures = elements.stream().map(this::applySafe).collect(Collectors.toSet());
-		return !elementFeatures.contains(this.applySafe(value));
+		if (this == identity()) {
+			return !elements.contains(value);
+		}
+		Object feature = applySafe(value);
+		return elements.stream()
+					   .map(this::applySafe)
+					   .noneMatch(x -> Objects.equals(x, feature));
 	}
 
 	default boolean areUnique(Collection<T> elements) {
-		Set<Object> elementFeatures = elements.stream().map(this::applySafe).collect(Collectors.toSet());
-		return elementFeatures.size() == elements.size();
+		long uniqueCount = elements.stream().map(this::applySafe).distinct().count();
+		return uniqueCount == elements.size();
 	}
 }
