@@ -16,7 +16,7 @@ public class TestRunData {
 	}
 
 	public TestRunData() {
-		this(new HashSet<>());
+		this(new LinkedHashSet<>());
 	}
 
 	public void add(TestRun testRun) {

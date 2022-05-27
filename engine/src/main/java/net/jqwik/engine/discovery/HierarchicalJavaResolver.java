@@ -143,7 +143,7 @@ class HierarchicalJavaResolver {
 	}
 
 	private Set<TestDescriptor> resolveForAllParents(AnnotatedElement element, Set<TestDescriptor> potentialParents) {
-		Set<TestDescriptor> resolvedDescriptors = new HashSet<>();
+		Set<TestDescriptor> resolvedDescriptors = new LinkedHashSet<>();
 		potentialParents.forEach(parent -> resolvedDescriptors.addAll(resolve(element, parent)));
 		return resolvedDescriptors;
 	}

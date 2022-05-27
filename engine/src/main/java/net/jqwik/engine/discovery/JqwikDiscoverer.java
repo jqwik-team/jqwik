@@ -103,7 +103,7 @@ public class JqwikDiscoverer {
 	}
 
 	private HierarchicalJavaResolver createHierarchicalResolver(TestDescriptor engineDescriptor) {
-		Set<ElementResolver> resolvers = new HashSet<>();
+		Set<ElementResolver> resolvers = new LinkedHashSet<>();
 		resolvers.add(new TopLevelContainerResolver());
 		resolvers.add(new GroupContainerResolver());
 		resolvers.add(new PropertyMethodResolver(testRunData, propertyDefaultValues));

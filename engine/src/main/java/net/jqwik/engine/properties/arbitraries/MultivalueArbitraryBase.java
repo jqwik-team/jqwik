@@ -19,7 +19,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 	protected int minSize = 0;
 	protected int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
-	protected Set<FeatureExtractor<T>> uniquenessExtractors = new HashSet<>();
+	protected Set<FeatureExtractor<T>> uniquenessExtractors = new LinkedHashSet<>();
 	protected RandomDistribution sizeDistribution = null;
 
 	protected MultivalueArbitraryBase(Arbitrary<T> elementArbitrary) {

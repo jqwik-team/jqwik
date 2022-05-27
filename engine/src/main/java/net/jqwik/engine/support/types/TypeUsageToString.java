@@ -9,7 +9,7 @@ import net.jqwik.api.providers.*;
 class TypeUsageToString {
 
 	public static String toString(TypeUsage self) {
-		return toString(self, new HashSet<>());
+		return toString(self, new LinkedHashSet<>());
 	}
 
 	private static String toString(TypeUsage self, Set<TypeUsage> touchedTypes) {

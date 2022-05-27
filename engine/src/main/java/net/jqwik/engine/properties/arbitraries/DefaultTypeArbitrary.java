@@ -15,9 +15,9 @@ import static org.junit.platform.commons.support.ModifierSupport.*;
 public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements TypeArbitrary<T> {
 
 	private final Class<T> targetType;
-	private final Set<Executable> explicitCreators = new HashSet<>();
-	private final Set<Predicate<? super Constructor<?>>> constructorFilters = new HashSet<>();
-	private final Set<Predicate<Method>> factoryMethodFilters = new HashSet<>();
+	private final Set<Executable> explicitCreators = new LinkedHashSet<>();
+	private final Set<Predicate<? super Constructor<?>>> constructorFilters = new LinkedHashSet<>();
+	private final Set<Predicate<Method>> factoryMethodFilters = new LinkedHashSet<>();
 	private boolean defaultsSet = true;
 
 	private TraverseArbitrary<T> traverseArbitrary;
@@ -137,7 +137,7 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 
 		@Override
 		public Set<Executable> findCreators(TypeUsage target) {
-			Set<Executable> creators = new HashSet<>();
+			Set<Executable> creators = new LinkedHashSet<>();
 			if (target.isOfType(targetType)) {
 				creators.addAll(explicitCreators);
 			}

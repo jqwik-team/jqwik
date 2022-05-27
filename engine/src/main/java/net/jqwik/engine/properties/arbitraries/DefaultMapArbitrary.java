@@ -17,8 +17,8 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	private int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	private RandomDistribution sizeDistribution = null;
 
-	private Set<FeatureExtractor<K>> keyUniquenessExtractors = new HashSet<>();
-	private Set<FeatureExtractor<V>> valueUniquenessExtractors = new HashSet<>();
+	private Set<FeatureExtractor<K>> keyUniquenessExtractors = new LinkedHashSet<>();
+	private Set<FeatureExtractor<V>> valueUniquenessExtractors = new LinkedHashSet<>();
 
 	public DefaultMapArbitrary(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		this.keysArbitrary = keysArbitrary;

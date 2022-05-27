@@ -14,7 +14,7 @@ public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitr
 	private static final float DEFAULT_MAX = Float.MAX_VALUE;
 
 	private DecimalGeneratingArbitrary generatingArbitrary;
-	private final Set<Float> specials = new HashSet<>();
+	private final Set<Float> specials = new LinkedHashSet<>();
 
 	public DefaultFloatArbitrary() {
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(Range.of(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX)));

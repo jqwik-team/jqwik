@@ -174,7 +174,7 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	private Stream<List<ShrinkableChainIteration<T>>> shrinkToAllSubLists(List<ShrinkableChainIteration<T>> iterations) {
-		Set<List<ShrinkableChainIteration<T>>> setOfSequences = new HashSet<>();
+		Set<List<ShrinkableChainIteration<T>>> setOfSequences = new LinkedHashSet<>();
 		for (int i = 0; i < iterations.size(); i++) {
 			if (!isUnshrinkableEndOfChain(iterations.get(i))) {
 				ArrayList<ShrinkableChainIteration<T>> newCandidate = new ArrayList<>(iterations);

@@ -16,7 +16,7 @@ import static net.jqwik.engine.matchers.TestDescriptorMatchers.*;
 @SuppressLogging
 public class JqwikExecutorTests {
 
-	private Set<UniqueId> previouslyFailedTests = new HashSet<>();
+	private Set<UniqueId> previouslyFailedTests = new LinkedHashSet<>();
 	private JqwikExecutor executor = new JqwikExecutor(new LifecycleHooksRegistry(), testRun -> {}, previouslyFailedTests, true, false);
 
 	@Example

@@ -89,7 +89,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	private void pushGeneratedLevel() {
-		generatedParts.addFirst(new HashSet<>());
+		generatedParts.addFirst(new LinkedHashSet<>());
 	}
 
 	private void popGeneratedLevel() {

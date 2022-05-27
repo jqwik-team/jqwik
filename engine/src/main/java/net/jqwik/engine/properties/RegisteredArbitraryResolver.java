@@ -17,7 +17,7 @@ public class RegisteredArbitraryResolver {
 
 	public Set<Arbitrary<?>> resolve(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		int currentPriority = Integer.MIN_VALUE;
-		Set<Arbitrary<?>> fittingArbitraries = new HashSet<>();
+		Set<Arbitrary<?>> fittingArbitraries = new LinkedHashSet<>();
 		for (ArbitraryProvider provider : registeredProviders) {
 			if (provider.canProvideFor(targetType)) {
 				if (provider.priority() < currentPriority) {

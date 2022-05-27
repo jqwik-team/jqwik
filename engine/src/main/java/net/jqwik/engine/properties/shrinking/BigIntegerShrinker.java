@@ -13,7 +13,7 @@ public class BigIntegerShrinker {
 	}
 
 	public Stream<BigInteger> shrink(BigInteger value) {
-		Set<BigInteger> candidates = new HashSet<>();
+		Set<BigInteger> candidates = new LinkedHashSet<>();
 		BigInteger lower = shrinkingTarget.min(value);
 		BigInteger higher = shrinkingTarget.max(value);
 		addFibbonaci(candidates, lower, BigInteger.valueOf(0), BigInteger.valueOf(1), higher);

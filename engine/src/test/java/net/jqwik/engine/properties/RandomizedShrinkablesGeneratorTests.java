@@ -44,7 +44,7 @@ class RandomizedShrinkablesGeneratorTests {
 		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
 			@Override
 			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
-				Set<Arbitrary<?>> arbitraries = new HashSet<>();
+				Set<Arbitrary<?>> arbitraries = new LinkedHashSet<>();
 				if (parameter.getType().equals(String.class)) {
 					arbitraries.add(Arbitraries.just("a"));
 					arbitraries.add(Arbitraries.just("b"));
@@ -74,7 +74,7 @@ class RandomizedShrinkablesGeneratorTests {
 		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
 			@Override
 			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
-				Set<Arbitrary<?>> arbitraries = new HashSet<>();
+				Set<Arbitrary<?>> arbitraries = new LinkedHashSet<>();
 				arbitraries.add(Arbitraries.just("a"));
 				arbitraries.add(Arbitraries.just("b"));
 				return arbitraries;
@@ -95,7 +95,7 @@ class RandomizedShrinkablesGeneratorTests {
 		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
 			@Override
 			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
-				Set<Arbitrary<?>> arbitraries = new HashSet<>();
+				Set<Arbitrary<?>> arbitraries = new LinkedHashSet<>();
 				Arbitrary<String> a = Arbitraries.just("a");
 				Arbitrary<String> b = Arbitraries.just("b");
 				if (parameter.getType() instanceof TypeVariable) {

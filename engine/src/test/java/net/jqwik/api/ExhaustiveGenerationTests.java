@@ -123,7 +123,7 @@ class ExhaustiveGenerationTests {
 	@Example
 	@Label("Arbitrary.flatMap() will freshly generate base values")
 	void flatMapWillFreshlyGenerateBaseValues() {
-		Set<Object> dates = new HashSet<>();
+		Set<Object> dates = new LinkedHashSet<>();
 
 		Optional<ExhaustiveGenerator<Integer>> optionalGenerator =
 			Arbitraries.create(Object::new).flatMap(object -> {

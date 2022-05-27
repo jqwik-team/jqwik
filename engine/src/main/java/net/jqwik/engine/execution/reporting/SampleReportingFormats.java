@@ -11,7 +11,7 @@ public class SampleReportingFormats {
 	private static final LazyServiceLoaderCache<SampleReportingFormat> serviceCache = new LazyServiceLoaderCache<>(SampleReportingFormat.class);
 
 	public static Collection<SampleReportingFormat> getReportingFormats() {
-		Set<SampleReportingFormat> formats = new HashSet<>();
+		Set<SampleReportingFormat> formats = new LinkedHashSet<>();
 		formats.addAll(getRegisteredReportingFormats());
 		formats.addAll(getReportingFormatsFromCurrentDomainContext());
 

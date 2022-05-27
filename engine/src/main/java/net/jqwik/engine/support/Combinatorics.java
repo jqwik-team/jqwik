@@ -26,7 +26,7 @@ public class Combinatorics {
 
 	@SuppressWarnings("unchecked")
 	private static <T> Iterator<Set<T>> emptySetSingleton() {
-		return asList((Set<T>) new HashSet<>()).iterator();
+		return asList((Set<T>) new LinkedHashSet<>()).iterator();
 	}
 
 	public static <T> Iterator<List<T>> listCombinations(Iterable<T> elementIterable, int minSize, int maxSize) {

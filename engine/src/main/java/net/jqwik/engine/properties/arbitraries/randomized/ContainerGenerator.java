@@ -62,7 +62,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		int sizeToShuffleIfExceeded = Integer.MAX_VALUE;
 
 		boolean canUseSetForValues = uniquenessExtractors.isEmpty() || uniquenessExtractors.contains(FeatureExtractor.identity());
-		Collection<T> existingValues = canUseSetForValues ? new HashSet<>() : new ArrayList<>();
+		Collection<T> existingValues = canUseSetForValues ? new LinkedHashSet<>() : new ArrayList<>();
 
 		while (listOfShrinkables.size() < listSize) {
 			try {

@@ -18,7 +18,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class NumbersEdgeCasesTests {
 
 	private <T> Set<T> values(EdgeCases<T> edgeCases) {
-		Set<T> values = new HashSet<>();
+		Set<T> values = new LinkedHashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {
 			values.add(edgeCase.value());
 		}
