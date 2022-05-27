@@ -716,7 +716,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	@Override
 	public TypeUsage withMetaInfo(String key, Object value) {
 		return cloneWith(t -> {
-			t.metaInfo = new HashMap<>(metaInfo);
+			t.metaInfo = new LinkedHashMap<>(metaInfo);
 			t.metaInfo.put(key, value);
 		});
 	}

@@ -84,7 +84,7 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 				elements.stream()
 						.map(e -> flatMapper.apply(elements, e))
 						.collect(Collectors.toList());
-			return Combinators.combine(arbitraries).as(HashSet::new);
+			return Combinators.combine(arbitraries).as(LinkedHashSet::new);
 		});
 	}
 
