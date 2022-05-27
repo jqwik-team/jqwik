@@ -307,7 +307,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
-	private HashMap<String, Object> metaInfo = new HashMap<>();
+	private HashMap<String, Object> metaInfo = new LinkedHashMap<>();
 	private boolean isNullable = false;
 
 	public TypeUsageImpl(

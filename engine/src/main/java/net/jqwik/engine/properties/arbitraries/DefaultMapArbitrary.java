@@ -56,7 +56,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 			ListArbitrary<V> valueListArbitrary = createValueListArbitrary(mapSize);
 			return valueListArbitrary.map(
 					values -> {
-						HashMap<K, V> map = new HashMap<>();
+						HashMap<K, V> map = new LinkedHashMap<>();
 						for (int i = 0; i < mapSize; i++) {
 							K key = keys.get(i);
 							V value = values.get(i);

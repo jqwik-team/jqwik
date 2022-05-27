@@ -339,7 +339,7 @@ class SampleReportingTests {
 		class Maps {
 			@Example
 			void fitsInOneLine() {
-				Map<String, Integer> map = new HashMap<>();
+				Map<String, Integer> map = new LinkedHashMap<>();
 				map.put("key1", 1);
 				map.put("key2", 2);
 				map.put("key3", 3);
@@ -373,7 +373,7 @@ class SampleReportingTests {
 					}
 				};
 
-				Map<String, Integer> map = new HashMap<>();
+				Map<String, Integer> map = new LinkedHashMap<>();
 				map.put("key1", 1);
 				ValueReport report = ValueReport.of(map, asList(collectionFormat));
 
@@ -391,7 +391,7 @@ class SampleReportingTests {
 
 			@Example
 			void mapOfLists() {
-				Map<String, List<String>> map = new HashMap<>();
+				Map<String, List<String>> map = new LinkedHashMap<>();
 				map.put(
 						"list1",
 						asList(

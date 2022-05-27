@@ -10,7 +10,7 @@ import net.jqwik.engine.support.*;
 // Make sure that all property parameters are only resolved once per property run
 public class CachingArbitraryResolver implements ArbitraryResolver {
 
-	private final Map<Parameter, Set<Arbitrary<?>>> cache = new HashMap<>();
+	private final Map<Parameter, Set<Arbitrary<?>>> cache = new LinkedHashMap<>();
 
 	private ArbitraryResolver resolver;
 

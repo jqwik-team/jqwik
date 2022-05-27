@@ -223,7 +223,7 @@ class MapArbitraryTests {
 
 		@SafeVarargs
 		private final <T, U> Map<T, U> createMap(Tuple.Tuple2<T, U>... tuples) {
-			HashMap<T, U> result = new HashMap<>();
+			HashMap<T, U> result = new LinkedHashMap<>();
 			for (Tuple.Tuple2<T, U> tuple : tuples) {
 				result.put(tuple.get1(), tuple.get2());
 			}

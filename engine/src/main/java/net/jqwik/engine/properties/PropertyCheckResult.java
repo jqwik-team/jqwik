@@ -307,7 +307,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		switch (checkStatus()) {
 			case FAILED:
 				String failedMessage = falsifiedParameters().map(sampleParams -> {
-					Map<Integer, Object> sampleMap = new HashMap<>();
+					Map<Integer, Object> sampleMap = new LinkedHashMap<>();
 					for (int i = 0; i < sampleParams.size(); i++) {
 						Object parameter = sampleParams.get(i);
 						sampleMap.put(i, parameter);

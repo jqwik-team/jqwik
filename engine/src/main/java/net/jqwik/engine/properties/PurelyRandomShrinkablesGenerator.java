@@ -15,7 +15,7 @@ class PurelyRandomShrinkablesGenerator {
 	}
 
 	List<Shrinkable<Object>> generateNext(Random random) {
-		Map<TypeUsage, Arbitrary<Object>> generatorsCache = new HashMap<>();
+		Map<TypeUsage, Arbitrary<Object>> generatorsCache = new LinkedHashMap<>();
 		return parameterGenerators
 				   .stream()
 				   .map(generator -> generator.next(random, generatorsCache))

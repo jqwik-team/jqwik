@@ -27,7 +27,7 @@ public class StoreRepository {
 
 	private static class IdentifiedStores extends HashMap<TestDescriptor, ScopedStore<?>> {}
 
-	private final Map<Object, IdentifiedStores> storesByIdentifier = new HashMap<>();
+	private final Map<Object, IdentifiedStores> storesByIdentifier = new LinkedHashMap<>();
 
 	public <T> ScopedStore<T> create(
 		TestDescriptor scope,
