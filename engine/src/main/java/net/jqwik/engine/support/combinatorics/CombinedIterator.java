@@ -33,38 +33,37 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 		}
 		if (position == -1) {
 			// The first initialization of the values
-			resetValuesUpTo(elements.size());
+			resetValuesFrom(0);
 		} else {
 			Iterator<T> it = iterators.get(position);
 			if (it.hasNext()) {
 				// Just advance the current iterator
 				elements.set(position, it.next());
 			} else {
-				// Advance the next iterator, and reset [0..nextPosition)
-				position++;
+				// Advance the next iterator, and reset (nextPosition, size)
+				position--;
 				int nextPosition = nextAvailablePosition();
 				if (nextPosition == -1) {
 					throw new NoSuchElementException();
 				}
 				elements.set(nextPosition, iterators.get(nextPosition).next());
-				resetValuesUpTo(nextPosition);
+				resetValuesFrom(nextPosition + 1);
 			}
 		}
 		return new ArrayList<>(elements);
 	}
 
-	private void resetValuesUpTo(int nextPosition) {
-		for (int i = 0; i < nextPosition; i++) {
+	private void resetValuesFrom(int startPosition) {
+		for (int i = startPosition; i < iterables.size(); i++) {
 			Iterator<T> newIt = iterables.get(i).iterator();
 			iterators.set(i, newIt);
 			elements.set(i, newIt.next());
 		}
-		position = 0;
+		position = iterables.size() - 1;
 	}
 
 	private int nextAvailablePosition() {
-		int size = iterators.size();
-		for (int i = position; i < size; i++) {
+		for (int i = position; i >= 0; i--) {
 			if (iterators.get(i).hasNext()) {
 				return i;
 			}
