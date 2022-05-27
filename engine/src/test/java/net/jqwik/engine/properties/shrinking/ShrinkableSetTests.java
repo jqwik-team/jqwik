@@ -173,7 +173,7 @@ class ShrinkableSetTests {
 			}
 			return i % modulo;
 		}).collect(Collectors.toList());
-		return new HashSet<>(moduloList).size() == list.size();
+		return new LinkedHashSet<>(moduloList).size() == list.size();
 	}
 
 	@SafeVarargs

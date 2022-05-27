@@ -86,7 +86,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	@Override
 	public MapArbitrary<K, V> uniqueKeys(Function<K, Object> by) {
 		DefaultMapArbitrary<K, V> clone = typedClone();
-		clone.keyUniquenessExtractors = new HashSet<>(keyUniquenessExtractors);
+		clone.keyUniquenessExtractors = new LinkedHashSet<>(keyUniquenessExtractors);
 		clone.keyUniquenessExtractors.add(by::apply);
 		return clone;
 	}
@@ -94,7 +94,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	@Override
 	public MapArbitrary<K, V> uniqueValues(Function<V, Object> by) {
 		DefaultMapArbitrary<K, V> clone = typedClone();
-		clone.valueUniquenessExtractors = new HashSet<>(valueUniquenessExtractors);
+		clone.valueUniquenessExtractors = new LinkedHashSet<>(valueUniquenessExtractors);
 		clone.valueUniquenessExtractors.add(by::apply);
 		return clone;
 	}

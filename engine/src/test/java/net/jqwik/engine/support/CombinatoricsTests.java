@@ -138,7 +138,7 @@ class CombinatoricsTests {
 		}
 
 		private Set<Integer> asSet(Integer... integers) {
-			return new HashSet<>(asList(integers));
+			return new LinkedHashSet<>(asList(integers));
 		}
 
 		@Example

@@ -134,7 +134,7 @@ public class RandomGenerators {
 			int minSize, int maxSize, int genSize, RandomDistribution sizeDistribution,
 			Set<FeatureExtractor<T>> uniquenessExtractors
 	) {
-		Set<FeatureExtractor<T>> extractors = new HashSet<>(uniquenessExtractors);
+		Set<FeatureExtractor<T>> extractors = new LinkedHashSet<>(uniquenessExtractors);
 		extractors.add(FeatureExtractor.identity());
 		Function<List<Shrinkable<T>>, Shrinkable<Set<T>>> createShrinkable =
 			elements -> new ShrinkableSet<T>(elements, minSize, maxSize, uniquenessExtractors);

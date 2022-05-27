@@ -79,7 +79,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 	protected StreamableArbitrary<T, U> uniqueElements(FeatureExtractor<T> by) {
 		MultivalueArbitraryBase<T, U> clone = typedClone();
-		clone.uniquenessExtractors = new HashSet<>(uniquenessExtractors);
+		clone.uniquenessExtractors = new LinkedHashSet<>(uniquenessExtractors);
 		clone.uniquenessExtractors.add(by);
 		return clone;
 	}

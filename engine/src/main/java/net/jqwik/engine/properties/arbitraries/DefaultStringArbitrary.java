@@ -185,7 +185,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	@Override
 	public StringArbitrary excludeChars(char... charsToExclude) {
 		DefaultStringArbitrary clone = typedClone();
-		Set<Character> excludedChars = new HashSet<>(this.excludedChars);
+		Set<Character> excludedChars = new LinkedHashSet<>(this.excludedChars);
 		for (char c : charsToExclude) {
 			excludedChars.add(c);
 		}

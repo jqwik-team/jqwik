@@ -18,6 +18,7 @@ import net.jqwik.engine.support.types.*;
 import net.jqwik.testing.*;
 
 import static java.math.BigInteger.*;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
@@ -86,7 +87,7 @@ class ArbitrariesTests {
 
 	@Example
 	void ofValueSet(@ForAll Random random) {
-		Set<String> valueSet = new HashSet<>(Arrays.asList("1", "hallo", "test"));
+		Set<String> valueSet = new LinkedHashSet<>(asList("1", "hallo", "test"));
 		Arbitrary<String> stringArbitrary = Arbitraries.of(valueSet);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		checkAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
@@ -120,7 +121,7 @@ class ArbitrariesTests {
 	void ofSupplierSet(@ForAll Random random) {
 		@SuppressWarnings("unchecked")
 		Supplier<List<String>>[] suppliers = new Supplier[]{ArrayList::new, ArrayList::new};
-		Set<Supplier<List<String>>> supplierList = new HashSet<>(Arrays.asList(suppliers));
+		Set<Supplier<List<String>>> supplierList = new LinkedHashSet<>(asList(suppliers));
 		Arbitrary<List<String>> listArbitrary = Arbitraries.ofSuppliers(supplierList);
 		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
 		assertAllGenerated(generator, random, (List<String> value) -> {

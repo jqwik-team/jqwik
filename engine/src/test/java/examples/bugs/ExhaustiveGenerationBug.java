@@ -23,7 +23,7 @@ class ExhaustiveGenerationBug {
 
 	private boolean hasNoDuplicates(List<List<Integer>> matrix) {
 		List<Integer> all = matrix.stream().flatMap(List::stream).collect(Collectors.toList());
-		HashSet<Integer> allSet = new HashSet<>(all);
+		HashSet<Integer> allSet = new LinkedHashSet<>(all);
 		return all.size() == allSet.size();
 	}
 

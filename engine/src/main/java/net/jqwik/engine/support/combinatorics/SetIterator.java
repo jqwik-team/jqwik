@@ -21,7 +21,7 @@ public class SetIterator<T> implements Iterator<Set<T>> {
 
 	private Set<T> findNext() {
 		while (combinedListIterator.hasNext()) {
-			HashSet<T> candidate = new HashSet<>(combinedListIterator.next());
+			HashSet<T> candidate = new LinkedHashSet<>(combinedListIterator.next());
 			if (candidate.size() != setSize || generatedSets.contains(candidate)) {
 				continue;
 			}

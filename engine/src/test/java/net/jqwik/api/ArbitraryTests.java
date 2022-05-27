@@ -486,7 +486,7 @@ class ArbitraryTests {
 
 			RandomGenerator<List<Integer>> generator = arbitrary.generator(1000, false);
 			List<Integer> listWithDuplicates = generator.next(random).value();
-			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+			Set<Integer> noMoreDuplicates = new LinkedHashSet<>(listWithDuplicates);
 
 			Statistics
 				.label("duplicates > 10%")
@@ -502,7 +502,7 @@ class ArbitraryTests {
 
 			RandomGenerator<List<Integer>> generator = arbitrary.generator(1000, false);
 			List<Integer> listWithDuplicates = generator.next(random).value();
-			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+			Set<Integer> noMoreDuplicates = new LinkedHashSet<>(listWithDuplicates);
 
 			Statistics
 				.label("duplicates > 40%")
@@ -518,7 +518,7 @@ class ArbitraryTests {
 
 			RandomGenerator<List<Integer>> generator = arbitrary.generator(1000, false);
 			List<Integer> listWithDuplicates = generator.next(random).value();
-			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+			Set<Integer> noMoreDuplicates = new LinkedHashSet<>(listWithDuplicates);
 			assertThat(noMoreDuplicates).hasSize(1);
 		}
 
@@ -528,7 +528,7 @@ class ArbitraryTests {
 			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(1.0);
 
 			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(50).sample();
-			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+			Set<Integer> noMoreDuplicates = new LinkedHashSet<>(listWithDuplicates);
 
 			assertThat(noMoreDuplicates).hasSize(1);
 		}

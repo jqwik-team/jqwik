@@ -14,6 +14,7 @@ import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.testing.*;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
@@ -158,7 +159,7 @@ class PropertyMethodArbitraryResolverTests {
 
 				@Override
 				public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-					return new HashSet<>(Arrays.asList(arbitraries));
+					return new LinkedHashSet<>(asList(arbitraries));
 				}
 			};
 		}

@@ -159,7 +159,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	private Stream<Shrinkable<T>> shrinkToAlternatives(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
 		ShrinkingDistance distance = current.distance();
-		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
+		Set<Integer> newUsedIndexes = new LinkedHashSet<>(usedIndexes);
 		return IntStream
 					   .range(0, suppliers.size())
 					   .filter(index -> !usedIndexes.contains(index))
@@ -173,7 +173,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	@SuppressWarnings("unused")
 	private Stream<Shrinkable<T>> shrinkToAlternativesAndGrow(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
 		ShrinkingDistance distance = current.distance();
-		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
+		Set<Integer> newUsedIndexes = new LinkedHashSet<>(usedIndexes);
 		return IntStream
 					   .range(0, suppliers.size())
 					   .filter(index -> !usedIndexes.contains(index))

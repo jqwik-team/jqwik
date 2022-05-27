@@ -71,7 +71,7 @@ class ShrinkableProperties {
 						 .mapToObj(ignore -> Arbitraries.lazy(this::anyShrinkable))
 						 .collect(Collectors.toList());
 			return Combinators.combine(elementArbitraries).as(elements -> {
-				Set<Shrinkable> elementSet = new HashSet<>(elements);
+				Set<Shrinkable> elementSet = new LinkedHashSet<>(elements);
 				return new ShrinkableSet(elementSet, 0, size, Collections.emptySet());
 			});
 		});

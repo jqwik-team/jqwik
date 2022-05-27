@@ -81,7 +81,7 @@ class UniqueElementsProperties {
 		}
 
 		private Set<String> asSet(String ... strings) {
-			return new HashSet<>(asList(strings));
+			return new LinkedHashSet<>(asList(strings));
 		}
 
 		private class GetFirstTwoChars implements Function<String, Object> {

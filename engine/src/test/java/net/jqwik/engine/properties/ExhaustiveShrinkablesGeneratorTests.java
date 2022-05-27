@@ -59,7 +59,7 @@ class ExhaustiveShrinkablesGeneratorTests {
 			asList(Shrinkable.unshrinkable(asList(0, 1))),
 			asList(Shrinkable.unshrinkable(asList(1, 0))),
 			asList(Shrinkable.unshrinkable(asList(1, 1))),
-			asList(Shrinkable.unshrinkable(new HashSet<>(asList(0, 1))))
+			asList(Shrinkable.unshrinkable(new LinkedHashSet<>(asList(0, 1))))
 		);
 	}
 

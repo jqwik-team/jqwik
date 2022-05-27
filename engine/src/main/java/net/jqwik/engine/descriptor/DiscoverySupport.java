@@ -40,7 +40,7 @@ public class DiscoverySupport {
 	}
 
 	public static Set<Domain> findDomains(AnnotatedElement element) {
-		return new HashSet<>(findRepeatableAnnotations(element, Domain.class));
+		return new LinkedHashSet<>(findRepeatableAnnotations(element, Domain.class));
 	}
 
 	public static String determineLabel(AnnotatedElement element, Supplier<String> defaultNameSupplier) {

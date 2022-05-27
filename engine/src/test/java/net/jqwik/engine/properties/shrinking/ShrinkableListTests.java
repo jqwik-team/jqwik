@@ -166,7 +166,7 @@ class ShrinkableListTests {
 		void shrinkSizeAgainAfterShrinkingElements() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 0, 2, 1);
 
-			TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() == new HashSet<>(integers).size();
+			TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() == new LinkedHashSet<>(integers).size();
 			List<Integer> shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 0);
 		}
@@ -259,7 +259,7 @@ class ShrinkableListTests {
 			List<Integer> values = Arrays.asList(56, 4, 23, 2, 95);
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(values, 2, 5, i -> i);
 
-			Predicate<List<Integer>> condition = list -> new HashSet<>(list).size() == list.size();
+			Predicate<List<Integer>> condition = list -> new LinkedHashSet<>(list).size() == list.size();
 			assertWhileShrinking(shrinkable, condition);
 		}
 
@@ -420,7 +420,7 @@ class ShrinkableListTests {
 							   .list().ofMaxSize(5)
 							   .filter(lol -> {
 								   List<Integer> allElements = lol.stream().flatMap(Collection::stream).collect(Collectors.toList());
-								   return (allElements.size() == new HashSet<>(allElements).size());
+								   return (allElements.size() == new LinkedHashSet<>(allElements).size());
 							   });
 
 			TestingFalsifier<List<Set<Integer>>> falsifier =

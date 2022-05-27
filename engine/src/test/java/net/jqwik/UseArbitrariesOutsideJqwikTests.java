@@ -79,7 +79,7 @@ class UseArbitrariesOutsideJqwikTests {
 		for (int i = 0; i < 20; i++) {
 
 			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
-			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+			Set<Integer> noMoreDuplicates = new LinkedHashSet<>(listWithDuplicates);
 
 			if (i < 19) {
 				// Can fail because collections with no duplicates have probability of approx. 5%

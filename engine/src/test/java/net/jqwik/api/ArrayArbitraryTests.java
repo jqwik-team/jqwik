@@ -180,7 +180,7 @@ class ArrayArbitraryTests {
 			}
 			return i % modulo;
 		}).collect(Collectors.toList());
-		return new HashSet<>(modulo100).size() == list.size();
+		return new LinkedHashSet<>(modulo100).size() == list.size();
 	}
 
 	@Group

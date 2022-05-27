@@ -22,7 +22,7 @@ class ShrinkingListElementsNotEnough {
 	}
 
 	private <T> List<T> reverseWithoutDuplicates(List<T> original) {
-		List<T> clone = new ArrayList<>(new HashSet<>(original));
+		List<T> clone = new ArrayList<>(new LinkedHashSet<>(original));
 		Collections.reverse(clone);
 		return clone;
 	}

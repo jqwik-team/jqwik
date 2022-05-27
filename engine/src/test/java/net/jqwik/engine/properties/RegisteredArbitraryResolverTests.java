@@ -112,7 +112,7 @@ class RegisteredArbitraryResolverTests {
 
 			@Override
 			public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-				return new HashSet<>(asList(arbitraries));
+				return new LinkedHashSet<>(asList(arbitraries));
 			}
 
 			@Override
