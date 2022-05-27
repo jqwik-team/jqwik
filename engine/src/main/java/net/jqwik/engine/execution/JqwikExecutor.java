@@ -47,7 +47,10 @@ public class JqwikExecutor {
 	}
 
 	private void letNonSuccessfulTestsExecuteFirst(ExecutionPipeline pipeline) {
-		previousFailedTests.forEach(pipeline::executeFirst);
+		// TODO: avoid O(m*n) in the future
+		List<UniqueId> ids = new ArrayList<>(previousFailedTests);
+		Collections.reverse(ids);
+		ids.forEach(pipeline::executeFirst);
 	}
 
 	private ExecutionTask createTask(TestDescriptor descriptor, Pipeline pipeline, PropertyExecutionListener propertyExecutionListener) {

@@ -54,6 +54,8 @@
     - JqwikSession:
       - setRandomSessionSeed(), getRandomSessionSeed()
 
+    - Rework net.jqwik.engine.execution.JqwikExecutor.letNonSuccessfulTestsExecuteFirst to avoid O(m*n)
+
     - Allow state machine / model specification with temporal logic.
       See https://wickstrom.tech/programming/2021/05/03/specifying-state-machines-with-temporal-logic.html
 
