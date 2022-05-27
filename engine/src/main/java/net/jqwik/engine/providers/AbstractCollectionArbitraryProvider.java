@@ -6,6 +6,8 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
+
 abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider {
 
 	@Override
@@ -21,7 +23,7 @@ abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider 
 		Set<Arbitrary<?>> elementArbitraries = subtypeProvider.apply(elementType);
 		return elementArbitraries.stream()
 								 .map(this::create)
-								 .collect(Collectors.toSet());
+								 .collect(toLinkedHashSet());
 	}
 
 	protected abstract Arbitrary<?> create(Arbitrary<?> innerArbitrary);

@@ -11,6 +11,7 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.*;
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 class ProviderMethodInvoker {
@@ -86,7 +87,7 @@ class ProviderMethodInvoker {
 	}
 
 	private <T, R> Set<R> mapSet(Set<T> invokers, Function<T, R> mapper) {
-		return invokers.stream().map(mapper).collect(Collectors.toSet());
+		return invokers.stream().map(mapper).collect(toLinkedHashSet());
 	}
 
 	private boolean isForAllParameter(MethodParameter parameter) {

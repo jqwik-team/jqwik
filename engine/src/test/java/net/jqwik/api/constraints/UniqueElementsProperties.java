@@ -8,6 +8,8 @@ import net.jqwik.api.*;
 
 import static java.util.Arrays.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.*;
+
 @PropertyDefaults(tries = 100)
 @Group
 class UniqueElementsProperties {
@@ -190,7 +192,7 @@ class UniqueElementsProperties {
 	}
 
 	private <T> boolean hasNoDuplicates(Collection<T> collection, Function<T, Object> by) {
-		Set<Object> set = collection.stream().map(by).collect(Collectors.toSet());
+		Set<Object> set = collection.stream().map(by).collect(toLinkedHashSet());
 		return set.size() == collection.size();
 	}
 }

@@ -6,6 +6,8 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
+
 public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
 	public ShrinkableSet(Collection<Shrinkable<E>> elements, int minSize, int maxSize, Collection<FeatureExtractor<E>> uniquenessExtractors) {
@@ -28,7 +30,7 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
 	@Override
 	Collector<E, ?, Set<E>> containerCollector() {
-		return Collectors.toSet();
+		return toLinkedHashSet();
 	}
 
 	@Override

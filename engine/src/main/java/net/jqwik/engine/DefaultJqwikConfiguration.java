@@ -9,6 +9,8 @@ import org.junit.platform.engine.*;
 
 import net.jqwik.engine.recording.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.*;
+
 public class DefaultJqwikConfiguration implements JqwikConfiguration {
 
 	private static final Logger LOG = Logger.getLogger(JqwikConfiguration.class.getName());
@@ -102,7 +104,7 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			public Set<UniqueId> previousFailures() {
 				if (!properties.runFailuresFirst())
 					return Collections.emptySet();
-				return previousRun.allNonSuccessfulTests().map(TestRun::getUniqueId).collect(Collectors.toSet());
+				return previousRun.allNonSuccessfulTests().map(TestRun::getUniqueId).collect(toLinkedHashSet());
 			}
 		};
 	}

@@ -13,6 +13,8 @@ import net.jqwik.api.statistics.StatisticsReport.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.*;
+
 public class StatisticsHook implements AroundPropertyHook {
 
 	private static final Logger LOG = Logger.getLogger(StatisticsHook.class.getName());
@@ -78,7 +80,7 @@ public class StatisticsHook implements AroundPropertyHook {
 						  String label = entry.getKey();
 						  return Tuple.of(label, entry.getValue(), determineFormat(label, statisticsReportAnnotations, context, isFailure));
 					  })
-					  .collect(Collectors.toSet());
+					  .collect(toLinkedHashSet());
 
 		report(reports, context.reporter(), context.extendedLabel());
 	}

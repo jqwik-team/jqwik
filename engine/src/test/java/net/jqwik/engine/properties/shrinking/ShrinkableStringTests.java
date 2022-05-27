@@ -8,6 +8,7 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import net.jqwik.testing.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
@@ -92,7 +93,7 @@ public class ShrinkableStringTests {
 
 			TestingFalsifier<String> falsifier =
 					string -> {
-						Set<Integer> usedLetters = string.chars().boxed().collect(Collectors.toSet());
+						Set<Integer> usedLetters = string.chars().boxed().collect(toLinkedHashSet());
 						return usedLetters.size() != 1;
 					};
 

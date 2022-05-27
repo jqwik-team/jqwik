@@ -11,6 +11,7 @@ import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
 
 import static java.lang.Math.*;
+import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
 
 public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator {
 
@@ -146,7 +147,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		Set<Arbitrary<Object>> arbitraries =
 			arbitraryResolver.forParameter(parameter).stream()
 							 .map(Arbitrary::asGeneric)
-							 .collect(Collectors.toSet());
+							 .collect(toLinkedHashSet());
 		if (arbitraries.isEmpty()) {
 			throw new CannotFindArbitraryException(TypeUsageImpl.forParameter(parameter), parameter.getAnnotation(ForAll.class));
 		}

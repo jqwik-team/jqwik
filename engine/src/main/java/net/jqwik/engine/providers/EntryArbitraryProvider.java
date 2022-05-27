@@ -6,6 +6,8 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
+
 public class EntryArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
@@ -24,7 +26,7 @@ public class EntryArbitraryProvider implements ArbitraryProvider {
 				Arbitrary<?> valueArbitrary = arbitraries.get(1);
 				return Arbitraries.entries(keyArbitrary, valueArbitrary);
 			})
-			.collect(Collectors.toSet());
+			.collect(toLinkedHashSet());
 
 	}
 }

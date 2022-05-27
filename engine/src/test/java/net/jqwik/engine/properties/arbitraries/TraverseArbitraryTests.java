@@ -11,6 +11,8 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.testing.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.*;
+
 import static org.assertj.core.api.Assertions.*;
 
 class TraverseArbitraryTests {
@@ -57,7 +59,7 @@ class TraverseArbitraryTests {
 		}
 		@Override
 		public Set<Executable> findCreators(TypeUsage targetType) {
-			return Arrays.stream(targetType.getRawType().getDeclaredConstructors()).collect(Collectors.toSet());
+			return Arrays.stream(targetType.getRawType().getDeclaredConstructors()).collect(toLinkedHashSet());
 		}
 	}
 

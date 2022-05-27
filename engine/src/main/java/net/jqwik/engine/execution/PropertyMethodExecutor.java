@@ -17,6 +17,8 @@ import net.jqwik.engine.execution.reporting.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.*;
+
 public class PropertyMethodExecutor {
 
 	private static final Logger LOG = Logger.getLogger(PropertyMethodExecutor.class.getName());
@@ -113,7 +115,7 @@ public class PropertyMethodExecutor {
 	}
 
 	private String buildResultReportKey() {
-		Set<String> tags = methodDescriptor.getTags().stream().map(TestTag::getName).collect(Collectors.toSet());
+		Set<String> tags = methodDescriptor.getTags().stream().map(TestTag::getName).collect(toLinkedHashSet());
 		String tagsString = tags.isEmpty()
 								? ""
 								: String.format("[%s] ", String.join(", ", tags));

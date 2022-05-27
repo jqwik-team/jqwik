@@ -6,6 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.support.*;
 
 public class ArrayArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -27,7 +28,7 @@ public class ArrayArbitraryProvider implements ArbitraryProvider {
 					return DefaultArrayArbitrary.forComponentType(elementArbitrary, componentClass);
 				}
 			})
-			.collect(Collectors.toSet());
+			.collect(JqwikCollectors.toLinkedHashSet());
 	}
 
 	private Class<?> upperboundsSupertype(TypeUsage componentType) {

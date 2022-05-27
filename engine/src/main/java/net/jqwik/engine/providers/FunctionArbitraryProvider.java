@@ -9,6 +9,8 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
 
+import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
+
 public class FunctionArbitraryProvider implements ArbitraryProvider {
 
 	private static final Class<?>[] EXCLUDE_TYPES =
@@ -38,7 +40,7 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 					   Arbitrary<?> resultArbitrary = arbitraries.get(0);
 					   return Functions.function(functionalType).returning(resultArbitrary);
 				   })
-				   .collect(Collectors.toSet());
+				   .collect(toLinkedHashSet());
 	}
 
 	private TypeUsage getReturnType(TypeUsage targetType) {

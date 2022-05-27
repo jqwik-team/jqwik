@@ -12,6 +12,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import net.jqwik.testing.*;
 
 import static java.util.Arrays.*;
+import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
@@ -138,7 +139,7 @@ class ShrinkableSetTests {
 		@Example
 		void bigSet() {
 			Set<Shrinkable<Integer>> elementShrinkables = IntStream.range(0, 1000).mapToObj(OneStepShrinkable::new)
-																   .collect(Collectors.toSet());
+																   .collect(toLinkedHashSet());
 			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5, 1000, Collections.emptySet());
 
 			Set<Integer> shrunkValue = shrink(shrinkable, falsifier(Set::isEmpty), null);
