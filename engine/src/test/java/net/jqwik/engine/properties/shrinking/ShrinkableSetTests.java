@@ -133,7 +133,7 @@ class ShrinkableSetTests {
 				};
 
 			Set<Integer> shrunkValue = shrink(shrinkable, falsifier, null);
-			assertThat(shrunkValue).containsExactly(0, 1, 2, 3);
+			assertThat(shrunkValue).containsExactly(1, 3, 0, 2);
 		}
 
 		@Example
