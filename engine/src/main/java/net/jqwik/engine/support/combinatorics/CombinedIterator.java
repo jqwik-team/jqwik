@@ -54,8 +54,14 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 	}
 
 	private void resetValuesFrom(int startPosition) {
+		List<Iterator<T>> iterators = this.iterators;
+		List<Iterable<T>> iterables = this.iterables;
+		List<T> elements = this.elements;
+		// In the initial reset, we can reuse the existing iterators
+		// It might slightly optimize the behavior, and it supports Stream#iterator which can't be executed twice
+		boolean initialReset = position == -1;
 		for (int i = startPosition; i < iterables.size(); i++) {
-			Iterator<T> newIt = iterables.get(i).iterator();
+			Iterator<T> newIt = initialReset ? iterators.get(i) : iterables.get(i).iterator();
 			iterators.set(i, newIt);
 			elements.set(i, newIt.next());
 		}
@@ -63,6 +69,7 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 	}
 
 	private int nextAvailablePosition() {
+		List<Iterator<T>> iterators = this.iterators;
 		for (int i = position; i >= 0; i--) {
 			if (iterators.get(i).hasNext()) {
 				return i;
