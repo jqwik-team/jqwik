@@ -39,10 +39,13 @@ jobs:
           java-version: ${{ matrix.Java }}
           check-latest: true
 
-      - name: Build and Test
-        run: |
-          ./gradlew --version
-          ./gradlew test --info
+      - uses: burrunan/gradle-cache-action@v1
+        # See https://github.com/burrunan/gradle-cache-action
+        name: Build and Test
+        with:
+          # It allows different cache contents for different JDKs
+          job-id: java${{ matrix.java }}
+          arguments: check
 
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
