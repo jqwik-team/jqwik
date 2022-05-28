@@ -1,6 +1,5 @@
 package net.jqwik.engine.support.combinatorics;
 
-import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.*;
 
