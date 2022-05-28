@@ -2,6 +2,10 @@
 1.7.0
 
     - Chains: Implement Fluent API for Chains and Action chains
+        - See https://github.com/jlink/jqwik/issues/134#issuecomment-1127478094:
+          Reimplement SequentialActionChain.transformations() without reinstantiating all shrinkables
+          - Collect all transformer descriptions for Chain.transformers() as they go.
+          - Remove all descriptionProviders in Transformer factory methods and re-introduce description strings.
         - Transformer.noop()
             - Optimize shrinking for that
         - Action -> Action.Dependent | Action.Independent
