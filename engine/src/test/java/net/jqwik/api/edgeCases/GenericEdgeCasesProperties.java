@@ -28,13 +28,14 @@ public interface GenericEdgeCasesProperties {
 	@Property
 	default void consistentItemOrder(
 		@ForAll("arbitraries") Arbitrary<?> arbitrary,
-		@ForAll("arbitraryTransformations") Function<Arbitrary<?>, Arbitrary<?>> transformation,
+		@ForAll("arbitraryTransformations") ArbitraryTransformer<?, ?> transformation,
 		@ForAll Random random,
 		@ForAll @IntRange(min = 1, max = 20) int size,
 		@ForAll @IntRange(min = 1, max = 1000) int genSize,
 		@ForAll boolean withEdgeCases
 	) {
-		Arbitrary<?> values = transformation.apply(arbitrary);
+		@SuppressWarnings({"unchecked", "rawtypes"})
+		Arbitrary<?> values = transformation.apply((Arbitrary) arbitrary);
 		RandomGenerator<?> gen = values.generator(genSize, withEdgeCases);
 		for (int i = 0; i < size; i++) {
 			long seed = random.nextLong();
@@ -49,13 +50,13 @@ public interface GenericEdgeCasesProperties {
 
 	interface ArbitraryTransformer<U, V> extends Function<Arbitrary<U>, Arbitrary<V>> {
 		static <E, R> ArbitraryTransformer<E, R> transformer(
-			Supplier<String> name,
+			String name,
 			Function<? super Arbitrary<E>, ? extends Arbitrary<R>> action
 		) {
 			return new ArbitraryTransformer<E, R>() {
 				@Override
 				public String toString() {
-					return name.get();
+					return name;
 				}
 
 				@Override
@@ -63,6 +64,13 @@ public interface GenericEdgeCasesProperties {
 					return action.apply(input);
 				}
 			};
+		}
+
+		default <K> ArbitraryTransformer<U, K> then(ArbitraryTransformer<V, K> after) {
+			return transformer(
+				toString() + after,
+				(x) -> after.apply(apply(x))
+			);
 		}
 
 		static Object wrapWithOpaqueObject(Object that) {
@@ -73,43 +81,44 @@ public interface GenericEdgeCasesProperties {
 				}
 			};
 		}
+
+		ArbitraryTransformer<Object, Object> IDENTITY = ArbitraryTransformer.transformer(
+			"identity",
+			(x) -> x
+		);
+
+		ArbitraryTransformer<Object, Object> WRAP_WITH_OPAQUE_OBJECT = ArbitraryTransformer.transformer(
+			".map(::wrapWithOpaqueObject)",
+			(x) -> x.map(ArbitraryTransformer::wrapWithOpaqueObject)
+		);
+
+		ArbitraryTransformer<Object, Set<Object>> SET = ArbitraryTransformer.transformer(
+			".set()",
+			(x) -> x.set()
+		);
+
+		ArbitraryTransformer<Object, Set<Object>> SET__MAP_EACH = ArbitraryTransformer.transformer(
+			".mapEach(::identity)",
+			(x) -> x.set().mapEach((set, value) -> value)
+		);
+
+		ArbitraryTransformer<Object, Set<Object>> SET__FLAT_MAP_EACH = ArbitraryTransformer.transformer(
+			".set().flatMapEach(just(value))",
+			(x) -> x.set().flatMapEach((set, value) -> Arbitraries.just(value))
+		);
 	}
 
 	@Provide
-	default Arbitrary<ArbitraryTransformer<?, ?>> arbitraryTransformations() {
+	static Arbitrary<ArbitraryTransformer<?, ?>> arbitraryTransformations() {
 		return Arbitraries.of(
-			ArbitraryTransformer.transformer(
-				() -> "identity",
-				(x) -> x
-			),
-			ArbitraryTransformer.transformer(
-				() -> ".set()",
-				(x) -> x.set()
-			),
-			ArbitraryTransformer.transformer(
-				() -> ".set().mapEach(::identity)",
-				(x) -> x.set().mapEach((set, value) -> value)
-			),
-			ArbitraryTransformer.transformer(
-				() -> ".set().flatMapEach(just(value))",
-				(x) -> x.set().flatMapEach((set, value) -> Arbitraries.just(value))
-			),
-			ArbitraryTransformer.transformer(
-				() -> ".map(wrapWithObject)",
-				(x) -> x.map(ArbitraryTransformer::wrapWithOpaqueObject)
-			),
-			ArbitraryTransformer.transformer(
-				() -> ".map(wrapWithObject).set()",
-				(x) -> x.map(ArbitraryTransformer::wrapWithOpaqueObject).set()
-			),
-			ArbitraryTransformer.transformer(
-				() -> ".map(wrapWithObject).set().mapEach(::identity)",
-				(x) -> x.map(ArbitraryTransformer::wrapWithOpaqueObject).set().mapEach((set, value) -> value)
-			),
-			ArbitraryTransformer.transformer(
-				() -> ".map(wrapWithObject).set().flatMapEach(just(value))",
-				(x) -> x.map(ArbitraryTransformer::wrapWithOpaqueObject).set().flatMapEach((set, value) -> Arbitraries.just(value))
-			)
+			ArbitraryTransformer.IDENTITY,
+			ArbitraryTransformer.WRAP_WITH_OPAQUE_OBJECT,
+			ArbitraryTransformer.SET,
+			ArbitraryTransformer.SET__MAP_EACH,
+			ArbitraryTransformer.SET__FLAT_MAP_EACH,
+			ArbitraryTransformer.WRAP_WITH_OPAQUE_OBJECT.then(ArbitraryTransformer.SET),
+			ArbitraryTransformer.WRAP_WITH_OPAQUE_OBJECT.then(ArbitraryTransformer.SET__MAP_EACH),
+			ArbitraryTransformer.WRAP_WITH_OPAQUE_OBJECT.then(ArbitraryTransformer.SET__FLAT_MAP_EACH)
 		);
 	}
 }
