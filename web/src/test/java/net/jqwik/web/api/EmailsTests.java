@@ -253,7 +253,7 @@ public class EmailsTests {
 			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(WebTestingSupport::getLocalPartOfEmail)
-											 .collect(Collectors.toSet());
+											 .collect(Collectors.toCollection(LinkedHashSet::new));
 
 			assertThat(localParts).containsExactlyInAnyOrder("a", "A", "0");
 		}
@@ -264,7 +264,7 @@ public class EmailsTests {
 			Set<String> localParts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(WebTestingSupport::getLocalPartOfEmail)
-											 .collect(Collectors.toSet());
+											 .collect(Collectors.toCollection(LinkedHashSet::new));
 
 			assertThat(localParts).containsExactlyInAnyOrder("\"a\"", "\" \"");
 		}
@@ -275,7 +275,7 @@ public class EmailsTests {
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(WebTestingSupport::getEmailHost)
-											 .collect(Collectors.toSet());
+											 .collect(Collectors.toCollection(LinkedHashSet::new));
 
 			assertThat(hosts).containsExactlyInAnyOrder("a.aa", "0.aa");
 		}
@@ -286,7 +286,7 @@ public class EmailsTests {
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(WebTestingSupport::getEmailHost)
-											 .collect(Collectors.toSet());
+											 .collect(Collectors.toCollection(LinkedHashSet::new));
 
 			assertThat(hosts).contains(
 					"[0.0.0.0]", "[255.255.255.255]", "[127.0.0.1]"
@@ -299,7 +299,7 @@ public class EmailsTests {
 			Set<String> hosts = collectEdgeCaseValues(emails.edgeCases())
 											 .stream()
 											 .map(WebTestingSupport::getEmailHost)
-											 .collect(Collectors.toSet());
+											 .collect(Collectors.toCollection(LinkedHashSet::new));
 
 			assertThat(hosts).contains(
 					"[::]",
