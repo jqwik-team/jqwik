@@ -30,10 +30,12 @@ public interface GenericEdgeCasesProperties {
 		@ForAll("arbitraries") Arbitrary<?> arbitrary,
 		@ForAll("arbitraryTransformations") Function<Arbitrary<?>, Arbitrary<?>> transformation,
 		@ForAll Random random,
-		@ForAll @IntRange(min = 1, max = 20) int size
+		@ForAll @IntRange(min = 1, max = 20) int size,
+		@ForAll @IntRange(min = 1, max = 1000) int genSize,
+		@ForAll boolean withEdgeCases
 	) {
 		Arbitrary<?> values = transformation.apply(arbitrary);
-		RandomGenerator<?> gen = values.generator(1000, true);
+		RandomGenerator<?> gen = values.generator(genSize, withEdgeCases);
 		for (int i = 0; i < size; i++) {
 			long seed = random.nextLong();
 			// Both values should be equal with respect to "displayString"
