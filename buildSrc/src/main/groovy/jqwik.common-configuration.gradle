@@ -2,6 +2,8 @@ plugins {
 	id 'java-library'
 	id 'maven-publish'
 	id 'signing'
+	// See https://github.com/vlsi/vlsi-release-plugins/blob/master/plugins/gradle-extensions-plugin/README.md
+	id 'com.github.vlsi.gradle-extensions'
 }
 
 repositories {
