@@ -49,6 +49,12 @@ class CombinedIteratorTests {
 		assertThat(combined.hasNext()).isFalse();
 	}
 
+	@Example
+	void combineNoIterables() {
+		CombinedIterator<String> combined = new CombinedIterator<>(asList());
+		assertThat(combined.hasNext()).isFalse();
+	}
+
 	@Property
 	void combineManyIterables(@ForAll @Size(min = 1, max = 10) List<@Size(min = 1, max = 5) Iterable<Integer>> iterables) {
 		CombinedIterator<Integer> combined = new CombinedIterator<>(iterables);

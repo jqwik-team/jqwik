@@ -14,7 +14,7 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 		this.iterables = iterables;
 		elements = new ArrayList<>(Collections.nCopies(iterables.size(), null));
 		iterators = iterables.stream().map(Iterable::iterator).collect(Collectors.toCollection(ArrayList::new));
-		isEmpty = !iterators.stream().allMatch(Iterator::hasNext);
+		isEmpty = iterables.isEmpty() || !iterators.stream().allMatch(Iterator::hasNext);
 	}
 
 	@Override
