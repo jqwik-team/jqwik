@@ -27,6 +27,6 @@ class TripleArbitraryProvider : ArbitraryProvider {
                 val third = arbitraries[2]
                 return@map anyTriple(first, second, third)
             }
-            .collect(Collectors.toSet())
+            .collect(Collectors.toCollection(::LinkedHashSet))
     }
 }

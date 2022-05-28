@@ -24,6 +24,6 @@ class PairArbitraryProvider : ArbitraryProvider {
                 val second = arbitraries[1]
                 return@map anyPair(first, second)
             }
-            .collect(Collectors.toSet())
+            .collect(Collectors.toCollection(::LinkedHashSet))
     }
 }
