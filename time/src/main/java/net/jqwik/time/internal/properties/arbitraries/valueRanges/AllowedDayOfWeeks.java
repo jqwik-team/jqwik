@@ -7,7 +7,7 @@ public class AllowedDayOfWeeks extends AllowedUnits<DayOfWeek> {
 
 	@Override
 	protected void setDefaultAllowed() {
-		allowed = new HashSet<>(Arrays.asList(DayOfWeek.values()));
+		allowed = new LinkedHashSet<>(Arrays.asList(DayOfWeek.values()));
 	}
 
 }

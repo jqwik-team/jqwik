@@ -41,7 +41,7 @@ class RateProviderContractProperties {
 	// Constraints should be checked during precondition checking of a contract
 	static class CurrencyConstraint implements Constraint<String> {
 
-		private final Set<String> currencies = new HashSet<String>() {
+		private final Set<String> currencies = new LinkedHashSet<String>() {
 			{
 				add("EUR");
 				add("USD");

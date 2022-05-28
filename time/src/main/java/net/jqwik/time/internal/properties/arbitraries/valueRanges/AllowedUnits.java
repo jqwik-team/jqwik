@@ -15,7 +15,7 @@ public abstract class AllowedUnits<T> {
 
 	@SafeVarargs
 	public final void set(T... values) {
-		allowed = new HashSet<>(Arrays.asList(values));
+		allowed = new LinkedHashSet<>(Arrays.asList(values));
 	}
 
 	public Set<T> get() {

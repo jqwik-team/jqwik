@@ -11,7 +11,7 @@ public class OfPrecision {
 
 	public final static ChronoUnit DEFAULT = SECONDS;
 
-	private final static Set<ChronoUnit> ALLOWED_PRECISIONS = new HashSet<>(Arrays.asList(HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS));
+	private final static Set<ChronoUnit> ALLOWED_PRECISIONS = new LinkedHashSet<>(Arrays.asList(HOURS, MINUTES, SECONDS, MILLIS, MICROS, NANOS));
 
 	private ChronoUnit precision = DEFAULT;
 	private boolean precisionSet = false;

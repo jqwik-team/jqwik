@@ -120,7 +120,7 @@ public class TestingSupport {
 	}
 
 	public static <T> Set<Shrinkable<T>> collectEdgeCaseShrinkables(EdgeCases<T> edgeCases) {
-		Set<Shrinkable<T>> shrinkables = new HashSet<>();
+		Set<Shrinkable<T>> shrinkables = new LinkedHashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {
 			shrinkables.add(edgeCase);
 		}
@@ -128,7 +128,7 @@ public class TestingSupport {
 	}
 
 	public static <T> Set<T> collectEdgeCaseValues(EdgeCases<T> edgeCases) {
-		Set<T> values = new HashSet<>();
+		Set<T> values = new LinkedHashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {
 			values.add(edgeCase.value());
 		}
