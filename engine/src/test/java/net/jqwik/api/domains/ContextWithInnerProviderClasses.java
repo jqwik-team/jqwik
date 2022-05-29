@@ -1,12 +1,10 @@
 package net.jqwik.api.domains;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
-
-import static net.jqwik.engine.support.JqwikCollectors.*;
+import net.jqwik.engine.support.*;
 
 class ContextWithInnerProviderClasses extends DomainContextBase {
 
@@ -32,7 +30,7 @@ class ContextWithInnerProviderClasses extends DomainContextBase {
 		public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 			TypeUsage innerTarget = targetType.getTypeArgument(0);
 			Set<Arbitrary<?>> innerProviders = subtypeProvider.apply(innerTarget);
-			return innerProviders.stream().map(inner -> inner.list().ofSize(3)).collect(toLinkedHashSet());
+			return innerProviders.stream().map(inner -> inner.list().ofSize(3)).collect(JqwikCollectors.toLinkedHashSet());
 		}
 	}
 

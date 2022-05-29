@@ -1,13 +1,11 @@
 package net.jqwik.engine.providers;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
-
-import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
+import net.jqwik.engine.support.*;
 
 public class NullableArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -24,7 +22,7 @@ public class NullableArbitraryProvider implements ArbitraryProvider {
 		Set<Arbitrary<?>> rawArbitraries = subtypeProvider.apply(nonNullType);
 		return rawArbitraries.stream()
 				   .map(a -> a.injectNull(0.05))
-				   .collect(toLinkedHashSet());
+				   .collect(JqwikCollectors.toLinkedHashSet());
 	}
 
 	@Override

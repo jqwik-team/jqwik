@@ -1,12 +1,10 @@
 package net.jqwik.api.domains;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-
-import static net.jqwik.engine.support.JqwikCollectors.*;
+import net.jqwik.engine.support.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -34,7 +32,7 @@ class DomainInitializationTests {
 		List<PropertyLifecycleContext> contexts = DomainWithInitializeMethod.initializedContexts;
 		assertThat(contexts).hasSize(3);
 
-		Set<String> labels = contexts.stream().map(LifecycleContext::label).collect(toLinkedHashSet());
+		Set<String> labels = contexts.stream().map(LifecycleContext::label).collect(JqwikCollectors.toLinkedHashSet());
 		assertThat(labels).containsExactlyInAnyOrder("prop1", "prop2", "prop3");
 	}
 

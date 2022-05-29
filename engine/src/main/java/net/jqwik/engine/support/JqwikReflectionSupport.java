@@ -14,7 +14,6 @@ import net.jqwik.api.providers.*;
 
 import static java.util.stream.Collectors.*;
 
-import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
 import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 public class JqwikReflectionSupport {
@@ -173,7 +172,7 @@ public class JqwikReflectionSupport {
 		String classpath = System.getProperty("java.class.path");
 		return Arrays.stream(classpath.split(File.pathSeparator))
 					 .map(Paths::get).filter(Files::isDirectory)
-					 .collect(toLinkedHashSet());
+					 .collect(JqwikCollectors.toLinkedHashSet());
 	}
 
 	public static List<MethodParameter> getMethodParameters(Executable method, Class<?> containerClass) {

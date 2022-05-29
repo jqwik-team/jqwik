@@ -9,8 +9,6 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
-import static net.jqwik.engine.support.JqwikCollectors.*;
-
 class DomainContextFactory {
 
 	private final PropertyLifecycleContext propertyLifecycleContext;
@@ -40,7 +38,7 @@ class DomainContextFactory {
 				.peek(domainContext -> {
 					domainContext.initialize(propertyLifecycleContext);
 				})
-				.collect(toLinkedHashSet());
+				.collect(JqwikCollectors.toLinkedHashSet());
 		return new CombinedDomainContext(domainContexts);
 	}
 

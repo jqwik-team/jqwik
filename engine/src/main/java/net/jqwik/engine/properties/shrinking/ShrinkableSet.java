@@ -5,8 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
-
-import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
+import net.jqwik.engine.support.*;
 
 public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
@@ -30,7 +29,7 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
 	@Override
 	Collector<E, ?, Set<E>> containerCollector() {
-		return toLinkedHashSet();
+		return JqwikCollectors.toLinkedHashSet();
 	}
 
 	@Override

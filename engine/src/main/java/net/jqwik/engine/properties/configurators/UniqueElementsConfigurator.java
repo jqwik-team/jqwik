@@ -11,8 +11,6 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 
-import static net.jqwik.engine.support.JqwikCollectors.*;
-
 @SuppressWarnings("unchecked")
 public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 
@@ -73,7 +71,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 	}
 
 	private boolean isUnique(Collection<?> list, Function<Object, Object> extractor) {
-		Set<Object> set = list.stream().map(extractor).collect(toLinkedHashSet());
+		Set<Object> set = list.stream().map(extractor).collect(JqwikCollectors.toLinkedHashSet());
 		return set.size() == list.size();
 	}
 

@@ -16,9 +16,9 @@ import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.stateful.*;
+import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
-import static net.jqwik.engine.support.JqwikCollectors.*;
 
 /**
  * Is loaded through reflection in api module
@@ -275,7 +275,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		RegisteredArbitraryConfigurer defaultArbitraryConfigurer = new RegisteredArbitraryConfigurer(domainContext.getArbitraryConfigurators());
 		return unconfiguredArbitraries.stream()
 									  .map(arbitrary -> defaultArbitraryConfigurer.configure(arbitrary, typeUsage))
-									  .collect(toLinkedHashSet());
+									  .collect(JqwikCollectors.toLinkedHashSet());
 	}
 
 	private static Set<Arbitrary<?>> createDefaultArbitraries(

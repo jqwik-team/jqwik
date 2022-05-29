@@ -8,11 +8,9 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.support.*;
 
 import static java.util.Arrays.*;
-
-import static net.jqwik.engine.support.JqwikCollectors.*;
-
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.ShrinkingSupport.*;
@@ -123,7 +121,7 @@ class StreamArbitraryTests {
 			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
 			Arbitrary<Stream<Integer>> arbitrary = ints.stream();
 			Set<Stream<Integer>> streams = collectEdgeCaseValues(arbitrary.edgeCases());
-			Set<List<Integer>> lists = streams.stream().map(stream -> stream.collect(Collectors.toList())).collect(toLinkedHashSet());
+			Set<List<Integer>> lists = streams.stream().map(stream -> stream.collect(Collectors.toList())).collect(JqwikCollectors.toLinkedHashSet());
 			assertThat(lists).containsExactlyInAnyOrder(
 				Collections.emptyList(),
 				Collections.singletonList(-10),
@@ -247,7 +245,7 @@ class StreamArbitraryTests {
 	}
 
 	private void assertGeneratedStream(Shrinkable<Stream<Integer>> stream) {
-		Set<Integer> set = stream.value().collect(toLinkedHashSet());
+		Set<Integer> set = stream.value().collect(JqwikCollectors.toLinkedHashSet());
 		assertThat(set.size()).isBetween(0, 5);
 		assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	}

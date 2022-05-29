@@ -10,8 +10,7 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
-
-import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
+import net.jqwik.engine.support.*;
 
 public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> implements SetArbitrary<T> {
 
@@ -73,7 +72,7 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 	public <U> Arbitrary<Set<U>> mapEach(BiFunction<Set<T>, T, U> mapper) {
 		return this.map(elements -> elements.stream()
 											.map(e -> mapper.apply(elements, e))
-											.collect(toLinkedHashSet()));
+											.collect(JqwikCollectors.toLinkedHashSet()));
 	}
 
 	// TODO: Remove duplication with DefaultListArbitrary.flatMapEach()

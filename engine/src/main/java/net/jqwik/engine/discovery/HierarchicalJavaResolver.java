@@ -14,10 +14,6 @@ import net.jqwik.engine.discovery.predicates.*;
 import net.jqwik.engine.support.*;
 
 import static java.lang.String.*;
-import static java.util.stream.Collectors.*;
-
-import static net.jqwik.engine.support.JqwikCollectors.*;
-
 import static org.junit.platform.commons.support.HierarchyTraversalMode.*;
 import static org.junit.platform.commons.support.ReflectionSupport.*;
 import static org.junit.platform.engine.SelectorResolutionResult.*;
@@ -176,7 +172,7 @@ class HierarchicalJavaResolver {
 				   .map(resolver -> tryToResolveWithResolver(element, parent, resolver))
 				   .filter(testDescriptors -> !testDescriptors.isEmpty())
 				   .flatMap(Collection::stream)
-				   .collect(toLinkedHashSet());
+				   .collect(JqwikCollectors.toLinkedHashSet());
 	}
 
 	private Set<TestDescriptor> tryToResolveWithResolver(AnnotatedElement element, TestDescriptor parent, ElementResolver resolver) {

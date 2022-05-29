@@ -7,8 +7,8 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.support.*;
 
-import static net.jqwik.engine.support.JqwikCollectors.*;
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
@@ -69,7 +69,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 				   .stream()
 				   .map(arbitrary -> configure(arbitrary, targetType))
 				   .filter(Objects::nonNull)
-				   .collect(toLinkedHashSet());
+				   .collect(JqwikCollectors.toLinkedHashSet());
 	}
 
 	private Set<Arbitrary<?>> resolveFromSupplier(

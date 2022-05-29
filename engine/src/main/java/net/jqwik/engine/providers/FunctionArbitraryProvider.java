@@ -2,14 +2,11 @@ package net.jqwik.engine.providers;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
-
-import static net.jqwik.engine.support.JqwikCollectors.toLinkedHashSet;
 
 public class FunctionArbitraryProvider implements ArbitraryProvider {
 
@@ -40,7 +37,7 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 					   Arbitrary<?> resultArbitrary = arbitraries.get(0);
 					   return Functions.function(functionalType).returning(resultArbitrary);
 				   })
-				   .collect(toLinkedHashSet());
+				   .collect(JqwikCollectors.toLinkedHashSet());
 	}
 
 	private TypeUsage getReturnType(TypeUsage targetType) {

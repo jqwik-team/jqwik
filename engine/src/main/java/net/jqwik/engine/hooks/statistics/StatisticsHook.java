@@ -3,7 +3,6 @@ package net.jqwik.engine.hooks.statistics;
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
@@ -12,8 +11,6 @@ import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.StatisticsReport.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
-
-import static net.jqwik.engine.support.JqwikCollectors.*;
 
 public class StatisticsHook implements AroundPropertyHook {
 
@@ -80,7 +77,7 @@ public class StatisticsHook implements AroundPropertyHook {
 						  String label = entry.getKey();
 						  return Tuple.of(label, entry.getValue(), determineFormat(label, statisticsReportAnnotations, context, isFailure));
 					  })
-					  .collect(toLinkedHashSet());
+					  .collect(JqwikCollectors.toLinkedHashSet());
 
 		report(reports, context.reporter(), context.extendedLabel());
 	}
