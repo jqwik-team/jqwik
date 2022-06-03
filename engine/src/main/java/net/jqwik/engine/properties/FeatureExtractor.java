@@ -2,7 +2,6 @@ package net.jqwik.engine.properties;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 @FunctionalInterface
 public interface FeatureExtractor<T> extends Function<T, Object> {
