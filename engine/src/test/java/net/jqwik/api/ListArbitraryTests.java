@@ -97,7 +97,7 @@ class ListArbitraryTests {
 		ListArbitrary<Integer> listArbitrary =
 			Arbitraries.integers().between(1, 1000).injectNull(0.5)
 					   .list().ofMaxSize(20)
-					   .uniqueElements(i -> i % 100);
+					   .uniqueElements(i -> i == null ? null : i % 100);
 
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1000, true);
 
