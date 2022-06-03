@@ -59,7 +59,7 @@ title: jqwik Release Notes
 
 - Removed method `CharacterArbitrary.digit()` which had been deprecated in 1.5.3
 
-#### Bug Fixes
+#### Bug Fixes and Improvements
 
 - Generated TLDs in `web-module` will no longer start with digit.
   See https://github.com/jlink/jqwik/issues/316.
@@ -68,6 +68,13 @@ title: jqwik Release Notes
   See https://github.com/jlink/jqwik/issues/327.
 
 - Property methods in Kotlin with `internal` modifier get now their correct name.
+
+- Combined arbitraries will not explode so easily now.
+  See https://github.com/jlink/jqwik/issues/342.
+
+- Frequency based arbitraries now perform better with large number of options.
+  See https://github.com/jlink/jqwik/issues/332.
+
 
 ## 1.6.x
 
