@@ -43,6 +43,10 @@ title: jqwik Release Notes
   for `jqwik.failures.after.default` is now `SAMPLE_FIRST`.
   Set it to `PREVIOUS_SEED` if you want the behaviour of jqwik < 1.7.
 
+- `Arbitrary.filter(Predicate<T> predicate, int maxMisses)` has swapped arguments:
+  `Arbitrary.filter(int maxMisses, Predicate<T> predicate)` to allow for a more idiomatic use in Kotlin.
+  See https://github.com/jlink/jqwik/issues/334.
+
 - Removed method `ActionSequenceArbitrary.ofMinSize(int)` which had been deprecated in 1.5.3
 
 - Removed method `ActionSequenceArbitrary.ofMaxSize(int)` which had been deprecated in 1.5.3

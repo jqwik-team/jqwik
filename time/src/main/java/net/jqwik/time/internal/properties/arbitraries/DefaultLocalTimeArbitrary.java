@@ -38,11 +38,11 @@ public class DefaultLocalTimeArbitrary extends ArbitraryDecorator<LocalTime> imp
 		Arbitrary<LocalTime> localTimes = longs.map(v -> ofPrecision.localTimeFromValue(v, effectiveMin));
 
 		localTimes = localTimes.filter(
+			20000,
 			v -> v.getMinute() >= minuteBetween.getMin()
 					 && v.getMinute() <= minuteBetween.getMax()
 					 && v.getSecond() >= secondBetween.getMin()
-					 && v.getSecond() <= secondBetween.getMax(),
-			20000
+					 && v.getSecond() <= secondBetween.getMax()
 		);
 
 		return localTimes;

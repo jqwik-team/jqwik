@@ -183,7 +183,7 @@ public interface Arbitrary<T> {
 	@API(status = MAINTAINED, since = "1.1.2")
 	default void forEachValue(Consumer<? super T> action) {
 		if (!allValues().isPresent())
-			throw new AssertionError("Cannot generate all values of " + this.toString());
+			throw new AssertionError("Cannot generate all values of " + this);
 		allValues().ifPresent(
 				stream -> stream.forEach(action::accept));
 	}
@@ -197,20 +197,20 @@ public interface Arbitrary<T> {
 	 * @throws TooManyFilterMissesException if filtering will fail to come up with a value after 10000 tries
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
-		return filter(filterPredicate, 10000);
+		return filter(10000, filterPredicate);
 	}
 
 	/**
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but only allows
 	 * values that are accepted by the {@code filterPredicate}.
 	 *
+	 * @param maxMisses       The max number of misses allowed for filtering
 	 * @param filterPredicate The predicate used for filtering
-	 * @param maxMisses The max number of misses allowed for filtering
 	 * @return a new arbitrary instance
 	 * @throws TooManyFilterMissesException if filtering will fail to come up with a value after {@code maxMisses} tries
 	 */
-	@API(status = EXPERIMENTAL, since = "1.6.1")
-	default Arbitrary<T> filter(Predicate<T> filterPredicate, int maxMisses) {
+	@API(status = EXPERIMENTAL, since = "1.7.0")
+	default Arbitrary<T> filter(int maxMisses, Predicate<T> filterPredicate) {
 		return ArbitraryFacade.implementation.filter(this, filterPredicate, maxMisses);
 	}
 
