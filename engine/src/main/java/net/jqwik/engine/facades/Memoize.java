@@ -8,14 +8,15 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
-class Memoize {
+// TODO: Move to package of use
+public class Memoize {
 
 	private static Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> generatorStore() {
 		return Store.getOrCreate(Memoize.class, Lifespan.PROPERTY, () -> new LruCache<>(500));
 	}
 
 	@SuppressWarnings("unchecked")
-	static <U> RandomGenerator<U> memoizedGenerator(
+	public static <U> RandomGenerator<U> memoizedGenerator(
 			Arbitrary<U> arbitrary,
 			int genSize,
 			boolean withEdgeCases,

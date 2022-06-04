@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
 
@@ -37,6 +38,8 @@ class RandomizedParameterGenerator {
 	}
 
 	private RandomGenerator<Object> getGenerator(Arbitrary<Object> arbitrary) {
-		return arbitrary.generator(genSize, withEdgeCases);
+		return Memoize.memoizedGenerator(arbitrary, genSize, withEdgeCases, () -> arbitrary.generator(genSize, withEdgeCases));
+		// TODO: clean up
+		// return arbitrary.generator(genSize, withEdgeCases);
 	}
 }
