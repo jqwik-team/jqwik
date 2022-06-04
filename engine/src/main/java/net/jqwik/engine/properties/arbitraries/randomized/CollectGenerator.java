@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class CollectGenerator<T> implements RandomGenerator<List<T>> {
@@ -20,20 +19,15 @@ public class CollectGenerator<T> implements RandomGenerator<List<T>> {
 	public Shrinkable<List<T>> next(Random random) {
 		List<T> base = new ArrayList<>();
 		List<Shrinkable<T>> shrinkables = new ArrayList<>();
-		MaxTriesLoop.loop(
-			() -> !until.test(base),
-			ignore -> {
-				Shrinkable<T> shrinkable = elementGenerator.next(random);
-				base.add(shrinkable.value());
-				shrinkables.add(shrinkable);
-				return Tuple.of(false, ignore);
-			},
-			maxMisses -> {
-				String message =
-					String.format("Generated list not fulfilled condition after maximum of %s elements", maxMisses);
-				return new JqwikException(message);
-			},
-                10000);
-		return new CollectShrinkable<>(shrinkables, until);
+		for (int i = 0; i < 10000; i++) {
+			if (until.test(base)) {
+				return new CollectShrinkable<>(shrinkables, until);
+			}
+			Shrinkable<T> shrinkable = elementGenerator.next(random);
+			base.add(shrinkable.value());
+			shrinkables.add(shrinkable);
+		}
+		String message = String.format("Generated list not fulfilled condition after maximum of %s elements", 10000);
+		throw new JqwikException(message);
 	}
 }

@@ -12,7 +12,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.*;
-import net.jqwik.engine.properties.*;
 
 public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
@@ -212,36 +211,27 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(Random random) {
-			return MaxTriesLoop.loop(
-				() -> true,
-				arbitraryAccessTuple -> {
-					TransformerProvider<T> chainGenerator = providerGenerator.apply(random);
-					AtomicBoolean accessState = new AtomicBoolean(false);
-					Supplier<T> supplier = () -> {
-						accessState.set(true);
-						return current;
-					};
+			AtomicBoolean accessState = new AtomicBoolean(false);
+			Supplier<T> supplier = () -> {
+				accessState.set(true);
+				return current;
+			};
 
-					Predicate<T> precondition = chainGenerator.precondition();
-					boolean hasPrecondition = precondition != TransformerProvider.NO_PRECONDITION;
-					if (hasPrecondition) {
-						if (!precondition.test(current)) {
-							return Tuple.of(false, null);
-						}
-					}
+			for (int i = 0; i < 1000; i++) {
+				TransformerProvider<T> chainGenerator = providerGenerator.apply(random);
 
-					Arbitrary<Transformer<T>> arbitrary = chainGenerator.apply(supplier);
-					return Tuple.of(
-						true,
-						Tuple.of(arbitrary, hasPrecondition ? precondition : null, accessState.get())
-					);
-				},
-				maxMisses -> {
-					String message = String.format("Could not generate a transformer after %s tries.", maxMisses);
-					return new JqwikException(message);
-				},
-				1000
-			);
+				Predicate<T> precondition = chainGenerator.precondition();
+				boolean hasPrecondition = precondition != TransformerProvider.NO_PRECONDITION;
+				if (hasPrecondition && !precondition.test(current)) {
+					continue;
+				}
+
+				accessState.set(false);
+				Arbitrary<Transformer<T>> arbitrary = chainGenerator.apply(supplier);
+				return Tuple.of(arbitrary, hasPrecondition ? precondition : null, accessState.get());
+			}
+			String message = String.format("Could not generate a transformer after %s tries.", 1000);
+			throw new JqwikException(message);
 		}
 	}
 

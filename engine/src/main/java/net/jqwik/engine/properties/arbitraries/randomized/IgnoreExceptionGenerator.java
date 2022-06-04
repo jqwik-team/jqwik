@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
@@ -23,27 +22,21 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 	}
 
 	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
-		return MaxTriesLoop.loop(
-			() -> true,
-			next -> {
-				try {
-					next = fetchShrinkable.apply(random);
-					// Enforce value generation for possible exception raising
-					next.value();
-					return Tuple.of(true, next);
-				} catch (Throwable throwable) {
-					if (exceptionType.isAssignableFrom(throwable.getClass())) {
-						return Tuple.of(false, next);
-					}
-					throw throwable;
+		for (int i = 0; i < 10000; i++) {
+			try {
+				Shrinkable<T> next = fetchShrinkable.apply(random);
+				// Enforce value generation for possible exception raising
+				next.value();
+				return next;
+			} catch (Throwable throwable) {
+				if (exceptionType.isInstance(throwable)) {
+					continue;
 				}
-			},
-			(maxMisses) -> {
-				String message = String.format("%s missed more than %s times.", toString(), maxMisses);
-				return new TooManyFilterMissesException(message);
-			},
-			10000
-		);
+				throw throwable;
+			}
+		}
+		String message = String.format("%s missed more than %s times.", toString(), 10000);
+		throw new TooManyFilterMissesException(message);
 	}
 
 }

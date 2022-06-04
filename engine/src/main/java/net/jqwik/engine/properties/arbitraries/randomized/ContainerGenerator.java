@@ -92,25 +92,20 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		Function<Random, Shrinkable<T>> fetchShrinkable,
 		boolean noDuplicates
 	) {
-		return MaxTriesLoop.loop(
-			() -> true,
-			next -> {
-				next = fetchShrinkable.apply(random);
-				T value = next.value();
-				if (noDuplicates && existingValues.contains(value)) {
-					return Tuple.of(false, next);
-				}
-				if (!checkSpecifiedUniqueness(existingValues, value)) {
-					return Tuple.of(false, next);
-				}
-				existingValues.add(value);
-				return Tuple.of(true, next);
-			},
-			(maxMisses) -> {
-				String message = String.format("Trying to fulfill uniqueness constraint missed more than %s times.", maxMisses);
-				return new TooManyFilterMissesException(message);
-			},
-                10000);
+		for (int i = 0; i < 10000; i++) {
+			Shrinkable<T> next = fetchShrinkable.apply(random);
+			T value = next.value();
+			if (noDuplicates && existingValues.contains(value)) {
+				continue;
+			}
+			if (!checkSpecifiedUniqueness(existingValues, value)) {
+				continue;
+			}
+			existingValues.add(value);
+			return next;
+		}
+		String message = String.format("Trying to fulfill uniqueness constraint missed more than %s times.", 10000);
+		throw new TooManyFilterMissesException(message);
 	}
 
 	private boolean checkSpecifiedUniqueness(Collection<T> elements, T value) {

@@ -3,7 +3,6 @@ package net.jqwik.engine.properties.arbitraries.exhaustive;
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.*;
 
 public class IgnoreExceptionExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 	private final ExhaustiveGenerator<T> toFilter;
@@ -42,28 +41,21 @@ public class IgnoreExceptionExhaustiveGenerator<T> implements ExhaustiveGenerato
 			}
 
 			private T findNext() {
-				return MaxTriesLoop.loop(
-					() -> true,
-					next -> {
-						if (!mappedIterator.hasNext()) {
-							return Tuple.of(true, null);
+				for (int i = 0; i < 10000; i++) {
+					if (!mappedIterator.hasNext()) {
+						return null;
+					}
+					try {
+						return mappedIterator.next();
+					} catch (Throwable throwable) {
+						if (exceptionType.isInstance(throwable)) {
+							continue;
 						}
-						try {
-							next = mappedIterator.next();
-							return Tuple.of(true, next);
-						} catch (Throwable throwable) {
-							if (exceptionType.isAssignableFrom(throwable.getClass())) {
-								return Tuple.of(false, next);
-							}
-							throw throwable;
-						}
-					},
-					maxMisses -> {
-						String message =
-							String.format("Filter missed more than %s times.", maxMisses);
-						return new TooManyFilterMissesException(message);
-					},
-                        10000);
+						throw throwable;
+					}
+				}
+				String message = String.format("Filter missed more than %s times.", 10000);
+				throw new TooManyFilterMissesException(message);
 			}
 
 		};

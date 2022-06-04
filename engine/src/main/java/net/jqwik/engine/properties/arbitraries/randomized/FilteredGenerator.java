@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class FilteredGenerator<T> implements RandomGenerator<T> {
@@ -29,22 +28,14 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 	}
 
 	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
-		Shrinkable<T> accepted = MaxTriesLoop.loop(
-			() -> true,
-			next -> {
-				next = fetchShrinkable.apply(random);
-				if (filterPredicate.test(next.value())) {
-					return Tuple.of(true, next);
-				}
-				return Tuple.of(false, next);
-			},
-			(missed) -> {
-				String message = String.format("%s missed more than %s times.", toString(), missed);
-				return new TooManyFilterMissesException(message);
-			},
-			maxMisses
-		);
-		return new FilteredShrinkable<>(accepted, filterPredicate);
+		for (int i = 0; i < maxMisses; i++) {
+			Shrinkable<T> value = fetchShrinkable.apply(random);
+			if (filterPredicate.test(value.value())) {
+				return new FilteredShrinkable<>(value, filterPredicate);
+			}
+		}
+		String message = String.format("%s missed more than %s times.", toString(), maxMisses);
+		throw new TooManyFilterMissesException(message);
 	}
 
 }
