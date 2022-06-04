@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.*;
 
 public class FilteredExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 	private final ExhaustiveGenerator<T> toFilter;
@@ -45,25 +44,17 @@ public class FilteredExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 			}
 
 			private T findNext() {
-				return MaxTriesLoop.loop(
-					() -> true,
-					next -> {
-						if (!mappedIterator.hasNext()) {
-							return Tuple.of(true, null);
-						}
-						next = mappedIterator.next();
-						if ((filter.test(next))) {
-							return Tuple.of(true, next);
-						}
-						return Tuple.of(false, next);
-					},
-					missed -> {
-						String message =
-							String.format("Filter missed more than %s times.", missed);
-						return new TooManyFilterMissesException(message);
-					},
-					maxMisses
-				);
+				for (int i = 0; i < maxMisses; i++) {
+					if (!mappedIterator.hasNext()) {
+						return null;
+					}
+					T value = mappedIterator.next();
+					if (filter.test(value)) {
+						return value;
+					}
+				}
+				String message = String.format("Filter missed more than %s times.", maxMisses);
+				throw new TooManyFilterMissesException(message);
 			}
 
 		};
