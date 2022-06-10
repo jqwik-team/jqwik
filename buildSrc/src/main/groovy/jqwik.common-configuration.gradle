@@ -1,3 +1,9 @@
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+	id 'signing'
+}
+
 repositories {
 	mavenCentral()
 	//maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
@@ -5,10 +11,6 @@ repositories {
 
 group = moduleName
 version = jqwikVersion
-
-project.plugins.apply('java-library')
-project.plugins.apply('maven-publish')
-project.plugins.apply('signing')
 
 tasks['publish'].dependsOn(build)
 
@@ -41,9 +43,12 @@ java {
 	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
 compileTestJava {
 	options.compilerArgs += '-parameters'
-	options.encoding = 'UTF-8'
 }
 
 dependencies {

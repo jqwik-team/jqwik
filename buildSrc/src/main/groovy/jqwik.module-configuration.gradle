@@ -1,5 +1,6 @@
-
-project.plugins.apply('org.beryx.jar')
+plugins {
+	id 'org.beryx.jar'
+}
 
 moduleConfig {
 	moduleInfoPath = 'src/main/module/module-info.java' // don't confuse IDEs
