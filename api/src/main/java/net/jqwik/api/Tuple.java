@@ -1,11 +1,13 @@
 package net.jqwik.api;
 
-import org.jetbrains.annotations.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.jetbrains.annotations.*;
+
+import net.jqwik.api.support.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -152,7 +154,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(v1);
+			return HashCodeSupport.hash(v1);
 		}
 
 		@Override
@@ -194,7 +196,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(v1, v2);
+			return HashCodeSupport.hash(v1, v2);
 		}
 
 		@Override
@@ -237,7 +239,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(v1, v2, v3);
+			return HashCodeSupport.hash(v1, v2, v3);
 		}
 
 		@Override
@@ -281,7 +283,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(v1, v2, v3, v4);
+			return HashCodeSupport.hash(v1, v2, v3, v4);
 		}
 
 		@Override
@@ -326,7 +328,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(v1, v2, v3, v4, v5);
+			return HashCodeSupport.hash(v1, v2, v3, v4, v5);
 		}
 
 		@Override
@@ -372,7 +374,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(v1, v2, v3, v4, v5, v6);
+			return HashCodeSupport.hash(v1, v2, v3, v4, v5, v6);
 		}
 
 		@Override
@@ -384,7 +386,15 @@ public interface Tuple extends Serializable, Cloneable {
 	class Tuple7<T1, T2, T3, T4, T5, T6, T7> extends Tuple6<T1, T2, T3, T4, T5, T6> {
 		final T7 v7;
 
-		private Tuple7(@Nullable T1 v1, @Nullable T2 v2, @Nullable T3 v3, @Nullable T4 v4, @Nullable T5 v5, @Nullable T6 v6, @Nullable T7 v7) {
+		private Tuple7(
+			@Nullable T1 v1,
+			@Nullable T2 v2,
+			@Nullable T3 v3,
+			@Nullable T4 v4,
+			@Nullable T5 v5,
+			@Nullable T6 v6,
+			@Nullable T7 v7
+		) {
 			super(v1, v2, v3, v4, v5, v6);
 			this.v7 = v7;
 		}
@@ -419,7 +429,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(v1, v2, v3, v4, v5, v6, v7);
+			return HashCodeSupport.hash(v1, v2, v3, v4, v5, v6, v7);
 		}
 
 		@Override
@@ -431,7 +441,16 @@ public interface Tuple extends Serializable, Cloneable {
 	class Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> extends Tuple7<T1, T2, T3, T4, T5, T6, T7> {
 		final T8 v8;
 
-		private Tuple8(@Nullable T1 v1, @Nullable T2 v2, @Nullable T3 v3, @Nullable T4 v4, @Nullable T5 v5, @Nullable T6 v6, @Nullable T7 v7, @Nullable T8 v8) {
+		private Tuple8(
+			@Nullable T1 v1,
+			@Nullable T2 v2,
+			@Nullable T3 v3,
+			@Nullable T4 v4,
+			@Nullable T5 v5,
+			@Nullable T6 v6,
+			@Nullable T7 v7,
+			@Nullable T8 v8
+		) {
 			super(v1, v2, v3, v4, v5, v6, v7);
 			this.v8 = v8;
 		}
@@ -472,7 +491,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(v1, v2, v3, v4, v5, v6, v7, v8);
+			return HashCodeSupport.hash(v1, v2, v3, v4, v5, v6, v7, v8);
 		}
 
 	}
