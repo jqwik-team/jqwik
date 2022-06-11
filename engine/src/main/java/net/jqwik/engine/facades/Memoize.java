@@ -15,6 +15,7 @@ public class Memoize {
 		return Store.getOrCreate(Memoize.class, Lifespan.PROPERTY, () -> new LruCache<>(500));
 	}
 
+	// TODO: Is generator supplier really needed or is the same one used everywhere?
 	@SuppressWarnings("unchecked")
 	public static <U> RandomGenerator<U> memoizedGenerator(
 			Arbitrary<U> arbitrary,

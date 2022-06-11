@@ -12,6 +12,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.*;
+import net.jqwik.engine.facades.*;
 
 public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
@@ -20,6 +21,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	private final Function<Random, TransformerProvider<T>> providerGenerator;
 	private final int maxTransformations;
 	private final int genSize;
+	private final boolean withEmbeddedEdgeCases;
 	private final List<ShrinkableChainIteration<T>> iterations;
 	private final Supplier<ChangeDetector<T>> changeDetectorSupplier;
 
@@ -29,9 +31,10 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		Function<Random, TransformerProvider<T>> providerGenerator,
 		Supplier<ChangeDetector<T>> changeDetectorSupplier,
 		int maxTransformations,
-		int genSize
+		int genSize,
+		boolean withEmbeddedEdgeCases
 	) {
-		this(randomSeed, initialSupplier, providerGenerator, changeDetectorSupplier, maxTransformations, genSize, new ArrayList<>());
+		this(randomSeed, initialSupplier, providerGenerator, changeDetectorSupplier, maxTransformations, genSize, withEmbeddedEdgeCases, new ArrayList<>());
 	}
 
 	private ShrinkableChain(
@@ -40,6 +43,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		Supplier<ChangeDetector<T>> changeDetectorSupplier,
 		int maxTransformations,
 		int genSize,
+		boolean withEmbeddedEdgeCases,
 		List<ShrinkableChainIteration<T>> iterations
 	) {
 		this.randomSeed = randomSeed;
@@ -48,6 +52,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		this.changeDetectorSupplier = changeDetectorSupplier;
 		this.maxTransformations = maxTransformations;
 		this.genSize = genSize;
+		this.withEmbeddedEdgeCases = withEmbeddedEdgeCases;
 		this.iterations = iterations;
 	}
 
@@ -71,6 +76,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			changeDetectorSupplier,
 			newMaxSize,
 			genSize,
+			withEmbeddedEdgeCases,
 			shrunkIterations
 		);
 	}
@@ -204,7 +210,9 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			Predicate<T> precondition = arbitraryAccessTuple.get2();
 			boolean accessState = arbitraryAccessTuple.get3();
 
-			RandomGenerator<Transformer<T>> generator = arbitrary.generator(genSize);
+			RandomGenerator<Transformer<T>> generator =
+				Memoize.memoizedGenerator(arbitrary, genSize, withEmbeddedEdgeCases, () -> arbitrary.generator(genSize, withEmbeddedEdgeCases));
+
 			Shrinkable<Transformer<T>> next = generator.next(random);
 			iterations.add(new ShrinkableChainIteration<>(precondition, accessState, next));
 			return next;

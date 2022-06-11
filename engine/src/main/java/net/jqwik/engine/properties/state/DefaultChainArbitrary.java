@@ -3,6 +3,8 @@ package net.jqwik.engine.properties.state;
 import java.util.*;
 import java.util.function.*;
 
+import org.jetbrains.annotations.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.properties.arbitraries.*;
@@ -31,6 +33,15 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 
 	@Override
 	public RandomGenerator<Chain<T>> generator(int genSize) {
+		return generatorWithOrWithoutECs(genSize, false);
+	}
+
+	@Override
+	public RandomGenerator<Chain<T>> generatorWithEmbeddedEdgeCases(int genSize) {
+		return generatorWithOrWithoutECs(genSize, true);	}
+
+	@NotNull
+	private RandomGenerator<Chain<T>> generatorWithOrWithoutECs(int genSize, boolean withEmbeddedEdgeCases) {
 		final int effectiveMaxTransformations =
 			this.maxTransformations != Integer.MIN_VALUE ? this.maxTransformations : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
 		Function<Random, TransformerProvider<T>> providerGenerator = new ChooseRandomlyByFrequency<>(weightedProviders);
@@ -40,7 +51,8 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 			providerGenerator,
 			changeDetectorSupplier,
 			effectiveMaxTransformations,
-			genSize
+			genSize,
+			withEmbeddedEdgeCases
 		);
 	}
 
