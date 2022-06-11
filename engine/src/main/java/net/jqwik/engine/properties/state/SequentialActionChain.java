@@ -9,6 +9,7 @@ import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.support.*;
 
 public class SequentialActionChain<T> implements ActionChain<T> {
@@ -79,9 +80,9 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 
 	private String createErrorMessage(String name, String causeMessage) {
 		String actionsString = transformations()
-			.stream()
-			.map(transformation -> "    " + transformation)
-			.collect(Collectors.joining(System.lineSeparator()));
+								   .stream()
+								   .map(transformation -> "    " + transformation)
+								   .collect(Collectors.joining(System.lineSeparator()));
 		return String.format(
 			"%s failed after the following actions: [%s]%nfinal state: %s%n%s",
 			name,
@@ -138,6 +139,6 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(currentValue, currentRunning);
+		return HashCodeSupport.hash(currentValue, currentRunning);
 	}
 }

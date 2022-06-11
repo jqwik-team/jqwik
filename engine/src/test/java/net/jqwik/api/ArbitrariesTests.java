@@ -42,7 +42,7 @@ class ArbitrariesTests {
 	@Example
 	void fromGenerator(@ForAll Random random) {
 		Arbitrary<String> stringArbitrary =
-				Arbitraries.fromGenerator(r -> Shrinkable.unshrinkable(Integer.toString(r.nextInt(10))));
+			Arbitraries.fromGenerator(r -> Shrinkable.unshrinkable(Integer.toString(r.nextInt(10))));
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		checkAllGenerated(generator, random, value -> Integer.parseInt(value) < 10);
 	}
@@ -179,7 +179,7 @@ class ArbitrariesTests {
 			if (o == null || getClass() != o.getClass()) return false;
 			Person person = (Person) o;
 			return firstName.equals(person.firstName) &&
-						   lastName.equals(person.lastName);
+					   lastName.equals(person.lastName);
 		}
 
 		@Override
@@ -213,9 +213,9 @@ class ArbitrariesTests {
 		void noValues(@ForAll Random random) {
 			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle();
 			assertAllGenerated(
-					shuffled.generator(1000),
-					random,
-					list -> { assertThat(list).isEmpty();}
+				shuffled.generator(1000),
+				random,
+				list -> {assertThat(list).isEmpty();}
 			);
 		}
 
@@ -283,8 +283,8 @@ class ArbitrariesTests {
 		@Provide
 		Arbitrary<List<String>> stringLists() {
 			return Arbitraries.oneOf(
-					Arbitraries.strings().ofLength(2).list(),
-					Arbitraries.strings().ofLength(3).list()
+				Arbitraries.strings().ofLength(2).list(),
+				Arbitraries.strings().ofLength(3).list()
 			);
 		}
 	}
@@ -322,8 +322,8 @@ class ArbitrariesTests {
 		@Provide
 		Arbitrary<List<String>> stringLists() {
 			return Arbitraries.frequencyOf(
-					Tuple.of(1, Arbitraries.strings().ofLength(2).list()),
-					Tuple.of(2, Arbitraries.strings().ofLength(3).list())
+				Tuple.of(1, Arbitraries.strings().ofLength(2).list()),
+				Tuple.of(2, Arbitraries.strings().ofLength(3).list())
 			);
 		}
 	}
@@ -335,20 +335,20 @@ class ArbitrariesTests {
 		void lazy(@ForAll Random random) {
 			Arbitrary<Integer> samples = Arbitraries.lazy(() -> new OrderedArbitraryForTesting<>(1, 2, 3));
 
-			assertGeneratedExactly(samples.generator(1000),random, 1, 2, 3, 1);
-			assertGeneratedExactly(samples.generator(1000), random,1, 2, 3, 1);
+			assertGeneratedExactly(samples.generator(1000), random, 1, 2, 3, 1);
+			assertGeneratedExactly(samples.generator(1000), random, 1, 2, 3, 1);
 		}
 
 		@Example
 		void recursiveLazy(@ForAll Random random) {
 			Arbitrary<Tree> trees = trees();
 			checkAllGenerated(
-					trees.generator(1000, true),
-					random,
-					tree -> {
-						//System.out.println(tree);
-						return tree != null;
-					}
+				trees.generator(1000, true),
+				random,
+				tree -> {
+					//System.out.println(tree);
+					return tree != null;
+				}
 			);
 		}
 
@@ -362,8 +362,8 @@ class ArbitrariesTests {
 
 		private Arbitrary<Tree> aBranch() {
 			return Arbitraries.lazy(() -> Arbitraries.frequencyOf(
-					Tuple.of(2, Arbitraries.just(null)),
-					Tuple.of(1, trees())
+				Tuple.of(2, Arbitraries.just(null)),
+				Tuple.of(1, trees())
 			));
 		}
 
@@ -376,12 +376,12 @@ class ArbitrariesTests {
 		void recursiveTree(@ForAll("trees") Tree tree) {
 			assertThat(tree.name).hasSize(3);
 			assertThat(tree.left).satisfiesAnyOf(
-					branch -> assertThat(branch).isNull(),
-					branch -> assertThat(branch).isInstanceOf(Tree.class)
+				branch -> assertThat(branch).isNull(),
+				branch -> assertThat(branch).isInstanceOf(Tree.class)
 			);
 			assertThat(tree.right).satisfiesAnyOf(
-					branch -> assertThat(branch).isNull(),
-					branch -> assertThat(branch).isInstanceOf(Tree.class)
+				branch -> assertThat(branch).isNull(),
+				branch -> assertThat(branch).isInstanceOf(Tree.class)
 			);
 		}
 
@@ -396,9 +396,9 @@ class ArbitrariesTests {
 
 		private Arbitrary<Tree> aBranch() {
 			return Arbitraries.lazyOf(
-					() -> Arbitraries.just(null),
-					() -> Arbitraries.just(null),
-					this::trees
+				() -> Arbitraries.just(null),
+				() -> Arbitraries.just(null),
+				this::trees
 			);
 		}
 
@@ -412,13 +412,13 @@ class ArbitrariesTests {
 		Arbitrary<List<Integer>> listWithIds() {
 			Arbitrary<Integer> uniqueId = Arbitraries.integers().between(1, 20);
 			return Arbitraries.lazyOf(
-					() -> Arbitraries.just(new ArrayList<>()),
-					() -> Combinators.combine(listWithIds(), uniqueId)
-									 .as((l, id) -> {
-										 ArrayList<Integer> list = new ArrayList<>(l);
-										 list.add(id);
-										 return list;
-									 })
+				() -> Arbitraries.just(new ArrayList<>()),
+				() -> Combinators.combine(listWithIds(), uniqueId)
+								 .as((l, id) -> {
+									 ArrayList<Integer> list = new ArrayList<>(l);
+									 list.add(id);
+									 return list;
+								 })
 			);
 		}
 
@@ -445,8 +445,8 @@ class ArbitrariesTests {
 				return 0;
 			}
 			return Math.max(
-					left == null ? 0 : left.depth() + 1,
-					right == null ? 0 : right.depth() + 1
+				left == null ? 0 : left.depth() + 1,
+				right == null ? 0 : right.depth() + 1
 			);
 		}
 	}
@@ -479,10 +479,10 @@ class ArbitrariesTests {
 		@Property(tries = 10)
 		void fourUnequalPairs(@ForAll Random random) {
 			Arbitrary<String> one = Arbitraries.frequency(
-					Tuple.of(1, "a"),
-					Tuple.of(5, "b"),
-					Tuple.of(10, "c"),
-					Tuple.of(20, "d")
+				Tuple.of(1, "a"),
+				Tuple.of(5, "b"),
+				Tuple.of(10, "c"),
+				Tuple.of(20, "d")
 			);
 			Map<String, Long> counts = count(one.generator(1000, true), 1000, random);
 			assertThat(counts.get("a")).isLessThan(counts.get("b"));
@@ -565,7 +565,8 @@ class ArbitrariesTests {
 		}
 
 		class Int42 extends DomainContextBase {
-			@Provide Arbitrary<Integer> fortyTwo() {
+			@Provide
+			Arbitrary<Integer> fortyTwo() {
 				return Arbitraries.just(42);
 			}
 		}
@@ -704,27 +705,27 @@ class ArbitrariesTests {
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(valueOf(-50L)) < 0);
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.compareTo(valueOf(50L)) > 0);
 			checkAllGenerated(
-					generator,
-					random,
-					value -> value.compareTo(valueOf(-100L)) >= 0
-									 && value.compareTo(valueOf(100L)) <= 0
+				generator,
+				random,
+				value -> value.compareTo(valueOf(-100L)) >= 0
+							 && value.compareTo(valueOf(100L)) <= 0
 			);
 		}
 
 		@Property(tries = 10)
 		void bigIntegersWithUniformDistribution(@ForAll Random random) {
 			Arbitrary<BigInteger> bigIntegerArbitrary =
-					Arbitraries.bigIntegers()
-							   .between(valueOf(-1000L), valueOf(1000L))
-							   .withDistribution(RandomDistribution.uniform());
+				Arbitraries.bigIntegers()
+						   .between(valueOf(-1000L), valueOf(1000L))
+						   .withDistribution(RandomDistribution.uniform());
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
 
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.longValue() > -1000 && value.longValue() < -980);
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.longValue() < 1000 && value.longValue() > 980);
 			TestingSupport.checkAllGenerated(
-					generator,
-					random,
-					value -> value.compareTo(valueOf(-1000L)) >= 0 && value.compareTo(valueOf(1000L)) <= 0
+				generator,
+				random,
+				value -> value.compareTo(valueOf(-1000L)) >= 0 && value.compareTo(valueOf(1000L)) <= 0
 			);
 		}
 
@@ -836,10 +837,10 @@ class ArbitrariesTests {
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.longValue() > -1000 && value.longValue() < -980);
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value.longValue() < 1000 && value.longValue() > 980);
 			TestingSupport.checkAllGenerated(
-					generator,
-					random,
-					value -> value.compareTo(BigDecimal.valueOf(-1000L)) >= 0
-									 && value.compareTo(BigDecimal.valueOf(1000L)) <= 0
+				generator,
+				random,
+				value -> value.compareTo(BigDecimal.valueOf(-1000L)) >= 0
+							 && value.compareTo(BigDecimal.valueOf(1000L)) <= 0
 			);
 		}
 
@@ -921,8 +922,8 @@ class ArbitrariesTests {
 		checkAllGenerated(generator, random, value -> value.length() >= minLength && value.length() <= maxLength);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
 		checkAllGenerated(
-				generator, random,
-				(String value) -> value.chars().allMatch(i -> allowedChars.contains((char) i))
+			generator, random,
+			(String value) -> value.chars().allMatch(i -> allowedChars.contains((char) i))
 		);
 	}
 }

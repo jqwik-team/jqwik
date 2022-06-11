@@ -132,6 +132,7 @@ class ShrunkSampleRecreatorTests {
 	}
 
 	// Takes >= 5 seconds due to sleeps in shrinking
+	// TODO: This test sometimes fails. Make it reliable.
 	@SuppressLogging
 	@Property(tries = 5, edgeCases = EdgeCasesMode.NONE)
 	void recreationWorksIfShrinkingBoundIsExceeded(@ForAll("sleepTime") int sleepMs) {

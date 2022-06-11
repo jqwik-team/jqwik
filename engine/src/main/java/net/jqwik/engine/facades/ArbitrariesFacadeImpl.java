@@ -9,6 +9,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.stateful.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
@@ -198,7 +199,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	/**
-	 * The calculated cash is supposed to be the same for the same callers of Arbitraries.lazyOf()
+	 * The calculated hash is supposed to be the same for the same callers of Arbitraries.lazyOf()
 	 * This is important to have a single instance of LazyOfArbitrary for the same code.
 	 */
 	private static int calculateIdentifier(int numberOfSuppliers) {
@@ -210,7 +211,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(ArbitrariesFacadeImpl.class.getName()))
 					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(Arbitraries.class.getName()))
 					  .findFirst()
-					  .map(stackTraceElement -> Objects.hash(
+					  .map(stackTraceElement -> HashCodeSupport.hash(
 						  stackTraceElement.getClassName(),
 						  stackTraceElement.getMethodName(),
 						  stackTraceElement.getLineNumber(),

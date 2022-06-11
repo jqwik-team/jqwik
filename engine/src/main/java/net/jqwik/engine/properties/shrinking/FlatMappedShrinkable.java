@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.support.*;
 
@@ -14,11 +15,11 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	private final Function<T, Shrinkable<U>> mapper;
 
 	public FlatMappedShrinkable(
-			Shrinkable<T> toMap,
-			Function<T, Arbitrary<U>> toArbitraryMapper,
-			int genSize,
-			long randomSeed,
-			boolean withEmbeddedEdgeCases
+		Shrinkable<T> toMap,
+		Function<T, Arbitrary<U>> toArbitraryMapper,
+		int genSize,
+		long randomSeed,
+		boolean withEmbeddedEdgeCases
 	) {
 		this(toMap, t -> {
 			Arbitrary<U> arbitrary = toArbitraryMapper.apply(t);
@@ -42,9 +43,9 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	@Override
 	public Stream<Shrinkable<U>> shrink() {
 		return JqwikStreamSupport.concat(
-				shrinkRightSide(),
-				shrinkLeftSide(),
-				shrinkLeftGrowRightSide()
+			shrinkRightSide(),
+			shrinkLeftSide(),
+			shrinkLeftGrowRightSide()
 		);
 	}
 
@@ -98,18 +99,18 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(value());
+		return HashCodeSupport.hash(value());
 	}
 
 	@Override
 	public String toString() {
 		return String.format(
-				"%s<%s>(%s:%s)|%s",
-				getClass().getSimpleName(),
-				value().getClass().getSimpleName(),
-				value(),
-				distance(),
-				toMap
+			"%s<%s>(%s:%s)|%s",
+			getClass().getSimpleName(),
+			value().getClass().getSimpleName(),
+			value(),
+			distance(),
+			toMap
 		);
 	}
 

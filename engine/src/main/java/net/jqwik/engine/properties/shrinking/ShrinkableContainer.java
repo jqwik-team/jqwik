@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
@@ -24,9 +25,9 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 
 	private C createValue(List<Shrinkable<E>> shrinkables) {
 		return shrinkables
-					   .stream()
-					   .map(Shrinkable::value)
-					   .collect(containerCollector());
+				   .stream()
+				   .map(Shrinkable::value)
+				   .collect(containerCollector());
 	}
 
 	@Override
@@ -37,9 +38,9 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	@Override
 	public Stream<Shrinkable<C>> shrink() {
 		return JqwikStreamSupport.concat(
-				shrinkSizeOfList(),
-				shrinkElementsOneAfterTheOther(0),
-				shrinkPairsOfElements()
+			shrinkSizeOfList(),
+			shrinkElementsOneAfterTheOther(0),
+			shrinkPairsOfElements()
 		);
 	}
 
@@ -164,16 +165,16 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(elements);
+		return HashCodeSupport.hash(elements);
 	}
 
 	@Override
 	public String toString() {
 		return String.format(
-				"%s<%s>(%s:%s)",
-				getClass().getSimpleName(),
-				value().getClass().getSimpleName(),
-				value(), distance()
+			"%s<%s>(%s:%s)",
+			getClass().getSimpleName(),
+			value().getClass().getSimpleName(),
+			value(), distance()
 		);
 	}
 

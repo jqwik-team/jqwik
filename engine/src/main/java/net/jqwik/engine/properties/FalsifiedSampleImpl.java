@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.support.*;
 
 public class FalsifiedSampleImpl implements FalsifiedSample {
 
@@ -56,7 +57,7 @@ public class FalsifiedSampleImpl implements FalsifiedSample {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(parameters);
+		return HashCodeSupport.hash(parameters);
 	}
 
 }

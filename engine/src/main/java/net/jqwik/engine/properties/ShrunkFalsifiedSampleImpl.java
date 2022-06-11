@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.support.*;
 
 public class ShrunkFalsifiedSampleImpl extends FalsifiedSampleImpl implements ShrunkFalsifiedSample {
 
@@ -43,6 +44,6 @@ public class ShrunkFalsifiedSampleImpl extends FalsifiedSampleImpl implements Sh
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), shrinkingSteps);
+		return HashCodeSupport.hash(super.hashCode(), shrinkingSteps);
 	}
 }

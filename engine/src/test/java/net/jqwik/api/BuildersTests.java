@@ -450,9 +450,7 @@ class BuildersTests {
 
 		@Override
 		public int hashCode() {
-			int result = Objects.hash(name);
-			result = 31 * result + age;
-			return result;
+			return Objects.hash(name, age);
 		}
 
 		@Override
