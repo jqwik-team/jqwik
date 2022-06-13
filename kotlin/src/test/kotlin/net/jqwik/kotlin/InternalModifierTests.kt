@@ -29,18 +29,18 @@ internal class InternalModifierTests {
 
 
     @Property
-    fun publicPropertyInInternalClass() {
+    fun publicPropertyInInternalClass(@ForAll i: Int) {
     }
 
     @Property
-    fun `public property will have its name cut $ at dollar sign`() {
+    fun `public property will have its name cut $ at dollar sign`(@ForAll i: Int) {
     }
 
     @Property
-    internal fun internalPropertyInInternalClass() {
+    internal fun internalPropertyInInternalClass(@ForAll i: Int) {
     }
 
-    @Property
+    @Property(tries = 10)
     internal fun internalPropertyWithSpecialParameter(@ForAll uInt: UInt) {
     }
 
