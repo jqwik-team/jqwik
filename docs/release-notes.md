@@ -28,6 +28,7 @@ title: jqwik Release Notes
 #### New and Enhanced Features
 
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`:
+    - `net.jqwik.api.ArbitrarySupplier`
     - `net.jqwik.api.Arbitraries.subsetOf(Collection<T>)`
     - `net.jqwik.api.Arbitraries.subsetOf(T...)`
     - `net.jqwik.api.JavaBeanReportingFormat`

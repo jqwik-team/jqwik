@@ -239,6 +239,13 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void failWithNullSupplier() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingByNullSupplier");
+			assertThatThrownBy(() -> provider.forParameter(parameter)).isInstanceOf(JqwikException.class);
+		}
+
+		@Example
 		void findGeneratorByNameInFromAnnotation() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFrom");
@@ -381,6 +388,18 @@ class PropertyMethodArbitraryResolverTests {
 				@Override
 				public Arbitrary<Thing> get() {
 					return Arbitraries.just(new Thing());
+				}
+			}
+
+			@Property
+			boolean thingByNullSupplier(@ForAll(supplier = ThingNullSupplier.class) Thing aThing) {
+				return true;
+			}
+
+			class ThingNullSupplier implements ArbitrarySupplier<Thing> {
+				@Override
+				public Arbitrary<Thing> get() {
+					return null;
 				}
 			}
 

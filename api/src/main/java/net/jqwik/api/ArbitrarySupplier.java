@@ -3,6 +3,7 @@ package net.jqwik.api;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jetbrains.annotations.*;
 
 import net.jqwik.api.providers.*;
 
@@ -22,7 +23,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see ForAll
  * @see From
  */
-@API(status = EXPERIMENTAL, since = "1.6.3")
+@API(status = MAINTAINED, since = "1.7.0")
 public interface ArbitrarySupplier<T> extends Supplier<Arbitrary<T>> {
 
 	/**
@@ -35,6 +36,7 @@ public interface ArbitrarySupplier<T> extends Supplier<Arbitrary<T>> {
 	 *
 	 * @return A new arbitrary instance
 	 */
+	@Nullable
 	default Arbitrary<T> supplyFor(TypeUsage targetType) {
 		return get();
 	}
@@ -48,6 +50,7 @@ public interface ArbitrarySupplier<T> extends Supplier<Arbitrary<T>> {
 	 *
 	 * @return A new arbitrary instance
 	 */
+	@Nullable
 	default Arbitrary<T> get() {
 		throw new JqwikException("You have to override either ArbitrarySupplier.get() or ArbitrarySupplier.supplyFor()");
 	}

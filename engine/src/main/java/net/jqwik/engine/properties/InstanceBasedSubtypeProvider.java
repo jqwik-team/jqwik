@@ -65,10 +65,10 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 		}
 
 		return resolvedArbitraries
-			.stream()
-			.map(arbitrary -> configure(arbitrary, targetType))
-			.filter(Objects::nonNull)
-			.collect(Collectors.toSet());
+				   .stream()
+				   .map(arbitrary -> configure(arbitrary, targetType))
+				   .filter(Objects::nonNull)
+				   .collect(Collectors.toSet());
 	}
 
 	private Set<Arbitrary<?>> resolveFromSupplier(
@@ -79,7 +79,16 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 		Class<? extends ArbitrarySupplier<?>> supplierClass =
 			optionalForAllSupplier.orElseGet(() -> optionalFromSupplier.orElseThrow(() -> new JqwikException("Should never happen")));
 		ArbitrarySupplier<?> supplier = newInstanceInTestContext(supplierClass, instance);
-		return Collections.singleton(supplier.supplyFor(targetType));
+		Arbitrary<?> arbitrary = supplier.supplyFor(targetType);
+		if (arbitrary == null) {
+			String message = String.format(
+				"Supplier [%s] for type [%s] returns null but should return an arbitrary",
+				supplierClass,
+				targetType
+			);
+			throw new JqwikException(message);
+		}
+		return Collections.singleton(arbitrary);
 	}
 
 	private Set<Arbitrary<?>> resolveFromGeneratorName(
