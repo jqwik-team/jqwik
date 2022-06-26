@@ -15,6 +15,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	private final long maxUniqueElements;
 	private final Collection<FeatureExtractor<T>> uniquenessExtractors;
 	private final Function<Random, Integer> sizeGenerator;
+	private final long maxAttempts;
 
 	private static Function<Random, Integer> sizeGenerator(
 		int minSize,
@@ -41,6 +42,11 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		this.maxUniqueElements = maxUniqueElements;
 		this.uniquenessExtractors = uniquenessExtractors;
 		this.sizeGenerator = sizeGenerator(minSize, maxSize, genSize, sizeDistribution);
+
+		// This is a heuristic value.
+		// The assumption is that with 5 times the number of possible values,
+		// each possible value should be hit at least once with a high probability.
+		this.maxAttempts = Math.min(10000, maxUniqueElements * 5);
 	}
 
 	@Override
@@ -97,7 +103,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		Function<Random, Shrinkable<T>> fetchShrinkable,
 		boolean noDuplicates
 	) {
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < maxAttempts; i++) {
 			Shrinkable<T> next = fetchShrinkable.apply(random);
 			T value = next.value();
 			if (noDuplicates && existingValues.contains(value)) {
@@ -109,7 +115,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 			existingValues.add(value);
 			return next;
 		}
-		String message = String.format("Trying to fulfill uniqueness constraint missed more than %s times.", 10000);
+		String message = String.format("Trying to fulfill uniqueness constraint missed more than %s times.", maxAttempts);
 		throw new TooManyFilterMissesException(message);
 	}
 
