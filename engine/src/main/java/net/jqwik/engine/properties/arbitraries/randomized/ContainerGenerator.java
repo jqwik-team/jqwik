@@ -12,13 +12,9 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	private final RandomGenerator<T> elementGenerator;
 	private final Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable;
 	private final int minSize;
-	private final int genSize;
-	private final RandomDistribution sizeDistribution;
+	private final long maxUniqueElements;
 	private final Collection<FeatureExtractor<T>> uniquenessExtractors;
-
-	private boolean noDuplicatesHadToBeSwitchedOff = false;
-
-	private Function<Random, Integer> sizeGenerator;
+	private final Function<Random, Integer> sizeGenerator;
 
 	private static Function<Random, Integer> sizeGenerator(
 		int minSize,
@@ -34,6 +30,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,
 		int minSize,
 		int maxSize,
+		long maxUniqueElements,
 		int genSize,
 		RandomDistribution sizeDistribution,
 		Collection<FeatureExtractor<T>> uniquenessExtractors
@@ -41,8 +38,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		this.elementGenerator = elementGenerator;
 		this.createShrinkable = createShrinkable;
 		this.minSize = minSize;
-		this.genSize = genSize;
-		this.sizeDistribution = sizeDistribution;
+		this.maxUniqueElements = maxUniqueElements;
 		this.uniquenessExtractors = uniquenessExtractors;
 		this.sizeGenerator = sizeGenerator(minSize, maxSize, genSize, sizeDistribution);
 	}
@@ -53,11 +49,11 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		List<Shrinkable<T>> listOfShrinkables = new ArrayList<>();
 
 		// Raise probability for no duplicates even in large containers to approx 2 percent
-		// boolean noDuplicates = false;
-		boolean noDuplicates = !noDuplicatesHadToBeSwitchedOff
-								   && listSize >= 2
+		boolean noDuplicates = listSize >= 2
+								   && listSize <= maxUniqueElements
 								   && uniquenessExtractors.isEmpty()
 								   && random.nextInt(100) <= 2;
+		int sizeToShuffleIfExceeded = Integer.MAX_VALUE;
 
 		boolean canUseSetForValues = uniquenessExtractors.isEmpty() || uniquenessExtractors.contains(FeatureExtractor.identity());
 		Collection<T> existingValues = canUseSetForValues ? new HashSet<>() : new ArrayList<>();
@@ -66,22 +62,31 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 			try {
 				Shrinkable<T> next = nextUntilAccepted(random, existingValues, elementGenerator::next, noDuplicates);
 				listOfShrinkables.add(next);
-			} catch (TooManyFilterMissesException tooManyFilterMissesException) {
-				// Switch off noDuplicates
+			} catch (TooManyFilterMissesException tooManyFailedGenerationAttempts) {
+				// Switch off noDuplicates to enable generation of elements to proceed
 				if (noDuplicates) {
+					// This should occur only rarely because usually the check against maxUniqueElements prevents it from happening.
 					noDuplicates = false;
-					noDuplicatesHadToBeSwitchedOff = true;
-				} else {
-					// Ignore if list.size() >= minSize, because uniqueness constraints influence possible max size
-					if (listOfShrinkables.size() < minSize) {
-						throw tooManyFilterMissesException;
-					} else {
-						listSize = listOfShrinkables.size();
-						sizeGenerator = sizeGenerator(minSize, listSize, genSize, sizeDistribution);
-					}
-				}
-			}
+					sizeToShuffleIfExceeded = listOfShrinkables.size();
 
+					// Resume generation
+					continue;
+				}
+				if (listOfShrinkables.size() < minSize) {
+					// Fail if minimum container size could not be reached
+					throw tooManyFailedGenerationAttempts;
+				}
+				// Stop generation if minimum container size could be reached,
+				// because uniqueness constraints - or an overestimated value for maxUniqueElements -
+				// can reduce the achievable max size of a container.
+				break;
+			}
+		}
+		if (listOfShrinkables.size() > sizeToShuffleIfExceeded) {
+			// If we started generating with no duplicates, and then realized we can't generate enough unique elements,
+			// then the list becomes skewed: unique elements go first
+			// We shuffle the list to allow other constellations (e.g. list unique-most elements starting with non-unique ones)
+			Collections.shuffle(listOfShrinkables, random);
 		}
 		return createShrinkable.apply(listOfShrinkables);
 	}

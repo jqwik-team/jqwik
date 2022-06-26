@@ -22,7 +22,8 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 
 	@Override
 	public RandomGenerator<String> generator(int genSize) {
-		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, genSize, lengthDistribution);
+		long maxUniqueChars = characterArbitrary.exhaustive(maxLength).map(ExhaustiveGenerator::maxCount).orElse((long) maxLength);
+		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, maxUniqueChars, genSize, lengthDistribution);
 	}
 
 	@Override
