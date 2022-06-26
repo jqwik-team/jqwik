@@ -161,6 +161,23 @@ class ListArbitraryTests {
 		});
 	}
 
+	@Example
+	void uniqueListsAreSometimesGeneratedByDefaultEvenIfMaxSizeDoesNotAllowThat(@ForAll Random random) {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(0, 10);
+		ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(50);
+
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1, false);
+
+		for (int i = 0; i < 2000; i++) {
+			List<Integer> list = generator.next(random).value();
+			Statistics.collect(isUniqueModulo(list, 10));
+		}
+
+		Statistics.coverage(checker -> {
+			checker.check(true).percentage(p -> p >= 1.5);
+		});
+	}
+
 	@Group
 	class SizeDistribution {
 
