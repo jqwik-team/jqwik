@@ -276,6 +276,18 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
 					  .collect(hasRepetition(aString));
 		}
 
+		@Property(edgeCases = EdgeCasesMode.NONE)
+		void generateNoDuplicatesWorksIfPossibleCharsAreLessThanMaxStringLength(
+			@ForAll @CharRange(from = 'a', to = 'z') @StringLength(max = 500) String aString
+		) {
+			Statistics.label("duplicates")
+					  .collect(hasDuplicate(aString))
+					  .coverage(checker -> checker.check(false).percentage(p -> p >= 4));
+
+			Statistics.label("repetition")
+					  .collect(hasRepetition(aString));
+		}
+
 		private boolean hasDuplicate(String aString) {
 			return aString.chars().distinct().count() != aString.length();
 		}
