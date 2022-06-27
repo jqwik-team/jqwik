@@ -86,28 +86,17 @@ class ShrinkableChainShrinker<T> {
 	}
 
 	private Stream<ShrinkableChain<T>> shrinkIterationsRange(int startIndex, int endIndex) {
-		List<ShrinkableChainIteration<T>> iterationsRange = extractRange(startIndex, endIndex);
+		List<ShrinkableChainIteration<T>> iterationsRange = iterations.subList(startIndex, endIndex + 1);
 		return JqwikStreamSupport.concat(
-			shrinkAllSubRanges(startIndex, iterationsRange),
-			shrinkOneAfterTheOther(startIndex, iterationsRange),
-			shrinkPairs(startIndex, iterationsRange)
+			shrinkAllSubRanges(startIndex, endIndex, iterationsRange),
+			shrinkOneAfterTheOther(startIndex, endIndex, iterationsRange),
+			shrinkPairs(startIndex, endIndex, iterationsRange)
 		);
 	}
 
-	private List<ShrinkableChainIteration<T>> extractRange(int startIndex, int endIndex) {
-		List<ShrinkableChainIteration<T>> iterationsRange = new ArrayList<>();
-		for (int i = 0; i < iterations.size(); i++) {
-			if (i >= startIndex && i <= endIndex) {
-				iterationsRange.add(iterations.get(i));
-			}
-		}
-		return iterationsRange;
-	}
-
-	private Stream<ShrinkableChain<T>> shrinkPairs(int startIndex, List<ShrinkableChainIteration<T>> iterationsRange) {
+	private Stream<ShrinkableChain<T>> shrinkPairs(int startIndex, int endIndex, List<ShrinkableChainIteration<T>> iterationsRange) {
 		Stream<List<ShrinkableChainIteration<T>>> shrunkRange = shrinkPairsOfIterations(iterationsRange);
-		int restSize = iterations.size() - iterationsRange.size();
-		return replaceRangeByShrunkRange(startIndex, shrunkRange, restSize);
+		return replaceRangeByShrunkRange(startIndex, endIndex, shrunkRange);
 	}
 
 	private Stream<List<ShrinkableChainIteration<T>>> shrinkPairsOfIterations(List<ShrinkableChainIteration<T>> iterationsRange) {
@@ -129,16 +118,14 @@ class ShrinkableChainShrinker<T> {
 			});
 	}
 
-	private Stream<ShrinkableChain<T>> shrinkOneAfterTheOther(int startIndex, List<ShrinkableChainIteration<T>> iterationsRange) {
+	private Stream<ShrinkableChain<T>> shrinkOneAfterTheOther(int startIndex, int endIndex, List<ShrinkableChainIteration<T>> iterationsRange) {
 		Stream<List<ShrinkableChainIteration<T>>> shrunkRange = shrinkOneIterationAfterTheOther(iterationsRange);
-		int restSize = iterations.size() - iterationsRange.size();
-		return replaceRangeByShrunkRange(startIndex, shrunkRange, restSize);
+		return replaceRangeByShrunkRange(startIndex, endIndex, shrunkRange);
 	}
 
-	private Stream<ShrinkableChain<T>> shrinkAllSubRanges(int startIndex, List<ShrinkableChainIteration<T>> iterationsRange) {
+	private Stream<ShrinkableChain<T>> shrinkAllSubRanges(int startIndex, int endIndex, List<ShrinkableChainIteration<T>> iterationsRange) {
 		Stream<List<ShrinkableChainIteration<T>>> shrunkRange = shrinkToAllSubLists(iterationsRange);
-		int restSize = iterations.size() - iterationsRange.size();
-		return replaceRangeByShrunkRange(startIndex, shrunkRange, restSize);
+		return replaceRangeByShrunkRange(startIndex, endIndex, shrunkRange);
 	}
 
 	private Stream<List<ShrinkableChainIteration<T>>> shrinkOneIterationAfterTheOther(List<ShrinkableChainIteration<T>> iterationsRange) {
@@ -147,10 +134,10 @@ class ShrinkableChainShrinker<T> {
 			int index = i;
 			ShrinkableChainIteration<T> iteration = iterationsRange.get(i);
 			Shrinkable<Transformer<T>> element = iteration.shrinkable;
-			Stream<List<ShrinkableChainIteration<T>>> shrinkElement = element.shrink().flatMap(shrunkElement -> {
+			Stream<List<ShrinkableChainIteration<T>>> shrinkElement = element.shrink().map(shrunkElement -> {
 				List<ShrinkableChainIteration<T>> iterationsCopy = new ArrayList<>(iterationsRange);
 				iterationsCopy.set(index, iteration.withShrinkable(shrunkElement));
-				return Stream.of(iterationsCopy);
+				return iterationsCopy;
 			});
 			shrinkPerElementStreams.add(shrinkElement);
 		}
@@ -159,8 +146,8 @@ class ShrinkableChainShrinker<T> {
 
 	private Stream<ShrinkableChain<T>> replaceRangeByShrunkRange(
 		int startIndex,
-		Stream<List<ShrinkableChainIteration<T>>> shrunkRange,
-		int restSize
+		int endIndex,
+		Stream<List<ShrinkableChainIteration<T>>> shrunkRange
 	) {
 		return shrunkRange.map(shrunkIterationsRange -> {
 			List<ShrinkableChainIteration<T>> shrunkIterations = new ArrayList<>();
@@ -168,8 +155,10 @@ class ShrinkableChainShrinker<T> {
 				shrunkIterations.add(iterations.get(i));
 			}
 			shrunkIterations.addAll(shrunkIterationsRange);
-			int newMaxSize = restSize + shrunkIterationsRange.size();
-			return newShrinkableChain(shrunkIterations, newMaxSize);
+			for (int i = endIndex + 1; i < iterations.size(); i++) {
+				shrunkIterations.add(iterations.get(i));
+			}
+			return newShrinkableChain(shrunkIterations, shrunkIterations.size());
 		});
 	}
 
