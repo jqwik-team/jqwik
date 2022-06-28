@@ -7,7 +7,7 @@ module net.jqwik.time {
 	requires transitive net.jqwik.api;
 	requires org.opentest4j;
 
-	provides net.jqwik.api.configurators.ArbitraryConfigurator with 
+	provides net.jqwik.api.configurators.ArbitraryConfigurator with
 		net.jqwik.time.internal.properties.configurators.DateRangeConfigurator.ForLocalDate,
 		net.jqwik.time.internal.properties.configurators.DateRangeConfigurator.ForCalendar,
 		net.jqwik.time.internal.properties.configurators.DateRangeConfigurator.ForDate,
@@ -80,20 +80,21 @@ module net.jqwik.time {
 		net.jqwik.time.internal.properties.configurators.PrecisionConfigurator.ForInstant,
 		net.jqwik.time.internal.properties.configurators.PrecisionConfigurator.ForOffsetDateTime,
 		net.jqwik.time.internal.properties.configurators.OffsetRangeConfigurator.ForOffsetDateTime;
-																   
+
 	provides net.jqwik.api.providers.ArbitraryProvider with
-		net.jqwik.time.internal.properties.providers.DatesArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.DateTimeArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.DurationArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.InstantArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.LocalDateArbitraryProvider,
 		net.jqwik.time.internal.properties.providers.MonthDayArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.OffsetDateTimeArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.OffsetTimeArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.PeriodArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.TimeArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.TimeZoneArbitraryProvider,
 		net.jqwik.time.internal.properties.providers.YearArbitraryProvider,
 		net.jqwik.time.internal.properties.providers.YearMonthArbitraryProvider,
-		net.jqwik.time.internal.properties.providers.PeriodArbitraryProvider,
-		net.jqwik.time.internal.properties.providers.OffsetTimesArbitraryProvider,
-		net.jqwik.time.internal.properties.providers.TimesArbitraryProvider,
-		net.jqwik.time.internal.properties.providers.TimeZoneArbitraryProvider,
+		net.jqwik.time.internal.properties.providers.ZonedDateTimeArbitraryProvider,
 		net.jqwik.time.internal.properties.providers.ZoneIdArbitraryProvider,
-		net.jqwik.time.internal.properties.providers.ZoneOffsetsArbitraryProvider,
-		net.jqwik.time.internal.properties.providers.DurationArbitraryProvider,
-		net.jqwik.time.internal.properties.providers.DateTimesArbitraryProvider,
-		net.jqwik.time.internal.properties.providers.InstantArbitraryProvider,
-		net.jqwik.time.internal.properties.providers.OffsetDateTimesArbitraryProvider;
+		net.jqwik.time.internal.properties.providers.ZoneOffsetsArbitraryProvider;
 }
