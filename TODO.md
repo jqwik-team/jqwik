@@ -17,6 +17,8 @@
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
+    - Check module-info.java files
+
     - Document
         - Release notes
 
