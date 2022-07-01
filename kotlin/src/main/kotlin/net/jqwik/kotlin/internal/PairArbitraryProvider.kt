@@ -3,8 +3,8 @@ package net.jqwik.kotlin.internal
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.providers.ArbitraryProvider
 import net.jqwik.api.providers.TypeUsage
+import net.jqwik.api.support.CollectorsSupport
 import net.jqwik.kotlin.api.anyPair
-import java.util.stream.Collectors
 
 class PairArbitraryProvider : ArbitraryProvider {
 
@@ -24,6 +24,6 @@ class PairArbitraryProvider : ArbitraryProvider {
                 val second = arbitraries[1]
                 return@map anyPair(first, second)
             }
-            .collect(Collectors.toSet())
+            .collect(CollectorsSupport.toLinkedHashSet())
     }
 }

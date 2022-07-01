@@ -3,9 +3,8 @@ package net.jqwik.kotlin.internal
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.providers.ArbitraryProvider
 import net.jqwik.api.providers.TypeUsage
-import net.jqwik.kotlin.api.anyPair
+import net.jqwik.api.support.CollectorsSupport
 import net.jqwik.kotlin.api.anyTriple
-import java.util.stream.Collectors
 
 class TripleArbitraryProvider : ArbitraryProvider {
 
@@ -27,6 +26,6 @@ class TripleArbitraryProvider : ArbitraryProvider {
                 val third = arbitraries[2]
                 return@map anyTriple(first, second, third)
             }
-            .collect(Collectors.toSet())
+            .collect(CollectorsSupport.toLinkedHashSet())
     }
 }
