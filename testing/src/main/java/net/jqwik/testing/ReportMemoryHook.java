@@ -18,7 +18,7 @@ public class ReportMemoryHook implements AroundPropertyHook {
 		double usedMemoryBefore = usedMemInMB();
 		PropertyExecutionResult result = property.execute();
 		double usedMemoryAfter = usedMemInMB();
-		Map<String, Object> memoryReport = new HashMap<>();
+		Map<String, Object> memoryReport = new LinkedHashMap<>();
 		memoryReport.put("used memory before", String.format("%s MB", usedMemoryBefore));
 		memoryReport.put("used memory after", String.format("%s MB", usedMemoryAfter));
 		context.reporter().publishReport(context.extendedLabel(), memoryReport);
