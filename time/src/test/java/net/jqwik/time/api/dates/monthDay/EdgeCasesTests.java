@@ -18,7 +18,7 @@ public class EdgeCasesTests {
 		MonthDayArbitrary monthDays = Dates.monthDays();
 		Set<MonthDay> edgeCases = collectEdgeCaseValues(monthDays.edgeCases());
 		assertThat(edgeCases).hasSize(3);
-		assertThat(edgeCases).containsExactly(
+		assertThat(edgeCases).containsExactlyInAnyOrder(
 			MonthDay.of(Month.JANUARY, 1),
 			MonthDay.of(Month.FEBRUARY, 29),
 			MonthDay.of(Month.DECEMBER, 31)
