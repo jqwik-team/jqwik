@@ -11,7 +11,6 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
-import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -69,6 +68,26 @@ class ArbitraryTests {
 		Statistics.label("at least 25 nulls")
 				  .collect(listWithoutNulls.size() <= 75)
 				  .coverage(checker -> checker.check(true).percentage(p -> p > 80));
+	}
+
+	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.integers().map(Object::toString),
+				Arbitraries.integers().map(i -> i % 2 == 0),
+				Arbitraries.integers().map(i -> {
+					if (i % 2 == 0) throw new RuntimeException();
+					return i;
+				}).ignoreException(RuntimeException.class),
+				Arbitraries.of(-10, 10).injectNull(0.1),
+				Arbitraries.integers().between(-10, 10).fixGenSize(100),
+				Arbitraries.of(-10, 10).optional(),
+				Arbitraries.just(42).tuple5(),
+				Arbitraries.integers().between(1, 10).flatMap(i -> Arbitraries.strings().ofLength(i))
+			);
+		}
 	}
 
 	@Group
