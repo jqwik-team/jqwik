@@ -18,6 +18,7 @@ import net.jqwik.engine.support.types.*;
 import net.jqwik.testing.*;
 
 import static java.math.BigInteger.*;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
@@ -158,6 +159,24 @@ class ArbitrariesTests {
 		assertAllGenerated(constant.generator(1000), random, value -> {
 			assertThat(value).isInstanceOf(Person.class);
 		});
+	}
+
+	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers()),
+				Arbitraries.just("abc"),
+				Arbitraries.create(() -> "new string"),
+				Arbitraries.shuffle(1, 2, 3),
+				Arbitraries.oneOf(Arbitraries.integers(), Arbitraries.strings()),
+				Arbitraries.frequencyOf(
+					Tuple.of(2, Arbitraries.integers()),
+					Tuple.of(3, Arbitraries.strings())
+				)
+			);
+		}
 	}
 
 	private static class Person {
@@ -629,6 +648,20 @@ class ArbitrariesTests {
 	@Label("Integrals")
 	class IntegralNumbers {
 
+		@Group
+		class IntegralGenerationTests implements GenericGenerationProperties {
+			@Override
+			public Arbitrary<Arbitrary<?>> arbitraries() {
+				return Arbitraries.of(
+					Arbitraries.integers(),
+					Arbitraries.shorts(),
+					Arbitraries.bytes(),
+					Arbitraries.longs(),
+					Arbitraries.bigIntegers()
+				);
+			}
+		}
+
 		@Example
 		void shorts(@ForAll Random random) {
 			Arbitrary<Short> enumArbitrary = Arbitraries.shorts();
@@ -744,6 +777,18 @@ class ArbitrariesTests {
 				valueOf(0),
 				valueOf(1), valueOf(2),
 				min, max
+			);
+		}
+	}
+
+	@Group
+	class DecimalsGenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.bigDecimals(),
+				Arbitraries.floats(),
+				Arbitraries.doubles()
 			);
 		}
 	}

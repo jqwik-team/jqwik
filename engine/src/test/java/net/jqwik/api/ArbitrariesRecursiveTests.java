@@ -132,6 +132,16 @@ class ArbitrariesRecursiveTests {
 	}
 
 	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				fixedDepthRecursiveIntArbitrary()
+			);
+		}
+	}
+
+	@Group
 	class EdgeCasesTests implements GenericEdgeCasesProperties {
 
 		@Override

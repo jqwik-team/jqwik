@@ -5,7 +5,9 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
+import net.jqwik.engine.support.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -92,7 +94,7 @@ public class ShrinkableStringTests {
 
 			TestingFalsifier<String> falsifier =
 					string -> {
-						Set<Integer> usedLetters = string.chars().boxed().collect(Collectors.toSet());
+						Set<Integer> usedLetters = string.chars().boxed().collect(CollectorsSupport.toLinkedHashSet());
 						return usedLetters.size() != 1;
 					};
 

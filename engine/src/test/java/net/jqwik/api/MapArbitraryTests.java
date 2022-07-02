@@ -144,7 +144,18 @@ class MapArbitraryTests {
 			}
 			return i % modulo;
 		}).collect(Collectors.toList());
-		return new HashSet<>(moduloList).size() == list.size();
+		return new LinkedHashSet<>(moduloList).size() == list.size();
+	}
+
+	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
+			Arbitrary<Integer> values = Arbitraries.of(10, 100);
+			Arbitrary<Map<String, Integer>> arbitrary = Arbitraries.maps(keys, values);
+			return Arbitraries.of(arbitrary);
+		}
 	}
 
 	@Group
@@ -223,7 +234,7 @@ class MapArbitraryTests {
 
 		@SafeVarargs
 		private final <T, U> Map<T, U> createMap(Tuple.Tuple2<T, U>... tuples) {
-			HashMap<T, U> result = new HashMap<>();
+			HashMap<T, U> result = new LinkedHashMap<>();
 			for (Tuple.Tuple2<T, U> tuple : tuples) {
 				result.put(tuple.get1(), tuple.get2());
 			}

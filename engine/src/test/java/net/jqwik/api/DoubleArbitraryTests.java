@@ -188,6 +188,17 @@ class DoubleArbitraryTests {
 	}
 
 	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.doubles(),
+				Arbitraries.doubles().withStandardSpecialValues()
+			);
+		}
+	}
+
+	@Group
 	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
 
 		@Override

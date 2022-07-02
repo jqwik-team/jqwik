@@ -20,4 +20,8 @@ class IsPropertyDescriptorFor implements ArgumentMatcher<PropertyMethodDescripto
 				&& descriptor.getTargetMethod().getName().equals(methodName);
 	}
 
+	@Override
+	public String toString() {
+		return "IsPropertyDescriptorFor(" + containerClass + "." + methodName + ")";
+	}
 }

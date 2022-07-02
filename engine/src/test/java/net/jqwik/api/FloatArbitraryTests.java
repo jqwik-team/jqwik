@@ -161,6 +161,17 @@ class FloatArbitraryTests {
 	}
 
 	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.floats(),
+				Arbitraries.floats().withStandardSpecialValues()
+			);
+		}
+	}
+
+	@Group
 	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
 
 		@Override

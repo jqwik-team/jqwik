@@ -78,8 +78,8 @@ class UniqueElementsProperties {
 			);
 		}
 
-		private Set<String> asSet(String ... strings) {
-			return new HashSet<>(asList(strings));
+		private Set<String> asSet(String... strings) {
+			return new LinkedHashSet<>(asList(strings));
 		}
 
 		private class GetFirstTwoChars implements Function<String, Object> {
@@ -95,17 +95,17 @@ class UniqueElementsProperties {
 
 		@Property
 		boolean arrays(@ForAll @UniqueElements String[] aStringArray) {
-			return hasNoDuplicates(asList((Object[]) aStringArray), Function.identity());
+			return hasNoDuplicates(asList(aStringArray), Function.identity());
 		}
 
 		@Property
 		boolean arraysWithByClause(@ForAll @UniqueElements(by = GetStringLength.class) String[] aStringArray) {
-			return hasNoDuplicates(asList((String[]) aStringArray), new GetStringLength());
+			return hasNoDuplicates(asList(aStringArray), new GetStringLength());
 		}
 
 		@Property
 		boolean arraysNotFromListArbitraryUsePlainFilter(@ForAll("arrayOfStrings") @UniqueElements String[] aStringArray) {
-			return hasNoDuplicates(asList((Object[]) aStringArray), Function.identity());
+			return hasNoDuplicates(asList(aStringArray), Function.identity());
 		}
 
 		@Provide

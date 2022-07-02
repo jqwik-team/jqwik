@@ -7,8 +7,10 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
+import net.jqwik.engine.support.*;
 import net.jqwik.testing.*;
 
 import static java.util.Arrays.*;
@@ -138,7 +140,7 @@ class ShrinkableSetTests {
 		@Example
 		void bigSet() {
 			Set<Shrinkable<Integer>> elementShrinkables = IntStream.range(0, 1000).mapToObj(OneStepShrinkable::new)
-																   .collect(Collectors.toSet());
+																   .collect(CollectorsSupport.toLinkedHashSet());
 			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5, 1000, Collections.emptySet());
 
 			Set<Integer> shrunkValue = shrink(shrinkable, falsifier(Set::isEmpty), null);
@@ -172,7 +174,7 @@ class ShrinkableSetTests {
 			}
 			return i % modulo;
 		}).collect(Collectors.toList());
-		return new HashSet<>(moduloList).size() == list.size();
+		return new LinkedHashSet<>(moduloList).size() == list.size();
 	}
 
 	@SafeVarargs

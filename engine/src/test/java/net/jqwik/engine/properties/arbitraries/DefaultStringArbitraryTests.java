@@ -16,11 +16,16 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @StatisticsReport(onFailureOnly = true)
-class DefaultStringArbitraryTests implements GenericEdgeCasesProperties {
+class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, GenericGenerationProperties {
 
 	@Override
 	public Arbitrary<Arbitrary<?>> arbitraries() {
-		return Arbitraries.of(arbitrary);
+		return Arbitraries.of(
+			arbitrary,
+			arbitrary.ofMinLength(5).ofMaxLength(55),
+			arbitrary.withCharRange('a', 'z'),
+			arbitrary.whitespace().numeric().alpha()
+		);
 	}
 
 	StringArbitrary arbitrary = new DefaultStringArbitrary();

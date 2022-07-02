@@ -3,6 +3,7 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.function.*;
 
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
@@ -225,6 +226,16 @@ class FunctionsTests {
 			Function<String, Integer> function = (Function<String, Integer>) result.falsifiedParameters().get().get(0);
 			String string = (String) result.falsifiedParameters().get().get(1);
 			assertThat(function.apply(string)).isEqualTo(11);
+		}
+	}
+
+	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Integer> integers = Arbitraries.integers().between(10, 100);
+			FunctionArbitrary<Object, Integer> functionArbitrary = Functions.function(Function.class).returning(integers);
+			return Arbitraries.just(functionArbitrary);
 		}
 	}
 

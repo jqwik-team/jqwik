@@ -3,12 +3,12 @@ package net.jqwik.engine.properties.arbitraries;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -57,7 +57,7 @@ class TraverseArbitraryTests {
 		}
 		@Override
 		public Set<Executable> findCreators(TypeUsage targetType) {
-			return Arrays.stream(targetType.getRawType().getDeclaredConstructors()).collect(Collectors.toSet());
+			return Arrays.stream(targetType.getRawType().getDeclaredConstructors()).collect(CollectorsSupport.toLinkedHashSet());
 		}
 	}
 

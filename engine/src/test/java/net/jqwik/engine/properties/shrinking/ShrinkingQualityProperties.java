@@ -56,7 +56,7 @@ class ShrinkingQualityProperties {
 					   .list().ofMaxSize(50);
 
 		TestingFalsifier<List<List<Integer>>> containsLessThan5DistinctNumbers = (List<List<Integer>> ls) -> {
-			Set<Integer> allElements = new HashSet<>();
+			Set<Integer> allElements = new LinkedHashSet<>();
 			for (List<Integer> x : ls) {
 				allElements.addAll(x);
 			}

@@ -137,7 +137,7 @@ class SetArbitraryTests {
 			}
 			return i % modulo;
 		}).collect(Collectors.toList());
-		return new HashSet<>(moduloList).size() == list.size();
+		return new LinkedHashSet<>(moduloList).size() == list.size();
 	}
 
 	@Group
@@ -202,7 +202,7 @@ class SetArbitraryTests {
 		}
 
 		private Set<Integer> asSet(Integer... ints) {
-			return new HashSet<>(asList(ints));
+			return new LinkedHashSet<>(asList(ints));
 		}
 
 		@Example
@@ -217,6 +217,16 @@ class SetArbitraryTests {
 			Optional<ExhaustiveGenerator<Set<Integer>>> optionalGenerator =
 				Arbitraries.integers().between(1, 75).set().ofMaxSize(10).exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
+		}
+	}
+
+	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			Arbitrary<Set<Integer>> arbitrary = ints.set();
+			return Arbitraries.of(arbitrary);
 		}
 	}
 

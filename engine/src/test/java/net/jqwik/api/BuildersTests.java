@@ -324,6 +324,36 @@ class BuildersTests {
 	}
 
 	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Person> simpleBuilder =
+				Builders
+					.withBuilder(PersonBuilder::new)
+					.build(PersonBuilder::build);
+
+			Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
+			Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
+			Arbitrary<Person> builder =
+				Builders
+					.withBuilder(PersonBuilder::new)
+					.use(name).in(PersonBuilder::withName)
+					.use(age).in(PersonBuilder::withAge)
+					.build(PersonBuilder::build);
+
+			Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
+			Arbitrary<String> appendingBuilder =
+				Builders
+					.withBuilder(StringBuilder::new)
+					.use(digit).in(StringBuilder::append)
+					.use(digit).in(StringBuilder::append)
+					.build(StringBuilder::toString);
+
+			return Arbitraries.of(simpleBuilder, builder, appendingBuilder);
+		}
+	}
+
+	@Group
 	@PropertyDefaults(tries = 1000)
 	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
 

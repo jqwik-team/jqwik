@@ -81,6 +81,17 @@ class CombinatorsTests {
 	}
 
 	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> plus = Combinators.combine(a1, a2).as((i1, i2) -> i1 + i2);
+			return Arbitraries.of(plus);
+		}
+	}
+
+	@Group
 	@SuppressWarnings("Convert2MethodRef")
 	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
 

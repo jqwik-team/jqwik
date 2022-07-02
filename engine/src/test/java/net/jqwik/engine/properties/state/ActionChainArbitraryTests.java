@@ -287,7 +287,7 @@ class ActionChainArbitraryTests {
 				}
 			};
 			return ActionChain.actionChains(
-				HashSet::new,
+				LinkedHashSet::new,
 				Action.just("clear", set -> {
 					set.clear();
 					return set;

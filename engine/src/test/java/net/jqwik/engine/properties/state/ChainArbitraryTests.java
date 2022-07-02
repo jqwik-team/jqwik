@@ -551,7 +551,7 @@ class ChainArbitraryTests {
 			TestingFalsifier<Chain<List<Integer>>> falsifier = chain -> {
 				for (List<Integer> list : chain) {
 					// Fail on duplicates
-					if (new HashSet<>(list).size() < list.size()) {
+					if (new LinkedHashSet<>(list).size() < list.size()) {
 						return false;
 					}
 				}

@@ -251,7 +251,7 @@ class ListArbitraryTests {
 			}
 			return i % modulo;
 		}).collect(Collectors.toList());
-		return new HashSet<>(moduloList).size() == list.size();
+		return new LinkedHashSet<>(moduloList).size() == list.size();
 	}
 
 	@Example
@@ -408,6 +408,17 @@ class ListArbitraryTests {
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}
+
+	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			Arbitrary<List<Integer>> arbitrary = ints.list();
+			return Arbitraries.of(arbitrary);
+		}
+	}
+
 
 	@Group
 	class EdgeCasesGeneration implements GenericEdgeCasesProperties {

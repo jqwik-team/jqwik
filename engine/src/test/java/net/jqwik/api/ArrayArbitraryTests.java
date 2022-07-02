@@ -143,6 +143,16 @@ class ArrayArbitraryTests {
 	}
 
 	@Group
+	class GenerationTests implements GenericGenerationProperties {
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			Arbitrary<Integer> ints = Arbitraries.of(-10, 10);
+			ArrayArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
+			return Arbitraries.of(arbitrary);
+		}
+	}
+
+	@Group
 	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
 
 		@Override
