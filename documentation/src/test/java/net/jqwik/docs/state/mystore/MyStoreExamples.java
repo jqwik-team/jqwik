@@ -104,7 +104,7 @@ public class MyStoreExamples {
 		private Set<Tuple.Tuple2<K, V>> entries(MyStore<K, V> before) {
 			return before.keys().stream()
 						 .map(key -> Tuple.of(key, before.get(key).orElse(null)))
-						 .collect(Collectors.toSet());
+						 .collect(Collectors.toCollection(LinkedHashSet::new));
 		}
 
 		@Override

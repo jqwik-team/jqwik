@@ -35,14 +35,14 @@ public class MyStore<K, V> {
 	}
 
 	public Set<K> keys() {
-		return tuples.stream().map(Tuple1::get1).collect(Collectors.toSet());
+		return tuples.stream().map(Tuple1::get1).collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 	@Override
 	public String toString() {
 		Set<String> contents = keys().stream()
 									 .map(k -> String.format("%s=%s", k, get(k).orElse(null)))
-									 .collect(Collectors.toSet());
+									 .collect(Collectors.toCollection(LinkedHashSet::new));
 		return String.format("Store %s", contents);
 	}
 }
