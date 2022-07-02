@@ -3,11 +3,11 @@ package net.jqwik.engine.properties;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
 
@@ -86,7 +86,7 @@ class ProviderMethodInvoker {
 	}
 
 	private <T, R> Set<R> mapSet(Set<T> invokers, Function<T, R> mapper) {
-		return invokers.stream().map(mapper).collect(Collectors.toSet());
+		return invokers.stream().map(mapper).collect(CollectorsSupport.toLinkedHashSet());
 	}
 
 	private boolean isForAllParameter(MethodParameter parameter) {

@@ -17,8 +17,8 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	private int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	private RandomDistribution sizeDistribution = null;
 
-	private Set<FeatureExtractor<K>> keyUniquenessExtractors = new HashSet<>();
-	private Set<FeatureExtractor<V>> valueUniquenessExtractors = new HashSet<>();
+	private Set<FeatureExtractor<K>> keyUniquenessExtractors = new LinkedHashSet<>();
+	private Set<FeatureExtractor<V>> valueUniquenessExtractors = new LinkedHashSet<>();
 
 	public DefaultMapArbitrary(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		this.keysArbitrary = keysArbitrary;
@@ -56,7 +56,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 			ListArbitrary<V> valueListArbitrary = createValueListArbitrary(mapSize);
 			return valueListArbitrary.map(
 					values -> {
-						HashMap<K, V> map = new HashMap<>();
+						Map<K, V> map = new LinkedHashMap<>();
 						for (int i = 0; i < mapSize; i++) {
 							K key = keys.get(i);
 							V value = values.get(i);
@@ -86,7 +86,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	@Override
 	public MapArbitrary<K, V> uniqueKeys(Function<K, Object> by) {
 		DefaultMapArbitrary<K, V> clone = typedClone();
-		clone.keyUniquenessExtractors = new HashSet<>(keyUniquenessExtractors);
+		clone.keyUniquenessExtractors = new LinkedHashSet<>(keyUniquenessExtractors);
 		clone.keyUniquenessExtractors.add(by::apply);
 		return clone;
 	}
@@ -94,7 +94,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	@Override
 	public MapArbitrary<K, V> uniqueValues(Function<V, Object> by) {
 		DefaultMapArbitrary<K, V> clone = typedClone();
-		clone.valueUniquenessExtractors = new HashSet<>(valueUniquenessExtractors);
+		clone.valueUniquenessExtractors = new LinkedHashSet<>(valueUniquenessExtractors);
 		clone.valueUniquenessExtractors.add(by::apply);
 		return clone;
 	}

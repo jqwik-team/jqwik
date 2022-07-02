@@ -6,6 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
@@ -38,7 +39,7 @@ class DomainContextFactory {
 				.peek(domainContext -> {
 					domainContext.initialize(propertyLifecycleContext);
 				})
-				.collect(Collectors.toSet());
+				.collect(CollectorsSupport.toLinkedHashSet());
 		return new CombinedDomainContext(domainContexts);
 	}
 

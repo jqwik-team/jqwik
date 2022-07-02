@@ -1,10 +1,10 @@
 package net.jqwik.engine.providers;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 
 public class HashMapArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -24,6 +24,6 @@ public class HashMapArbitraryProvider implements ArbitraryProvider {
 				Arbitrary<?> valueArbitrary = arbitraries.get(1);
 				return Arbitraries.maps(keyArbitrary, valueArbitrary);
 			})
-			.collect(Collectors.toSet());
+			.collect(CollectorsSupport.toLinkedHashSet());
 	}
 }

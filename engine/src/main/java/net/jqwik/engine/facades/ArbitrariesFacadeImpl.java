@@ -274,7 +274,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		RegisteredArbitraryConfigurer defaultArbitraryConfigurer = new RegisteredArbitraryConfigurer(domainContext.getArbitraryConfigurators());
 		return unconfiguredArbitraries.stream()
 									  .map(arbitrary -> defaultArbitraryConfigurer.configure(arbitrary, typeUsage))
-									  .collect(Collectors.toSet());
+									  .collect(CollectorsSupport.toLinkedHashSet());
 	}
 
 	private static Set<Arbitrary<?>> createDefaultArbitraries(

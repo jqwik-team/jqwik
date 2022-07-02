@@ -25,7 +25,7 @@ public class DefaultTraverseArbitrary<T> extends ArbitraryDecorator<T> implement
 	private boolean enableRecursion = false;
 
 	public DefaultTraverseArbitrary(Class<T> targetType, Traverser traverser) {
-		this(targetType, traverser, new HashMap<>());
+		this(targetType, traverser, new LinkedHashMap<>());
 	}
 
 	private DefaultTraverseArbitrary(Class<T> targetType, Traverser traverser, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {

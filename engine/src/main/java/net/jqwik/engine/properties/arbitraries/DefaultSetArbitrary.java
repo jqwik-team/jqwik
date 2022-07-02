@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
@@ -46,7 +47,7 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 	@Override
 	public EdgeCases<Set<T>> edgeCases(int maxEdgeCases) {
 		return edgeCases((elementList, minSize1) -> {
-			Set<Shrinkable<T>> elementSet = new HashSet<>(elementList);
+			Set<Shrinkable<T>> elementSet = new LinkedHashSet<>(elementList);
 			return new ShrinkableSet<>(elementSet, minSize1, maxSize, uniquenessExtractors);
 		}, maxEdgeCases);
 	}
@@ -71,7 +72,7 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 	public <U> Arbitrary<Set<U>> mapEach(BiFunction<Set<T>, T, U> mapper) {
 		return this.map(elements -> elements.stream()
 											.map(e -> mapper.apply(elements, e))
-											.collect(Collectors.toSet()));
+											.collect(CollectorsSupport.toLinkedHashSet()));
 	}
 
 	// TODO: Remove duplication with DefaultListArbitrary.flatMapEach()
@@ -82,7 +83,7 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 				elements.stream()
 						.map(e -> flatMapper.apply(elements, e))
 						.collect(Collectors.toList());
-			return Combinators.combine(arbitraries).as(HashSet::new);
+			return Combinators.combine(arbitraries).as(LinkedHashSet::new);
 		});
 	}
 

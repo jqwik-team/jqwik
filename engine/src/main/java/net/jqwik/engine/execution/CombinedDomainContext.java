@@ -14,9 +14,7 @@ class CombinedDomainContext implements DomainContext {
 	private final List<SampleReportingFormat> reportingFormats = new ArrayList<>();
 
 	CombinedDomainContext(Set<DomainContext> domainContexts) {
-		Set<DomainContext> expandedContexts = new HashSet<>(domainContexts);
-
-		for (DomainContext domainContext : expandedContexts) {
+		for (DomainContext domainContext : domainContexts) {
 			providers.addAll(domainContext.getArbitraryProviders());
 			configurators.addAll(domainContext.getArbitraryConfigurators());
 			reportingFormats.addAll(domainContext.getReportingFormats());

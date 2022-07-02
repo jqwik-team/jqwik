@@ -11,6 +11,7 @@ import java.util.stream.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 
 import static java.util.stream.Collectors.*;
 
@@ -172,7 +173,7 @@ public class JqwikReflectionSupport {
 		String classpath = System.getProperty("java.class.path");
 		return Arrays.stream(classpath.split(File.pathSeparator))
 					 .map(Paths::get).filter(Files::isDirectory)
-					 .collect(toSet());
+					 .collect(CollectorsSupport.toLinkedHashSet());
 	}
 
 	public static List<MethodParameter> getMethodParameters(Executable method, Class<?> containerClass) {

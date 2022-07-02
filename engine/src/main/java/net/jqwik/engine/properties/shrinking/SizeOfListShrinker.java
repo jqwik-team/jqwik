@@ -31,7 +31,7 @@ public class SizeOfListShrinker<T> {
 	}
 
 	public Stream<List<T>> cuts(List<T> toShrink) {
-		Set<List<T>> lists = new HashSet<>();
+		Set<List<T>> lists = new LinkedHashSet<>();
 		appendRightCuts(toShrink, lists);
 		appendLeftCuts(toShrink, lists);
 		return lists.stream();

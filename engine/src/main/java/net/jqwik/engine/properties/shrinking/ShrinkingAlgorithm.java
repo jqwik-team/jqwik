@@ -8,7 +8,7 @@ import net.jqwik.api.lifecycle.*;
 
 class ShrinkingAlgorithm {
 
-	private final Map<List<Object>, TryExecutionResult> falsificationCache = new HashMap<>();
+	private final Map<List<Object>, TryExecutionResult> falsificationCache = new LinkedHashMap<>();
 	private final FalsifiedSample originalSample;
 	private final Consumer<FalsifiedSample> sampleShrunkConsumer;
 	private final Consumer<FalsifiedSample> shrinkAttemptConsumer;

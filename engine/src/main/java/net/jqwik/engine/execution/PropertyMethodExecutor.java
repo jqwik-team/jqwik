@@ -3,7 +3,6 @@ package net.jqwik.engine.execution;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.logging.*;
-import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
@@ -11,6 +10,7 @@ import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.reporting.*;
@@ -113,7 +113,9 @@ public class PropertyMethodExecutor {
 	}
 
 	private String buildResultReportKey() {
-		Set<String> tags = methodDescriptor.getTags().stream().map(TestTag::getName).collect(Collectors.toSet());
+		Set<String> tags = methodDescriptor.getTags().stream()
+										   .map(TestTag::getName)
+										   .collect(CollectorsSupport.toLinkedHashSet());
 		String tagsString = tags.isEmpty()
 								? ""
 								: String.format("[%s] ", String.join(", ", tags));

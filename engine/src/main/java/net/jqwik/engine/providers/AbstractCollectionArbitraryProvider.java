@@ -1,10 +1,10 @@
 package net.jqwik.engine.providers;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 
 abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider {
 
@@ -21,7 +21,7 @@ abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider 
 		Set<Arbitrary<?>> elementArbitraries = subtypeProvider.apply(elementType);
 		return elementArbitraries.stream()
 								 .map(this::create)
-								 .collect(Collectors.toSet());
+								 .collect(CollectorsSupport.toLinkedHashSet());
 	}
 
 	protected abstract Arbitrary<?> create(Arbitrary<?> innerArbitrary);

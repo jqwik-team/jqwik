@@ -104,7 +104,7 @@ abstract class AbstractSampleShrinker {
 
 		PriorityQueue<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> prioritizedResults = new PriorityQueue<>(resultComparator);
 
-		Set<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> removedResults = new HashSet<>();
+		Set<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> removedResults = new LinkedHashSet<>();
 
 		void push(Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> result) {
 			if (removedResults.contains(result)) {

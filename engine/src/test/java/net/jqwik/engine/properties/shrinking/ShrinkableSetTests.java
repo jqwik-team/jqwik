@@ -134,7 +134,7 @@ class ShrinkableSetTests {
 				};
 
 			Set<Integer> shrunkValue = shrink(shrinkable, falsifier, null);
-			assertThat(shrunkValue).containsExactly(0, 1, 2, 3);
+			assertThat(shrunkValue).containsExactlyInAnyOrder(0, 1, 2, 3);
 		}
 
 		@Example

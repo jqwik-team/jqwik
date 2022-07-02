@@ -14,7 +14,7 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 	private static final double DEFAULT_MAX = Double.MAX_VALUE;
 
 	private DecimalGeneratingArbitrary generatingArbitrary;
-	private final Set<Double> specials = new HashSet<>();
+	private final Set<Double> specials = new LinkedHashSet<>();
 
 	public DefaultDoubleArbitrary() {
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(Range.of(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX)));

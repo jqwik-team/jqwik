@@ -8,7 +8,7 @@ import net.jqwik.api.lifecycle.ResolveParameterHook.*;
 import net.jqwik.engine.support.*;
 
 class ParameterSupplierResolver {
-	private final Map<Parameter, Optional<ParameterSupplier>> resolvedSuppliers = new HashMap<>();
+	private final Map<Parameter, Optional<ParameterSupplier>> resolvedSuppliers = new LinkedHashMap<>();
 	private final ResolveParameterHook resolveParameterHook;
 	private final LifecycleContext lifecycleContext;
 

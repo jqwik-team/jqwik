@@ -14,7 +14,7 @@ import net.jqwik.engine.facades.*;
 public class StatisticsCollectorImpl implements StatisticsCollector {
 	public static final Object COLLECTORS_ID = Tuple.of(StatisticsCollectorImpl.class, "collectors");
 
-	private final Map<List<Object>, Integer> counts = new HashMap<>();
+	private final Map<List<Object>, Integer> counts = new LinkedHashMap<>();
 	private final List<Consumer<StatisticsCoverage>> coverageCheckers = new ArrayList<>();
 	private final String label;
 

@@ -56,7 +56,7 @@ public class JavaBeanReportingFormatFacadeImpl extends JavaBeanReportingFormat.J
 	}
 
 	private Map<String, Tuple2<String, Method>> toMap(List<Tuple2<String, Method>> properties) {
-		HashMap<String, Tuple2<String, Method>> map = new HashMap<>();
+		HashMap<String, Tuple2<String, Method>> map = new LinkedHashMap<>();
 		for (Tuple2<String, Method> entry : properties) {
 			map.put(entry.get1(), entry);
 		}

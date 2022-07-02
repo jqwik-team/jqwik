@@ -307,7 +307,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
-	private HashMap<String, Object> metaInfo = new HashMap<>();
+	private HashMap<String, Object> metaInfo = new LinkedHashMap<>();
 	private boolean isNullable = false;
 
 	public TypeUsageImpl(
@@ -716,7 +716,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	@Override
 	public TypeUsage withMetaInfo(String key, Object value) {
 		return cloneWith(t -> {
-			t.metaInfo = new HashMap<>(metaInfo);
+			t.metaInfo = new LinkedHashMap<>(metaInfo);
 			t.metaInfo.put(key, value);
 		});
 	}

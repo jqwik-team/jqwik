@@ -3,10 +3,10 @@ package net.jqwik.engine;
 import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
-import java.util.stream.*;
 
 import org.junit.platform.engine.*;
 
+import net.jqwik.api.support.*;
 import net.jqwik.engine.recording.*;
 
 public class DefaultJqwikConfiguration implements JqwikConfiguration {
@@ -102,7 +102,7 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			public Set<UniqueId> previousFailures() {
 				if (!properties.runFailuresFirst())
 					return Collections.emptySet();
-				return previousRun.allNonSuccessfulTests().map(TestRun::getUniqueId).collect(Collectors.toSet());
+				return previousRun.allNonSuccessfulTests().map(TestRun::getUniqueId).collect(CollectorsSupport.toLinkedHashSet());
 			}
 		};
 	}

@@ -2,10 +2,10 @@ package net.jqwik.engine.providers;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
 
@@ -38,7 +38,7 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 					   Arbitrary<?> resultArbitrary = arbitraries.get(0);
 					   return Functions.function(functionalType).returning(resultArbitrary);
 				   })
-				   .collect(Collectors.toSet());
+				   .collect(CollectorsSupport.toLinkedHashSet());
 	}
 
 	private TypeUsage getReturnType(TypeUsage targetType) {

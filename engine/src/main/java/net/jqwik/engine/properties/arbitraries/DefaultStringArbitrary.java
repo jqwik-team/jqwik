@@ -16,7 +16,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 
 	private int minLength = 0;
 	private int maxLength = RandomGenerators.DEFAULT_COLLECTION_SIZE;
-	private Set<Character> excludedChars = new HashSet<>();
+	private Set<Character> excludedChars = new LinkedHashSet<>();
 	private RandomDistribution lengthDistribution = null;
 	private double repeatChars = 0.0;
 
@@ -185,7 +185,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	@Override
 	public StringArbitrary excludeChars(char... charsToExclude) {
 		DefaultStringArbitrary clone = typedClone();
-		Set<Character> excludedChars = new HashSet<>(this.excludedChars);
+		Set<Character> excludedChars = new LinkedHashSet<>(this.excludedChars);
 		for (char c : charsToExclude) {
 			excludedChars.add(c);
 		}

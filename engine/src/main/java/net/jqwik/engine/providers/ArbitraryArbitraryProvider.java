@@ -1,10 +1,10 @@
 package net.jqwik.engine.providers;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 
 public class ArbitraryArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -17,6 +17,6 @@ public class ArbitraryArbitraryProvider implements ArbitraryProvider {
 		TypeUsage innerType = targetType.getTypeArguments().get(0);
 		return subtypeProvider.apply(innerType).stream()
 							  .map(Arbitraries::just)
-							  .collect(Collectors.toSet());
+							  .collect(CollectorsSupport.toLinkedHashSet());
 	}
 }

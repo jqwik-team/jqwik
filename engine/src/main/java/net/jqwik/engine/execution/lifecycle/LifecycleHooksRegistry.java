@@ -24,7 +24,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	}
 
 	private final List<HookRegistration> registrations = new ArrayList<>();
-	private final Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new HashMap<>();
+	private final Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new LinkedHashMap<>();
 
 	@Override
 	public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {

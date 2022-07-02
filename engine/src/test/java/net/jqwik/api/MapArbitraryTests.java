@@ -148,6 +148,7 @@ class MapArbitraryTests {
 	}
 
 	@Group
+	@PropertyDefaults(tries = 100)
 	class GenerationTests implements GenericGenerationProperties {
 		@Override
 		public Arbitrary<Arbitrary<?>> arbitraries() {

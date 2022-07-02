@@ -22,7 +22,7 @@ public class GenericsClassContext {
 	};
 
 	private final TypeUsage contextType;
-	private final Map<LookupTypeVariable, TypeResolution> resolutions = new HashMap<>();
+	private final Map<LookupTypeVariable, TypeResolution> resolutions = new LinkedHashMap<>();
 
 	GenericsClassContext(TypeUsage contextType) {
 		this.contextType = contextType;

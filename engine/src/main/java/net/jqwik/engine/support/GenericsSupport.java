@@ -7,7 +7,7 @@ import net.jqwik.api.providers.*;
 
 public class GenericsSupport {
 
-	private static Map<TypeUsage, GenericsClassContext> contextsCache = new HashMap<>();
+	private static final Map<TypeUsage, GenericsClassContext> contextsCache = new LinkedHashMap<>();
 
 	/**
 	 * Return a context object which can resolve generic types for a given {@code contextClass}.

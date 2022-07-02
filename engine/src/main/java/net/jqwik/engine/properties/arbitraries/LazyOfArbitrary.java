@@ -17,9 +17,9 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	// Cached arbitraries only have to survive one property
 	private static Store<Map<Integer, LazyOfArbitrary<?>>> arbitrariesStore() {
 		try {
-			return Store.getOrCreate(Tuple.of(LazyOfShrinkable.class, "arbitraries"), Lifespan.PROPERTY, HashMap::new);
+			return Store.getOrCreate(Tuple.of(LazyOfShrinkable.class, "arbitraries"), Lifespan.PROPERTY, LinkedHashMap::new);
 		} catch (OutsideJqwikException outsideJqwikException) {
-			return Store.free(HashMap::new);
+			return Store.free(LinkedHashMap::new);
 		}
 	}
 
@@ -39,9 +39,9 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	private Store<Map<Integer, RandomGenerator<T>>> createGeneratorsStore() {
 		try {
-			return Store.getOrCreate(Tuple.of(this, "generators"), Lifespan.TRY, HashMap::new);
+			return Store.getOrCreate(Tuple.of(this, "generators"), Lifespan.TRY, LinkedHashMap::new);
 		} catch (OutsideJqwikException outsideJqwikException) {
-			return Store.free(HashMap::new);
+			return Store.free(LinkedHashMap::new);
 		}
 	}
 
@@ -89,7 +89,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	private void pushGeneratedLevel() {
-		generatedParts.addFirst(new HashSet<>());
+		generatedParts.addFirst(new LinkedHashSet<>());
 	}
 
 	private void popGeneratedLevel() {
@@ -159,7 +159,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	private Stream<Shrinkable<T>> shrinkToAlternatives(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
 		ShrinkingDistance distance = current.distance();
-		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
+		Set<Integer> newUsedIndexes = new LinkedHashSet<>(usedIndexes);
 		return IntStream
 					   .range(0, suppliers.size())
 					   .filter(index -> !usedIndexes.contains(index))
@@ -173,7 +173,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	@SuppressWarnings("unused")
 	private Stream<Shrinkable<T>> shrinkToAlternativesAndGrow(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
 		ShrinkingDistance distance = current.distance();
-		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
+		Set<Integer> newUsedIndexes = new LinkedHashSet<>(usedIndexes);
 		return IntStream
 					   .range(0, suppliers.size())
 					   .filter(index -> !usedIndexes.contains(index))

@@ -5,6 +5,7 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
@@ -146,7 +147,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		Set<Arbitrary<Object>> arbitraries =
 			arbitraryResolver.forParameter(parameter).stream()
 							 .map(Arbitrary::asGeneric)
-							 .collect(Collectors.toSet());
+							 .collect(CollectorsSupport.toLinkedHashSet());
 		if (arbitraries.isEmpty()) {
 			throw new CannotFindArbitraryException(TypeUsageImpl.forParameter(parameter), parameter.getAnnotation(ForAll.class));
 		}

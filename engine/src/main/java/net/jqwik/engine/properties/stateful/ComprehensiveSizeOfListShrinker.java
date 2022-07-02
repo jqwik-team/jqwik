@@ -9,7 +9,7 @@ class ComprehensiveSizeOfListShrinker {
 		if (toShrink.size() <= minSize) {
 			return Stream.empty();
 		}
-		Set<List<T>> setOfSequences = new HashSet<>();
+		Set<List<T>> setOfSequences = new LinkedHashSet<>();
 		for (int i = 0; i < toShrink.size(); i++) {
 			ArrayList<T> newCandidate = new ArrayList<>(toShrink);
 			newCandidate.remove(i);

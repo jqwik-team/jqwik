@@ -25,7 +25,7 @@ public class AggressiveSizeOfListShrinker<T> {
 	}
 
 	public Stream<List<T>> cutsToMinsize(List<T> toShrink) {
-		Set<List<T>> lists = new HashSet<>();
+		Set<List<T>> lists = new LinkedHashSet<>();
 		appendLeftCut(toShrink, lists, minSize);
 		appendRightCut(toShrink, lists, minSize);
 		return lists.stream();
@@ -35,7 +35,7 @@ public class AggressiveSizeOfListShrinker<T> {
 		if (toShrink.size() <= minSize + 1) {
 			return Stream.empty();
 		}
-		Set<List<T>> lists = new HashSet<>();
+		Set<List<T>> lists = new LinkedHashSet<>();
 		appendLeftCut(toShrink, lists, minSize + 1);
 		appendRightCut(toShrink, lists, minSize + 1);
 		return lists.stream();
@@ -46,7 +46,7 @@ public class AggressiveSizeOfListShrinker<T> {
 		if (halfSize < minSize) {
 			return Stream.empty();
 		}
-		Set<List<T>> lists = new HashSet<>();
+		Set<List<T>> lists = new LinkedHashSet<>();
 		appendLeftCut(toShrink, lists, halfSize);
 		appendRightCut(toShrink, lists, toShrink.size() - halfSize);
 		return lists.stream();

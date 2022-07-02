@@ -5,7 +5,7 @@ import java.util.*;
 public class SetIterator<T> implements Iterator<Set<T>> {
 
 	private final Iterator<List<T>> combinedListIterator;
-	private final Set<Set<T>> generatedSets = new HashSet<>();
+	private final Set<Set<T>> generatedSets = new LinkedHashSet<>();
 	private final int setSize;
 	private Set<T> next;
 
@@ -21,7 +21,7 @@ public class SetIterator<T> implements Iterator<Set<T>> {
 
 	private Set<T> findNext() {
 		while (combinedListIterator.hasNext()) {
-			HashSet<T> candidate = new HashSet<>(combinedListIterator.next());
+			HashSet<T> candidate = new LinkedHashSet<>(combinedListIterator.next());
 			if (candidate.size() != setSize || generatedSets.contains(candidate)) {
 				continue;
 			}

@@ -9,6 +9,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.support.*;
 
 @SuppressWarnings("unchecked")
@@ -71,7 +72,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 	}
 
 	private boolean isUnique(Collection<?> list, Function<Object, Object> extractor) {
-		Set<Object> set = list.stream().map(extractor).collect(Collectors.toSet());
+		Set<Object> set = list.stream().map(extractor).collect(CollectorsSupport.toLinkedHashSet());
 		return set.size() == list.size();
 	}
 
