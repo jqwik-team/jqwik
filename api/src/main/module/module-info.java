@@ -12,6 +12,7 @@ module net.jqwik.api {
 	exports net.jqwik.api.sessions;
 	exports net.jqwik.api.stateful;
 	exports net.jqwik.api.statistics;
+	exports net.jqwik.api.support;
 
 	requires java.logging;
 	requires org.junit.platform.commons;
