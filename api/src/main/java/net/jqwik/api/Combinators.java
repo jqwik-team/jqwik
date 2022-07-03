@@ -200,6 +200,10 @@ public class Combinators {
 		return list;
 	}
 
+	private static boolean isCombinedGeneratorMemoizable(Arbitrary<?> ... arbitraries) {
+		return Arrays.stream(arbitraries).allMatch(Arbitrary::isGeneratorMemoizable);
+	}
+
 	private static <T> RandomGenerator<T> combineGenerator(
 		int genSize,
 		Function<List<Object>, T> combineFunction,
@@ -283,6 +287,11 @@ public class Combinators {
 				}
 
 				@Override
+				public boolean isGeneratorMemoizable() {
+					return isCombinedGeneratorMemoizable(a1, a2);
+				}
+
+				@Override
 				public EdgeCases<R> edgeCases(int maxEdgeCases) {
 					return CombinatorsFacade.implementation.combineEdgeCases(
 						asTypedList(a1, a2),
@@ -330,6 +339,11 @@ public class Combinators {
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
 					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3);
+				}
+
+				@Override
+				public boolean isGeneratorMemoizable() {
+					return isCombinedGeneratorMemoizable(a1, a2, a3);
 				}
 
 				@Override
@@ -392,6 +406,11 @@ public class Combinators {
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
 					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4);
+				}
+
+				@Override
+				public boolean isGeneratorMemoizable() {
+					return isCombinedGeneratorMemoizable(a1, a2, a3, a4);
 				}
 
 				@Override
@@ -459,6 +478,11 @@ public class Combinators {
 				}
 
 				@Override
+				public boolean isGeneratorMemoizable() {
+					return isCombinedGeneratorMemoizable(a1, a2, a3, a4, a5);
+				}
+
+				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					return CombinatorsFacade.implementation.combineExhaustive(
 						asTypedList(a1, a2, a3, a4, a5),
@@ -522,6 +546,11 @@ public class Combinators {
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
 					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6);
+				}
+
+				@Override
+				public boolean isGeneratorMemoizable() {
+					return isCombinedGeneratorMemoizable(a1, a2, a3, a4, a5, a6);
 				}
 
 				@Override
@@ -593,6 +622,11 @@ public class Combinators {
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
 					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7);
+				}
+
+				@Override
+				public boolean isGeneratorMemoizable() {
+					return isCombinedGeneratorMemoizable(a1, a2, a3, a4, a5, a6, a7);
 				}
 
 				@Override
@@ -668,6 +702,11 @@ public class Combinators {
 				}
 
 				@Override
+				public boolean isGeneratorMemoizable() {
+					return isCombinedGeneratorMemoizable(a1, a2, a3, a4, a5, a6, a7, a8);
+				}
+
+				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					return CombinatorsFacade.implementation.combineExhaustive(
 						asTypedList(a1, a2, a3, a4, a5, a6, a7, a8),
@@ -712,18 +751,23 @@ public class Combinators {
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(Function<List<T>, @NotNull R> combinator) {
 			return new Arbitrary<R>() {
+				final Arbitrary<?>[] arbitraries = listOfArbitraries.toArray(new Arbitrary[listOfArbitraries.size()]);
+
 				@Override
 				public RandomGenerator<R> generator(int genSize) {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
-					Arbitrary[] arbitraries = listOfArbitraries.toArray(new Arbitrary[listOfArbitraries.size()]);
 					return combineGenerator(genSize, combinedFunction, arbitraries);
 				}
 
 				@Override
 				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
-					Arbitrary[] arbitraries = listOfArbitraries.toArray(new Arbitrary[listOfArbitraries.size()]);
 					return combineGeneratorWithEmbeddedEdgeCases(genSize, combinedFunction, arbitraries);
+				}
+
+				@Override
+				public boolean isGeneratorMemoizable() {
+					return isCombinedGeneratorMemoizable(arbitraries);
 				}
 
 				@Override

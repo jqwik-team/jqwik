@@ -13,12 +13,14 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 	private final List<Arbitrary<T>> all = new ArrayList<>();
+	private final boolean isGeneratorMemoizable;
 
 	@SuppressWarnings("unchecked")
 	public OneOfArbitrary(Collection<Arbitrary<? extends T>> choices) {
 		for (Arbitrary<? extends T> choice : choices) {
 			all.add((Arbitrary<T>) choice);
 		}
+		isGeneratorMemoizable = all.stream().allMatch(Arbitrary::isGeneratorMemoizable);
 	}
 
 	@Override
@@ -29,6 +31,11 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 	@Override
 	public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
 		return rawGeneration(genSize, true);
+	}
+
+	@Override
+	public boolean isGeneratorMemoizable() {
+		return isGeneratorMemoizable;
 	}
 
 	private RandomGenerator<T> rawGeneration(int genSize, boolean withEmbeddedEdgeCases) {

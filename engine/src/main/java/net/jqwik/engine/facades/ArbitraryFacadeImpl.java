@@ -94,6 +94,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			public EdgeCases<U> edgeCases(int maxEdgeCases) {
 				return EdgeCasesSupport.map(self.edgeCases(maxEdgeCases), mapper);
 			}
+
+			@Override
+			public boolean isGeneratorMemoizable() {
+				return self.isGeneratorMemoizable();
+			}
 		};
 	}
 
@@ -119,6 +124,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			@Override
 			public EdgeCases<U> edgeCases(int maxEdgeCases) {
 				return EdgeCasesSupport.flatMapArbitrary(self.edgeCases(maxEdgeCases), mapper, maxEdgeCases);
+			}
+
+			@Override
+			public boolean isGeneratorMemoizable() {
+				return self.isGeneratorMemoizable();
 			}
 		};
 	}

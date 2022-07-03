@@ -27,6 +27,11 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	}
 
 	@Override
+	public boolean isGeneratorMemoizable() {
+		return elementArbitrary.isGeneratorMemoizable();
+	}
+
+	@Override
 	public StreamableArbitrary<T, U> ofMinSize(int minSize) {
 		if (minSize < 0) {
 			String message = String.format("minSize (%s) must be between 0 and 2147483647", minSize);

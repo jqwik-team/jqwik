@@ -8,21 +8,24 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
-class Memoize {
+public class Memoize {
 
 	private static Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> generatorStore() {
 		return Store.getOrCreate(Memoize.class, Lifespan.PROPERTY, () -> new LruCache<>(500));
 	}
 
 	@SuppressWarnings("unchecked")
-	static <U> RandomGenerator<U> memoizedGenerator(
-			Arbitrary<U> arbitrary,
+	public static <U> RandomGenerator<U> memoizedGenerator(
+			Arbitrary<? extends U> arbitrary,
 			int genSize,
 			boolean withEdgeCases,
-			Supplier<RandomGenerator<U>> generatorSupplier
+			Supplier<RandomGenerator<? extends U>> generatorSupplier
 	) {
-		Tuple3<Arbitrary<?>, Integer, Boolean> key = Tuple.of(arbitrary, genSize, withEdgeCases);
+		if (!arbitrary.isGeneratorMemoizable()){
+			return (RandomGenerator<U>) generatorSupplier.get();
+		}
 
+		Tuple3<Arbitrary<?>, Integer, Boolean> key = Tuple.of(arbitrary, genSize, withEdgeCases);
 		RandomGenerator<?> generator = computeIfAbsent(
 				generatorStore().get(),
 				key,

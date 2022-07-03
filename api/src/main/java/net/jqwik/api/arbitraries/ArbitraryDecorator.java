@@ -53,6 +53,11 @@ public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> 
 	}
 
 	@Override
+	public boolean isGeneratorMemoizable() {
+		return instance().isGeneratorMemoizable();
+	}
+
+	@Override
 	public EdgeCases<T> edgeCases(int maxEdgeCases) {
 		return instance().edgeCases(maxEdgeCases);
 	}

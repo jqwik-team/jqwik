@@ -82,6 +82,7 @@ class ArbitraryTests {
 					return i;
 				}).ignoreException(RuntimeException.class),
 				Arbitraries.of(-10, 10).injectNull(0.1),
+				Arbitraries.of(-1000, 1000).injectDuplicates(0.1),
 				Arbitraries.integers().between(-10, 10).fixGenSize(100),
 				Arbitraries.of(-10, 10).optional(),
 				Arbitraries.just(42).tuple5(),

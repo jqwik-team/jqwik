@@ -13,6 +13,8 @@ public class RecursiveArbitrary<T> implements Arbitrary<T> {
 	// Not used for exhaustive generation
 	private final Arbitrary<T> arbitrary;
 
+	private boolean isGeneratorMemoizable = true;
+
 	public RecursiveArbitrary(Supplier<Arbitrary<T>> base, Function<Arbitrary<T>, Arbitrary<T>> recur, int depth) {
 		this.base = base;
 		this.recur = recur;
@@ -35,6 +37,11 @@ public class RecursiveArbitrary<T> implements Arbitrary<T> {
 	}
 
 	@Override
+	public boolean isGeneratorMemoizable() {
+		return isGeneratorMemoizable;
+	}
+
+	@Override
 	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 		// The straightforward implementation can easily overflow:
 		// return arbitrary.exhaustive(maxNumberOfSamples);
@@ -54,8 +61,12 @@ public class RecursiveArbitrary<T> implements Arbitrary<T> {
 	private Arbitrary<T> iteratedArbitrary() {
 		// Real recursion can blow the stack
 		Arbitrary<T> current = base.get();
+		isGeneratorMemoizable = current.isGeneratorMemoizable();
 		for (int i = 0; i < depth; i++) {
 			current = recur.apply(current);
+			if (!current.isGeneratorMemoizable()) {
+				isGeneratorMemoizable = false;
+			}
 		}
 		return current;
 	}

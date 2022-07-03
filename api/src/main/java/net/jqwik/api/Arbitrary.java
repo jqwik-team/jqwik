@@ -146,6 +146,11 @@ public interface Arbitrary<T> {
 		return Optional.empty();
 	}
 
+	@API(status = INTERNAL)
+	default boolean isGeneratorMemoizable() {
+		return true;
+	}
+
 	EdgeCases<T> edgeCases(int maxEdgeCases);
 
 	/**
@@ -477,6 +482,11 @@ public interface Arbitrary<T> {
 					return EdgeCases.none();
 				}
 				return Arbitrary.this.edgeCases(maxEdgeCases);
+			}
+
+			@Override
+			public boolean isGeneratorMemoizable() {
+				return false;
 			}
 		};
 	}

@@ -21,10 +21,10 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	@Override
 	public Arbitrary<Arbitrary<?>> arbitraries() {
 		return Arbitraries.of(
-			arbitrary,
-			arbitrary.ofMinLength(5).ofMaxLength(55),
-			arbitrary.withCharRange('a', 'z'),
-			arbitrary.whitespace().numeric().alpha()
+			new DefaultStringArbitrary(),
+			new DefaultStringArbitrary().ofMinLength(5).ofMaxLength(55),
+			new DefaultStringArbitrary().withCharRange('a', 'z'),
+			new DefaultStringArbitrary().whitespace().numeric().alpha()
 		);
 	}
 

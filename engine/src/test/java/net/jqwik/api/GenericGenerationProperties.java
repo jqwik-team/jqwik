@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -21,7 +22,7 @@ public interface GenericGenerationProperties {
 	}
 
 	@Property
-	default void sameRandomValueWillAlwaysGenerateSameValues(
+	default void sameRandomWillGenerateSameValueOnFreshGenerator(
 		@ForAll("arbitraries") Arbitrary<?> arbitrary,
 		@ForAll Random random,
 		@ForAll @IntRange(min = 1, max = 10000) int genSize,
@@ -35,6 +36,55 @@ public interface GenericGenerationProperties {
 		Object valueA = gen1.next(SourceOfRandomness.newRandom(seed)).value();
 		RandomGenerator<?> gen2 = arbitrary.generator(genSize, withEdgeCases);
 		Object valueB = gen2.next(SourceOfRandomness.newRandom(seed)).value();
+		assertThat(JqwikStringSupport.displayString(valueA))
+			.isEqualTo(JqwikStringSupport.displayString(valueB));
+	}
+
+	@Property
+	default void memoizableArbitrariesWillMemoizeGenerators(
+		@ForAll Random randomToGenerateArbitrary,
+		@ForAll @IntRange(min = 1, max = 10000) int genSize,
+		@ForAll boolean withEdgeCases
+	) {
+		long seedToGenerateArbitraries = randomToGenerateArbitrary.nextLong();
+		Arbitrary<?> arbitrary1 = arbitraries().generator(1000).next(SourceOfRandomness.newRandom(seedToGenerateArbitraries)).value();
+		Arbitrary<?> arbitrary2 = arbitraries().generator(1000).next(SourceOfRandomness.newRandom(seedToGenerateArbitraries)).value();
+
+		assertThat(arbitrary1.isGeneratorMemoizable()).isEqualTo(arbitrary2.isGeneratorMemoizable());
+
+		if (!arbitrary1.isGeneratorMemoizable()) {
+			return;
+		}
+
+		RandomGenerator<?> gen1 = Memoize.memoizedGenerator(
+			arbitrary1, genSize, withEdgeCases,
+			() -> arbitrary1.generator(genSize, withEdgeCases)
+		);
+		RandomGenerator<?> gen2 = Memoize.memoizedGenerator(
+			arbitrary1, genSize, withEdgeCases,
+			() -> arbitrary2.generator(genSize, withEdgeCases)
+		);
+		assertThat(gen1).isSameAs(gen2);
+	}
+
+	@Property
+	default void sameRandomWillGenerateSameValueOnMemoizedGenerator(
+		@ForAll Random randomToGenerateArbitrary,
+		@ForAll Random randomToGenerateValue,
+		@ForAll @IntRange(min = 1, max = 10000) int genSize,
+		@ForAll boolean withEdgeCases
+	) {
+		long seedToGenerateArbitraries = randomToGenerateArbitrary.nextLong();
+		Arbitrary<?> arbitrary1 = arbitraries().generator(1000).next(SourceOfRandomness.newRandom(seedToGenerateArbitraries)).value();
+		Arbitrary<?> arbitrary2 = arbitraries().generator(1000).next(SourceOfRandomness.newRandom(seedToGenerateArbitraries)).value();
+
+		long seedToGenerateValue = randomToGenerateValue.nextLong();
+
+		RandomGenerator<?> gen1 = Memoize.memoizedGenerator(arbitrary1, genSize, withEdgeCases, () -> arbitrary1.generator(genSize, withEdgeCases));
+		RandomGenerator<?> gen2 = Memoize.memoizedGenerator(arbitrary2, genSize, withEdgeCases, () -> arbitrary2.generator(genSize, withEdgeCases));
+
+		Object valueA = gen1.next(SourceOfRandomness.newRandom(seedToGenerateValue)).value();
+		Object valueB = gen2.next(SourceOfRandomness.newRandom(seedToGenerateValue)).value();
 		assertThat(JqwikStringSupport.displayString(valueA))
 			.isEqualTo(JqwikStringSupport.displayString(valueB));
 	}

@@ -14,9 +14,11 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 
 	private final List<Tuple2<Integer, Arbitrary<T>>> frequencies;
+	private final boolean isGeneratorMemoizable;
 
 	public FrequencyOfArbitrary(List<Tuple2<Integer, Arbitrary<T>>> frequencies) {
 		this.frequencies = frequencies;
+		this.isGeneratorMemoizable = frequencies.stream().allMatch(t -> t.get2().isGeneratorMemoizable());
 		if (this.frequencies.isEmpty()) {
 			throw new JqwikException("At least one frequency must be above 0");
 		}
@@ -30,6 +32,11 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 	@Override
 	public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
 		return RandomGenerators.frequencyOf(frequencies, genSize, true);
+	}
+
+	@Override
+	public boolean isGeneratorMemoizable() {
+		return isGeneratorMemoizable;
 	}
 
 	@Override
