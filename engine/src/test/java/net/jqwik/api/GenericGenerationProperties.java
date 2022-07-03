@@ -41,6 +41,7 @@ public interface GenericGenerationProperties {
 	}
 
 	@Property
+	@Disabled("Fix equals() methods in all arbitraries")
 	default void memoizableArbitrariesWillMemoizeGenerators(
 		@ForAll Random randomToGenerateArbitrary,
 		@ForAll @IntRange(min = 1, max = 10000) int genSize,
@@ -61,7 +62,7 @@ public interface GenericGenerationProperties {
 			() -> arbitrary1.generator(genSize, withEdgeCases)
 		);
 		RandomGenerator<?> gen2 = Memoize.memoizedGenerator(
-			arbitrary1, genSize, withEdgeCases,
+			arbitrary2, genSize, withEdgeCases,
 			() -> arbitrary2.generator(genSize, withEdgeCases)
 		);
 		assertThat(gen1).isSameAs(gen2);
