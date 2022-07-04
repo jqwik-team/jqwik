@@ -606,6 +606,7 @@ public class Arbitraries {
 		return ArbitrariesFacade.implementation.traverse(targetType, traverser);
 	}
 
+	// TODO: Get rid of all callers
 	private static <T> Arbitrary<T> fromGenerators(
 		final RandomGenerator<T> randomGenerator,
 		final Function<Long, Optional<ExhaustiveGenerator<T>>> exhaustiveGeneratorFunction,

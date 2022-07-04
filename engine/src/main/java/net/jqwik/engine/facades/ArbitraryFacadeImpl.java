@@ -47,28 +47,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> Arbitrary<T> filter(Arbitrary<T> self, Predicate<T> filterPredicate, int maxMisses) {
-		return new ArbitraryDelegator<T>(self) {
-			@Override
-			public RandomGenerator<T> generator(int genSize) {
-				return super.generator(genSize).filter(filterPredicate, maxMisses);
-			}
-
-			@Override
-			public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
-				return super.generatorWithEmbeddedEdgeCases(genSize).filter(filterPredicate, maxMisses);
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return super.exhaustive(maxNumberOfSamples)
-							.map(generator -> generator.filter(filterPredicate, maxMisses));
-			}
-
-			@Override
-			public EdgeCases<T> edgeCases(int maxEdgeCases) {
-				return EdgeCasesSupport.filter(super.edgeCases(maxEdgeCases), filterPredicate);
-			}
-		};
+		return new FilterArbitrary<>(self, filterPredicate, maxMisses);
 	}
 
 	@Override
@@ -149,8 +128,8 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			return Arbitraries.just(null);
 		}
 		return Arbitraries.frequencyOf(
-				Tuple.of(frequencyNull, Arbitraries.just(null)),
-				Tuple.of(frequencyNotNull, self)
+			Tuple.of(frequencyNull, Arbitraries.just(null)),
+			Tuple.of(frequencyNotNull, self)
 		);
 	}
 

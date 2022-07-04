@@ -21,7 +21,7 @@ public interface GenericGenerationProperties {
 		return arbitraries().map(transformation);
 	}
 
-	@Property
+	@Property(tries = 100)
 	default void sameRandomWillGenerateSameValueOnFreshGenerator(
 		@ForAll("arbitraries") Arbitrary<?> arbitrary,
 		@ForAll Random random,
@@ -40,7 +40,7 @@ public interface GenericGenerationProperties {
 			.isEqualTo(JqwikStringSupport.displayString(valueB));
 	}
 
-	@Property
+	@Property(tries = 100)
 	@Disabled("Fix equals() methods in all arbitraries")
 	default void memoizableArbitrariesWillMemoizeGenerators(
 		@ForAll Random randomToGenerateArbitrary,
@@ -68,7 +68,7 @@ public interface GenericGenerationProperties {
 		assertThat(gen1).isSameAs(gen2);
 	}
 
-	@Property
+	@Property(tries = 100)
 	default void sameRandomWillGenerateSameValueOnMemoizedGenerator(
 		@ForAll Random randomToGenerateArbitrary,
 		@ForAll Random randomToGenerateValue,

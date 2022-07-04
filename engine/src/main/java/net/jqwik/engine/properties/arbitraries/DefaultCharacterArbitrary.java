@@ -120,6 +120,20 @@ public class DefaultCharacterArbitrary extends TypedCloneable implements Charact
 		return this.range('A', 'Z').range('a', 'z');
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DefaultCharacterArbitrary that = (DefaultCharacterArbitrary) o;
+		return partsWithSize.equals(that.partsWithSize);
+	}
+
+	@Override
+	public int hashCode() {
+		return partsWithSize.hashCode();
+	}
+
 	private CharacterArbitrary cloneWith(Arbitrary<Character> part, int size) {
 		DefaultCharacterArbitrary clone = super.typedClone();
 		clone.partsWithSize = new ArrayList<>(partsWithSize);

@@ -51,4 +51,22 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 	public EdgeCases<Character> edgeCases(int maxEdgeCases) {
 		return EdgeCasesSupport.fromShrinkables(listOfEdgeCases(maxEdgeCases));
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		CharacterRangeArbitrary that = (CharacterRangeArbitrary) o;
+
+		if (min != that.min) return false;
+		return max == that.max;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = min;
+		result = 31 * result + (int) max;
+		return result;
+	}
 }
