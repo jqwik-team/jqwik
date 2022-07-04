@@ -65,6 +65,28 @@ public class Range<T extends Comparable<T>> {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Range<?> range = (Range<?>) o;
+
+		if (minIncluded != range.minIncluded) return false;
+		if (maxIncluded != range.maxIncluded) return false;
+		if (!min.equals(range.min)) return false;
+		return max.equals(range.max);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = min.hashCode();
+		result = 31 * result + (minIncluded ? 1 : 0);
+		result = 31 * result + max.hashCode();
+		result = 31 * result + (maxIncluded ? 1 : 0);
+		return result;
+	}
+
+	@Override
 	public String toString() {
 		char leftBracket = minIncluded ? '[' : ']';
 		char rightBracket = maxIncluded ? ']' : '[';

@@ -65,4 +65,13 @@ class RangeTests {
 	void cannotCreateMinGreaterThanMax(@ForAll BigDecimal any) {
 		assertThatThrownBy(() -> Range.of(any, any.subtract(BigDecimal.ONE))).isInstanceOf(IllegalArgumentException.class);
 	}
+
+	@Example
+	void equality() {
+		Range<Integer> range1 = Range.of(1, 2);
+		Range<Integer> range2 = Range.of(1, 2);
+		Range<Integer> range3 = Range.of(1, 3);
+		assertThat(range1).isEqualTo(range2);
+		assertThat(range1).isNotEqualTo(range3);
+	}
 }

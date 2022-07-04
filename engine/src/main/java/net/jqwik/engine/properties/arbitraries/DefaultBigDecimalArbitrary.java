@@ -92,4 +92,16 @@ public class DefaultBigDecimalArbitrary extends TypedCloneable implements BigDec
 		return clone;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		DefaultBigDecimalArbitrary that = (DefaultBigDecimalArbitrary) o;
+		return generatingArbitrary.equals(that.generatingArbitrary);
+	}
+
+	@Override
+	public int hashCode() {
+		return generatingArbitrary.hashCode();
+	}
 }

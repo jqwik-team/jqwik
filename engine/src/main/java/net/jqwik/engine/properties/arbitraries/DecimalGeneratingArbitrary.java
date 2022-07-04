@@ -75,6 +75,27 @@ class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<Big
 		return clone;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DecimalGeneratingArbitrary that = (DecimalGeneratingArbitrary) o;
+
+		if (scale != that.scale) return false;
+		if (!range.equals(that.range)) return false;
+		if (!Objects.equals(shrinkingTarget, that.shrinkingTarget)) return false;
+		if (!Objects.equals(distribution, that.distribution)) return false;
+		return Objects.equals(edgeCasesConfigurator, that.edgeCasesConfigurator);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = range.hashCode();
+		result = 31 * result + scale;
+		return result;
+	}
+
 	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables(int maxEdgeCases) {
 		Range<BigInteger> bigIntegerRange = unscaledBigIntegerRange(range, scale);
 		return streamRawEdgeCases()

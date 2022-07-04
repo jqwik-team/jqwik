@@ -4,14 +4,18 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 public class RandomDistributionFacadeImpl extends RandomDistribution.RandomDistributionFacade {
+
+	private static final BiasedRandomDistribution BIASED_RANDOM_DISTRIBUTION = new BiasedRandomDistribution();
+	private static final UniformRandomDistribution UNIFORM_RANDOM_DISTRIBUTION = new UniformRandomDistribution();
+
 	@Override
 	public RandomDistribution biased() {
-		return new BiasedRandomDistribution();
+		return BIASED_RANDOM_DISTRIBUTION;
 	}
 
 	@Override
 	public RandomDistribution uniform() {
-		return new UniformRandomDistribution();
+		return UNIFORM_RANDOM_DISTRIBUTION;
 	}
 
 	@Override

@@ -113,6 +113,24 @@ public class DefaultFloatArbitrary extends TypedCloneable implements FloatArbitr
 		return clone;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DefaultFloatArbitrary that = (DefaultFloatArbitrary) o;
+
+		if (!generatingArbitrary.equals(that.generatingArbitrary)) return false;
+		return specials.equals(that.specials);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = generatingArbitrary.hashCode();
+		result = 31 * result + specials.hashCode();
+		return result;
+	}
+
 	private Arbitrary<Float> arbitrary() {
 		Arbitrary<Float> floatArbitrary = generatingArbitrary.map(BigDecimal::floatValue);
 		if (specials.isEmpty()) {

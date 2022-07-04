@@ -113,6 +113,24 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 		return clone;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DefaultDoubleArbitrary that = (DefaultDoubleArbitrary) o;
+
+		if (!generatingArbitrary.equals(that.generatingArbitrary)) return false;
+		return specials.equals(that.specials);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = generatingArbitrary.hashCode();
+		result = 31 * result + specials.hashCode();
+		return result;
+	}
+
 	private BigDecimal toBigDecimal(double value) {
 		return new BigDecimal(Double.toString(value));
 	}

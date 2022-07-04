@@ -21,6 +21,21 @@ public class GaussianRandomDistribution implements RandomDistribution {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		GaussianRandomDistribution that = (GaussianRandomDistribution) o;
+		return Double.compare(that.borderSigma, borderSigma) == 0;
+	}
+
+	@Override
+	public int hashCode() {
+		long temp = Double.doubleToLongBits(borderSigma);
+		return (int) (temp ^ (temp >>> 32));
+	}
+
+	@Override
 	public String toString() {
 		return String.format("GaussianDistribution(%s)", borderSigma);
 	}
