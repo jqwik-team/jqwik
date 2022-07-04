@@ -121,12 +121,14 @@ public class DefaultTraverseArbitrary<T> extends ArbitraryDecorator<T> implement
 	private Arbitrary<Object> arbitraryFor(
 		TypeUsage parameterTypeUsage
 	) {
-		return arbitrariesCache.computeIfAbsent(
-			parameterTypeUsage,
-			dontUse -> {
-				Optional<Arbitrary<Object>> resolvedArbitrary = traverser.resolveParameter(parameterTypeUsage);
-				return resolvedArbitrary.orElseGet(() -> Arbitraries.defaultFor(parameterTypeUsage, this::arbitraryForTypeWithoutDefault));
-			});
+		// arbitrariesCache.computeIfAbsent doesn't work here due to concurrent modification
+		Arbitrary<Object> arbitrary = arbitrariesCache.get(parameterTypeUsage);
+		if (arbitrary == null) {
+			Optional<Arbitrary<Object>> resolvedArbitrary = traverser.resolveParameter(parameterTypeUsage);
+			arbitrary = resolvedArbitrary.orElseGet(() -> Arbitraries.defaultFor(parameterTypeUsage, this::arbitraryForTypeWithoutDefault));
+			arbitrariesCache.put(parameterTypeUsage, arbitrary);
+		}
+		return arbitrary;
 	}
 
 	@SuppressWarnings("unchecked")
