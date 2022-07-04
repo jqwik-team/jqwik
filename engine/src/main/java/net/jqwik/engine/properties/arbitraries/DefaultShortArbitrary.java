@@ -73,4 +73,17 @@ public class DefaultShortArbitrary extends TypedCloneable implements ShortArbitr
 		return clone;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DefaultShortArbitrary that = (DefaultShortArbitrary) o;
+		return generatingArbitrary.equals(that.generatingArbitrary);
+	}
+
+	@Override
+	public int hashCode() {
+		return generatingArbitrary.hashCode();
+	}
 }

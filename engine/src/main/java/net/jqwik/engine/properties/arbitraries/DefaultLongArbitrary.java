@@ -73,4 +73,17 @@ public class DefaultLongArbitrary extends TypedCloneable implements LongArbitrar
 		return clone;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DefaultLongArbitrary that = (DefaultLongArbitrary) o;
+		return generatingArbitrary.equals(that.generatingArbitrary);
+	}
+
+	@Override
+	public int hashCode() {
+		return generatingArbitrary.hashCode();
+	}
 }

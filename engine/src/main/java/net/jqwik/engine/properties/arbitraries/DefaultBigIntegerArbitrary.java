@@ -67,4 +67,18 @@ public class DefaultBigIntegerArbitrary extends TypedCloneable implements BigInt
 		clone.generatingArbitrary.shrinkingTarget = target;
 		return clone;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DefaultBigIntegerArbitrary that = (DefaultBigIntegerArbitrary) o;
+		return generatingArbitrary.equals(that.generatingArbitrary);
+	}
+
+	@Override
+	public int hashCode() {
+		return generatingArbitrary.hashCode();
+	}
 }

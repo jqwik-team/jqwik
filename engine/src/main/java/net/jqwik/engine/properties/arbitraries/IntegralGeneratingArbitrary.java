@@ -72,6 +72,30 @@ class IntegralGeneratingArbitrary extends TypedCloneable implements Arbitrary<Bi
 		return clone;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		IntegralGeneratingArbitrary that = (IntegralGeneratingArbitrary) o;
+
+		if (!min.equals(that.min)) return false;
+		if (!max.equals(that.max)) return false;
+		if (!Objects.equals(shrinkingTarget, that.shrinkingTarget)) return false;
+		if (!distribution.equals(that.distribution)) return false;
+		return Objects.equals(edgeCasesConfigurator, that.edgeCasesConfigurator);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = min.hashCode();
+		result = 31 * result + max.hashCode();
+		result = 31 * result + (shrinkingTarget != null ? shrinkingTarget.hashCode() : 0);
+		result = 31 * result + distribution.hashCode();
+		result = 31 * result + (edgeCasesConfigurator != null ? edgeCasesConfigurator.hashCode() : 0);
+		return result;
+	}
+
 	private Stream<BigInteger> streamDefaultEdgeCases() {
 		return streamRawEdgeCases()
 			.distinct()
