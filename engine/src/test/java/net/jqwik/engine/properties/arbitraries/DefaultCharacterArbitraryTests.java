@@ -5,11 +5,22 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.edgeCases.*;
 import net.jqwik.testing.*;
 
 import static net.jqwik.testing.TestingSupport.*;
 
-class DefaultCharacterArbitraryTests {
+class DefaultCharacterArbitraryTests implements GenericGenerationProperties, GenericEdgeCasesProperties {
+
+	@Override
+	public Arbitrary<Arbitrary<?>> arbitraries() {
+		return Arbitraries.of(
+			new DefaultCharacterArbitrary(),
+			new DefaultCharacterArbitrary().whitespace(),
+			new DefaultCharacterArbitrary().with('a', 'b', 'c'),
+			new DefaultCharacterArbitrary().alpha().numeric()
+		);
+	}
 
 	CharacterArbitrary arbitrary = new DefaultCharacterArbitrary();
 
@@ -200,7 +211,7 @@ class DefaultCharacterArbitraryTests {
 		checkAllGenerated(
 			all.generator(1000, true),
 			random,
-			(Predicate<Character>) Character::isWhitespace
+			Character::isWhitespace
 		);
 		assertAtLeastOneGeneratedOf(
 			all.generator(1000, true),
