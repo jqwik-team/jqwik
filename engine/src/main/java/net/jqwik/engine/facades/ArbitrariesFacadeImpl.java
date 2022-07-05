@@ -184,6 +184,12 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return new ChooseCharacterArbitrary(chars);
 	}
 
+	@Override
+	public <T> Arbitrary<T> of(Collection<T> values) {
+		List<T> valueList = values instanceof List ? (List<T>) values : new ArrayList<>(values);
+		return new ChooseValueArbitrary<>(valueList);
+	}
+
 	/**
 	 * The calculated hash is supposed to be the same for the same callers of Arbitraries.lazyOf()
 	 * This is important to have a single instance of LazyOfArbitrary for the same code.

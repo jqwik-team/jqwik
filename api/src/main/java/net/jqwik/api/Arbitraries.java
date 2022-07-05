@@ -92,6 +92,8 @@ public class Arbitraries {
 		public abstract <T> TraverseArbitrary<T> traverse(Class<T> targetType, Traverser traverser);
 
 		public abstract Arbitrary<Character> of(char[] chars);
+
+		public abstract <T> Arbitrary<T> of(Collection<T> values);
 	}
 
 	private Arbitraries() {
@@ -172,12 +174,7 @@ public class Arbitraries {
 	 */
 	@API(status = MAINTAINED, since = "1.3.1")
 	public static <T> Arbitrary<T> of(Collection<T> values) {
-		List<T> valueList = values instanceof List ? (List<T>) values : new ArrayList<>(values);
-		return fromGenerators(
-			ArbitrariesFacade.implementation.randomChoose(valueList),
-			max -> ArbitrariesFacade.implementation.exhaustiveChoose(valueList, max),
-			maxEdgeCases -> ArbitrariesFacade.implementation.edgeCasesChoose(valueList, maxEdgeCases)
-		);
+		return ArbitrariesFacade.implementation.of(values);
 	}
 
 	/**

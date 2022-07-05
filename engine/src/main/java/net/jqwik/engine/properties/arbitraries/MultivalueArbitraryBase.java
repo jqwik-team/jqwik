@@ -6,6 +6,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
@@ -121,6 +122,24 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 												  : EdgeCases.none();
 
 		return EdgeCasesSupport.concat(asList(emptyListEdgeCase, singleElementEdgeCases, fixedSizeEdgeCases), maxEdgeCases);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		MultivalueArbitraryBase<?, ?> that = (MultivalueArbitraryBase<?, ?>) o;
+		if (minSize != that.minSize) return false;
+		if (maxSize != that.maxSize) return false;
+		if (!elementArbitrary.equals(that.elementArbitrary)) return false;
+		if (!uniquenessExtractors.equals(that.uniquenessExtractors)) return false;
+		return Objects.equals(sizeDistribution, that.sizeDistribution);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeSupport.hash(elementArbitrary, minSize, maxSize, uniquenessExtractors);
 	}
 
 	private boolean generateFixedSizeEdgeCases() {
