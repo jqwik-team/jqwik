@@ -2,7 +2,6 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import org.apiguardian.api.*;
 import org.jetbrains.annotations.*;
@@ -20,22 +19,7 @@ public class Combinators {
 			implementation = FacadeLoader.load(CombinatorsFacade.class);
 		}
 
-		public abstract <R> Shrinkable<R> combineShrinkables(
-			List<Shrinkable<Object>> shrinkables,
-			Function<List<Object>, R> combineFunction
-		);
-
-		public abstract <R> Optional<ExhaustiveGenerator<R>> combineExhaustive(
-			List<Arbitrary<Object>> arbitraries,
-			Function<List<Object>, R> combineFunction,
-			long maxNumberOfSamples
-		);
-
-		public abstract <R> EdgeCases<R> combineEdgeCases(
-			List<Arbitrary<Object>> arbitraries,
-			Function<List<Object>, R> combineFunction,
-			int maxEdgeCases
-		);
+		public abstract <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries);
 	}
 
 	private Combinators() {
@@ -131,114 +115,64 @@ public class Combinators {
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, R> Function<List<Object>, R> combineFunction(F2<T1, T2, R> combinator2) {
 		return params -> combinator2
-			.apply((T1) params.get(0), (T2) params.get(1));
+							 .apply((T1) params.get(0), (T2) params.get(1));
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, R> Function<List<Object>, R> combineFunction(F3<T1, T2, T3, R> combinator3) {
 		return params -> combinator3
-			.apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
+							 .apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, R> Function<List<Object>, R> combineFunction(F4<T1, T2, T3, T4, R> combinator4) {
 		return params -> combinator4
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3)
-			);
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3)
+							 );
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, R> Function<List<Object>, R> combineFunction(F5<T1, T2, T3, T4, T5, R> combinator5) {
 		return params -> combinator5
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3),
-				(T5) params.get(4)
-			);
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3),
+								 (T5) params.get(4)
+							 );
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, R> Function<List<Object>, R> combineFunction(F6<T1, T2, T3, T4, T5, T6, R> combinator6) {
 		return params -> combinator6
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3),
-				(T5) params.get(4), (T6) params.get(5)
-			);
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3),
+								 (T5) params.get(4), (T6) params.get(5)
+							 );
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, T7, R> Function<List<Object>, R> combineFunction(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator7) {
 		return params -> combinator7
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3),
-				(T5) params.get(4), (T6) params.get(5),
-				(T7) params.get(6)
-			);
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3),
+								 (T5) params.get(4), (T6) params.get(5),
+								 (T7) params.get(6)
+							 );
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function<List<Object>, R> combineFunction(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator8) {
 		return params -> combinator8
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3),
-				(T5) params.get(4), (T6) params.get(5),
-				(T7) params.get(6), (T8) params.get(7)
-			);
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T> List<T> asTypedList(Object... objects) {
-		List<T> list = new ArrayList<>();
-		for (Object object : objects) {
-			list.add((T) object);
-		}
-		return list;
-	}
-
-	private static boolean isCombinedGeneratorMemoizable(Arbitrary<?> ... arbitraries) {
-		return Arrays.stream(arbitraries).allMatch(Arbitrary::isGeneratorMemoizable);
-	}
-
-	private static <T> RandomGenerator<T> combineGenerator(
-		int genSize,
-		Function<List<Object>, T> combineFunction,
-		Arbitrary<?>... arbitraries
-	) {
-		List<RandomGenerator<?>> generators = Arrays.stream(arbitraries)
-													.map(a -> a.generator(genSize))
-													.collect(Collectors.toList());
-		return random -> {
-			List<Shrinkable<Object>> shrinkables = generateShrinkables(generators, random);
-			return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
-		};
-	}
-
-	private static <T> RandomGenerator<T> combineGeneratorWithEmbeddedEdgeCases(
-		int genSize,
-		Function<List<Object>, @NotNull T> combineFunction,
-		Arbitrary<?>... arbitraries
-	) {
-		List<RandomGenerator<?>> generators = Arrays.stream(arbitraries)
-													.map(a -> a.generatorWithEmbeddedEdgeCases(genSize))
-													.collect(Collectors.toList());
-		return random -> {
-			List<Shrinkable<Object>> shrinkables = generateShrinkables(generators, random);
-			return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
-		};
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T> List<Shrinkable<T>> generateShrinkables(List<RandomGenerator<?>> generators, Random random) {
-		List<Shrinkable<T>> list = new ArrayList<>();
-		for (RandomGenerator<?> generator : generators) {
-			list.add((Shrinkable<T>) generator.next(random));
-		}
-		return list;
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3),
+								 (T5) params.get(4), (T6) params.get(5),
+								 (T7) params.get(6), (T8) params.get(7)
+							 );
 	}
 
 	/**
@@ -261,46 +195,7 @@ public class Combinators {
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F2<T1, T2, @NotNull R> combinator) {
-			// This is a shorter implementation of as, which however would have worse shrinking
-			// behaviour because it builds on flatMap:
-			//		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
-			//			return a1.flatMap(v1 -> a2.map(v2 -> combinator.apply(v1, v2)));
-			//		}
-			return new Arbitrary<R>() {
-				@Override
-				public RandomGenerator<R> generator(int genSize) {
-					return combineGenerator(genSize, combineFunction(combinator), a1, a2);
-				}
-
-				@Override
-				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2);
-				}
-
-				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(
-						asTypedList(a1, a2),
-						combineFunction(combinator),
-						maxNumberOfSamples
-					);
-				}
-
-				@Override
-				public boolean isGeneratorMemoizable() {
-					return isCombinedGeneratorMemoizable(a1, a2);
-				}
-
-				@Override
-				public EdgeCases<R> edgeCases(int maxEdgeCases) {
-					return CombinatorsFacade.implementation.combineEdgeCases(
-						asTypedList(a1, a2),
-						combineFunction(combinator),
-						maxEdgeCases
-					);
-				}
-
-			};
+			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2);
 		}
 
 		public <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<@NotNull R>> flatCombinator) {
@@ -330,41 +225,7 @@ public class Combinators {
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F3<T1, T2, T3, @NotNull R> combinator) {
-			return new Arbitrary<R>() {
-				@Override
-				public RandomGenerator<R> generator(int genSize) {
-					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3);
-				}
-
-				@Override
-				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3);
-				}
-
-				@Override
-				public boolean isGeneratorMemoizable() {
-					return isCombinedGeneratorMemoizable(a1, a2, a3);
-				}
-
-				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(
-						asTypedList(a1, a2, a3),
-						combineFunction(combinator),
-						maxNumberOfSamples
-					);
-				}
-
-				@Override
-				public EdgeCases<R> edgeCases(int maxEdgeCases) {
-					return CombinatorsFacade.implementation.combineEdgeCases(
-						asTypedList(a1, a2, a3),
-						combineFunction(combinator),
-						maxEdgeCases
-					);
-				}
-
-			};
+			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3);
 		}
 
 		public <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<@NotNull R>> flatCombinator) {
@@ -397,41 +258,7 @@ public class Combinators {
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F4<T1, T2, T3, T4, @NotNull R> combinator) {
-			return new Arbitrary<R>() {
-				@Override
-				public RandomGenerator<R> generator(int genSize) {
-					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4);
-				}
-
-				@Override
-				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4);
-				}
-
-				@Override
-				public boolean isGeneratorMemoizable() {
-					return isCombinedGeneratorMemoizable(a1, a2, a3, a4);
-				}
-
-				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(
-						asTypedList(a1, a2, a3, a4),
-						combineFunction(combinator),
-						maxNumberOfSamples
-					);
-				}
-
-				@Override
-				public EdgeCases<R> edgeCases(int maxEdgeCases) {
-					return CombinatorsFacade.implementation.combineEdgeCases(
-						asTypedList(a1, a2, a3, a4),
-						combineFunction(combinator),
-						maxEdgeCases
-					);
-				}
-
-			};
+			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3, a4);
 		}
 
 		public <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<@NotNull R>> flatCombinator) {
@@ -466,41 +293,7 @@ public class Combinators {
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, @NotNull R> combinator) {
-			return new Arbitrary<R>() {
-				@Override
-				public RandomGenerator<R> generator(int genSize) {
-					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4, a5);
-				}
-
-				@Override
-				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5);
-				}
-
-				@Override
-				public boolean isGeneratorMemoizable() {
-					return isCombinedGeneratorMemoizable(a1, a2, a3, a4, a5);
-				}
-
-				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(
-						asTypedList(a1, a2, a3, a4, a5),
-						combineFunction(combinator),
-						maxNumberOfSamples
-					);
-				}
-
-				@Override
-				public EdgeCases<R> edgeCases(int maxEdgeCases) {
-					return CombinatorsFacade.implementation.combineEdgeCases(
-						asTypedList(a1, a2, a3, a4, a5),
-						combineFunction(combinator),
-						maxEdgeCases
-					);
-				}
-
-			};
+			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3, a4, a5);
 		}
 
 		public <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<@NotNull R>> flatCombinator) {
@@ -537,41 +330,7 @@ public class Combinators {
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, @NotNull R> combinator) {
-			return new Arbitrary<R>() {
-				@Override
-				public RandomGenerator<R> generator(int genSize) {
-					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6);
-				}
-
-				@Override
-				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6);
-				}
-
-				@Override
-				public boolean isGeneratorMemoizable() {
-					return isCombinedGeneratorMemoizable(a1, a2, a3, a4, a5, a6);
-				}
-
-				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(
-						asTypedList(a1, a2, a3, a4, a5, a6),
-						combineFunction(combinator),
-						maxNumberOfSamples
-					);
-				}
-
-				@Override
-				public EdgeCases<R> edgeCases(int maxEdgeCases) {
-					return CombinatorsFacade.implementation.combineEdgeCases(
-						asTypedList(a1, a2, a3, a4, a5, a6),
-						combineFunction(combinator),
-						maxEdgeCases
-					);
-				}
-
-			};
+			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3, a4, a5, a6);
 		}
 
 		public <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<@NotNull R>> flatCombinator) {
@@ -613,40 +372,7 @@ public class Combinators {
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, @NotNull R> combinator) {
-			return new Arbitrary<R>() {
-				@Override
-				public RandomGenerator<R> generator(int genSize) {
-					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7);
-				}
-
-				@Override
-				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7);
-				}
-
-				@Override
-				public boolean isGeneratorMemoizable() {
-					return isCombinedGeneratorMemoizable(a1, a2, a3, a4, a5, a6, a7);
-				}
-
-				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(
-						asTypedList(a1, a2, a3, a4, a5, a6, a7),
-						combineFunction(combinator),
-						maxNumberOfSamples
-					);
-				}
-
-				@Override
-				public EdgeCases<R> edgeCases(int maxEdgeCases) {
-					return CombinatorsFacade.implementation.combineEdgeCases(
-						asTypedList(a1, a2, a3, a4, a5, a6, a7),
-						combineFunction(combinator),
-						maxEdgeCases
-					);
-				}
-			};
+			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7);
 		}
 
 		public <R> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<@NotNull R>> flatCombinator) {
@@ -690,40 +416,7 @@ public class Combinators {
 		 * @return arbitrary instance
 		 */
 		public <R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, @NotNull R> combinator) {
-			return new Arbitrary<R>() {
-				@Override
-				public RandomGenerator<R> generator(int genSize) {
-					return combineGenerator(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7, a8);
-				}
-
-				@Override
-				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					return combineGeneratorWithEmbeddedEdgeCases(genSize, combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7, a8);
-				}
-
-				@Override
-				public boolean isGeneratorMemoizable() {
-					return isCombinedGeneratorMemoizable(a1, a2, a3, a4, a5, a6, a7, a8);
-				}
-
-				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(
-						asTypedList(a1, a2, a3, a4, a5, a6, a7, a8),
-						combineFunction(combinator),
-						maxNumberOfSamples
-					);
-				}
-
-				@Override
-				public EdgeCases<R> edgeCases(int maxEdgeCases) {
-					return CombinatorsFacade.implementation.combineEdgeCases(
-						asTypedList(a1, a2, a3, a4, a5, a6, a7, a8),
-						combineFunction(combinator),
-						maxEdgeCases
-					);
-				}
-			};
+			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7, a8);
 		}
 
 		public <R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<@NotNull R>> flatCombinator) {
@@ -750,46 +443,9 @@ public class Combinators {
 		 */
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(Function<List<T>, @NotNull R> combinator) {
-			return new Arbitrary<R>() {
-				final Arbitrary<?>[] arbitraries = listOfArbitraries.toArray(new Arbitrary[listOfArbitraries.size()]);
-
-				@Override
-				public RandomGenerator<R> generator(int genSize) {
-					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
-					return combineGenerator(genSize, combinedFunction, arbitraries);
-				}
-
-				@Override
-				public RandomGenerator<R> generatorWithEmbeddedEdgeCases(int genSize) {
-					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
-					return combineGeneratorWithEmbeddedEdgeCases(genSize, combinedFunction, arbitraries);
-				}
-
-				@Override
-				public boolean isGeneratorMemoizable() {
-					return isCombinedGeneratorMemoizable(arbitraries);
-				}
-
-				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
-					return CombinatorsFacade.implementation.combineExhaustive(
-						asTypedList(listOfArbitraries.toArray()),
-						combinedFunction,
-						maxNumberOfSamples
-					);
-				}
-
-				@Override
-				public EdgeCases<R> edgeCases(int maxEdgeCases) {
-					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
-					return CombinatorsFacade.implementation.combineEdgeCases(
-						asTypedList(listOfArbitraries.toArray()),
-						combinedFunction,
-						maxEdgeCases
-					);
-				}
-			};
+			final Arbitrary<?>[] arbitraries = listOfArbitraries.toArray(new Arbitrary[listOfArbitraries.size()]);
+			final Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
+			return CombinatorsFacade.implementation.combine(combineFunction, arbitraries);
 		}
 
 		public <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<@NotNull R>> flatCombinator) {
