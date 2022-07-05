@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
@@ -88,12 +89,7 @@ class IntegralGeneratingArbitrary extends TypedCloneable implements Arbitrary<Bi
 
 	@Override
 	public int hashCode() {
-		int result = min.hashCode();
-		result = 31 * result + max.hashCode();
-		result = 31 * result + (shrinkingTarget != null ? shrinkingTarget.hashCode() : 0);
-		result = 31 * result + distribution.hashCode();
-		result = 31 * result + (edgeCasesConfigurator != null ? edgeCasesConfigurator.hashCode() : 0);
-		return result;
+		return HashCodeSupport.hash(min, max, shrinkingTarget, distribution, edgeCasesConfigurator);
 	}
 
 	private Stream<BigInteger> streamDefaultEdgeCases() {

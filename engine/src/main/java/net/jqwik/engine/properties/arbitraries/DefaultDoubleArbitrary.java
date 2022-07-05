@@ -6,6 +6,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 
 public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbitrary {
@@ -126,9 +127,7 @@ public class DefaultDoubleArbitrary extends TypedCloneable implements DoubleArbi
 
 	@Override
 	public int hashCode() {
-		int result = generatingArbitrary.hashCode();
-		result = 31 * result + specials.hashCode();
-		return result;
+		return HashCodeSupport.hash(generatingArbitrary, specials);
 	}
 
 	private BigDecimal toBigDecimal(double value) {

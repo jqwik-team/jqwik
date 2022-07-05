@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
@@ -65,8 +66,6 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 
 	@Override
 	public int hashCode() {
-		int result = min;
-		result = 31 * result + (int) max;
-		return result;
+		return HashCodeSupport.hash(min, max);
 	}
 }

@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
@@ -91,9 +92,7 @@ class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<Big
 
 	@Override
 	public int hashCode() {
-		int result = range.hashCode();
-		result = 31 * result + scale;
-		return result;
+		return HashCodeSupport.hash(range, scale);
 	}
 
 	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables(int maxEdgeCases) {

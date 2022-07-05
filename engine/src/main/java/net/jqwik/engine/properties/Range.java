@@ -2,6 +2,8 @@ package net.jqwik.engine.properties;
 
 import java.util.function.*;
 
+import net.jqwik.api.support.*;
+
 public class Range<T extends Comparable<T>> {
 
 	public static <T extends Comparable<T>> Range<T> of(T min, T max) {
@@ -79,11 +81,7 @@ public class Range<T extends Comparable<T>> {
 
 	@Override
 	public int hashCode() {
-		int result = min.hashCode();
-		result = 31 * result + (minIncluded ? 1 : 0);
-		result = 31 * result + max.hashCode();
-		result = 31 * result + (maxIncluded ? 1 : 0);
-		return result;
+		return HashCodeSupport.hash(min, minIncluded, max, maxIncluded);
 	}
 
 	@Override
