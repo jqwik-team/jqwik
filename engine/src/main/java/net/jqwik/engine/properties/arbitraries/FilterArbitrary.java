@@ -39,6 +39,7 @@ public class FilterArbitrary<T> extends ArbitraryDelegator<T> {
 
 	@Override
 	public boolean equals(Object o) {
+		if (this == o) return true;
 		if (!super.equals(o)) return false;
 
 		FilterArbitrary<?> that = (FilterArbitrary<?>) o;
