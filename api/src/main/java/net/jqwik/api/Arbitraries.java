@@ -28,8 +28,6 @@ public class Arbitraries {
 
 		public abstract <T> EdgeCases<T> edgeCasesChoose(List<T> values, int maxEdgeCases);
 
-		public abstract EdgeCases<Character> edgeCasesChoose(char[] validChars, int maxEdgeCases);
-
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples);
 
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier, long maxNumberOfSamples);
@@ -96,6 +94,8 @@ public class Arbitraries {
 		public abstract <T> Arbitrary<T> lazyOf(List<Supplier<Arbitrary<T>>> suppliers);
 
 		public abstract <T> TraverseArbitrary<T> traverse(Class<T> targetType, Traverser traverser);
+
+		public abstract Arbitrary<Character> of(char[] chars);
 	}
 
 	private Arbitraries() {
@@ -230,11 +230,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static Arbitrary<Character> of(char[] values) {
-		return fromGenerators(
-			ArbitrariesFacade.implementation.randomChoose(values),
-			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max),
-			maxEdgeCases -> ArbitrariesFacade.implementation.edgeCasesChoose(values, maxEdgeCases)
-		);
+		return ArbitrariesFacade.implementation.of(values);
 	}
 
 	/**
