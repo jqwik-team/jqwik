@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
@@ -191,6 +192,25 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 		}
 		clone.excludedChars = excludedChars;
 		return clone;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DefaultStringArbitrary that = (DefaultStringArbitrary) o;
+		if (minLength != that.minLength) return false;
+		if (maxLength != that.maxLength) return false;
+		if (Double.compare(that.repeatChars, repeatChars) != 0) return false;
+		if (!characterArbitrary.equals(that.characterArbitrary)) return false;
+		if (!excludedChars.equals(that.excludedChars)) return false;
+		return Objects.equals(lengthDistribution, that.lengthDistribution);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeSupport.hash(characterArbitrary, minLength, maxLength, repeatChars, excludedChars, lengthDistribution);
 	}
 
 	private RandomGenerator<Character> randomCharacterGenerator() {
