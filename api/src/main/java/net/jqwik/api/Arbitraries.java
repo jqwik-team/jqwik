@@ -32,13 +32,9 @@ public class Arbitraries {
 
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier, long maxNumberOfSamples);
 
-		public abstract Optional<ExhaustiveGenerator<Character>> exhaustiveChoose(char[] values, long maxNumberOfSamples);
-
 		public abstract <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values, long maxNumberOfSamples);
 
 		public abstract <T> RandomGenerator<T> randomChoose(List<T> values);
-
-		public abstract RandomGenerator<Character> randomChoose(char[] values);
 
 		public abstract <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> all);
 

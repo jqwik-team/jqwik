@@ -39,16 +39,6 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public RandomGenerator<Character> randomChoose(char[] values) {
-		return RandomGenerators.choose(values);
-	}
-
-	@Override
-	public Optional<ExhaustiveGenerator<Character>> exhaustiveChoose(char[] values, long maxNumberOfSamples) {
-		return ExhaustiveGenerators.choose(values, maxNumberOfSamples);
-	}
-
-	@Override
 	public <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier, long maxNumberOfSamples) {
 		return ExhaustiveGenerators.create(supplier, maxNumberOfSamples);
 	}
@@ -191,17 +181,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
 	public Arbitrary<Character> of(char[] chars) {
-		return new FromGeneratorsArbitrary<>(
-			randomChoose(chars),
-			max -> exhaustiveChoose(chars, max),
-			maxEdgeCases -> {
-				List<Character> validCharacters = new ArrayList<>(chars.length);
-				for (char character : chars) {
-					validCharacters.add(character);
-				}
-				return edgeCasesChoose(validCharacters, maxEdgeCases);
-			}
-		);
+		return new ChooseCharacterArbitrary(chars);
 	}
 
 	/**
