@@ -52,33 +52,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T, U> Arbitrary<U> map(Arbitrary<T> self, Function<T, U> mapper) {
-		return new Arbitrary<U>() {
-			@Override
-			public RandomGenerator<U> generator(int genSize) {
-				return self.generator(genSize).map(mapper);
-			}
-
-			@Override
-			public RandomGenerator<U> generatorWithEmbeddedEdgeCases(int genSize) {
-				return self.generatorWithEmbeddedEdgeCases(genSize).map(mapper);
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<U>> exhaustive(long maxNumberOfSamples) {
-				return self.exhaustive(maxNumberOfSamples)
-						   .map(generator -> generator.map(mapper));
-			}
-
-			@Override
-			public EdgeCases<U> edgeCases(int maxEdgeCases) {
-				return EdgeCasesSupport.map(self.edgeCases(maxEdgeCases), mapper);
-			}
-
-			@Override
-			public boolean isGeneratorMemoizable() {
-				return self.isGeneratorMemoizable();
-			}
-		};
+		return new ArbitraryMap<>(self, mapper);
 	}
 
 	@Override
