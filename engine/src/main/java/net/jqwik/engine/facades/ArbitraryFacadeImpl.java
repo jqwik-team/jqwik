@@ -47,7 +47,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> Arbitrary<T> filter(Arbitrary<T> self, Predicate<T> filterPredicate, int maxMisses) {
-		return new FilterArbitrary<>(self, filterPredicate, maxMisses);
+		return new ArbitraryFilter<>(self, filterPredicate, maxMisses);
 	}
 
 	@Override

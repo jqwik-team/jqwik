@@ -41,7 +41,7 @@ public interface GenericGenerationProperties {
 	}
 
 	@Property(tries = 100)
-	@Disabled("Fix equals() methods in all arbitraries")
+	//@Disabled("Fix equals() methods in all arbitraries")
 	default void memoizableArbitrariesWillMemoizeGenerators(
 		@ForAll Random randomToGenerateArbitrary,
 		@ForAll @IntRange(min = 1, max = 10000) int genSize,

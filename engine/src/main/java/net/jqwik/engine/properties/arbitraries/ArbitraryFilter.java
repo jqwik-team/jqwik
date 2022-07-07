@@ -7,11 +7,11 @@ import net.jqwik.api.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.support.*;
 
-public class FilterArbitrary<T> extends ArbitraryDelegator<T> {
+public class ArbitraryFilter<T> extends ArbitraryDelegator<T> {
 	private final Predicate<T> filterPredicate;
 	private final int maxMisses;
 
-	public FilterArbitrary(Arbitrary<T> self, Predicate<T> filterPredicate, int maxMisses) {
+	public ArbitraryFilter(Arbitrary<T> self, Predicate<T> filterPredicate, int maxMisses) {
 		super(self);
 		this.filterPredicate = filterPredicate;
 		this.maxMisses = maxMisses;
@@ -43,7 +43,7 @@ public class FilterArbitrary<T> extends ArbitraryDelegator<T> {
 		if (this == o) return true;
 		if (!super.equals(o)) return false;
 
-		FilterArbitrary<?> that = (FilterArbitrary<?>) o;
+		ArbitraryFilter<?> that = (ArbitraryFilter<?>) o;
 		if (maxMisses != that.maxMisses) return false;
 		return JqwikLambdaSupport.areEqual(filterPredicate, that.filterPredicate);
 	}
