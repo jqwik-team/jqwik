@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.support.*;
 
 public class ArbitraryMap<T, U> implements Arbitrary<U> {
 	private final Arbitrary<T> self;
@@ -38,5 +39,20 @@ public class ArbitraryMap<T, U> implements Arbitrary<U> {
 	@Override
 	public boolean isGeneratorMemoizable() {
 		return self.isGeneratorMemoizable();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ArbitraryMap<?, ?> that = (ArbitraryMap<?, ?>) o;
+		if (!self.equals(that.self)) return false;
+		return JqwikLambdaSupport.areEqual(mapper, that.mapper);
+	}
+
+	@Override
+	public int hashCode() {
+		return self.hashCode();
 	}
 }

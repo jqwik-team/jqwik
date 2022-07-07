@@ -7,7 +7,10 @@ public class JqwikLambdaSupport {
 	private JqwikLambdaSupport() {}
 
 	/**
+	 * This method is used in arbitrary implementations of equals() to allow memoization of generators.
+	 *
 	 * Comparing two lambdas by their implementation class works if they don't access an enclosing object's state.
+	 * When in doubt, fail comparison.
 	 **/
 	public static boolean areEqual(Object l1, Object l2) {
 		if (l1 == l2) return true;
@@ -25,6 +28,11 @@ public class JqwikLambdaSupport {
 	private static boolean fieldIsEqualIn(Field field, Object left, Object right) {
 		field.setAccessible(true);
 		try {
+			// If field is a functional type use areEqual.
+			// TODO: Could there be circular references among functional types?
+			if (JqwikReflectionSupport.isFunctionalType(field.getType())) {
+				return areEqual(field.get(left), field.get(right));
+			}
 			return field.get(left).equals(field.get(right));
 		} catch (IllegalAccessException e) {
 			return false;
