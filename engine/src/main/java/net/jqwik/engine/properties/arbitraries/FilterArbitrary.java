@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.*;
+import net.jqwik.engine.support.*;
 
 public class FilterArbitrary<T> extends ArbitraryDelegator<T> {
 	private final Predicate<T> filterPredicate;
@@ -44,13 +45,12 @@ public class FilterArbitrary<T> extends ArbitraryDelegator<T> {
 
 		FilterArbitrary<?> that = (FilterArbitrary<?>) o;
 		if (maxMisses != that.maxMisses) return false;
-		return filterPredicate.equals(that.filterPredicate);
+		return JqwikLambdaSupport.areEqual(filterPredicate, that.filterPredicate);
 	}
 
 	@Override
 	public int hashCode() {
 		int result = super.hashCode();
-		result = 31 * result + filterPredicate.hashCode();
 		result = 31 * result + maxMisses;
 		return result;
 	}

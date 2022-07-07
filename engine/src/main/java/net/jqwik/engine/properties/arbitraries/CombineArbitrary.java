@@ -5,8 +5,10 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
+import net.jqwik.engine.support.*;
 
 public class CombineArbitrary<R> implements Arbitrary<R> {
 
@@ -52,7 +54,22 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 		);
 	}
 
-	private static boolean isCombinedGeneratorMemoizable(List<Arbitrary<Object>> arbitraries) {
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		CombineArbitrary<?> that = (CombineArbitrary<?>) o;
+		if (!arbitraries.equals(that.arbitraries)) return false;
+		return JqwikLambdaSupport.areEqual(combinator, that.combinator);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeSupport.hash(arbitraries);
+	}
+
+	private boolean isCombinedGeneratorMemoizable(List<Arbitrary<Object>> arbitraries) {
 		return arbitraries.stream().allMatch(Arbitrary::isGeneratorMemoizable);
 	}
 
@@ -61,7 +78,7 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 		Function<List<Object>, R> combineFunction,
 		List<Arbitrary<Object>> arbitraries
 	) {
-		List<RandomGenerator<?>> generators = arbitraries.stream()
+		List<RandomGenerator<Object>> generators = arbitraries.stream()
 													.map(a -> a.generator(genSize))
 													.collect(Collectors.toList());
 		return random -> {
@@ -75,7 +92,7 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 		Function<List<Object>, R> combineFunction,
 		List<Arbitrary<Object>> arbitraries
 	) {
-		List<RandomGenerator<?>> generators =
+		List<RandomGenerator<Object>> generators =
 			arbitraries.stream()
 				  .map(a -> a.generatorWithEmbeddedEdgeCases(genSize))
 				  .collect(Collectors.toList());
@@ -85,11 +102,10 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 		};
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T> List<Shrinkable<T>> generateShrinkables(List<RandomGenerator<?>> generators, Random random) {
-		List<Shrinkable<T>> list = new ArrayList<>();
-		for (RandomGenerator<?> generator : generators) {
-			list.add((Shrinkable<T>) generator.next(random));
+	private List<Shrinkable<Object>> generateShrinkables(List<RandomGenerator<Object>> generators, Random random) {
+		List<Shrinkable<Object>> list = new ArrayList<>();
+		for (RandomGenerator<Object> generator : generators) {
+			list.add(generator.next(random));
 		}
 		return list;
 	}
