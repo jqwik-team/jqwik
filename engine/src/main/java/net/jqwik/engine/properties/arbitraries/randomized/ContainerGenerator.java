@@ -44,9 +44,9 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		this.sizeGenerator = sizeGenerator(minSize, maxSize, genSize, sizeDistribution);
 
 		// This is a heuristic value.
-		// The assumption is that with 5 times the number of possible values,
+		// The assumption is that with 10 times the number of possible values,
 		// each possible value should be hit at least once with a high probability.
-		this.maxAttempts = Math.min(10000, maxUniqueElements * 5);
+		this.maxAttempts = Math.min(10000, maxUniqueElements * 10);
 	}
 
 	@Override
