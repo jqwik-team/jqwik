@@ -45,8 +45,9 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 
 		// This is a heuristic value.
 		// The assumption is that with 10 times the number of possible values,
+		// and additionally between 1000 and 10000 tries,
 		// each possible value should be hit at least once with a high probability.
-		this.maxAttempts = Math.min(10000, maxUniqueElements * 10);
+		this.maxAttempts = Math.min(10000, Math.max(1000, maxUniqueElements * 10));
 	}
 
 	@Override
