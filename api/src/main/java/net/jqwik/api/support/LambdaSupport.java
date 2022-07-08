@@ -20,7 +20,7 @@ public class LambdaSupport {
 	 * Comparing two lambdas by their implementation class works if they don't access an enclosing object's state.
 	 * When in doubt, fail comparison.
 	 **/
-	public static boolean areEqual(Object l1, Object l2) {
+	public static <T> boolean areEqual(T l1, T l2) {
 		if (l1 == l2) return true;
 		Class<?> l1Class = l1.getClass();
 		if (l1Class != l2.getClass()) return false;

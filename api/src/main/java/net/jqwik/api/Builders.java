@@ -8,6 +8,7 @@ import org.apiguardian.api.*;
 import org.jetbrains.annotations.*;
 
 import net.jqwik.api.Tuple.*;
+import net.jqwik.api.support.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -66,7 +67,8 @@ public class Builders {
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
 
 			class Holder {
-				@Nullable final Object value;
+				@Nullable
+				final Object value;
 
 				Holder(@Nullable Object value) {
 					this.value = value;
@@ -77,12 +79,13 @@ public class Builders {
 			// leads to better performance and forgoes some problems with stateful builders
 			List<Arbitrary<Optional<Holder>>> arbitraries =
 				mutators.stream()
-					.map(mutator -> {
-						double presenceProbability = mutator.get1();
-						Arbitrary<Holder> nullable = mutator.get2().map(value -> new Holder(value)); // Java 8 does not allow Holder::new here
-						return nullable.optional(presenceProbability);
-					})
-					.collect(Collectors.toList());
+						.map(mutator -> {
+							double presenceProbability = mutator.get1();
+							Arbitrary<Holder> nullable = mutator.get2()
+																.map(value -> new Holder(value)); // Java 8 does not allow Holder::new here
+							return nullable.optional(presenceProbability);
+						})
+						.collect(Collectors.toList());
 
 			Arbitrary<B> aBuilder = Combinators.combine(arbitraries).as(values -> {
 				B builder = starter.get();
@@ -108,6 +111,47 @@ public class Builders {
 		 */
 		public Arbitrary<B> build() {
 			return build(Function.identity());
+		}
+
+		/**
+		 * Equality matters to allow memoization of resulting arbitraries
+		 */
+		@SuppressWarnings("unchecked")
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			BuilderCombinator<B> that = (BuilderCombinator<B>) o;
+			if (!LambdaSupport.areEqual(starter, that.starter)) return false;
+			return mutatorsAreEqual(mutators, that.mutators);
+		}
+
+		private boolean mutatorsAreEqual(
+			List<Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>>> leftMutators,
+			List<Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>>> rightMutators
+		) {
+			if (leftMutators.size() != rightMutators.size()) {
+				return false;
+			}
+			for (int i = 0; i < leftMutators.size(); i++) {
+				Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>> left = leftMutators.get(i);
+				Tuple3<Double, Arbitrary<Object>, BiFunction<B, Object, B>> right = rightMutators.get(i);
+				if(!left.get1().equals(right.get1())) return false;
+				if(!left.get2().equals(right.get2())) return false;
+				if(!LambdaSupport.areEqual(left.get3(), right.get3())) return false;
+			}
+			return true;
+		}
+
+		@Override
+		public int hashCode() {
+			return hashMutators();
+		}
+
+		private int hashMutators() {
+			// BiFunctions are not hashable, so we need to hash the mutators separately
+			return mutators.stream().map(Tuple2::get2).collect(Collectors.toList()).hashCode();
 		}
 
 		BuilderCombinator<B> withMutator(double probabilityOfUse, Arbitrary<Object> arbitrary, BiFunction<B, Object, B> mutate) {
