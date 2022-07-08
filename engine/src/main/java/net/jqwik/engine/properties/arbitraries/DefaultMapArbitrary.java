@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
@@ -102,5 +103,25 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	@Override
 	public MapArbitrary<K, V> uniqueValues() {
 		return uniqueValues(FeatureExtractor.identity());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DefaultMapArbitrary<?, ?> that = (DefaultMapArbitrary<?, ?>) o;
+		if (minSize != that.minSize) return false;
+		if (maxSize != that.maxSize) return false;
+		if (!keysArbitrary.equals(that.keysArbitrary)) return false;
+		if (!valuesArbitrary.equals(that.valuesArbitrary)) return false;
+		if (!Objects.equals(sizeDistribution, that.sizeDistribution)) return false;
+		if (!keyUniquenessExtractors.equals(that.keyUniquenessExtractors)) return false;
+		return valueUniquenessExtractors.equals(that.valueUniquenessExtractors);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeSupport.hash(minSize, maxSize, keysArbitrary, valuesArbitrary);
 	}
 }
