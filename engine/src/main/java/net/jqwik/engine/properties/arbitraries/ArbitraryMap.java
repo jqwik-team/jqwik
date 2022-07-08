@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.support.*;
+import net.jqwik.api.support.*;
 
 public class ArbitraryMap<T, U> implements Arbitrary<U> {
 	private final Arbitrary<T> self;
@@ -48,7 +48,7 @@ public class ArbitraryMap<T, U> implements Arbitrary<U> {
 
 		ArbitraryMap<?, ?> that = (ArbitraryMap<?, ?>) o;
 		if (!self.equals(that.self)) return false;
-		return JqwikLambdaSupport.areEqual(mapper, that.mapper);
+		return LambdaSupport.areEqual(mapper, that.mapper);
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
-import net.jqwik.engine.support.*;
 
 public class CombineArbitrary<R> implements Arbitrary<R> {
 
@@ -61,7 +60,7 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 
 		CombineArbitrary<?> that = (CombineArbitrary<?>) o;
 		if (!arbitraries.equals(that.arbitraries)) return false;
-		return JqwikLambdaSupport.areEqual(combinator, that.combinator);
+		return LambdaSupport.areEqual(combinator, that.combinator);
 	}
 
 	@Override

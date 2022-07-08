@@ -4,8 +4,8 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.*;
-import net.jqwik.engine.support.*;
 
 public class ArbitraryFilter<T> extends ArbitraryDelegator<T> {
 	private final Predicate<T> filterPredicate;
@@ -45,7 +45,7 @@ public class ArbitraryFilter<T> extends ArbitraryDelegator<T> {
 
 		ArbitraryFilter<?> that = (ArbitraryFilter<?>) o;
 		if (maxMisses != that.maxMisses) return false;
-		return JqwikLambdaSupport.areEqual(filterPredicate, that.filterPredicate);
+		return LambdaSupport.areEqual(filterPredicate, that.filterPredicate);
 	}
 
 	@Override

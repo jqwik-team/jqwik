@@ -1,10 +1,18 @@
-package net.jqwik.engine.support;
+package net.jqwik.api.support;
 
 import java.lang.reflect.*;
+import java.util.*;
+import java.util.stream.*;
 
-public class JqwikLambdaSupport {
+import org.apiguardian.api.*;
+import org.junit.platform.commons.support.*;
 
-	private JqwikLambdaSupport() {}
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = INTERNAL)
+public class LambdaSupport {
+
+	private LambdaSupport() {}
 
 	/**
 	 * This method is used in arbitrary implementations of equals() to allow memoization of generators.
@@ -30,7 +38,7 @@ public class JqwikLambdaSupport {
 		try {
 			// If field is a functional type use areEqual.
 			// TODO: Could there be circular references among functional types?
-			if (JqwikReflectionSupport.isFunctionalType(field.getType())) {
+			if (isFunctionalType(field.getType())) {
 				return areEqual(field.get(left), field.get(right));
 			}
 			return field.get(left).equals(field.get(right));
@@ -38,4 +46,25 @@ public class JqwikLambdaSupport {
 			return false;
 		}
 	}
+
+	// TODO: This duplicates JqwikReflectionSupport.isFunctionalType() because module dependencies
+	private static boolean isFunctionalType(Class<?> candidateType) {
+		if (!candidateType.isInterface()) {
+			return false;
+		}
+		return countInterfaceMethods(candidateType) == 1;
+	}
+
+	private static long countInterfaceMethods(Class<?> candidateType) {
+		Method[] methods = candidateType.getMethods();
+		return findInterfaceMethods(methods).size();
+	}
+
+	private static List<Method> findInterfaceMethods(Method[] methods) {
+		return Arrays
+				   .stream(methods)
+				   .filter(m -> !m.isDefault() && !ModifierSupport.isStatic(m))
+				   .collect(Collectors.toList());
+	}
+
 }

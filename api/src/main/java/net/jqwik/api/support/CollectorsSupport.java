@@ -13,6 +13,9 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = INTERNAL)
 public class CollectorsSupport {
+
+	private CollectorsSupport() {}
+
 	public static <T> Collector<T, ?, Set<T>> toLinkedHashSet() {
 		return Collectors.toCollection(LinkedHashSet::new);
 	}
