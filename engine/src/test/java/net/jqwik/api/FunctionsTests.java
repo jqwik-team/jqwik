@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.testing.*;
@@ -235,7 +236,10 @@ class FunctionsTests {
 		public Arbitrary<Arbitrary<?>> arbitraries() {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(10, 100);
 			FunctionArbitrary<Object, Integer> functionArbitrary = Functions.function(Function.class).returning(integers);
-			return Arbitraries.just(functionArbitrary);
+			return Arbitraries.ofSuppliers(
+				() -> functionArbitrary,
+				() -> functionArbitrary.when(p -> p.get(0) == null, ignore -> 20)
+			);
 		}
 	}
 
