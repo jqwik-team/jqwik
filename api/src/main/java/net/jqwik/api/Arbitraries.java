@@ -30,8 +30,6 @@ public class Arbitraries {
 
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples);
 
-		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier, long maxNumberOfSamples);
-
 		public abstract <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values, long maxNumberOfSamples);
 
 		public abstract <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> all);
@@ -92,6 +90,8 @@ public class Arbitraries {
 		public abstract Arbitrary<Character> of(char[] chars);
 
 		public abstract <T> Arbitrary<T> of(Collection<T> values);
+
+		public abstract <T> Arbitrary<T> create(Supplier<T> supplier);
 	}
 
 	private Arbitraries() {
@@ -463,11 +463,7 @@ public class Arbitraries {
 	 */
 	@API(status = MAINTAINED, since = "1.1.1")
 	public static <T> Arbitrary<T> create(Supplier<T> supplier) {
-		return fromGenerators(
-			random -> Shrinkable.supplyUnshrinkable(supplier),
-			max -> ArbitrariesFacade.implementation.exhaustiveCreate(supplier, max),
-			maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.supplyUnshrinkable(supplier))
-		);
+		return ArbitrariesFacade.implementation.create(supplier);
 	}
 
 	/**

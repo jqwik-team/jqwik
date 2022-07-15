@@ -35,11 +35,6 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier, long maxNumberOfSamples) {
-		return ExhaustiveGenerators.create(supplier, maxNumberOfSamples);
-	}
-
-	@Override
 	public <T> Arbitrary<T> just(T value) {
 		return new JustArbitrary<>(value);
 	}
@@ -154,6 +149,15 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	public <T> Arbitrary<T> of(Collection<T> values) {
 		List<T> valueList = values instanceof List ? (List<T>) values : new ArrayList<>(values);
 		return new ChooseValueArbitrary<>(valueList);
+	}
+
+	@Override
+	public <T> Arbitrary<T> create(Supplier<T> supplier) {
+		return new FromGeneratorsArbitrary<>(
+				random -> Shrinkable.supplyUnshrinkable(supplier),
+				max -> ExhaustiveGenerators.create(supplier, max),
+				maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.supplyUnshrinkable(supplier))
+		);
 	}
 
 	/**
