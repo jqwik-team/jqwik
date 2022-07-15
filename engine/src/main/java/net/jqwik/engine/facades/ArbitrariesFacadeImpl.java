@@ -153,11 +153,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
 	public <T> Arbitrary<T> create(Supplier<T> supplier) {
-		return new FromGeneratorsArbitrary<>(
-				random -> Shrinkable.supplyUnshrinkable(supplier),
-				max -> ExhaustiveGenerators.create(supplier, max),
-				maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.supplyUnshrinkable(supplier))
-		);
+		return new CreateArbitrary<>(supplier);
 	}
 
 	/**
