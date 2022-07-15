@@ -30,13 +30,9 @@ public class Arbitraries {
 
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples);
 
-		public abstract <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values, long maxNumberOfSamples);
-
 		public abstract <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> all);
 
 		public abstract <T> RandomGenerator<T> randomFrequency(List<Tuple2<Integer, T>> frequencies);
-
-		public abstract <T> RandomGenerator<List<T>> randomShuffle(List<T> values);
 
 		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary);
 
@@ -92,6 +88,8 @@ public class Arbitraries {
 		public abstract <T> Arbitrary<T> of(Collection<T> values);
 
 		public abstract <T> Arbitrary<T> create(Supplier<T> supplier);
+
+		public abstract <T> Arbitrary<List<T>> shuffle(List<T> values);
 	}
 
 	private Arbitraries() {
@@ -490,11 +488,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<List<T>> shuffle(List<T> values) {
-		return fromGenerators(
-			ArbitrariesFacade.implementation.randomShuffle(values),
-			max -> ArbitrariesFacade.implementation.exhaustiveShuffle(values, max),
-			maxEdgeCases -> EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(values))
-		);
+		return ArbitrariesFacade.implementation.shuffle(values);
 	}
 
 	/**

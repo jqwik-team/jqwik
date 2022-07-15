@@ -50,16 +50,6 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> RandomGenerator<List<T>> randomShuffle(List<T> values) {
-		return RandomGenerators.shuffle(values);
-	}
-
-	@Override
-	public <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values, long maxNumberOfSamples) {
-		return ExhaustiveGenerators.shuffle(values, maxNumberOfSamples);
-	}
-
-	@Override
 	public <M> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary) {
 		return new DefaultActionSequenceArbitrary<>(actionArbitrary);
 	}
@@ -156,6 +146,11 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return new CreateArbitrary<>(supplier);
 	}
 
+	@Override
+	public <T> Arbitrary<List<T>> shuffle(List<T> values) {
+		return new ShuffleArbitrary<>(values);
+	}
+
 	/**
 	 * The calculated hash is supposed to be the same for the same callers of Arbitraries.lazyOf()
 	 * This is important to have a single instance of LazyOfArbitrary for the same code.
@@ -210,7 +205,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	public <K, V> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		// The map cannot be larger than the max number of possible keys
 		return new DefaultMapArbitrary<>(keysArbitrary, valuesArbitrary)
-			.ofMaxSize(maxNumberOfElements(keysArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
+				   .ofMaxSize(maxNumberOfElements(keysArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
+// TODO: This class is probably not needed at all its methods be pulled up.
 public class FromGeneratorsArbitrary<T> implements Arbitrary<T> {
 
 	private final RandomGenerator<T> randomGenerator;
