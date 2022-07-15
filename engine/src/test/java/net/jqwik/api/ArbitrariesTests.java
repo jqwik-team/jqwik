@@ -165,16 +165,24 @@ class ArbitrariesTests {
 	class GenerationTests implements GenericGenerationProperties {
 		@Override
 		public Arbitrary<Arbitrary<?>> arbitraries() {
-			return Arbitraries.of(
-				Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers()),
-				Arbitraries.just("abc"),
-				Arbitraries.create(() -> "new string"),
-				Arbitraries.shuffle(1, 2, 3),
-				Arbitraries.oneOf(Arbitraries.integers(), Arbitraries.strings()),
-				Arbitraries.frequencyOf(
-					Tuple.of(2, Arbitraries.integers()),
-					Tuple.of(3, Arbitraries.strings())
-				)
+			return Arbitraries.ofSuppliers(
+				() -> Arbitraries.of(1, 2, 3),
+				() -> Arbitraries.just("abc"),
+				() -> Arbitraries.create(() -> "new string"),
+				() -> Arbitraries.ofSuppliers(() -> 1, () -> 2, () -> 3),
+				() -> Arbitraries.shuffle(1, 2, 3)
+				//() -> Arbitraries.oneOf(Arbitraries.integers(), Arbitraries.strings())
+				// Arbitraries.frequencyOf(
+				// 	Tuple.of(2, Arbitraries.integers()),
+				// 	Tuple.of(3, Arbitraries.strings())
+				// ),
+				// Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers())
+				// Arbitraries.of(chars[])
+				// Arbitraries.of(Enum.class)
+				// Arbitraries.fromGenerator(..),
+				// Arbitraries.randomValue(..)
+				// Arbitraries.defaultFor(..)
+				// Arbitraries.traverse(..)
 			);
 		}
 	}
