@@ -84,12 +84,12 @@ class IntegralGeneratingArbitrary extends TypedCloneable implements Arbitrary<Bi
 		if (!max.equals(that.max)) return false;
 		if (!Objects.equals(shrinkingTarget, that.shrinkingTarget)) return false;
 		if (!distribution.equals(that.distribution)) return false;
-		return Objects.equals(edgeCasesConfigurator, that.edgeCasesConfigurator);
+		return LambdaSupport.areEqual(edgeCasesConfigurator, that.edgeCasesConfigurator);
 	}
 
 	@Override
 	public int hashCode() {
-		return HashCodeSupport.hash(min, max, shrinkingTarget, distribution, edgeCasesConfigurator);
+		return HashCodeSupport.hash(min, max, shrinkingTarget);
 	}
 
 	private Stream<BigInteger> streamDefaultEdgeCases() {

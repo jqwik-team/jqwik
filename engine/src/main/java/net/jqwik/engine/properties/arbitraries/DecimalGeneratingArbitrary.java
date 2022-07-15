@@ -87,12 +87,12 @@ class DecimalGeneratingArbitrary extends TypedCloneable implements Arbitrary<Big
 		if (!range.equals(that.range)) return false;
 		if (!Objects.equals(shrinkingTarget, that.shrinkingTarget)) return false;
 		if (!Objects.equals(distribution, that.distribution)) return false;
-		return Objects.equals(edgeCasesConfigurator, that.edgeCasesConfigurator);
+		return LambdaSupport.areEqual(edgeCasesConfigurator, that.edgeCasesConfigurator);
 	}
 
 	@Override
 	public int hashCode() {
-		return HashCodeSupport.hash(range, scale);
+		return HashCodeSupport.hash(range, scale, shrinkingTarget);
 	}
 
 	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables(int maxEdgeCases) {

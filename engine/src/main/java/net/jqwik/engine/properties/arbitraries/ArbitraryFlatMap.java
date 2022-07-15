@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 
 public class ArbitraryFlatMap<T, U> implements Arbitrary<U> {
@@ -39,5 +40,20 @@ public class ArbitraryFlatMap<T, U> implements Arbitrary<U> {
 	@Override
 	public boolean isGeneratorMemoizable() {
 		return self.isGeneratorMemoizable();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ArbitraryFlatMap<?, ?> that = (ArbitraryFlatMap<?, ?>) o;
+		if (!self.equals(that.self)) return false;
+		return LambdaSupport.areEqual(mapper, that.mapper);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeSupport.hash(self, mapper.getClass());
 	}
 }

@@ -136,7 +136,8 @@ class ArbitrariesRecursiveTests {
 		@Override
 		public Arbitrary<Arbitrary<?>> arbitraries() {
 			return Arbitraries.of(
-				fixedDepthRecursiveIntArbitrary()
+				fixedDepthRecursiveIntArbitrary(),
+				minMaxDepthRecursiveIntArbitrary()
 			);
 		}
 	}

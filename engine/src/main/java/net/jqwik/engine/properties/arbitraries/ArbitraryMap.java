@@ -53,6 +53,6 @@ public class ArbitraryMap<T, U> implements Arbitrary<U> {
 
 	@Override
 	public int hashCode() {
-		return self.hashCode();
+		return HashCodeSupport.hash(self, mapper.getClass());
 	}
 }
