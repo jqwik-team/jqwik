@@ -301,10 +301,14 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 			throw new IllegalArgumentException(message);
 		}
 
-		Arbitrary<Integer> depths = Arbitraries.integers().between(minDepth, maxDepth)
-											   .withDistribution(RandomDistribution.uniform())
-											   .edgeCases(c -> c.includeOnly(minDepth, maxDepth));
-		return depths.flatMap(depth -> recursive(base, recur, depth));
+		if (minDepth == maxDepth) {
+			return recursive(base, recur, minDepth);
+		} else {
+			Arbitrary<Integer> depths = Arbitraries.integers().between(minDepth, maxDepth)
+												   .withDistribution(RandomDistribution.uniform())
+												   .edgeCases(c -> c.includeOnly(minDepth, maxDepth));
+			return depths.flatMap(depth -> recursive(base, recur, depth));
+		}
 	}
 
 	private <T> Arbitrary<T> recursive(

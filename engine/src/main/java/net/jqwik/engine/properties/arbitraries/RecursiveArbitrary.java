@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 
 public class RecursiveArbitrary<T> implements Arbitrary<T> {
 	private final Supplier<Arbitrary<T>> base;
@@ -56,6 +57,22 @@ public class RecursiveArbitrary<T> implements Arbitrary<T> {
 			last = current.exhaustive(maxNumberOfSamples);
 		}
 		return last;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		RecursiveArbitrary<?> that = (RecursiveArbitrary<?>) o;
+		if (depth != that.depth) return false;
+		if (!LambdaSupport.areEqual(base, that.base)) return false;
+		return LambdaSupport.areEqual(recur, that.recur);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeSupport.hash(base.getClass(), recur.getClass(), depth);
 	}
 
 	private Arbitrary<T> iteratedArbitrary() {
