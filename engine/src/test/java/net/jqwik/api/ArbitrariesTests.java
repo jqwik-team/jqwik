@@ -167,6 +167,8 @@ class ArbitrariesTests {
 		public Arbitrary<Arbitrary<?>> arbitraries() {
 			return Arbitraries.ofSuppliers(
 				() -> Arbitraries.of(1, 2, 3),
+				() -> Arbitraries.of('a', 'b', 'c'),
+				() -> Arbitraries.of(MyEnum.class),
 				() -> Arbitraries.just("abc"),
 				() -> Arbitraries.create(() -> "new string"),
 				() -> Arbitraries.ofSuppliers(() -> 1, () -> 2, () -> 3),
@@ -177,8 +179,6 @@ class ArbitrariesTests {
 				// 	Tuple.of(3, Arbitraries.strings())
 				// ),
 				// Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers())
-				// Arbitraries.of(chars[])
-				// Arbitraries.of(Enum.class)
 				// Arbitraries.fromGenerator(..),
 				// Arbitraries.randomValue(..)
 				// Arbitraries.defaultFor(..)
