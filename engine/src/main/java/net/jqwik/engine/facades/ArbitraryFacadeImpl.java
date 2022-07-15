@@ -8,7 +8,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;
-import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
@@ -27,7 +26,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	public <T> SetArbitrary<T> set(Arbitrary<T> elementArbitrary) {
 		// The set can never be larger than the max number of possible elements
 		return new DefaultSetArbitrary<>(elementArbitrary)
-					   .ofMaxSize(maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
+				   .ofMaxSize(maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
 	@Override
@@ -57,33 +56,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T, U> Arbitrary<U> flatMap(Arbitrary<T> self, Function<T, Arbitrary<U>> mapper) {
-		return new Arbitrary<U>() {
-			@Override
-			public RandomGenerator<U> generator(int genSize) {
-				return self.generator(genSize).flatMap(mapper, genSize, false);
-			}
-
-			@Override
-			public RandomGenerator<U> generatorWithEmbeddedEdgeCases(int genSize) {
-				return self.generatorWithEmbeddedEdgeCases(genSize).flatMap(mapper, genSize, true);
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<U>> exhaustive(long maxNumberOfSamples) {
-				return self.exhaustive(maxNumberOfSamples)
-						   .flatMap(generator -> ExhaustiveGenerators.flatMap(generator, mapper, maxNumberOfSamples));
-			}
-
-			@Override
-			public EdgeCases<U> edgeCases(int maxEdgeCases) {
-				return EdgeCasesSupport.flatMapArbitrary(self.edgeCases(maxEdgeCases), mapper, maxEdgeCases);
-			}
-
-			@Override
-			public boolean isGeneratorMemoizable() {
-				return self.isGeneratorMemoizable();
-			}
-		};
+		return new ArbitraryFlatMap<>(self, mapper);
 	}
 
 	@Override
