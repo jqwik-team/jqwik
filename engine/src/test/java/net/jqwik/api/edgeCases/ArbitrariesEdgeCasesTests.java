@@ -23,8 +23,7 @@ class ArbitrariesEdgeCasesTests implements GenericEdgeCasesProperties {
 			Arbitraries.create(() -> "new string"),
 			Arbitraries.shuffle(1, 2, 3),
 			oneOfArbitrary(),
-			frequencyOfArbitrary(),
-			functionArbitrary()
+			frequencyOfArbitrary()
 		);
 	}
 
@@ -166,28 +165,6 @@ class ArbitrariesEdgeCasesTests implements GenericEdgeCasesProperties {
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
-	}
-
-	@Example
-	@Label("Functions.function(type, returnArbitrary)")
-	void functionHasConstantFunctionsAsEdgeCases() {
-		Arbitrary<Function<String, Integer>> arbitrary = functionArbitrary();
-
-		EdgeCases<Function<String, Integer>> edgeCases = arbitrary.edgeCases();
-		Set<Function<String, Integer>> functions = collectEdgeCaseValues(edgeCases);
-		assertThat(functions).hasSize(4);
-
-		for (Function<String, Integer> function : functions) {
-			assertThat(function.apply("any string")).isIn(10, 11, 99, 100);
-		}
-
-		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
-	}
-
-	private Arbitrary<Function<String, Integer>> functionArbitrary() {
-		Arbitrary<Integer> integers = Arbitraries.integers().between(10, 100);
-		return Functions.function(Function.class).returning(integers);
 	}
 
 	@Group

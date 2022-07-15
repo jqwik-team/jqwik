@@ -230,6 +230,7 @@ class FunctionsTests {
 		}
 	}
 
+
 	@Group
 	class GenerationTests implements GenericGenerationProperties {
 		@Override
@@ -242,6 +243,41 @@ class FunctionsTests {
 			);
 		}
 	}
+
+
+	@Group
+	class EdgeCaseGeneration implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				functionArbitrary(),
+				functionArbitrary().when(p -> p.get(0) == null, ignore -> 20)
+			);
+		}
+
+		@Example
+		void functionHasConstantFunctionsAsEdgeCases() {
+			FunctionArbitrary<Function<String, Integer>, Integer> arbitrary = functionArbitrary();
+
+			EdgeCases<Function<String, Integer>> edgeCases = arbitrary.edgeCases();
+			Set<Function<String, Integer>> functions = collectEdgeCaseValues(edgeCases);
+			assertThat(functions).hasSize(4);
+
+			for (Function<String, Integer> function : functions) {
+				assertThat(function.apply("any string")).isIn(10, 11, 99, 100);
+			}
+
+			// make sure edge cases can be repeatedly generated
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
+		}
+
+		private FunctionArbitrary<Function<String, Integer>, Integer> functionArbitrary() {
+			Arbitrary<Integer> integers = Arbitraries.integers().between(10, 100);
+			return Functions.function(Function.class).returning(integers);
+		}
+	}
+
 
 	@Group
 	class Conditional_results {
