@@ -23,10 +23,6 @@ import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
  * Is loaded through reflection in api module
  */
 public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
-	@Override
-	public <T> RandomGenerator<T> randomChoose(List<T> values) {
-		return RandomGenerators.choose(values);
-	}
 
 	@Override
 	public <T> EdgeCases<T> edgeCasesChoose(List<T> values, int maxEdgeCases) {
@@ -45,37 +41,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
 	public <T> Arbitrary<T> just(T value) {
-		return new Arbitrary<T>() {
-
-			// Optimization: just(value).flatMap(mapper) -> mapper(value)
-			@Override
-			public <U> Arbitrary<U> flatMap(Function<T, Arbitrary<U>> mapper) {
-				return mapper.apply(value);
-			}
-
-			// Optimization: just(value).map(mapper) -> just(mapper(value))
-			@Override
-			public <U> Arbitrary<U> map(Function<T, U> mapper) {
-				return just(mapper.apply(value));
-			}
-
-			@Override
-			public RandomGenerator<T> generator(int tries) {
-				return random -> Shrinkable.unshrinkable(value);
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return exhaustiveChoose(Arrays.asList(value), maxNumberOfSamples);
-			}
-
-			@Override
-			public EdgeCases<T> edgeCases(int maxEdgeCases1) {
-				return maxEdgeCases1 <= 0
-						   ? EdgeCases.none()
-						   : EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(value));
-			}
-		};
+		return new JustArbitrary<>(value);
 	}
 
 	@Override

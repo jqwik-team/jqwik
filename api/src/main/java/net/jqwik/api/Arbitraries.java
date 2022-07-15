@@ -34,8 +34,6 @@ public class Arbitraries {
 
 		public abstract <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values, long maxNumberOfSamples);
 
-		public abstract <T> RandomGenerator<T> randomChoose(List<T> values);
-
 		public abstract <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> all);
 
 		public abstract <T> RandomGenerator<T> randomFrequency(List<Tuple2<Integer, T>> frequencies);
