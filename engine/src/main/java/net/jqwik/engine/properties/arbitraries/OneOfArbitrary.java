@@ -63,4 +63,18 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 		all.replaceAll(arbitrary -> SelfConfiguringArbitrary.configure(arbitrary, configurator, targetType));
 		return configurator.configure(this, targetType);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		OneOfArbitrary<?> that = (OneOfArbitrary<?>) o;
+		return all.equals(that.all);
+	}
+
+	@Override
+	public int hashCode() {
+		return all.hashCode();
+	}
 }

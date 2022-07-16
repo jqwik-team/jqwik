@@ -172,8 +172,8 @@ class ArbitrariesTests {
 				() -> Arbitraries.just("abc"),
 				() -> Arbitraries.create(() -> "new string"),
 				() -> Arbitraries.ofSuppliers(() -> 1, () -> 2, () -> 3),
-				() -> Arbitraries.shuffle(1, 2, 3)
-				//() -> Arbitraries.oneOf(Arbitraries.integers(), Arbitraries.strings())
+				() -> Arbitraries.shuffle(1, 2, 3),
+				() -> Arbitraries.oneOf(Arbitraries.integers(), Arbitraries.strings())
 				// Arbitraries.frequencyOf(
 				// 	Tuple.of(2, Arbitraries.integers()),
 				// 	Tuple.of(3, Arbitraries.strings())
