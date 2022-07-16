@@ -64,4 +64,18 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 		});
 		return configurator.configure(this, targetType);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		FrequencyOfArbitrary<?> that = (FrequencyOfArbitrary<?>) o;
+		return frequencies.equals(that.frequencies);
+	}
+
+	@Override
+	public int hashCode() {
+		return frequencies.hashCode();
+	}
 }
