@@ -1073,7 +1073,7 @@ If you need more you have a few options:
 - Consider to group some parameters into an object of their own and change your design
 - Generate inbetween arbitraries e.g. of type `Tuple` and combine those in another step
 - Introduce a build for your domain object and combine them
-  [in this way](#combining-arbitraries-with-builder)
+  [in this way](#combining-arbitraries-with-builders)
 
 #### Flat Combination
 
