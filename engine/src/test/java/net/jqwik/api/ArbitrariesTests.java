@@ -177,8 +177,8 @@ class ArbitrariesTests {
 				() -> Arbitraries.frequencyOf(
 					Tuple.of(2, Arbitraries.integers()),
 					Tuple.of(3, Arbitraries.strings())
-				)
-				// Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers())
+				),
+				() -> Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers())
 				// Arbitraries.fromGenerator(..),
 				// Arbitraries.randomValue(..)
 				// Arbitraries.defaultFor(..)
