@@ -12,13 +12,14 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
 import net.jqwik.testing.*;
 
 import static java.math.BigInteger.*;
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.testing.TestingSupport.*;
@@ -139,13 +140,6 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void randoms(@ForAll Random random) {
-		Arbitrary<Random> randomArbitrary = Arbitraries.randoms();
-		RandomGenerator<Random> generator = randomArbitrary.generator(1);
-		checkAllGenerated(generator, random, (Random value) -> value.nextInt(100) < 100);
-	}
-
-	@Example
 	void just(@ForAll Random random) {
 		Arbitrary<String> constant = Arbitraries.just("hello");
 		assertAllGenerated(constant.generator(1000), random, value -> {
@@ -159,6 +153,73 @@ class ArbitrariesTests {
 		assertAllGenerated(constant.generator(1000), random, value -> {
 			assertThat(value).isInstanceOf(Person.class);
 		});
+	}
+
+	@Group
+	class Randoms {
+		@Example
+		void randoms(@ForAll Random random) {
+			Arbitrary<Random> randomArbitrary = Arbitraries.randoms();
+			RandomGenerator<Random> generator = randomArbitrary.generator(1);
+			checkAllGenerated(generator, random, (Random value) -> value.nextInt(100) < 100);
+		}
+
+		// GenericGenerationProperties cannot be used due to different equality semantics of Random
+
+		@Property(tries = 100)
+		void sameRandomWillGenerateSameValueOnFreshGenerator(
+			@ForAll Random random,
+			@ForAll @IntRange(min = 1, max = 10000) int genSize,
+			@ForAll boolean withEdgeCases
+		) {
+			long seed = random.nextLong();
+			Arbitrary<Random> arbitrary = Arbitraries.randoms();
+
+			RandomGenerator<Random> gen1 = arbitrary.generator(genSize, withEdgeCases);
+			Random valueA = gen1.next(SourceOfRandomness.newRandom(seed)).value();
+			RandomGenerator<Random> gen2 = arbitrary.generator(genSize, withEdgeCases);
+			Random valueB = gen2.next(SourceOfRandomness.newRandom(seed)).value();
+			assertThat(valueA.nextLong()).isEqualTo(valueB.nextLong());
+		}
+
+		@Property(tries = 100)
+		void memoizableArbitrariesWillMemoizeGenerators(
+			@ForAll @IntRange(min = 1, max = 10000) int genSize,
+			@ForAll boolean withEdgeCases
+		) {
+			Arbitrary<Random> arbitrary1 = Arbitraries.randoms();
+			Arbitrary<Random> arbitrary2 = Arbitraries.randoms();
+
+			RandomGenerator<Random> gen1 = Memoize.memoizedGenerator(
+				arbitrary1, genSize, withEdgeCases,
+				() -> arbitrary1.generator(genSize, withEdgeCases)
+			);
+			RandomGenerator<Random> gen2 = Memoize.memoizedGenerator(
+				arbitrary2, genSize, withEdgeCases,
+				() -> arbitrary2.generator(genSize, withEdgeCases)
+			);
+			assertThat(gen1).isSameAs(gen2);
+		}
+
+		@Property(tries = 100)
+		void sameRandomWillGenerateSameValueOnMemoizedGenerator(
+			@ForAll Random randomToGenerateValue,
+			@ForAll @IntRange(min = 1, max = 10000) int genSize,
+			@ForAll boolean withEdgeCases
+		) {
+			Arbitrary<Random> arbitrary1 = Arbitraries.randoms();
+			Arbitrary<Random> arbitrary2 = Arbitraries.randoms();
+
+			long seedToGenerateValue = randomToGenerateValue.nextLong();
+
+			RandomGenerator<Random> gen1 = Memoize.memoizedGenerator(arbitrary1, genSize, withEdgeCases, () -> arbitrary1.generator(genSize, withEdgeCases));
+			RandomGenerator<Random> gen2 = Memoize.memoizedGenerator(arbitrary2, genSize, withEdgeCases, () -> arbitrary2.generator(genSize, withEdgeCases));
+
+			Random valueA = gen1.next(SourceOfRandomness.newRandom(seedToGenerateValue)).value();
+			Random valueB = gen2.next(SourceOfRandomness.newRandom(seedToGenerateValue)).value();
+			assertThat(valueA.nextLong()).isEqualTo(valueB.nextLong());
+		}
+
 	}
 
 	@Group
@@ -178,9 +239,9 @@ class ArbitrariesTests {
 					Tuple.of(2, Arbitraries.integers()),
 					Tuple.of(3, Arbitraries.strings())
 				),
-				() -> Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers())
-				// Arbitraries.fromGenerator(..),
-				// Arbitraries.randomValue(..)
+				() -> Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers()),
+				() -> Arbitraries.randomValue(random -> random.nextInt()),
+				() -> Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable(random.nextInt()))
 				// Arbitraries.defaultFor(..)
 				// Arbitraries.traverse(..)
 			);
