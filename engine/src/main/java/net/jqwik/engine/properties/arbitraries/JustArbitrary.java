@@ -54,7 +54,6 @@ public class JustArbitrary<T> implements Arbitrary<T> {
 
 	@Override
 	public int hashCode() {
-		Objects.hash(value);
 		return value != null ? value.hashCode() : 0;
 	}
 }
