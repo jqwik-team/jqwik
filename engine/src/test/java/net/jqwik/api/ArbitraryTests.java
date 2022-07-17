@@ -74,19 +74,24 @@ class ArbitraryTests {
 	class GenerationTests implements GenericGenerationProperties {
 		@Override
 		public Arbitrary<Arbitrary<?>> arbitraries() {
-			return Arbitraries.of(
-				Arbitraries.integers().map(Object::toString),
-				Arbitraries.integers().map(i -> i % 2 == 0),
-				Arbitraries.integers().map(i -> {
+			return Arbitraries.ofSuppliers(
+				() -> Arbitraries.integers().map(Object::toString),
+				() -> Arbitraries.integers().map(i -> i * 2),
+				() -> Arbitraries.integers().filter(i -> i % 2 == 0),
+				() -> Arbitraries.integers().map(i -> {
 					if (i % 2 == 0) throw new RuntimeException();
 					return i;
 				}).ignoreException(RuntimeException.class),
-				Arbitraries.of(-10, 10).injectNull(0.1),
-				Arbitraries.of(-1000, 1000).injectDuplicates(0.1),
-				Arbitraries.integers().between(-10, 10).fixGenSize(100),
-				Arbitraries.of(-10, 10).optional(),
-				Arbitraries.just(42).tuple5(),
-				Arbitraries.integers().between(1, 10).flatMap(i -> Arbitraries.strings().ofLength(i))
+				() -> Arbitraries.integers().between(1, 10).flatMap(i -> Arbitraries.strings().ofLength(i)),
+				() -> Arbitraries.of(-10, 10).injectNull(0.1),
+				() -> Arbitraries.of(-1000, 1000).injectDuplicates(0.1),
+				() -> Arbitraries.of(-10, 10).optional(),
+				() -> Arbitraries.just(42).tuple5(),
+				() -> Arbitraries.integers().withoutEdgeCases(),
+				() -> Arbitraries.integers().edgeCases(config -> {}),
+				() -> Arbitraries.integers().dontShrink()
+				// () -> Arbitraries.integers().between(-10, 10).fixGenSize(100),
+				// () -> Arbitraries.integers().collect(..),
 			);
 		}
 	}
