@@ -44,6 +44,17 @@ class TraverseArbitraryTests {
 		);
 	}
 
+	@Group
+	class GenerationTests implements GenericGenerationProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			TraverseArbitrary<MyNestingClass> arbitrary =
+				Arbitraries.traverse(MyNestingClass.class, new NameTraverser()).enableRecursion();
+			return Arbitraries.just(arbitrary);
+		}
+	}
+
 	@Retention(RetentionPolicy.RUNTIME)
 	@interface Name {}
 
@@ -69,6 +80,15 @@ class TraverseArbitraryTests {
 			this.name = name;
 			this.myClasses = myClasses;
 		}
+
+		@Override
+		public String toString() {
+			final StringBuffer sb = new StringBuffer("MyNestingClass{");
+			sb.append("name='").append(name).append('\'');
+			sb.append(", myClasses=").append(myClasses);
+			sb.append('}');
+			return sb.toString();
+		}
 	}
 
 	private static class MyClass {
@@ -78,6 +98,15 @@ class TraverseArbitraryTests {
 		MyClass(@Name String name, @Size(3) List<String> tags) {
 			this.name = name;
 			this.tags = tags;
+		}
+
+		@Override
+		public String toString() {
+			final StringBuffer sb = new StringBuffer("MyClass{");
+			sb.append("name='").append(name).append('\'');
+			sb.append(", tags=").append(tags);
+			sb.append('}');
+			return sb.toString();
 		}
 	}
 }

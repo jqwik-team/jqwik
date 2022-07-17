@@ -10,6 +10,7 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.support.types.*;
 
 import static org.junit.platform.commons.support.ModifierSupport.*;
@@ -102,6 +103,22 @@ public class DefaultTraverseArbitrary<T> extends ArbitraryDecorator<T> implement
 	@Override
 	public String toString() {
 		return String.format("TraverseArbitrary<%s>(allowRecursion=%s)", targetType.getName(), enableRecursion);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		DefaultTraverseArbitrary<?> that = (DefaultTraverseArbitrary<?>) o;
+		if (enableRecursion != that.enableRecursion) return false;
+		if (!targetType.equals(that.targetType)) return false;
+		return LambdaSupport.areEqual(traverser, that.traverser);
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeSupport.hash(targetType, enableRecursion);
 	}
 
 	private Arbitrary<T> createArbitrary(
