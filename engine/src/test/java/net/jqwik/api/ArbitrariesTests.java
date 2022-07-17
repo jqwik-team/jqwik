@@ -241,9 +241,8 @@ class ArbitrariesTests {
 				),
 				() -> Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers()),
 				() -> Arbitraries.randomValue(random -> random.nextInt()),
-				() -> Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable(random.nextInt()))
-				// Arbitraries.defaultFor(..)
-				// Arbitraries.traverse(..)
+				() -> Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable(random.nextInt())),
+				() -> Arbitraries.defaultFor(String.class)
 			);
 		}
 	}
