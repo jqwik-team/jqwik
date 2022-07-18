@@ -28,7 +28,7 @@ ext {
 	mockitoVersion = '4.6.1'
 	systemLambdaVersion = '1.2.1'
 	kotlinVersion = '1.6.10'
-	kotlinxVersion = '1.6.3'
+	kotlinxVersion = '1.6.4'
 	findbugsVersion = '3.0.2'
 	jetbrainsAnnotationsVersion = '23.0.0'
 	moduleName = 'net.jqwik'
