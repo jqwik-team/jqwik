@@ -252,8 +252,9 @@ class ChainArbitraryTests {
 			Chain.initializeWith(() -> 1)
 				 .provideTransformer(
 					 TransformerProvider.<Integer>when(ignore -> false)
-										.provide((Arbitrary<Transformer<Integer>>) null /* never gets here */)
+										.provide((Arbitrary<Transformer<Integer>>) null) // never gets here
 				 )
+				 .provideTransformer(ignore -> just(Transformer.noop())) // noop() is ignored
 				 .withMaxTransformations(50);
 
 		Chain<Integer> chain = chains.generator(100).next(random).value();

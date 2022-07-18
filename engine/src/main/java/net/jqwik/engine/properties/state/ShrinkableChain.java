@@ -15,6 +15,7 @@ import net.jqwik.engine.*;
 
 public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
+	public static final int MAX_TRANSFORMER_TRIES = 1000;
 	private final long randomSeed;
 	private final Supplier<? extends T> initialSupplier;
 	private final Function<Random, TransformerProvider<T>> providerGenerator;
@@ -200,8 +201,9 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		private Shrinkable<Transformer<T>> runNewStep(long nextSeed) {
 			Random random = SourceOfRandomness.newRandom(nextSeed);
 
-			while(true) {
-				Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random);
+			int[] i = {0};
+			while (i[0] < MAX_TRANSFORMER_TRIES) {
+				Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random, i);
 				Arbitrary<Transformer<T>> arbitrary = arbitraryAccessTuple.get1();
 				Predicate<T> precondition = arbitraryAccessTuple.get2();
 				boolean accessState = arbitraryAccessTuple.get3();
@@ -214,16 +216,18 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				iterations.add(new ShrinkableChainIteration<>(precondition, accessState, next));
 				return next;
 			}
+			String message = String.format("Could not generate a transformer after %s tries.", MAX_TRANSFORMER_TRIES);
+			throw new JqwikException(message);
 		}
 
-		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(Random random) {
+		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(Random random, int[] i) {
 			AtomicBoolean accessState = new AtomicBoolean(false);
 			Supplier<T> supplier = () -> {
 				accessState.set(true);
 				return current;
 			};
 
-			for (int i = 0; i < 1000; i++) {
+			while (i[0]++ < MAX_TRANSFORMER_TRIES) {
 				TransformerProvider<T> chainGenerator = providerGenerator.apply(random);
 
 				Predicate<T> precondition = chainGenerator.precondition();
@@ -236,7 +240,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				Arbitrary<Transformer<T>> arbitrary = chainGenerator.apply(supplier);
 				return Tuple.of(arbitrary, hasPrecondition ? precondition : null, accessState.get());
 			}
-			String message = String.format("Could not generate a transformer after %s tries.", 1000);
+			String message = String.format("Could not generate a transformer after %s tries.", MAX_TRANSFORMER_TRIES);
 			throw new JqwikException(message);
 		}
 	}
