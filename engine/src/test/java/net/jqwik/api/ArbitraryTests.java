@@ -90,8 +90,8 @@ class ArbitraryTests {
 				() -> Arbitraries.integers().withoutEdgeCases(),
 				() -> Arbitraries.integers().edgeCases(config -> {}),
 				() -> Arbitraries.integers().dontShrink(),
-				() -> Arbitraries.integers().between(-10, 10).fixGenSize(100)
-				// () -> Arbitraries.integers().collect(..),
+				() -> Arbitraries.integers().between(-10, 10).fixGenSize(100),
+				() -> Arbitraries.integers().between(1, 3).collect(list -> sum(list) > 10)
 			);
 		}
 	}
@@ -233,6 +233,11 @@ class ArbitraryTests {
 			this.string = string;
 		}
 	}
+
+	private static int sum(List<Integer> list) {
+		return list.stream().mapToInt(i -> i).sum();
+	}
+
 
 	@Group
 	class Filtering {
@@ -469,10 +474,6 @@ class ArbitraryTests {
 
 			assertThatThrownBy(() -> generator.next(random))
 				.isInstanceOf(JqwikException.class);
-		}
-
-		private int sum(List<Integer> list) {
-			return list.stream().mapToInt(i -> i).sum();
 		}
 
 	}

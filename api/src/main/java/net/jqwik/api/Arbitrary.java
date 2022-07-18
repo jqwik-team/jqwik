@@ -58,6 +58,8 @@ public interface Arbitrary<T> {
 		public abstract <T> RandomGenerator<T> memoizedGenerator(Arbitrary<T> self, int genSize, boolean withEdgeCases);
 
 		public abstract <T> Arbitrary<T> fixGenSize(Arbitrary<T> self, int genSize);
+
+		public abstract <T> Arbitrary<List<T>> collect(Arbitrary<T> self, Predicate<List<T>> until);
 	}
 
 	/**
@@ -355,17 +357,7 @@ public interface Arbitrary<T> {
 	 */
 	@API(status = MAINTAINED, since = "1.3.0")
 	default Arbitrary<List<T>> collect(Predicate<List<T>> until) {
-		return new Arbitrary<List<T>>() {
-			@Override
-			public RandomGenerator<List<T>> generator(final int genSize) {
-				return Arbitrary.this.generator(genSize).collect(until);
-			}
-
-			@Override
-			public EdgeCases<List<T>> edgeCases(int maxEdgeCases) {
-				return EdgeCases.none();
-			}
-		};
+		return ArbitraryFacade.implementation.collect(this, until);
 	}
 
 	/**
