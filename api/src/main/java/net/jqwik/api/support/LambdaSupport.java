@@ -18,7 +18,8 @@ public class LambdaSupport {
 	private LambdaSupport() {}
 
 	/**
-	 * This method is used in {@linkplain Arbitrary#equals(Object)} implementations to allow memoization of generators.
+	 * This method is used in {@linkplain Object#equals(Object)} implementations of {@linkplain Arbitrary} types
+	 * to allow memoization of generators.
 	 * <p>
 	 * Comparing two lambdas by their implementation class works if they don't access an enclosing object's state.
 	 * When in doubt, fail comparison.

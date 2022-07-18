@@ -80,6 +80,9 @@ title: jqwik Release Notes
 - Frequency based arbitraries now perform better with large number of options.
   See https://github.com/jlink/jqwik/issues/332.
 
+- Generator memoization now works for most kinds of arbitraries and therefore uses less memory.
+  See https://github.com/jlink/jqwik/issues/339.
+
 
 ## 1.6.x
 
