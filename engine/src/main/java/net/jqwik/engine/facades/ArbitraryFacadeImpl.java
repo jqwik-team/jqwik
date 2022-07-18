@@ -164,6 +164,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 			public RandomGenerator<T> generator(int ignoredGenSize) {
 				return super.generator(genSize);
 			}
+
+			@Override
+			public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int ignoredGenSize) {
+				return super.generatorWithEmbeddedEdgeCases(genSize);
+			}
 		};
 	}
 

@@ -47,8 +47,11 @@ class ArbitraryTests {
 				}
 			};
 
-		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000, true);
+		RandomGenerator<Integer> notUsedWithoutEdgeCases = arbitrary.fixGenSize(42).generator(1000, false);
 		assertThat(injectedGenSize[0]).isEqualTo(42);
+
+		RandomGenerator<Integer> notUsedWithEdgeCases = arbitrary.fixGenSize(43).generator(1000, true);
+		assertThat(injectedGenSize[0]).isEqualTo(43);
 	}
 
 	@Property(tries = 100)
