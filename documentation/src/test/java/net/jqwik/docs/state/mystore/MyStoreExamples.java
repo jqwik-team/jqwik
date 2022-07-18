@@ -34,7 +34,7 @@ public class MyStoreExamples {
 		public Arbitrary<Transformer<MyStore<Integer, String>>> transformer() {
 			return Combinators.combine(keys(), values())
 							  .as((key, value) -> Transformer.mutate(
-								  () -> String.format("store %s=%s", key, value),
+								  String.format("store %s=%s", key, value),
 								  store -> {
 									  store.store(key, value);
 									  assertThat(store.isEmpty()).isFalse();
@@ -55,7 +55,7 @@ public class MyStoreExamples {
 			Arbitrary<Integer> existingKeys = Arbitraries.of(state.keys());
 			return Combinators.combine(existingKeys, values())
 							  .as((key, value) -> Transformer.mutate(
-								  () -> String.format("update %s=%s", key, value),
+								  String.format("update %s=%s", key, value),
 								  store -> {
 									  store.store(key, value);
 									  assertThat(store.isEmpty()).isFalse();
@@ -75,7 +75,7 @@ public class MyStoreExamples {
 		public Arbitrary<Transformer<MyStore<Integer, String>>> transformer(MyStore<Integer, String> state) {
 			Arbitrary<Integer> existingKeys = Arbitraries.of(state.keys());
 			return existingKeys.map(key -> Transformer.mutate(
-				() -> String.format("remove %s", key),
+				String.format("remove %s", key),
 				store -> {
 					store.remove(key);
 					assertThat(store.get(key)).isNotPresent();

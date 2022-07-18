@@ -173,7 +173,7 @@ class ActionChainArbitraryTests {
 				public Arbitrary<Transformer<List<Integer>>> transformer() {
 					return Arbitraries.integers()
 									  .map(i -> Transformer.mutate(
-										  () -> "add " + i,
+										  "add " + i,
 										  l -> {
 											  l.add(i);
 											  assertThat(l).hasSizeLessThan(3);
@@ -211,7 +211,7 @@ class ActionChainArbitraryTests {
 					return Arbitraries.integers().greaterOrEqual(0)
 									  .filter(i -> !state.contains(i))
 									  .map(i -> Transformer.mutate(
-										  () -> "add " + i,
+										  "add " + i,
 										  l -> l.add(i)
 									  ));
 				}
@@ -274,13 +274,13 @@ class ActionChainArbitraryTests {
 						return Arbitraries.integers().between(0, 50)
 										  .map(i -> i * 2)
 										  .map(i -> Transformer.mutate(
-											  () -> "add " + i,
+											  "add " + i,
 											  set -> set.add(i)
 										  ));
 					} else {
 						return Arbitraries.integers().between(0, 100)
 										  .map(i -> Transformer.mutate(
-											  () -> "add " + i,
+											  "add " + i,
 											  set -> set.add(i)
 										  ));
 					}
@@ -318,7 +318,7 @@ class ActionChainArbitraryTests {
 				@Override
 				public Arbitrary<Transformer<List<Integer>>> transformer() {
 					return Arbitraries.integers().between(100, 1000).map(i -> Transformer.mutate(
-						() -> "Initial " + i,
+						"Initial " + i,
 						l -> l.add(i)
 					));
 				}
@@ -333,7 +333,7 @@ class ActionChainArbitraryTests {
 				public Arbitrary<Transformer<List<Integer>>> transformer(List<Integer> state) {
 					int last = state.get(state.size() - 1);
 					return Arbitraries.integers().between(0, last).map(i -> Transformer.mutate(
-						() -> "Add " + i,
+						"Add " + i,
 						l -> l.add(i)
 					));
 				}
@@ -388,7 +388,7 @@ class ActionChainArbitraryTests {
 				public Arbitrary<Transformer<MyModel>> transformer() {
 					return Arbitraries.strings().alpha().ofMinLength(1)
 									  .map(aString -> Transformer.transform(
-										  () -> "setValue: " + aString,
+										  "setValue: " + aString,
 										  model -> model.setValue(aString)
 									  ));
 				}

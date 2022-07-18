@@ -40,7 +40,7 @@ public interface Action<S> {
 		return new Action<T>() {
 			@Override
 			public Arbitrary<Transformer<T>> transformer() {
-				Transformer<T> withDescription = description == null ? transformer : Transformer.transform(() -> description, transformer);
+				Transformer<T> withDescription = description == null ? transformer : Transformer.transform(description, transformer);
 				return Arbitraries.just(withDescription);
 			}
 		};
@@ -61,7 +61,7 @@ public interface Action<S> {
 		return new Action<T>() {
 			@Override
 			public Arbitrary<Transformer<T>> transformer() {
-				Transformer<T> withDescription = description == null ? transformer : Transformer.transform(() -> description, transformer);
+				Transformer<T> withDescription = description == null ? transformer : Transformer.transform(description, transformer);
 				return Arbitraries.just(withDescription);
 			}
 

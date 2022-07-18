@@ -66,7 +66,7 @@ class MyStringStackExamples {
 		public Arbitrary<Transformer<MyStringStack>> transformer() {
 			StringArbitrary pushElements = Arbitraries.strings().alpha().ofLength(5);
 			return pushElements.map(element -> Transformer.mutate(
-				() -> String.format("push(%s)", element),
+				String.format("push(%s)", element),
 				stack -> {
 					int sizeBefore = stack.size();
 					stack.push(element);
