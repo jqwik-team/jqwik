@@ -199,15 +199,21 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 		private Shrinkable<Transformer<T>> runNewStep(long nextSeed) {
 			Random random = SourceOfRandomness.newRandom(nextSeed);
-			Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random);
-			Arbitrary<Transformer<T>> arbitrary = arbitraryAccessTuple.get1();
-			Predicate<T> precondition = arbitraryAccessTuple.get2();
-			boolean accessState = arbitraryAccessTuple.get3();
 
-			RandomGenerator<Transformer<T>> generator = arbitrary.generator(genSize);
-			Shrinkable<Transformer<T>> next = generator.next(random);
-			iterations.add(new ShrinkableChainIteration<>(precondition, accessState, next));
-			return next;
+			while(true) {
+				Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random);
+				Arbitrary<Transformer<T>> arbitrary = arbitraryAccessTuple.get1();
+				Predicate<T> precondition = arbitraryAccessTuple.get2();
+				boolean accessState = arbitraryAccessTuple.get3();
+
+				RandomGenerator<Transformer<T>> generator = arbitrary.generator(genSize);
+				Shrinkable<Transformer<T>> next = generator.next(random);
+				if (next.value() == Transformer.noop()) {
+					continue;
+				}
+				iterations.add(new ShrinkableChainIteration<>(precondition, accessState, next));
+				return next;
+			}
 		}
 
 		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(Random random) {

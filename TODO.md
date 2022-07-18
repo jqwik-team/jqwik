@@ -5,14 +5,12 @@
         - See https://github.com/jlink/jqwik/issues/134#issuecomment-1127478094:
           Reimplement SequentialActionChain.transformations() without reinstantiating all shrinkables
           - Collect all transformer descriptions for Chain.transformers() as they go.
-        - Transformer.noop()
-            - Optimize shrinking for that
         - Action -> Action.Dependent | Action.Independent
         - Action.builder() instead of Action factory methods?
-        - ActionChainArbitrary
-            - addAction(Function<Action.Builder, Action.Builder>)
-            - infinite()
-            - improveShrinkingWith(Supplier<ChangeDetector<T>> detectorSupplier)
+            - ActionChainArbitrary
+                - addAction(Function<Action.Builder, Action.Builder>)
+                - infinite()
+                - improveShrinkingWith(Supplier<ChangeDetector<T>> detectorSupplier)
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 

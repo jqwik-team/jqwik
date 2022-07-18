@@ -180,7 +180,7 @@ class ChainArbitraryTests {
 	}
 
 	@Property
-	void transformerThatReturnsNullIsIgnored(@ForAll Random random) {
+	void providerPreconditionsAreRespected(@ForAll Random random) {
 		TransformerProvider<List<Integer>> addRandomIntToList =
 			ignore -> integers().between(0, 10)
 								.map(i -> l -> {
@@ -212,6 +212,35 @@ class ChainArbitraryTests {
 			int lastSize = last.size();
 			List<Integer> next = iterator.next();
 			assertThat(lastSize).isNotEqualTo(next.size());
+			last = next;
+		}
+		assertThat(chain.transformations()).hasSize(13);
+	}
+
+	@Property
+	void noopTransformersAreIgnored(@ForAll Random random) {
+		TransformerProvider<Integer> addOne =
+			ignore -> just(1).map(toAdd -> i -> i + toAdd);
+
+		TransformerProvider<Integer> justNoop = ignore -> just(Transformer.noop());
+		TransformerProvider<Integer> noopOrNoop = ignore -> of(Transformer.noop(), Transformer.noop());
+
+		ChainArbitrary<Integer> chains =
+			Chain.initializeWith(() -> 0)
+				 .provideTransformer(addOne)
+				 .provideTransformer(justNoop)
+				 .provideTransformer(noopOrNoop)
+				 .withMaxTransformations(13);
+
+		Shrinkable<Chain<Integer>> chainShrinkable = chains.generator(100).next(random);
+
+		Chain<Integer> chain = chainShrinkable.value();
+		Iterator<Integer> iterator = chain.iterator();
+
+		int last = iterator.next();
+		while (iterator.hasNext()) {
+			int next = iterator.next();
+			assertThat(last + 1).isEqualTo(next);
 			last = next;
 		}
 		assertThat(chain.transformations()).hasSize(13);
@@ -327,7 +356,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void removeNullTransformersDuringShrinking(@ForAll Random random) {
+		void removeTransformersThatDontChangeStateDuringShrinking(@ForAll Random random) {
 			Transformer<Integer> addOne = Transformer.transform("addOne", t1 -> t1 + 1);
 			Transformer<Integer> doNothing = Transformer.transform("doNothing", t -> t);
 
@@ -574,6 +603,7 @@ class ChainArbitraryTests {
 				Chain.initializeWith(() -> "")
 					 .provideTransformer(ignore -> chars().alpha().map(c -> Transformer.transform("append " + c, s -> s + c)))
 					 .provideTransformer(ignore -> just(Transformer.transform("nothing", s -> s)))
+					 .provideTransformer(ignore -> just(Transformer.noop()))
 					 .provideTransformer(TransformerProvider.<String>when(string -> !string.isEmpty())
 															.provide(
 																value -> Arbitraries.of(value.toCharArray())

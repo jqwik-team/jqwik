@@ -48,6 +48,36 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 		public boolean isEndOfChain() {
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			return transformation();
+		}
+	};
+
+	/**
+	 * The singleton object used for all calls to {@linkplain #noop()}.
+	 */
+	Transformer<?> NOOP = new Transformer<Object>() {
+		@Override
+		public @NotNull Object apply(@NotNull Object t) {
+			return t;
+		}
+
+		@Override
+		public String transformation() {
+			return "noop";
+		}
+
+		@Override
+		public boolean isEndOfChain() {
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			return transformation();
+		}
 	};
 
 	/**
@@ -58,6 +88,23 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	@SuppressWarnings("unchecked")
 	static <T> Transformer<T> endOfChain() {
 		return (Transformer<T>) END_OF_CHAIN;
+	}
+
+	/**
+	 * Use this transformer to signal a noop transformation.
+	 * This can be useful when a {@linkplain TransformerProvider} wants to provide
+	 * a transformer that does nothing in some circumstances.
+	 *
+	 * <p>
+	 *     Noop transformers are ignored and not added to the chain of transformers.
+	 * </p>
+	 *
+	 * @param <T> The transformer's state value type
+	 * @return a transformer instance
+	 */
+	@SuppressWarnings("unchecked")
+	static <T> Transformer<T> noop() {
+		return (Transformer<T>) NOOP;
 	}
 
 	/**
