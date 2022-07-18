@@ -26,13 +26,7 @@ public class Arbitraries {
 			implementation = FacadeLoader.load(ArbitrariesFacade.class);
 		}
 
-		public abstract <T> EdgeCases<T> edgeCasesChoose(List<T> values, int maxEdgeCases);
-
-		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples);
-
 		public abstract <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> all);
-
-		public abstract <T> RandomGenerator<T> randomFrequency(List<Tuple2<Integer, T>> frequencies);
 
 		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary);
 
@@ -92,6 +86,8 @@ public class Arbitraries {
 		public abstract <T> Arbitrary<List<T>> shuffle(List<T> values);
 
 		public abstract <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator);
+
+		public abstract <T> Arbitrary<T> frequency(List<Tuple2<Integer, T>> frequencies);
 	}
 
 	private Arbitraries() {
@@ -286,17 +282,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> frequency(List<Tuple2<Integer, T>> frequencies) {
-		List<T> values = frequencies.stream()
-									.filter(f -> f.get1() > 0)
-									.map(Tuple2::get2)
-									.collect(Collectors.toList());
-
-		return fromGenerators(
-			ArbitrariesFacade.implementation.randomFrequency(frequencies),
-			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max),
-			maxEdgeCases -> ArbitrariesFacade.implementation.edgeCasesChoose(values, maxEdgeCases)
-		);
-
+		return ArbitrariesFacade.implementation.frequency(frequencies);
 	}
 
 	/**
@@ -573,32 +559,6 @@ public class Arbitraries {
 	@API(status = EXPERIMENTAL, since = "1.6.1")
 	public static <T> TraverseArbitrary<T> traverse(Class<T> targetType, Traverser traverser) {
 		return ArbitrariesFacade.implementation.traverse(targetType, traverser);
-	}
-
-	// TODO: Get rid of all callers
-	private static <T> Arbitrary<T> fromGenerators(
-		final RandomGenerator<T> randomGenerator,
-		final Function<Long, Optional<ExhaustiveGenerator<T>>> exhaustiveGeneratorFunction,
-		final Function<Integer, EdgeCases<T>> edgeCasesSupplier
-	) {
-		return new Arbitrary<T>() {
-			@Override
-			public RandomGenerator<T> generator(int tries) {
-				return randomGenerator;
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return exhaustiveGeneratorFunction.apply(maxNumberOfSamples);
-			}
-
-			@Override
-			public EdgeCases<T> edgeCases(int maxEdgeCases) {
-				return maxEdgeCases <= 0
-						   ? EdgeCases.none()
-						   : edgeCasesSupplier.apply(maxEdgeCases);
-			}
-		};
 	}
 
 	/**

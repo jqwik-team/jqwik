@@ -13,7 +13,6 @@ import net.jqwik.api.support.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
-import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.stateful.*;
 
@@ -23,16 +22,6 @@ import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
  * Is loaded through reflection in api module
  */
 public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
-
-	@Override
-	public <T> EdgeCases<T> edgeCasesChoose(List<T> values, int maxEdgeCases) {
-		return EdgeCasesSupport.choose(values, maxEdgeCases);
-	}
-
-	@Override
-	public <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples) {
-		return ExhaustiveGenerators.choose(values, maxNumberOfSamples);
-	}
 
 	@Override
 	public <T> Arbitrary<T> just(T value) {
@@ -45,11 +34,6 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> RandomGenerator<T> randomFrequency(List<Tuple.Tuple2<Integer, T>> frequencies) {
-		return RandomGenerators.frequency(frequencies);
-	}
-
-	@Override
 	public <M> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary) {
 		return new DefaultActionSequenceArbitrary<>(actionArbitrary);
 	}
@@ -58,9 +42,15 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	public <T> Arbitrary<T> frequencyOf(List<Tuple.Tuple2<Integer, Arbitrary<T>>> frequencies) {
 		List<Tuple.Tuple2<Integer, Arbitrary<T>>> aboveZeroFrequencies =
 			frequencies.stream().filter(f -> f.get1() > 0).collect(Collectors.toList());
+
 		if (aboveZeroFrequencies.size() == 1) {
 			return aboveZeroFrequencies.get(0).get2();
 		}
+		if (aboveZeroFrequencies.isEmpty()) {
+			String message = "frequencyOf() must be called with at least one choice with a frequency > 0";
+			throw new JqwikException(message);
+		}
+
 		return new FrequencyOfArbitrary<>(aboveZeroFrequencies);
 	}
 
@@ -154,6 +144,23 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	@Override
 	public <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
 		return new FromGeneratorArbitrary<>(generator);
+	}
+
+	@Override
+	public <T> Arbitrary<T> frequency(List<Tuple.Tuple2<Integer, T>> frequencies) {
+		List<Tuple.Tuple2<Integer, T>> frequenciesAbove0 = frequencies.stream()
+																	  .filter(f -> f.get1() > 0)
+																	  .collect(Collectors.toList());
+
+		if (frequenciesAbove0.isEmpty()) {
+			String message = "frequency() must be called with at least one value with a frequency > 0";
+			throw new JqwikException(message);
+		}
+		if (frequenciesAbove0.size() == 1) {
+			return new JustArbitrary<>(frequenciesAbove0.get(0).get2());
+		}
+
+		return new FrequencyArbitrary<>(frequenciesAbove0);
 	}
 
 	/**

@@ -230,6 +230,11 @@ class ArbitrariesTests {
 				() -> Arbitraries.of(1, 2, 3),
 				() -> Arbitraries.of('a', 'b', 'c'),
 				() -> Arbitraries.of(MyEnum.class),
+				() -> Arbitraries.frequency(
+					Tuple.of(1, "one"),
+					Tuple.of(2, "two"),
+					Tuple.of(3, "three")
+				),
 				() -> Arbitraries.just("abc"),
 				() -> Arbitraries.create(() -> "new string"),
 				() -> Arbitraries.ofSuppliers(() -> 1, () -> 2, () -> 3),
