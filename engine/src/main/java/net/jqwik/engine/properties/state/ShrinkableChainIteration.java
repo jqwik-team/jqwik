@@ -24,7 +24,8 @@ class ShrinkableChainIteration<T> {
 	private ShrinkableChainIteration(
 		Predicate<T> precondition,
 		boolean accessState,
-		boolean changeState, Shrinkable<Transformer<T>> shrinkable
+		boolean changeState,
+		Shrinkable<Transformer<T>> shrinkable
 	) {
 		this.precondition = precondition;
 		this.accessState = accessState;
@@ -57,5 +58,9 @@ class ShrinkableChainIteration<T> {
 			return this;
 		}
 		return new ShrinkableChainIteration<>(precondition, accessState, stateHasBeenChanged, shrinkable);
+	}
+
+	String transformation() {
+		return shrinkable.value().transformation();
 	}
 }
