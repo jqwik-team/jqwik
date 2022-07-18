@@ -158,6 +158,16 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
+	public <T> Arbitrary<T> fixGenSize(Arbitrary<T> self, int genSize) {
+		return new ArbitraryDelegator<T>(self) {
+			@Override
+			public RandomGenerator<T> generator(int ignoredGenSize) {
+				return super.generator(genSize);
+			}
+		};
+	}
+
+	@Override
 	public <T> RandomGenerator<T> memoizedGenerator(Arbitrary<T> self, int genSize, boolean withEdgeCases) {
 		return Memoize.memoizedGenerator(self, genSize, withEdgeCases, () -> generator(self, genSize, withEdgeCases));
 	}

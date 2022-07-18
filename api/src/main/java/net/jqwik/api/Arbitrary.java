@@ -56,6 +56,8 @@ public interface Arbitrary<T> {
 		public abstract <T> Arbitrary<T> withoutEdgeCases(Arbitrary<T> self);
 
 		public abstract <T> RandomGenerator<T> memoizedGenerator(Arbitrary<T> self, int genSize, boolean withEdgeCases);
+
+		public abstract <T> Arbitrary<T> fixGenSize(Arbitrary<T> self, int genSize);
 	}
 
 	/**
@@ -261,22 +263,7 @@ public interface Arbitrary<T> {
 	 */
 	@API(status = MAINTAINED, since = "1.2.0")
 	default Arbitrary<T> fixGenSize(int genSize) {
-		return new Arbitrary<T>() {
-			@Override
-			public RandomGenerator<T> generator(int ignoredGenSize) {
-				return Arbitrary.this.generator(genSize);
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return Arbitrary.this.exhaustive(maxNumberOfSamples);
-			}
-
-			@Override
-			public EdgeCases<T> edgeCases(int maxEdgeCases) {
-				return Arbitrary.this.edgeCases(maxEdgeCases);
-			}
-		};
+		return ArbitraryFacade.implementation.fixGenSize(this, genSize);
 	}
 
 	/**

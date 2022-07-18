@@ -89,8 +89,8 @@ class ArbitraryTests {
 				() -> Arbitraries.just(42).tuple5(),
 				() -> Arbitraries.integers().withoutEdgeCases(),
 				() -> Arbitraries.integers().edgeCases(config -> {}),
-				() -> Arbitraries.integers().dontShrink()
-				// () -> Arbitraries.integers().between(-10, 10).fixGenSize(100),
+				() -> Arbitraries.integers().dontShrink(),
+				() -> Arbitraries.integers().between(-10, 10).fixGenSize(100)
 				// () -> Arbitraries.integers().collect(..),
 			);
 		}
