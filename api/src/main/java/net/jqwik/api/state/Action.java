@@ -97,6 +97,7 @@ public interface Action<S> {
 	 * Implementing this interface instead of {@linkplain Independent} will make the chain of actions harder to shrink.
 	 * </p>
 	 */
+	@FunctionalInterface
 	interface Dependent<S> extends Action<S> {
 		/**
 		 * Return an arbitrary for transformers that depends on the previous state.
@@ -120,6 +121,7 @@ public interface Action<S> {
 	 * can also check or assert post-conditions and invariants that should hold when doing the transformation.
 	 * </p>
 	 */
+	@FunctionalInterface
 	interface Independent<S> extends Action<S> {
 		/**
 		 * Return an arbitrary for transformers that does not depend on the previous state.
