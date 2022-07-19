@@ -26,7 +26,7 @@ public class MyStoreExamples {
 			Tuple.of(3, new StoreAnyValue()),
 			Tuple.of(1, new UpdateValue()),
 			Tuple.of(1, new RemoveValue())
-		).detectChangesWith(StoreChangesDetector::new);
+		).improveShrinkingWith(StoreChangesDetector::new);
 	}
 
 	static class StoreAnyValue implements Action.Independent<MyStore<Integer, String>> {

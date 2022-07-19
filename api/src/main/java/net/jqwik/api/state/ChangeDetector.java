@@ -15,7 +15,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see Transformer
  * @see ChainArbitrary#improveShrinkingWith(Supplier)
- * @see ActionChainArbitrary#detectChangesWith(Supplier)
+ * @see ActionChainArbitrary#improveShrinkingWith(Supplier)
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface ChangeDetector<T> {

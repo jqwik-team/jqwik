@@ -219,7 +219,7 @@ class ActionChainArbitraryTests {
 
 			ActionChainArbitrary<List<Integer>> chains = ActionChain.actionChains(
 				ArrayList::new, nothing, add
-			).withMaxTransformations(10).detectChangesWith(changeOfListDetector);
+			).withMaxTransformations(10).improveShrinkingWith(changeOfListDetector);
 
 			TestingFalsifier<ActionChain<List<Integer>>> falsifier = chain -> {
 				chain.withInvariant(l -> assertThat(l).hasSizeLessThan(2)).run();

@@ -34,6 +34,6 @@ public interface ActionChainArbitrary<S> extends Arbitrary<ActionChain<S>> {
 	 *
 	 * @param detectorSupplier A function to create a new {@linkplain ChangeDetector} instance.
 	 */
-	ActionChainArbitrary<S> detectChangesWith(Supplier<ChangeDetector<S>> detectorSupplier);
+	ActionChainArbitrary<S> improveShrinkingWith(Supplier<ChangeDetector<S>> detectorSupplier);
 
 }

@@ -6,10 +6,10 @@
           Reimplement SequentialActionChain.transformations() without reinstantiating all shrinkables
           - Collect all transformer descriptions for Chain.transformers() as they go.
         - Action.builder() instead of Action factory methods?
+            - ActionChain.startWith(initializer) -> ActionChainArbitrary
             - ActionChainArbitrary
                 - addAction(Function<Action.Builder, Action.Builder>)
-                - infinite()
-                - improveShrinkingWith(Supplier<ChangeDetector<T>> detectorSupplier)
+        - Make ChainArbitrary and ActionChainArbitrary memoizable
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 

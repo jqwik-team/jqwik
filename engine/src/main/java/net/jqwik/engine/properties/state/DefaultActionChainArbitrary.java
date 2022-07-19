@@ -90,7 +90,7 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	}
 
 	@Override
-	public ActionChainArbitrary<T> detectChangesWith(Supplier<ChangeDetector<T>> changeDetectorSupplier) {
+	public ActionChainArbitrary<T> improveShrinkingWith(Supplier<ChangeDetector<T>> changeDetectorSupplier) {
 		DefaultActionChainArbitrary<T> clone = typedClone();
 		clone.chainArbitrary = clone.chainArbitrary.improveShrinkingWith(changeDetectorSupplier);
 		return clone;
