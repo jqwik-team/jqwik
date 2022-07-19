@@ -201,9 +201,9 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		private Shrinkable<Transformer<T>> runNewStep(long nextSeed) {
 			Random random = SourceOfRandomness.newRandom(nextSeed);
 
-			int[] i = {0};
-			while (i[0] < MAX_TRANSFORMER_TRIES) {
-				Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random, i);
+			AtomicInteger attemptsCounter = new AtomicInteger(0);
+			while (attemptsCounter.get() < MAX_TRANSFORMER_TRIES) {
+				Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random, attemptsCounter);
 				Arbitrary<Transformer<T>> arbitrary = arbitraryAccessTuple.get1();
 				Predicate<T> precondition = arbitraryAccessTuple.get2();
 				boolean accessState = arbitraryAccessTuple.get3();
@@ -216,18 +216,17 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				iterations.add(new ShrinkableChainIteration<>(precondition, accessState, next));
 				return next;
 			}
-			String message = String.format("Could not generate a transformer after %s tries.", MAX_TRANSFORMER_TRIES);
-			throw new JqwikException(message);
+			return failWithTooManyAttempts(attemptsCounter);
 		}
 
-		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(Random random, int[] i) {
+		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(Random random, AtomicInteger attemptsCounter) {
 			AtomicBoolean accessState = new AtomicBoolean(false);
 			Supplier<T> supplier = () -> {
 				accessState.set(true);
 				return current;
 			};
 
-			while (i[0]++ < MAX_TRANSFORMER_TRIES) {
+			while (attemptsCounter.getAndIncrement() < MAX_TRANSFORMER_TRIES) {
 				TransformerProvider<T> chainGenerator = providerGenerator.apply(random);
 
 				Predicate<T> precondition = chainGenerator.precondition();
@@ -240,7 +239,11 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				Arbitrary<Transformer<T>> arbitrary = chainGenerator.apply(supplier);
 				return Tuple.of(arbitrary, hasPrecondition ? precondition : null, accessState.get());
 			}
-			String message = String.format("Could not generate a transformer after %s tries.", MAX_TRANSFORMER_TRIES);
+			return failWithTooManyAttempts(attemptsCounter);
+		}
+
+		private <R> R failWithTooManyAttempts(AtomicInteger attemptsCounter) {
+			String message = String.format("Could not generate a transformer after %s attempts.", attemptsCounter.get());
 			throw new JqwikException(message);
 		}
 	}
