@@ -60,7 +60,7 @@ class MyStringStackExamples {
 			.run();
 	}
 
-	static class PushAction implements Action<MyStringStack> {
+	static class PushAction implements Action.Independent<MyStringStack> {
 
 		@Override
 		public Arbitrary<Transformer<MyStringStack>> transformer() {

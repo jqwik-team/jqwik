@@ -10,55 +10,59 @@ import net.jqwik.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * An action class represents a state transformation that can be preformed
+ * An action class represents a state transformation that can be performed
  * on an object of type {@code S}.
- * Those objects can be either mutable, which means that the state changing method will return the same object,
+ * Those objects can be mutable, which means that the state changing method will return the same object,
  * or immutable, which requires the method to return another object that represents the transformed state.
  *
  * <p>
- *     Mind that there is a another interface {@link net.jqwik.api.stateful.Action} which looks similar
- *     but refers to jqwik's old and deprecated style of state-based property testing.
- *     The two interfaces CANNOT be used interchangeably.
+ * Do not implement this interface directly, but either {@linkplain Action.Dependent} or {@linkplain Action.Independent}.
+ * Only those can be used to create an arbitrary for a {@linkplain ActionChain}.
+ * </p>
+ *
+ * <p>
+ * Mind that there is a another interface {@link net.jqwik.api.stateful.Action} which looks similar
+ * but refers to jqwik's old and deprecated style of state-based property testing.
+ * The two interfaces CANNOT be used interchangeably.
  * </p>
  *
  * @param <S> Type of the object to transform through an action
+ * @see ActionChain
+ * @see ActionChainArbitrary
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public interface Action<S> {
 
 	/**
-	 * Create an {@linkplain Action} without generated parts
+	 * Create an independent {@linkplain Action} with a constant transformer
 	 */
-	static <T> Action<T> just(Transformer<T> transformer) {
+	static <T> Action.Independent<T> just(Transformer<T> transformer) {
 		return just((String) null, transformer);
 	}
 
 	/**
-	 * Create an {@linkplain Action} without generated parts
+	 * Create an independent {@linkplain Action} with a description and a constant transformer
 	 */
-	static <T> Action<T> just(@Nullable String description, Transformer<T> transformer) {
-		return new Action<T>() {
-			@Override
-			public Arbitrary<Transformer<T>> transformer() {
-				Transformer<T> withDescription = description == null ? transformer : Transformer.transform(description, transformer);
-				return Arbitraries.just(withDescription);
-			}
+	static <T> Action.Independent<T> just(@Nullable String description, Transformer<T> transformer) {
+		return () -> {
+			Transformer<T> withDescription = description == null ? transformer : Transformer.transform(description, transformer);
+			return Arbitraries.just(withDescription);
 		};
 	}
 
 	/**
-	 * Create an {@linkplain Action} without generated parts
+	 * Create an independent {@linkplain Action} with precondition and a constant transformer
 	 */
-	static <T> Action<T> just(Predicate<T> precondition, Transformer<T> transformer) {
+	static <T> Action.Independent<T> just(Predicate<T> precondition, Transformer<T> transformer) {
 		return just(null, precondition, transformer);
 	}
 
 	/**
-	 * Create an {@linkplain Action} without generated parts
+	 * Create an independent {@linkplain Action} with description, precondition and a constant transformer
 	 */
-	static <T> Action<T> just(@Nullable String description, Predicate<T> precondition, Transformer<T> transformer) {
+	static <T> Action.Independent<T> just(@Nullable String description, Predicate<T> precondition, Transformer<T> transformer) {
 		// Do not merge implementation with Action.just(description, transformer) since dedicated implementation of precondition() changes shrinking behaviour
-		return new Action<T>() {
+		return new Action.Independent<T>() {
 			@Override
 			public Arbitrary<Transformer<T>> transformer() {
 				Transformer<T> withDescription = description == null ? transformer : Transformer.transform(description, transformer);
@@ -87,36 +91,47 @@ public interface Action<S> {
 	}
 
 	/**
-	 * Implement this method if you want to have the action's transforming behaviour depend on the previous state.
-	 * You have to implement either this method or {@linkplain #transformer()}.
+	 * Implement this interface if you want to have the action's transforming behaviour depend on the previous state.
 	 *
 	 * <p>
-	 *     In addition to performing a state transformation the mutator function
-	 *     can also check or assert post-conditions and invariants that should hold when doing the transformation.
+	 * Implementing this interface instead of {@linkplain Independent} will make the chain of actions harder to shrink.
 	 * </p>
-	 * <p>
-	 * Implementing this method instead of {@linkplain #transformer()} will make the chain of actions harder to shrink.
-	 * </p>
-	 *
-	 * @param state the current state
-	 * @return an arbitrary of type {@linkplain Transformer Transformer<S>}.
 	 */
-	default Arbitrary<Transformer<S>> transformer(S state) {
-		throw new UnsupportedOperationException("You have to override either Action.transformer() or Action.transformer(state).");
+	interface Dependent<S> extends Action<S> {
+		/**
+		 * Return an arbitrary for transformers that depends on the previous state.
+		 *
+		 * <p>
+		 * In addition to performing a state transformation the mutator function
+		 * can also check or assert post-conditions and invariants that should hold when doing the transformation.
+		 * </p>
+		 *
+		 * @param state the current state
+		 * @return an arbitrary of type {@linkplain Transformer Transformer<S>}.
+		 */
+		Arbitrary<Transformer<S>> transformer(S state);
 	}
 
 	/**
-	 * Implement this method if you want to have the action's transforming behaviour not to depend on previous state.
-	 * You have to implement either this method or {@linkplain #transformer(Object)}.
+	 * Implement this interface if you want to have the action's transforming behaviour not to depend on previous state.
 	 *
 	 * <p>
-	 *     In addition to performing a state transformation the mutator function
-	 *     can also check or assert post-conditions and invariants that should hold when doing the transformation.
+	 * In addition to performing a state transformation the mutator function
+	 * can also check or assert post-conditions and invariants that should hold when doing the transformation.
 	 * </p>
-	 *
-	 * @return an arbitrary of type {@linkplain Transformer Transformer<S>}.
 	 */
-	default Arbitrary<Transformer<S>> transformer() {
-		throw new UnsupportedOperationException("You have to override either Action.transformer() or Action.transformer(state).");
+	interface Independent<S> extends Action<S> {
+		/**
+		 * Return an arbitrary for transformers that does not depend on the previous state.
+		 *
+		 * <p>
+		 * In addition to performing a state transformation the mutator function
+		 * can also check or assert post-conditions and invariants that should hold when doing the transformation.
+		 * </p>
+		 *
+		 * @return an arbitrary of type {@linkplain Transformer Transformer<S>}.
+		 */
+		Arbitrary<Transformer<S>> transformer();
 	}
+
 }

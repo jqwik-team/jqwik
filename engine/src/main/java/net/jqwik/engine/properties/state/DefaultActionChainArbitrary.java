@@ -61,56 +61,21 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	}
 
 	private void checkActionIsConsistent(Action<T> action) {
-		Optional<Method> transformer = transformerMethod(action.getClass());
-		Optional<Method> transformerWithStateAccess = transformerStateMethod(action.getClass());
-
-		boolean noTransformerMethodImplemented = !transformer.isPresent() && !transformerWithStateAccess.isPresent();
-		boolean bothTransformerMethodImplemented = transformer.isPresent() && transformerWithStateAccess.isPresent();
-		if (noTransformerMethodImplemented || bothTransformerMethodImplemented) {
-			String message = String.format("Action %s must implement exactly one of transformer() or transformer(state).", action);
-			throw new JqwikException(message);
+		if (!(action instanceof Action.Dependent) && !(action instanceof Action.Independent)) {
+			throw new JqwikException("Action must be of type Action.Dependent or Action.Independent");
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private Arbitrary<Transformer<T>> toTransformerArbitrary(Action<T> action, Supplier<T> stateSupplier) {
-		Optional<Method> transformer = transformerMethod(action.getClass());
-		Optional<Method> transformerWithStateAccess = transformerStateMethod(action.getClass());
-
-		if (transformer.isPresent()) {
-			if (!transformerWithStateAccess.isPresent()) {
-				return (Arbitrary<Transformer<T>>) ReflectionSupport.invokeMethod(transformer.get(), action);
-			}
-		} else {
-			if (transformerWithStateAccess.isPresent()) {
-				return (Arbitrary<Transformer<T>>) ReflectionSupport.invokeMethod(
-					transformerWithStateAccess.get(), action,
-					stateSupplier.get()
-				);
-			}
+		if (action instanceof Action.Independent) {
+			Action.Independent<T> independentAction = (Action.Independent<T>) action;
+			return independentAction.transformer();
 		}
-
+		if (action instanceof Action.Dependent) {
+			Action.Dependent<T> dependentAction = (Action.Dependent<T>) action;
+			return dependentAction.transformer(stateSupplier.get());
+		}
 		throw new RuntimeException("Should never get here. Should be caught before by checkActionIsConsistent()");
-	}
-
-	private Optional<Method> transformerMethod(Class<?> aClass) {
-		try {
-			Method method = aClass.getMethod("transformer");
-			if (!method.equals(Action.class.getMethod("transformer"))) {
-				return Optional.of(method);
-			}
-		} catch (NoSuchMethodException ignore) {}
-		return Optional.empty();
-	}
-
-	private Optional<Method> transformerStateMethod(Class<?> aClass) {
-		try {
-			Method method = aClass.getMethod("transformer", Object.class);
-			if (!method.equals(Action.class.getMethod("transformer", Object.class))) {
-				return Optional.of(method);
-			}
-		} catch (NoSuchMethodException ignore) {}
-		return Optional.empty();
 	}
 
 	private Method preconditionMethod(Class<?> aClass) throws NoSuchMethodException {

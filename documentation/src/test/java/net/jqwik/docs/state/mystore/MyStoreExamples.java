@@ -29,7 +29,7 @@ public class MyStoreExamples {
 		).detectChangesWith(StoreChangesDetector::new);
 	}
 
-	static class StoreAnyValue implements Action<MyStore<Integer, String>> {
+	static class StoreAnyValue implements Action.Independent<MyStore<Integer, String>> {
 		@Override
 		public Arbitrary<Transformer<MyStore<Integer, String>>> transformer() {
 			return Combinators.combine(keys(), values())
@@ -44,7 +44,7 @@ public class MyStoreExamples {
 		}
 	}
 
-	static class UpdateValue implements Action<MyStore<Integer, String>> {
+	static class UpdateValue implements Action.Dependent<MyStore<Integer, String>> {
 		@Override
 		public boolean precondition(MyStore<Integer, String> store) {
 			return !store.isEmpty();
@@ -65,7 +65,7 @@ public class MyStoreExamples {
 		}
 	}
 
-	static class RemoveValue implements Action<MyStore<Integer, String>> {
+	static class RemoveValue implements Action.Dependent<MyStore<Integer, String>> {
 		@Override
 		public boolean precondition(MyStore<Integer, String> store) {
 			return !store.isEmpty();

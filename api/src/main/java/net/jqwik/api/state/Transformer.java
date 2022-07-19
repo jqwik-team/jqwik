@@ -12,13 +12,9 @@ import static org.apiguardian.api.API.Status.*;
  * Transformation can create a new object, or change the inner state of an object and return it.
  *
  * <p>
- *     Whenever a {@linkplain Transformer#endOfChain()} is chosen by a chain,
- *     the chain ends with the current state being provided (e.g. in the chain's iterator) for a last time.
- * </p>
- * <p>
- *     In addition to performing a state transformation the mutator function can also
- *     check or assert conditions and invariants that should hold when doing the transformation.
- *     This is especially useful for {@linkplain Action actions}.
+ * In addition to performing a state transformation the mutator function can also
+ * check or assert conditions and invariants that should hold when doing the transformation.
+ * This is especially useful when a transformer is used as part of an {@linkplain Action action}.
  * </p>
  *
  * @param <T> The type of state to be transformed in a chain
@@ -82,6 +78,12 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 
 	/**
 	 * Use this transformer to stop further enhancement of a chain.
+	 *
+	 * <p>
+	 * Whenever a {@linkplain Transformer#endOfChain()} is chosen by a chain,
+	 * the chain ends with the current state being provided (e.g. in the chain's iterator) for a last time.
+	 * </p>
+	 *
 	 * @param <T> The transformer's state value type
 	 * @return a transformer instance
 	 */
@@ -96,7 +98,7 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	 * a transformer that does nothing in some circumstances.
 	 *
 	 * <p>
-	 *     Noop transformers are ignored and not added to the chain of transformers.
+	 * Noop transformers are ignored and not added to the chain of transformers.
 	 * </p>
 	 *
 	 * @param <T> The transformer's state value type
@@ -111,8 +113,8 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	 * Create a transformer with a description
 	 *
 	 * @param description A text to describe what the transform is doing
-	 * @param transform The actual transforming function
-	 * @param <S> The type of the state to transform
+	 * @param transform   The actual transforming function
+	 * @param <S>         The type of the state to transform
 	 * @return a new instance of a transformer
 	 */
 	static <S> Transformer<S> transform(String description, Function<S, S> transform) {
@@ -134,8 +136,8 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	 * A mutator works on a mutable, stateful object which will always be returned.
 	 *
 	 * @param description A text to describe what the transform is doing
-	 * @param mutate The actual mutating operation
-	 * @param <S> The type of the state to mutate
+	 * @param mutate      The actual mutating operation
+	 * @param <S>         The type of the state to mutate
 	 * @return a new instance of a transformer
 	 */
 	static <S> Transformer<S> mutate(String description, Consumer<S> mutate) {
