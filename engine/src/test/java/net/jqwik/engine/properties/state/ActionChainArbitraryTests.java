@@ -33,6 +33,24 @@ class ActionChainArbitraryTests {
 	}
 
 	@Example
+	void infiniteChain(@ForAll Random random) {
+		Action.Independent<String> addEOC = Action.just(Transformer.endOfChain());
+		ActionChainArbitrary<String> chains = ActionChain.actionChains(() -> "", addX(), addEOC).infinite();
+		TestingSupport.assertAllGenerated(
+			chains,
+			random,
+			chain -> {
+				String result = chain.run();
+				assertThat(chain.running()).isEqualTo(RunningState.SUCCEEDED);
+				assertThat(chain.finalState()).isPresent();
+				assertThat(chain.transformations().size()).isGreaterThanOrEqualTo(1);
+				if (result.length() > 0) {
+					assertThat(result.chars()).containsOnly((int) 'x');
+				}
+			});
+	}
+
+	@Example
 	void peekingIntoChain(@ForAll Random random) {
 		ActionChainArbitrary<String> chains = ActionChain.actionChains(() -> "", addX()).withMaxTransformations(5);
 
