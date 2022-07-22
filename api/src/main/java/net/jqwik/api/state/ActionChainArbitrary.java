@@ -12,6 +12,18 @@ import static org.apiguardian.api.API.Status.*;
 public interface ActionChainArbitrary<S> extends Arbitrary<ActionChain<S>> {
 
 	/**
+	 * Add an action with default weight 1.
+	 */
+	default ActionChainArbitrary<S> addAction(Action<S> action) {
+		return addAction(1, action);
+	}
+
+	/**
+	 * Add an action with a given weight.
+	 */
+	ActionChainArbitrary<S> addAction(int weight, Action<S> action);
+
+	/**
 	 * Set the intended number of transformations of generated chains.
 	 *
 	 * <p>
@@ -35,5 +47,4 @@ public interface ActionChainArbitrary<S> extends Arbitrary<ActionChain<S>> {
 	 * @param detectorSupplier A function to create a new {@linkplain ChangeDetector} instance.
 	 */
 	ActionChainArbitrary<S> improveShrinkingWith(Supplier<ChangeDetector<S>> detectorSupplier);
-
 }

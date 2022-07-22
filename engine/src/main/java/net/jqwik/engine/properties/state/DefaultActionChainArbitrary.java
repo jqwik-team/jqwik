@@ -15,12 +15,21 @@ import net.jqwik.engine.support.*;
 
 public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionChain<T>> implements ActionChainArbitrary<T> {
 
+	private final Supplier<? extends T> initialSupplier;
+	private final List<Tuple2<Integer, Action<T>>> actionFrequencies;
 	private ChainArbitrary<T> chainArbitrary;
+
+	public DefaultActionChainArbitrary(Supplier<? extends T> initialSupplier) {
+		this(initialSupplier, Collections.emptyList());
+	}
 
 	public DefaultActionChainArbitrary(
 		Supplier<? extends T> initialSupplier,
 		List<Tuple2<Integer, Action<T>>> actionFrequencies
 	) {
+		this.initialSupplier = initialSupplier;
+		this.actionFrequencies = actionFrequencies;
+		// TODO: Use the same approach in ChainArbitrary so that addAction can delegate to it
 		List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies = toProviderFrequencies(actionFrequencies);
 		chainArbitrary = new DefaultChainArbitrary<>(initialSupplier, providerFrequencies);
 	}
@@ -80,6 +89,12 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 
 	private Method preconditionMethod(Class<?> aClass) throws NoSuchMethodException {
 		return aClass.getMethod("precondition", Object.class);
+	}
+
+	@Override
+	public ActionChainArbitrary<T> addAction(int weight, Action<T> action) {
+		// TODO: Implement that in ChainArbitrary
+		return this;
 	}
 
 	@Override

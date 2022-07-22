@@ -19,4 +19,9 @@ public class ActionChainFacadeImpl extends ActionChain.ActionChainFacade {
 	) {
 		return new DefaultActionChainArbitrary<>(initialSupplier, actionFrequencies);
 	}
+
+	@Override
+	public <T> ActionChainArbitrary<T> startAs(Supplier<? extends T> initialSupplier) {
+		return new DefaultActionChainArbitrary<>(initialSupplier);
+	}
 }

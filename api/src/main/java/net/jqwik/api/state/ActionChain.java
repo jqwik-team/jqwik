@@ -37,6 +37,19 @@ public interface ActionChain<S> {
 			Supplier<? extends T> initialSupplier,
 			List<Tuple.Tuple2<Integer, Action<T>>> actionFrequencies
 		);
+
+		public abstract <T> ActionChainArbitrary<T> startAs(Supplier<? extends T> initialSupplier);
+	}
+
+	/**
+	 * Create arbitrary for a {@linkplain ActionChain chain} with a specified by initial state.
+	 *
+	 * @param initialSupplier function to create the initial state object
+	 * @param <T>             The type of state to be transformed through the chain.
+	 * @return new arbitrary instance
+	 */
+	static <T> ActionChainArbitrary<T> startAs(Supplier<? extends T> initialSupplier) {
+		return ActionChainFacade.implementation.startAs(initialSupplier);
 	}
 
 	/**
