@@ -36,10 +36,13 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 
 	@Override
 	public ChainArbitrary<T> provideTransformer(int weight, TransformerProvider<T> provider) {
+		if (weight <= 0) {
+			throw new IllegalArgumentException("Weight must be at least 1");
+		}
 		DefaultChainArbitrary<T> clone = typedClone();
-		List<Tuple.Tuple2<Integer, TransformerProvider<T>>> newWeightedTransformers = new ArrayList<>(weightedProviders);
-		newWeightedTransformers.add(Tuple.of(weight, provider));
-		clone.weightedProviders = newWeightedTransformers;
+		List<Tuple.Tuple2<Integer, TransformerProvider<T>>> newWeightedProviders = new ArrayList<>(weightedProviders);
+		newWeightedProviders.add(Tuple.of(weight, provider));
+		clone.weightedProviders = newWeightedProviders;
 		return clone;
 	}
 

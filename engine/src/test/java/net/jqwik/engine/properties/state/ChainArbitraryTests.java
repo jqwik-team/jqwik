@@ -153,13 +153,11 @@ class ChainArbitraryTests {
 	@StatisticsReport(onFailureOnly = true)
 	void useFrequenciesToChooseTransformers(@ForAll Random random) {
 
-		TransformerProvider<Integer> just42 = ignore -> Arbitraries.just(t -> 42);
 		TransformerProvider<Integer> just1 = ignore -> Arbitraries.just(t -> 1);
 		TransformerProvider<Integer> just2 = ignore -> Arbitraries.just(t -> 2);
 
 		Arbitrary<Chain<Integer>> chains =
 			Chain.startWith(() -> 0)
-				 .provideTransformer(0, just42)
 				 .provideTransformer(1, just1)
 				 .provideTransformer(4, just2)
 				 .withMaxTransformations(10);
@@ -172,7 +170,6 @@ class ChainArbitraryTests {
 		}
 
 		Statistics.coverage(checker -> {
-			checker.check(42).count(c -> c == 0);
 			checker.check(0).percentage(p -> p >= 9 && p <= 10); // Always 1 of 11
 			checker.check(1).percentage(p -> p > 0 && p < 25);
 			checker.check(2).percentage(p -> p > 65);

@@ -401,9 +401,20 @@ class ActionChainArbitraryTests {
 	void usingActionThatIsNotDependentOrIndependentFails() {
 		Action<String> neitherDependentNotIndependent = new Action<String>() {};
 
+		ActionChainArbitrary<String> actionChainArbitrary = ActionChain.startWith(() -> "");
 		Assertions.assertThatThrownBy(
-			() -> ActionChain.actionChains(() -> "", neitherDependentNotIndependent)
-		).isInstanceOf(JqwikException.class);
+			() -> actionChainArbitrary.addAction(neitherDependentNotIndependent)
+		).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Example
+	void usingWeightLessThan1Fails() {
+		Action.Independent<String> addA = Action.just("addA", s -> s + "A");
+
+		ActionChainArbitrary<String> actionChainArbitrary = ActionChain.startWith(() -> "");
+		Assertions.assertThatThrownBy(
+			() -> actionChainArbitrary.addAction(0, addA)
+		).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	private Action.Independent<String> addX() {

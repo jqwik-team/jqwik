@@ -47,7 +47,7 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 
 	private void checkActionIsConsistent(Action<T> action) {
 		if (!(action instanceof Action.Dependent) && !(action instanceof Action.Independent)) {
-			throw new JqwikException("Action must be of type Action.Dependent or Action.Independent");
+			throw new IllegalArgumentException("Action must be of type Action.Dependent or Action.Independent");
 		}
 	}
 
