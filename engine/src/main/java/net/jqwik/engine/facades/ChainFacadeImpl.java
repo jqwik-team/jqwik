@@ -13,7 +13,7 @@ import net.jqwik.engine.properties.state.*;
 public class ChainFacadeImpl extends Chain.ChainFacade {
 
 	@Override
-	public <T> ChainArbitrary<T> initializeChainWith(Supplier<? extends T> initialSupplier) {
+	public <T> ChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
 		return new DefaultChainArbitrary<>(initialSupplier);
 	}
 

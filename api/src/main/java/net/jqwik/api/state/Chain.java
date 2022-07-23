@@ -20,7 +20,7 @@ import static org.apiguardian.api.API.Status.*;
  * </p>
  *
  * <p>
- *     Chains can be generated through {@linkplain Chain#initializeWith(Supplier)}.
+ *     Chains can be generated through {@linkplain Chain#startWith(Supplier)}.
  * </p>
  *
  * @see Transformer
@@ -38,18 +38,18 @@ public interface Chain<T> extends Iterable<T> {
 			implementation = FacadeLoader.load(ChainFacade.class);
 		}
 
-		public abstract <T> ChainArbitrary<T> initializeChainWith(Supplier<? extends T> initialSupplier);
+		public abstract <T> ChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier);
 	}
 
 	/**
-	 * Create arbitrary for {@linkplain Chain chains}.
+	 * Create arbitrary for {@linkplain Chain chains} with a certain initial state.
 	 *
 	 * @param initialSupplier function to create the initial state object
 	 * @param <T>             The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
 	 */
-	static <T> ChainArbitrary<T> initializeWith(Supplier<? extends T> initialSupplier) {
-		return ChainFacade.implementation.initializeChainWith(initialSupplier);
+	static <T> ChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
+		return ChainFacade.implementation.startWith(initialSupplier);
 	}
 
 	/**

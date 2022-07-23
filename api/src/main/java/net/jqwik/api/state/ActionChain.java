@@ -38,18 +38,18 @@ public interface ActionChain<S> {
 			List<Tuple.Tuple2<Integer, Action<T>>> actionFrequencies
 		);
 
-		public abstract <T> ActionChainArbitrary<T> startAs(Supplier<? extends T> initialSupplier);
+		public abstract <T> ActionChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier);
 	}
 
 	/**
-	 * Create arbitrary for a {@linkplain ActionChain chain} with a specified by initial state.
+	 * Create arbitrary for a {@linkplain ActionChain chain} with a certain initial state.
 	 *
 	 * @param initialSupplier function to create the initial state object
 	 * @param <T>             The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
 	 */
-	static <T> ActionChainArbitrary<T> startAs(Supplier<? extends T> initialSupplier) {
-		return ActionChainFacade.implementation.startAs(initialSupplier);
+	static <T> ActionChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
+		return ActionChainFacade.implementation.startWith(initialSupplier);
 	}
 
 	/**

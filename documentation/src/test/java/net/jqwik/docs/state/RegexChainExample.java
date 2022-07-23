@@ -21,7 +21,7 @@ class RegexChainExample {
 
 	@Provide
 	Arbitrary<Chain<String>> abplusc() {
-		return Chain.initializeWith(() -> "")
+		return Chain.startWith(() -> "")
 					.provideTransformer(TransformerProvider.when(String::isEmpty).provide(just(s -> s + "a")))
 					.provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("a")).provide(just(s -> s + "b")))
 					.provideTransformer(TransformerProvider.<String>when(s -> s.endsWith("b")).provide(

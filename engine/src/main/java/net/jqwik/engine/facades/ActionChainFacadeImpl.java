@@ -21,7 +21,7 @@ public class ActionChainFacadeImpl extends ActionChain.ActionChainFacade {
 	}
 
 	@Override
-	public <T> ActionChainArbitrary<T> startAs(Supplier<? extends T> initialSupplier) {
+	public <T> ActionChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
 		return new DefaultActionChainArbitrary<>(initialSupplier);
 	}
 }
