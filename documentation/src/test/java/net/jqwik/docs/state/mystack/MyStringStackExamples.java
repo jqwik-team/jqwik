@@ -15,10 +15,10 @@ class MyStringStackExamples {
 
 	@Provide
 	Arbitrary<ActionChain<MyStringStack>> myStackActions() {
-		return ActionChain.actionChains(
-			MyStringStack::new,
-			push(), pop(), clear()
-		);
+		return ActionChain.startWith(MyStringStack::new)
+						  .addAction(push())
+						  .addAction(pop())
+						  .addAction(clear());
 	}
 
 	private Action<MyStringStack> push() {
@@ -30,7 +30,7 @@ class MyStringStackExamples {
 			"clear",
 			stack -> {
 				stack.clear();
-				assertThat(stack.isEmpty()).isTrue();
+				assertThat(stack.isEmpty()).describedAs("is stack empty").isTrue();
 				return stack;
 			}
 		);

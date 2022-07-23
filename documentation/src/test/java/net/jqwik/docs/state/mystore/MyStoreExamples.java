@@ -77,7 +77,7 @@ public class MyStoreExamples {
 				String.format("remove %s", key),
 				store -> {
 					store.remove(key);
-					assertThat(store.get(key)).isNotPresent();
+					assertThat(store.get(key)).describedAs("value of key <%s>", key).isNotPresent();
 				}
 			));
 		}
