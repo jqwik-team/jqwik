@@ -13,6 +13,9 @@ public interface ActionChainArbitrary<S> extends Arbitrary<ActionChain<S>> {
 
 	/**
 	 * Add an action with default weight 1.
+	 *
+	 * @param action Instance of {@linkplain Action.Dependent} or {@linkplain Action.Independent}
+	 * @return new arbitrary instance
 	 */
 	default ActionChainArbitrary<S> addAction(Action<S> action) {
 		return addAction(1, action);
@@ -20,6 +23,10 @@ public interface ActionChainArbitrary<S> extends Arbitrary<ActionChain<S>> {
 
 	/**
 	 * Add an action with a given weight.
+	 *
+	 * @param weight Determines the relative probability of an action to be chosen.
+	 * @param action Instance of {@linkplain Action.Dependent} or {@linkplain Action.Independent}
+	 * @return new arbitrary instance
 	 */
 	ActionChainArbitrary<S> addAction(int weight, Action<S> action);
 
