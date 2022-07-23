@@ -217,9 +217,11 @@ class ActionChainArbitraryTests {
 									 }
 								 ));
 
-			ActionChainArbitrary<List<Integer>> chains = ActionChain.actionChains(
-				ArrayList::new, clear, add
-			).withMaxTransformations(10);
+			ActionChainArbitrary<List<Integer>> chains =
+				ActionChain.<List<Integer>>startWith(ArrayList::new)
+						   .addAction(clear)
+						   .addAction(add)
+						   .withMaxTransformations(10);
 
 			TestingFalsifier<ActionChain<List<Integer>>> falsifier = c -> {
 				c.run();
@@ -261,9 +263,12 @@ class ActionChainArbitraryTests {
 				}
 			};
 
-			ActionChainArbitrary<List<Integer>> chains = ActionChain.actionChains(
-				ArrayList::new, nothing, add
-			).withMaxTransformations(10).improveShrinkingWith(changeOfListDetector);
+			ActionChainArbitrary<List<Integer>> chains =
+				ActionChain.<List<Integer>>startWith(ArrayList::new)
+						   .addAction(nothing)
+						   .addAction(add)
+						   .withMaxTransformations(10)
+						   .improveShrinkingWith(changeOfListDetector);
 
 			TestingFalsifier<ActionChain<List<Integer>>> falsifier = chain -> {
 				chain.withInvariant(l -> assertThat(l).hasSizeLessThan(2)).run();
@@ -313,14 +318,14 @@ class ActionChainArbitraryTests {
 									  ));
 				}
 			};
-			return ActionChain.actionChains(
-				LinkedHashSet::new,
-				Action.just("clear", set -> {
-					set.clear();
-					return set;
-				}),
-				addNumber
-			).withMaxTransformations(50);
+			return ActionChain.<Set<Integer>>startWith(LinkedHashSet::new)
+							  .addAction(
+								  Action.just("clear", set -> {
+									  set.clear();
+									  return set;
+								  }))
+							  .addAction(addNumber)
+							  .withMaxTransformations(10);
 		}
 
 		@Property
@@ -365,11 +370,10 @@ class ActionChainArbitraryTests {
 					));
 				}
 			};
-			return ActionChain.actionChains(
-				ArrayList::new,
-				addInitialNumber,
-				addSmallerNumber
-			).withMaxTransformations(30);
+			return ActionChain.<List<Integer>>startWith(ArrayList::new)
+							  .addAction(addInitialNumber)
+							  .addAction(addSmallerNumber)
+							  .withMaxTransformations(30);
 		}
 
 	}
@@ -405,7 +409,10 @@ class ActionChainArbitraryTests {
 		class MyModelChain implements ArbitrarySupplier<ActionChain<MyModel>> {
 			@Override
 			public Arbitrary<ActionChain<MyModel>> get() {
-				return ActionChain.actionChains(MyModel::new, changeValue(), nullify()).withMaxTransformations(20);
+				return ActionChain.startWith(MyModel::new)
+								  .addAction(changeValue())
+								  .addAction(nullify())
+								  .withMaxTransformations(20);
 			}
 		}
 

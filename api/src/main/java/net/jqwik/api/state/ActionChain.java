@@ -16,8 +16,8 @@ import static org.apiguardian.api.API.Status.*;
  * of a chain can be queried.
  *
  * <p>
- *     By default any action chain instance is not thread safe,
- *     i.e. you should not try to invoke {@linkplain #run()} concurrently.
+ * By default any action chain instance is not thread safe,
+ * i.e. you should not try to invoke {@linkplain #run()} concurrently.
  * </p>
  *
  * @param <S> The type of the object going through state transformations
@@ -33,11 +33,6 @@ public interface ActionChain<S> {
 			implementation = FacadeLoader.load(ActionChainFacade.class);
 		}
 
-		public abstract <T> ActionChainArbitrary<T> actionChains(
-			Supplier<? extends T> initialSupplier,
-			List<Tuple.Tuple2<Integer, Action<T>>> actionFrequencies
-		);
-
 		public abstract <T> ActionChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier);
 	}
 
@@ -52,26 +47,6 @@ public interface ActionChain<S> {
 		return ActionChainFacade.implementation.startWith(initialSupplier);
 	}
 
-	/**
-	 * Create arbitrary for a {@linkplain ActionChain chain} based on {@linkplain Action actions}.
-	 *
-	 * @param initialSupplier function to create the initial state object
-	 * @param actions         variable number of {@linkplain Action actions}. The actions are randomly chosen with equal probability.
-	 * @param <T>             The type of state to be transformed through the chain.
-	 * @return new arbitrary instance
-	 */
-	@SuppressWarnings("unchecked")
-	@SafeVarargs
-	static <T> ActionChainArbitrary<T> actionChains(
-		Supplier<? extends T> initialSupplier,
-		Action<T>... actions
-	) {
-		Tuple.Tuple2<Integer, Action<T>>[] actionFrequencies =
-			Arrays.stream(actions).map(a -> Tuple.of(1, a)).toArray(Tuple.Tuple2[]::new);
-		List<Tuple.Tuple2<Integer, Action<T>>> frequencies = Arrays.asList(actionFrequencies);
-		return ActionChainFacade.implementation.actionChains(initialSupplier, frequencies);
-	}
-
 	enum RunningState {
 		NOT_RUN, RUNNING, FAILED, SUCCEEDED
 	}
@@ -80,7 +55,7 @@ public interface ActionChain<S> {
 	 * Return list of all applied transformations.
 	 *
 	 * <p>
-	 *     For a chain that has not been run this list is always empty.
+	 * For a chain that has not been run this list is always empty.
 	 * </p>
 	 *
 	 * @return list of describing strings
@@ -119,6 +94,7 @@ public interface ActionChain<S> {
 
 	/**
 	 * The final state value after running an action chain.
+	 *
 	 * @return state or {@linkplain Optional#empty()} if chain has not been run
 	 */
 	Optional<S> finalState();
