@@ -21,12 +21,11 @@ public class MyStoreExamples {
 
 	@Provide
 	ActionChainArbitrary<MyStore<Integer, String>> storeActions() {
-		return ActionChain.actionChains(
-			MyStore::new,
-			Tuple.of(3, new StoreAnyValue()),
-			Tuple.of(1, new UpdateValue()),
-			Tuple.of(1, new RemoveValue())
-		).improveShrinkingWith(StoreChangesDetector::new);
+		return ActionChain.<MyStore<Integer, String>>startWith(MyStore::new)
+						  .addAction(3, new StoreAnyValue())
+						  .addAction(1, new UpdateValue())
+						  .addAction(1, new RemoveValue())
+						  .improveShrinkingWith(StoreChangesDetector::new);
 	}
 
 	static class StoreAnyValue implements Action.Independent<MyStore<Integer, String>> {

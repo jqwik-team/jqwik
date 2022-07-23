@@ -68,27 +68,7 @@ public interface ActionChain<S> {
 	) {
 		Tuple.Tuple2<Integer, Action<T>>[] actionFrequencies =
 			Arrays.stream(actions).map(a -> Tuple.of(1, a)).toArray(Tuple.Tuple2[]::new);
-		return actionChains(initialSupplier, actionFrequencies);
-	}
-
-	/**
-	 * Create arbitrary for a {@linkplain ActionChain action chain} based on {@linkplain Action actions}.
-	 *
-	 * @param initialSupplier   function to create the initial state object
-	 * @param actionFrequencies variable number of Tuples with weight and {@linkplain Action action}.
-	 *                          The weight determines the relative probability of an action to be chosen.
-	 * @param <T>               The type of state to be transformed through the chain.
-	 * @return new arbitrary instance
-	 */
-	@SafeVarargs
-	static <T> ActionChainArbitrary<T> actionChains(
-		Supplier<? extends T> initialSupplier,
-		Tuple.Tuple2<Integer, Action<T>>... actionFrequencies
-	) {
 		List<Tuple.Tuple2<Integer, Action<T>>> frequencies = Arrays.asList(actionFrequencies);
-		if (frequencies.isEmpty()) {
-			throw new IllegalArgumentException("You must specify at least one action");
-		}
 		return ActionChainFacade.implementation.actionChains(initialSupplier, frequencies);
 	}
 
