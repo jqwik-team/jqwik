@@ -19,7 +19,11 @@ class ActionChainArbitraryTests {
 
 	@Example
 	void deterministicChainCanBeRun(@ForAll Random random) {
-		ActionChainArbitrary<String> chains = ActionChain.actionChains(() -> "", addX()).withMaxTransformations(10);
+		ActionChainArbitrary<String> chains =
+			ActionChain.startWith(() -> "")
+					   .addAction(addX())
+					   .withMaxTransformations(10);
+
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 		assertThat(chain.running()).isEqualTo(RunningState.NOT_RUN);
 		assertThat(chain.finalState()).isNotPresent();
@@ -35,7 +39,12 @@ class ActionChainArbitraryTests {
 	@Example
 	void infiniteChain(@ForAll Random random) {
 		Action.Independent<String> addEOC = Action.just(Transformer.endOfChain());
-		ActionChainArbitrary<String> chains = ActionChain.actionChains(() -> "", addX(), addEOC).infinite();
+		ActionChainArbitrary<String> chains =
+			ActionChain.startWith(() -> "")
+					   .addAction(addX())
+					   .addAction(addEOC)
+					   .infinite();
+
 		TestingSupport.assertAllGenerated(
 			chains,
 			random,
@@ -47,12 +56,16 @@ class ActionChainArbitraryTests {
 				if (result.length() > 0) {
 					assertThat(result.chars()).containsOnly((int) 'x');
 				}
-			});
+			}
+		);
 	}
 
 	@Example
 	void peekingIntoChain(@ForAll Random random) {
-		ActionChainArbitrary<String> chains = ActionChain.actionChains(() -> "", addX()).withMaxTransformations(5);
+		ActionChainArbitrary<String> chains =
+			ActionChain.startWith(() -> "")
+					   .addAction(addX())
+					   .withMaxTransformations(5);
 
 		AtomicInteger countPeeks = new AtomicInteger(0);
 
@@ -82,7 +95,10 @@ class ActionChainArbitraryTests {
 
 	@Provide
 	ActionChainArbitrary<String> xOrFailing() {
-		return ActionChain.actionChains(() -> "", addX(), failing()).withMaxTransformations(30);
+		return ActionChain.startWith(() -> "")
+						  .addAction(addX())
+						  .addAction(failing())
+						  .withMaxTransformations(30);
 	}
 
 	@Property
@@ -100,7 +116,10 @@ class ActionChainArbitraryTests {
 
 	@Provide
 	ActionChainArbitrary<String> xOrY() {
-		return ActionChain.actionChains(() -> "", addX(), addY()).withMaxTransformations(30);
+		return ActionChain.startWith(() -> "")
+						  .addAction(addX())
+						  .addAction(addY())
+						  .withMaxTransformations(30);
 	}
 
 	@Property
@@ -117,7 +136,9 @@ class ActionChainArbitraryTests {
 	@Provide
 	ActionChainArbitrary<String> anyAtoZ() {
 		Action.Independent<String> anyAZ = () -> Arbitraries.chars().range('a', 'z').map(c -> s -> s + c);
-		return ActionChain.actionChains(() -> "", anyAZ).withMaxTransformations(30);
+		return ActionChain.startWith(() -> "")
+						  .addAction(anyAZ)
+						  .withMaxTransformations(30);
 	}
 
 	@Example
@@ -131,9 +152,12 @@ class ActionChainArbitraryTests {
 			s -> s + "y"
 		);
 
-		ActionChainArbitrary<String> chains = ActionChain.actionChains(
-			() -> "", x0to4, y5to9
-		).withMaxTransformations(10);
+		ActionChainArbitrary<String> chains =
+			ActionChain.startWith(() -> "")
+					   .addAction(x0to4)
+					   .addAction(y5to9)
+					   .withMaxTransformations(10);
+
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 
 		String result = chain.run();
@@ -152,9 +176,11 @@ class ActionChainArbitraryTests {
 			Transformer.endOfChain()
 		);
 
-		ActionChainArbitrary<String> chains = ActionChain.actionChains(
-			() -> "", x0to4, end
-		).withMaxTransformations(10);
+		ActionChainArbitrary<String> chains =
+			ActionChain.startWith(() -> "")
+					   .addAction(x0to4)
+					   .addAction(end)
+					   .withMaxTransformations(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 
 		String result = chain.run();
