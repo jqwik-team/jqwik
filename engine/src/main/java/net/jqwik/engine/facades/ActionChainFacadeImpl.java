@@ -17,7 +17,11 @@ public class ActionChainFacadeImpl extends ActionChain.ActionChainFacade {
 		Supplier<? extends T> initialSupplier,
 		List<Tuple2<Integer, Action<T>>> actionFrequencies
 	) {
-		return new DefaultActionChainArbitrary<>(initialSupplier, actionFrequencies);
+		DefaultActionChainArbitrary<T> actionChainArbitrary = new DefaultActionChainArbitrary<>(initialSupplier);
+		for (Tuple2<Integer, Action<T>> actionFrequency : actionFrequencies) {
+			actionChainArbitrary = (DefaultActionChainArbitrary<T>) actionChainArbitrary.addAction(actionFrequency.get1(), actionFrequency.get2());
+		}
+		return actionChainArbitrary;
 	}
 
 	@Override

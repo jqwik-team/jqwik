@@ -12,21 +12,11 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 
 	private int maxTransformations = Integer.MIN_VALUE;
 	private Supplier<ChangeDetector<T>> changeDetectorSupplier = ChangeDetector::alwaysTrue;
-	private List<Tuple.Tuple2<Integer, TransformerProvider<T>>> weightedProviders;
+	private List<Tuple.Tuple2<Integer, TransformerProvider<T>>> weightedProviders = new ArrayList<>();
 	private final Supplier<? extends T> initialSupplier;
 
 	public DefaultChainArbitrary(Supplier<? extends T> initialSupplier) {
 		this.initialSupplier = initialSupplier;
-		this.weightedProviders = new ArrayList<>();
-	}
-
-	// TODO: Change users to use other constructor
-	DefaultChainArbitrary(
-		Supplier<? extends T> initialSupplier,
-		List<Tuple.Tuple2<Integer, TransformerProvider<T>>> providerFrequencies
-	) {
-		this.initialSupplier = initialSupplier;
-		this.weightedProviders = providerFrequencies;
 	}
 
 	@Override
@@ -71,4 +61,11 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	public EdgeCases<Chain<T>> edgeCases(int maxEdgeCases) {
 		return EdgeCases.none();
 	}
+
+	@Override
+	public boolean isGeneratorMemoizable() {
+		// Not memoizable, because any non-memoizable arbitrary could be used in transformer providers.
+		return false;
+	}
+
 }

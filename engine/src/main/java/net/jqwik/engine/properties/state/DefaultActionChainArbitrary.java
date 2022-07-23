@@ -3,44 +3,20 @@ package net.jqwik.engine.properties.state;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.support.*;
 
 public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionChain<T>> implements ActionChainArbitrary<T> {
 
-	private final Supplier<? extends T> initialSupplier;
-	private final List<Tuple2<Integer, Action<T>>> actionFrequencies;
 	private ChainArbitrary<T> chainArbitrary;
 
 	public DefaultActionChainArbitrary(Supplier<? extends T> initialSupplier) {
-		this(initialSupplier, Collections.emptyList());
-	}
-
-	public DefaultActionChainArbitrary(
-		Supplier<? extends T> initialSupplier,
-		List<Tuple2<Integer, Action<T>>> actionFrequencies
-	) {
-		this.initialSupplier = initialSupplier;
-		this.actionFrequencies = actionFrequencies;
-		// TODO: Use the same approach in ChainArbitrary so that addAction can delegate to it
-		List<Tuple2<Integer, TransformerProvider<T>>> providerFrequencies = toProviderFrequencies(actionFrequencies);
-		chainArbitrary = new DefaultChainArbitrary<>(initialSupplier, providerFrequencies);
-	}
-
-	private List<Tuple2<Integer, TransformerProvider<T>>> toProviderFrequencies(List<Tuple2<Integer, Action<T>>> actionFrequencies) {
-		return actionFrequencies
-			.stream()
-			.map(frequency -> {
-				TransformerProvider<T> provider = createProvider(frequency.get2());
-				return Tuple.of(frequency.get1(), provider);
-			}).collect(Collectors.toList());
+		chainArbitrary = new DefaultChainArbitrary<>(initialSupplier);
 	}
 
 	private TransformerProvider<T> createProvider(Action<T> action) {
@@ -93,8 +69,9 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 
 	@Override
 	public ActionChainArbitrary<T> addAction(int weight, Action<T> action) {
-		// TODO: Implement that in ChainArbitrary
-		return this;
+		DefaultActionChainArbitrary<T> clone = typedClone();
+		clone.chainArbitrary = clone.chainArbitrary.provideTransformer(weight, createProvider(action));
+		return clone;
 	}
 
 	@Override
@@ -114,5 +91,11 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	@Override
 	protected Arbitrary<ActionChain<T>> arbitrary() {
 		return chainArbitrary.map(SequentialActionChain::new);
+	}
+
+	@Override
+	public boolean isGeneratorMemoizable() {
+		// Not memoizable, because any non-memoizable arbitrary could be used in actions
+		return false;
 	}
 }
