@@ -18,7 +18,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	public static final int MAX_TRANSFORMER_TRIES = 1000;
 	private final long randomSeed;
 	private final Supplier<? extends T> initialSupplier;
-	private final Function<Random, TransformerProvider<T>> providerGenerator;
+	private final Function<Random, Transformation<T>> transformationGenerator;
 	private final int maxTransformations;
 	private final int genSize;
 	private final List<ShrinkableChainIteration<T>> iterations;
@@ -27,17 +27,17 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	public ShrinkableChain(
 		long randomSeed,
 		Supplier<? extends T> initialSupplier,
-		Function<Random, TransformerProvider<T>> providerGenerator,
+		Function<Random, Transformation<T>> transformationGenerator,
 		Supplier<ChangeDetector<T>> changeDetectorSupplier,
 		int maxTransformations,
 		int genSize
 	) {
-		this(randomSeed, initialSupplier, providerGenerator, changeDetectorSupplier, maxTransformations, genSize, new ArrayList<>());
+		this(randomSeed, initialSupplier, transformationGenerator, changeDetectorSupplier, maxTransformations, genSize, new ArrayList<>());
 	}
 
 	private ShrinkableChain(
 		long randomSeed, Supplier<? extends T> initialSupplier,
-		Function<Random, TransformerProvider<T>> providerGenerator,
+		Function<Random, Transformation<T>> transformationGenerator,
 		Supplier<ChangeDetector<T>> changeDetectorSupplier,
 		int maxTransformations,
 		int genSize,
@@ -45,7 +45,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	) {
 		this.randomSeed = randomSeed;
 		this.initialSupplier = initialSupplier;
-		this.providerGenerator = providerGenerator;
+		this.transformationGenerator = transformationGenerator;
 		this.changeDetectorSupplier = changeDetectorSupplier;
 		this.maxTransformations = maxTransformations;
 		this.genSize = genSize;
@@ -68,7 +68,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		return new ShrinkableChain<>(
 			randomSeed,
 			initialSupplier,
-			providerGenerator,
+			transformationGenerator,
 			changeDetectorSupplier,
 			newMaxSize,
 			genSize,
@@ -227,10 +227,10 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			};
 
 			while (attemptsCounter.getAndIncrement() < MAX_TRANSFORMER_TRIES) {
-				TransformerProvider<T> chainGenerator = providerGenerator.apply(random);
+				Transformation<T> chainGenerator = transformationGenerator.apply(random);
 
 				Predicate<T> precondition = chainGenerator.precondition();
-				boolean hasPrecondition = precondition != TransformerProvider.NO_PRECONDITION;
+				boolean hasPrecondition = precondition != Transformation.NO_PRECONDITION;
 				if (hasPrecondition && !precondition.test(current)) {
 					continue;
 				}

@@ -9,9 +9,12 @@ import net.jqwik.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Provide an arbitrary of {@linkplain Transformer transformer} for values of type {@code T} in the context of {@linkplain Chain chains}.
- * The provided arbitrary of transformer can depend on the previous state
+ * A transformation provides an arbitrary of {@linkplain Transformer transformers}
+ * for values of type {@code T} in the context of {@linkplain Chain chains}.
+ * The provided arbitrary of transformers can depend on the previous state,
  * which can be retrieved using the first {@linkplain Supplier supplier} argument of the function.
+ * A transformation can also be restricted by a precondition,
+ * which must hold for the transformation to be applicable.
  *
  * @param <T> The type of state to be transformed in a chain
  * @see Chain
@@ -19,7 +22,7 @@ import static org.apiguardian.api.API.Status.*;
  */
 @FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface TransformerProvider<T> extends Function<Supplier<T>, Arbitrary<Transformer<T>>> {
+public interface Transformation<T> extends Function<Supplier<T>, Arbitrary<Transformer<T>>> {
 
 	Predicate<?> NO_PRECONDITION = ignore -> false;
 
@@ -30,8 +33,8 @@ public interface TransformerProvider<T> extends Function<Supplier<T>, Arbitrary<
 			this.precondition = precondition;
 		}
 
-		public TransformerProvider<T> provide(Arbitrary<Transformer<T>> arbitrary) {
-			return new TransformerProvider<T>() {
+		public Transformation<T> provide(Arbitrary<Transformer<T>> arbitrary) {
+			return new Transformation<T>() {
 				@Override
 				public Predicate<T> precondition() {
 					return precondition;
@@ -44,8 +47,8 @@ public interface TransformerProvider<T> extends Function<Supplier<T>, Arbitrary<
 			};
 		}
 
-		public TransformerProvider<T> provide(Function<T, Arbitrary<Transformer<T>>> arbitraryCreator) {
-			return new TransformerProvider<T>() {
+		public Transformation<T> provide(Function<T, Arbitrary<Transformer<T>>> arbitraryCreator) {
+			return new Transformation<T>() {
 				@Override
 				public Predicate<T> precondition() {
 					return precondition;

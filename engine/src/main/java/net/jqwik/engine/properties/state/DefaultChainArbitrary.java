@@ -12,7 +12,7 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 
 	private int maxTransformations = Integer.MIN_VALUE;
 	private Supplier<ChangeDetector<T>> changeDetectorSupplier = ChangeDetector::alwaysTrue;
-	private List<Tuple.Tuple2<Integer, TransformerProvider<T>>> weightedProviders = new ArrayList<>();
+	private List<Tuple.Tuple2<Integer, Transformation<T>>> weightedTransformations = new ArrayList<>();
 	private final Supplier<? extends T> initialSupplier;
 
 	public DefaultChainArbitrary(Supplier<? extends T> initialSupplier) {
@@ -23,11 +23,11 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	public RandomGenerator<Chain<T>> generator(int genSize) {
 		final int effectiveMaxTransformations =
 			this.maxTransformations != Integer.MIN_VALUE ? this.maxTransformations : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-		Function<Random, TransformerProvider<T>> providerGenerator = new ChooseRandomlyByFrequency<>(weightedProviders);
+		Function<Random, Transformation<T>> transformationGenerator = new ChooseRandomlyByFrequency<>(weightedTransformations);
 		return random -> new ShrinkableChain<>(
 			random.nextLong(),
 			initialSupplier,
-			providerGenerator,
+			transformationGenerator,
 			changeDetectorSupplier,
 			effectiveMaxTransformations,
 			genSize
@@ -35,14 +35,14 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	}
 
 	@Override
-	public ChainArbitrary<T> provideTransformer(int weight, TransformerProvider<T> provider) {
+	public ChainArbitrary<T> addTransformation(int weight, Transformation<T> transformation) {
 		if (weight <= 0) {
 			throw new IllegalArgumentException("Weight must be at least 1");
 		}
 		DefaultChainArbitrary<T> clone = typedClone();
-		List<Tuple.Tuple2<Integer, TransformerProvider<T>>> newWeightedProviders = new ArrayList<>(weightedProviders);
-		newWeightedProviders.add(Tuple.of(weight, provider));
-		clone.weightedProviders = newWeightedProviders;
+		List<Tuple.Tuple2<Integer, Transformation<T>>> newWeightedTransformations = new ArrayList<>(weightedTransformations);
+		newWeightedTransformations.add(Tuple.of(weight, transformation));
+		clone.weightedTransformations = newWeightedTransformations;
 		return clone;
 	}
 

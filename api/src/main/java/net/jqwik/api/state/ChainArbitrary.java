@@ -12,22 +12,22 @@ import static org.apiguardian.api.API.Status.*;
 public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 
 	/**
-	 * Add an additional {@linkplain TransformerProvider}.
+	 * Add an additional {@linkplain Transformation}.
 	 *
 	 * @param weight Determines the relative probability of a transformer to be chosen.
-	 * @param provider The {@linkplain TransformerProvider provider} to add.
+	 * @param provider The {@linkplain Transformation provider} to add.
 	 * @return instance of arbitrary
 	 */
-	ChainArbitrary<T> provideTransformer(int weight, TransformerProvider<T> provider);
+	ChainArbitrary<T> addTransformation(int weight, Transformation<T> provider);
 
 	/**
-	 * Add an additional {@linkplain TransformerProvider} with a default weight of 1.
+	 * Add an additional {@linkplain Transformation} with a default weight of 1.
 	 *
-	 * @param provider The {@linkplain TransformerProvider provider} to add.
+	 * @param provider The {@linkplain Transformation provider} to add.
 	 * @return instance of arbitrary
 	 */
-	default ChainArbitrary<T> provideTransformer(TransformerProvider<T> provider) {
-		return provideTransformer(1, provider);
+	default ChainArbitrary<T> addTransformation(Transformation<T> provider) {
+		return addTransformation(1, provider);
 	}
 
 	/**

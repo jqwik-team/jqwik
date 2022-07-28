@@ -19,11 +19,11 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 		chainArbitrary = new DefaultChainArbitrary<>(initialSupplier);
 	}
 
-	private TransformerProvider<T> createProvider(Action<T> action) {
+	private Transformation<T> createTransformation(Action<T> action) {
 		checkActionIsConsistent(action);
 		Optional<Predicate<T>> optionalPrecondition = precondition(action);
-		return optionalPrecondition.map(precondition -> TransformerProvider.when(precondition)
-																		   .provide(state -> toTransformerArbitrary(action, () -> state)))
+		return optionalPrecondition.map(precondition -> Transformation.when(precondition)
+																	  .provide(state -> toTransformerArbitrary(action, () -> state)))
 								   .orElseGet(() -> supplier -> toTransformerArbitrary(action, supplier));
 	}
 
@@ -70,7 +70,7 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	@Override
 	public ActionChainArbitrary<T> addAction(int weight, Action<T> action) {
 		DefaultActionChainArbitrary<T> clone = typedClone();
-		clone.chainArbitrary = clone.chainArbitrary.provideTransformer(weight, createProvider(action));
+		clone.chainArbitrary = clone.chainArbitrary.addTransformation(weight, createTransformation(action));
 		return clone;
 	}
 

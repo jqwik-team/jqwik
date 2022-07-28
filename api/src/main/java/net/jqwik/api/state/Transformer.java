@@ -19,7 +19,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @param <T> The type of state to be transformed in a chain
  * @see Chain
- * @see TransformerProvider
+ * @see Transformation
  * @see Action
  */
 @FunctionalInterface
@@ -94,7 +94,7 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 
 	/**
 	 * Use this transformer to signal a noop transformation.
-	 * This can be useful when a {@linkplain TransformerProvider} wants to provide
+	 * This can be useful when a {@linkplain Transformation} wants to provide
 	 * a transformer that does nothing in some circumstances.
 	 *
 	 * <p>
