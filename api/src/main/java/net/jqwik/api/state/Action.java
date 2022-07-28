@@ -103,7 +103,7 @@ public interface Action<S> {
 		 * Return an arbitrary for transformers that depends on the previous state.
 		 *
 		 * <p>
-		 * In addition to performing a state transformation the mutator function
+		 * In addition to performing a state transformation the transformin function
 		 * can also check or assert post-conditions and invariants that should hold when doing the transformation.
 		 * </p>
 		 *
@@ -127,7 +127,7 @@ public interface Action<S> {
 		 * Return an arbitrary for transformers that does not depend on the previous state.
 		 *
 		 * <p>
-		 * In addition to performing a state transformation the mutator function
+		 * In addition to performing a state transformation the transforming function
 		 * can also check or assert post-conditions and invariants that should hold when doing the transformation.
 		 * </p>
 		 *
