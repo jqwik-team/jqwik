@@ -83,6 +83,9 @@ title: jqwik Release Notes
 - Generator memoization now works for most kinds of arbitraries and therefore uses less memory.
   See https://github.com/jlink/jqwik/issues/339.
 
+- Arbitrary API methods `ofMinSize()` and `ofMinLength()` are handled more intelligently.
+  See https://github.com/jlink/jqwik/issues/377.
+
 
 ## 1.6.x
 
