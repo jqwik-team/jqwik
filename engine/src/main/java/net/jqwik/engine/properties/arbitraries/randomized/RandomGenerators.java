@@ -10,9 +10,19 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import static java.lang.Math.*;
+
 public class RandomGenerators {
 
 	public static final int DEFAULT_COLLECTION_SIZE = 255;
+
+	public static int collectionMaxSize(int minSize, Integer maxSize) {
+		if (maxSize != null) {
+			return maxSize;
+		}
+		int doubleMinSize = toIntExact(min(Integer.MAX_VALUE, (long) minSize * 2));
+		return max(RandomGenerators.DEFAULT_COLLECTION_SIZE, doubleMinSize);
+	}
 
 	public static <U> RandomGenerator<U> choose(List<U> values) {
 		if (values.size() == 0) {

@@ -36,19 +36,19 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 
 	private RandomGenerator<Set<T>> rawGenerator(int genSize, boolean withEmbeddedEdgeCases) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize, withEmbeddedEdgeCases);
-		return RandomGenerators.set(elementGenerator, minSize, maxSize, genSize, sizeDistribution, uniquenessExtractors);
+		return RandomGenerators.set(elementGenerator, minSize, maxSize(), genSize, sizeDistribution, uniquenessExtractors);
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<Set<T>>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.set(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples);
+		return ExhaustiveGenerators.set(elementArbitrary, minSize, maxSize(), uniquenessExtractors, maxNumberOfSamples);
 	}
 
 	@Override
 	public EdgeCases<Set<T>> edgeCases(int maxEdgeCases) {
 		return edgeCases((elementList, minSize1) -> {
 			Set<Shrinkable<T>> elementSet = new LinkedHashSet<>(elementList);
-			return new ShrinkableSet<>(elementSet, minSize1, maxSize, uniquenessExtractors);
+			return new ShrinkableSet<>(elementSet, minSize1, maxSize(), uniquenessExtractors);
 		}, maxEdgeCases);
 	}
 

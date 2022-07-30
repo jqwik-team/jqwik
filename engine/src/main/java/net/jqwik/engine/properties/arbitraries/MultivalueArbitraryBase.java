@@ -19,7 +19,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	protected Arbitrary<T> elementArbitrary;
 
 	protected int minSize = 0;
-	protected int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
+	private Integer maxSize = null;
 	protected Set<FeatureExtractor<T>> uniquenessExtractors = new LinkedHashSet<>();
 	protected RandomDistribution sizeDistribution = null;
 
@@ -92,8 +92,8 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize, boolean withEmbeddedEdgeCases) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize, withEmbeddedEdgeCases);
-		long maxUniqueElements = elementArbitrary.exhaustive(maxSize).map(ExhaustiveGenerator::maxCount).orElse((long) maxSize);
-		return RandomGenerators.list(elementGenerator, minSize, maxSize, maxUniqueElements, genSize, sizeDistribution, uniquenessExtractors);
+		long maxUniqueElements = elementArbitrary.exhaustive(maxSize()).map(ExhaustiveGenerator::maxCount).orElse((long) maxSize());
+		return RandomGenerators.list(elementGenerator, minSize, maxSize(), maxUniqueElements, genSize, sizeDistribution, uniquenessExtractors);
 	}
 
 	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int genSize, boolean withEdgeCases) {
@@ -101,8 +101,8 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	}
 
 	protected <C extends Collection<?>> EdgeCases<C> edgeCases(
-			BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator,
-			int maxEdgeCases
+		BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator,
+		int maxEdgeCases
 	) {
 		// Optimization. Already handled by EdgeCases.concat(..)
 		if (maxEdgeCases <= 0) {
@@ -112,14 +112,14 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 		EdgeCases<C> emptyListEdgeCase = (minSize == 0) ? emptyListEdgeCase(shrinkableCreator) : EdgeCases.none();
 
 		int effectiveMaxEdgeCases = maxEdgeCases - emptyListEdgeCase.size();
-		EdgeCases<C> singleElementEdgeCases = (minSize <= 1 && maxSize >= 1)
-													  ? fixedSizeEdgeCases(1, shrinkableCreator, effectiveMaxEdgeCases)
-													  : EdgeCases.none();
+		EdgeCases<C> singleElementEdgeCases = (minSize <= 1 && maxSize() >= 1)
+												  ? fixedSizeEdgeCases(1, shrinkableCreator, effectiveMaxEdgeCases)
+												  : EdgeCases.none();
 
 		effectiveMaxEdgeCases = maxEdgeCases - singleElementEdgeCases.size();
 		EdgeCases<C> fixedSizeEdgeCases = generateFixedSizeEdgeCases()
-												  ? fixedSizeEdgeCases(minSize, shrinkableCreator, effectiveMaxEdgeCases)
-												  : EdgeCases.none();
+											  ? fixedSizeEdgeCases(minSize, shrinkableCreator, effectiveMaxEdgeCases)
+											  : EdgeCases.none();
 
 		return EdgeCasesSupport.concat(asList(emptyListEdgeCase, singleElementEdgeCases, fixedSizeEdgeCases), maxEdgeCases);
 	}
@@ -131,7 +131,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 
 		MultivalueArbitraryBase<?, ?> that = (MultivalueArbitraryBase<?, ?>) o;
 		if (minSize != that.minSize) return false;
-		if (maxSize != that.maxSize) return false;
+		if (!Objects.equals(maxSize, that.maxSize)) return false;
 		if (!elementArbitrary.equals(that.elementArbitrary)) return false;
 		if (!uniquenessExtractors.equals(that.uniquenessExtractors)) return false;
 		return Objects.equals(sizeDistribution, that.sizeDistribution);
@@ -143,30 +143,33 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	}
 
 	private boolean generateFixedSizeEdgeCases() {
-		return minSize == maxSize && minSize > 1;
+		return minSize == maxSize() && minSize > 1;
 	}
 
 	private <C extends Collection<?>> EdgeCases<C> fixedSizeEdgeCases(
-			final int fixedSize,
-			final BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator,
-			int maxEdgeCases
+		final int fixedSize,
+		final BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator,
+		int maxEdgeCases
 	) {
 		return EdgeCasesSupport.mapShrinkable(
-				elementArbitrary.edgeCases(maxEdgeCases),
-				shrinkableT -> {
-					List<Shrinkable<T>> elements = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableT));
-					if (!checkUniquenessOfShrinkables(uniquenessExtractors, elements)) {
-						return null;
-					}
-					return shrinkableCreator.apply(elements, minSize);
+			elementArbitrary.edgeCases(maxEdgeCases),
+			shrinkableT -> {
+				List<Shrinkable<T>> elements = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableT));
+				if (!checkUniquenessOfShrinkables(uniquenessExtractors, elements)) {
+					return null;
 				}
+				return shrinkableCreator.apply(elements, minSize);
+			}
 		);
 	}
 
 	private <C extends Collection<?>> EdgeCases<C> emptyListEdgeCase(BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator) {
 		return EdgeCases.fromSupplier(
-				() -> shrinkableCreator.apply(Collections.emptyList(), minSize)
+			() -> shrinkableCreator.apply(Collections.emptyList(), minSize)
 		);
 	}
 
+	protected int maxSize() {
+		return RandomGenerators.collectionMaxSize(minSize, maxSize);
+	}
 }

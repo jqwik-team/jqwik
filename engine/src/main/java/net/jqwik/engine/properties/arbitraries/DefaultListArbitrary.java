@@ -33,12 +33,12 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 
 	@Override
 	public Optional<ExhaustiveGenerator<List<T>>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples);
+		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize(), uniquenessExtractors, maxNumberOfSamples);
 	}
 
 	@Override
 	public EdgeCases<List<T>> edgeCases(int maxEdgeCases) {
-		return edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors), maxEdgeCases);
+		return edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize(), uniquenessExtractors), maxEdgeCases);
 	}
 
 	@Override

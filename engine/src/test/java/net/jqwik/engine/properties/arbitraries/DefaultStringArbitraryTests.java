@@ -155,6 +155,24 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
+	void defaultLength(@ForAll Random random) {
+		StringArbitrary stringArbitrary = this.arbitrary;
+		checkAllGenerated(
+			stringArbitrary.generator(10, true), random,
+			s -> s.length() <= 255
+		);
+	}
+
+	@Example
+	void minLengthAboveDefaultMaxLength(@ForAll Random random) {
+		StringArbitrary stringArbitrary = this.arbitrary.ofMinLength(256);
+		checkAllGenerated(
+			stringArbitrary.generator(10, true), random,
+			s -> s.length() >= 255 && s.length() <= 512
+		);
+	}
+
+	@Example
 	void lengthRange(@ForAll Random random) {
 		StringArbitrary stringArbitrary = this.arbitrary.ofMinLength(3).ofMaxLength(10);
 		checkAllGenerated(

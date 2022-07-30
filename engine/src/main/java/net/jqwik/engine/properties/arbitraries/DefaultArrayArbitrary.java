@@ -59,7 +59,7 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 	@Override
 	public Optional<ExhaustiveGenerator<A>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators
-			.list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples)
+			.list(elementArbitrary, minSize, maxSize(), uniquenessExtractors, maxNumberOfSamples)
 			.map(generator -> generator.map(this::toArray));
 	}
 
@@ -67,7 +67,7 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 	public EdgeCases<A> edgeCases(int maxEdgeCases) {
 		return EdgeCasesSupport.map(
 			edgeCases(
-				(elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors),
+				(elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize(), uniquenessExtractors),
 				maxEdgeCases
 			),
 			this::toArray

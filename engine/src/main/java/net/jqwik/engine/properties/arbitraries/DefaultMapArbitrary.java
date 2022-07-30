@@ -15,7 +15,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	private final Arbitrary<V> valuesArbitrary;
 
 	private int minSize = 0;
-	private int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
+	private Integer maxSize = null;
 	private RandomDistribution sizeDistribution = null;
 
 	private Set<FeatureExtractor<K>> keyUniquenessExtractors = new LinkedHashSet<>();
@@ -77,11 +77,15 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 	}
 
 	private SetArbitrary<K> createKeySetArbitrary() {
-		SetArbitrary<K> keySetArbitrary = keysArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize).withSizeDistribution(sizeDistribution);
+		SetArbitrary<K> keySetArbitrary = keysArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize()).withSizeDistribution(sizeDistribution);
 		for (FeatureExtractor<K> extractor : keyUniquenessExtractors) {
 			keySetArbitrary = keySetArbitrary.uniqueElements(extractor);
 		}
 		return keySetArbitrary;
+	}
+
+	private int maxSize() {
+		return RandomGenerators.collectionMaxSize(minSize, maxSize);
 	}
 
 	@Override
@@ -112,7 +116,7 @@ public class DefaultMapArbitrary<K, V> extends ArbitraryDecorator<Map<K, V>> imp
 
 		DefaultMapArbitrary<?, ?> that = (DefaultMapArbitrary<?, ?>) o;
 		if (minSize != that.minSize) return false;
-		if (maxSize != that.maxSize) return false;
+		if (!Objects.equals(maxSize, that.maxSize)) return false;
 		if (!keysArbitrary.equals(that.keysArbitrary)) return false;
 		if (!valuesArbitrary.equals(that.valuesArbitrary)) return false;
 		if (!Objects.equals(sizeDistribution, that.sizeDistribution)) return false;

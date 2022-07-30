@@ -34,14 +34,14 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 	@Override
 	public Optional<ExhaustiveGenerator<Stream<T>>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators
-					   .list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples)
+					   .list(elementArbitrary, minSize, maxSize(), uniquenessExtractors, maxNumberOfSamples)
 					   .map(generator -> generator.map(ReportableStream::new));
 	}
 
 	@Override
 	public EdgeCases<Stream<T>> edgeCases(int maxEdgeCases) {
 		return EdgeCasesSupport.map(
-				edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize, uniquenessExtractors), maxEdgeCases),
+				edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize(), uniquenessExtractors), maxEdgeCases),
 				ReportableStream::new
 		);
 	}

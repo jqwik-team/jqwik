@@ -22,13 +22,15 @@ import static net.jqwik.testing.TestingSupport.*;
 @StatisticsReport(onFailureOnly = true)
 class ListArbitraryTests {
 
+	public static final int DEFAULT_MAX_SIZE = 255;
+
 	@Example
-	void list() {
+	void listWithDefaultSizes() {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 		ListArbitrary<String> listArbitrary = stringArbitrary.list();
 
 		RandomGenerator<List<String>> generator = listArbitrary.generator(1, true);
-		assertGeneratedLists(generator, 0, Integer.MAX_VALUE);
+		assertGeneratedLists(generator, 0, DEFAULT_MAX_SIZE);
 	}
 
 	@Example
@@ -47,6 +49,26 @@ class ListArbitraryTests {
 
 		RandomGenerator<List<String>> generator = listArbitrary.generator(1, true);
 		assertGeneratedLists(generator, 2, 5);
+	}
+
+	@Example
+	void ofMinSize_aboveDefaultMaxSize() {
+		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
+		int minSize = DEFAULT_MAX_SIZE + 1;
+		ListArbitrary<String> listArbitrary = stringArbitrary.list().ofMinSize(minSize);
+
+		RandomGenerator<List<String>> generator = listArbitrary.generator(1, true);
+		assertGeneratedLists(generator, minSize, minSize * 2);
+	}
+
+	@Property(tries = 10)
+	void ofMinSize_closeToIntegerMax(@ForAll @IntRange(min = Integer.MAX_VALUE / 2) int minSize, @ForAll Random random) {
+		ListArbitrary<Integer> listArbitrary = Arbitraries.of(1,2,3).list().ofMinSize(minSize);
+		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1, true);
+
+		// Generating the actual list leads to OutOfMemoryError
+		// Shrinkable<List<Integer>> list = generator.next(random);
+		// assertThat(list.value()).hasSizeBetween(minSize, Integer.MAX_VALUE);
 	}
 
 	@Example

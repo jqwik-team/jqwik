@@ -32,14 +32,14 @@ public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iter
 
 	@Override
 	public Optional<ExhaustiveGenerator<Iterator<T>>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, uniquenessExtractors, maxNumberOfSamples)
+		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize(), uniquenessExtractors, maxNumberOfSamples)
 								   .map(generator -> generator.map(List::iterator));
 	}
 
 	@Override
 	public EdgeCases<Iterator<T>> edgeCases(int maxEdgeCases) {
 		return EdgeCasesSupport.map(
-				edgeCases((elements, minimalSize) -> new ShrinkableList<>(elements, minimalSize, maxSize, uniquenessExtractors), maxEdgeCases),
+				edgeCases((elements, minimalSize) -> new ShrinkableList<>(elements, minimalSize, maxSize(), uniquenessExtractors), maxEdgeCases),
 				List::iterator
 		);
 	}
