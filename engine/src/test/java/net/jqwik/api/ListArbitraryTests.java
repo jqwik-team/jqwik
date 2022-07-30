@@ -61,14 +61,14 @@ class ListArbitraryTests {
 		assertGeneratedLists(generator, minSize, minSize * 2);
 	}
 
-	@Property(tries = 10)
+	// Lists of that size often lead to OutOfMemoryError
+	// @Property(tries = 10)
 	void ofMinSize_closeToIntegerMax(@ForAll @IntRange(min = Integer.MAX_VALUE / 2) int minSize, @ForAll Random random) {
 		ListArbitrary<Integer> listArbitrary = Arbitraries.of(1,2,3).list().ofMinSize(minSize);
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1, true);
 
-		// Generating the actual list leads to OutOfMemoryError
-		// Shrinkable<List<Integer>> list = generator.next(random);
-		// assertThat(list.value()).hasSizeBetween(minSize, Integer.MAX_VALUE);
+		Shrinkable<List<Integer>> list = generator.next(random);
+		assertThat(list.value()).hasSizeBetween(minSize, Integer.MAX_VALUE);
 	}
 
 	@Example
