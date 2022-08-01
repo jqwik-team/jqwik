@@ -29,6 +29,11 @@ class JqwikPropertiesTests {
 			public int size() {
 				return 0;
 			}
+
+			@Override
+			public Set<String> keySet() {
+				return Collections.emptySet();
+			}
 		});
 
 		assertThat(properties.runFailuresFirst()).isEqualTo(false);
