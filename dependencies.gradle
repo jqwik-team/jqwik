@@ -19,7 +19,7 @@ static def isSnapshotRelease(versionString) {
 }
 
 ext {
-	junitPlatformVersion = '1.8.2'
+	junitPlatformVersion = '1.9.0'
 	junitJupiterVersion = '5.8.2'
 	apiGuardianVersion = '1.1.2'
 	opentest4jVersion = '1.2.0'
