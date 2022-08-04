@@ -123,6 +123,19 @@ public interface Action<S> {
 		Arbitrary<Transformer<S>> transformer();
 	}
 
+	/**
+	 * Subclass if you want to implement an {@linkplain Action.Independent independent action} that simply transforms the given state.
+	 *
+	 * <p>
+	 *     If you rather want to declaratively specify an action  start with {@linkplain Action#just(Transformer)},
+	 *     {@linkplain Action#when(Predicate)} or {@linkplain Action#builder()}.
+	 * </p>
+	 *
+	 * <p>
+	 *     For actions whose state transformation depends on the state,
+	 *     you have to implement either {@linkplain Action.Dependent} or {@linkplain Action.Independent}.
+	 * </p>
+	 */
 	abstract class JustTransform<S> implements Action.Independent<S> {
 
 		@Override
@@ -133,13 +146,26 @@ public interface Action<S> {
 			));
 		}
 
-		abstract S transform(S state);
+		public abstract S transform(S state);
 
 		String description() {
 			return getClass().getSimpleName();
 		}
 	}
 
+	/**
+	 * Subclass if you want to implement an {@linkplain Action.Independent independent action} that simply mutates the given state.
+	 *
+	 * <p>
+	 *     If you rather want to declaratively specify an action start with {@linkplain Action#just(Transformer)},
+	 *     {@linkplain Action#when(Predicate)} or {@linkplain Action#builder()}.
+	 * </p>
+	 *
+	 * <p>
+	 *     For actions whose state transformation depends on the state,
+	 *     you have to implement either {@linkplain Action.Dependent} or {@linkplain Action.Independent}.
+	 * </p>
+	 */
 	abstract class JustMutate<S> implements Action.Independent<S> {
 
 		@Override

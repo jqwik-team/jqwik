@@ -188,6 +188,87 @@ class ActionChainArbitraryTests {
 	}
 
 	@Group
+	class ConvenienceSubtypes {
+
+		@Example
+		@Label("Action.JustTransform")
+		void justTransform(@ForAll Random random) {
+			Action.Independent<String> x0to4 = new Action.JustTransform<String>() {
+				@Override
+				public boolean precondition(String state) {
+					return state.length() < 5;
+				}
+
+				@Override
+				public String transform(String state) {
+					return state + "x";
+				}
+			};
+
+			Action.Independent<String> y5to9 = new Action.JustTransform<String>() {
+				@Override
+				public boolean precondition(String state) {
+					return state.length() >= 5;
+				}
+
+				@Override
+				public String transform(String state) {
+					return state + "y";
+				}
+			};
+			ActionChainArbitrary<String> chains =
+				ActionChain.startWith(() -> "")
+						   .addAction(x0to4)
+						   .addAction(y5to9)
+						   .withMaxTransformations(10);
+
+			ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
+
+			String result = chain.run();
+			assertThat(result).isEqualTo("xxxxxyyyyy");
+		}
+
+		@Example
+		@Label("Action.JustMutate")
+		void justMutate(@ForAll Random random) {
+			Action.Independent<List<String>> x0to4 = new Action.JustMutate<List<String>>() {
+				@Override
+				public boolean precondition(List<String> state) {
+					return state.size() < 5;
+				}
+
+				@Override
+				public void mutate(List<String> state) {
+					state.add("x");
+				}
+			};
+
+			Action.Independent<List<String>> y5to9 = new Action.JustMutate<List<String>>() {
+				@Override
+				public boolean precondition(List<String> state) {
+					return state.size() >= 5;
+				}
+
+				@Override
+				public void mutate(List<String> state) {
+					state.add("y");
+				}
+			};
+			ActionChainArbitrary<List<String>> chains =
+				ActionChain.<List<String>>startWith(ArrayList::new)
+						   .addAction(x0to4)
+						   .addAction(y5to9)
+						   .withMaxTransformations(10);
+
+			ActionChain<List<String>> chain = TestingSupport.generateFirst(chains, random);
+
+			List<String> result = chain.run();
+			assertThat(result).containsExactly("x", "x", "x", "x", "x", "y", "y", "y", "y", "y");
+		}
+
+	}
+
+	@Group
 	class Shrinking {
 
 		@Property

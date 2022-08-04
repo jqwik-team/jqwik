@@ -15,9 +15,13 @@ import static org.apiguardian.api.API.Status.*;
  * However, even simple actions can have preconditions.
  *
  * <p>
- *     For actions whose state transformation depends on the state,
- *     you have to provide implementations either {@linkplain Action.Dependent}
- *     or {@linkplain Action.Independent}.
+ * Alternatively you can subclass {@linkplain Action.JustTransform} or {@linkplain Action.JustMutate}.
+ * </p>
+ *
+ * <p>
+ * For actions whose state transformation depends on the state,
+ * you have to provide implementations of either {@linkplain Action.Dependent}
+ * or {@linkplain Action.Independent}.
  * </p>
  *
  * @param <S> Type of the object to transform through an action
