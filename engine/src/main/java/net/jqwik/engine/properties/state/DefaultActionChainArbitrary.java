@@ -47,7 +47,20 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 
 	private void checkActionIsConsistent(Action<T> action) {
 		if (!(action instanceof Action.Dependent) && !(action instanceof Action.Independent)) {
-			throw new IllegalArgumentException("Action must be of type Action.Dependent or Action.Independent");
+			String message = String.format(
+				"Action <%s> must implement exactly one of type Action.Dependent or Action.Independent," +
+					"but implements neither.",
+				action
+			);
+			throw new IllegalArgumentException(message);
+		}
+		if ((action instanceof Action.Dependent) && (action instanceof Action.Independent)) {
+			String message = String.format(
+				"Action <%s> must implement exactly one of type Action.Dependent or Action.Independent," +
+					"but implements both.",
+				action
+			);
+			throw new IllegalArgumentException(message);
 		}
 	}
 

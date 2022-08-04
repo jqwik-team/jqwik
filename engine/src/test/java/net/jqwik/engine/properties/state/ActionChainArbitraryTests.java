@@ -514,6 +514,16 @@ class ActionChainArbitraryTests {
 	}
 
 	@Example
+	void usingActionThatIsBothDependentAndIndependentFails() {
+		Action<String> neitherDependentNotIndependent = new DependentAndIndependentAction();
+
+		ActionChainArbitrary<String> actionChainArbitrary = ActionChain.startWith(() -> "");
+		Assertions.assertThatThrownBy(
+			() -> actionChainArbitrary.addAction(neitherDependentNotIndependent)
+		).isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Example
 	void usingWeightLessThan1Fails() {
 		Action.Independent<String> addA = Action.just("addA", s -> s + "A");
 
@@ -552,4 +562,15 @@ class ActionChainArbitraryTests {
 		}
 	}
 
+	static class DependentAndIndependentAction implements Action.Dependent<String>, Action.Independent<String> {
+		@Override
+		public Arbitrary<Transformer<String>> transformer(String state) {
+			return Arbitraries.just(s -> s);
+		}
+
+		@Override
+		public Arbitrary<Transformer<String>> transformer() {
+			return Arbitraries.just(s -> s);
+		}
+	}
 }
