@@ -143,14 +143,10 @@ class ActionChainArbitraryTests {
 
 	@Example
 	void preconditionsInSeparateActionsAreConsidered(@ForAll Random random) {
-		Action<String> x0to4 = Action.just(
-			s -> s.length() < 5,
-			s -> s + "x"
-		);
-		Action<String> y5to9 = Action.just(
-			s -> s.length() >= 5,
-			s -> s + "y"
-		);
+		Action<String> x0to4 = Action.<String>when(s1 -> s1.length() < 5)
+									 .just(s2 -> s2 + "x");
+		Action<String> y5to9 = Action.<String>when(s -> s.length() >= 5)
+									 .just(s1 -> s1 + "y");
 
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
@@ -166,15 +162,11 @@ class ActionChainArbitraryTests {
 
 	@Example
 	void usingEndOfChain(@ForAll Random random) {
-		Action.Independent<String> x0to4 = Action.just(
-			"addX",
-			s -> s.length() < 5,
-			s -> s + "x"
-		);
-		Action.Independent<String> end = Action.just(
-			s -> s.length() >= 5,
-			Transformer.endOfChain()
-		);
+		Action.Independent<String> x0to4 = Action.<String>when(s -> s.length() < 5)
+												 .describeAs("addX")
+												 .just(s -> s + "x");
+		Action.Independent<String> end = Action.<String>when(s -> s.length() >= 5)
+											   .just(Transformer.endOfChain());
 
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")

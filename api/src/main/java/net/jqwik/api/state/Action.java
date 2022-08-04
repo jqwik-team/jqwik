@@ -3,7 +3,6 @@ package net.jqwik.api.state;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
 
 import net.jqwik.api.*;
 
@@ -34,46 +33,31 @@ import static org.apiguardian.api.API.Status.*;
 public interface Action<S> {
 
 	/**
-	 * Create an independent {@linkplain Action} with a constant transformer
+	 * Create an unconditioned {@linkplain ActionBuilder}.
+	 */
+	static <T> ActionBuilder<T> builder() {
+		return new ActionBuilder<T>();
+	}
+
+	/**
+	 * Create an {@linkplain ActionBuilder} with a precondition.
+	 */
+	static <T> ActionBuilder<T> when(Predicate<T> precondition) {
+		return new ActionBuilder<T>().when(precondition);
+	}
+
+	/**
+	 * Convenience method to create an independent {@linkplain Action} with a constant transformer
 	 */
 	static <T> Action.Independent<T> just(Transformer<T> transformer) {
-		return just((String) null, transformer);
+		return Action.<T>builder().just(transformer);
 	}
 
 	/**
-	 * Create an independent {@linkplain Action} with a description and a constant transformer
+	 * Convenience method to create an independent {@linkplain Action} with a description and a constant transformer
 	 */
-	static <T> Action.Independent<T> just(@Nullable String description, Transformer<T> transformer) {
-		return () -> {
-			Transformer<T> withDescription = description == null ? transformer : Transformer.transform(description, transformer);
-			return Arbitraries.just(withDescription);
-		};
-	}
-
-	/**
-	 * Create an independent {@linkplain Action} with precondition and a constant transformer
-	 */
-	static <T> Action.Independent<T> just(Predicate<T> precondition, Transformer<T> transformer) {
-		return just(null, precondition, transformer);
-	}
-
-	/**
-	 * Create an independent {@linkplain Action} with description, precondition and a constant transformer
-	 */
-	static <T> Action.Independent<T> just(@Nullable String description, Predicate<T> precondition, Transformer<T> transformer) {
-		// Do not merge implementation with Action.just(description, transformer) since dedicated implementation of precondition() changes shrinking behaviour
-		return new Action.Independent<T>() {
-			@Override
-			public Arbitrary<Transformer<T>> transformer() {
-				Transformer<T> withDescription = description == null ? transformer : Transformer.transform(description, transformer);
-				return Arbitraries.just(withDescription);
-			}
-
-			@Override
-			public boolean precondition(T state) {
-				return precondition.test(state);
-			}
-		};
+	static <T> Action.Independent<T> just(String description, Transformer<T> transformer) {
+		return Action.<T>builder().describeAs(description).just(transformer);
 	}
 
 	/**
@@ -120,6 +104,9 @@ public interface Action<S> {
 	 * In addition to performing a state transformation the mutator function
 	 * can also check or assert post-conditions and invariants that should hold when doing the transformation.
 	 * </p>
+	 *
+	 * @see JustMutate
+	 * @see JustTransform
 	 */
 	@FunctionalInterface
 	interface Independent<S> extends Action<S> {
@@ -134,6 +121,40 @@ public interface Action<S> {
 		 * @return an arbitrary of type {@linkplain Transformer Transformer<S>}.
 		 */
 		Arbitrary<Transformer<S>> transformer();
+	}
+
+	abstract class JustTransform<S> implements Action.Independent<S> {
+
+		@Override
+		public Arbitrary<Transformer<S>> transformer() {
+			return Arbitraries.just(Transformer.transform(
+				description(),
+				this::transform
+			));
+		}
+
+		abstract S transform(S state);
+
+		String description() {
+			return getClass().getSimpleName();
+		}
+	}
+
+	abstract class JustMutate<S> implements Action.Independent<S> {
+
+		@Override
+		public Arbitrary<Transformer<S>> transformer() {
+			return Arbitraries.just(Transformer.mutate(
+				description(),
+				this::mutate
+			));
+		}
+
+		abstract public void mutate(S state);
+
+		public String description() {
+			return getClass().getSimpleName();
+		}
 	}
 
 }

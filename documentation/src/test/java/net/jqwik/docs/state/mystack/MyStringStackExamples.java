@@ -37,19 +37,16 @@ class MyStringStackExamples {
 	}
 
 	private Action<MyStringStack> pop() {
-		return Action.just(
-			"pop",
-			stack -> !stack.isEmpty(),
-			stack -> {
-				int sizeBefore = stack.size();
-				String topBefore = stack.top();
+		return Action.<MyStringStack>when(stack -> !stack.isEmpty())
+					 .describeAs("pop")
+					 .justMutate(stack -> {
+						 int sizeBefore = stack.size();
+						 String topBefore = stack.top();
 
-				String popped = stack.pop();
-				assertThat(popped).isEqualTo(topBefore);
-				assertThat(stack.size()).isEqualTo(sizeBefore - 1);
-				return stack;
-			}
-		);
+						 String popped = stack.pop();
+						 assertThat(popped).isEqualTo(topBefore);
+						 assertThat(stack.size()).isEqualTo(sizeBefore - 1);
+					 });
 	}
 
 	@Property
