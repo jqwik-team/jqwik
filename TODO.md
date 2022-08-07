@@ -18,9 +18,6 @@
 
 1.7.1
 
-    - Optimize memoization, e.g. through adding Arbitrary.generatorIsCacheable()
-      See discussion in https://github.com/jlink/jqwik/issues/339 and https://github.com/jlink/jqwik/issues/354
-
     - Kotlin: Convenience methods and extensions for chains and action chains
 
     - Introduce ModelChain. Should cover https://github.com/jlink/jqwik/issues/80.
