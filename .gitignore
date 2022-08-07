@@ -29,7 +29,3 @@ out/
 
 # Mac
 .DS_Store
-
-# Jekyll
-/docs/_site
-/docs/Gemfile.lock
