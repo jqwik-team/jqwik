@@ -1,7 +1,0 @@
-title: jqwik
-description: Property-Based Testing in Java
-remote_theme: pages-themes/slate@v0.2.0
-show_downloads: false
-plugins:
-  - jekyll-remote-theme
-  - jekyll-redirect-from

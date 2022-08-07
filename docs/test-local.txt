@@ -1,8 +1,0 @@
-Install Bundler:
-`gem install bundler`
-
-Install Jekyll using bundler:
-`bundle install`
-
-Build site locally:
-`bundle exec jekyll serve`
