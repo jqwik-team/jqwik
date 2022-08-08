@@ -11,6 +11,8 @@
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
+    - Possible bug: When shrinking is interrupted, are after try hooks correctly executed?
+
     - Check module-info.java files
 
     - Document
@@ -19,6 +21,9 @@
 1.7.1
 
     - Kotlin: Convenience methods and extensions for chains and action chains
+
+    - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
+      See Jupiter's TestInfo as an example.
 
     - Introduce ModelChain. Should cover https://github.com/jlink/jqwik/issues/80.
         - ModelChain can be generated before it's provided as parameter!
