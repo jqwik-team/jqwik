@@ -2,12 +2,6 @@
 1.7.0
 
     - Chains: Implement Fluent API for Chains and Action chains
-        - See https://github.com/jlink/jqwik/issues/134#issuecomment-1127478094:
-          Reimplement SequentialActionChain.transformations() without reinstantiating all shrinkables
-          - Collect all transformer descriptions for Chain.transformers() as they go.
-        - Action.builder() instead of Action factory methods?
-            - ActionChainArbitrary
-                - addAction(Function<Action.Builder, Action.Builder>)
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
@@ -25,10 +19,12 @@
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
       See Jupiter's TestInfo as an example.
 
-    - Introduce ModelChain. Should cover https://github.com/jlink/jqwik/issues/80.
-        - ModelChain can be generated before it's provided as parameter!
+    - Introduce ModelChain or other mechanism to simplify model-based comparison properties. 
+        - Should cover https://github.com/jlink/jqwik/issues/80.
+        - Maybe ModelChain can be fully generated before it's provided as parameter? This could enable repeatability of shrinked samples.
+        - See example in https://github.com/jlink/model-based-testing/tree/jqwik170/src/test/java/mbt/tecoc/withModelChain
 
-    - Compose stateful actions: https://github.com/jlink/jqwik/issues/300
+    - Compose stateful actions: https://github.com/jlink/jqwik/issues/300, if still useful
 
     - <T,S,U> SetArbitrary<E>.combineEach(Arbitrary<S>).as(BiFunction<T, E, U>): Arbitrary<Set<U>>
             - For all collection arbitraries
