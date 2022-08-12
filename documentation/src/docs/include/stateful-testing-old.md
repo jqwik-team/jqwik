@@ -1,5 +1,5 @@
-> _As of version 1.7.0 jqwik comes with a [new approach to stateful testing](#stateful-testing).
-  What is described in this chapter will probably be deprecated in one of the next minor versions._
+_**As of version 1.7.0 jqwik comes with a [new approach to stateful testing](#stateful-testing).
+What is described in this chapter will probably be deprecated in one of the next minor versions.**_
 
 Despite its bad reputation _state_ is an important concept in object-oriented languages like Java.
 We often have to deal with stateful objects or components whose state can be changed through methods.

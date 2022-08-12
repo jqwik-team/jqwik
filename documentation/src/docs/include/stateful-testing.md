@@ -1,7 +1,7 @@
-> _The approach described here has been freshly introduced in version 1.7.0.
-  It is still marked "experimental" but will probably be promoted to default in
-  one of the next minor versions of jqwik.
-  You can also read about [the old way of stateful testing](#stateful-testing-old)._
+_**The approach described here has been freshly introduced in version 1.7.0.
+It is still marked "experimental" but will probably be promoted to default in
+one of the next minor versions of jqwik.
+You can also read about [the old way of stateful testing](#stateful-testing-old-approach).**_
 
 Despite its bad reputation _state_ is an important concept in object-oriented languages like Java.
 We often have to deal with stateful objects or components whose state can be changed through methods.
