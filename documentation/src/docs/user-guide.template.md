@@ -87,6 +87,11 @@ ${new File("src/docs/include/contract-tests.md").text}
 ${new File("src/docs/include/stateful-testing.md").text}
 
 
+## Stateful Testing (Old Approach)
+
+${new File("src/docs/include/stateful-testing-old.md").text}
+
+
 ## Assumptions
 
 ${new File("src/docs/include/assumptions.md").text}
