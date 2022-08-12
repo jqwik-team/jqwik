@@ -19,7 +19,7 @@ title: jqwik User Guide - ${version}
 - [Using Arbitraries Directly](#using-arbitraries-directly)
 - [Contract Tests](#contract-tests)
 - [Stateful Testing](#stateful-testing)
-- [Stateful Testing (Old Approach)](#stateful-testing-old)
+- [Stateful Testing (Old Approach)](#stateful-testing-old-approach)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
 - [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
