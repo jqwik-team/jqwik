@@ -29,8 +29,6 @@
     - <T,S,U> SetArbitrary<E>.combineEach(Arbitrary<S>).as(BiFunction<T, E, U>): Arbitrary<Set<U>>
             - For all collection arbitraries
 
-    - Make `AfterFailureMode.SAMPLE_FIRST` the default
-
     - Introduce BOM
 
 1.7.x

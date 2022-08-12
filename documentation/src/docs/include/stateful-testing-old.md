@@ -1,7 +1,5 @@
-> _The approach described here has been freshly introduced in version 1.7.0.
-  It is still marked "experimental" but will probably be promoted to default in
-  one of the next minor versions of jqwik.
-  You can also read about [the old way of stateful testing](#stateful-testing-old)._
+> _As of version 1.7.0 jqwik comes with a [new approach to stateful testing](#stateful-testing).
+  What is described in this chapter will probably be deprecated in one of the next minor versions._
 
 Despite its bad reputation _state_ is an important concept in object-oriented languages like Java.
 We often have to deal with stateful objects or components whose state can be changed through methods.
@@ -10,10 +8,6 @@ Thinking in a more formal way we can look at those objects as _state machines_ a
 _actions_ that move the object from one state to another. Some actions have preconditions to constrain
 when they can be invoked and some objects have invariants that should never be violated regardless
 of the sequence of performed actions.
-
-_to be continued_
-
-<!--
 
 To make this abstract concept concrete, let's look at a
 [simple stack implementation](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/MyStringStack.java):
@@ -227,4 +221,3 @@ org.opentest4j.AssertionFailedError:
     final state: ["AAAAA", "AAAAA", "AAAAA", "AAAAA", "AAAAA"]
 ```
 
--->
