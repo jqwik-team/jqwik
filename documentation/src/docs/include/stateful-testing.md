@@ -5,18 +5,20 @@ You can also read about [the old way of stateful testing](#stateful-testing-old-
 
 Despite its bad reputation _state_ is an important concept in object-oriented languages like Java.
 We often have to deal with stateful objects or components whose state can be changed through methods.
+Applying the concept of properties to stateful objects or data is not a new idea.
+Jqwik provides the tools for you to explore and implement these ideas.
+Those tools are available in package [net.jqwik.api.state](/docs/${docsVersion}/javadoc/net/jqwik/api/state/package-summary.html).
 
-Thinking in a more formal way we can look at those objects as _state machines_ and the methods as
-_actions_ that move the object from one state to another. Some actions have preconditions to constrain
-when they can be invoked and some objects have invariants that should never be violated regardless
+### State Machines
+
+One, slightly formal, way to look at stateful objects are _state machines_.
+A state machine has an internal state and _actions_ that change the internal state.
+Some actions have preconditions to constrain when they can be invoked. 
+Also, state machines can have invariants that should never be violated regardless
 of the sequence of performed actions.
 
-_to be continued_
-
-<!--
-
 To make this abstract concept concrete, let's look at a
-[simple stack implementation](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/MyStringStack.java):
+[simple stack implementation](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/state/mystack/MyStringStack.java):
 
 ```java
 public class MyStringStack {
@@ -29,7 +31,40 @@ public class MyStringStack {
 }
 ```
 
-### Specify Actions
+### Specifying Actions
+
+Jqwik's [new `Action` type](/docs/${docsVersion}/javadoc/net/jqwik/api/state/Action.html)
+covers the idea that an action can be represented by "arbitrary" 
+[transformers](/docs/${docsVersion}/javadoc/net/jqwik/api/state/Transformer.html);
+arbitrary in the sense that in the context of property-based testing there's some variation to it,
+e.g. a push onto a string stack can have any `String` as parameter.
+And as mentioned above, actions can be restricted by preconditions.
+
+```java
+interface Action<S> {
+    default boolean precondition(S state) {
+        return true;
+    }
+
+    interface Independent<S> extends Action<S> {
+        Arbitrary<Transformer<S>> transformer();
+    }
+
+    interface Dependent<S> extends Action<S> {
+        Arbitrary<Transformer<S>> transformer(S state);
+    }
+}
+
+interface Transformer<S> extends Function<S, S> {}
+```
+
+What makes the abstraction a bit more complicated than desirable is the fact that 
+the range of possible transformers may or may not depend on the previous state.
+That's why there exist the two subtypes of `Action`: `Independent` and `Dependent`.
+
+_**TO BE CONTINUED...**_
+
+<!--
 
 We can see at least three _actions_ with their preconditions and expected state changes:
 
