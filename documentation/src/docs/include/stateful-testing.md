@@ -1,7 +1,9 @@
 _**The approach described here has been freshly introduced in version 1.7.0.
-It is still marked "experimental" but will probably be promoted to default in
+It is still marked "experimental" but will probably be promoted to "maintained" in
 one of the next minor versions of jqwik.
-You can also read about [the old way of stateful testing](#stateful-testing-old-approach).**_
+You can also read about [the old way of stateful testing](#stateful-testing-old-approach).
+Since both approaches have an interface called `Action`, 
+be careful to import the right one!**_
 
 Despite its bad reputation _state_ is an important concept in object-oriented languages like Java.
 We often have to deal with stateful objects or components whose state can be changed through methods.
@@ -41,6 +43,7 @@ e.g. a push onto a string stack can have any `String` as parameter.
 And as mentioned above, actions can be restricted by preconditions.
 
 ```java
+package net.jqwik.api.state;
 interface Action<S> {
     default boolean precondition(S state) {
         return true;
@@ -61,134 +64,133 @@ interface Transformer<S> extends Function<S, S> {}
 What makes the abstraction a bit more complicated than desirable is the fact that 
 the range of possible transformers may or may not depend on the previous state.
 That's why there exist the two subtypes of `Action`: `Independent` and `Dependent`.
+Both types of actions can have a precondition to state when they can be applied.
+Leaving the precondition out means that the action can be applied at any time.
 
-_**TO BE CONTINUED...**_
+Given that the precondition is fulfilled,
+- the transforming behaviour of an _independent_ action is defined by the `transformer()` method
+  and does not rely on the previous state.
+- the transforming behaviour of an _dependent_ action, however, 
+  is defined by the `transformer(S state)` method and can use the previous state
+  in order to constrain how a transformation should be done.
 
-<!--
+Both `transformer` methods return an `Arbitrary` of `Transformer` instances,
+which means that they describe a range of possible transformations; 
+jqwik will pick one of them at random as it does with any other `Arbitrary`.
+Mind that a transformer will not only invoke the transformation 
+but will often check the correct state changes and postcondition(s) as well.
 
-We can see at least three _actions_ with their preconditions and expected state changes:
+In our simple stack example at least three _actions_ can be identified:
 
-- [`Push`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PushAction.java):
-  Push a string onto the stack. The string should be on top afterwards and the size
-  should have increased by 1.
+- __Push__ a string onto the stack. 
+  The string should be on top afterwards and the size should have increased by 1.
 
   ```java
-  import net.jqwik.api.stateful.*;
-  import org.assertj.core.api.*;
-  
-  class PushAction implements Action<MyStringStack> {
-  
-  	private final String element;
-  
-  	PushAction(String element) {
-  		this.element = element;
-  	}
-  
-  	@Override
-  	public MyStringStack run(MyStringStack stack) {
-  		int sizeBefore = stack.size();
-  		stack.push(element);
-  		Assertions.assertThat(stack.isEmpty()).isFalse();
-  		Assertions.assertThat(stack.size()).isEqualTo(sizeBefore + 1);
-  		return stack;
-  	}
-  
-  	@Override
-  	public String toString() { return String.format("push(%s)", element); }
+  class PushAction implements Action.Independent<MyStringStack> {
+    @Override
+    public Arbitrary<Transformer<MyStringStack>> transformer() {
+      Arbitrary<String> pushElements = Arbitraries.strings().alpha().ofLength(5);
+      return pushElements.map(element -> Transformer.mutate(
+        String.format("push(%s)", element),
+        stack -> {
+          int sizeBefore = stack.size();
+          stack.push(element);
+          assertThat(stack.isEmpty()).isFalse();
+          assertThat(stack.size()).isEqualTo(sizeBefore + 1);
+        }
+      ));
+    }
   }
   ``` 
+  
+  In this case I've decided to directly implement the `Action.Independent` interface.
+  In order to facilitate the creation of transformers, the `Transformer` class comes 
+  with a few convenience methods; here `Transformer.mutate()` was a good fit.
 
-- [`Pop`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PopAction.java):
+- __Pop__ the last element from the stack.
   If (and only if) the stack is not empty, pop the element on top off the stack.
   The size of the stack should have decreased by 1.
 
   ```java
-  class PopAction implements Action<MyStringStack> {
-    
-        @Override
-        public boolean precondition(MyStringStack stack) {
-            return !stack.isEmpty();
-        }
-    
-        @Override
-        public MyStringStack run(MyStringStack stack) {
-            int sizeBefore = stack.size();
-            String topBefore = stack.top();
-    
-            String popped = stack.pop();
-            Assertions.assertThat(popped).isEqualTo(topBefore);
-            Assertions.assertThat(stack.size()).isEqualTo(sizeBefore - 1);
-            return stack;
-        }
-    
-        @Override
-        public String toString() { return "pop"; }
+  private Action<MyStringStack> pop() {
+    return Action.<MyStringStack>when(stack -> !stack.isEmpty())
+                 .describeAs("pop")
+                 .justMutate(stack -> {
+                   int sizeBefore = stack.size();
+                   String topBefore = stack.top();
+                   
+                   String popped = stack.pop();
+                   assertThat(popped).isEqualTo(topBefore);
+                   assertThat(stack.size()).isEqualTo(sizeBefore - 1);
+                 });
   }
-  ``` 
+  ```
+  
+  For _pop_ using an action builder through `Action.when(..)` seemed simpler 
+  than implementing the `Action.Independent` interface.
 
-- [`Clear`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/ClearAction.java):
-  Remove all elements from the stack which should be empty afterwards.
+- __Clear__ the stack, which should be empty afterwards.
 
   ```java
-  class ClearAction implements Action<MyStringStack> {
-
-        @Override
-        public MyStringStack run(MyStringStack stack) {
-            stack.clear();
-            Assertions.assertThat(stack.isEmpty()).isTrue();
-            return stack;
-        }
+  static class ClearAction extends Action.JustMutate<MyStringStack> {
+    @Override
+    public void mutate(MyStringStack stack) {
+    	stack.clear();
+    	assertThat(stack.isEmpty()).describedAs("stack is empty").isTrue();
+    }
     
-        @Override
-        public String toString() { return "clear"; }
+    @Override
+    public String description() {
+    	return "clear";
+    }
   }
   ``` 
 
-### Check Postconditions
+  Here you can see yet another implementation option for actions that have no variation in their
+  transforming behaviour: Just subclass `Action.JustTransform` or `Action.JustMutate`.
 
-The fundamental property that _jqwik_ should try to falsify is:
+There are different ways to implement actions. 
+Sometimes one is obviously simpler than the other.
+In other cases it's a matter of taste - e.g. about preferring functions over classes, 
+or the other way round.
 
-    For any valid sequence of actions all required state changes
-    (aka postconditions) should be fulfilled.
+### Formulating Stateful Properties
 
-We can formulate that quite easily as a
-[_jqwik_ property](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/MyStringStackProperties.java):
+Now that we have a set of actions, we can formulate the 
+_fundamental property of stateful systems_:
+
+> For any valid sequence of actions all required state changes
+> (aka postconditions) should be fulfilled.
+
+Let's translate that into jqwik's language:
 
 ```java
-class MyStringStackProperties {
+@Property
+void checkMyStack(@ForAll("myStackActions") ActionChain<MyStringStack> chain) {
+  chain.run();
+}
 
-	@Property
-	void checkMyStack(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
-		actions.run(new MyStringStack());
-	}
-
-	@Provide
-	Arbitrary<ActionSequence<MyStringStack>> sequences() {
-		return Arbitraries.sequences(Arbitraries.oneOf(push(), pop(), clear()));
-	}
-
-	private Arbitrary<Action<MyStringStack>> push() {
-		return Arbitraries.strings().alpha().ofLength(5).map(PushAction::new);
-	}
-
-	private Arbitrary<Action<MyStringStack>> clear() {
-		return Arbitraries.just(new ClearAction());
-	}
-
-	private Arbitrary<Action<MyStringStack>> pop() {
-		return Arbitraries.just(new PopAction());
-	}
+@Provide
+Arbitrary<ActionChain<MyStringStack>> myStackActions() {
+  return ActionChain.startWith(MyStringStack::new)
+                    .addAction(new PushAction())
+                    .addAction(pop())
+                    .addAction(new ClearAction());
 }
 ```
 
 The interesting API elements are
-- [`ActionSequence`](/docs/${docsVersion}/javadoc/net/jqwik/api/stateful/ActionSequence.html):
-  A generic collection type especially crafted for holding and shrinking of a list of actions.
-  As a convenience it will apply the actions to a state-based object when you call `run(state)`.
+- [`ActionChain`](/docs/${docsVersion}/javadoc/net/jqwik/api/state/ActionChain.html):
+  This interface provides the entry point for running a stateful object through
+  a sequence of actions through its `run()` method, which returns the final state
+  as a convenience.
 
-- [`Arbitraries.sequences()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#sequences(net.jqwik.api.Arbitrary)):
-  This method will create the arbitrary for generating an `ActionSequence` given the
-  arbitrary for generating actions.
+- [`Action.Chain.startWith()`](/docs/${docsVersion}/javadoc/net/jqwik/api/state/ActionChain.html#startWith(java.util.function.Supplier)):
+  This method will create an arbitrary for generating an `ActionChain`.
+  This [`ActionChainArbitrary`](/docs/${docsVersion}/javadoc/net/jqwik/api/state/ActionChainArbitrary.html)
+  has methods to add potential actions and to further configure chain generation.
+
+### Running Stateful Properties
 
 To give _jqwik_ something to falsify, we broke the implementation of `clear()` so that
 it won't clear everything if there are more than two elements on the stack:
@@ -207,14 +209,25 @@ public void clear() {
 Running the property should now produce a result similar to:
 
 ```
-org.opentest4j.AssertionFailedError: 
-  Run failed after following actions:
-      push(AAAAA)
-      push(AAAAA)
-      push(AAAAA)
-      clear
-    final state: ["AAAAA", "AAAAA"]
+MyStringStackExamples:checkMyStack = 
+  org.opentest4j.AssertionFailedError:
+    Run failed after the following actions: [
+        push(AAAAA)
+        push(AAAAA)
+        push(AAAAA)
+        clear  
+    ]
+    final state: [AAAAA, AAAAA]
+    [stack is empty] 
+    Expecting value to be true but was false
 ```
+
+The error message shows the sequence of actions that led to the failing postcondition.
+Moreover, you can notice that the sequence of actions has been shrunk to the minimal failing sequence.
+
+_**TO BE CONTINUED...**_
+
+<!--
 
 ### Number of actions
 

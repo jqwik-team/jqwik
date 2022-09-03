@@ -1,7 +1,6 @@
 package net.jqwik.docs.state.mystack;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.state.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -16,24 +15,26 @@ class MyStringStackExamples {
 	@Provide
 	Arbitrary<ActionChain<MyStringStack>> myStackActions() {
 		return ActionChain.startWith(MyStringStack::new)
-						  .addAction(push())
+						  .addAction(new PushAction())
 						  .addAction(pop())
-						  .addAction(clear());
+						  .addAction(new ClearAction());
 	}
 
-	private Action<MyStringStack> push() {
-		return new PushAction();
-	}
+	static class PushAction implements Action.Independent<MyStringStack> {
 
-	private Action<MyStringStack> clear() {
-		return Action.just(
-			"clear",
-			stack -> {
-				stack.clear();
-				assertThat(stack.isEmpty()).describedAs("is stack empty").isTrue();
-				return stack;
-			}
-		);
+		@Override
+		public Arbitrary<Transformer<MyStringStack>> transformer() {
+			Arbitrary<String> pushElements = Arbitraries.strings().alpha().ofLength(5);
+			return pushElements.map(element -> Transformer.mutate(
+				String.format("push(%s)", element),
+				stack -> {
+					int sizeBefore = stack.size();
+					stack.push(element);
+					assertThat(stack.isEmpty()).isFalse();
+					assertThat(stack.size()).isEqualTo(sizeBefore + 1);
+				}
+			));
+		}
 	}
 
 	private Action<MyStringStack> pop() {
@@ -49,28 +50,24 @@ class MyStringStackExamples {
 					 });
 	}
 
+	static class ClearAction extends Action.JustMutate<MyStringStack> {
+		@Override
+		public void mutate(MyStringStack stack) {
+			stack.clear();
+			assertThat(stack.isEmpty()).describedAs("stack is empty").isTrue();
+		}
+
+		@Override
+		public String description() {
+			return "clear";
+		}
+	}
+
 	@Property
 	void checkMyStackWithInvariant(@ForAll("myStackActions") ActionChain<MyStringStack> chain) {
 		chain
 			.withInvariant("greater", stack -> assertThat(stack.size()).isGreaterThanOrEqualTo(0))
 			.withInvariant("less", stack -> assertThat(stack.size()).isLessThan(5)) // Does not hold!
 			.run();
-	}
-
-	static class PushAction implements Action.Independent<MyStringStack> {
-
-		@Override
-		public Arbitrary<Transformer<MyStringStack>> transformer() {
-			StringArbitrary pushElements = Arbitraries.strings().alpha().ofLength(5);
-			return pushElements.map(element -> Transformer.mutate(
-				String.format("push(%s)", element),
-				stack -> {
-					int sizeBefore = stack.size();
-					stack.push(element);
-					assertThat(stack.isEmpty()).isFalse();
-					assertThat(stack.size()).isEqualTo(sizeBefore + 1);
-				}
-			));
-		}
 	}
 }
