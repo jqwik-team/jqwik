@@ -5,7 +5,9 @@
         - User Guide
             Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
 
-    - Possible bug: When shrinking is interrupted, are after try hooks correctly executed?
+    - Possible bug: When shrinking is interrupted, are after-try hooks correctly executed?
+
+    - Add some clarifications to edge cases in the user guide. See https://github.com/jlink/jqwik/issues/384
 
     - Check module-info.java files
 
