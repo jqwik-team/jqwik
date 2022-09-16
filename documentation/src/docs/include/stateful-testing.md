@@ -225,28 +225,44 @@ MyStringStackExamples:checkMyStack =
 The error message shows the sequence of actions that led to the failing postcondition.
 Moreover, you can notice that the sequence of actions has been shrunk to the minimal failing sequence.
 
-_**TO BE CONTINUED...**_
-
-<!--
-
 ### Number of actions
 
 _jqwik_ will vary the number of generated actions according to the number
 of `tries` of your property. For the default of 1000 tries a sequence will
-have 32 actions. If need be you can specify the number of actions
-to generate using either the fluent interface or the `@Size` annotation:
+have 32 actions. If need be you can specify the maximum number of actions
+explicitly using `withMaxTransformations(int)`:
 
 ```java
-@Property
-// check stack with sequences of 7 actions:
-void checkMyStack(@ForAll("sequences") @Size(7) ActionSequence<MyStringStack> actions) {
-    actions.run(new MyStringStack());
+@Provide
+Arbitrary<ActionChain<MyStringStack>> myStackActions() {
+    return ActionChain.startWith(MyStringStack::new)
+                      .addAction(new PushAction())
+                      .addAction(pop())
+                      .addAction(new ClearAction())
+                      .withMaxTransformations(10);
 }
 ```
 
 The minimum number of generated actions in a sequence is 1 since checking
 an empty sequence does not make sense.
 
+There's also the possibility to use a potentially `infinite` chain,
+which then requires to explicitly add an action with an `endOfChain()` transformer:
+
+```java
+@Provide
+Arbitrary<ActionChain<MyStringStack>> myStackActions() {
+    return ActionChain.startWith(MyStringStack::new)
+                      .addAction(new PushAction())
+                      .addAction(pop())
+                      .addAction(new ClearAction())
+                      .addAction(Action.just(Transformer.endOfChain()))
+                      .infinite();
+}
+
+```
+
+<!--
 ### Check Invariants
 
 We can also add invariants to our sequence checking property:
