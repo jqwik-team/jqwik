@@ -276,3 +276,15 @@ org.opentest4j.AssertionFailedError:
 ```
 
 -->
+
+## Rerunning Falsified Action Chains
+
+As described in the [chapter about rerunning falsified properties](#rerunning-falsified-properties)
+_jqwik_ has different options for rerunning falsified properties.
+
+Due to the fact that action chains are generated one action after the other,
+recreating the exact same sample of a chain is usually not possible.
+That's why `AfterFailureMode.SAMPLE_ONLY` and `AfterFailureMode.SAMPLE_FIRST`
+will just start with the same random seed, which leads to the same sequence of chains,
+but not start with the last failing sample chain.
+A warning will be logged in such cases.

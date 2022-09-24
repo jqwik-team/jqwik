@@ -1,9 +1,8 @@
 
 1.7.0
-
-    - Chains: Implement Fluent API for Chains and Action chains
-        - User Guide
-            Clarify that Chain and ActionChain cannot be reproduced in SAMPLE_FIRST/ONLY mode 
+    - Finish stateful-testing.md
+        - Number of actions
+        - Invariants
 
     - Possible bug: When shrinking is interrupted, are after-try hooks correctly executed?
 
@@ -11,8 +10,10 @@
 
     - Check module-info.java files
 
-    - Document
+    - Release
         - Release notes
+        - Generate documentation
+        - Advance version 
 
 1.7.1
 
