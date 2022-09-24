@@ -262,18 +262,17 @@ Arbitrary<ActionChain<MyStringStack>> myStackActions() {
 
 ```
 
-<!--
 ### Check Invariants
 
 We can also add invariants to our sequence checking property:
 
 ```java
 @Property
-void checkMyStackWithInvariant(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
-    actions
-        .withInvariant(stack -> Assertions.assertThat(stack.size()).isGreaterThanOrEqualTo(0))
-        .withInvariant(stack -> Assertions.assertThat(stack.size()).isLessThan(5))
-        .run(new MyStringStack());
+void checkMyStackWithInvariant(@ForAll("myStackActions") ActionChain<MyStringStack> chain) {
+    chain
+      .withInvariant("greater", stack -> assertThat(stack.size()).isGreaterThanOrEqualTo(0))
+      .withInvariant("less", stack -> assertThat(stack.size()).isLessThan(5)) // Does not hold!
+      .run();
 }
 ```
 
@@ -281,17 +280,20 @@ If we first fix the bug in `MyStringStack.clear()` our property should eventuall
 with the following result:
 
 ```
-org.opentest4j.AssertionFailedError: 
-  Run failed after following actions:
+net.jqwik.engine.properties.state.InvariantFailedError:
+  Invariant 'less' failed after the following actions: [
       push(AAAAA)
       push(AAAAA)
       push(AAAAA)
       push(AAAAA)
-      push(AAAAA)
-    final state: ["AAAAA", "AAAAA", "AAAAA", "AAAAA", "AAAAA"]
+      push(AAAAA)  
+  ]
+  final state: [AAAAA, AAAAA, AAAAA, AAAAA, AAAAA]
+  Expecting actual:
+    5
+  to be less than:
+    5 
 ```
-
--->
 
 ## Rerunning Falsified Action Chains
 

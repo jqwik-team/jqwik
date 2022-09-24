@@ -1,7 +1,5 @@
 
 1.7.0
-    - Finish stateful-testing.md
-        - Invariants
 
     - Possible bug: When shrinking is interrupted, are after-try hooks correctly executed?
 
