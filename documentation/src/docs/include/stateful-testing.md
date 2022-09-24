@@ -185,7 +185,7 @@ The interesting API elements are
   a sequence of actions through its `run()` method, which returns the final state
   as a convenience.
 
-- [`Action.Chain.startWith()`](/docs/${docsVersion}/javadoc/net/jqwik/api/state/ActionChain.html#startWith(java.util.function.Supplier)):
+- [`ActionChain.startWith()`](/docs/${docsVersion}/javadoc/net/jqwik/api/state/ActionChain.html#startWith(java.util.function.Supplier)):
   This method will create an arbitrary for generating an `ActionChain`.
   This [`ActionChainArbitrary`](/docs/${docsVersion}/javadoc/net/jqwik/api/state/ActionChainArbitrary.html)
   has methods to add potential actions and to further configure chain generation.
@@ -295,7 +295,7 @@ net.jqwik.engine.properties.state.InvariantFailedError:
     5 
 ```
 
-## Rerunning Falsified Action Chains
+### Rerunning Falsified Action Chains
 
 As described in the [chapter about rerunning falsified properties](#rerunning-falsified-properties)
 _jqwik_ has different options for rerunning falsified properties.
