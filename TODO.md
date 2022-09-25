@@ -1,8 +1,6 @@
 
 1.7.0
 
-    - Possible bug: When shrinking is interrupted, are after-try hooks correctly executed?
-
     - Check module-info.java files
 
     - Release
