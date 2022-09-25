@@ -21,7 +21,7 @@ void printEdgeCases() {
 and you will see this output:
 
 ```
-EdgeCases[-2, -1, 0, 2, 1, -2147483648, 2147483647]
+EdgeCases[-2, -1, 0, 2, 1, -2147483648, 2147483647, 2147483647, 2147483646]
 EdgeCases["a", "z", ""]
 EdgeCases[[], [0.0], [1.0], [-1.0], [0.01], [-0.01], [-3.4028235E38], [3.4028235E38]]
 ```
@@ -99,17 +99,51 @@ This is done through [`Arbitrary.edgeCases(config)`](/docs/${docsVersion}/javado
 Here's an example that shows how to add a few "special" strings to a generator:
 
 ```java
-@Property
-void stringsWithSpecialEdgeCases(@ForAll("withSpecials") String aString) {
+@Property(edgeCases = EdgeCasesMode.FIRST)
+void stringsWithSpecialEdgeCases(@ForAll("withSpecialEdgeCases") String aString) {
   System.out.println(aString);
 }
 
 @Provide
-Arbitrary<String> withSpecials() {
+Arbitrary<String> withSpecialEdgeCases() {
   return Arbitraries.strings()
           .alpha().ofMinLength(1).ofMaxLength(10)
           .edgeCases(stringConfig -> {
             stringConfig.add("hello", "hallo", "hi");
           });
+}
+```
+
+The output should start with:
+```
+A
+Z
+a
+z
+hello
+hallo
+hi
+```
+followed by a lot of random strings.
+
+Mind that the additional edge cases - in this case `"hello"`, `"hallo"` and `"hi"` - 
+are within the range of the underlying arbitrary.
+That means that they could also be generated randomly, 
+albeit with a much lower probability.
+
+_**Caveat**_: Values that are outside the range of the underlying arbitrary 
+_are not allowed_ as edge cases. 
+For implementation reasons, arbitraries cannot warn you about forbidden values,
+and the resulting behaviour is undefined.
+
+If you want to add values that from outside the range of the underlying arbitrary,
+use  `Arbitraries.oneOf()` - and maybe combine it with explicit edge case configuration:
+
+```java
+@Provide
+Arbitrary<String> withSpecialEdgeCases() {
+    StringArbitrary strings = Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(10);
+    return Arbitraries.oneOf(strings, Arbitraries.of("", "0", "1"))
+                      .edgeCases(config -> config.add("", "0", "1")); // <-- To really raise the probability of these edge cases
 }
 ```
