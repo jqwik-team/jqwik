@@ -136,7 +136,7 @@ _are not allowed_ as edge cases.
 For implementation reasons, arbitraries cannot warn you about forbidden values,
 and the resulting behaviour is undefined.
 
-If you want to add values that from outside the range of the underlying arbitrary,
+If you want to add values from outside the range of the underlying arbitrary,
 use  `Arbitraries.oneOf()` - and maybe combine it with explicit edge case configuration:
 
 ```java
