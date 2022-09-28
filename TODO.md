@@ -1,8 +1,6 @@
 
 1.7.0
 
-    - Check module-info.java files
-
     - Release
         - Release notes
         - Generate documentation

@@ -11,6 +11,7 @@ module net.jqwik.api {
 	exports net.jqwik.api.providers;
 	exports net.jqwik.api.sessions;
 	exports net.jqwik.api.stateful;
+	exports net.jqwik.api.state;
 	exports net.jqwik.api.statistics;
 	exports net.jqwik.api.support;
 
@@ -37,4 +38,6 @@ module net.jqwik.api {
 	uses net.jqwik.api.providers.TypeUsage.TypeUsageFacade;
 	uses net.jqwik.api.sessions.JqwikSession.JqwikSessionFacade;
 	uses net.jqwik.api.statistics.Statistics.StatisticsFacade;
+	uses net.jqwik.api.state.Chain.ChainFacade;
+	uses net.jqwik.api.state.ActionChain.ActionChainFacade;
 }

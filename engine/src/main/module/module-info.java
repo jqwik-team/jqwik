@@ -31,6 +31,8 @@ module net.jqwik.engine {
 	provides net.jqwik.api.providers.TypeUsage.TypeUsageFacade with net.jqwik.engine.facades.TypeUsageFacadeImpl;
 	provides net.jqwik.api.sessions.JqwikSession.JqwikSessionFacade with net.jqwik.engine.facades.JqwikSessionFacadeImpl;
 	provides net.jqwik.api.statistics.Statistics.StatisticsFacade with net.jqwik.engine.facades.StatisticsFacadeImpl;
+	provides net.jqwik.api.state.Chain.ChainFacade with net.jqwik.engine.facades.ChainFacadeImpl;
+	provides net.jqwik.api.state.ActionChain.ActionChainFacade with net.jqwik.engine.facades.ActionChainFacadeImple;
 
 	provides net.jqwik.api.providers.ArbitraryProvider with
 		net.jqwik.engine.providers.BigDecimalArbitraryProvider,
