@@ -1,10 +1,4 @@
 
-1.7.0
-
-    - Release
-        - Advance version
-        - Update modular tests
-
 1.7.1
 
     - Kotlin: Convenience methods and extensions for chains and action chains
