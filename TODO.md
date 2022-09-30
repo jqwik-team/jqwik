@@ -2,9 +2,8 @@
 1.7.0
 
     - Release
-        - Release notes
-        - Generate documentation
-        - Advance version 
+        - Advance version
+        - Update modular tests
 
 1.7.1
 
