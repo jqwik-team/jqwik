@@ -4,8 +4,6 @@
     - Combinators.combine(..).filter(..)
       See https://github.com/jlink/jqwik/issues/329.
 
-    - Kotlin: Upgrade to latest Kotlin 1.7.x
-
     - Support configurable character for Histograms
       See https://github.com/jlink/jqwik/issues/376
 
