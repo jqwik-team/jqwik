@@ -2,7 +2,7 @@ package net.jqwik.api;
 
 import java.util.ArrayList;
 import java.util.*;
-import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.lifecycle.*;
@@ -42,7 +42,7 @@ class CombinatorsTests {
 	@Example
 	void fiveArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine5 = Combinators.combine(one(), two(), three(), four(), five()) //
-				.as((a, b, c, d, e) -> a + b + c + d + e);
+												 .as((a, b, c, d, e) -> a + b + c + d + e);
 		Shrinkable<Integer> value = generate(combine5);
 		assertThat(value.value()).isEqualTo(15);
 	}
@@ -50,7 +50,7 @@ class CombinatorsTests {
 	@Example
 	void sixArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine6 = Combinators.combine(one(), two(), three(), four(), five(), six()) //
-				.as((a, b, c, d, e, f) -> a + b + c + d + e + f);
+												 .as((a, b, c, d, e, f) -> a + b + c + d + e + f);
 		Shrinkable<Integer> value = generate(combine6);
 		assertThat(value.value()).isEqualTo(21);
 	}
@@ -58,7 +58,7 @@ class CombinatorsTests {
 	@Example
 	void sevenArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine7 = Combinators.combine(one(), two(), three(), four(), five(), six(), seven()) //
-				.as((a, b, c, d, e, f, g) -> a + b + c + d + e + f + g);
+												 .as((a, b, c, d, e, f, g) -> a + b + c + d + e + f + g);
 		Shrinkable<Integer> value = generate(combine7);
 		assertThat(value.value()).isEqualTo(28);
 	}
@@ -66,7 +66,7 @@ class CombinatorsTests {
 	@Example
 	void eightArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine8 = Combinators.combine(one(), two(), three(), four(), five(), six(), seven(), eight()) //
-				.as((a, b, c, d, e, f, g, h) -> a + b + c + d + e + f + g + h);
+												 .as((a, b, c, d, e, f, g, h) -> a + b + c + d + e + f + g + h);
 		Shrinkable<Integer> value = generate(combine8);
 		assertThat(value.value()).isEqualTo(36);
 	}
@@ -81,6 +81,46 @@ class CombinatorsTests {
 	}
 
 	@Group
+	@Label("combine(..).filter(..)")
+	class Filtering {
+
+		Arbitrary<Integer> oneToThree() {
+			return Arbitraries.integers().between(1, 3);
+		}
+
+		@Example
+		void twoArbitraries(@ForAll Random random) {
+			Arbitrary<Tuple.Tuple2<Integer, Integer>> combine2 =
+				Combinators.combine(oneToThree(), oneToThree())
+						   .filter((a, b) -> !a.equals(b))
+						   .as(Tuple::of);
+
+			assertAllGenerated(combine2.generator(1000), random, tuple -> {
+				assertThat(tuple.get1())
+					.describedAs("combination %s", tuple)
+					.isNotEqualTo(tuple.get2());
+			});
+		}
+
+		@Example
+		void doubleFilters(@ForAll Random random) {
+			Arbitrary<Tuple.Tuple2<Integer, Integer>> combine2 =
+				Combinators.combine(oneToThree(), oneToThree())
+						   .filter((a, b) -> a + b != 2)
+						   .filter((a, b) -> a + b != 6)
+						   .as(Tuple::of);
+
+			assertAllGenerated(combine2.generator(1000), random, tuple -> {
+				assertThat(tuple.get1() + tuple.get2())
+					.isNotEqualTo(2);
+				assertThat(tuple.get1() + tuple.get2())
+					.isNotEqualTo(6);
+			});
+		}
+
+	}
+
+	@Group
 	class GenerationTests implements GenericGenerationProperties {
 		@Override
 		public Arbitrary<Arbitrary<?>> arbitraries() {
@@ -89,6 +129,7 @@ class CombinatorsTests {
 			Arbitrary<Integer> plus = Combinators.combine(a1, a2).as((i1, i2) -> i1 + i2);
 			return Arbitraries.of(plus);
 		}
+
 	}
 
 	@Group
@@ -108,8 +149,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
 			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2)
-				.as((i1, i2) -> i1 + i2);
+										  .combine(a1, a2)
+										  .as((i1, i2) -> i1 + i2);
 
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases))
@@ -123,8 +164,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
 			Arbitrary<Integer> a2 = Arbitraries.of(10, 20).withoutEdgeCases();
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2)
-				.as((i1, i2) -> i1 + i2);
+										  .combine(a1, a2)
+										  .as((i1, i2) -> i1 + i2);
 
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases)).isEmpty();
@@ -135,8 +176,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a1 = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Integer> a2 = Arbitraries.integers().between(-100, 100);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2)
-				.as((i1, i2) -> i1 + i2);
+										  .combine(a1, a2)
+										  .as((i1, i2) -> i1 + i2);
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 
 			Shrinkable<Integer> firstEdgeCase = edgeCases.iterator().next();
@@ -152,8 +193,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
 			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3)
-				.as((i1, i2, i3) -> i1 + i2 + i3);
+										  .combine(a1, a2, a3)
+										  .as((i1, i2, i3) -> i1 + i2 + i3);
 
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases))
@@ -169,8 +210,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
 			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4)
-				.as((i1, i2, i3, i4) -> i1 + i2 + i3 + i4);
+										  .combine(a1, a2, a3, a4)
+										  .as((i1, i2, i3, i4) -> i1 + i2 + i3 + i4);
 
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases))
@@ -187,8 +228,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
 			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5)
-				.as((i1, i2, i3, i4, i5) -> i1 + i2 + i3 + i4 + i5);
+										  .combine(a1, a2, a3, a4, a5)
+										  .as((i1, i2, i3, i4, i5) -> i1 + i2 + i3 + i4 + i5);
 
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases))
@@ -206,8 +247,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
 			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5, a6)
-				.as((i1, i2, i3, i4, i5, i6) -> i1 + i2 + i3 + i4 + i5 + i6);
+										  .combine(a1, a2, a3, a4, a5, a6)
+										  .as((i1, i2, i3, i4, i5, i6) -> i1 + i2 + i3 + i4 + i5 + i6);
 
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases))
@@ -226,8 +267,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
 			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5, a6, a7)
-				.as((i1, i2, i3, i4, i5, i6, i7) -> i1 + i2 + i3 + i4 + i5 + i6 + i7);
+										  .combine(a1, a2, a3, a4, a5, a6, a7)
+										  .as((i1, i2, i3, i4, i5, i6, i7) -> i1 + i2 + i3 + i4 + i5 + i6 + i7);
 
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases))
@@ -247,8 +288,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
 			Arbitrary<Integer> a8 = Arbitraries.of(10000000, 20000000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5, a6, a7, a8)
-				.as((i1, i2, i3, i4, i5, i6, i7, i8) -> i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8);
+										  .combine(a1, a2, a3, a4, a5, a6, a7, a8)
+										  .as((i1, i2, i3, i4, i5, i6, i7, i8) -> i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8);
 
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases))
@@ -263,8 +304,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
 			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
 			Arbitrary<Integer> plus = Combinators
-				.combine(asList(a1, a2, a3))
-				.as(params -> params.stream().mapToInt(i -> i).sum());
+										  .combine(asList(a1, a2, a3))
+										  .as(params -> params.stream().mapToInt(i -> i).sum());
 
 			EdgeCases<Integer> edgeCases = plus.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases))
@@ -298,11 +339,11 @@ class CombinatorsTests {
 			Arbitrary<StringBuilder> stringBuilders = Arbitraries.create(StringBuilder::new);
 			Arbitrary<String> strings = Arbitraries.of("a", "b", "c");
 			Arbitrary<String> append = Combinators
-				.combine(stringBuilders, strings)
-				.as((b, s) -> {
-					b.append(s);
-					return b.toString();
-				});
+										   .combine(stringBuilders, strings)
+										   .as((b, s) -> {
+											   b.append(s);
+											   return b.toString();
+										   });
 
 			assertThat(append.exhaustive()).isPresent();
 
@@ -316,8 +357,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a1020 = Arbitraries.of(10, 20);
 			Arbitrary<Integer> a12 = Arbitraries.of(1, 2);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1020, a12)
-				.as((i1, i2) -> i1 + i2);
+										  .combine(a1020, a12)
+										  .as((i1, i2) -> i1 + i2);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -332,8 +373,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a1020 = Arbitraries.of(10, 20);
 			Arbitrary<Integer> a12 = Arbitraries.of(1, 2);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a100200, a1020, a12)
-				.as((i1, i2, i3) -> i1 + i2 + i3);
+										  .combine(a100200, a1020, a12)
+										  .as((i1, i2, i3) -> i1 + i2 + i3);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -349,8 +390,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
 			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4)
-				.as((i1, i2, i3, i4) -> i1 + i2 + i3 + i4);
+										  .combine(a1, a2, a3, a4)
+										  .as((i1, i2, i3, i4) -> i1 + i2 + i3 + i4);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -368,8 +409,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
 			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5)
-				.as((i1, i2, i3, i4, i5) -> i1 + i2 + i3 + i4 + i5);
+										  .combine(a1, a2, a3, a4, a5)
+										  .as((i1, i2, i3, i4, i5) -> i1 + i2 + i3 + i4 + i5);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -388,8 +429,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
 			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5, a6)
-				.as((i1, i2, i3, i4, i5, i6) -> i1 + i2 + i3 + i4 + i5 + i6);
+										  .combine(a1, a2, a3, a4, a5, a6)
+										  .as((i1, i2, i3, i4, i5, i6) -> i1 + i2 + i3 + i4 + i5 + i6);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -409,8 +450,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
 			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5, a6, a7)
-				.as((i1, i2, i3, i4, i5, i6, i7) -> i1 + i2 + i3 + i4 + i5 + i6 + i7);
+										  .combine(a1, a2, a3, a4, a5, a6, a7)
+										  .as((i1, i2, i3, i4, i5, i6, i7) -> i1 + i2 + i3 + i4 + i5 + i6 + i7);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -431,8 +472,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
 			Arbitrary<Integer> a8 = Arbitraries.of(10000000, 20000000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5, a6, a7, a8)
-				.as((i1, i2, i3, i4, i5, i6, i7, i8) -> i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8);
+										  .combine(a1, a2, a3, a4, a5, a6, a7, a8)
+										  .as((i1, i2, i3, i4, i5, i6, i7, i8) -> i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -448,8 +489,8 @@ class CombinatorsTests {
 			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
 			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
 			Arbitrary<Integer> plus = Combinators
-				.combine(asList(a1, a2, a3))
-				.as(params -> params.stream().mapToInt(i -> i).sum());
+										  .combine(asList(a1, a2, a3))
+										  .as(params -> params.stream().mapToInt(i -> i).sum());
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -458,7 +499,6 @@ class CombinatorsTests {
 			assertThat(generator).containsOnly(111, 112, 113, 121, 122, 123, 211, 212, 213, 221, 222, 223);
 		}
 	}
-
 
 	private Shrinkable<Integer> generate(Arbitrary<Integer> integerArbitrary) {
 		return integerArbitrary.generator(1, true).next(random);

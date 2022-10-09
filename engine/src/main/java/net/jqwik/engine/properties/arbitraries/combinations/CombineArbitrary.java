@@ -1,4 +1,4 @@
-package net.jqwik.engine.properties.arbitraries;
+package net.jqwik.engine.properties.arbitraries.combinations;
 
 import java.util.*;
 import java.util.function.*;
@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.support.*;
+import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
@@ -15,7 +16,7 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 	private final List<Arbitrary<Object>> arbitraries;
 
 	@SuppressWarnings("unchecked")
-	public CombineArbitrary(Function<List<Object>, R> combinator, Arbitrary<?>[] arbitraries) {
+	public CombineArbitrary(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries) {
 		this.combinator = combinator;
 		this.arbitraries = Arrays.asList((Arbitrary<Object>[]) arbitraries);
 	}

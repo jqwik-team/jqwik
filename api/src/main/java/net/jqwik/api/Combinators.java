@@ -19,6 +19,8 @@ public class Combinators {
 			implementation = FacadeLoader.load(CombinatorsFacade.class);
 		}
 
+		public abstract <T1, T2> Combinator2<T1, T2> combine2(Arbitrary<T1> a1, Arbitrary<T2> a2);
+
 		public abstract <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries);
 	}
 
@@ -31,7 +33,7 @@ public class Combinators {
 	 * @return Combinator2 instance which can be evaluated using {@linkplain Combinator2#as}
 	 */
 	public static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
-		return new Combinator2<>(a1, a2);
+		return CombinatorsFacade.implementation.combine2(a1, a2);
 	}
 
 	/**
@@ -113,12 +115,6 @@ public class Combinators {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T1, T2, R> Function<List<Object>, R> combineFunction(F2<T1, T2, R> combinator2) {
-		return params -> combinator2
-							 .apply((T1) params.get(0), (T2) params.get(1));
-	}
-
-	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, R> Function<List<Object>, R> combineFunction(F3<T1, T2, T3, R> combinator3) {
 		return params -> combinator3
 							 .apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
@@ -178,14 +174,7 @@ public class Combinators {
 	/**
 	 * Combinator for two values.
 	 */
-	public static class Combinator2<T1, T2> {
-		private final Arbitrary<T1> a1;
-		private final Arbitrary<T2> a2;
-
-		private Combinator2(Arbitrary<T1> a1, Arbitrary<T2> a2) {
-			this.a1 = a1;
-			this.a2 = a2;
-		}
+	public interface Combinator2<T1, T2> {
 
 		/**
 		 * Combine two values.
@@ -194,11 +183,25 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F2<T1, T2, @NotNull R> combinator) {
-			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2);
-		}
+		<R> Arbitrary<R> as(F2<T1, T2, @NotNull R> combinator);
 
-		public <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<@NotNull R>> flatCombinator) {
+		/**
+		 * Filter two values to only let them pass if the predicate is true.
+		 *
+		 * @param filter function
+		 * @return combinator instance
+		 */
+		@API(status = EXPERIMENTAL, since = "1.7.1")
+		Combinator2<T1, T2> filter(F2<T1, T2, Boolean> filter);
+
+		/**
+		 * Combine two values to create a new arbitrary.
+		 *
+		 * @param flatCombinator function
+		 * @param <R> return type of arbitrary
+		 * @return arbitrary instance
+		 */
+		default  <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
