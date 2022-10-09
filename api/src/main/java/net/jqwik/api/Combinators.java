@@ -21,6 +21,8 @@ public class Combinators {
 
 		public abstract <T1, T2> Combinator2<T1, T2> combine2(Arbitrary<T1> a1, Arbitrary<T2> a2);
 
+		public abstract <T1, T2, T3> Combinator3<T1, T2, T3> combine3(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3);
+
 		public abstract <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries);
 	}
 
@@ -42,7 +44,7 @@ public class Combinators {
 	 * @return Combinator3 instance which can be evaluated using {@linkplain Combinator3#as}
 	 */
 	public static <T1, T2, T3> Combinator3<T1, T2, T3> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3) {
-		return new Combinator3<>(a1, a2, a3);
+		return CombinatorsFacade.implementation.combine3(a1, a2, a3);
 	}
 
 	/**
@@ -209,16 +211,7 @@ public class Combinators {
 	/**
 	 * Combinator for three values.
 	 */
-	public static class Combinator3<T1, T2, T3> {
-		private final Arbitrary<T1> a1;
-		private final Arbitrary<T2> a2;
-		private final Arbitrary<T3> a3;
-
-		private Combinator3(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3) {
-			this.a1 = a1;
-			this.a2 = a2;
-			this.a3 = a3;
-		}
+	public interface Combinator3<T1, T2, T3> {
 
 		/**
 		 * Combine three values.
@@ -227,11 +220,25 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F3<T1, T2, T3, @NotNull R> combinator) {
-			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3);
-		}
+		<R> Arbitrary<R> as(F3<T1, T2, T3, @NotNull R> combinator);
 
-		public <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<@NotNull R>> flatCombinator) {
+		/**
+		 * Filter three values to only let them pass if the predicate is true.
+		 *
+		 * @param filter function
+		 * @return combinator instance
+		 */
+		@API(status = EXPERIMENTAL, since = "1.7.1")
+		Combinator3<T1, T2, T3> filter(F3<T1, T2, T3, Boolean> filter);
+
+		/**
+		 * Combine three values to create a new arbitrary.
+		 *
+		 * @param flatCombinator function
+		 * @param <R> return type of arbitrary
+		 * @return arbitrary instance
+		 */
+		default  <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 

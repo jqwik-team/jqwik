@@ -2,8 +2,8 @@ package net.jqwik.api;
 
 import java.util.ArrayList;
 import java.util.*;
-import java.util.stream.*;
 
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
@@ -90,12 +90,12 @@ class CombinatorsTests {
 
 		@Example
 		void twoArbitraries(@ForAll Random random) {
-			Arbitrary<Tuple.Tuple2<Integer, Integer>> combine2 =
+			Arbitrary<Tuple2<Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree())
 						   .filter((a, b) -> !a.equals(b))
 						   .as(Tuple::of);
 
-			assertAllGenerated(combine2.generator(1000), random, tuple -> {
+			assertAllGenerated(combine.generator(1000), random, tuple -> {
 				assertThat(tuple.get1())
 					.describedAs("combination %s", tuple)
 					.isNotEqualTo(tuple.get2());
@@ -104,17 +104,31 @@ class CombinatorsTests {
 
 		@Example
 		void doubleFilters(@ForAll Random random) {
-			Arbitrary<Tuple.Tuple2<Integer, Integer>> combine2 =
+			Arbitrary<Tuple2<Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree())
 						   .filter((a, b) -> a + b != 2)
 						   .filter((a, b) -> a + b != 6)
 						   .as(Tuple::of);
 
-			assertAllGenerated(combine2.generator(1000), random, tuple -> {
+			assertAllGenerated(combine.generator(1000), random, tuple -> {
 				assertThat(tuple.get1() + tuple.get2())
 					.isNotEqualTo(2);
 				assertThat(tuple.get1() + tuple.get2())
 					.isNotEqualTo(6);
+			});
+		}
+
+		@Example
+		void threeArbitraries(@ForAll Random random) {
+			Arbitrary<Tuple3<Integer, Integer, Integer>> combine =
+				Combinators.combine(oneToThree(), oneToThree(), oneToThree())
+						   .filter((a, b, c) -> !a.equals(b))
+						   .as(Tuple::of);
+
+			assertAllGenerated(combine.generator(1000), random, tuple -> {
+				assertThat(tuple.get1())
+					.describedAs("combination %s", tuple)
+					.isNotEqualTo(tuple.get2());
 			});
 		}
 
