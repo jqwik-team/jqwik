@@ -21,12 +21,12 @@ class FilteredCombinator3<T1, T2, T3> implements Combinators.Combinator3<T1, T2,
 		this.filter = filter;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <R> Arbitrary<R> as(Combinators.F3<T1, T2, T3, @NotNull R> combinator) {
-		Arbitrary<Tuple3<T1, T2, T3>> unfilteredArbitrary = new CombineArbitrary<>(combineToTuple(), a1, a2, a3);
-		return unfilteredArbitrary
-				   .filter(tuple -> filter.apply(tuple.get1(), tuple.get2(), tuple.get3()))
-				   .map(tuple -> combinator.apply(tuple.get1(), tuple.get2(), tuple.get3()));
+		return new CombineArbitrary<>(Function.identity(), a1, a2, a3)
+				   .filter(params -> filter.apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2)))
+				   .map(combineFunction(combinator));
 	}
 
 	@Override
@@ -35,8 +35,12 @@ class FilteredCombinator3<T1, T2, T3> implements Combinators.Combinator3<T1, T2,
 	}
 
 	@SuppressWarnings("unchecked")
-	private Function<List<Object>, Tuple3<T1, T2, T3>> combineToTuple() {
-		return params -> Tuple.of((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
+	private <R> Function<List<Object>, R> combineFunction(Combinators.F3<T1, T2, T3, R> combinator) {
+		return params -> combinator
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2)
+							 );
 	}
 
 	private Combinators.F3<T1, T2, T3, Boolean> combineFilters(Combinators.F3<T1, T2, T3, Boolean> filter1, Combinators.F3<T1, T2, T3, Boolean> filter2) {

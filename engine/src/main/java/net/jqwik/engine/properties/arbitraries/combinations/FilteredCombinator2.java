@@ -19,12 +19,12 @@ class FilteredCombinator2<T1, T2> implements Combinators.Combinator2<T1, T2> {
 		this.filter = filter;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <R> Arbitrary<R> as(Combinators.F2<T1, T2, @NotNull R> combinator) {
-		Arbitrary<Tuple2<T1, T2>> unfilteredArbitrary = new CombineArbitrary<>(combineToTuple(), a1, a2);
-		return unfilteredArbitrary
-				   .filter(tuple -> filter.apply(tuple.get1(), tuple.get2()))
-				   .map(tuple -> combinator.apply(tuple.get1(), tuple.get2()));
+		return new CombineArbitrary<>(Function.identity(), a1, a2)
+				   .filter(params -> filter.apply((T1) params.get(0), (T2) params.get(1)))
+				   .map(combineFunction(combinator));
 	}
 
 	@Override
@@ -33,8 +33,8 @@ class FilteredCombinator2<T1, T2> implements Combinators.Combinator2<T1, T2> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Function<List<Object>, Tuple2<T1, T2>> combineToTuple() {
-		return params -> Tuple.of((T1) params.get(0), (T2) params.get(1));
+	private <R> Function<List<Object>, R> combineFunction(Combinators.F2<T1, T2, R> combinator) {
+		return params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
 	}
 
 	private Combinators.F2<T1,T2, Boolean> combineFilters(Combinators.F2<T1,T2, Boolean> first, Combinators.F2<T1,T2, Boolean> second) {
