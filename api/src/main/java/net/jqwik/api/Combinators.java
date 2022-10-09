@@ -23,6 +23,8 @@ public class Combinators {
 
 		public abstract <T1, T2, T3> Combinator3<T1, T2, T3> combine3(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3);
 
+		public abstract <T1, T2, T3, T4> Combinator4<T1, T2, T3, T4> combine4(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4);
+
 		public abstract <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries);
 	}
 
@@ -56,7 +58,7 @@ public class Combinators {
 		Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 		Arbitrary<T4> a4
 	) {
-		return new Combinator4<>(a1, a2, a3, a4);
+		return CombinatorsFacade.implementation.combine4(a1, a2, a3, a4);
 	}
 
 	/**
@@ -116,20 +118,6 @@ public class Combinators {
 		return new ListCombinator<>(listOfArbitraries);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T1, T2, T3, R> Function<List<Object>, R> combineFunction(F3<T1, T2, T3, R> combinator3) {
-		return params -> combinator3
-							 .apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T1, T2, T3, T4, R> Function<List<Object>, R> combineFunction(F4<T1, T2, T3, T4, R> combinator4) {
-		return params -> combinator4
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3)
-							 );
-	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, R> Function<List<Object>, R> combineFunction(F5<T1, T2, T3, T4, T5, R> combinator5) {
@@ -247,18 +235,7 @@ public class Combinators {
 	/**
 	 * Combinator for four values.
 	 */
-	public static class Combinator4<T1, T2, T3, T4> {
-		private final Arbitrary<T1> a1;
-		private final Arbitrary<T2> a2;
-		private final Arbitrary<T3> a3;
-		private final Arbitrary<T4> a4;
-
-		private Combinator4(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4) {
-			this.a1 = a1;
-			this.a2 = a2;
-			this.a3 = a3;
-			this.a4 = a4;
-		}
+	public interface Combinator4<T1, T2, T3, T4> {
 
 		/**
 		 * Combine four values.
@@ -267,11 +244,25 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F4<T1, T2, T3, T4, @NotNull R> combinator) {
-			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3, a4);
-		}
+		<R> Arbitrary<R> as(F4<T1, T2, T3, T4, @NotNull R> combinator);
 
-		public <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<@NotNull R>> flatCombinator) {
+		/**
+		 * Filter four values to only let them pass if the predicate is true.
+		 *
+		 * @param filter function
+		 * @return combinator instance
+		 */
+		@API(status = EXPERIMENTAL, since = "1.7.1")
+		Combinator4<T1, T2, T3, T4> filter(F4<T1, T2, T3, T4, Boolean> filter);
+
+		/**
+		 * Combine four values to create a new arbitrary.
+		 *
+		 * @param flatCombinator function
+		 * @param <R> return type of arbitrary
+		 * @return arbitrary instance
+		 */
+		default  <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 

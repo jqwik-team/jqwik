@@ -132,6 +132,20 @@ class CombinatorsTests {
 			});
 		}
 
+		@Example
+		void fourArbitraries(@ForAll Random random) {
+			Arbitrary<Tuple4<Integer, Integer, Integer, Integer>> combine =
+				Combinators.combine(oneToThree(), oneToThree(), oneToThree(), oneToThree())
+						   .filter((a, b, c, d) -> !a.equals(b))
+						   .as(Tuple::of);
+
+			assertAllGenerated(combine.generator(1000), random, tuple -> {
+				assertThat(tuple.get1())
+					.describedAs("combination %s", tuple)
+					.isNotEqualTo(tuple.get2());
+			});
+		}
+
 	}
 
 	@Group

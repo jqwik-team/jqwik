@@ -22,6 +22,16 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 	}
 
 	@Override
+	public <T1, T2, T3, T4> Combinators.Combinator4<T1, T2, T3, T4> combine4(
+		Arbitrary<T1> a1,
+		Arbitrary<T2> a2,
+		Arbitrary<T3> a3,
+		Arbitrary<T4> a4
+	) {
+		return new DefaultCombinator4<>(a1, a2, a3, a4);
+	}
+
+	@Override
 	public <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries) {
 		return new CombineArbitrary<>(combinator, arbitraries);
 	}
