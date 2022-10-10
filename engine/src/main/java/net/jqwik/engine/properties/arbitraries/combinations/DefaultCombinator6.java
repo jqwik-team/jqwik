@@ -5,20 +5,14 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public class DefaultCombinator6<T1, T2, T3, T4, T5, T6> implements Combinators.Combinator6<T1, T2, T3, T4, T5, T6> {
-	protected final Arbitrary<T1> a1;
-	protected final Arbitrary<T2> a2;
-	protected final Arbitrary<T3> a3;
-	protected final Arbitrary<T4> a4;
-	protected final Arbitrary<T5> a5;
+public class DefaultCombinator6<T1, T2, T3, T4, T5, T6>
+	extends DefaultCombinator5<T1, T2, T3, T4, T5>
+	implements Combinators.Combinator6<T1, T2, T3, T4, T5, T6> {
+
 	protected final Arbitrary<T6> a6;
 
 	public DefaultCombinator6(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6) {
-		this.a1 = a1;
-		this.a2 = a2;
-		this.a3 = a3;
-		this.a4 = a4;
-		this.a5 = a5;
+		super(a1, a2, a3, a4, a5);
 		this.a6 = a6;
 	}
 
