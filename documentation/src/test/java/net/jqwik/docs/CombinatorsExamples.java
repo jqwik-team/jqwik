@@ -24,6 +24,25 @@ class CombinatorsExamples {
 	}
 
 	@Group
+	class Combine_and_filter {
+
+		@Property
+		void pairsCannotBeTwins(@ForAll("digitPairsWithoutTwins") String pair) {
+			Assertions.assertThat(pair).hasSize(2);
+			Assertions.assertThat(pair.charAt(0)).isNotEqualTo(pair.charAt(1));
+		}
+
+		@Provide
+		Arbitrary<String> digitPairsWithoutTwins() {
+			Arbitrary<Integer> digits = Arbitraries.integers().between(0, 9);
+			return Combinators.combine(digits, digits)
+							  .filter((first, second) -> first != second)
+							  .as((first, second) -> first + "" + second);
+		}
+
+	}
+
+	@Group
 	class Combine_asFlat {
 		@Property
 		@Report(Reporting.GENERATED)

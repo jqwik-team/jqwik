@@ -14,7 +14,9 @@
 
 ## Update
 
-0. Generate documentation. Mind jqwik version in `/build.gradle`
-1. Move contents of folder `docs-XXX` to `/docs/docs/<version>`
-   - If this is not a snapshot, copy `user-guide.md` to `/docs/docs/current`
-2. Update "Latest Release: <version>" in `/docs/_layout/default.html`
+0. Generate documentation. Mind jqwik version in file `/dependencies.gradle`
+1. Move contents of folder `/documentation/build/docs-XXX` to `<jqwik.net root>/docs/<version>`
+   - If this is not a snapshot: 
+     - Copy `user-guide.md` to `<jqwik.net root>/docs/current`
+     - Update "Latest Release: <version>" in `<jqwik.net root>/docs/_layout/default.html`
+3. Push project `jqwik.net` to its GitHub repository, which will trigger the documentation generation action

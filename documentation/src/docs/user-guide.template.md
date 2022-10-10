@@ -15,6 +15,7 @@ title: jqwik User Guide - ${version}
 - [Writing Properties](#writing-properties)
 - [Default Parameter Generation](#default-parameter-generation)
 - [Customized Parameter Generation](#customized-parameter-generation)
+- [Combining Arbitraries](#combining-arbitraries)
 - [Recursive Arbitraries](#recursive-arbitraries)
 - [Using Arbitraries Directly](#using-arbitraries-directly)
 - [Contract Tests](#contract-tests)
@@ -65,6 +66,11 @@ ${new File("src/docs/include/default-parameter-generation.md").text}
 ## Customized Parameter Generation
 
 ${new File("src/docs/include/customized-parameter-generation.md").text}
+
+
+## Combining Arbitraries
+
+${new File("src/docs/include/combining-arbitraries.md").text}
 
 
 ## Recursive Arbitraries
