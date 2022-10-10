@@ -160,6 +160,20 @@ class CombinatorsTests {
 			});
 		}
 
+		@Example
+		void sixArbitraries(@ForAll Random random) {
+			Arbitrary<Tuple6<Integer, Integer, Integer, Integer, Integer, Integer>> combine =
+				Combinators.combine(oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree())
+						   .filter((a, b, c, d, e, f) -> !a.equals(b))
+						   .as(Tuple::of);
+
+			assertAllGenerated(combine.generator(1000), random, tuple -> {
+				assertThat(tuple.get1())
+					.describedAs("combination %s", tuple)
+					.isNotEqualTo(tuple.get2());
+			});
+		}
+
 	}
 
 	@Group

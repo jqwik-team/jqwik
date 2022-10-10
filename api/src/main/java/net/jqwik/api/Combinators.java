@@ -319,7 +319,7 @@ public class Combinators {
 		 * Combine five values.
 		 *
 		 * @param combinator function
-		 * @param <R>        return type
+		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
 		<R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, @NotNull R> combinator);
@@ -337,7 +337,7 @@ public class Combinators {
 		 * Combine five values to create a new arbitrary.
 		 *
 		 * @param flatCombinator function
-		 * @param <R>            return type of arbitrary
+		 * @param <R> return type of arbitrary
 		 * @return arbitrary instance
 		 */
 		default  <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<@NotNull R>> flatCombinator) {
@@ -348,35 +348,35 @@ public class Combinators {
 	/**
 	 * Combinator for six values.
 	 */
-	public static class Combinator6<T1, T2, T3, T4, T5, T6> {
-		private final Arbitrary<T1> a1;
-		private final Arbitrary<T2> a2;
-		private final Arbitrary<T3> a3;
-		private final Arbitrary<T4> a4;
-		private final Arbitrary<T5> a5;
-		private final Arbitrary<T6> a6;
-
-		public Combinator6(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6) {
-			this.a1 = a1;
-			this.a2 = a2;
-			this.a3 = a3;
-			this.a4 = a4;
-			this.a5 = a5;
-			this.a6 = a6;
-		}
+	public interface Combinator6<T1, T2, T3, T4, T5, T6> {
 
 		/**
 		 * Combine six values.
 		 *
 		 * @param combinator function
-		 * @param <R>        return type
+		 * @param <R> return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, @NotNull R> combinator) {
-			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3, a4, a5, a6);
-		}
+		<R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, @NotNull R> combinator);
 
-		public <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<@NotNull R>> flatCombinator) {
+		/**
+		 * Filter six values to only let them pass if the predicate is true.
+		 *
+		 * @param filter function
+		 * @return combinator instance
+		 */
+		@API(status = EXPERIMENTAL, since = "1.7.1")
+		Combinator6<T1, T2, T3, T4, T5, T6> filter(F6<T1, T2, T3, T4, T5, T6, Boolean> filter);
+
+		/**
+		 * Combine six values to create a new arbitrary.
+		 *
+		 * @param flatCombinator function
+		 * @param <R> return type of arbitrary
+		 * @return arbitrary instance
+		 */
+
+		default <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
