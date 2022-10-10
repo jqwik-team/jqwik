@@ -23,7 +23,7 @@ ext {
 	junitJupiterVersion = '5.9.1'
 	apiGuardianVersion = '1.1.2'
 	opentest4jVersion = '1.2.0'
-	archunitVersion = '0.23.1'
+	archunitVersion = '1.0.0'
 	assertJVersion = '3.23.1'
 	mockitoVersion = '4.8.0'
 	systemLambdaVersion = '1.2.1'
