@@ -174,6 +174,19 @@ class CombinatorsTests {
 			});
 		}
 
+		@Example
+		void listOfArbitraries() {
+			List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(oneToThree(), oneToThree(), oneToThree());
+			Arbitrary<List<Integer>> combine = Combinators.combine(listOfArbitraries)
+													.filter(list -> !list.get(0).equals(list.get(1)))
+													.as(list -> list);
+			assertAllGenerated(combine.generator(1000), random, list -> {
+				assertThat(list.get(0))
+					.describedAs("combination %s", list)
+					.isNotEqualTo(list.get(1));
+			});
+		}
+
 	}
 
 	@Group

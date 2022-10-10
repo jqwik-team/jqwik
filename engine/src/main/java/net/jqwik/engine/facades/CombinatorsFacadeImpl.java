@@ -82,6 +82,11 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 	}
 
 	@Override
+	public <T> Combinators.ListCombinator<T> combineList(List<Arbitrary<T>> listOfArbitraries) {
+		return new DefaultListCombinator<>(listOfArbitraries);
+	}
+
+	@Override
 	public <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries) {
 		return new CombineArbitrary<>(combinator, arbitraries);
 	}

@@ -68,6 +68,8 @@ public class Combinators {
 			Arbitrary<T8> a8
 		);
 
+		public abstract <T> ListCombinator<T> combineList(List<Arbitrary<T>> listOfArbitraries);
+
 		public abstract <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries);
 	}
 
@@ -158,7 +160,7 @@ public class Combinators {
 	 * @return ListCombinator instance which can be evaluated using {@linkplain ListCombinator#as}
 	 */
 	public static <T> ListCombinator<T> combine(List<Arbitrary<T>> listOfArbitraries) {
-		return new ListCombinator<>(listOfArbitraries);
+		return CombinatorsFacade.implementation.combineList(listOfArbitraries);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -375,7 +377,6 @@ public class Combinators {
 		 * @param <R> return type of arbitrary
 		 * @return arbitrary instance
 		 */
-
 		default <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
@@ -470,12 +471,7 @@ public class Combinators {
 	/**
 	 * Combinator for any number of values.
 	 */
-	public static class ListCombinator<T> {
-		private final List<Arbitrary<T>> listOfArbitraries;
-
-		private ListCombinator(List<Arbitrary<T>> listOfArbitraries) {
-			this.listOfArbitraries = listOfArbitraries;
-		}
+	public interface ListCombinator<T> {
 
 		/**
 		 * Combine any number of values.
@@ -484,14 +480,25 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		@SuppressWarnings("unchecked")
-		public <R> Arbitrary<R> as(Function<List<T>, @NotNull R> combinator) {
-			final Arbitrary<?>[] arbitraries = listOfArbitraries.toArray(new Arbitrary[listOfArbitraries.size()]);
-			final Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
-			return CombinatorsFacade.implementation.combine(combineFunction, arbitraries);
-		}
+		<R> Arbitrary<R> as(Function<List<T>, @NotNull R> combinator);
 
-		public <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<@NotNull R>> flatCombinator) {
+		/**
+		 * Filter list of values to only let them pass if the predicate is true.
+		 *
+		 * @param filter function
+		 * @return combinator instance
+		 */
+		@API(status = EXPERIMENTAL, since = "1.7.1")
+		ListCombinator<T> filter(Predicate<List<T>> filter);
+
+		/**
+		 * Combine list of values to create a new arbitrary.
+		 *
+		 * @param flatCombinator function
+		 * @param <R> return type of arbitrary
+		 * @return arbitrary instance
+		 */
+		default <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
