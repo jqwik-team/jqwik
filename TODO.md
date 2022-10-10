@@ -1,6 +1,8 @@
 
 # 1.7.1
 
+    - Extend user guide for CombinatorX.filter(..)
+
     - Support configurable character for Histograms
       See https://github.com/jlink/jqwik/issues/376
 
