@@ -3,7 +3,7 @@ you can do some kind of _contract testing_. That means that you specify
 the properties in a generically typed interface and specify the concrete class to
 instantiate in a test container implementing the interface.
 
-The following example was influence by a similar feature in
+The following example was influenced by a similar feature in
 [junit-quickcheck](http://pholser.github.io/junit-quickcheck/site/0.8/usage/contract-tests.html).
 Here's the contract:
 
