@@ -69,9 +69,9 @@ _jqwik_ will do all the combinations and filtering for you.
 
 ### Using Arbitraries Outside Jqwik Lifecycle
 
-All the methode mentioned in this chapter can be used outside a property, 
+All the methods mentioned in this chapter can be used outside a property, 
 which also means outside jqwik's lifecycle control. 
-Probably the most prominent reason to that is to experiment with arbitraries
+Probably the most prominent reason to do that is to experiment with arbitraries
 and value generation in a Java console or a main method.
 Another reason can be to use jqwik's data generation capabilities for testing
 data in Jupiter or Cucumber tests.
