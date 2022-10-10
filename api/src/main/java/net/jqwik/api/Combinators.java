@@ -422,29 +422,7 @@ public class Combinators {
 	/**
 	 * Combinator for eight values.
 	 */
-	public static class Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> {
-		private final Arbitrary<T1> a1;
-		private final Arbitrary<T2> a2;
-		private final Arbitrary<T3> a3;
-		private final Arbitrary<T4> a4;
-		private final Arbitrary<T5> a5;
-		private final Arbitrary<T6> a6;
-		private final Arbitrary<T7> a7;
-		private final Arbitrary<T8> a8;
-
-		public Combinator8(
-			Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6,
-			Arbitrary<T7> a7, Arbitrary<T8> a8
-		) {
-			this.a1 = a1;
-			this.a2 = a2;
-			this.a3 = a3;
-			this.a4 = a4;
-			this.a5 = a5;
-			this.a6 = a6;
-			this.a7 = a7;
-			this.a8 = a8;
-		}
+	public interface Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> {
 
 		/**
 		 * Combine eight values.
@@ -453,11 +431,25 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, @NotNull R> combinator) {
-			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7, a8);
-		}
+		<R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, @NotNull R> combinator);
 
-		public <R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<@NotNull R>> flatCombinator) {
+		/**
+		 * Filter eight values to only let them pass if the predicate is true.
+		 *
+		 * @param filter function
+		 * @return combinator instance
+		 */
+		@API(status = EXPERIMENTAL, since = "1.7.1")
+		Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> filter(F8<T1, T2, T3, T4, T5, T6, T7, T8, Boolean> filter);
+
+		/**
+		 * Combine eight values to create a new arbitrary.
+		 *
+		 * @param flatCombinator function
+		 * @param <R> return type of arbitrary
+		 * @return arbitrary instance
+		 */
+		default <R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}

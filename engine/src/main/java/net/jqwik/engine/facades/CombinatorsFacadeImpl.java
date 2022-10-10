@@ -78,7 +78,7 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 		Arbitrary<T7> a7,
 		Arbitrary<T8> a8
 	) {
-		return new Combinators.Combinator8<>(a1, a2, a3, a4, a5, a6, a7, a8);
+		return new DefaultCombinator8<>(a1, a2, a3, a4, a5, a6, a7, a8);
 	}
 
 	@Override
