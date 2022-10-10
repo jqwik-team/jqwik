@@ -1,9 +1,6 @@
 
 # 1.7.1
 
-    - Combinators.combine(..).filter(..)
-      See https://github.com/jlink/jqwik/issues/329.
-
     - Support configurable character for Histograms
       See https://github.com/jlink/jqwik/issues/376
 

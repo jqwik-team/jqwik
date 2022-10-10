@@ -69,8 +69,6 @@ public class Combinators {
 		);
 
 		public abstract <T> ListCombinator<T> combineList(List<Arbitrary<T>> listOfArbitraries);
-
-		public abstract <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries);
 	}
 
 	private Combinators() {
@@ -163,48 +161,6 @@ public class Combinators {
 		return CombinatorsFacade.implementation.combineList(listOfArbitraries);
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <T1, T2, T3, T4, T5, R> Function<List<Object>, R> combineFunction(F5<T1, T2, T3, T4, T5, R> combinator5) {
-		return params -> combinator5
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4)
-							 );
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T1, T2, T3, T4, T5, T6, R> Function<List<Object>, R> combineFunction(F6<T1, T2, T3, T4, T5, T6, R> combinator6) {
-		return params -> combinator6
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4), (T6) params.get(5)
-							 );
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T1, T2, T3, T4, T5, T6, T7, R> Function<List<Object>, R> combineFunction(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator7) {
-		return params -> combinator7
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4), (T6) params.get(5),
-								 (T7) params.get(6)
-							 );
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function<List<Object>, R> combineFunction(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator8) {
-		return params -> combinator8
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4), (T6) params.get(5),
-								 (T7) params.get(6), (T8) params.get(7)
-							 );
-	}
-
 	/**
 	 * Combinator for two values.
 	 */
@@ -232,7 +188,7 @@ public class Combinators {
 		 * Combine two values to create a new arbitrary.
 		 *
 		 * @param flatCombinator function
-		 * @param <R> return type of arbitrary
+		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
 		default <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<@NotNull R>> flatCombinator) {
@@ -267,7 +223,7 @@ public class Combinators {
 		 * Combine three values to create a new arbitrary.
 		 *
 		 * @param flatCombinator function
-		 * @param <R> return type of arbitrary
+		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
 		default <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<@NotNull R>> flatCombinator) {
@@ -303,7 +259,7 @@ public class Combinators {
 		 * Combine four values to create a new arbitrary.
 		 *
 		 * @param flatCombinator function
-		 * @param <R> return type of arbitrary
+		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
 		default <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<@NotNull R>> flatCombinator) {
@@ -321,7 +277,7 @@ public class Combinators {
 		 * Combine five values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		<R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, @NotNull R> combinator);
@@ -339,10 +295,10 @@ public class Combinators {
 		 * Combine five values to create a new arbitrary.
 		 *
 		 * @param flatCombinator function
-		 * @param <R> return type of arbitrary
+		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default  <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -356,7 +312,7 @@ public class Combinators {
 		 * Combine six values.
 		 *
 		 * @param combinator function
-		 * @param <R> return type
+		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
 		<R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, @NotNull R> combinator);
@@ -374,7 +330,7 @@ public class Combinators {
 		 * Combine six values to create a new arbitrary.
 		 *
 		 * @param flatCombinator function
-		 * @param <R> return type of arbitrary
+		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
 		default <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<@NotNull R>> flatCombinator) {
@@ -410,7 +366,7 @@ public class Combinators {
 		 * Combine seven values to create a new arbitrary.
 		 *
 		 * @param flatCombinator function
-		 * @param <R> return type of arbitrary
+		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
 		default <R> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<@NotNull R>> flatCombinator) {
@@ -446,7 +402,7 @@ public class Combinators {
 		 * Combine eight values to create a new arbitrary.
 		 *
 		 * @param flatCombinator function
-		 * @param <R> return type of arbitrary
+		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
 		default <R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<@NotNull R>> flatCombinator) {
@@ -481,7 +437,7 @@ public class Combinators {
 		 * Combine list of values to create a new arbitrary.
 		 *
 		 * @param flatCombinator function
-		 * @param <R> return type of arbitrary
+		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
 		default <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<@NotNull R>> flatCombinator) {
