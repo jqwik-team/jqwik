@@ -175,6 +175,20 @@ class CombinatorsTests {
 		}
 
 		@Example
+		void sevenArbitraries(@ForAll Random random) {
+			Arbitrary<Tuple7<Integer, Integer, Integer, Integer, Integer, Integer, Integer>> combine =
+				Combinators.combine(oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree())
+						   .filter((a, b, c, d, e, f, g) -> !a.equals(b))
+						   .as(Tuple::of);
+
+			assertAllGenerated(combine.generator(1000), random, tuple -> {
+				assertThat(tuple.get1())
+					.describedAs("combination %s", tuple)
+					.isNotEqualTo(tuple.get2());
+			});
+		}
+
+		@Example
 		void listOfArbitraries() {
 			List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(oneToThree(), oneToThree(), oneToThree());
 			Arbitrary<List<Integer>> combine = Combinators.combine(listOfArbitraries)
