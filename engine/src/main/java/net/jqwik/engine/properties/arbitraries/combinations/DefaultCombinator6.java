@@ -51,7 +51,6 @@ public class DefaultCombinator6<T1, T2, T3, T4, T5, T6>
 			this.filter = filter;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public <R> Arbitrary<R> as(Combinators.F6<T1, T2, T3, T4, T5, T6, R> combinator) {
 			return new CombineArbitrary<>(Function.identity(), a1, a2, a3, a4, a5, a6)
