@@ -23,7 +23,50 @@ public class Combinators {
 
 		public abstract <T1, T2, T3> Combinator3<T1, T2, T3> combine3(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3);
 
-		public abstract <T1, T2, T3, T4> Combinator4<T1, T2, T3, T4> combine4(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4);
+		public abstract <T1, T2, T3, T4> Combinator4<T1, T2, T3, T4> combine4(
+			Arbitrary<T1> a1,
+			Arbitrary<T2> a2,
+			Arbitrary<T3> a3,
+			Arbitrary<T4> a4
+		);
+
+		public abstract <T1, T2, T3, T4, T5> Combinator5<T1, T2, T3, T4, T5> combine5(
+			Arbitrary<T1> a1,
+			Arbitrary<T2> a2,
+			Arbitrary<T3> a3,
+			Arbitrary<T4> a4,
+			Arbitrary<T5> a5
+		);
+
+		public abstract <T1, T2, T3, T4, T5, T6> Combinator6<T1, T2, T3, T4, T5, T6> combine6(
+			Arbitrary<T1> a1,
+			Arbitrary<T2> a2,
+			Arbitrary<T3> a3,
+			Arbitrary<T4> a4,
+			Arbitrary<T5> a5,
+			Arbitrary<T6> a6
+		);
+
+		public abstract <T1, T2, T3, T4, T5, T6, T7> Combinator7<T1, T2, T3, T4, T5, T6, T7> combine7(
+			Arbitrary<T1> a1,
+			Arbitrary<T2> a2,
+			Arbitrary<T3> a3,
+			Arbitrary<T4> a4,
+			Arbitrary<T5> a5,
+			Arbitrary<T6> a6,
+			Arbitrary<T7> a7
+		);
+
+		public abstract <T1, T2, T3, T4, T5, T6, T7, T8> Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> combine8(
+			Arbitrary<T1> a1,
+			Arbitrary<T2> a2,
+			Arbitrary<T3> a3,
+			Arbitrary<T4> a4,
+			Arbitrary<T5> a5,
+			Arbitrary<T6> a6,
+			Arbitrary<T7> a7,
+			Arbitrary<T8> a8
+		);
 
 		public abstract <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries);
 	}
@@ -70,7 +113,7 @@ public class Combinators {
 		Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 		Arbitrary<T4> a4, Arbitrary<T5> a5
 	) {
-		return new Combinator5<>(a1, a2, a3, a4, a5);
+		return CombinatorsFacade.implementation.combine5(a1, a2, a3, a4, a5);
 	}
 
 	/**
@@ -82,7 +125,7 @@ public class Combinators {
 		Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 		Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6
 	) {
-		return new Combinator6<>(a1, a2, a3, a4, a5, a6);
+		return CombinatorsFacade.implementation.combine6(a1, a2, a3, a4, a5, a6);
 	}
 
 	/**
@@ -94,7 +137,7 @@ public class Combinators {
 		Arbitrary<T1> a1, Arbitrary<T2> a2,
 		Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7
 	) {
-		return new Combinator7<>(a1, a2, a3, a4, a5, a6, a7);
+		return CombinatorsFacade.implementation.combine7(a1, a2, a3, a4, a5, a6, a7);
 	}
 
 	/**
@@ -106,7 +149,7 @@ public class Combinators {
 		Arbitrary<T1> a1, Arbitrary<T2> a2,
 		Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7, Arbitrary<T8> a8
 	) {
-		return new Combinator8<>(a1, a2, a3, a4, a5, a6, a7, a8);
+		return CombinatorsFacade.implementation.combine8(a1, a2, a3, a4, a5, a6, a7, a8);
 	}
 
 	/**
@@ -117,7 +160,6 @@ public class Combinators {
 	public static <T> ListCombinator<T> combine(List<Arbitrary<T>> listOfArbitraries) {
 		return new ListCombinator<>(listOfArbitraries);
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, R> Function<List<Object>, R> combineFunction(F5<T1, T2, T3, T4, T5, R> combinator5) {
@@ -191,7 +233,7 @@ public class Combinators {
 		 * @param <R> return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default  <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -226,7 +268,7 @@ public class Combinators {
 		 * @param <R> return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default  <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -262,7 +304,7 @@ public class Combinators {
 		 * @param <R> return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default  <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -271,20 +313,7 @@ public class Combinators {
 	/**
 	 * Combinator for five values.
 	 */
-	public static class Combinator5<T1, T2, T3, T4, T5> {
-		private final Arbitrary<T1> a1;
-		private final Arbitrary<T2> a2;
-		private final Arbitrary<T3> a3;
-		private final Arbitrary<T4> a4;
-		private final Arbitrary<T5> a5;
-
-		private Combinator5(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5) {
-			this.a1 = a1;
-			this.a2 = a2;
-			this.a3 = a3;
-			this.a4 = a4;
-			this.a5 = a5;
-		}
+	public interface Combinator5<T1, T2, T3, T4, T5> {
 
 		/**
 		 * Combine five values.
@@ -293,14 +322,27 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		public <R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, @NotNull R> combinator) {
-			return CombinatorsFacade.implementation.combine(combineFunction(combinator), a1, a2, a3, a4, a5);
-		}
+		<R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, @NotNull R> combinator);
 
-		public <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<@NotNull R>> flatCombinator) {
+		/**
+		 * Filter five values to only let them pass if the predicate is true.
+		 *
+		 * @param filter function
+		 * @return combinator instance
+		 */
+		@API(status = EXPERIMENTAL, since = "1.7.1")
+		Combinator5<T1, T2, T3, T4, T5> filter(F5<T1, T2, T3, T4, T5, Boolean> filter);
+
+		/**
+		 * Combine five values to create a new arbitrary.
+		 *
+		 * @param flatCombinator function
+		 * @param <R>            return type of arbitrary
+		 * @return arbitrary instance
+		 */
+		default  <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<@NotNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
-
 	}
 
 	/**
@@ -314,7 +356,7 @@ public class Combinators {
 		private final Arbitrary<T5> a5;
 		private final Arbitrary<T6> a6;
 
-		private Combinator6(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6) {
+		public Combinator6(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6) {
 			this.a1 = a1;
 			this.a2 = a2;
 			this.a3 = a3;
@@ -352,7 +394,7 @@ public class Combinators {
 		private final Arbitrary<T6> a6;
 		private final Arbitrary<T7> a7;
 
-		private Combinator7(
+		public Combinator7(
 			Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6,
 			Arbitrary<T7> a7
 		) {
@@ -395,7 +437,7 @@ public class Combinators {
 		private final Arbitrary<T7> a7;
 		private final Arbitrary<T8> a8;
 
-		private Combinator8(
+		public Combinator8(
 			Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6,
 			Arbitrary<T7> a7, Arbitrary<T8> a8
 		) {

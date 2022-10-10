@@ -32,6 +32,56 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 	}
 
 	@Override
+	public <T1, T2, T3, T4, T5> Combinators.Combinator5<T1, T2, T3, T4, T5> combine5(
+		Arbitrary<T1> a1,
+		Arbitrary<T2> a2,
+		Arbitrary<T3> a3,
+		Arbitrary<T4> a4,
+		Arbitrary<T5> a5
+	) {
+		return new DefaultCombinator5<>(a1, a2, a3, a4, a5);
+	}
+
+	@Override
+	public <T1, T2, T3, T4, T5, T6> Combinators.Combinator6<T1, T2, T3, T4, T5, T6> combine6(
+		Arbitrary<T1> a1,
+		Arbitrary<T2> a2,
+		Arbitrary<T3> a3,
+		Arbitrary<T4> a4,
+		Arbitrary<T5> a5,
+		Arbitrary<T6> a6
+	) {
+		return new Combinators.Combinator6<>(a1, a2, a3, a4, a5, a6);
+	}
+
+	@Override
+	public <T1, T2, T3, T4, T5, T6, T7> Combinators.Combinator7<T1, T2, T3, T4, T5, T6, T7> combine7(
+		Arbitrary<T1> a1,
+		Arbitrary<T2> a2,
+		Arbitrary<T3> a3,
+		Arbitrary<T4> a4,
+		Arbitrary<T5> a5,
+		Arbitrary<T6> a6,
+		Arbitrary<T7> a7
+	) {
+		return new Combinators.Combinator7<>(a1, a2, a3, a4, a5, a6, a7);
+	}
+
+	@Override
+	public <T1, T2, T3, T4, T5, T6, T7, T8> Combinators.Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> combine8(
+		Arbitrary<T1> a1,
+		Arbitrary<T2> a2,
+		Arbitrary<T3> a3,
+		Arbitrary<T4> a4,
+		Arbitrary<T5> a5,
+		Arbitrary<T6> a6,
+		Arbitrary<T7> a7,
+		Arbitrary<T8> a8
+	) {
+		return new Combinators.Combinator8<>(a1, a2, a3, a4, a5, a6, a7, a8);
+	}
+
+	@Override
 	public <R> Arbitrary<R> combine(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries) {
 		return new CombineArbitrary<>(combinator, arbitraries);
 	}

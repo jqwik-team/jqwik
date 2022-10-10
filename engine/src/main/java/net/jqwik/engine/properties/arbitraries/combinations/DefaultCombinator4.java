@@ -5,7 +5,6 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-// default combinator for 4 parameters just like DefaultCombinator3.java
 public class DefaultCombinator4<T1, T2, T3, T4> implements Combinators.Combinator4<T1, T2, T3, T4> {
 	private final Arbitrary<T1> a1;
 	private final Arbitrary<T2> a2;
