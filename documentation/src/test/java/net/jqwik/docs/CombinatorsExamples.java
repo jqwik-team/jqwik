@@ -21,6 +21,19 @@ class CombinatorsExamples {
 			Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
 			return Combinators.combine(names, ages).as((name, age) -> new Person(name, age));
 		}
+
+		@Property
+		void validPeopleFlatMappedHaveIDs(@ForAll("validPeopleFlatMapped") Person aPerson) {
+			Assertions.assertThat(aPerson.getID()).contains("-");
+			Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);
+		}
+
+		@Provide
+		Arbitrary<Person> validPeopleFlatMapped() {
+			Arbitrary<String> names = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(3).ofMaxLength(21);
+			Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
+			return names.flatMap(name -> ages.map(age -> new Person(name, age)));
+		}
 	}
 
 	@Group

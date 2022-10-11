@@ -31,9 +31,7 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '${junitPlatformVersion}'
 ext.junitJupiterVersion = '${junitJupiterVersion}'
-
 ext.jqwikVersion = '${version}'
 
 compileTestJava {
@@ -64,7 +62,7 @@ dependencies {
     testImplementation "net.jqwik:jqwik:\${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter:\${junitJupiterVersion}"
 
     // Add any other test library you need...
     testImplementation "org.assertj:assertj-core:3.12.2"
