@@ -69,7 +69,7 @@ If you need more you have a few options:
 #### Combining Arbitraries vs Flat Mapping
 
 Combining arbitraries with each other can also be achieved through [flat mapping](#flat-mapping).
-So, the valid people arbitrary from above could also be written as:
+So, the `validPeople` provider method from above could also be written as:
 
 ```java
 @Provide
