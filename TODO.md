@@ -1,9 +1,6 @@
 
 # 1.7.1
 
-    - Support configurable character for Histograms
-      See https://github.com/jlink/jqwik/issues/376
-
     - Kotlin: Add convenience methods and extensions for chains and action chains
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.

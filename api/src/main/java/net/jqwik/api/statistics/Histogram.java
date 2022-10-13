@@ -16,7 +16,14 @@ public class Histogram implements StatisticsReportFormat {
 
 	private static final Logger LOG = Logger.getLogger(Histogram.class.getName());
 
-	static final char BOX = '\u25a0';
+	static char BOX = '\u25a0';
+
+	static {
+		// Windows terminal does not support unicode box character
+		if (System.getProperty("os.name").toLowerCase().contains("win")) {
+			BOX = '#';
+		}
+	}
 
 	@Override
 	public List<String> formatReport(List<StatisticsEntry> entries) {
@@ -29,7 +36,7 @@ public class Histogram implements StatisticsReportFormat {
 			return generateHistogram(entries, buckets);
 		} catch (Throwable throwable) {
 			LOG.log(Level.WARNING, "Cannot draw histogram", throwable);
-			return Collections.singletonList("Cannot draw histogram: " + throwable.toString());
+			return Collections.singletonList("Cannot draw histogram: " + throwable);
 		}
 	}
 
