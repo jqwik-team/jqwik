@@ -1,6 +1,9 @@
 
 # 1.7.1
 
+    - Introduce StatisticsCoverage.checkPattern(regex)
+      See https://github.com/jlink/jqwik/issues/394 for motivation.
+
     - Kotlin: Add convenience methods and extensions for chains and action chains
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
