@@ -1,6 +1,7 @@
 package net.jqwik.api.support;
 
 import java.io.*;
+import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
@@ -51,16 +52,22 @@ public class LambdaSupport {
 		return byteArrayOutputStream.toByteArray();
 	}
 
+	private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+
 	private static boolean fieldIsEqualIn(Field field, Object left, Object right) {
-		field.setAccessible(true);
 		try {
+			// TODO: Is this still required when using LOOKUP.unreflectGetter(..)?
+			field.setAccessible(true);
+			MethodHandle handle = LOOKUP.unreflectGetter(field);
 			// If field is a functional type use LambdaSupport.areEqual().
 			// TODO: Could there be circular references among functional types?
 			if (isFunctionalType(field.getType())) {
-				return areEqual(field.get(left), field.get(right));
+				return areEqual(handle.invoke(left), handle.invoke(right));
 			}
-			return field.get(left).equals(field.get(right));
-		} catch (IllegalAccessException e) {
+			return handle.invoke(left).equals(handle.invoke(right));
+		} catch (Throwable e) {
+			// As of Java 17, field.setAccessible(..) throws IllegalAccessException
+			// if the field is private and not opened to jqwik, Predicate.not() will create lambda instances with private fields.
 			return false;
 		}
 	}
