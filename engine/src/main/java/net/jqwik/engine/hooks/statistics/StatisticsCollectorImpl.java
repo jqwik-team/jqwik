@@ -86,7 +86,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 					   List<Object> values = entry.values();
 					   return query.test(values);
 				   })
-				   .reduce(StatisticsEntryImpl.NULL, StatisticsEntryImpl::plus);
+				   .reduce(StatisticsEntryImpl.nullWithName("<adhoc query>"), StatisticsEntryImpl::plus);
 	}
 
 	public int countAllCollects() {
