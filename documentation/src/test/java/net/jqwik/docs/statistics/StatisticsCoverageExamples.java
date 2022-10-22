@@ -6,7 +6,6 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.statistics.Statistics;
 import net.jqwik.api.statistics.*;
 
 /**
@@ -60,6 +59,16 @@ class StatisticsCoverageExamples {
 		Statistics.coverage(coverage -> {
 			Predicate<List<Integer>> isZero = params -> params.get(0) == 0;
 			coverage.checkQuery(isZero).percentage(p -> p > 5.0);
+		});
+	}
+
+	@Property
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	void patternStatistics(@ForAll @NumericChars String aString) {
+		Statistics.collect(aString);
+
+		Statistics.coverage(coverage -> {
+			coverage.checkPattern("0.*").percentage(p -> p >= 10.0);
 		});
 	}
 }

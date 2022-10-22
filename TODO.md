@@ -1,8 +1,7 @@
 
 # 1.7.1
 
-    - Introduce StatisticsCoverage.checkPattern(regex)
-      See https://github.com/jlink/jqwik/issues/394 for motivation.
+    - Add example for StatisticsCoverage.checkPattern(regex) to user guide
 
     - Kotlin: Add convenience methods and extensions for chains and action chains
 

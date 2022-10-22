@@ -81,4 +81,18 @@ public interface StatisticsCoverage {
 	 *              and returns true if the specific values shall be counted.
 	 */
 	CoverageChecker checkQuery(Predicate<? extends List<?>> query);
+
+	/**
+	 * Match collected values against a regular expression.
+	 * Count all values that match.
+	 *
+	 * <p>
+	 * Values must be instances of type of {@linkplain CharSequence},
+	 * e.g. {@linkplain String} or {@linkplain StringBuffer}.
+	 * Values of other types never match.
+	 *
+	 * @param regex A regular expression
+	 */
+	@API(status = EXPERIMENTAL, since = "1.7.1")
+	CoverageChecker checkPattern(String regex);
 }

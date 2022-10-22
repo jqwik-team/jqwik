@@ -2,6 +2,7 @@ package net.jqwik.engine.hooks.statistics;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.regex.*;
 import java.util.stream.*;
 
 import org.opentest4j.*;
@@ -79,14 +80,38 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 				   .orElse(StatisticsEntryImpl.nullFor(key));
 	}
 
-	private StatisticsEntry query(Predicate<List<Object>> query) {
+	private StatisticsEntry query(Predicate<List<Object>> query, int countAll) {
 		return statisticsEntries()
 				   .stream()
 				   .filter(entry -> {
 					   List<Object> values = entry.values();
 					   return query.test(values);
 				   })
-				   .reduce(StatisticsEntryImpl.nullWithName("<adhoc query>"), StatisticsEntryImpl::plus);
+				   .reduce(
+					   StatisticsEntryImpl.nullWithName("<adhoc query>"),
+					   (statisticsEntry, other) -> statisticsEntry.plus(other, countAll)
+				   );
+	}
+
+	private StatisticsEntryImpl matchPattern(String regex, int countAll) {
+		String name = String.format("<pattern: %s>", regex);
+		return statisticsEntries()
+				   .stream()
+				   .filter(entry -> {
+					   if (entry.values().size() != 1) {
+						   return false;
+					   }
+					   Object value = entry.values().get(0);
+					   if (!(value instanceof CharSequence)) {
+						   return false;
+					   }
+					   CharSequence toMatch = (CharSequence) value;
+					   return Pattern.matches(regex, toMatch);
+				   })
+				   .reduce(
+					   StatisticsEntryImpl.nullWithName(name),
+					   (statisticsEntry, other) -> statisticsEntry.plus(other, countAll)
+				   );
 	}
 
 	public int countAllCollects() {
@@ -171,12 +196,21 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 			return new CoverageCheckerImpl(label, entry, countAllCollects());
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public CoverageChecker checkQuery(Predicate<? extends List<?>> query) {
-			@SuppressWarnings("unchecked")
-			StatisticsEntry entry = query((Predicate<List<Object>>) query);
-			return new CoverageCheckerImpl(label, entry, countAllCollects());
+			int countAll = countAllCollects();
+			StatisticsEntry entry = query((Predicate<List<Object>>) query, countAll);
+			return new CoverageCheckerImpl(label, entry, countAll);
 		}
+
+		@Override
+		public CoverageChecker checkPattern(String regex) {
+			int countAll = countAllCollects();
+			StatisticsEntry entry = matchPattern(regex, countAll);
+			return new CoverageCheckerImpl(label, entry, countAll);
+		}
+
 	}
 
 	private static class CoverageCheckerImpl implements CoverageChecker {

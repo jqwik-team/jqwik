@@ -7,11 +7,11 @@ import net.jqwik.engine.support.*;
 
 public class StatisticsEntryImpl implements StatisticsEntry {
 	static StatisticsEntryImpl nullFor(List<Object> values) {
-		return new StatisticsEntryImpl(values, JqwikStringSupport.displayString(values), 0 , 0.0);
+		return new StatisticsEntryImpl(values, JqwikStringSupport.displayString(values), 0, 0.0);
 	}
 
 	static StatisticsEntryImpl nullWithName(String name) {
-		return new StatisticsEntryImpl(null, name, 0 , 0.0);
+		return new StatisticsEntryImpl(null, name, 0, 0.0);
 	}
 
 	private final List<Object> values;
@@ -26,9 +26,9 @@ public class StatisticsEntryImpl implements StatisticsEntry {
 		this.percentage = percentage;
 	}
 
-	StatisticsEntryImpl plus(StatisticsEntryImpl other) {
+	StatisticsEntryImpl plus(StatisticsEntryImpl other, int totalCount) {
 		int newCount = count + other.count;
-		double newPercentage = percentage + other.percentage;
+		double newPercentage = newCount * 100.0 / totalCount;
 		return new StatisticsEntryImpl(Collections.emptyList(), name, newCount, newPercentage);
 	}
 

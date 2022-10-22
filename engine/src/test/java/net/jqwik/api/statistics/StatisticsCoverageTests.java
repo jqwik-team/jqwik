@@ -180,7 +180,60 @@ class StatisticsCoverageTests {
 	}
 
 	@Group
-	class AdHocQueries {
+	class CheckPattern {
+
+		@Property(generation = GenerationMode.EXHAUSTIVE)
+		void checkCountForPattern(@ForAll @NumericChars @StringLength(3) String aString) {
+			Statistics.collect(aString);
+
+			Statistics.coverage(coverage -> {
+				coverage.checkPattern("[0-9]+").count(c -> c == 1000);
+				coverage.checkPattern("[0-1]+").count(c -> c == 8);
+			});
+		}
+
+		@Property(generation = GenerationMode.EXHAUSTIVE)
+		void checkCountsAreAddedUp(@ForAll @NumericChars @StringLength(3) String aString) {
+			Statistics.label("twice").collect(aString);
+			Statistics.label("twice").collect(aString);
+
+			Statistics.label("twice").coverage(coverage -> {
+				coverage.checkPattern("[0-9]+").count(c -> c == 2000);
+				coverage.checkPattern("[0-1]+").count(c -> c == 16);
+			});
+		}
+
+		@Property(generation = GenerationMode.EXHAUSTIVE)
+		void checkPercentageForPattern(@ForAll @NumericChars @StringLength(3) String aString) {
+			Statistics.collect(aString);
+
+			Statistics.coverage(coverage -> {
+				coverage.checkPattern("[0-9]+").percentage(p -> p == 100.0);
+				coverage.checkPattern("[0-1]+").percentage(p -> p == 0.8);
+			});
+		}
+
+		@Property(generation = GenerationMode.EXHAUSTIVE)
+		void valueTypeNotCharSequenceDoesNotMatch(@ForAll @NumericChars @StringLength(3) String aString) {
+			Object wrappedString = new Object() {
+				@Override
+				public String toString() {
+					return aString;
+				}
+			};
+			Statistics.collect(aString);
+			Statistics.collect(wrappedString);
+
+			Statistics.coverage(coverage -> {
+				coverage.checkPattern("[0-9]+").count(c -> c == 1000);
+				coverage.checkPattern("[0-9]+").percentage(p -> p == 50.0);
+			});
+		}
+
+	}
+
+	@Group
+	class CheckQuery {
 
 		@Property(generation = GenerationMode.EXHAUSTIVE)
 		void checkCountForQuery(@ForAll @IntRange(min = 1, max = 100) int anInt) {
@@ -233,6 +286,5 @@ class StatisticsCoverageTests {
 				assertThat(propertyExecutionResult.throwable().get()).isInstanceOf(ClassCastException.class);
 			}
 		}
-
 	}
 }
