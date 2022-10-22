@@ -31,6 +31,11 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
+	public List<Transformer<T>> transformers() {
+		return chain.transformers();
+	}
+
+	@Override
 	@NotNull
 	public synchronized T run() {
 		currentRunning = RunningState.RUNNING;

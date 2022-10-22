@@ -83,6 +83,23 @@ public interface Chain<T> extends Iterable<T> {
 	List<String> transformations();
 
 	/**
+	 * Return list of all used transformer instances.
+	 *
+	 * <p>
+	 * Checking transformer instances - e.g. if they are of a certain implementation type -
+	 * only makes sense if the transformer's description string is NOT set explicitly.
+	 * </p>
+	 *
+	 * <p>
+	 * For a chain that has not been run this list is always empty.
+	 * </p>
+	 *
+	 * @return list of transformer instances
+	 */
+	@API(status = EXPERIMENTAL, since = "1.7.1")
+	List<Transformer<T>> transformers();
+
+	/**
 	 * The maximum number of transformations that a chain can go through.
 	 *
 	 * @return a number >= 1

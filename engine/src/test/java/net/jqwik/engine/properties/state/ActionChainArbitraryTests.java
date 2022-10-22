@@ -37,6 +37,24 @@ class ActionChainArbitraryTests {
 	}
 
 	@Example
+	void transformersAreCorrectlyReported(@ForAll Random random) {
+		Transformer<String> transformer = s -> s + "x";
+
+		Action.Independent<String> action = Action.just(transformer);
+		ActionChainArbitrary<String> chains =
+			ActionChain.startWith(() -> "")
+					   .addAction(action)
+					   .withMaxTransformations(10);
+
+		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
+		String result = chain.run();
+		assertThat(result).isEqualTo("xxxxxxxxxx");
+
+		assertThat(chain.transformers().size()).isEqualTo(10);
+		chain.transformers().forEach(t -> assertThat(t).isSameAs(transformer));
+	}
+
+	@Example
 	void infiniteChain(@ForAll Random random) {
 		Action.Independent<String> addEOC = Action.just(Transformer.endOfChain());
 		ActionChainArbitrary<String> chains =

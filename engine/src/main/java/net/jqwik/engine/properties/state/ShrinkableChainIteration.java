@@ -61,6 +61,10 @@ class ShrinkableChainIteration<T> {
 	}
 
 	String transformation() {
-		return shrinkable.value().transformation();
+		return transformer().transformation();
+	}
+
+	Transformer<T> transformer() {
+		return shrinkable.value();
 	}
 }

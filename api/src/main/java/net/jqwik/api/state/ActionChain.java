@@ -63,6 +63,24 @@ public interface ActionChain<S> {
 	List<String> transformations();
 
 	/**
+	 * Return list of all used transformer instances.
+	 *
+	 * <p>
+	 * Checking transformer instances - e.g. if they are of a certain implementation type -
+	 * only makes sense if the transformer's description string is NOT set explicitly,
+	 * e.g. in an Action's description() method.
+	 * </p>
+	 *
+	 * <p>
+	 * For a chain that has not been run this list is always empty.
+	 * </p>
+	 *
+	 * @return list of transformer instances
+	 */
+	@API(status = EXPERIMENTAL, since = "1.7.1")
+	List<Transformer<S>> transformers();
+
+	/**
 	 * Run the list through all transformations provided by the actions to create it.
 	 * Stop when either the maximum number of transformations is reached or if a
 	 * {@linkplain Transformer#END_OF_CHAIN} is being applied.

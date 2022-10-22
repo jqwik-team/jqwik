@@ -113,6 +113,12 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		public List<String> transformations() {
 			return iterations.stream().map(i -> i.transformation()).collect(Collectors.toList());
 		}
+
+		@Override
+		@NotNull
+		public List<Transformer<T>> transformers() {
+			return iterations.stream().map(i -> i.transformer()).collect(Collectors.toList());
+		}
 	}
 
 	private class ChainIterator implements Iterator<T> {

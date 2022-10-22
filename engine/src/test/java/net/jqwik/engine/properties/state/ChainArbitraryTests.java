@@ -31,6 +31,22 @@ class ChainArbitraryTests {
 	}
 
 	@Example
+	void transformersAreCorrectlyReported(@ForAll Random random) {
+		Transformer<Integer> transformer = i -> i + 1;
+		Arbitrary<Chain<Integer>> chains =
+			Chain.startWith(() -> 0)
+				 .addTransformation(ignore -> just(transformer))
+				 .withMaxTransformations(10);
+
+		Chain<Integer> chain = TestingSupport.generateFirst(chains, random);
+
+		assertThat(collectAllValues(chain)).containsExactly(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+		assertThat(chain.transformers().size()).isEqualTo(10);
+		chain.transformers().forEach(t -> assertThat(t).isSameAs(transformer));
+	}
+
+	@Example
 	void chainWithZeroMaxTransformations(@ForAll Random random) {
 		Arbitrary<Chain<Integer>> chains =
 			Chain.startWith(() -> 0)
