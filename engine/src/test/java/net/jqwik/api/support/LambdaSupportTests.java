@@ -47,6 +47,29 @@ class LambdaSupportTests {
 		)).isTrue();
 	}
 
+	// TODO: How to implement that in Java >= 17?
+	// @Example
+	void negatedPredicatesAreEqual() {
+		Predicate<String> p = s -> s.length() > 0;
+		assertThat(LambdaSupport.areEqual(
+			p.negate(),
+			p.negate()
+		)).isTrue();
+	}
+
+	@Example
+	void lambdaImplementationsWithEqualsImplementation() {
+		assertThat(LambdaSupport.areEqual(
+			new EqualsImplementingAdder(42),
+			new EqualsImplementingAdder(42)
+		)).isTrue();
+
+		assertThat(LambdaSupport.areEqual(
+			new EqualsImplementingAdder(42),
+			new EqualsImplementingAdder(43)
+		)).isFalse();
+	}
+
 	@Example
 	void serializableFunctionsCanBeCompared() {
 		assertThat(LambdaSupport.areEqual(
@@ -71,6 +94,36 @@ class LambdaSupportTests {
 		@Override
 		public Integer apply(Integer i) {
 			return i + added;
+		}
+	}
+
+	private static class EqualsImplementingAdder implements Function<Integer, Integer> {
+
+		private final int added;
+
+		// To force the use of equals() instead of fields comparison
+		private final int random = new Random().nextInt();
+
+		private EqualsImplementingAdder(int added) {
+			this.added = added;
+		}
+
+		@Override
+		public Integer apply(Integer i) {
+			return i + added;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			EqualsImplementingAdder that = (EqualsImplementingAdder) o;
+			return added == that.added;
+		}
+
+		@Override
+		public int hashCode() {
+			return added;
 		}
 	}
 

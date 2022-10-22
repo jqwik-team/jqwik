@@ -27,8 +27,11 @@ public class LambdaSupport {
 	 **/
 	public static <T> boolean areEqual(T l1, T l2) {
 		if (l1 == l2) return true;
+		if (l1.equals(l2)) return true;
+
 		Class<?> l1Class = l1.getClass();
 		if (l1Class != l2.getClass()) return false;
+
 		if (l1 instanceof Serializable) {
 			try {
 				return Arrays.equals(serialize(l1), serialize(l2));
@@ -36,6 +39,7 @@ public class LambdaSupport {
 				// ignore
 			}
 		}
+
 		// Check enclosed state the hard way
 		for (Field field : l1Class.getDeclaredFields()) {
 			if (!fieldIsEqualIn(field, l1, l2)) {
@@ -56,8 +60,9 @@ public class LambdaSupport {
 
 	private static boolean fieldIsEqualIn(Field field, Object left, Object right) {
 		try {
-			// TODO: Is this still required when using LOOKUP.unreflectGetter(..)?
+			// Javadoc of LOOKUP.unreflectGetter(..) suggests that this may be necessary in some cases:
 			field.setAccessible(true);
+
 			MethodHandle handle = LOOKUP.unreflectGetter(field);
 			// If field is a functional type use LambdaSupport.areEqual().
 			// TODO: Could there be circular references among functional types?
