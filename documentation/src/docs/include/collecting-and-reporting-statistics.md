@@ -154,7 +154,7 @@ You can switch off statistics report as simple as that:
 @Property
 @StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 void queryStatistics(@ForAll int anInt) {
-	Statistics.collect(anInt);
+    Statistics.collect(anInt);
 }
 ```
 
@@ -164,7 +164,7 @@ Or you can just switch it off for properties that do not fail:
 @Property
 @StatisticsReport(onFailureOnly = true)
 void queryStatistics(@ForAll int anInt) {
-	Statistics.collect(anInt);
+    Statistics.collect(anInt);
 }
 ```
 
@@ -187,10 +187,10 @@ void integers(@ForAll("gaussians") int aNumber) {
 @Provide
 Arbitrary<Integer> gaussians() {
     return Arbitraries
-               .integers()
-               .between(0, 20)
-               .shrinkTowards(10)
-               .withDistribution(RandomDistribution.gaussian());
+            .integers()
+            .between(0, 20)
+            .shrinkTowards(10)
+            .withDistribution(RandomDistribution.gaussian());
 }
 ```
 
@@ -270,17 +270,17 @@ implementation of type
 @Property
 @StatisticsReport(format = MyStatisticsFormat.class)
 void statisticsWithHandMadeFormat(@ForAll Integer anInt) {
-	String range = anInt < 0 ? "negative" : anInt > 0 ? "positive" : "zero";
-	Statistics.collect(range);
+    String range = anInt < 0 ? "negative" : anInt > 0 ? "positive" : "zero";
+    Statistics.collect(range);
 }
 
 class MyStatisticsFormat implements StatisticsReportFormat {
-	@Override
-	public List<String> formatReport(List<StatisticsEntry> entries) {
-		return entries.stream()
-					  .map(e -> String.format("%s: %d", e.name(), e.count()))
-					  .collect(Collectors.toList());
-	}
+    @Override
+    public List<String> formatReport(List<StatisticsEntry> entries) {
+        return entries.stream()
+    	              .map(e -> String.format("%s: %d", e.name(), e.count()))
+    	              .collect(Collectors.toList());
+    }
 }
 ```
 
@@ -309,12 +309,12 @@ The following example does that for generated values of enum `RoundingMode`:
 ```java
 @Property(generation = GenerationMode.RANDOMIZED)
 void simpleStats(@ForAll RoundingMode mode) {
-	Statistics.collect(mode);
+    Statistics.collect(mode);
 
-	Statistics.coverage(coverage -> {
-		coverage.check(RoundingMode.CEILING).percentage(p -> p > 5.0);
-		coverage.check(RoundingMode.FLOOR).count(c -> c > 2);
-	});
+    Statistics.coverage(coverage -> {
+        coverage.check(RoundingMode.CEILING).percentage(p -> p > 5.0);
+        coverage.check(RoundingMode.FLOOR).count(c -> c > 2);
+    });
 }
 ```
 
@@ -324,15 +324,14 @@ and in a fluent API style.
 ```java
 @Property(generation = GenerationMode.RANDOMIZED)
 void labeledStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
-	String range = anInt < 3 ? "small" : "large";
-
-	Statistics.label("range")
-			  .collect(range)
-			  .coverage(coverage -> coverage.check("small").percentage(p -> p > 20.0));
-
-	Statistics.label("value")
-			  .collect(anInt)
-			  .coverage(coverage -> coverage.check(0).count(c -> c > 0));
+    String range = anInt < 3 ? "small" : "large";
+	
+    Statistics.label("range")
+              .collect(range)
+              .coverage(coverage -> coverage.check("small").percentage(p -> p > 20.0));
+    Statistics.label("value")
+              .collect(anInt)
+              .coverage(coverage -> coverage.check(0).count(c -> c > 0));
 }
 ```
 
@@ -349,12 +348,12 @@ collect the raw data and use a query when doing coverage checking:
 @Property
 @StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 void queryStatistics(@ForAll int anInt) {
-	Statistics.collect(anInt);
-
-	Statistics.coverage(coverage -> {
-		Predicate<List<Integer>> isZero = params -> params.get(0) == 0;
-		coverage.checkQuery(isZero).percentage(p -> p > 5.0);
-	});
+    Statistics.collect(anInt);
+	
+    Statistics.coverage(coverage -> {
+    Predicate<List<Integer>> isZero = params -> params.get(0) == 0;
+        coverage.checkQuery(isZero).percentage(p -> p > 5.0);
+    });
 }
 ```
 
@@ -362,3 +361,24 @@ In those cases you probably want to
 [switch off reporting](#switch-statistics-reporting-off),
 otherwise the reports might get very long - and without informative value.
 
+
+#### Check Coverage of Regex Pattern
+
+Another option - similar to [ad-hoc querying](#check-ad-hoc-query-coverage) -
+is the possibility to check coverage of a regular expression pattern:
+
+```java
+@Property
+@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+void patternStatistics(@ForAll @NumericChars String aString) {
+    Statistics.collect(aString);
+	
+    Statistics.coverage(coverage -> {
+        coverage.checkPattern("0.*").percentage(p -> p >= 10.0);
+    });
+}
+```
+
+Mind that only _single_ values of type `CharSequence`, which includes `String`, 
+can be checked against a pattern.
+All other types will not match the pattern.

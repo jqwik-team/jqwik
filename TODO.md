@@ -1,8 +1,6 @@
 
 # 1.7.1
 
-    - Add example for StatisticsCoverage.checkPattern(regex) to user guide
-
     - Kotlin: Add convenience methods and extensions for chains and action chains
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
