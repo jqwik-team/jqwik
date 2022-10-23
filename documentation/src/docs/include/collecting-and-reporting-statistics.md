@@ -98,7 +98,7 @@ If you want more than one statistic in a single property, you must give them lab
 
 ```java
 @Property
-void severalStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
+void labeledStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
     String range = anInt < 3 ? "small" : "large";
     Statistics.label("range").collect(range);
     Statistics.label("value").collect(anInt);
@@ -141,7 +141,7 @@ The `value` attribute is of type
 - __`OFF`__: Switch statistics reporting off
 - __`PLUG_IN`__: Plug in your homemade format. This is the default so that
   you only have to provide the `format` attribute
-  [as shown below](#plug-in-your-own-statistics-report-format)
+  [as shown below](#make-your-own-statistics-report-format)
 
 When using [labeled statistics](#labeled-statistics) you can set mode and format
 for each label individually by using the annotation attribute `@StatisticsReport.value`.
