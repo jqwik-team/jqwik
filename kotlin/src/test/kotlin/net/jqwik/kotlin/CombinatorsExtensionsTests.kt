@@ -1,15 +1,11 @@
 package net.jqwik.kotlin
 
+import net.jqwik.api.*
 import net.jqwik.api.Arbitraries.just
-import net.jqwik.api.Arbitrary
-import net.jqwik.api.Example
-import net.jqwik.api.ForAll
-import net.jqwik.api.Group
-import net.jqwik.kotlin.api.combine
-import net.jqwik.kotlin.api.flatCombine
-import net.jqwik.kotlin.api.orNull
+import net.jqwik.kotlin.api.*
 import net.jqwik.testing.TestingSupport.*
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.util.Lists.list
 import java.util.*
 
 @Group
@@ -130,6 +126,110 @@ class CombinatorsExtensionsTests {
             )
         }
     }
+
+    @Group
+    inner class Combine_and_Filter {
+
+        private val oneToThree: Arbitrary<Int> = Int.any(1..3)
+
+        @Example
+        fun `2 arbitraries`(@ForAll random: Random) {
+            val combine = combine(
+                oneToThree, oneToThree,
+                filter = { a: Int, b: Int -> a != b }
+            ) { v1: Int, v2: Int -> Tuple.of(v1, v2) }
+
+            assertAllGenerated(combine.generator(1000), random) { (first, second) ->
+                assertThat(first).isNotEqualTo(second)
+            }
+        }
+
+        @Example
+        fun `3 arbitraries`(@ForAll random: Random) {
+            val combine = combine(
+                oneToThree, oneToThree, oneToThree,
+                filter = { a: Int, b: Int, c: Int -> a != b }
+            ) { v1: Int, v2: Int, v3: Int -> Tuple.of(v1, v2, v3) }
+
+            assertAllGenerated(combine.generator(1000), random) { (first, second) ->
+                assertThat(first).isNotEqualTo(second)
+            }
+        }
+
+        @Example
+        fun `4 arbitraries`(@ForAll random: Random) {
+            val combine = combine(
+                oneToThree, oneToThree, oneToThree, oneToThree,
+                filter = { a: Int, b: Int, c: Int, d: Int -> a != b }
+            ) { v1: Int, v2: Int, v3: Int, v4: Int -> Tuple.of(v1, v2, v3, v4) }
+
+            assertAllGenerated(combine.generator(1000), random) { (first, second) ->
+                assertThat(first).isNotEqualTo(second)
+            }
+        }
+
+        @Example
+        fun `5 arbitraries`(@ForAll random: Random) {
+            val combine = combine(
+                oneToThree, oneToThree, oneToThree, oneToThree, oneToThree,
+                filter = { a: Int, b: Int, c: Int, d: Int, e: Int -> a != b }
+            ) { v1: Int, v2: Int, v3: Int, v4: Int, v5: Int -> Tuple.of(v1, v2, v3, v4, v5) }
+
+            assertAllGenerated(combine.generator(1000), random) { (first, second) ->
+                assertThat(first).isNotEqualTo(second)
+            }
+        }
+
+        @Example
+        fun `6 arbitraries`(@ForAll random: Random) {
+            val combine = combine(
+                oneToThree, oneToThree, oneToThree, oneToThree, oneToThree, oneToThree,
+                filter = { a: Int, b: Int, c: Int, d: Int, e: Int, f: Int -> a != b }
+            ) { v1: Int, v2: Int, v3: Int, v4: Int, v5: Int, v6: Int -> Tuple.of(v1, v2, v3, v4, v5, v6) }
+
+            assertAllGenerated(combine.generator(1000), random) { (first, second) ->
+                assertThat(first).isNotEqualTo(second)
+            }
+        }
+
+        @Example
+        fun `7 arbitraries`(@ForAll random: Random) {
+            val combine = combine(
+                oneToThree, oneToThree, oneToThree, oneToThree, oneToThree, oneToThree, oneToThree,
+                filter = { a: Int, b: Int, c: Int, d: Int, e: Int, f: Int, g: Int -> a != b }
+            ) { v1: Int, v2: Int, v3: Int, v4: Int, v5: Int, v6: Int, v7: Int -> Tuple.of(v1, v2, v3, v4, v5, v6, v7) }
+
+            assertAllGenerated(combine.generator(1000), random) { (first, second) ->
+                assertThat(first).isNotEqualTo(second)
+            }
+        }
+
+        @Example
+        fun `8 arbitraries`(@ForAll random: Random) {
+            val combine = combine(
+                oneToThree, oneToThree, oneToThree, oneToThree, oneToThree, oneToThree, oneToThree, oneToThree,
+                filter = { a: Int, b: Int, c: Int, d: Int, e: Int, f: Int, g: Int, h: Int -> a != b }
+            ) { v1: Int, v2: Int, v3: Int, v4: Int, v5: Int, v6: Int, v7: Int, v8: Int -> Tuple.of(v1, v2, v3, v4, v5, v6, v7, v8) }
+
+            assertAllGenerated(combine.generator(1000), random) { (first, second) ->
+                assertThat(first).isNotEqualTo(second)
+            }
+        }
+
+        @Example
+        fun `list of arbitraries`(@ForAll random: Random) {
+            val combine = combine(
+                list(oneToThree, oneToThree, oneToThree),
+                filter = { list -> list[0] != list[1] }
+            ) { list -> list }
+
+            assertAllGenerated(combine.generator(1000), random) { (first, second) ->
+                assertThat(first).isNotEqualTo(second)
+            }
+        }
+
+    }
+
 
     @Group
     inner class FlatCombine {
