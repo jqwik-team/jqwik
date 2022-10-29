@@ -7,6 +7,8 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.testing.TestingSupport.*;
+
 class FlatCombinatorsTests {
 
 	private final Random random = SourceOfRandomness.current();
@@ -17,6 +19,17 @@ class FlatCombinatorsTests {
 												 .flatAs((a, b) -> Arbitraries.just(a + b));
 		Shrinkable<Integer> value = generate(combine2);
 		assertThat(value.value()).isEqualTo(3);
+	}
+
+	@Example
+	void filteringWorksWithFlatAs(@ForAll Random random) {
+		Arbitrary<Integer> upToThree = Arbitraries.integers().between(0, 3);
+		Arbitrary<Integer> combine2 = Combinators.combine(upToThree, upToThree)
+												 .filter((a, b) -> a + b == 3)
+												 .flatAs((a, b) -> Arbitraries.just(a + b));
+		assertAllGenerated(combine2, random, value -> {
+			assertThat(value).isEqualTo(3);
+		});
 	}
 
 	private Shrinkable<Integer> generate(Arbitrary<Integer> integerArbitrary) {
