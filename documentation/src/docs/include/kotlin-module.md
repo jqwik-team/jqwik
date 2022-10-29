@@ -388,7 +388,8 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
 ##### Diverse Convenience Functions
 
 - `combine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> R)` can replace all
-  variants of `Combinators.combine(a1, ...).as((v1: T1, ...) -> R)`.
+  variants of `Combinators.combine(a1, ...).as((v1: T1, ...) -> R)`
+  and `Combinators.combine(a1, ...).filter(a1, ...).as((v1: T1, ...) -> R)`.
   Here's an example:
 
   ```kotlin
@@ -401,7 +402,10 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
   fun fullNames() : Arbitrary<String> {
       val firstNames = String.any().alpha().ofMinLength(1)
       val lastNames = String.any().alpha().ofMinLength(1)
-      return combine(firstNames, lastNames) {first, last -> first + " " + last }
+      return combine(
+          firstNames, lastNames,
+          filter = { firstName, lastName -> firstName != lastName } // optional parameter
+      ) { first, last -> first + " " + last }
   }
   ```
 
