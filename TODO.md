@@ -1,6 +1,12 @@
 
 # 1.7.1
 
+    - Kotlin convenience functions:
+        - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)
+        - Collection<Arbitrary<T>>.chooseOne() -> Arbitraries.oneOf(..)
+
+# 1.7.x
+
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
       See Jupiter's TestInfo as an example.
 
@@ -8,12 +14,6 @@
       - Should cover https://github.com/jlink/jqwik/issues/80.
       - Maybe ModelChain can be fully generated before it's provided as parameter? This could enable repeatability of shrinked samples.
       - See example in https://github.com/jlink/model-based-testing/tree/jqwik170/src/test/java/mbt/tecoc/withModelChain
-
-# 1.7.x
-
-    - Kotlin convenience functions:
-        - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)
-        - Collection<Arbitrary<T>>.chooseOne() -> Arbitraries.oneOf(..)
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
       - Alternative: New annotation @InitBeforeTry
