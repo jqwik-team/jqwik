@@ -28,14 +28,18 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
 public class ActionBuilder<S> {
+
+	@Nullable
 	final private Predicate<S> precondition;
+
+	@Nullable
 	final private String description;
 
 	ActionBuilder() {
 		this(null, null);
 	}
 
-	private ActionBuilder(Predicate<S> precondition, String description) {
+	private ActionBuilder(@Nullable Predicate<S> precondition, @Nullable String description) {
 		this.precondition = precondition;
 		this.description = description;
 	}
