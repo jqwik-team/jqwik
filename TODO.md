@@ -1,10 +1,6 @@
 
 # 1.7.1
 
-    - Kotlin convenience functions:
-        - Collection<T>.anyValue() or Collection<T>.chooseAny() -> Arbitraries.of(..)
-        - Collection<Arbitrary<T>>.chooseOne() -> Arbitraries.oneOf(..)
-
 # 1.7.x
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.

@@ -426,6 +426,12 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
 - `frequencyOf(vararg frequencies: Pair<Int, Arbitrary<out T>>)` can replace 
   `Arbitraries.frequencyOf(vararg Tuple.Tuple2<Int, Arbitrary<out T>>)`
 
+- `Collection<T>.anyValue()` can replace 
+  `Arbitraries.of(collection: Collection<T>)`
+
+- `Collection<T>.anySubset()` can replace 
+  `Arbitraries.subsetOf(collection: Collection<T>)`
+
 
 #### Quirks and Bugs
 
