@@ -102,7 +102,7 @@ public interface Chain<T> extends Iterable<T> {
 	/**
 	 * The maximum number of transformations that a chain can go through.
 	 *
-	 * @return a number >= 1
+	 * @return a number &gt;= 1
 	 */
 	int maxTransformations();
 }
