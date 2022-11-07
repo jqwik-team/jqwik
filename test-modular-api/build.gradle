@@ -30,7 +30,7 @@ dependencies {
 		testImplementation(project(":web"))
 		testRuntimeOnly(project(":engine"))
 	} else {
-		testImplementation("net.jqwik:jqwik-api:1.7.0")
+		testImplementation("net.jqwik:jqwik-api:1.7.1")
 		testImplementation("net.jqwik:jqwik-web:1.7.0")
 		testRuntimeOnly("net.jqwik:jqwik-engine:1.7.0")
 	}
