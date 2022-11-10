@@ -34,6 +34,12 @@ import static org.apiguardian.api.API.Status.*;
  *     </ul>
  * </p>
  *
+ * <p>
+ *     Mind that a domain context does not automatically import global providers and configurators.
+ *     If you want to have them available, you have to add the global domain context to the domain class or at the point of usage
+ *     like this: {@code @Domain(DomainContext.Global.class)}.
+ * </p>
+ *
  * @see DomainContext
  * @see Provide
  */

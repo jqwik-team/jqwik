@@ -5,7 +5,7 @@ Until now you have seen two ways to specify which arbitraries will be created fo
   that will be triggered by a known parameter signature.
 
 In many cases both approaches can be tedious to set up or require constant repetition of the same
-annotation value. There's another way that allows you to collect a number of arbitrary providers
+annotation value. There's another way that allows you to group a number of arbitrary providers
 (and also arbitrary configurators) in a single place, called a `DomainContext` and tell
 a property method or container to only use providers and configurators from those domain contexts
 that are explicitly stated in a `@Domain(Class<? extends DomainContext>)` annotation.
@@ -117,7 +117,7 @@ class AddressProperties {
 
 	@Property
 	@Domain(AmericanAddresses.class)
-	void willFailBecauseGlobalDomainIsNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
+	void globalDomainIsNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
 	}
 
 	@Property
@@ -136,4 +136,21 @@ It's being used in a covariant way, i.e., `Arbitrary<String>` is also applicable
 for parameter `@ForAll CharSequence charSequence`.
 
 Since `AmericanAddresses` does not configure any arbitrary provider for `String` parameters,
-the second property will fail with `CannotFindArbitraryException`.
+the property method `globalDomainIsNotPresent(..)` will fail,
+whereas `globalDomainCanBeAdded(..)` will succeed because it has the additional `@Domain(DomainContext.Global.class)` annotation.
+You could also add this line to class `AmericanAddresses` itself,
+which would then automatically bring the global context to all users of this domain class:
+
+```java
+@Domain(DomainContext.Global.class)
+public class AmericanAddresses extends DomainContextBase {
+   ...
+}
+```
+
+The reason that you have to jump through these hoops is that 
+domains are conceived to give you perfect control about how objects of
+a certain application domain are being created.
+That means, that by default they _do not inherit the global context_.
+
+
