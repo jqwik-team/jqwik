@@ -1,5 +1,6 @@
 # 1.7.2
 
+    - Documentation: Be more explicit about domains not inheriting general arbitraries by default.
 
 # 1.7.x
 
