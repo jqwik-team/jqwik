@@ -175,7 +175,7 @@ class ArbitraryTests {
 		void combinedGeneratorWithEmbeddedEdgeCases(@ForAll("tuple") Tuple2<Integer, Integer> aTuple) {
 			Statistics.label("tuple contains 1000")
 					  .collect(aTuple.get1() == 1000 || aTuple.get2() == 1000)
-					  .coverage(checker -> checker.check(true).percentage(p -> p > 1));
+					  .coverage(checker -> checker.check(true).percentage(p -> p >= 1));
 		}
 
 		@Provide

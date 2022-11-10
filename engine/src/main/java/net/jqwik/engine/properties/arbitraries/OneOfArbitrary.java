@@ -60,8 +60,11 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 
 	@Override
 	public Arbitrary<T> configure(ArbitraryConfigurator configurator, TypeUsage targetType) {
-		all.replaceAll(arbitrary -> SelfConfiguringArbitrary.configure(arbitrary, configurator, targetType));
-		return configurator.configure(this, targetType);
+		Arbitrary<T> configuredArbitrary = configurator.configure(this, targetType);
+		if (configuredArbitrary == this) {
+			all.replaceAll(arbitrary -> SelfConfiguringArbitrary.configure(arbitrary, configurator, targetType));
+		}
+		return configuredArbitrary;
 	}
 
 	@Override
