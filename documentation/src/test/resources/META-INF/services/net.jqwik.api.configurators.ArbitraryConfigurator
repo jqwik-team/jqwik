@@ -1,1 +1,2 @@
-net.jqwik.engine.properties.configurators.IntRangeConfigurator
+net.jqwik.docs.arbitraryconfigurator.OddConfigurator
+net.jqwik.docs.arbitraryconfigurator.NotNullConfigurator
