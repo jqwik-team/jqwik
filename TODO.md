@@ -1,5 +1,8 @@
 # 1.7.2
 
+    - Fix NPE when using `@BeforeProperty` and `@BeforeTry` on same method.
+      See [issue #409](https://github.com/jlink/jqwik/issues/409).
+
 # 1.7.x
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
