@@ -1,7 +1,7 @@
 # 1.7.2
 
     - Fix NPE when using `@BeforeProperty` and `@BeforeTry` on same method.
-      See [issue #409](https://github.com/jlink/jqwik/issues/409).
+      See https://github.com/jlink/jqwik/issues/409.
 
 # 1.7.x
 
