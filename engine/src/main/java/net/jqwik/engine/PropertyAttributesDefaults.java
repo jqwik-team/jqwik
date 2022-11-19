@@ -16,6 +16,8 @@ public interface PropertyAttributesDefaults {
 	String stereotype();
 	FixedSeedMode whenFixedSeed();
 
+	public String seed();
+
 	// This is currently a global parameter
 	int boundedShrinkingSeconds();
 
@@ -27,7 +29,8 @@ public interface PropertyAttributesDefaults {
 		EdgeCasesMode edgeCasesMode,
 		ShrinkingMode shrinkingMode,
 		int boundedShrinkingSeconds,
-		FixedSeedMode fixedSeedMode
+		FixedSeedMode fixedSeedMode,
+		String seed
 	) {
 		return new PropertyAttributesDefaults() {
 			@Override
@@ -74,6 +77,9 @@ public interface PropertyAttributesDefaults {
 			public FixedSeedMode whenFixedSeed() {
 				return fixedSeedMode;
 			}
+
+			@Override
+			public String seed() {return seed;}
 		};
 	}
 }

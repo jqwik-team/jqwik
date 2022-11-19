@@ -1,11 +1,16 @@
 package net.jqwik.engine.descriptor;
 
+import java.security.*;
+import java.util.logging.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.execution.*;
 
 public class PropertyConfiguration {
+
+	private static final Logger LOG = Logger.getLogger(CheckedProperty.class.getName());
 
 	public static PropertyConfiguration from(
 		PropertyAttributes propertyAttributes,
@@ -93,7 +98,7 @@ public class PropertyConfiguration {
 		if (overriddenSeed != null) {
 			return overriddenSeed;
 		}
-		return propertyAttributes.seed().orElse(Property.SEED_NOT_SET);
+		return propertyAttributes.seed().orElse(propertyAttributesDefaults.seed());
 	}
 
 	public GenerationMode getGenerationMode() {
@@ -151,8 +156,26 @@ public class PropertyConfiguration {
 		return previousFailureGeneration.randomSeed().map(this::withSeed).orElse(this);
 	}
 
-	public PropertyConfiguration withFixedSeed() {
-		return withSeed(getSeed());
+	public PropertyConfiguration withFixedSeed(CheckedProperty checkedProperty) {
+		if (getSeed().equals(Property.SEED_FROM_NAME))
+			return withSeed(getSeedFromPropertyName(checkedProperty.propertyName));
+		else
+			return withSeed(getSeed());
+	}
+
+	private String getSeedFromPropertyName(String propertyName) {
+		try {
+			byte[] bytes = MessageDigest.getInstance("MD5")
+										.digest(propertyName.getBytes());
+			long seed = 0;
+			for (int i = 0; i < 8; i++) {
+				seed += (seed << 8) + (bytes[i] & 0xff);
+			}
+			LOG.info("calculated seed for " + propertyName + ": " + seed);
+			return Long.toString(seed);
+		} catch (NoSuchAlgorithmException e) {
+			throw new JqwikException("", e);
+		}
 	}
 
 	public boolean seedHasNotChanged() {

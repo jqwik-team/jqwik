@@ -34,7 +34,8 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			properties.defaultEdgeCases(),
 			properties.defaultShrinking(),
 			properties.boundedShrinkingSeconds(),
-			properties.fixedSeedMode()
+			properties.fixedSeedMode(),
+			properties.defaultSeed()
 		);
 	}
 

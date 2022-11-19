@@ -92,10 +92,10 @@ public class CheckedProperty {
 		}
 	}
 
-	private PropertyConfiguration configurationWithEffectiveSeed() {
+	public PropertyConfiguration configurationWithEffectiveSeed() {
 		if (configuration.hasFixedSeed()) {
 			applyFixedSeedMode(configuration);
-			return configuration.withFixedSeed();
+			return configuration.withFixedSeed(this);
 		}
 		if (configuration.previousFailureMustBeHandled()) {
 			return configuration.withPreviousGenerationSeed();

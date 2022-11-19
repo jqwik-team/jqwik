@@ -1,8 +1,6 @@
 package net.jqwik.engine;
 
 import java.io.*;
-import java.util.*;
-import java.util.function.*;
 import java.util.logging.*;
 
 import org.junit.platform.engine.*;
@@ -44,6 +42,7 @@ public class JqwikProperties {
 	private final ShrinkingMode defaultShrinking;
 	private final int boundedShrinkingSeconds;
 	private final FixedSeedMode fixedSeedMode;
+	private final String defaultSeed;
 
 	public String databasePath() {
 		return databasePath;
@@ -93,6 +92,10 @@ public class JqwikProperties {
 		return fixedSeedMode;
 	}
 
+	public String defaultSeed() {
+		return defaultSeed;
+	}
+
 	JqwikProperties(ConfigurationParameters parameters) {
 		databasePath = parameters.get("database").orElse(DEFAULT_DATABASE_PATH);
 		runFailuresFirst = parameters.getBoolean("failures.runfirst").orElse(DEFAULT_RERUN_FAILURES_FIRST);
@@ -106,6 +109,7 @@ public class JqwikProperties {
 		defaultShrinking = parameters.get("shrinking.default", ShrinkingMode::valueOf).orElse(DEFAULT_SHRINKING);
 		boundedShrinkingSeconds = parameters.get("shrinking.bounded.seconds", Integer::parseInt).orElse(DEFAULT_BOUNDED_SHRINKING_SECONDS);
 		fixedSeedMode = parameters.get("seeds.whenfixed", FixedSeedMode::valueOf).orElse(FixedSeedMode.ALLOW);
+		defaultSeed = parameters.get("seeds.default").orElse(Property.SEED_NOT_SET);
 	}
 
 	static JqwikProperties load(ConfigurationParameters fromJunit) {

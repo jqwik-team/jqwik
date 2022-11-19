@@ -22,7 +22,9 @@ jqwik.shrinking.default = BOUNDED            # Set default shrinking behaviour:
 jqwik.shrinking.bounded.seconds = 10         # The maximum number of seconds to shrink if
                                              # shrinking behaviour is set to BOUNDED
 jqwik.seeds.whenfixed = ALLOW                # How a test should act when a seed is fixed. Can set to ALLOW, WARN or FAIL
-                                             # Useful to prevent accidental commits of fixed seeds into source control.                                             
+                                             # Useful to prevent accidental commits of fixed seeds into source control.
+jqwik.seeds.default = SEED_FROM_NAME         # Allows to generate a fixed seed from the property's name
+                                             # Can be useful if you want your CI to have repeatable test results
 ```
 
 Besides the properties file there is also the possibility to set properties

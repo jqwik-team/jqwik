@@ -37,6 +37,7 @@ public @interface Property {
 	int TRIES_NOT_SET = 0;
 	int MAX_DISCARD_RATIO_NOT_SET = 0;
 	String SEED_NOT_SET = "";
+	String SEED_FROM_NAME = "SEED_FROM_NAME";
 	String STEREOTYPE_NOT_SET = "";
 
 	/**

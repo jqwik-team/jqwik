@@ -18,6 +18,7 @@ import net.jqwik.testing.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.GenerationMode.*;
+import static net.jqwik.api.Property.*;
 import static net.jqwik.engine.TestHelper.*;
 import static net.jqwik.engine.properties.PropertyCheckResult.CheckStatus.*;
 import static net.jqwik.engine.properties.PropertyConfigurationBuilder.*;
@@ -81,6 +82,48 @@ class CheckedPropertyTests {
 			);
 		}
 
+		@Group
+		class EffectiveSeed {
+			@Group
+			class DefaultSeedIs_SEED_FROM_NAME {
+				@Example
+				void seedDoesNotChangeForGivenProperty() {
+					PropertyMethodDescriptor descriptor =
+						(PropertyMethodDescriptor) TestDescriptorBuilder
+													   .forMethod(CheckingExamples.class, "propertyWithSeedFromName", int.class)
+													   .build();
+					PropertyConfiguration configuration1 = createCheckedProperty(descriptor).configurationWithEffectiveSeed();
+					PropertyConfiguration configuration2 = createCheckedProperty(descriptor).configurationWithEffectiveSeed();
+					assertThat(configuration1.getSeed()).isEqualTo(configuration2.getSeed());
+				}
+
+				@Example
+				void seedISDifferentForDifferentProperties() {
+					PropertyMethodDescriptor descriptor =
+						(PropertyMethodDescriptor) TestDescriptorBuilder
+													   .forMethod(CheckingExamples.class, "propertyWithSeedFromName", int.class)
+													   .build();
+					PropertyConfiguration configuration1 = createCheckedProperty(descriptor).configurationWithEffectiveSeed();
+					PropertyConfiguration configuration2 = createCheckedProperty(descriptor).configurationWithEffectiveSeed();
+					assertThat(configuration1.getSeed()).isEqualTo(configuration2.getSeed());
+				}
+
+				@Example
+				void seedIsANumber() {
+					PropertyMethodDescriptor descriptor1 =
+						(PropertyMethodDescriptor) TestDescriptorBuilder
+													   .forMethod(CheckingExamples.class, "propertyWithSeedFromName", int.class)
+													   .build();
+					PropertyMethodDescriptor descriptor2 =
+						(PropertyMethodDescriptor) TestDescriptorBuilder
+													   .forMethod(CheckingExamples.class, "otherPropertyWithSeedFromName", int.class)
+													   .build();
+					PropertyConfiguration configuration1 = createCheckedProperty(descriptor1).configurationWithEffectiveSeed();
+					PropertyConfiguration configuration2 = createCheckedProperty(descriptor2).configurationWithEffectiveSeed();
+					assertThat(configuration1.getSeed()).isNotEqualTo(configuration2.getSeed());
+				}
+			}
+		}
 	}
 
 	@Group
@@ -546,6 +589,22 @@ class CheckedPropertyTests {
 			afterFailure = AfterFailureMode.RANDOM_SEED
 		)
 		public boolean propertyWith42TriesAndMaxDiscardRatio2(@ForAll int anyNumber) {
+			return true;
+		}
+
+		@Property(
+			seed = SEED_FROM_NAME,
+			whenFixedSeed = FixedSeedMode.ALLOW
+		)
+		public boolean propertyWithSeedFromName(@ForAll int anyNumber) {
+			return true;
+		}
+
+		@Property(
+			seed = SEED_FROM_NAME,
+			whenFixedSeed = FixedSeedMode.ALLOW
+		)
+		public boolean otherPropertyWithSeedFromName(@ForAll int anyNumber) {
 			return true;
 		}
 
