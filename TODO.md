@@ -6,6 +6,8 @@
     - Allow to skip current generation attempt.
       See https://github.com/jlink/jqwik/issues/408.
 
+    - Allow `@Domain` annotation in provider methods or `@ForAll` parameters.
+
 # 1.7.x
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
