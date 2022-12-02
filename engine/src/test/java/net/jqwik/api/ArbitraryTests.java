@@ -81,10 +81,6 @@ class ArbitraryTests {
 				() -> Arbitraries.integers().map(Object::toString),
 				() -> Arbitraries.integers().map(i -> i * 2),
 				() -> Arbitraries.integers().filter(i -> i % 2 == 0),
-				() -> Arbitraries.integers().map(i -> {
-					if (i % 2 == 0) throw new RuntimeException();
-					return i;
-				}).ignoreException(RuntimeException.class),
 				() -> Arbitraries.integers().between(1, 10).flatMap(i -> Arbitraries.strings().ofLength(i)),
 				() -> Arbitraries.of(-10, 10).injectNull(0.1),
 				() -> Arbitraries.of(-1000, 1000).injectDuplicates(0.1),
@@ -260,60 +256,6 @@ class ArbitraryTests {
 		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
-			RandomGenerator<Integer> generator = filtered.generator(10, true);
-
-			assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
-		}
-	}
-
-	@Group
-	class IgnoreException {
-		@Example
-		void ignoreIllegalArgumentException(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary =
-				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
-					.map(anInt -> {
-						if (anInt % 2 == 0) {
-							throw new IllegalArgumentException("No even numbers");
-						}
-						return anInt;
-					});
-			Arbitrary<Integer> filtered = arbitrary.ignoreException(IllegalArgumentException.class);
-			RandomGenerator<Integer> generator = filtered.generator(10, true);
-
-			assertThat(generator.next(random).value()).isEqualTo(1);
-			assertThat(generator.next(random).value()).isEqualTo(3);
-			assertThat(generator.next(random).value()).isEqualTo(5);
-			assertThat(generator.next(random).value()).isEqualTo(1);
-		}
-
-		@Example
-		void ignoreSubtypeOfException(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary =
-				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
-					.map(anInt -> {
-						if (anInt % 2 == 0) {
-							throw new IllegalArgumentException("No even numbers");
-						}
-						return anInt;
-					});
-			Arbitrary<Integer> filtered = arbitrary.ignoreException(RuntimeException.class);
-			RandomGenerator<Integer> generator = filtered.generator(10, true);
-
-			assertThat(generator.next(random).value()).isEqualTo(1);
-			assertThat(generator.next(random).value()).isEqualTo(3);
-			assertThat(generator.next(random).value()).isEqualTo(5);
-			assertThat(generator.next(random).value()).isEqualTo(1);
-		}
-
-		@Example
-		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary =
-				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
-					.map(anInt -> {
-						throw new IllegalArgumentException("No even numbers");
-					});
-			Arbitrary<Integer> filtered = arbitrary.ignoreException(RuntimeException.class);
 			RandomGenerator<Integer> generator = filtered.generator(10, true);
 
 			assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);

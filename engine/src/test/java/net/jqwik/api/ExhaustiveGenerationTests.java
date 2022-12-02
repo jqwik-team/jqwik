@@ -46,27 +46,6 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
-	@Label("Arbitrary.ignoreException()")
-	void ignoringException() {
-		Arbitrary<Integer> arbitrary =
-			Arbitraries.integers().between(-5, 5)
-					   .map(anInt -> {
-						   if (anInt % 2 != 0) {
-							   throw new IllegalArgumentException("No even numbers");
-						   }
-						   return anInt;
-					   });
-		Arbitrary<Integer> filtered = arbitrary.ignoreException(IllegalArgumentException.class);
-
-		Optional<ExhaustiveGenerator<Integer>> optionalGenerator = filtered.exhaustive();
-		assertThat(optionalGenerator).isPresent();
-
-		ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
-		assertThat(generator.maxCount()).isEqualTo(11); // Cannot know the number of thrown exceptions in advance
-		assertThat(generator).containsExactly(-4, -2, 0, 2, 4);
-	}
-
-	@Example
 	@Label("Arbitrary.injectNull(): null is prepended")
 	void withNull() {
 		double doesNotMatter = 0.5;

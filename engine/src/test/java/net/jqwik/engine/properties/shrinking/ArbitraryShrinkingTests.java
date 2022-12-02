@@ -31,20 +31,6 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 10)
-	void ignoringException(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary =
-			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-					   .map(i -> {
-						   if (i % 2 != 0) {
-							   throw new IllegalArgumentException("Only even numbers");
-						   }
-						   return i;
-					   })
-					   .ignoreException(IllegalArgumentException.class);
-		assertAllValuesAreShrunkTo(2, arbitrary, random);
-	}
-
-	@Property(tries = 10)
 	void dontShrink(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).dontShrink();

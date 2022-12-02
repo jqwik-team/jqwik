@@ -5,7 +5,6 @@
 
     - Allow to skip current generation attempt.
       See https://github.com/jlink/jqwik/issues/408.
-        - Consolidate IgnoreExceptionTests
         - Arbitrary.ignoreException_s_()
         - `@Provide(ignoreExceptions={})` attribute
 

@@ -55,17 +55,6 @@ class ArbitraryEdgeCasesTests implements GenericEdgeCasesProperties {
 		return Arbitraries.integers().between(-10, 10).filter(i -> i % 2 == 0);
 	}
 
-	@Example
-	void ignoringExceptions() {
-		Arbitrary<Integer> arbitrary = ignoringExceptionArbitrary();
-		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
-		assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
-				-10, -2, 0, 2, 10
-		);
-		// make sure edge cases can be repeatedly generated
-		assertThat(collectEdgeCaseValues(edgeCases)).hasSize(5);
-	}
-
 	private Arbitrary<Integer> ignoringExceptionArbitrary() {
 		Arbitrary<Integer> arbitrary =
 				Arbitraries.integers().between(-10, 10)
