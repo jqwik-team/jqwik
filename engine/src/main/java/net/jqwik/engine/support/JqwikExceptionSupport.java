@@ -1,5 +1,7 @@
 package net.jqwik.engine.support;
 
+import java.util.*;
+
 public class JqwikExceptionSupport {
 
 	/**
@@ -26,6 +28,10 @@ public class JqwikExceptionSupport {
 		if (exception instanceof OutOfMemoryError) {
 			throwAsUncheckedException(exception);
 		}
+	}
+
+	public static boolean isInstanceOfAny(Throwable throwable, Class<? extends Throwable>[] exceptionTypes) {
+		return Arrays.stream(exceptionTypes).anyMatch(exceptionType -> exceptionType.isInstance(throwable));
 	}
 
 }

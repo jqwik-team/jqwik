@@ -14,6 +14,13 @@ import static net.jqwik.testing.TestingSupport.*;
 
 class ArbitraryIgnoreExceptionsTests {
 
+	private static class OtherException extends RuntimeException {
+		OtherException(String message) {
+			super(message);
+		}
+	}
+
+
 	@Example
 	void ignoreIllegalArgumentException(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =
@@ -30,6 +37,33 @@ class ArbitraryIgnoreExceptionsTests {
 		assertThat(generator.next(random).value()).isEqualTo(1);
 		assertThat(generator.next(random).value()).isEqualTo(3);
 		assertThat(generator.next(random).value()).isEqualTo(5);
+		assertThat(generator.next(random).value()).isEqualTo(1);
+	}
+
+	@Example
+	void ignoreMultipleExceptions(@ForAll Random random) {
+
+		Arbitrary<Integer> arbitrary =
+			new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5, 6, 7, 8, 9)
+				.map(anInt -> {
+					if (anInt % 2 == 0) {
+						throw new IllegalArgumentException("No even numbers");
+					}
+					if (anInt % 3 == 0) {
+						throw new OtherException("Not divisible by 3");
+					}
+					return anInt;
+				});
+		//noinspection unchecked
+		Arbitrary<Integer> filtered = arbitrary.ignoreExceptions(
+			IllegalArgumentException.class,
+			OtherException.class
+		);
+		RandomGenerator<Integer> generator = filtered.generator(10, true);
+
+		assertThat(generator.next(random).value()).isEqualTo(1);
+		assertThat(generator.next(random).value()).isEqualTo(5);
+		assertThat(generator.next(random).value()).isEqualTo(7);
 		assertThat(generator.next(random).value()).isEqualTo(1);
 	}
 
@@ -85,20 +119,44 @@ class ArbitraryIgnoreExceptionsTests {
 		assertThat(generator).containsExactly(-4, -2, 0, 2, 4);
 	}
 
-	@Property(tries = 10)
-	void shrinking(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary =
-			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-					   .map(i -> {
-						   if (i % 2 != 0) {
-							   throw new IllegalArgumentException("Only even numbers");
-						   }
-						   return i;
-					   })
-					   .ignoreException(IllegalArgumentException.class);
+	@Group
+	class Shrinking {
 
-		Integer value = falsifyThenShrink((Arbitrary<? extends Integer>) arbitrary, random);
-		Assertions.assertThat(value).isEqualTo((Integer) 2);
+		@Property(tries = 10)
+		void singleException(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary =
+				Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+						   .map(i -> {
+							   if (i % 2 != 0) {
+								   throw new IllegalArgumentException("Only even numbers");
+							   }
+							   return i;
+						   })
+						   .ignoreException(IllegalArgumentException.class);
+
+			Integer value = falsifyThenShrink((Arbitrary<? extends Integer>) arbitrary, random);
+			Assertions.assertThat(value).isEqualTo(2);
+		}
+
+		@SuppressWarnings("unchecked")
+		@Property(tries = 10)
+		void severalExceptions(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary =
+				Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+						   .map(i -> {
+							   if (i % 2 != 0) {
+								   throw new IllegalArgumentException("Only even numbers");
+							   }
+							   if (i == 2) {
+								   throw new OtherException("Not 2");
+							   }
+							   return i;
+						   })
+						   .ignoreExceptions(IllegalArgumentException.class, OtherException.class);
+
+			Integer value = falsifyThenShrink((Arbitrary<? extends Integer>) arbitrary, random);
+			Assertions.assertThat(value).isEqualTo(4);
+		}
 	}
 
 	@Group

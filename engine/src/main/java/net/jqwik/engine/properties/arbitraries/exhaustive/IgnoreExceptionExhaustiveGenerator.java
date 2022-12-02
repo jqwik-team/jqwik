@@ -4,13 +4,15 @@ import java.util.*;
 
 import net.jqwik.api.*;
 
+import static net.jqwik.engine.support.JqwikExceptionSupport.*;
+
 public class IgnoreExceptionExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 	private final ExhaustiveGenerator<T> toFilter;
-	private final Class<? extends Throwable> exceptionType;
+	private final Class<? extends Throwable>[] exceptionTypes;
 
-	public IgnoreExceptionExhaustiveGenerator(ExhaustiveGenerator<T> toFilter, Class<? extends Throwable> exceptionType) {
+	public IgnoreExceptionExhaustiveGenerator(ExhaustiveGenerator<T> toFilter, Class<? extends Throwable>[] exceptionTypes) {
 		this.toFilter = toFilter;
-		this.exceptionType = exceptionType;
+		this.exceptionTypes = exceptionTypes;
 	}
 
 	@Override
@@ -48,7 +50,7 @@ public class IgnoreExceptionExhaustiveGenerator<T> implements ExhaustiveGenerato
 					try {
 						return mappedIterator.next();
 					} catch (Throwable throwable) {
-						if (exceptionType.isInstance(throwable)) {
+						if (isInstanceOfAny(throwable, exceptionTypes)) {
 							continue;
 						}
 						throw throwable;

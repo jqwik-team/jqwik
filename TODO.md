@@ -5,7 +5,6 @@
 
     - Allow to skip current generation attempt.
       See https://github.com/jlink/jqwik/issues/408.
-        - Arbitrary.ignoreException_s_()
         - `@Provide(ignoreExceptions={})` attribute
 
     - Allow `@Domain` annotation in provider methods or `@ForAll` parameters.

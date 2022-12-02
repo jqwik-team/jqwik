@@ -6,19 +6,21 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import static net.jqwik.engine.support.JqwikExceptionSupport.*;
+
 public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 
 	private final RandomGenerator<T> base;
-	private final Class<? extends Throwable> exceptionType;
+	private final Class<? extends Throwable>[] exceptionTypes;
 
-	public IgnoreExceptionGenerator(RandomGenerator<T> base, Class<? extends Throwable> exceptionType) {
+	public IgnoreExceptionGenerator(RandomGenerator<T> base, Class<? extends Throwable>[] exceptionTypes) {
 		this.base = base;
-		this.exceptionType = exceptionType;
+		this.exceptionTypes = exceptionTypes;
 	}
 
 	@Override
 	public Shrinkable<T> next(final Random random) {
-		return new IgnoreExceptionShrinkable<>(nextUntilAccepted(random, base::next), exceptionType);
+		return new IgnoreExceptionShrinkable<>(nextUntilAccepted(random, base::next), exceptionTypes);
 	}
 
 	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
@@ -29,13 +31,13 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 				next.value();
 				return next;
 			} catch (Throwable throwable) {
-				if (exceptionType.isInstance(throwable)) {
+				if (isInstanceOfAny(throwable, exceptionTypes)) {
 					continue;
 				}
 				throw throwable;
 			}
 		}
-		String message = String.format("%s missed more than %s times.", toString(), 10000);
+		String message = String.format("%s missed more than %s times.", this, 10000);
 		throw new TooManyFilterMissesException(message);
 	}
 

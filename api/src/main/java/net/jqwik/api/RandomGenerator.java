@@ -37,7 +37,7 @@ public interface RandomGenerator<T> {
 
 		public abstract <T> RandomGenerator<T> injectDuplicates(RandomGenerator<T> self, double duplicateProbability);
 
-		public abstract <T> RandomGenerator<T> ignoreException(RandomGenerator<T> self, Class<? extends Throwable> exceptionType);
+		public abstract <T> RandomGenerator<T> ignoreExceptions(RandomGenerator<T> self, Class<? extends Throwable>[] exceptionTypes);
 	}
 
 	/**
@@ -102,8 +102,8 @@ public interface RandomGenerator<T> {
 	}
 
 	@API(status = INTERNAL)
-	default RandomGenerator<T> ignoreException(Class<? extends Throwable> exceptionType) {
-		return RandomGeneratorFacade.implementation.ignoreException(this, exceptionType);
+	default RandomGenerator<T> ignoreExceptions(Class<? extends Throwable>[] exceptionTypes) {
+		return RandomGeneratorFacade.implementation.ignoreExceptions(this, exceptionTypes);
 	}
 
 	@API(status = INTERNAL)

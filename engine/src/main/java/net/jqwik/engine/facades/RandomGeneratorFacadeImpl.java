@@ -48,7 +48,7 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 	}
 
 	@Override
-	public <T> RandomGenerator<T> ignoreException(RandomGenerator<T> self, Class<? extends Throwable> exceptionType) {
-		return new IgnoreExceptionGenerator<>(self, exceptionType);
+	public <T> RandomGenerator<T> ignoreExceptions(RandomGenerator<T> self, Class<? extends Throwable>[] exceptionTypes) {
+		return new IgnoreExceptionGenerator<>(self, exceptionTypes);
 	}
 }

@@ -25,7 +25,7 @@ public class ExhaustiveGeneratorFacadeImpl extends ExhaustiveGenerator.Exhaustiv
 	}
 
 	@Override
-	public <T> ExhaustiveGenerator<T> ignoreException(final ExhaustiveGenerator<T> self, final Class<? extends Throwable> exceptionType) {
-		return new IgnoreExceptionExhaustiveGenerator<>(self, exceptionType);
+	public <T> ExhaustiveGenerator<T> ignoreExceptions(final ExhaustiveGenerator<T> self, final Class<? extends Throwable>[] exceptionTypes) {
+		return new IgnoreExceptionExhaustiveGenerator<>(self, exceptionTypes);
 	}
 }

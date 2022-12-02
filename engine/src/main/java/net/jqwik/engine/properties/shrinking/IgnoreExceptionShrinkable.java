@@ -4,14 +4,16 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
+import static net.jqwik.engine.support.JqwikExceptionSupport.*;
+
 public class IgnoreExceptionShrinkable<T> implements Shrinkable<T> {
 
 	private final Shrinkable<T> shrinkable;
-	private final Class<? extends Throwable> exceptionType;
+	private final Class<? extends Throwable>[] exceptionTypes;
 
-	public IgnoreExceptionShrinkable(Shrinkable<T> shrinkable, Class<? extends Throwable> exceptionType) {
+	public IgnoreExceptionShrinkable(Shrinkable<T> shrinkable, Class<? extends Throwable>[] exceptionTypes) {
 		this.shrinkable = shrinkable;
-		this.exceptionType = exceptionType;
+		this.exceptionTypes = exceptionTypes;
 	}
 
 	@Override
@@ -26,12 +28,12 @@ public class IgnoreExceptionShrinkable<T> implements Shrinkable<T> {
 				s.value();
 				return true;
 			} catch (Throwable throwable) {
-				if (exceptionType.isAssignableFrom(throwable.getClass())) {
+				if (isInstanceOfAny(throwable, exceptionTypes)) {
 					return false;
 				}
 				throw throwable;
 			}
-		}).map(shrinkable1 -> new IgnoreExceptionShrinkable<T>(shrinkable1, exceptionType));
+		}).map(shrinkable1 -> new IgnoreExceptionShrinkable<T>(shrinkable1, exceptionTypes));
 	}
 
 	@Override

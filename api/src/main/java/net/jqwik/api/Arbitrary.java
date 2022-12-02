@@ -47,7 +47,7 @@ public interface Arbitrary<T> {
 
 		public abstract <T, U> Arbitrary<U> flatMap(Arbitrary<T> self, Function<T, Arbitrary<U>> mapper);
 
-		public abstract <T> Arbitrary<T> ignoreException(Arbitrary<T> self, Class<? extends Throwable> exceptionType);
+		public abstract <T> Arbitrary<T> ignoreExceptions(Arbitrary<T> self, Class<? extends Throwable>[] exceptionTypes);
 
 		public abstract <T> Arbitrary<T> dontShrink(Arbitrary<T> self);
 
@@ -533,9 +533,24 @@ public interface Arbitrary<T> {
 	 * @param exceptionType The exception type to ignore
 	 * @return a new arbitrary instance
 	 */
+	@SuppressWarnings("unchecked")
 	@API(status = MAINTAINED, since = "1.3.1")
 	default Arbitrary<T> ignoreException(Class<? extends Throwable> exceptionType) {
-		return ArbitraryFacade.implementation.ignoreException(Arbitrary.this, exceptionType);
+		return ignoreExceptions(exceptionType);
+	}
+
+	/**
+	 * Create a new arbitrary of type {@code T} that will use the underlying
+	 * arbitrary to create the tuple values but will ignore any raised exception in
+	 * {@code exceptionTypes} during generation.
+	 *
+	 * @param exceptionTypes The exception types to ignore
+	 * @return a new arbitrary instance
+	 */
+	@SuppressWarnings("unchecked")
+	@API(status = MAINTAINED, since = "1.7.2")
+	default Arbitrary<T> ignoreExceptions(Class<? extends Throwable>... exceptionTypes) {
+		return ArbitraryFacade.implementation.ignoreExceptions(Arbitrary.this, exceptionTypes);
 	}
 
 	/**

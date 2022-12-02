@@ -9,6 +9,8 @@ import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.engine.support.JqwikExceptionSupport.*;
+
 public class EdgeCasesSupport {
 
 	public static <T> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {
@@ -112,7 +114,7 @@ public class EdgeCasesSupport {
 		return EdgeCases.fromSuppliers(filteredSuppliers);
 	}
 
-	public static <T> EdgeCases<T> ignoreException(final EdgeCases<T> self, final Class<? extends Throwable> exceptionType) {
+	public static <T> EdgeCases<T> ignoreExceptions(final EdgeCases<T> self, final Class<? extends Throwable>[] exceptionTypes) {
 		List<Supplier<Shrinkable<T>>> filteredSuppliers =
 			self.suppliers().stream()
 				.filter(supplier -> {
@@ -120,7 +122,7 @@ public class EdgeCasesSupport {
 						supplier.get().value();
 						return true;
 					} catch (Throwable throwable) {
-						if (exceptionType.isAssignableFrom(throwable.getClass())) {
+						if (isInstanceOfAny(throwable, exceptionTypes)) {
 							return false;
 						}
 						throw throwable;
@@ -128,7 +130,7 @@ public class EdgeCasesSupport {
 				})
 				.map(shrinkableSupplier -> (Supplier<Shrinkable<T>>) () -> {
 					Shrinkable<T> tShrinkable = shrinkableSupplier.get();
-					return new IgnoreExceptionShrinkable<T>(tShrinkable, exceptionType);
+					return new IgnoreExceptionShrinkable<T>(tShrinkable, exceptionTypes);
 				})
 				.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(filteredSuppliers);
