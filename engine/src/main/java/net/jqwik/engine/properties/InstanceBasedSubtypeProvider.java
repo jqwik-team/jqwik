@@ -24,7 +24,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 	public Set<Arbitrary<?>> apply(TypeUsage targetType) {
 		Optional<ForAll> optionalForAll = targetType.findAnnotation(ForAll.class);
 		Optional<String> optionalForAllValue = optionalForAll
-			.map(ForAll::value).filter(name -> !name.equals(ForAll.NO_VALUE));
+												   .map(ForAll::value).filter(name -> !name.equals(ForAll.NO_VALUE));
 
 		// Using Optional and map and filter for that destroys the type for some reason
 		Optional<Class<? extends ArbitrarySupplier<?>>> optionalForAllSupplier = Optional.empty();
@@ -37,7 +37,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 
 		Optional<From> optionalFrom = targetType.findAnnotation(From.class);
 		Optional<String> optionalFromValue = optionalFrom
-			.map(From::value).filter(name -> !name.equals(ForAll.NO_VALUE));
+												 .map(From::value).filter(name -> !name.equals(ForAll.NO_VALUE));
 
 		// Using Optional and map and filter for that destroys the type for some reason
 		Optional<Class<? extends ArbitrarySupplier<?>>> optionalFromSupplier = Optional.empty();
@@ -98,9 +98,9 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 		Optional<String> optionalFromValue
 	) {
 		String generatorName = optionalForAllValue.orElseGet(() -> optionalFromValue.orElseThrow(() -> new JqwikException("Should never happen")));
-		return findArbitraryGeneratorByName(targetType, generatorName)
-			.map(providerMethod -> invokeProviderMethod(providerMethod, targetType))
-			.orElse(Collections.emptySet());
+		return findProviderMethodByName(targetType, generatorName)
+				   .map(method -> ProviderMethod.forMethod(method, targetType, instance, this).invoke())
+				   .orElse(Collections.emptySet());
 	}
 
 	private Set<Arbitrary<?>> onlyOneSpecAllowedError(TypeUsage targetType, long countSpecs) {
@@ -112,11 +112,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 		throw new JqwikException(message);
 	}
 
-	private Set<Arbitrary<?>> invokeProviderMethod(Method providerMethod, TypeUsage targetType) {
-		return new ProviderMethodInvoker(providerMethod, targetType, instance, this).invoke();
-	}
-
-	private Optional<Method> findArbitraryGeneratorByName(TypeUsage typeUsage, String generatorToFind) {
+	private Optional<Method> findProviderMethodByName(TypeUsage typeUsage, String generatorToFind) {
 		if (generatorToFind.isEmpty())
 			return Optional.empty();
 

@@ -12,30 +12,37 @@ import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
-class ProviderMethodInvoker {
+class ProviderMethod {
 
-	ProviderMethodInvoker(Method providerMethod, TypeUsage targetType, Object instance, SubtypeProvider subtypeProvider) {
-		this.providerMethod = providerMethod;
+	static ProviderMethod forMethod(Method method, TypeUsage targetType, Object instance, ArbitraryProvider.SubtypeProvider subtypeProvider) {
+		// Provide provideAnnotation = findDeclaredOrInheritedAnnotation(method, Provide.class)
+		// 								.orElseThrow(() -> new RuntimeException("Should not happen"));
+		return new ProviderMethod(method, targetType, instance, subtypeProvider);
+	}
+
+	ProviderMethod(Method underlyingMethod, TypeUsage targetType, Object instance, SubtypeProvider subtypeProvider) {
+		this.method = underlyingMethod;
 		this.targetType = targetType;
 		this.instance = instance;
 		this.subtypeProvider = subtypeProvider;
 	}
 
-	private final Method providerMethod;
+	private final Method method;
 	private final TypeUsage targetType;
 	private final Object instance;
 	private final SubtypeProvider subtypeProvider;
 
 	Set<Arbitrary<?>> invoke() {
-		List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(providerMethod, instance.getClass());
+		List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, instance.getClass());
 		Set<Function<List<Object>, Arbitrary<?>>> baseInvoker = Collections.singleton(this::invokeProviderMethod);
 		Set<Supplier<Arbitrary<?>>> suppliers = arbitrarySuppliers(baseInvoker, parameters, Collections.emptyList());
 		return mapSet(suppliers, Supplier::get);
 	}
 
 	private Arbitrary<?> invokeProviderMethod(List<Object> argList) {
-		return (Arbitrary<?>) invokeMethodPotentiallyOuter(providerMethod, instance, argList.toArray());
+		return (Arbitrary<?>) invokeMethodPotentiallyOuter(method, instance, argList.toArray());
 	}
 
 	private Set<Supplier<Arbitrary<?>>> arbitrarySuppliers(
@@ -80,7 +87,7 @@ class ProviderMethodInvoker {
 				new CannotFindArbitraryException(
 					parameterType,
 					parameterType.findAnnotation(ForAll.class).orElse(null),
-					providerMethod
+					method
 				)
 		);
 	}
@@ -101,7 +108,7 @@ class ProviderMethodInvoker {
 				"Parameter [%s] cannot be resolved in @Provide method [%s]." +
 					"%nMaybe you want to add annotation `@ForAll`?",
 				parameter,
-				providerMethod
+				method
 			);
 			throw new JqwikException(message);
 		}

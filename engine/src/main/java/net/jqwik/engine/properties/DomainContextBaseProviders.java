@@ -15,6 +15,7 @@ import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 public class DomainContextBaseProviders {
 
@@ -34,7 +35,7 @@ public class DomainContextBaseProviders {
 		warnIfProvideAnnotationHasValue(methods);
 		return methods.stream()
 					  .filter(method -> isArbitrary(method.getReturnType()))
-					  .map(method -> new MethodBaseArbitraryProvider(method, base, priority));
+					  .map(method -> new MethodBasedArbitraryProvider(method, base, priority));
 	}
 
 	private static void warnIfProvideAnnotationHasValue(List<Method> methods) {
@@ -161,9 +162,9 @@ public class DomainContextBaseProviders {
 		}
 	}
 
-	private static class MethodBaseArbitraryProvider implements ArbitraryProvider {
+	private static class MethodBasedArbitraryProvider implements ArbitraryProvider {
 
-		private MethodBaseArbitraryProvider(Method method, Object base, int priority) {
+		private MethodBasedArbitraryProvider(Method method, Object base, int priority) {
 			this.method = method;
 			this.base = base;
 			this.priority = priority;
@@ -181,7 +182,7 @@ public class DomainContextBaseProviders {
 		@Override
 		public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 			SubtypeProvider domainSubtypeProvider = new net.jqwik.engine.properties.DomainContextBaseProviders.DomainContextBaseSubtypeProvider(base, subtypeProvider);
-			return new ProviderMethodInvoker(method, targetType, base, domainSubtypeProvider).invoke();
+			return ProviderMethod.forMethod(method, targetType, base, domainSubtypeProvider).invoke();
 		}
 
 		@Override
