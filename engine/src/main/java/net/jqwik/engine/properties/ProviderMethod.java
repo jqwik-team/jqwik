@@ -5,8 +5,8 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.support.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.engine.support.types.*;
@@ -16,17 +16,30 @@ import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 class ProviderMethod {
 
-	static ProviderMethod forMethod(Method method, TypeUsage targetType, Object instance, ArbitraryProvider.SubtypeProvider subtypeProvider) {
-		// Provide provideAnnotation = findDeclaredOrInheritedAnnotation(method, Provide.class)
-		// 								.orElseThrow(() -> new RuntimeException("Should not happen"));
-		return new ProviderMethod(method, targetType, instance, subtypeProvider);
+	@SuppressWarnings("unchecked")
+	static ProviderMethod forMethod(
+		Method method,
+		TypeUsage targetType,
+		Object instance,
+		ArbitraryProvider.SubtypeProvider subtypeProvider
+	) {
+		Class<? extends Throwable>[] ignoreExceptions = findDeclaredOrInheritedAnnotation(method, Provide.class)
+															.map(Provide::ignoreExceptions)
+															.orElse(new Class[0]);
+		return new ProviderMethod(method, targetType, instance, subtypeProvider, ignoreExceptions);
 	}
 
-	ProviderMethod(Method underlyingMethod, TypeUsage targetType, Object instance, SubtypeProvider subtypeProvider) {
+	private final Class<? extends Throwable>[] ignoreExceptions;
+
+	private ProviderMethod(
+		Method underlyingMethod, TypeUsage targetType, Object instance, SubtypeProvider subtypeProvider,
+		Class<? extends Throwable>[] ignoreExceptions
+	) {
 		this.method = underlyingMethod;
 		this.targetType = targetType;
 		this.instance = instance;
 		this.subtypeProvider = subtypeProvider;
+		this.ignoreExceptions = ignoreExceptions;
 	}
 
 	private final Method method;
@@ -38,7 +51,7 @@ class ProviderMethod {
 		List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, instance.getClass());
 		Set<Function<List<Object>, Arbitrary<?>>> baseInvoker = Collections.singleton(this::invokeProviderMethod);
 		Set<Supplier<Arbitrary<?>>> suppliers = arbitrarySuppliers(baseInvoker, parameters, Collections.emptyList());
-		return mapSet(suppliers, Supplier::get);
+		return mapSet(suppliers, arbitrarySupplier -> arbitrarySupplier.get().ignoreExceptions(ignoreExceptions));
 	}
 
 	private Arbitrary<?> invokeProviderMethod(List<Object> argList) {
@@ -67,7 +80,10 @@ class ProviderMethod {
 		}
 	}
 
-	private Set<Function<List<Object>, Arbitrary<?>>> flatMapArbitraryInInvocations(Set<Function<List<Object>, Arbitrary<?>>> invokers, int position) {
+	private Set<Function<List<Object>, Arbitrary<?>>> flatMapArbitraryInInvocations(
+		Set<Function<List<Object>, Arbitrary<?>>> invokers,
+		int position
+	) {
 		Function<Function<List<Object>, Arbitrary<?>>, Function<List<Object>, Arbitrary<?>>> mapper = invoker -> arguments -> {
 			Arbitrary<?> a = (Arbitrary<?>) arguments.get(position);
 			return a.flatMap(argument -> {

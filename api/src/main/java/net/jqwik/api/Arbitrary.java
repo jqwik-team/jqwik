@@ -544,6 +544,10 @@ public interface Arbitrary<T> {
 	 * arbitrary to create the tuple values but will ignore any raised exception in
 	 * {@code exceptionTypes} during generation.
 	 *
+	 * <p>
+	 *     If {@code exceptionTypes} is empty, the original arbitrary is returned.
+	 * </p>
+	 *
 	 * @param exceptionTypes The exception types to ignore
 	 * @return a new arbitrary instance
 	 */

@@ -45,4 +45,12 @@ public @interface Provide {
 	 * @return A non-empty string if the method should not be referenced by its name
 	 */
 	String value() default "";
+
+	/**
+	 * Used to specify exception types that should be ignored during value generation.
+	 *
+	 * @return an array of exception types
+	 */
+	@API(status = EXPERIMENTAL, since = "1.7.2")
+	Class<? extends Throwable>[] ignoreExceptions() default {};
 }

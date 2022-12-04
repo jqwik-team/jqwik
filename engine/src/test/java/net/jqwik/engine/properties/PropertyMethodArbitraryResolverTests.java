@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties;
 
 import java.lang.annotation.*;
+import java.util.ArrayList;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -14,7 +15,7 @@ import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
 import net.jqwik.testing.*;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
@@ -348,6 +349,18 @@ class PropertyMethodArbitraryResolverTests {
 			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
+		@Example
+		void provideAnnotationCanHaveIgnoreExceptionsAttribute(@ForAll Random random) {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "integersFromProvideMethodWithIgnoreExceptions");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			RandomGenerator<Integer> generator =
+				(RandomGenerator<Integer>) arbitraries.iterator().next().generator(100);
+			TestingSupport.assertAllGenerated(generator, random, anInt -> {
+				assertThat(anInt % 3).isEqualTo(0);
+			});
+		}
+
 		private void assertThingArbitrary(Arbitrary<?> arbitrary) {
 			Thing aThing = (Thing) arbitrary.generator(10, true).next(SourceOfRandomness.current()).value();
 			assertThat(aThing).isInstanceOf(Thing.class);
@@ -428,7 +441,7 @@ class PropertyMethodArbitraryResolverTests {
 			boolean thingFromEverything(
 				@ForAll(value = "aThingy", supplier = ThingSupplier.class)
 				@From(value = "aThingy", supplier = ThingSupplier.class)
-					Thing aThing
+				Thing aThing
 			) {
 				return true;
 			}
@@ -510,6 +523,22 @@ class PropertyMethodArbitraryResolverTests {
 			) {
 				assertThat(targetType.isOfType(Tuple2.class)).isTrue();
 				return Arbitraries.just(Tuple.of(aThing, aString));
+			}
+
+			@Property
+			boolean integersFromProvideMethodWithIgnoreExceptions(@ForAll("integerDivisibleBy3") int anIntDivisibleBy3) {
+				return true;
+			}
+
+			@Provide(ignoreExceptions = IllegalArgumentException.class)
+			Arbitrary<Integer> integerDivisibleBy3() {
+				return Arbitraries.integers().greaterOrEqual(0)
+								  .map(i -> {
+									  if (i % 3 != 0) {
+										  throw new IllegalArgumentException("not divisible by 3");
+									  }
+									  return i;
+								  });
 			}
 
 		}
