@@ -3,10 +3,6 @@
     - Fix NPE when using `@BeforeProperty` and `@BeforeTry` on same method.
       See https://github.com/jlink/jqwik/issues/409.
 
-    - Allow to skip current generation attempt.
-      See https://github.com/jlink/jqwik/issues/408.
-        - User guide entry for Arbitrary.ignoreExceptions() and annotation
-
     - Allow `@Domain` annotation in provider methods or `@ForAll` parameters.
 
 # 1.7.x

@@ -1087,6 +1087,26 @@ Arbitrary<LocalDate> datesBetween1900and2099() {
 }
 ```
 
+If you want to ignore more than one exception type you can use 
+[`Arbitrary.ignoreExceptions(Class<? extends Throwable>...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#ignoreExceptions(java.lang.Class...))
+
+#### Ignoring Exceptions in Provider Methods
+
+If the arbitrary is created in a provider method and the exception(s) should be ignored on the outermost level,
+you can use the `ignoreExceptions` attribute of the `@Provide` annotation:
+
+```java
+@Provide(ignoreExceptions = DateTimeException.class)
+Arbitrary<LocalDate> datesBetween1900and2099() {
+    Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2099);
+    Arbitrary<Integer> months = Arbitraries.integers().between(1, 12);
+    Arbitrary<Integer> days = Arbitraries.integers().between(1, 31);
+
+    return Combinators.combine(years, months, days).as(LocalDate::of);
+}
+```
+
+
 ### Fix an Arbitrary's `genSize`
 
 Some generators (e.g. most number generators) are sensitive to the
