@@ -1,8 +1,5 @@
 # 1.7.2
 
-    - Fix NPE when using `@BeforeProperty` and `@BeforeTry` on same method.
-      See https://github.com/jlink/jqwik/issues/409.
-
     - Allow `@Domain` annotation in provider methods or `@ForAll` parameters.
 
 # 1.7.x
