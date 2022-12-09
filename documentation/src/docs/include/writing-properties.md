@@ -177,7 +177,7 @@ public class FootnotesExamples {
 ```
 
 Unlike standard reporting, the footnotes feature must be explicitly enabled through
-the annotation `EnableFootnotes`, which can be added to container classes or individual property methods.
+the annotation `@EnableFootnotes`, which can be added to container classes or individual property methods.
 Now you can add a parameter of type `net.jqwik.api.footnotes.Footnotes` to a property method
 or a lifecycle method annotated with either `@BeforeTry` or `@AfterTry`.
 The footnote string will then be part of the sample reporting:
@@ -200,6 +200,10 @@ Original Sample
   #1 399322
 ```
 
+For footnotes that require significant computation you can also use 
+`Footnotes.addAfterFailure(Supplier<String> footnoteSupplier)`.
+Those suppliers will only be evaluated if the property fails, and then as early as possible.
+Mind that this evaluation can still happen quite often during shrinking.
 
 ### Optional `@Property` Attributes
 

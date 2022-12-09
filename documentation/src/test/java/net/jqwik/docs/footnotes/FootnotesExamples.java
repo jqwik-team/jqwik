@@ -15,4 +15,11 @@ public class FootnotesExamples {
 		Assertions.assertThat(difference).isLessThan(42);
 	}
 
+	@Property
+	void lazyFootnotes(@ForAll int anInt, @ForAll boolean shouldFail, Footnotes footnotes) {
+		footnotes.addAfterFailure(() -> "anInt=" + anInt);
+		footnotes.addAfterFailure(() -> "shouldFail=" + shouldFail);
+		Assertions.assertThat(shouldFail).isFalse();
+	}
+
 }
