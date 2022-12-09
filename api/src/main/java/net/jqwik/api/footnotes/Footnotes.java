@@ -1,5 +1,7 @@
 package net.jqwik.api.footnotes;
 
+import java.util.function.*;
+
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -24,4 +26,6 @@ public interface Footnotes {
 	 */
 	void addFootnote(String footnote);
 
+	@API(status = EXPERIMENTAL, since = "1.7.2")
+	void addAfterFailure(Supplier<String> footnoteSupplier);
 }
