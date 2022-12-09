@@ -1,8 +1,5 @@
 # 1.7.2
 
-    - Footnotes.addAfterFailure(..).
-      See https://github.com/jlink/jqwik/issues/310.
-
 # 1.7.x
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
