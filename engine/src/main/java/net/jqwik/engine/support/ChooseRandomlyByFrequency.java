@@ -5,7 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public class ChooseRandomlyByFrequency<T> implements Function<Random, T> {
+public class ChooseRandomlyByFrequency<T> implements Function<JqwikRandom, T> {
 
 	private int[] upperBounds;
 	private int size = 0;
@@ -61,7 +61,7 @@ public class ChooseRandomlyByFrequency<T> implements Function<Random, T> {
 		return valuesToChooseFrom.get(i);
 	}
 
-	public T apply(Random random) {
+	public T apply(JqwikRandom random) {
 		return choose(random.nextInt(size));
 	}
 }

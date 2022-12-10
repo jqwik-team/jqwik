@@ -74,7 +74,6 @@ class UseArbitrariesOutsideJqwikTests {
 		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 		Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.5);
 
-		Random random = new Random();
 		// Try 20 times because it fails sometimes due to enhanced probability of no duplicates
 		for (int i = 0; i < 20; i++) {
 

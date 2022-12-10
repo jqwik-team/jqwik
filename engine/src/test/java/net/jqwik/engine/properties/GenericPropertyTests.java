@@ -501,7 +501,7 @@ class GenericPropertyTests {
 	}
 
 	private ParametersGenerator randomizedShrinkablesGenerator(Arbitrary<Object>... arbitraries) {
-		Random random = SourceOfRandomness.current();
+		JqwikRandom random = SourceOfRandomness.current();
 		List<Arbitrary<Object>> arbitraryList = Arrays.stream(arbitraries).collect(Collectors.toList());
 		List<RandomGenerator<Object>> generators = arbitraryList
 			.stream()

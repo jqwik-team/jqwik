@@ -18,7 +18,7 @@ class BiasedNumericGenerator implements RandomNumericGenerator {
 	}
 
 	@Override
-	public BigInteger next(Random random) {
+	public BigInteger next(JqwikRandom random) {
 		return partitionedGenerator.next(random);
 	}
 

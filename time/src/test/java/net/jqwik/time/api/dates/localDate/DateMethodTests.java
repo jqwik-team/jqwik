@@ -26,7 +26,7 @@ public class DateMethodTests {
 	class DateMethods {
 
 		@Property
-		void atTheEarliest(@ForAll("dates") LocalDate startDate, @ForAll Random random) {
+		void atTheEarliest(@ForAll("dates") LocalDate startDate, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDate> dates = Dates.dates().atTheEarliest(startDate);
 
@@ -41,7 +41,7 @@ public class DateMethodTests {
 		void atTheEarliestAtTheLatestMinAfterMax(
 			@ForAll("dates") LocalDate startDate,
 			@ForAll("dates") LocalDate endDate,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDate.isAfter(endDate));
@@ -57,7 +57,7 @@ public class DateMethodTests {
 		}
 
 		@Property
-		void atTheLatest(@ForAll("dates") LocalDate endDate, @ForAll Random random) {
+		void atTheLatest(@ForAll("dates") LocalDate endDate, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDate> dates = Dates.dates().atTheLatest(endDate);
 
@@ -72,7 +72,7 @@ public class DateMethodTests {
 		void atTheLatestAtTheEarliestMinAfterMax(
 			@ForAll("dates") LocalDate startDate,
 			@ForAll("dates") LocalDate endDate,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDate.isAfter(endDate));
@@ -88,7 +88,7 @@ public class DateMethodTests {
 		}
 
 		@Property
-		void between(@ForAll("dates") LocalDate startDate, @ForAll("dates") LocalDate endDate, @ForAll Random random) {
+		void between(@ForAll("dates") LocalDate startDate, @ForAll("dates") LocalDate endDate, @ForAll JqwikRandom random) {
 
 			Assume.that(!startDate.isAfter(endDate));
 
@@ -105,7 +105,7 @@ public class DateMethodTests {
 		void betweenEndDateBeforeStartDate(
 			@ForAll("dates") LocalDate startDate,
 			@ForAll("dates") LocalDate endDate,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDate.isAfter(endDate));
@@ -120,7 +120,7 @@ public class DateMethodTests {
 		}
 
 		@Property
-		void betweenSame(@ForAll("dates") LocalDate sameDate, @ForAll Random random) {
+		void betweenSame(@ForAll("dates") LocalDate sameDate, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDate> dates = Dates.dates().between(sameDate, sameDate);
 
@@ -137,7 +137,7 @@ public class DateMethodTests {
 	class YearMethods {
 
 		@Property
-		void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll Random random) {
+		void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll JqwikRandom random) {
 
 			Assume.that(startYear <= endYear);
 
@@ -152,7 +152,7 @@ public class DateMethodTests {
 		}
 
 		@Property
-		void yearBetweenSame(@ForAll("years") int year, @ForAll Random random) {
+		void yearBetweenSame(@ForAll("years") int year, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDate> dates = Dates.dates().yearBetween(year, year);
 
@@ -174,7 +174,7 @@ public class DateMethodTests {
 	class MonthMethods {
 
 		@Property
-		void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+		void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll JqwikRandom random) {
 
 			Assume.that(startMonth <= endMonth);
 
@@ -189,7 +189,7 @@ public class DateMethodTests {
 		}
 
 		@Property
-		void monthBetweenMinAfterMax(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+		void monthBetweenMinAfterMax(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll JqwikRandom random) {
 
 			Assume.that(startMonth > endMonth);
 
@@ -204,7 +204,7 @@ public class DateMethodTests {
 		}
 
 		@Property
-		void monthBetweenSame(@ForAll("months") int month, @ForAll Random random) {
+		void monthBetweenSame(@ForAll("months") int month, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDate> dates = Dates.dates().monthBetween(month, month);
 
@@ -216,7 +216,7 @@ public class DateMethodTests {
 		}
 
 		@Property
-		void monthOnlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
+		void monthOnlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDate> dates = Dates.dates().onlyMonths(months.toArray(new Month[]{}));
 
@@ -241,7 +241,7 @@ public class DateMethodTests {
 		void dayOfMonthBetween(
 			@ForAll("dayOfMonths") int startDayOfMonth,
 			@ForAll("dayOfMonths") int endDayOfMonth,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDayOfMonth <= endDayOfMonth);
@@ -260,7 +260,7 @@ public class DateMethodTests {
 		void dayOfMonthBetweenStartAfterEnd(
 			@ForAll("dayOfMonths") int startDayOfMonth,
 			@ForAll("dayOfMonths") int endDayOfMonth,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDayOfMonth > endDayOfMonth);
@@ -276,7 +276,7 @@ public class DateMethodTests {
 		}
 
 		@Property
-		void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth, @ForAll Random random) {
+		void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDate> dates = Dates.dates().dayOfMonthBetween(dayOfMonth, dayOfMonth);
 
@@ -298,7 +298,7 @@ public class DateMethodTests {
 	class OnlyDaysOfWeekMethods {
 
 		@Property
-		void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll Random random) {
+		void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDate> dates = Dates.dates().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 
@@ -319,7 +319,7 @@ public class DateMethodTests {
 			@ForAll LocalDate min,
 			@ForAll LocalDate max,
 			@ForAll @IntRange(max = 2) int offset,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 			Assume.that(max.getYear() - min.getYear() >= 8);
 
@@ -346,7 +346,7 @@ public class DateMethodTests {
 			@ForAll MonthDay monthDay,
 			@ForAll @IntRange(max = 7) int yearOffset,
 			@ForAll @IntRange(max = 2) int dayOfMonthOffset,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(

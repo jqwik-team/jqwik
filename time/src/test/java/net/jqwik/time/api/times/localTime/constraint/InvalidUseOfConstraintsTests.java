@@ -21,7 +21,7 @@ public class InvalidUseOfConstraintsTests {
 	}
 
 	@Property
-	void minuteRange(@ForAll @MinuteRange(min = 11, max = 13) Random random) {
+	void minuteRange(@ForAll @MinuteRange(min = 11, max = 13) JqwikRandom random) {
 		assertThat(random).isNotNull();
 	}
 

@@ -32,7 +32,7 @@ class SequentialActionSequenceTests {
 	}
 
 	@Example
-	void runFailsWhenAllActionsHaveFailingPreconditions(@ForAll Random random) {
+	void runFailsWhenAllActionsHaveFailingPreconditions(@ForAll JqwikRandom random) {
 		Action<Integer> actionWithFailingPrecondition = new Action<Integer>() {
 			@Override
 			public boolean precondition(final Integer state) {

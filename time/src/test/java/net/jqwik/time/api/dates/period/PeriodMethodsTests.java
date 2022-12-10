@@ -14,7 +14,7 @@ import static net.jqwik.testing.TestingSupport.*;
 public class PeriodMethodsTests {
 
 	@Property
-	void between(@ForAll int start, @ForAll int end, @ForAll Random random) {
+	void between(@ForAll int start, @ForAll int end, @ForAll JqwikRandom random) {
 		Assume.that(start <= end);
 
 		Arbitrary<Period> periods = Dates.periods().between(Period.ofYears(start), Period.ofYears(end));
@@ -26,7 +26,7 @@ public class PeriodMethodsTests {
 	}
 
 	@Property
-	void betweenStartPeriodAfterEndPeriod(@ForAll int start, @ForAll int end, @ForAll Random random) {
+	void betweenStartPeriodAfterEndPeriod(@ForAll int start, @ForAll int end, @ForAll JqwikRandom random) {
 		Assume.that(start > end);
 
 		Arbitrary<Period> periods = Dates.periods().between(Period.ofYears(start), Period.ofYears(end));
@@ -47,7 +47,7 @@ public class PeriodMethodsTests {
 		@ForAll @IntRange(min = 0, max = Integer.MAX_VALUE) int year,
 		@ForAll @IntRange(min = 0, max = 11) int month,
 		@ForAll @IntRange(min = 0, max = 30) int day,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Period minMax = Period.of(year, month, day);

@@ -17,7 +17,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class IteratorArbitraryTests {
 
 	@Example
-	void iterators(@ForAll Random random) {
+	void iterators(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		IteratorArbitrary<Integer> streamArbitrary = integerArbitrary.iterator().ofMinSize(0).ofMaxSize(5);
 
@@ -31,7 +31,7 @@ class IteratorArbitraryTests {
 
 	@Example
 	@StatisticsReport(onFailureOnly = true)
-	void withSizeDistribution(@ForAll Random random) {
+	void withSizeDistribution(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		IteratorArbitrary<Integer> arbitrary =
 			integerArbitrary.iterator().ofMaxSize(100)
@@ -53,7 +53,7 @@ class IteratorArbitraryTests {
 	}
 
 	@Example
-	void uniquenessConstraint(@ForAll Random random) {
+	void uniquenessConstraint(@ForAll JqwikRandom random) {
 		IteratorArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).iterator().ofMaxSize(20)
 						   .uniqueElements(i -> i % 100);
@@ -66,7 +66,7 @@ class IteratorArbitraryTests {
 	}
 
 	@Example
-	void uniquenessElements(@ForAll Random random) {
+	void uniquenessElements(@ForAll JqwikRandom random) {
 		IteratorArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).iterator().ofMaxSize(20).uniqueElements();
 
@@ -193,14 +193,14 @@ class IteratorArbitraryTests {
 	class Shrinking {
 
 		@Property
-		void shrinksToEmptyStreamByDefault(@ForAll Random random) {
+		void shrinksToEmptyStreamByDefault(@ForAll JqwikRandom random) {
 			IteratorArbitrary<Integer> iterators = Arbitraries.integers().between(1, 10).iterator();
 			Iterator<Integer> value = falsifyThenShrink(iterators, random);
 			assertThat(value.hasNext()).isFalse();
 		}
 
 		@Property
-		void shrinkToMinSize(@ForAll Random random, @ForAll @IntRange(min = 1, max = 20) int min) {
+		void shrinkToMinSize(@ForAll JqwikRandom random, @ForAll @IntRange(min = 1, max = 20) int min) {
 			IteratorArbitrary<Integer> iterators = Arbitraries.integers().between(1, 10).iterator().ofMinSize(min);
 			Iterator<Integer> value = falsifyThenShrink(iterators, random);
 			List<Integer> list = toList(value);

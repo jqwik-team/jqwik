@@ -19,15 +19,15 @@ public class ShrinkingSupport {
 	private ShrinkingSupport() {
 	}
 
-	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random) {
+	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, JqwikRandom random) {
 		return falsifyThenShrink(arbitrary, random, ignore -> TryExecutionResult.falsified(null));
 	}
 
-	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
+	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, JqwikRandom random, Falsifier<T> falsifier) {
 		return ShrinkingSupportFacade.implementation.falsifyThenShrink(arbitrary, random, falsifier);
 	}
 
-	public static <T> T falsifyThenShrink(RandomGenerator<? extends T> generator, Random random, Falsifier<T> falsifier) {
+	public static <T> T falsifyThenShrink(RandomGenerator<? extends T> generator, JqwikRandom random, Falsifier<T> falsifier) {
 		return ShrinkingSupportFacade.implementation.falsifyThenShrink(generator, random, falsifier);
 	}
 

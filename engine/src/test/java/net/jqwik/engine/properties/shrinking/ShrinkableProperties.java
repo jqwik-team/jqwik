@@ -80,7 +80,7 @@ class ShrinkableProperties {
 	private Arbitrary<Shrinkable> integerShrinkable() {
 		Arbitrary<Integer> firsts = Arbitraries.integers();
 		Arbitrary<Integer> seconds = Arbitraries.integers();
-		Arbitrary<Random> randoms = Arbitraries.randoms();
+		Arbitrary<JqwikRandom> randoms = Arbitraries.randoms();
 		return Combinators.combine(firsts, seconds, randoms)
 						  .as((first, second, random) -> {
 							  int min = Math.min(first, second);

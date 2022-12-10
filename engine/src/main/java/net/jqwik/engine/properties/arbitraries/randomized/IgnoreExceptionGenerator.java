@@ -1,9 +1,9 @@
 package net.jqwik.engine.properties.arbitraries.randomized;
 
-import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.JqwikRandom;
 import net.jqwik.engine.properties.shrinking.*;
 
 import static net.jqwik.engine.support.JqwikExceptionSupport.*;
@@ -19,11 +19,11 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
-	public Shrinkable<T> next(final Random random) {
+	public Shrinkable<T> next(final JqwikRandom random) {
 		return new IgnoreExceptionShrinkable<>(nextUntilAccepted(random, base::next), exceptionTypes);
 	}
 
-	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
+	private Shrinkable<T> nextUntilAccepted(JqwikRandom random, Function<JqwikRandom, Shrinkable<T>> fetchShrinkable) {
 		for (int i = 0; i < 10000; i++) {
 			try {
 				Shrinkable<T> next = fetchShrinkable.apply(random);

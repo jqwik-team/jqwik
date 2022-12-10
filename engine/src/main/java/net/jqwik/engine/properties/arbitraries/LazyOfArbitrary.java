@@ -7,6 +7,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.random.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.shrinking.*;
@@ -53,7 +54,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	public RandomGenerator<T> generator(int genSize) {
 		return random -> {
 			int index = random.nextInt(suppliers.size());
-			long seed = random.nextLong();
+			JqwikRandomState seed = random.split().saveState();
 
 			Tuple2<Shrinkable<T>, Set<LazyOfShrinkable<T>>> shrinkableAndParts = generateCurrent(genSize, index, seed);
 			return createShrinkable(shrinkableAndParts, genSize, seed, Collections.singleton(index));
@@ -63,7 +64,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	private LazyOfShrinkable<T> createShrinkable(
 			Tuple2<Shrinkable<T>, Set<LazyOfShrinkable<T>>> shrinkableAndParts,
 			int genSize,
-			long seed,
+			JqwikRandomState seed,
 			Set<Integer> usedIndices
 	) {
 		Shrinkable<T> shrinkable = shrinkableAndParts.get1();
@@ -100,7 +101,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		return parts.stream().mapToInt(p -> p.depth).map(depth -> depth + 1).max().orElse(0);
 	}
 
-	private Tuple2<Shrinkable<T>, Set<LazyOfShrinkable<T>>> generateCurrent(int genSize, int index, long seed) {
+	private Tuple2<Shrinkable<T>, Set<LazyOfShrinkable<T>>> generateCurrent(int genSize, int index, JqwikRandomState seed) {
 		try {
 			pushGeneratedLevel();
 			return Tuple.of(
@@ -124,7 +125,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	private Stream<Shrinkable<T>> shrink(
 			LazyOfShrinkable<T> lazyOf,
 			int genSize,
-			long seed,
+			JqwikRandomState seed,
 			Set<Integer> usedIndexes
 	) {
 		return JqwikStreamSupport.concat(
@@ -139,7 +140,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	private Stream<Shrinkable<T>> shrinkCurrent(
 			LazyOfShrinkable<T> lazyOf,
 			int genSize,
-			long seed,
+			JqwikRandomState seed,
 			Set<Integer> usedIndexes
 	) {
 		return lazyOf.current.shrink().map(shrinkable -> new LazyOfShrinkable<>(
@@ -157,7 +158,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		);
 	}
 
-	private Stream<Shrinkable<T>> shrinkToAlternatives(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
+	private Stream<Shrinkable<T>> shrinkToAlternatives(Shrinkable<T> current, int genSize, JqwikRandomState seed, Set<Integer> usedIndexes) {
 		ShrinkingDistance distance = current.distance();
 		Set<Integer> newUsedIndexes = new LinkedHashSet<>(usedIndexes);
 		return IntStream
@@ -171,7 +172,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	// Currently disabled since I'm not sure if it provides additional value
 	@SuppressWarnings("unused")
-	private Stream<Shrinkable<T>> shrinkToAlternativesAndGrow(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
+	private Stream<Shrinkable<T>> shrinkToAlternativesAndGrow(Shrinkable<T> current, int genSize, JqwikRandomState seed, Set<Integer> usedIndexes) {
 		ShrinkingDistance distance = current.distance();
 		Set<Integer> newUsedIndexes = new LinkedHashSet<>(usedIndexes);
 		return IntStream

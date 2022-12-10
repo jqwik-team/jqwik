@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.math.*;
-import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
@@ -11,14 +10,14 @@ class SizeGenerator {
 	private SizeGenerator() {
 	}
 
-	static Function<Random, Integer> create(int minSize, int maxSize, int genSize, RandomDistribution distribution) {
+	static Function<JqwikRandom, Integer> create(int minSize, int maxSize, int genSize, RandomDistribution distribution) {
 		if (distribution != null) {
 			return sizeGeneratorWithDistribution(minSize, maxSize, genSize, distribution);
 		}
 		return sizeGeneratorWithCutoff(minSize, maxSize, genSize);
 	}
 
-	private static Function<Random, Integer> sizeGeneratorWithDistribution(
+	private static Function<JqwikRandom, Integer> sizeGeneratorWithDistribution(
 		int minSize,
 		int maxSize,
 		int genSize,
@@ -33,7 +32,7 @@ class SizeGenerator {
 		return random -> generator.next(random).intValueExact();
 	}
 
-	private static Function<Random, Integer> sizeGeneratorWithCutoff(int minSize, int maxSize, int genSize) {
+	private static Function<JqwikRandom, Integer> sizeGeneratorWithCutoff(int minSize, int maxSize, int genSize) {
 		int cutoffSize = cutoffSize(minSize, maxSize, genSize);
 		if (cutoffSize >= maxSize)
 			return random -> randomSize(random, minSize, maxSize);
@@ -59,7 +58,7 @@ class SizeGenerator {
 		return Math.min(offset + minSize, maxSize);
 	}
 
-	private static int randomSize(Random random, int minSize, int maxSize) {
+	private static int randomSize(JqwikRandom random, int minSize, int maxSize) {
 		int range = maxSize - minSize;
 		return random.nextInt(range + 1) + minSize;
 	}

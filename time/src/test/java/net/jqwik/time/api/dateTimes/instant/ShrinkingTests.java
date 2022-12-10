@@ -16,7 +16,7 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 public class ShrinkingTests {
 
 	@Property
-	void defaultShrinking(@ForAll Random random) {
+	void defaultShrinking(@ForAll JqwikRandom random) {
 		InstantArbitrary instants = DateTimes.instants();
 		Instant value = falsifyThenShrink(instants, random);
 		assertThat(value).isEqualTo(LocalDateTime.of(1900, JANUARY, 1, 0, 0, 0).toInstant(ZoneOffset.UTC));

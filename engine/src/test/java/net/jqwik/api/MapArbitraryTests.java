@@ -16,7 +16,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class MapArbitraryTests {
 
 	@Example
-	void map(@ForAll Random random) {
+	void map(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> keys = Arbitraries.integers().between(1, 10);
 		Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
 
@@ -51,7 +51,7 @@ class MapArbitraryTests {
 	}
 
 	@Example
-	void mapWithLessElementsThanMaxSize(@ForAll Random random) {
+	void mapWithLessElementsThanMaxSize(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> keys = Arbitraries.integers().between(1, 3);
 		Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
 
@@ -70,7 +70,7 @@ class MapArbitraryTests {
 
 	@Example
 	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
-	void withSizeDistribution(@ForAll Random random) {
+	void withSizeDistribution(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> keys = Arbitraries.integers();
 		Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
 
@@ -93,7 +93,7 @@ class MapArbitraryTests {
 	}
 
 	@Example
-	void keyUniqueness(@ForAll Random random) {
+	void keyUniqueness(@ForAll JqwikRandom random) {
 		MapArbitrary<Integer, String> mapArbitrary =
 			Arbitraries.maps(
 				Arbitraries.integers().between(1, 1000),
@@ -108,7 +108,7 @@ class MapArbitraryTests {
 	}
 
 	@Example
-	void valueUniqueness(@ForAll Random random) {
+	void valueUniqueness(@ForAll JqwikRandom random) {
 		MapArbitrary<String, Integer> mapArbitrary =
 			Arbitraries.maps(
 				Arbitraries.strings().alpha().ofMaxLength(10),
@@ -123,7 +123,7 @@ class MapArbitraryTests {
 	}
 
 	@Example
-	void uniqueValues(@ForAll Random random) {
+	void uniqueValues(@ForAll JqwikRandom random) {
 		MapArbitrary<String, Integer> mapArbitrary =
 			Arbitraries.maps(
 				Arbitraries.strings().alpha().ofMaxLength(10),
@@ -302,7 +302,7 @@ class MapArbitraryTests {
 	class Shrinking {
 
 		@Property(tries = 10)
-		void mapIsShrunkToEmptyMap(@ForAll Random random) {
+		void mapIsShrunkToEmptyMap(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(-10, 10);
 			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(1);
 
@@ -313,7 +313,7 @@ class MapArbitraryTests {
 		}
 
 		@Property(tries = 10)
-		void mapIsShrunkToSmallestValue(@ForAll Random random) {
+		void mapIsShrunkToSmallestValue(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(-10, 10);
 			Arbitrary<String> values = Arbitraries.strings().withCharRange('A', 'Z').ofLength(1);
 

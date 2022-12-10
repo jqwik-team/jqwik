@@ -24,7 +24,7 @@ public class MonthDayMethodsTests {
 	class MonthDayMethods {
 
 		@Property
-		void atTheEarliest(@ForAll("monthDays") MonthDay monthDay, @ForAll Random random) {
+		void atTheEarliest(@ForAll("monthDays") MonthDay monthDay, @ForAll JqwikRandom random) {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().atTheEarliest(monthDay);
 
@@ -36,7 +36,7 @@ public class MonthDayMethodsTests {
 		}
 
 		@Property
-		void atTheLatest(@ForAll("monthDays") MonthDay monthDay, @ForAll Random random) {
+		void atTheLatest(@ForAll("monthDays") MonthDay monthDay, @ForAll JqwikRandom random) {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().atTheLatest(monthDay);
 
@@ -48,7 +48,7 @@ public class MonthDayMethodsTests {
 		}
 
 		@Property
-		void between(@ForAll("monthDays") MonthDay startMonthDay, @ForAll("monthDays") MonthDay endMonthDay, @ForAll Random random) {
+		void between(@ForAll("monthDays") MonthDay startMonthDay, @ForAll("monthDays") MonthDay endMonthDay, @ForAll JqwikRandom random) {
 
 			Assume.that(!startMonthDay.isAfter(endMonthDay));
 
@@ -62,7 +62,7 @@ public class MonthDayMethodsTests {
 		}
 
 		@Property
-		void betweenSame(@ForAll("monthDays") MonthDay monthDay, @ForAll Random random) {
+		void betweenSame(@ForAll("monthDays") MonthDay monthDay, @ForAll JqwikRandom random) {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().between(monthDay, monthDay);
 
@@ -79,7 +79,7 @@ public class MonthDayMethodsTests {
 	class MonthMethods {
 
 		@Property
-		void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+		void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll JqwikRandom random) {
 
 			Assume.that(startMonth <= endMonth);
 
@@ -94,7 +94,7 @@ public class MonthDayMethodsTests {
 		}
 
 		@Property
-		void monthBetweenSame(@ForAll("months") int month, @ForAll Random random) {
+		void monthBetweenSame(@ForAll("months") int month, @ForAll JqwikRandom random) {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().monthBetween(month, month);
 
@@ -106,7 +106,7 @@ public class MonthDayMethodsTests {
 		}
 
 		@Property
-		void monthOnlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
+		void monthOnlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll JqwikRandom random) {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().onlyMonths(months.toArray(new Month[]{}));
 
@@ -131,7 +131,7 @@ public class MonthDayMethodsTests {
 		void dayOfMonthBetween(
 			@ForAll("dayOfMonths") int startDayOfMonth,
 			@ForAll("dayOfMonths") int endDayOfMonth,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDayOfMonth <= endDayOfMonth);
@@ -147,7 +147,7 @@ public class MonthDayMethodsTests {
 		}
 
 		@Property
-		void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth, @ForAll Random random) {
+		void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth, @ForAll JqwikRandom random) {
 
 			Arbitrary<MonthDay> dates = Dates.monthDays().dayOfMonthBetween(dayOfMonth, dayOfMonth);
 

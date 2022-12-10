@@ -11,7 +11,7 @@ import static net.jqwik.testing.TestingSupport.*;
 
 class FlatCombinatorsTests {
 
-	private final Random random = SourceOfRandomness.current();
+	private final JqwikRandom random = SourceOfRandomness.current();
 
 	@Example
 	void twoArbitrariesCanBeCombined() {
@@ -22,7 +22,7 @@ class FlatCombinatorsTests {
 	}
 
 	@Example
-	void filteringWorksWithFlatAs(@ForAll Random random) {
+	void filteringWorksWithFlatAs(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> upToThree = Arbitraries.integers().between(0, 3);
 		Arbitrary<Integer> combine2 = Combinators.combine(upToThree, upToThree)
 												 .filter((a, b) -> a + b == 3)
@@ -85,7 +85,7 @@ class FlatCombinatorsTests {
 	}
 
 	@Example
-	void listOfArbitrariesCanBeCombined(@ForAll Random random) {
+	void listOfArbitrariesCanBeCombined(@ForAll JqwikRandom random) {
 		List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(one(), two(), three());
 		Arbitrary<Integer> combineList =
 			Combinators.combine(listOfArbitraries)

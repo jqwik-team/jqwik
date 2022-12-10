@@ -24,7 +24,7 @@ public interface GenericGenerationProperties {
 	@Property(tries = 100)
 	default void sameRandomWillGenerateSameValueOnFreshGenerator(
 		@ForAll("arbitraries") Arbitrary<?> arbitrary,
-		@ForAll Random random,
+		@ForAll JqwikRandom random,
 		@ForAll @IntRange(min = 1, max = 10000) int genSize,
 		@ForAll boolean withEdgeCases
 	) {
@@ -42,7 +42,7 @@ public interface GenericGenerationProperties {
 
 	@Property(tries = 100)
 	default void memoizableArbitrariesWillMemoizeGenerators(
-		@ForAll Random randomToGenerateArbitrary,
+		@ForAll JqwikRandom randomToGenerateArbitrary,
 		@ForAll @IntRange(min = 1, max = 10000) int genSize,
 		@ForAll boolean withEdgeCases
 	) {
@@ -69,8 +69,8 @@ public interface GenericGenerationProperties {
 
 	@Property(tries = 100)
 	default void sameRandomWillGenerateSameValueOnMemoizedGenerator(
-		@ForAll Random randomToGenerateArbitrary,
-		@ForAll Random randomToGenerateValue,
+		@ForAll JqwikRandom randomToGenerateArbitrary,
+		@ForAll JqwikRandom randomToGenerateValue,
 		@ForAll @IntRange(min = 1, max = 10000) int genSize,
 		@ForAll boolean withEdgeCases
 	) {

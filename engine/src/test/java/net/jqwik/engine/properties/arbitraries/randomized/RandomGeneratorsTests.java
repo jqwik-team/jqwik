@@ -16,14 +16,14 @@ import static net.jqwik.testing.TestingSupport.*;
 class RandomGeneratorsTests {
 
 	@Example
-	void setsAreGeneratedWithCorrectMinAndMaxSize(@ForAll Random random) {
+	void setsAreGeneratedWithCorrectMinAndMaxSize(@ForAll JqwikRandom random) {
 		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
 		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 2, 5, 1000);
 		checkAllGenerated(generator, random, set -> set.size() >= 2 && set.size() <= 5);
 	}
 
 	@Example
-	void setGenerationShouldStopWithTooManyMisses(@ForAll Random random) {
+	void setGenerationShouldStopWithTooManyMisses(@ForAll JqwikRandom random) {
 		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
 		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 11, 11, 1000);
 
@@ -35,7 +35,7 @@ class RandomGeneratorsTests {
 	class IntegralGeneration {
 
 		@Example
-		void withinIntegerRange(@ForAll Random random) {
+		void withinIntegerRange(@ForAll JqwikRandom random) {
 			BigInteger min = valueOf(Integer.MIN_VALUE);
 			BigInteger max = valueOf(Integer.MAX_VALUE);
 			RandomGenerator<BigInteger> generator =
@@ -50,7 +50,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void withinSmallRange(@ForAll Random random) {
+		void withinSmallRange(@ForAll JqwikRandom random) {
 			BigInteger min = valueOf(-100);
 			BigInteger max = valueOf(10000);
 			RandomGenerator<BigInteger> generator =
@@ -65,7 +65,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void withinGreaterRange(@ForAll Random random) {
+		void withinGreaterRange(@ForAll JqwikRandom random) {
 			BigInteger min = valueOf(-100_000_000_000L);
 			BigInteger max = valueOf(100_000_000_000L);
 			RandomGenerator<BigInteger> generator =
@@ -80,7 +80,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void smallRangeWithBiasedDistribution(@ForAll Random random) {
+		void smallRangeWithBiasedDistribution(@ForAll JqwikRandom random) {
 			BigInteger min = valueOf(-100);
 			BigInteger max = valueOf(100000);
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
@@ -94,7 +94,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void greaterRangeWithPartitions(@ForAll Random random) {
+		void greaterRangeWithPartitions(@ForAll JqwikRandom random) {
 			BigInteger min = valueOf(Long.MIN_VALUE);
 			BigInteger max = valueOf(Long.MAX_VALUE);
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
@@ -107,7 +107,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void rangeWithGaussianDistribution(@ForAll Random random) {
+		void rangeWithGaussianDistribution(@ForAll JqwikRandom random) {
 			BigInteger min = valueOf(-1000);
 			BigInteger max = valueOf(1000);
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
@@ -121,7 +121,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void outsideLongRange(@ForAll Random random) {
+		void outsideLongRange(@ForAll JqwikRandom random) {
 			BigInteger min = new BigInteger("-10000000000000000000");
 			BigInteger max = new BigInteger("10000000000000000000");
 			RandomGenerator<BigInteger> generator =
@@ -166,7 +166,7 @@ class RandomGeneratorsTests {
 	class BigDecimalGeneration {
 
 		@Example
-		void smalls(@ForAll Random random) {
+		void smalls(@ForAll JqwikRandom random) {
 			BigDecimal min = new BigDecimal(-10);
 			BigDecimal max = new BigDecimal(10);
 			Range<BigDecimal> range = Range.of(min, max);
@@ -186,7 +186,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void bordersExcluded(@ForAll Random random) {
+		void bordersExcluded(@ForAll JqwikRandom random) {
 			BigDecimal min = new BigDecimal(-10);
 			BigDecimal max = new BigDecimal(10);
 			Range<BigDecimal> range = Range.of(min, false, max, false);
@@ -206,7 +206,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void bordersExcludedAllPositive(@ForAll Random random) {
+		void bordersExcludedAllPositive(@ForAll JqwikRandom random) {
 			BigDecimal min = new BigDecimal(1);
 			BigDecimal max = new BigDecimal(10);
 			Range<BigDecimal> range = Range.of(min, false, max, false);
@@ -226,7 +226,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void bordersExcludedAllNegative(@ForAll Random random) {
+		void bordersExcludedAllNegative(@ForAll JqwikRandom random) {
 			BigDecimal min = new BigDecimal(-10);
 			BigDecimal max = new BigDecimal(-1);
 			Range<BigDecimal> range = Range.of(min, false, max, false);
@@ -246,7 +246,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void smallRange(@ForAll Random random) {
+		void smallRange(@ForAll JqwikRandom random) {
 			BigDecimal min = new BigDecimal("0.01");
 			BigDecimal max = new BigDecimal("0.03");
 			Range<BigDecimal> range = Range.of(min, false, max, false);
@@ -278,7 +278,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void bigBigDecimals(@ForAll Random random) {
+		void bigBigDecimals(@ForAll JqwikRandom random) {
 			BigDecimal min = BigDecimal.valueOf(-Double.MAX_VALUE);
 			BigDecimal max = BigDecimal.valueOf(Double.MAX_VALUE);
 			Range<BigDecimal> range = Range.of(min, max);
@@ -299,7 +299,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void smallRangeWithBiasedDistribution(@ForAll Random random) {
+		void smallRangeWithBiasedDistribution(@ForAll JqwikRandom random) {
 			Range<BigDecimal> range = Range.of(BigDecimal.valueOf(-100), BigDecimal.valueOf(100000));
 			RandomGenerator<BigInteger> generator =
 				RandomGenerators.bigDecimals(
@@ -322,7 +322,7 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void greaterRangeWithBiasedDistribution(@ForAll Random random) {
+		void greaterRangeWithBiasedDistribution(@ForAll JqwikRandom random) {
 			Range<BigDecimal> range = Range.of(BigDecimal.valueOf(Long.MIN_VALUE), BigDecimal.valueOf(Long.MAX_VALUE));
 			RandomGenerator<BigInteger> generator =
 				RandomGenerators.bigDecimals(
@@ -361,7 +361,7 @@ class RandomGeneratorsTests {
 
 	private void assertAllPartitionsAreCovered(
 		RandomGenerator<BigInteger> generator,
-		Random random,
+		JqwikRandom random,
 		BigInteger min, BigInteger max,
 		List<BigInteger> partitionPoints
 	) {
@@ -386,7 +386,7 @@ class RandomGeneratorsTests {
 		);
 	}
 
-	private void assertAllWithinRange(RandomGenerator<BigInteger> generator, Random random, BigInteger min, BigInteger max) {
+	private void assertAllWithinRange(RandomGenerator<BigInteger> generator, JqwikRandom random, BigInteger min, BigInteger max) {
 		checkAllGenerated(
 			generator,
 			random,

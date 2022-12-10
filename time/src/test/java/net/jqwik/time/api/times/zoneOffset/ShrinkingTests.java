@@ -15,14 +15,14 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 public class ShrinkingTests {
 
 	@Property
-	void defaultShrinking(@ForAll Random random) {
+	void defaultShrinking(@ForAll JqwikRandom random) {
 		ZoneOffsetArbitrary offsets = Times.zoneOffsets();
 		ZoneOffset value = falsifyThenShrink(offsets, random);
 		assertThat(value).isEqualTo(ZoneOffset.of("Z"));
 	}
 
 	@Property
-	void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
+	void shrinksToSmallestFailingPositiveValue(@ForAll JqwikRandom random) {
 		ZoneOffsetArbitrary offsets = Times.zoneOffsets();
 		TestingFalsifier<ZoneOffset> falsifier = offset -> offset.getTotalSeconds() < ZoneOffset.ofHoursMinutesSeconds(2, 14, 33)
 																								.getTotalSeconds();
@@ -31,7 +31,7 @@ public class ShrinkingTests {
 	}
 
 	@Property
-	void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
+	void shrinksToSmallestFailingNegativeValue(@ForAll JqwikRandom random) {
 		ZoneOffsetArbitrary offsets = Times.zoneOffsets();
 		TestingFalsifier<ZoneOffset> falsifier = offset -> offset.getTotalSeconds() > ZoneOffset.ofHoursMinutesSeconds(-2, -14, -33)
 																								.getTotalSeconds();

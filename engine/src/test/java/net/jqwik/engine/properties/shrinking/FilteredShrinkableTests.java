@@ -55,7 +55,7 @@ class FilteredShrinkableTests {
 		}
 
 		@Property(tries = 10)
-		void filteredIntegers(@ForAll Random random) {
+		void filteredIntegers(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 40).filter(i -> i > 30);
 			Shrinkable<Integer> shrinkable = generateUntil(integers.generator(10, true), random, i -> true);
 

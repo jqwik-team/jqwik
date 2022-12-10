@@ -82,6 +82,8 @@ dependencies {
 	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 	implementation("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
+	implementation("org.apache.commons:commons-rng-core")
+	implementation("org.apache.commons:commons-rng-simple")
 
 	testImplementation(project(":testing"))
 

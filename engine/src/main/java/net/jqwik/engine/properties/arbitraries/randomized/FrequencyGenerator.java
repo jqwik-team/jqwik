@@ -3,6 +3,7 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.JqwikRandom;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
@@ -13,7 +14,7 @@ class FrequencyGenerator<T> extends ChooseRandomlyByFrequency<T> implements Rand
 	}
 
 	@Override
-	public Shrinkable<T> next(Random random) {
+	public Shrinkable<T> next(JqwikRandom random) {
 		return new ChooseValueShrinkable<>(apply(random), possibleValues());
 	}
 }

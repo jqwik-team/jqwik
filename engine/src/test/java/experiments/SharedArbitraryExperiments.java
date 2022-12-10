@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.JqwikRandom;
 
 // Edge cases and (probably) exhaustive generation does not really work with this approach
 // Maybe it can be made to work with even more hacking.
@@ -110,7 +111,7 @@ class SharedArbitrary<T> implements Arbitrary<T> {
 		}
 
 		@Override
-		public Shrinkable<T> next(Random random) {
+		public Shrinkable<T> next(JqwikRandom random) {
 			if (store.get() != null) {
 				return new ShrinkableRef();
 			}

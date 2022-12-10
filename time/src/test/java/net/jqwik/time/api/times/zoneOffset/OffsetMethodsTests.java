@@ -19,7 +19,7 @@ public class OffsetMethodsTests {
 	}
 
 	@Property
-	void between(@ForAll("offsets") ZoneOffset startOffset, @ForAll("offsets") ZoneOffset endOffset, @ForAll Random random) {
+	void between(@ForAll("offsets") ZoneOffset startOffset, @ForAll("offsets") ZoneOffset endOffset, @ForAll JqwikRandom random) {
 
 		Assume.that(startOffset.getTotalSeconds() <= endOffset.getTotalSeconds());
 
@@ -33,7 +33,7 @@ public class OffsetMethodsTests {
 	}
 
 	@Property
-	void betweenSame(@ForAll("offsets") ZoneOffset sameOffset, @ForAll Random random) {
+	void betweenSame(@ForAll("offsets") ZoneOffset sameOffset, @ForAll JqwikRandom random) {
 
 		Arbitrary<ZoneOffset> offsets = Times.zoneOffsets().between(sameOffset, sameOffset);
 
@@ -50,7 +50,7 @@ public class OffsetMethodsTests {
 		@ForAll("times") LocalTime end,
 		@ForAll boolean startValueIsPositive,
 		@ForAll boolean endValueIsPositive,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		try {

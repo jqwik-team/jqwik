@@ -58,14 +58,14 @@ class WebDomainTests {
 
 		@Property(tries = 10)
 		@Label("shrink down to a.aa")
-		void shrinkDownToAdotAA(@ForAll Random random) {
+		void shrinkDownToAdotAA(@ForAll JqwikRandom random) {
 			Arbitrary<String> domains = Web.webDomains();
 			String value = falsifyThenShrink(domains.generator(1000), random, TestingFalsifier.alwaysFalsify());
 			assertThat(value).isEqualTo("a.aa");
 		}
 
 		@Property(tries = 10)
-		void shrinkTo4Subdomains(@ForAll Random random) {
+		void shrinkTo4Subdomains(@ForAll JqwikRandom random) {
 			Arbitrary<String> domains = Web.webDomains();
 			Falsifier<String> falsifier = domain -> {
 				long countDots = domain.chars().filter(c -> c == '.').count();

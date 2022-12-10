@@ -18,7 +18,7 @@ public class YearMethodsTests {
 	}
 
 	@Property
-	void between(@ForAll("years") Year startYear, @ForAll("years") Year endYear, @ForAll Random random) {
+	void between(@ForAll("years") Year startYear, @ForAll("years") Year endYear, @ForAll JqwikRandom random) {
 
 		Assume.that(startYear.compareTo(endYear) <= 0);
 
@@ -33,7 +33,7 @@ public class YearMethodsTests {
 	}
 
 	@Property
-	void betweenSame(@ForAll("years") Year year, @ForAll Random random) {
+	void betweenSame(@ForAll("years") Year year, @ForAll JqwikRandom random) {
 
 		Arbitrary<Year> years = Dates.years().between(year, year);
 

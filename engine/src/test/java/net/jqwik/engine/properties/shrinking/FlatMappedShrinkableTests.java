@@ -7,9 +7,13 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.random.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import net.jqwik.testing.*;
+
+import org.junit.jupiter.api.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -22,8 +26,7 @@ import static net.jqwik.testing.TestingFalsifier.*;
 class FlatMappedShrinkableTests {
 
 	@Property(tries = 5, edgeCases = EdgeCasesMode.NONE)
-	void creation(@ForAll long seed) {
-		Assume.that(seed != 0L); // In very rare cases
+	void creation(@ForAll JqwikRandomState seed) {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Function<Integer, Arbitrary<String>> flatMapper = anInt -> Arbitraries.strings().alpha().ofLength(anInt);
 		Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
@@ -37,9 +40,7 @@ class FlatMappedShrinkableTests {
 	class Shrinking {
 
 		@Property
-		void canIgnoreLeftSide(@ForAll long seed) {
-			Assume.that(seed != 0L);
-
+		void canIgnoreLeftSide(@ForAll JqwikRandomState seed) {
 			Shrinkable<Integer> left = new OneStepShrinkable(4);
 			Function<Integer, Arbitrary<Integer>> flatMapper = ignore -> Arbitraries.integers().between(0, 100);
 			Shrinkable<Integer> shrinkable = left.flatMap(flatMapper, 1000, seed);
@@ -51,10 +52,10 @@ class FlatMappedShrinkableTests {
 		}
 
 		@Property
-		void canFullyShrinkAcrossJustOnRightSide(@ForAll Random random) {
+		void canFullyShrinkAcrossJustOnRightSide(@ForAll JqwikRandom random) {
 			Shrinkable<Integer> left = Arbitraries.integers().between(0, 100).generator(10, true).next(random);
 			Function<Integer, Arbitrary<Integer>> flatMapper = Arbitraries::just;
-			Shrinkable<Integer> shrinkable = left.flatMap(flatMapper, 1000, 4142L);
+			Shrinkable<Integer> shrinkable = left.flatMap(flatMapper, 1000, SourceOfRandomness.createSeed("4142"));
 
 			Assume.that(shrinkable.value() >= 3); // depends on seed
 
@@ -64,9 +65,7 @@ class FlatMappedShrinkableTests {
 		}
 
 		@Property
-		void shrinkingBothSidesToEnd(@ForAll long seed) {
-			Assume.that(seed != 0L);
-
+		void shrinkingBothSidesToEnd(@ForAll JqwikRandomState seed) {
 			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(4);
 			Function<Integer, Arbitrary<String>> flatMapper = anInt -> Arbitraries.strings().withCharRange('a', 'z').ofLength(anInt);
 			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
@@ -82,9 +81,7 @@ class FlatMappedShrinkableTests {
 		}
 
 		@Property
-		void filterLeftSide(@ForAll long seed) {
-			Assume.that(seed != 0L);
-
+		void filterLeftSide(@ForAll JqwikRandomState seed) {
 			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(4);
 			Function<Integer, Arbitrary<String>> flatMapper = anInt -> Arbitraries.strings().withCharRange('a', 'z').ofLength(anInt);
 			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
@@ -103,9 +100,7 @@ class FlatMappedShrinkableTests {
 		}
 
 		@Property
-		void filterRightSide(@ForAll long seed) {
-			Assume.that(seed != 0L);
-
+		void filterRightSide(@ForAll JqwikRandomState seed) {
 			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(4);
 			Function<Integer, Arbitrary<String>> flatMapper = anInt -> Arbitraries.strings().withCharRange('a', 'z').ofLength(anInt);
 			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
@@ -124,7 +119,7 @@ class FlatMappedShrinkableTests {
 		}
 
 		@Property
-		void innerShrinkableIsMoreImportantWhileShrinking(@ForAll Random random) {
+		void innerShrinkableIsMoreImportantWhileShrinking(@ForAll JqwikRandomState seed) {
 			Shrinkable<Integer> integerShrinkable = new ShrinkableBigInteger(
 				BigInteger.valueOf(5),
 				Range.of(BigInteger.ONE, BigInteger.TEN),
@@ -132,7 +127,7 @@ class FlatMappedShrinkableTests {
 			).map(BigInteger::intValueExact);
 
 			Function<Integer, Arbitrary<String>> flatMapper = i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i);
-			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, random.nextLong());
+			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
 			assertThat(shrinkable.value()).hasSize(5);
 
 			TestingFalsifier<String> falsifier = aString -> aString.length() < 3;
@@ -141,7 +136,7 @@ class FlatMappedShrinkableTests {
 		}
 
 		@Property
-		void canGrowOnRightSide(@ForAll Random random) {
+		void canGrowOnRightSide(@ForAll JqwikRandomState seed) {
 			Shrinkable<Integer> integerShrinkable = new ShrinkableBigInteger(
 				BigInteger.valueOf(2),
 				Range.of(BigInteger.ONE, BigInteger.TEN),
@@ -149,7 +144,7 @@ class FlatMappedShrinkableTests {
 			).map(BigInteger::intValueExact);
 
 			Function<Integer, Arbitrary<String>> flatMapper = i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i);
-			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, random.nextLong());
+			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
 			assertThat(shrinkable.value()).hasSize(2);
 
 			// Only then the falsifier condition is fulfilled
@@ -161,8 +156,7 @@ class FlatMappedShrinkableTests {
 		}
 
 		@Property
-		void canSimplifyOnBothSides(@ForAll long seed, @ForAll Random random) {
-			Assume.that(seed != 0L);
+		void canSimplifyOnBothSides(@ForAll JqwikRandomState seed, @ForAll JqwikRandom random) {
 			Shrinkable<Integer> integerShrinkable = Arbitraries.integers().generator(42, true).next(random);
 			Function<Integer, Arbitrary<List<Integer>>> flatMapper = anInt -> Arbitraries.just(anInt).list();
 			Shrinkable<List<Integer>> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
@@ -204,7 +198,7 @@ class FlatMappedShrinkableTests {
 
 		// This test is duplicated in ShrinkingQualityProperties
 		@Property
-		void flatMapRectangles(@ForAll Random random) {
+		void flatMapRectangles(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> lengths = Arbitraries.integers().between(0, 10);
 			List<String> shrunkResult = falsifyThenShrink(
 				lengths.flatMap(this::listsOfLength),

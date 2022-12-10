@@ -17,7 +17,7 @@ import static net.jqwik.testing.TestingFalsifier.*;
 class LazyOfArbitraryShrinkingTests {
 
 	@Property
-	void distance(@ForAll Random random) {
+	void distance(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazyOf(
 				() -> Arbitraries.integers().between(1, 10).filter(i -> i == 10)
@@ -28,7 +28,7 @@ class LazyOfArbitraryShrinkingTests {
 	}
 
 	@Property
-	void shrinkToOtherSuppliers(@ForAll Random random) {
+	void shrinkToOtherSuppliers(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazyOf(
 				() -> Arbitraries.integers().between(1, 10),
@@ -41,7 +41,7 @@ class LazyOfArbitraryShrinkingTests {
 	}
 
 	@Property
-	void twoLazyOfArbitraries(@ForAll Random random) {
+	void twoLazyOfArbitraries(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary1 =
 			Arbitraries.lazyOf(() -> Arbitraries.integers().between(1, 10));
 		Arbitrary<Integer> arbitrary2 =
@@ -54,7 +54,7 @@ class LazyOfArbitraryShrinkingTests {
 	}
 
 	@Property
-	void oneStep(@ForAll Random random) {
+	void oneStep(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazyOf(Arbitraries::integers);
 		Integer value = falsifyThenShrink(arbitrary, random);
@@ -62,7 +62,7 @@ class LazyOfArbitraryShrinkingTests {
 	}
 
 	@Property(seed = "42") // Fixed seed because sometimes uses too much heap space in CI action
-	void severalStepsToList(@ForAll Random random) {
+	void severalStepsToList(@ForAll JqwikRandom random) {
 		Arbitrary<List<Integer>> arbitrary = listOfInteger();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
 		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, falsifier);
@@ -85,7 +85,7 @@ class LazyOfArbitraryShrinkingTests {
 	// Fixing seed and tries to prevent occasional heap overflow in CI build
 	// See https://github.com/jlink/jqwik/issues/431 for the underlying problem
 	@Property(seed = "42", tries = 10)
-	void severalStepsToList_withReversedOrderOfSuppliers(@ForAll Random random) {
+	void severalStepsToList_withReversedOrderOfSuppliers(@ForAll JqwikRandom random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
 		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, falsifier);
@@ -106,7 +106,7 @@ class LazyOfArbitraryShrinkingTests {
 	}
 
 	@Property
-	void withDuplicateSuppliers(@ForAll Random random) {
+	void withDuplicateSuppliers(@ForAll JqwikRandom random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerWithDuplicateSuppliers();
 		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, alwaysFalsify());
 		assertThat(shrunkValue).isEqualTo(Collections.emptyList());
@@ -136,7 +136,7 @@ class LazyOfArbitraryShrinkingTests {
 	class Calculator {
 
 		@Property(tries = 1000)
-		void depthIsBetweenZeroAndNumberOfNodes(@ForAll Random random) {
+		void depthIsBetweenZeroAndNumberOfNodes(@ForAll JqwikRandom random) {
 			Arbitrary<Object> arbitrary = expression();
 			LazyOfShrinkable<Object> lazyOf = (LazyOfShrinkable<Object>) arbitrary.generator(10, true).next(random);
 

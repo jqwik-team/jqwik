@@ -39,7 +39,7 @@ class ActionGeneratorTests {
 	class RandomGenerator {
 
 		@Example
-		void generatesActionsFromArbitrary(@ForAll Random random) {
+		void generatesActionsFromArbitrary(@ForAll JqwikRandom random) {
 			Arbitrary<Action<Integer>> samples = new OrderedArbitraryForTesting<>(plus1(), plus2());
 
 			RandomActionGenerator<Integer> actionGenerator = new RandomActionGenerator<>(samples, 1000, random);
@@ -55,7 +55,7 @@ class ActionGeneratorTests {
 		}
 
 		@Example
-		void ignoresActionsWithFailingPrecondition(@ForAll Random random) {
+		void ignoresActionsWithFailingPrecondition(@ForAll JqwikRandom random) {
 			Arbitrary<Action<Integer>> samples = new OrderedArbitraryForTesting<>(plus1(), plus2(), failedPrecondition());
 
 			RandomActionGenerator<Integer> actionGenerator = new RandomActionGenerator<>(samples, 1000, random);
@@ -69,7 +69,7 @@ class ActionGeneratorTests {
 		}
 
 		@Example
-		void stopsSearchingForActionsAfter1000Tries(@ForAll Random random) {
+		void stopsSearchingForActionsAfter1000Tries(@ForAll JqwikRandom random) {
 			Arbitrary<Action<Integer>> samples = Arbitraries.of(failedPrecondition());
 
 			RandomActionGenerator<Integer> actionGenerator = new RandomActionGenerator<>(samples, 1000, random);

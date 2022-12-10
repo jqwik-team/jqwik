@@ -18,20 +18,20 @@ import static net.jqwik.testing.TestingFalsifier.*;
 class ArbitraryShrinkingTests {
 
 	@Property(tries = 10)
-	void values(@ForAll Random random) {
+	void values(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3);
 		assertAllValuesAreShrunkTo(1, arbitrary, random);
 	}
 
 	@Property(tries = 10)
-	void filtered(@ForAll Random random) {
+	void filtered(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).filter(i -> i % 2 == 0);
 		assertAllValuesAreShrunkTo(2, arbitrary, random);
 	}
 
 	@Property(tries = 10)
-	void dontShrink(@ForAll Random random) {
+	void dontShrink(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).dontShrink();
 
@@ -42,14 +42,14 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 10)
-	void mapped(@ForAll Random random) {
+	void mapped(@ForAll JqwikRandom random) {
 		Arbitrary<String> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).map(String::valueOf);
 		assertAllValuesAreShrunkTo("1", arbitrary, random);
 	}
 
 	@Property(tries = 10)
-	void flatMapped(@ForAll Random random) {
+	void flatMapped(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 					   .flatMap(i -> Arbitraries.of(i));
@@ -57,7 +57,7 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 10)
-	void flatMappedToString(@ForAll Random random) {
+	void flatMappedToString(@ForAll JqwikRandom random) {
 		Arbitrary<String> arbitrary =
 			Arbitraries.integers().between(1, 10)
 					   .flatMap(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i));
@@ -72,7 +72,7 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 10)
-	void collectedListShrinksElementsAndSize(@ForAll Random random) {
+	void collectedListShrinksElementsAndSize(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integersShrunkTowardMax =
 			Arbitraries
 				.integers()
@@ -92,7 +92,7 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 100)
-	void frequencyOf(@ForAll Random random) {
+	void frequencyOf(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.frequencyOf(
 				Tuple.of(1, Arbitraries.of(1, 2, 3)),
@@ -102,7 +102,7 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 100)
-	void oneOf(@ForAll Random random) {
+	void oneOf(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.oneOf(
 				Arbitraries.of(1, 2, 3),
@@ -112,7 +112,7 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 100)
-	void charsAlpha(@ForAll Random random) {
+	void charsAlpha(@ForAll JqwikRandom random) {
 		Arbitrary<Character> arbitrary =
 			Arbitraries.chars()
 					   .range('A', 'Z')
@@ -121,7 +121,7 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 100)
-	void stringsAlpha(@ForAll Random random) {
+	void stringsAlpha(@ForAll JqwikRandom random) {
 		Arbitrary<String> arbitrary =
 			Arbitraries.strings().alpha().ofLength(1);
 		assertAllValuesAreShrunkTo("A", arbitrary, random);
@@ -131,13 +131,13 @@ class ArbitraryShrinkingTests {
 	class InjectNull {
 
 		@Property(tries = 100)
-		void shrinkToNull(@ForAll Random random) {
+		void shrinkToNull(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3).injectNull(0.5);
 			assertAllValuesAreShrunkTo(null, arbitrary, random);
 		}
 
 		@Property(tries = 100)
-		void dontShrinkToNullIfFalsifierDoesNotAllow(@ForAll Random random) {
+		void dontShrinkToNullIfFalsifierDoesNotAllow(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3).injectNull(0.5);
 			Falsifier<Integer> falsifier = aNumber -> {
 				if (aNumber == null) {
@@ -317,7 +317,7 @@ class ArbitraryShrinkingTests {
 		}
 	}
 
-	private  <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
+	private  <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, JqwikRandom random) {
 		T value = falsifyThenShrink(arbitrary, random);
 		Assertions.assertThat(value).isEqualTo(expectedShrunkValue);
 	}

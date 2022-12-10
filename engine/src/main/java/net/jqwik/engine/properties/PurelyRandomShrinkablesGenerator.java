@@ -14,7 +14,7 @@ class PurelyRandomShrinkablesGenerator {
 		this.parameterGenerators = parameterGenerators;
 	}
 
-	List<Shrinkable<Object>> generateNext(Random random) {
+	List<Shrinkable<Object>> generateNext(JqwikRandom random) {
 		Map<TypeUsage, Arbitrary<Object>> generatorsCache = new LinkedHashMap<>();
 		return parameterGenerators
 				   .stream()

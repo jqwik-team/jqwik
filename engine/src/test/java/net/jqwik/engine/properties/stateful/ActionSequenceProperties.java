@@ -60,7 +60,7 @@ class ActionSequenceProperties {
 	}
 
 	@Example
-	void errorsAreWrappedInAssertionFailedError(@ForAll Random random) {
+	void errorsAreWrappedInAssertionFailedError(@ForAll JqwikRandom random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(error());
 		Shrinkable<ActionSequence<String>> sequence = arbitrary.generator(10, true).next(random);
 
@@ -69,7 +69,7 @@ class ActionSequenceProperties {
 	}
 
 	@Example
-	void sequenceExecutionIsStoppedWhenAllActionsFailPrecondition(@ForAll Random random) {
+	void sequenceExecutionIsStoppedWhenAllActionsFailPrecondition(@ForAll JqwikRandom random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX3times());
 		Shrinkable<ActionSequence<String>> sequence = arbitrary.generator(10, true).next(random);
 

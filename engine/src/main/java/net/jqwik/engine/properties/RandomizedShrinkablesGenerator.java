@@ -5,6 +5,7 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.random.*;
 import net.jqwik.api.support.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;
@@ -20,7 +21,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	public static RandomizedShrinkablesGenerator forParameters(
 		List<MethodParameter> parameters,
 		ArbitraryResolver arbitraryResolver,
-		Random random,
+		JqwikRandom random,
 		int genSize,
 		EdgeCasesMode edgeCasesMode
 	) {
@@ -36,7 +37,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 			edgeCasesMode,
 			edgeCasesTotal,
 			calculateBaseToEdgeCaseRatio(listOfEdgeCases, genSize),
-			random.nextLong()
+			random.split().saveState()
 		);
 	}
 
@@ -159,8 +160,8 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	private final EdgeCasesMode edgeCasesMode;
 	private final int edgeCasesTotal;
 	private final int baseToEdgeCaseRatio;
-	private final long baseRandomSeed;
-	private Random random;
+	private final JqwikRandomState seed;
+	private JqwikRandom random;
 
 	private boolean allEdgeCasesGenerated = false;
 	private int edgeCasesTried = 0;
@@ -171,15 +172,15 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
 		int baseToEdgeCaseRatio,
-		long baseRandomSeed
+		JqwikRandomState seed
 	) {
 		this.randomGenerator = randomGenerator;
 		this.edgeCasesGenerator = edgeCasesGenerator;
 		this.edgeCasesMode = edgeCasesMode;
 		this.edgeCasesTotal = edgeCasesTotal;
 		this.baseToEdgeCaseRatio = baseToEdgeCaseRatio;
-		this.baseRandomSeed = baseRandomSeed;
-		this.random = SourceOfRandomness.newRandom(baseRandomSeed);
+		this.seed = seed;
+		this.random = SourceOfRandomness.newRandom(seed);
 	}
 
 	@Override
@@ -225,10 +226,10 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 
 	@Override
 	public void reset() {
-		random = SourceOfRandomness.newRandom(baseRandomSeed);
+		random = SourceOfRandomness.newRandom(seed);
 	}
 
-	private boolean shouldGenerateEdgeCase(Random localRandom) {
+	private boolean shouldGenerateEdgeCase(JqwikRandom localRandom) {
 		return localRandom.nextInt(baseToEdgeCaseRatio + 1) == 0;
 	}
 

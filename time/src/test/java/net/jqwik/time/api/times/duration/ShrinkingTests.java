@@ -15,14 +15,14 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 public class ShrinkingTests {
 
 	@Property
-	void defaultShrinking(@ForAll Random random) {
+	void defaultShrinking(@ForAll JqwikRandom random) {
 		DurationArbitrary durations = Times.durations();
 		Duration value = falsifyThenShrink(durations, random);
 		assertThat(value).isEqualTo(Duration.ofSeconds(0, 0));
 	}
 
 	@Property(tries = 40)
-	void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
+	void shrinksToSmallestFailingPositiveValue(@ForAll JqwikRandom random) {
 		DurationArbitrary durations = Times.durations();
 		TestingFalsifier<Duration> falsifier = duration -> duration.compareTo(Duration.ofSeconds(999_392_192, 709_938_291)) < 0;
 		Duration value = falsifyThenShrink(durations, random, falsifier);
@@ -30,7 +30,7 @@ public class ShrinkingTests {
 	}
 
 	@Property(tries = 10)
-	void shrinksToSmallestFailingNegativeValue(@ForAll Random random) {
+	void shrinksToSmallestFailingNegativeValue(@ForAll JqwikRandom random) {
 		DurationArbitrary durations = Times.durations();
 		TestingFalsifier<Duration> falsifier = duration -> duration.compareTo(Duration.ofSeconds(-999_392_192, 709_938_291)) > 0;
 		Duration value = falsifyThenShrink(durations, random, falsifier);

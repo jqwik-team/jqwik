@@ -210,7 +210,7 @@ class PropertyMethodArbitraryResolverTests {
 
 		@SuppressWarnings("unchecked")
 		@Example
-		void providerMethodCanHaveForAllParameters(@ForAll Random random) {
+		void providerMethodCanHaveForAllParameters(@ForAll JqwikRandom random) {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "tuple2WithThingAndString");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
@@ -264,7 +264,7 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findGeneratorByNameInFromAnnotationOfTypeParameter(@ForAll Random random) {
+		void findGeneratorByNameInFromAnnotationOfTypeParameter(@ForAll JqwikRandom random) {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "listOfThingFrom");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
@@ -312,7 +312,7 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findGeneratorByNameOutsideGroup(@ForAll Random random) {
+		void findGeneratorByNameOutsideGroup(@ForAll JqwikRandom random) {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
@@ -350,7 +350,7 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void provideAnnotationCanHaveIgnoreExceptionsAttribute(@ForAll Random random) {
+		void provideAnnotationCanHaveIgnoreExceptionsAttribute(@ForAll JqwikRandom random) {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "integersFromProvideMethodWithIgnoreExceptions");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);

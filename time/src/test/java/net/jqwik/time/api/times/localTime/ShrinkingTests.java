@@ -17,14 +17,14 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 public class ShrinkingTests {
 
 	@Property
-	void defaultShrinking(@ForAll Random random) {
+	void defaultShrinking(@ForAll JqwikRandom random) {
 		LocalTimeArbitrary times = Times.times();
 		LocalTime value = falsifyThenShrink(times, random);
 		assertThat(value).isEqualTo(LocalTime.of(0, 0, 0, 0));
 	}
 
 	@Property
-	void shrinksToSmallestFailingValue(@ForAll Random random) {
+	void shrinksToSmallestFailingValue(@ForAll JqwikRandom random) {
 		LocalTimeArbitrary times = Times.times().ofPrecision(SECONDS);
 		TestingFalsifier<LocalTime> falsifier = time -> time.isBefore(LocalTime.of(9, 13, 42, 143_921_111));
 		LocalTime value = falsifyThenShrink(times, random, falsifier);

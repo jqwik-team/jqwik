@@ -34,7 +34,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void randomValues(@ForAll Random random) {
+	void randomValues(@ForAll JqwikRandom random) {
 		Arbitrary<String> stringArbitrary = Arbitraries.randomValue(r -> Integer.toString(r.nextInt(10)));
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		checkAllGenerated(generator, random, value -> Integer.parseInt(value) < 10);
@@ -42,7 +42,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void fromGenerator(@ForAll Random random) {
+	void fromGenerator(@ForAll JqwikRandom random) {
 		Arbitrary<String> stringArbitrary =
 			Arbitraries.fromGenerator(r -> Shrinkable.unshrinkable(Integer.toString(r.nextInt(10))));
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
@@ -50,7 +50,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void ofValues(@ForAll Random random) {
+	void ofValues(@ForAll JqwikRandom random) {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		checkAllGenerated(generator, random, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
@@ -58,7 +58,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void ofValueList(@ForAll Random random) {
+	void ofValueList(@ForAll JqwikRandom random) {
 		List<String> valueList = Arrays.asList("1", "hallo", "test");
 		Arbitrary<String> stringArbitrary = Arbitraries.of(valueList);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
@@ -67,7 +67,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void ofNonNullableValueList(@ForAll Random random) {
+	void ofNonNullableValueList(@ForAll JqwikRandom random) {
 		// TODO: Replace with List.of("a", "b") when moving to JDK >= 11
 		List<String> valueList = new ArrayList<String>() {
 			@Override
@@ -87,7 +87,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void ofValueSet(@ForAll Random random) {
+	void ofValueSet(@ForAll JqwikRandom random) {
 		Set<String> valueSet = new HashSet<>(Arrays.asList("1", "hallo", "test"));
 		Arbitrary<String> stringArbitrary = Arbitraries.of(valueSet);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
@@ -96,7 +96,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void ofSuppliers(@ForAll Random random) {
+	void ofSuppliers(@ForAll JqwikRandom random) {
 		Arbitrary<List<String>> listArbitrary = Arbitraries.ofSuppliers(ArrayList::new, ArrayList::new);
 		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
 		assertAllGenerated(generator, random, (List<String> value) -> {
@@ -106,7 +106,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void ofSupplierList(@ForAll Random random) {
+	void ofSupplierList(@ForAll JqwikRandom random) {
 		@SuppressWarnings("unchecked")
 		Supplier<List<String>>[] suppliers = new Supplier[]{ArrayList::new, ArrayList::new};
 		List<Supplier<List<String>>> supplierList = Arrays.asList(suppliers);
@@ -119,7 +119,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void ofSupplierSet(@ForAll Random random) {
+	void ofSupplierSet(@ForAll JqwikRandom random) {
 		@SuppressWarnings("unchecked")
 		Supplier<List<String>>[] suppliers = new Supplier[]{ArrayList::new, ArrayList::new};
 		Set<Supplier<List<String>>> supplierList = new HashSet<>(Arrays.asList(suppliers));
@@ -132,7 +132,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void ofEnum(@ForAll Random random) {
+	void ofEnum(@ForAll JqwikRandom random) {
 		Arbitrary<MyEnum> enumArbitrary = Arbitraries.of(MyEnum.class);
 		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1);
 		checkAllGenerated(generator, random, (MyEnum value) -> Arrays.asList(MyEnum.values()).contains(value));
@@ -140,7 +140,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void just(@ForAll Random random) {
+	void just(@ForAll JqwikRandom random) {
 		Arbitrary<String> constant = Arbitraries.just("hello");
 		assertAllGenerated(constant.generator(1000), random, value -> {
 			assertThat(value).isEqualTo("hello");
@@ -148,7 +148,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void forType(@ForAll Random random) {
+	void forType(@ForAll JqwikRandom random) {
 		TypeArbitrary<Person> constant = Arbitraries.forType(Person.class);
 		assertAllGenerated(constant.generator(1000), random, value -> {
 			assertThat(value).isInstanceOf(Person.class);
@@ -158,27 +158,27 @@ class ArbitrariesTests {
 	@Group
 	class Randoms {
 		@Example
-		void randoms(@ForAll Random random) {
-			Arbitrary<Random> randomArbitrary = Arbitraries.randoms();
-			RandomGenerator<Random> generator = randomArbitrary.generator(1);
-			checkAllGenerated(generator, random, (Random value) -> value.nextInt(100) < 100);
+		void randoms(@ForAll JqwikRandom random) {
+			Arbitrary<JqwikRandom> randomArbitrary = Arbitraries.randoms();
+			RandomGenerator<JqwikRandom> generator = randomArbitrary.generator(1);
+			checkAllGenerated(generator, random, (JqwikRandom value) -> value.nextInt(100) < 100);
 		}
 
 		// GenericGenerationProperties cannot be used due to different equality semantics of Random
 
 		@Property(tries = 100)
 		void sameRandomWillGenerateSameValueOnFreshGenerator(
-			@ForAll Random random,
+			@ForAll JqwikRandom random,
 			@ForAll @IntRange(min = 1, max = 10000) int genSize,
 			@ForAll boolean withEdgeCases
 		) {
 			long seed = random.nextLong();
-			Arbitrary<Random> arbitrary = Arbitraries.randoms();
+			Arbitrary<JqwikRandom> arbitrary = Arbitraries.randoms();
 
-			RandomGenerator<Random> gen1 = arbitrary.generator(genSize, withEdgeCases);
-			Random valueA = gen1.next(SourceOfRandomness.newRandom(seed)).value();
-			RandomGenerator<Random> gen2 = arbitrary.generator(genSize, withEdgeCases);
-			Random valueB = gen2.next(SourceOfRandomness.newRandom(seed)).value();
+			RandomGenerator<JqwikRandom> gen1 = arbitrary.generator(genSize, withEdgeCases);
+			JqwikRandom valueA = gen1.next(SourceOfRandomness.newRandom(seed)).value();
+			RandomGenerator<JqwikRandom> gen2 = arbitrary.generator(genSize, withEdgeCases);
+			JqwikRandom valueB = gen2.next(SourceOfRandomness.newRandom(seed)).value();
 			assertThat(valueA.nextLong()).isEqualTo(valueB.nextLong());
 		}
 
@@ -187,14 +187,14 @@ class ArbitrariesTests {
 			@ForAll @IntRange(min = 1, max = 10000) int genSize,
 			@ForAll boolean withEdgeCases
 		) {
-			Arbitrary<Random> arbitrary1 = Arbitraries.randoms();
-			Arbitrary<Random> arbitrary2 = Arbitraries.randoms();
+			Arbitrary<JqwikRandom> arbitrary1 = Arbitraries.randoms();
+			Arbitrary<JqwikRandom> arbitrary2 = Arbitraries.randoms();
 
-			RandomGenerator<Random> gen1 = Memoize.memoizedGenerator(
+			RandomGenerator<JqwikRandom> gen1 = Memoize.memoizedGenerator(
 				arbitrary1, genSize, withEdgeCases,
 				() -> arbitrary1.generator(genSize, withEdgeCases)
 			);
-			RandomGenerator<Random> gen2 = Memoize.memoizedGenerator(
+			RandomGenerator<JqwikRandom> gen2 = Memoize.memoizedGenerator(
 				arbitrary2, genSize, withEdgeCases,
 				() -> arbitrary2.generator(genSize, withEdgeCases)
 			);
@@ -203,20 +203,20 @@ class ArbitrariesTests {
 
 		@Property(tries = 100)
 		void sameRandomWillGenerateSameValueOnMemoizedGenerator(
-			@ForAll Random randomToGenerateValue,
+			@ForAll JqwikRandom randomToGenerateValue,
 			@ForAll @IntRange(min = 1, max = 10000) int genSize,
 			@ForAll boolean withEdgeCases
 		) {
-			Arbitrary<Random> arbitrary1 = Arbitraries.randoms();
-			Arbitrary<Random> arbitrary2 = Arbitraries.randoms();
+			Arbitrary<JqwikRandom> arbitrary1 = Arbitraries.randoms();
+			Arbitrary<JqwikRandom> arbitrary2 = Arbitraries.randoms();
 
 			long seedToGenerateValue = randomToGenerateValue.nextLong();
 
-			RandomGenerator<Random> gen1 = Memoize.memoizedGenerator(arbitrary1, genSize, withEdgeCases, () -> arbitrary1.generator(genSize, withEdgeCases));
-			RandomGenerator<Random> gen2 = Memoize.memoizedGenerator(arbitrary2, genSize, withEdgeCases, () -> arbitrary2.generator(genSize, withEdgeCases));
+			RandomGenerator<JqwikRandom> gen1 = Memoize.memoizedGenerator(arbitrary1, genSize, withEdgeCases, () -> arbitrary1.generator(genSize, withEdgeCases));
+			RandomGenerator<JqwikRandom> gen2 = Memoize.memoizedGenerator(arbitrary2, genSize, withEdgeCases, () -> arbitrary2.generator(genSize, withEdgeCases));
 
-			Random valueA = gen1.next(SourceOfRandomness.newRandom(seedToGenerateValue)).value();
-			Random valueB = gen2.next(SourceOfRandomness.newRandom(seedToGenerateValue)).value();
+			JqwikRandom valueA = gen1.next(SourceOfRandomness.newRandom(seedToGenerateValue)).value();
+			JqwikRandom valueB = gen2.next(SourceOfRandomness.newRandom(seedToGenerateValue)).value();
 			assertThat(valueA.nextLong()).isEqualTo(valueB.nextLong());
 		}
 
@@ -281,7 +281,7 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void create_regenerates_objects_on_each_call(@ForAll Random random) {
+	void create_regenerates_objects_on_each_call(@ForAll JqwikRandom random) {
 		Arbitrary<AtomicInteger> constant = Arbitraries.create(() -> new AtomicInteger(42));
 		AtomicInteger[] previous = new AtomicInteger[]{new AtomicInteger(42)};
 		assertAllGenerated(constant.generator(1000, true), random, value -> {
@@ -296,13 +296,13 @@ class ArbitrariesTests {
 	@Label("shuffle(..)")
 	class Shuffle {
 		@Example
-		void varArgsValues(@ForAll Random random) {
+		void varArgsValues(@ForAll JqwikRandom random) {
 			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle(1, 2, 3);
 			assertPermutations(shuffled, random);
 		}
 
 		@Example
-		void noValues(@ForAll Random random) {
+		void noValues(@ForAll JqwikRandom random) {
 			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle();
 			assertAllGenerated(
 				shuffled.generator(1000),
@@ -312,12 +312,12 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void listOfValues(@ForAll Random random) {
+		void listOfValues(@ForAll JqwikRandom random) {
 			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle(Arrays.asList(1, 2, 3));
 			assertPermutations(shuffled, random);
 		}
 
-		private void assertPermutations(Arbitrary<List<Integer>> shuffled, Random random) {
+		private void assertPermutations(Arbitrary<List<Integer>> shuffled, JqwikRandom random) {
 			assertAtLeastOneGeneratedOf(
 				shuffled.generator(1000),
 				random,
@@ -336,7 +336,7 @@ class ArbitrariesTests {
 	class OneOf {
 
 		@Example
-		void choosesOneOfManyArbitraries(@ForAll Random random) {
+		void choosesOneOfManyArbitraries(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> one = Arbitraries.of(1);
 			Arbitrary<Integer> two = Arbitraries.of(2);
 			Arbitrary<Integer> threeToFive = Arbitraries.of(3, 4, 5);
@@ -351,7 +351,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void choosesOneOfDifferentCovariantTypes(@ForAll Random random) {
+		void choosesOneOfDifferentCovariantTypes(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> ones = Arbitraries.of(1);
 			Arbitrary<String> twos = Arbitraries.of("2");
 
@@ -386,7 +386,7 @@ class ArbitrariesTests {
 	class FrequencyOf {
 
 		@Example
-		void choosesOneOfManyAccordingToFrequency(@ForAll Random random) {
+		void choosesOneOfManyAccordingToFrequency(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> one = Arbitraries.of(1);
 			Arbitrary<Integer> two = Arbitraries.of(2);
 
@@ -424,7 +424,7 @@ class ArbitrariesTests {
 	class Lazy {
 
 		@Example
-		void lazy(@ForAll Random random) {
+		void lazy(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> samples = Arbitraries.lazy(() -> new OrderedArbitraryForTesting<>(1, 2, 3));
 
 			assertGeneratedExactly(samples.generator(1000), random, 1, 2, 3, 1);
@@ -432,7 +432,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void recursiveLazy(@ForAll Random random) {
+		void recursiveLazy(@ForAll JqwikRandom random) {
 			Arbitrary<Tree> trees = trees();
 			checkAllGenerated(
 				trees.generator(1000, true),
@@ -548,13 +548,13 @@ class ArbitrariesTests {
 	class Frequency {
 
 		@Example
-		void onePair(@ForAll Random random) {
+		void onePair(@ForAll JqwikRandom random) {
 			Arbitrary<String> one = Arbitraries.frequency(Tuple.of(1, "a"));
 			checkAllGenerated(one.generator(1000), random, value -> {return value.equals("a");});
 		}
 
 		@Property(tries = 10)
-		void twoEqualPairs(@ForAll Random random) {
+		void twoEqualPairs(@ForAll JqwikRandom random) {
 			Arbitrary<String> one = Arbitraries.frequency(Tuple.of(1, "a"), Tuple.of(1, "b"));
 			Map<String, Long> counts = count(one.generator(1000, true), 1000, random);
 			assertThat(counts.get("a") > 200).isTrue();
@@ -562,14 +562,14 @@ class ArbitrariesTests {
 		}
 
 		@Property(tries = 10)
-		void twoUnequalPairs(@ForAll Random random) {
+		void twoUnequalPairs(@ForAll JqwikRandom random) {
 			Arbitrary<String> one = Arbitraries.frequency(Tuple.of(1, "a"), Tuple.of(10, "b"));
 			Map<String, Long> counts = count(one.generator(1000, true), 1000, random);
 			assertThat(counts.get("a")).isLessThan(counts.get("b"));
 		}
 
 		@Property(tries = 10)
-		void fourUnequalPairs(@ForAll Random random) {
+		void fourUnequalPairs(@ForAll JqwikRandom random) {
 			Arbitrary<String> one = Arbitraries.frequency(
 				Tuple.of(1, "a"),
 				Tuple.of(5, "b"),
@@ -593,28 +593,28 @@ class ArbitrariesTests {
 	@Label("defaultFor(..)")
 	class DefaultFor {
 		@Example
-		void simpleType(@ForAll Random random) {
+		void simpleType(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.defaultFor(Integer.class);
 			checkAllGenerated(integerArbitrary.generator(1000), random, Objects::nonNull);
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Example
-		void parameterizedType(@ForAll Random random) {
+		void parameterizedType(@ForAll JqwikRandom random) {
 			Arbitrary<List> list = Arbitraries.defaultFor(List.class, String.class);
 			checkAllGenerated(list.generator(1000), random, List.class::isInstance);
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Example
-		void moreThanOneDefault(@ForAll Random random) {
+		void moreThanOneDefault(@ForAll JqwikRandom random) {
 			Arbitrary<Collection> collections = Arbitraries.defaultFor(Collection.class, String.class);
 			TestingSupport.checkAtLeastOneGenerated(collections.generator(1000), random, List.class::isInstance);
 			TestingSupport.checkAtLeastOneGenerated(collections.generator(1000), random, Set.class::isInstance);
 		}
 
 		@Example
-		void defaultForWithTypeUsage(@ForAll Random random) throws NoSuchMethodException {
+		void defaultForWithTypeUsage(@ForAll JqwikRandom random) throws NoSuchMethodException {
 			class Container {
 				void method(@Size(3) List<Integer> intList) {}
 			}
@@ -668,14 +668,14 @@ class ArbitrariesTests {
 	@Label("chars()")
 	class Chars {
 		@Example
-		void charsDefault(@ForAll Random random) {
+		void charsDefault(@ForAll JqwikRandom random) {
 			Arbitrary<Character> arbitrary = Arbitraries.chars();
 			RandomGenerator<Character> generator = arbitrary.generator(1);
 			checkAllGenerated(generator, random, Objects::nonNull);
 		}
 
 		@Example
-		void chars(@ForAll Random random) {
+		void chars(@ForAll JqwikRandom random) {
 			Arbitrary<Character> arbitrary = Arbitraries.chars().range('a', 'd');
 			RandomGenerator<Character> generator = arbitrary.generator(1);
 			List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
@@ -688,7 +688,7 @@ class ArbitrariesTests {
 	@Label("strings()")
 	class Strings {
 		@Example
-		void string(@ForAll Random random) {
+		void string(@ForAll JqwikRandom random) {
 			Arbitrary<String> stringArbitrary = Arbitraries.strings()
 														   .withCharRange('a', 'd')
 														   .ofMinLength(0).ofMaxLength(5);
@@ -697,7 +697,7 @@ class ArbitrariesTests {
 		}
 
 		@Property(tries = 20)
-		void stringWithFixedLength(@ForAll @IntRange(min = 1, max = 10) int size, @ForAll Random random) {
+		void stringWithFixedLength(@ForAll @IntRange(min = 1, max = 10) int size, @ForAll JqwikRandom random) {
 			Arbitrary<String> stringArbitrary = Arbitraries.strings()
 														   .withCharRange('a', 'a')
 														   .ofMinLength(size).ofMaxLength(size);
@@ -707,7 +707,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void stringFromCharset(@ForAll Random random) {
+		void stringFromCharset(@ForAll JqwikRandom random) {
 			char[] validChars = new char[]{'a', 'b', 'c', 'd'};
 			Arbitrary<String> stringArbitrary = Arbitraries.strings()
 														   .withChars(validChars)
@@ -736,14 +736,14 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void shorts(@ForAll Random random) {
+		void shorts(@ForAll JqwikRandom random) {
 			Arbitrary<Short> enumArbitrary = Arbitraries.shorts();
 			RandomGenerator<Short> generator = enumArbitrary.generator(100);
 			checkAllGenerated(generator, random, (Short value) -> value >= Short.MIN_VALUE && value <= Short.MAX_VALUE);
 		}
 
 		@Example
-		void shortsMinsAndMaxes(@ForAll Random random) {
+		void shortsMinsAndMaxes(@ForAll JqwikRandom random) {
 			Arbitrary<Short> enumArbitrary = Arbitraries.shorts().between((short) -10, (short) 10);
 			RandomGenerator<Short> generator = enumArbitrary.generator(100);
 
@@ -753,14 +753,14 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void bytes(@ForAll Random random) {
+		void bytes(@ForAll JqwikRandom random) {
 			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes();
 			RandomGenerator<Byte> generator = enumArbitrary.generator(1);
 			checkAllGenerated(generator, random, (Byte value) -> value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE);
 		}
 
 		@Example
-		void bytesMinsAndMaxes(@ForAll Random random) {
+		void bytesMinsAndMaxes(@ForAll JqwikRandom random) {
 			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes().between((byte) -10, (byte) 10);
 			RandomGenerator<Byte> generator = enumArbitrary.generator(1);
 
@@ -770,14 +770,14 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void integerMinsAndMaxesWithEdgeCases(@ForAll Random random) {
+		void integerMinsAndMaxesWithEdgeCases(@ForAll JqwikRandom random) {
 			RandomGenerator<Integer> generator = Arbitraries.integers().generator(1, true);
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == Integer.MIN_VALUE);
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == Integer.MAX_VALUE);
 		}
 
 		@Example
-		void integersInt(@ForAll Random random) {
+		void integersInt(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> intArbitrary = Arbitraries.integers().between(-10, 10);
 			RandomGenerator<Integer> generator = intArbitrary.generator(10);
 
@@ -787,14 +787,14 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void longMinsAndMaxesWithEdgeCases(@ForAll Random random) {
+		void longMinsAndMaxesWithEdgeCases(@ForAll JqwikRandom random) {
 			RandomGenerator<Long> generator = Arbitraries.longs().generator(1, true);
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == Long.MIN_VALUE);
 			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == Long.MAX_VALUE);
 		}
 
 		@Example
-		void integersLong(@ForAll Random random) {
+		void integersLong(@ForAll JqwikRandom random) {
 			Arbitrary<Long> longArbitrary = Arbitraries.longs().between(-100L, 100L);
 			RandomGenerator<Long> generator = longArbitrary.generator(1000);
 
@@ -804,7 +804,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void bigIntegers(@ForAll Random random) {
+		void bigIntegers(@ForAll JqwikRandom random) {
 			Arbitrary<BigInteger> bigIntegerArbitrary = Arbitraries.bigIntegers().between(valueOf(-100L), valueOf(100L));
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
 
@@ -819,7 +819,7 @@ class ArbitrariesTests {
 		}
 
 		@Property(tries = 10)
-		void bigIntegersWithUniformDistribution(@ForAll Random random) {
+		void bigIntegersWithUniformDistribution(@ForAll JqwikRandom random) {
 			Arbitrary<BigInteger> bigIntegerArbitrary =
 				Arbitraries.bigIntegers()
 						   .between(valueOf(-1000L), valueOf(1000L))
@@ -836,7 +836,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void integralEdgeCasesAreGenerated(@ForAll Random random) {
+		void integralEdgeCasesAreGenerated(@ForAll JqwikRandom random) {
 			BigInteger min = valueOf(Integer.MIN_VALUE);
 			BigInteger max = valueOf(Integer.MAX_VALUE);
 			BigInteger shrinkingTarget = valueOf(101);
@@ -870,7 +870,7 @@ class ArbitrariesTests {
 	@Label("bigDecimals()")
 	class BigDecimals {
 		@Example
-		void bigDecimalsWithEdgeCases(@ForAll Random random) {
+		void bigDecimalsWithEdgeCases(@ForAll JqwikRandom random) {
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
 														 .between(BigDecimal.valueOf(-100.0), BigDecimal.valueOf(100.0))
 														 .ofScale(2)
@@ -889,7 +889,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void bigDecimalsLessOrEqual(@ForAll Random random) {
+		void bigDecimalsLessOrEqual(@ForAll JqwikRandom random) {
 			BigDecimal max = BigDecimal.valueOf(10);
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().lessOrEqual(max);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
@@ -897,7 +897,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void bigDecimalsLessThan(@ForAll Random random) {
+		void bigDecimalsLessThan(@ForAll JqwikRandom random) {
 			BigDecimal max = BigDecimal.valueOf(10);
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().lessThan(max).ofScale(1);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
@@ -905,7 +905,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void bigDecimalsGreaterOrEqual(@ForAll Random random) {
+		void bigDecimalsGreaterOrEqual(@ForAll JqwikRandom random) {
 			BigDecimal min = BigDecimal.valueOf(10);
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().greaterOrEqual(min);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
@@ -913,7 +913,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void bigDecimalsGreaterThan(@ForAll Random random) {
+		void bigDecimalsGreaterThan(@ForAll JqwikRandom random) {
 			BigDecimal min = BigDecimal.valueOf(10);
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().greaterThan(min).ofScale(1);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
@@ -929,7 +929,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void bigDecimalsWithBordersExcludedAndEdgeCases(@ForAll Random random) {
+		void bigDecimalsWithBordersExcludedAndEdgeCases(@ForAll JqwikRandom random) {
 			Range<BigDecimal> range = Range.of(BigDecimal.valueOf(-10.0), false, BigDecimal.valueOf(10.0), false);
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
 														 .between(range.min, range.minIncluded, range.max, range.maxIncluded)
@@ -944,7 +944,7 @@ class ArbitrariesTests {
 		}
 
 		@Property(tries = 10)
-		void bigDecimalsWithUniformDistribution(@ForAll Random random) {
+		void bigDecimalsWithUniformDistribution(@ForAll JqwikRandom random) {
 			Range<BigDecimal> range = Range.of(BigDecimal.valueOf(-1000.0), BigDecimal.valueOf(1000.0));
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
 														 .between(range.min, range.max)
@@ -968,7 +968,7 @@ class ArbitrariesTests {
 	class GenericTypes {
 
 		@Example
-		void optional(@ForAll Random random) {
+		void optional(@ForAll JqwikRandom random) {
 			Arbitrary<String> stringArbitrary = Arbitraries.of("one", "two");
 			Arbitrary<Optional<String>> optionalArbitrary = stringArbitrary.optional();
 
@@ -980,7 +980,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void optionalWithProbability(@ForAll Random random) {
+		void optionalWithProbability(@ForAll JqwikRandom random) {
 			Arbitrary<String> stringArbitrary = Arbitraries.of("one", "two");
 			Arbitrary<Optional<String>> optionalArbitrary = stringArbitrary.optional(0.9);
 
@@ -992,7 +992,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void entry(@ForAll Random random) {
+		void entry(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(1, 10);
 			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
 
@@ -1017,7 +1017,7 @@ class ArbitrariesTests {
 	@Group
 	class SubsetOf {
 		@Example
-		void subsetOf(@ForAll Random random) {
+		void subsetOf(@ForAll JqwikRandom random) {
 			SetArbitrary<String> subsets = Arbitraries.subsetOf("One", "Two", "Three").ofMinSize(1);
 			assertAllGenerated(subsets, random, value -> {
 				assertThat(value).isInstanceOf(Set.class);
@@ -1026,7 +1026,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void subsetOfListOfValues(@ForAll Random random) {
+		void subsetOfListOfValues(@ForAll JqwikRandom random) {
 			List<String> values = Arrays.asList("One", "Two", "Three", "One");
 			SetArbitrary<String> subsets = Arbitraries.subsetOf(values).ofMinSize(1);
 			assertAllGenerated(subsets, random, value -> {
@@ -1036,7 +1036,7 @@ class ArbitrariesTests {
 		}
 	}
 
-	private void assertGeneratedString(RandomGenerator<String> generator, Random random, int minLength, int maxLength) {
+	private void assertGeneratedString(RandomGenerator<String> generator, JqwikRandom random, int minLength, int maxLength) {
 		checkAllGenerated(generator, random, value -> value.length() >= minLength && value.length() <= maxLength);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
 		checkAllGenerated(

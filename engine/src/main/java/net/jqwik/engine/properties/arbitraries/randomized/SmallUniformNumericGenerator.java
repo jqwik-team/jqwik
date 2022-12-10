@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.math.*;
-import java.util.*;
 
 import net.jqwik.api.*;
 
@@ -16,7 +15,7 @@ class SmallUniformNumericGenerator implements RandomDistribution.RandomNumericGe
 	}
 
 	@Override
-	public BigInteger next(Random random) {
+	public BigInteger next(JqwikRandom random) {
 		int bound = Math.abs(max - min) + 1;
 		int value = random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + min;
 		return BigInteger.valueOf(value);

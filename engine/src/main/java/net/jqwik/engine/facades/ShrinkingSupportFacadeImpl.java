@@ -15,7 +15,7 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 	private final TestingSupportFacadeImpl testingSupportFacade = new TestingSupportFacadeImpl();
 
 	@Override
-	public <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
+	public <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, JqwikRandom random, Falsifier<T> falsifier) {
 		RandomGenerator<? extends T> generator = arbitrary.generator(10, true);
 		return falsifyThenShrink(generator, random, falsifier);
 	}
@@ -23,9 +23,9 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T falsifyThenShrink(
-			RandomGenerator<? extends T> generator,
-			Random random,
-			Falsifier<T> falsifier
+		RandomGenerator<? extends T> generator,
+		JqwikRandom random,
+		Falsifier<T> falsifier
 	) {
 		Throwable[] originalError = new Throwable[1];
 		Shrinkable<T> falsifiedShrinkable =

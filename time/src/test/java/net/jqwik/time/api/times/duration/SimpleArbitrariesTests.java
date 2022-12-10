@@ -34,7 +34,7 @@ public class SimpleArbitrariesTests {
 			@ForAll("worstCase") Duration duration,
 			@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanosStart,
 			@ForAll @IntRange(min = 0, max = 200) int nanosEnd,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Duration start = duration.withNanos(nanosStart);
@@ -54,7 +54,7 @@ public class SimpleArbitrariesTests {
 			@ForAll("worstCase") Duration duration,
 			@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanosStart,
 			@ForAll @IntRange(min = 0, max = 200) int nanosEnd,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Duration start = duration.withNanos(nanosStart);
@@ -74,7 +74,7 @@ public class SimpleArbitrariesTests {
 			@ForAll("worstCaseNegative") Duration duration,
 			@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanosEnd,
 			@ForAll @IntRange(min = 0, max = 200) int nanosStart,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Duration start = duration.withNanos(nanosEnd);
@@ -94,7 +94,7 @@ public class SimpleArbitrariesTests {
 			@ForAll("worstCaseNegative") Duration duration,
 			@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanosEnd,
 			@ForAll @IntRange(min = 0, max = 200) int nanosStart,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Duration start = duration.withNanos(nanosEnd);
@@ -113,7 +113,7 @@ public class SimpleArbitrariesTests {
 		void positiveOneSecondDifferenceNanosLow(
 			@ForAll("worstCase") Duration start,
 			@ForAll @IntRange(min = 0, max = 200) int nanosAdd,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(start.getNano() < 1_000_000_000 - nanosAdd);
@@ -133,7 +133,7 @@ public class SimpleArbitrariesTests {
 		void positiveTwoSecondDifferenceNanosLow(
 			@ForAll("worstCase") Duration start,
 			@ForAll @IntRange(min = 0, max = 200) int nanosAdd,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(start.getNano() < 1_000_000_000 - nanosAdd);
@@ -153,7 +153,7 @@ public class SimpleArbitrariesTests {
 		void negativeOneSecondDifferenceNanosLow(
 			@ForAll("worstCaseNegative") Duration start,
 			@ForAll @IntRange(min = 0, max = 200) int nanosSubtract,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(start.getNano() > nanosSubtract);
@@ -173,7 +173,7 @@ public class SimpleArbitrariesTests {
 		void negativeTwoSecondsDifferenceNanosLow(
 			@ForAll("worstCaseNegative") Duration start,
 			@ForAll @IntRange(min = 0, max = 200) int nanosSubtract,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(start.getNano() > nanosSubtract);
@@ -190,7 +190,7 @@ public class SimpleArbitrariesTests {
 		}
 
 		@Property
-		void aroundZero(@ForAll Random random) {
+		void aroundZero(@ForAll JqwikRandom random) {
 
 			Duration start = Duration.ofSeconds(0, -101);
 			Duration end = Duration.ofSeconds(0, 100);

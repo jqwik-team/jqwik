@@ -8,6 +8,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
+import net.jqwik.api.JqwikRandom;
 import net.jqwik.engine.*;
 import net.jqwik.engine.support.*;
 
@@ -24,11 +25,11 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 	}
 
 	@Override
-	public Shrinkable<F> next(Random random) {
+	public Shrinkable<F> next(JqwikRandom random) {
 		return new ShrinkableFunction(createFunction(random));
 	}
 
-	private F createFunction(Random random) {
+	private F createFunction(JqwikRandom random) {
 		long baseSeed = random.nextLong();
 		InvocationHandler handler = (proxy, method, args) -> {
 			if (JqwikReflectionSupport.isEqualsMethod(method)) {
@@ -44,7 +45,7 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 				return handleDefaultMethod(proxy, method, args);
 			}
 			return conditionalResult(args).orElseGet(() -> {
-				Random randomForArgs = SourceOfRandomness.newRandom(seedForArgs(baseSeed, args));
+				JqwikRandom randomForArgs = SourceOfRandomness.newRandom(seedForArgs(baseSeed, args));
 				Shrinkable<R> shrinkableResult = resultGenerator.next(randomForArgs);
 				storeLastResult(shrinkableResult);
 				return new Object[]{shrinkableResult.value()};

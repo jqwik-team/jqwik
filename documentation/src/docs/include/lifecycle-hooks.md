@@ -189,7 +189,7 @@ and publish the result using a [`Reporter`](/docs/${docsVersion}/javadoc/net/jqw
 ```java
 @Property(tries = 100)
 @AddLifecycleHook(MeasureTime.class)
-void measureTimeSpent(@ForAll Random random) throws InterruptedException {
+void measureTimeSpent(@ForAll JqwikRandom random) throws InterruptedException {
     Thread.sleep(random.nextInt(50));
 }
 
@@ -228,7 +228,7 @@ The following example shows how to fail if a single try will take longer than 10
 ```java
 @Property(tries = 10)
 @AddLifecycleHook(FailIfTooSlow.class)
-void sleepingProperty(@ForAll Random random) throws InterruptedException {
+void sleepingProperty(@ForAll JqwikRandom random) throws InterruptedException {
     Thread.sleep(random.nextInt(101));
 }
 

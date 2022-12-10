@@ -594,7 +594,7 @@ class SampleReportingTests {
 		class Streams {
 
 			@Example
-			void generatedStreamsCanBeReportedBeforeEvaluation(@ForAll Random random) {
+			void generatedStreamsCanBeReportedBeforeEvaluation(@ForAll JqwikRandom random) {
 				Arbitrary<Stream<Integer>> streams = Arbitraries.just(1).stream().ofSize(3);
 				Stream<Integer> stream = streams.generator(10, true).next(random).value();
 
@@ -603,7 +603,7 @@ class SampleReportingTests {
 			}
 
 			@Example
-			void generatedStreamsCanBeReportedWithoutEvaluation(@ForAll Random random) {
+			void generatedStreamsCanBeReportedWithoutEvaluation(@ForAll JqwikRandom random) {
 				Arbitrary<Stream<Integer>> streams = Arbitraries.just(1).stream().ofSize(3);
 				Stream<Integer> stream = streams.generator(10, true).next(random).value();
 

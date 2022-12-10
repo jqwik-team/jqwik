@@ -135,7 +135,7 @@ class ArbitraryEdgeCasesTests implements GenericEdgeCasesProperties {
 	class GenericConfiguration {
 
 		@Example
-		void noEdgeCases(@ForAll Random random) {
+		void noEdgeCases(@ForAll JqwikRandom random) {
 			Arbitrary<String> arbitrary =
 				Arbitraries
 					.of("one", "two", "three")

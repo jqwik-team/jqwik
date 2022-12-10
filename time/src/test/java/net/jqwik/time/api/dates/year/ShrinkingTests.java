@@ -16,14 +16,14 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 public class ShrinkingTests {
 
 	@Property
-	void defaultShrinking(@ForAll Random random) {
+	void defaultShrinking(@ForAll JqwikRandom random) {
 		YearArbitrary years = Dates.years();
 		Year value = falsifyThenShrink(years, random);
 		assertThat(value).isEqualTo(Year.of(1900));
 	}
 
 	@Property
-	void shrinksToSmallestFailingPositiveValue(@ForAll Random random) {
+	void shrinksToSmallestFailingPositiveValue(@ForAll JqwikRandom random) {
 		YearArbitrary years = Dates.years();
 		TestingFalsifier<Year> falsifier = year -> year.getValue() < 1942;
 		Year value = falsifyThenShrink(years, random, falsifier);

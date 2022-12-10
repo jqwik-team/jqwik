@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.random.*;
+
 import org.jetbrains.annotations.*;
 import org.opentest4j.*;
 
@@ -16,18 +18,18 @@ import net.jqwik.engine.*;
 public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	public static final int MAX_TRANSFORMER_TRIES = 1000;
-	private final long randomSeed;
+	private final JqwikRandomState randomSeed;
 	private final Supplier<? extends T> initialSupplier;
-	private final Function<Random, Transformation<T>> transformationGenerator;
+	private final Function<JqwikRandom, Transformation<T>> transformationGenerator;
 	private final int maxTransformations;
 	private final int genSize;
 	private final List<ShrinkableChainIteration<T>> iterations;
 	private final Supplier<ChangeDetector<T>> changeDetectorSupplier;
 
 	public ShrinkableChain(
-		long randomSeed,
+		JqwikRandomState randomSeed,
 		Supplier<? extends T> initialSupplier,
-		Function<Random, Transformation<T>> transformationGenerator,
+		Function<JqwikRandom, Transformation<T>> transformationGenerator,
 		Supplier<ChangeDetector<T>> changeDetectorSupplier,
 		int maxTransformations,
 		int genSize
@@ -36,8 +38,8 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	}
 
 	private ShrinkableChain(
-		long randomSeed, Supplier<? extends T> initialSupplier,
-		Function<Random, Transformation<T>> transformationGenerator,
+		JqwikRandomState randomSeed, Supplier<? extends T> initialSupplier,
+		Function<JqwikRandom, Transformation<T>> transformationGenerator,
 		Supplier<ChangeDetector<T>> changeDetectorSupplier,
 		int maxTransformations,
 		int genSize,
@@ -123,7 +125,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	private class ChainIterator implements Iterator<T> {
 
-		private final Random random = SourceOfRandomness.newRandom(randomSeed);
+		private final JqwikRandom random = SourceOfRandomness.newRandom(randomSeed);
 		private int steps = 0;
 		private T current;
 		private boolean initialSupplied = false;
@@ -169,7 +171,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 		private Transformer<T> nextTransformer() {
 			// Fix random seed for same random sequence in re-runs
-			long nextSeed = random.nextLong();
+			JqwikRandom nextSeed = random.split();
 
 			Shrinkable<Transformer<T>> next = null;
 			if (steps < iterations.size()) {
@@ -204,9 +206,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			return iteration.shrinkable;
 		}
 
-		private Shrinkable<Transformer<T>> runNewStep(long nextSeed) {
-			Random random = SourceOfRandomness.newRandom(nextSeed);
-
+		private Shrinkable<Transformer<T>> runNewStep(JqwikRandom random) {
 			AtomicInteger attemptsCounter = new AtomicInteger(0);
 			while (attemptsCounter.get() < MAX_TRANSFORMER_TRIES) {
 				Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> arbitraryAccessTuple = nextTransformerArbitrary(random, attemptsCounter);
@@ -225,7 +225,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			return failWithTooManyAttempts(attemptsCounter);
 		}
 
-		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(Random random, AtomicInteger attemptsCounter) {
+		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(JqwikRandom random, AtomicInteger attemptsCounter) {
 			AtomicBoolean accessState = new AtomicBoolean(false);
 			Supplier<T> supplier = () -> {
 				accessState.set(true);

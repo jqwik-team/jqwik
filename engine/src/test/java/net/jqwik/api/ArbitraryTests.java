@@ -22,7 +22,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class ArbitraryTests {
 
 	@Example
-	void generatorWithoutEdgeCases(@ForAll Random random) {
+	void generatorWithoutEdgeCases(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
 		RandomGenerator<Integer> generator = arbitrary.generator(10, false);
 		checkAllGenerated(generator, random, i -> i >= -1000 && i <= 1000);
@@ -55,7 +55,7 @@ class ArbitraryTests {
 	}
 
 	@Property(tries = 100)
-	void nullsWithProbability50Percent(@ForAll Random random) {
+	void nullsWithProbability50Percent(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 		Arbitrary<Integer> intsWithNulls = ints.injectNull(0.5);
 
@@ -136,7 +136,7 @@ class ArbitraryTests {
 	class GeneratorWithEmbeddedEdgeCases {
 
 		@Example
-		void generatorWithEdgeCases(@ForAll Random random) {
+		void generatorWithEdgeCases(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-1000, 1000);
 			RandomGenerator<Integer> generator = arbitrary.generator(10, true);
 
@@ -241,7 +241,7 @@ class ArbitraryTests {
 	@Group
 	class Filtering {
 		@Example
-		void filterInteger(@ForAll Random random) {
+		void filterInteger(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
 			RandomGenerator<Integer> generator = filtered.generator(10, true);
@@ -253,7 +253,7 @@ class ArbitraryTests {
 		}
 
 		@Example
-		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
+		void failIfFilterWillDiscard10000ValuesInARow(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
 			RandomGenerator<Integer> generator = filtered.generator(10, true);
@@ -305,7 +305,7 @@ class ArbitraryTests {
 	class Mapping {
 
 		@Example
-		void mapIntegerToString(@ForAll Random random) {
+		void mapIntegerToString(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
 			RandomGenerator<String> generator = mapped.generator(10, true);
@@ -320,7 +320,7 @@ class ArbitraryTests {
 
 		// To ensure optimization of just(value).map(..) works
 		@Example
-		void mapJust(@ForAll Random random) {
+		void mapJust(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.just(5);
 			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
 
@@ -335,7 +335,7 @@ class ArbitraryTests {
 	class FlatMapping {
 
 		@Example
-		void flatMapIntegerToString(@ForAll Random random) {
+		void flatMapIntegerToString(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings() //
 																			 .withCharRange('a', 'e') //
@@ -358,7 +358,7 @@ class ArbitraryTests {
 
 		// To ensure optimization of just(value).flatMap(..) works
 		@Example
-		void flatMapJust(@ForAll Random random) {
+		void flatMapJust(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.just(5);
 			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings()
 																			 .withCharRange('a', 'e')
@@ -382,7 +382,7 @@ class ArbitraryTests {
 	class Combination {
 
 		@Example
-		void generateCombination(@ForAll Random random) {
+		void generateCombination(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> a1 = new OrderedArbitraryForTesting<>(1, 2, 3);
 			Arbitrary<Integer> a2 = new OrderedArbitraryForTesting<>(4, 5, 6);
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
@@ -400,7 +400,7 @@ class ArbitraryTests {
 	class Collect {
 
 		@Example
-		void collectList(@ForAll Random random) {
+		void collectList(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 3);
 			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 10);
 			RandomGenerator<List<Integer>> generator = collected.generator(10, true);
@@ -412,7 +412,7 @@ class ArbitraryTests {
 		}
 
 		@Example
-		void collectListWillThrowExceptionIfTooBig(@ForAll Random random) {
+		void collectListWillThrowExceptionIfTooBig(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 3);
 			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) < 0);
 			RandomGenerator<List<Integer>> generator = collected.generator(10, true);
@@ -450,7 +450,7 @@ class ArbitraryTests {
 	class Duplicates {
 
 		@Property(tries = 100)
-		void duplicatesWith20Percent(@ForAll Random random) {
+		void duplicatesWith20Percent(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.2);
 			ListArbitrary<Integer> arbitrary = intsWithDuplicates.list().ofSize(100);
@@ -466,7 +466,7 @@ class ArbitraryTests {
 		}
 
 		@Property(tries = 100)
-		void duplicatesWith50Percent(@ForAll Random random) {
+		void duplicatesWith50Percent(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.5);
 			ListArbitrary<Integer> arbitrary = intsWithDuplicates.list().ofSize(100);
@@ -482,7 +482,7 @@ class ArbitraryTests {
 		}
 
 		@Property(tries = 100)
-		void duplicatesWith100Percent(@ForAll Random random) {
+		void duplicatesWith100Percent(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(1.0);
 			ListArbitrary<Integer> arbitrary = intsWithDuplicates.list().ofSize(100);

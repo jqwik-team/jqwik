@@ -16,7 +16,7 @@ import static net.jqwik.api.Arbitraries.*;
 class ChainArbitraryTests {
 
 	@Example
-	void deterministicChain(@ForAll Random random) {
+	void deterministicChain(@ForAll JqwikRandom random) {
 		Arbitrary<Chain<Integer>> chains =
 			Chain.startWith(() -> 0)
 				 .withTransformation(ignore -> just(Transformer.transform("+1", i -> i + 1)))
@@ -31,7 +31,7 @@ class ChainArbitraryTests {
 	}
 
 	@Example
-	void transformersAreCorrectlyReported(@ForAll Random random) {
+	void transformersAreCorrectlyReported(@ForAll JqwikRandom random) {
 		Transformer<Integer> transformer = i -> i + 1;
 		Arbitrary<Chain<Integer>> chains =
 			Chain.startWith(() -> 0)
@@ -47,7 +47,7 @@ class ChainArbitraryTests {
 	}
 
 	@Example
-	void chainWithZeroMaxTransformations(@ForAll Random random) {
+	void chainWithZeroMaxTransformations(@ForAll JqwikRandom random) {
 		Arbitrary<Chain<Integer>> chains =
 			Chain.startWith(() -> 0)
 				 .withTransformation(ignore -> just(Transformer.transform("+1", i -> i + 1)))
@@ -60,7 +60,7 @@ class ChainArbitraryTests {
 	}
 
 	@Example
-	void infiniteChain(@ForAll Random random) {
+	void infiniteChain(@ForAll JqwikRandom random) {
 		Arbitrary<Chain<Integer>> chains =
 			Chain.startWith(() -> 0)
 				 .withTransformation(supplier -> just(Transformer.transform("+1", i -> i + 1)))
@@ -79,7 +79,7 @@ class ChainArbitraryTests {
 	}
 
 	@Property
-	void chainWithSingleTransformation(@ForAll Random random) {
+	void chainWithSingleTransformation(@ForAll JqwikRandom random) {
 		Transformation<Integer> growBelow100OtherwiseShrink = intSupplier -> {
 			int last = intSupplier.get();
 			if (last < 100) {
@@ -116,7 +116,7 @@ class ChainArbitraryTests {
 	}
 
 	@Property
-	void chainWithSeveralTransformations(@ForAll Random random) {
+	void chainWithSeveralTransformations(@ForAll JqwikRandom random) {
 		Transformation<Integer> growBelow100otherwiseShrink = intSupplier -> {
 			int last = intSupplier.get();
 			if (last < 100) {
@@ -152,7 +152,7 @@ class ChainArbitraryTests {
 	}
 
 	@Property
-	void chainCanBeRerunWithSameValues(@ForAll Random random) {
+	void chainCanBeRerunWithSameValues(@ForAll JqwikRandom random) {
 		Arbitrary<Chain<Integer>> chains =
 			Chain.startWith(() -> 1)
 				 .withTransformation(ignore -> integers().between(0, 10).map(i -> t -> t + i));
@@ -168,7 +168,7 @@ class ChainArbitraryTests {
 
 	@Property
 	@StatisticsReport(onFailureOnly = true)
-	void useFrequenciesToChooseTransformers(@ForAll Random random) {
+	void useFrequenciesToChooseTransformers(@ForAll JqwikRandom random) {
 
 		Transformation<Integer> just1 = ignore -> Arbitraries.just(t -> 1);
 		Transformation<Integer> just2 = ignore -> Arbitraries.just(t -> 2);
@@ -194,7 +194,7 @@ class ChainArbitraryTests {
 	}
 
 	@Property
-	void transformationPreconditionsAreRespected(@ForAll Random random) {
+	void transformationPreconditionsAreRespected(@ForAll JqwikRandom random) {
 		Transformation<List<Integer>> addRandomIntToList =
 			ignore -> integers().between(0, 10)
 								.map(i -> l -> {
@@ -232,7 +232,7 @@ class ChainArbitraryTests {
 	}
 
 	@Property
-	void noopTransformersAreIgnored(@ForAll Random random) {
+	void noopTransformersAreIgnored(@ForAll JqwikRandom random) {
 		Transformation<Integer> addOne =
 			ignore -> just(1).map(toAdd -> i -> i + toAdd);
 
@@ -261,7 +261,7 @@ class ChainArbitraryTests {
 	}
 
 	@Example
-	void stopGenerationIfNoTransformerApplies(@ForAll Random random) {
+	void stopGenerationIfNoTransformerApplies(@ForAll JqwikRandom random) {
 		Arbitrary<Chain<Integer>> chains =
 			Chain.startWith(() -> 1)
 				 .withTransformation(
@@ -279,7 +279,7 @@ class ChainArbitraryTests {
 	}
 
 	@Example
-	void failToCreateGeneratorIfNoTransformersAreProvided(@ForAll Random random) {
+	void failToCreateGeneratorIfNoTransformersAreProvided(@ForAll JqwikRandom random) {
 		Arbitrary<Chain<Integer>> chains = Chain.startWith(() -> 1).withMaxTransformations(50);
 
 		assertThatThrownBy(() -> {
@@ -288,7 +288,7 @@ class ChainArbitraryTests {
 	}
 
 	@Property(tries = 5)
-	void concurrentlyIteratingChainProducesSameResult(@ForAll Random random) throws Exception {
+	void concurrentlyIteratingChainProducesSameResult(@ForAll JqwikRandom random) throws Exception {
 		Arbitrary<Chain<Integer>> chains =
 			Chain.startWith(() -> 1)
 				 .withTransformation(ignore -> Arbitraries.integers().between(1, 10).map(i -> t -> t + i))
@@ -332,7 +332,7 @@ class ChainArbitraryTests {
 	class Shrinking {
 
 		@Property
-		void shrinkChainWithoutStateAccessToEnd(@ForAll Random random) {
+		void shrinkChainWithoutStateAccessToEnd(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 0)
 					 .withTransformation(ignore -> integers().between(0, 10).map(i -> t -> t + i))
@@ -350,7 +350,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void shrinkChainWithStateAccessToEnd(@ForAll Random random) {
+		void shrinkChainWithStateAccessToEnd(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 0)
 					 .withTransformation(
@@ -372,7 +372,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void removeTransformersThatDontChangeStateDuringShrinking(@ForAll Random random) {
+		void removeTransformersThatDontChangeStateDuringShrinking(@ForAll JqwikRandom random) {
 			Transformer<Integer> addOne = Transformer.transform("addOne", t1 -> t1 + 1);
 			Transformer<Integer> doNothing = Transformer.transform("doNothing", t -> t);
 
@@ -395,7 +395,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void fullyShrinkTransformersWithoutStateAccess(@ForAll Random random) {
+		void fullyShrinkTransformersWithoutStateAccess(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 0)
 					 .withTransformation(ignore -> integers().between(1, 5).map(i -> Transformer.transform("add" + i, t -> t + i)))
@@ -420,7 +420,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void shrinkChainWithStateAccess(@ForAll Random random) {
+		void shrinkChainWithStateAccess(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 1)
 					 .withTransformation(
@@ -448,7 +448,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void preconditionedEndOfChainCanBeShrunkAwayInFiniteChain(@ForAll Random random) {
+		void preconditionedEndOfChainCanBeShrunkAwayInFiniteChain(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 0)
 					 .withTransformation(Transformation.<Integer>when(i -> i >= 5).provide(just(Transformer.endOfChain())))
@@ -463,7 +463,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void endOfChainCanBeShrunkAwayInFiniteChain(@ForAll Random random) {
+		void endOfChainCanBeShrunkAwayInFiniteChain(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 0)
 					 .withTransformation(ignore -> just(Transformer.transform("+1", i -> i + 1)))
@@ -482,7 +482,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void shrinkInfiniteChainWithPrecondition(@ForAll Random random) {
+		void shrinkInfiniteChainWithPrecondition(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 0)
 					 .withTransformation(Transformation.<Integer>when(i -> i >= 5).provide(just(Transformer.endOfChain())))
@@ -497,7 +497,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void shrinkInfiniteChainWithoutStateAccess(@ForAll Random random) {
+		void shrinkInfiniteChainWithoutStateAccess(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 0)
 					 .withTransformation(ignore -> just(Transformer.transform("+1", i -> i + 1)))
@@ -512,7 +512,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void shrinkChainWithMixedAccess(@ForAll Random random) {
+		void shrinkChainWithMixedAccess(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 0)
 					 .withTransformation(
@@ -548,7 +548,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void whenShrinkingTryToRemoveTransformersWithStateAccess(@ForAll Random random) {
+		void whenShrinkingTryToRemoveTransformersWithStateAccess(@ForAll JqwikRandom random) {
 			Arbitrary<Chain<Integer>> chains =
 				Chain.startWith(() -> 0)
 					 .withTransformation(supplier -> {
@@ -581,7 +581,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void shrinkPairsOfIterations(@ForAll Random random) {
+		void shrinkPairsOfIterations(@ForAll JqwikRandom random) {
 			ChainArbitrary<List<Integer>> chains =
 				Chain.startWith(() -> (List<Integer>) new ArrayList<Integer>())
 					 .withTransformation(ignore -> integers().map(i -> Transformer.mutate("add " + i, l -> l.add(i))))
@@ -614,7 +614,7 @@ class ChainArbitraryTests {
 		}
 
 		@Property
-		void whenUsingChangeDetector_shrinkAwayPartsThatDontChangeState(@ForAll Random random) {
+		void whenUsingChangeDetector_shrinkAwayPartsThatDontChangeState(@ForAll JqwikRandom random) {
 			ChainArbitrary<String> chains =
 				Chain.startWith(() -> "")
 					 .withTransformation(ignore -> chars().alpha().map(c -> Transformer.transform("append " + c, s -> s + c)))

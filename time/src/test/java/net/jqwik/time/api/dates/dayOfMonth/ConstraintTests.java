@@ -33,7 +33,7 @@ public class ConstraintTests {
 	class InvalidUseOfConstraints {
 
 		@Property
-		void dayOfMonthRange(@ForAll @DayOfMonthRange Random random) {
+		void dayOfMonthRange(@ForAll @DayOfMonthRange JqwikRandom random) {
 			assertThat(random).isNotNull();
 		}
 

@@ -54,7 +54,7 @@ public class DurationMethodsTests {
 	class DurationMethods {
 
 		@Property
-		void between(@ForAll("durations") Duration start, @ForAll("durations") Duration end, @ForAll Random random) {
+		void between(@ForAll("durations") Duration start, @ForAll("durations") Duration end, @ForAll JqwikRandom random) {
 
 			Assume.that(start.compareTo(end) <= 0);
 
@@ -71,7 +71,7 @@ public class DurationMethodsTests {
 		void betweenEndDurationAfterStartDuration(
 			@ForAll("durations") Duration start,
 			@ForAll("durations") Duration end,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(start.compareTo(end) > 0);
@@ -86,7 +86,7 @@ public class DurationMethodsTests {
 		}
 
 		@Property
-		void betweenSame(@ForAll("durations") Duration durationSame, @ForAll Random random) {
+		void betweenSame(@ForAll("durations") Duration durationSame, @ForAll JqwikRandom random) {
 
 			Arbitrary<Duration> durations = Times.durations().between(durationSame, durationSame);
 

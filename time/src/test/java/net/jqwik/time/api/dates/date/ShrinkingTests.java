@@ -17,7 +17,7 @@ import static net.jqwik.time.api.testingSupport.ForDate.*;
 public class ShrinkingTests {
 
 	@Property
-	void defaultShrinking(@ForAll Random random) {
+	void defaultShrinking(@ForAll JqwikRandom random) {
 		DateArbitrary dates = Dates.datesAsDate();
 		Calendar value = dateToCalendar(falsifyThenShrink(dates, random));
 		assertThat(value.get(Calendar.YEAR)).isEqualTo(1900);
@@ -26,7 +26,7 @@ public class ShrinkingTests {
 	}
 
 	@Property
-	void shrinksToSmallestFailingValue(@ForAll Random random) {
+	void shrinksToSmallestFailingValue(@ForAll JqwikRandom random) {
 		DateArbitrary dates = Dates.datesAsDate();
 		Calendar calendar = getCalendar(2013, Calendar.MAY, 24);
 		TestingFalsifier<Date> falsifier = date -> !dateToCalendar(date).after(calendar);

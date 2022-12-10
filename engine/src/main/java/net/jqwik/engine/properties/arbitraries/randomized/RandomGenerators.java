@@ -34,7 +34,7 @@ public class RandomGenerators {
 		};
 	}
 
-	public static <U> U chooseValue(List<U> values, Random random) {
+	public static <U> U chooseValue(List<U> values, JqwikRandom random) {
 		int index = random.nextInt(values.size());
 		return values.get(index);
 	}
@@ -91,7 +91,7 @@ public class RandomGenerators {
 	public static <T> RandomGenerator<List<T>> shuffle(List<T> values) {
 		return random -> {
 			List<T> clone = new ArrayList<>(values);
-			Collections.shuffle(clone, random);
+			Collections.shuffle(clone, random.asJdkRandom());
 			return Shrinkable.unshrinkable(clone);
 		};
 	}

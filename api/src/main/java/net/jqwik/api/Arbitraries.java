@@ -111,7 +111,7 @@ public class Arbitraries {
 	 * @param <T>       The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> randomValue(Function<Random, T> generator) {
+	public static <T> Arbitrary<T> randomValue(Function<JqwikRandom, T> generator) {
 		return fromGenerator(random -> Shrinkable.unshrinkable(generator.apply(random)));
 	}
 
@@ -120,8 +120,8 @@ public class Arbitraries {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	public static Arbitrary<Random> randoms() {
-		return randomValue(random -> new Random(random.nextLong()));
+	public static Arbitrary<JqwikRandom> randoms() {
+		return randomValue(JqwikRandom::split);
 	}
 
 	/**

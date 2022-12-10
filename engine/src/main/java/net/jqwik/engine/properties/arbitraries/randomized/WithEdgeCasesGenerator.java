@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.JqwikRandom;
 import net.jqwik.engine.properties.*;
 
 class WithEdgeCasesGenerator<T> implements RandomGenerator<T> {
@@ -19,7 +20,7 @@ class WithEdgeCasesGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
-	public Shrinkable<T> next(final Random random) {
+	public Shrinkable<T> next(final JqwikRandom random) {
 		if (random.nextInt(baseToEdgeCaseRatio) == 0) {
 			return edgeCasesGenerator.next(random);
 		} else {

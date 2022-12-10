@@ -102,7 +102,7 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 		};
 	}
 
-	private List<Shrinkable<Object>> generateShrinkables(List<RandomGenerator<Object>> generators, Random random) {
+	private List<Shrinkable<Object>> generateShrinkables(List<RandomGenerator<Object>> generators, JqwikRandom random) {
 		List<Shrinkable<Object>> list = new ArrayList<>();
 		for (RandomGenerator<Object> generator : generators) {
 			list.add(generator.next(random));

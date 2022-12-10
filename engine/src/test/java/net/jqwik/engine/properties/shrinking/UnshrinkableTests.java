@@ -55,7 +55,7 @@ class UnshrinkableTests {
 	}
 
 	@Property(tries = 50)
-	void nullValueUnshrinkable(@ForAll Random random) {
+	void nullValueUnshrinkable(@ForAll JqwikRandom random) {
 		SizableArbitrary<Set<String>> setArbitrary =
 			Arbitraries.strings().injectNull(1.0).set().ofSize(1);
 		Set<?> set = setArbitrary.generator(10, true).next(random).value();

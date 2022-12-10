@@ -232,7 +232,7 @@ public class CheckedProperty {
 	}
 
 	private ForAllParametersGenerator createRandomizedShrinkablesGenerator(PropertyConfiguration configuration) {
-		Random random = SourceOfRandomness.create(configuration.getSeed());
+		JqwikRandom random = SourceOfRandomness.create(configuration.getSeed());
 		return RandomizedShrinkablesGenerator.forParameters(
 			forAllParameters,
 			arbitraryResolver,

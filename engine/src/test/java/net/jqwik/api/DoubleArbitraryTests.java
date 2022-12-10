@@ -14,7 +14,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class DoubleArbitraryTests {
 
 	@Example
-	void doubleMinsAndMaxesWithEdgeCases(@ForAll Random random) {
+	void doubleMinsAndMaxesWithEdgeCases(@ForAll JqwikRandom random) {
 		RandomGenerator<Double> generator = Arbitraries.doubles().generator(1, true);
 		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == 0.01);
 		TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value == -0.01);
@@ -23,7 +23,7 @@ class DoubleArbitraryTests {
 	}
 
 	@Example
-	void doubles(@ForAll Random random) {
+	void doubles(@ForAll JqwikRandom random) {
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(-10.0, 10.0).ofScale(2);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(1);
 
@@ -37,7 +37,7 @@ class DoubleArbitraryTests {
 	}
 
 	@Example
-	void doublesWithMaximumRange(@ForAll Random random) {
+	void doublesWithMaximumRange(@ForAll JqwikRandom random) {
 		double min = -Double.MAX_VALUE;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, Double.MAX_VALUE).ofScale(2);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100, true);
@@ -64,7 +64,7 @@ class DoubleArbitraryTests {
 	}
 
 	@Example
-	void doublesWithBordersExcluded(@ForAll Random random) {
+	void doublesWithBordersExcluded(@ForAll JqwikRandom random) {
 		double min = 1.0;
 		double max = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, false, max, false).ofScale(1);
@@ -73,7 +73,7 @@ class DoubleArbitraryTests {
 	}
 
 	@Example
-	void doublesLessThan(@ForAll Random random) {
+	void doublesLessThan(@ForAll JqwikRandom random) {
 		double max = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().lessThan(max).ofScale(0);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100);
@@ -81,7 +81,7 @@ class DoubleArbitraryTests {
 	}
 
 	@Example
-	void doublesLessOrEqual(@ForAll Random random) {
+	void doublesLessOrEqual(@ForAll JqwikRandom random) {
 		double max = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().lessOrEqual(max).ofScale(0);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100);
@@ -89,7 +89,7 @@ class DoubleArbitraryTests {
 	}
 
 	@Example
-	void doublesGreaterThan(@ForAll Random random) {
+	void doublesGreaterThan(@ForAll JqwikRandom random) {
 		double min = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().greaterThan(min).ofScale(0);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100);
@@ -97,7 +97,7 @@ class DoubleArbitraryTests {
 	}
 
 	@Example
-	void doublesGreaterOrEqual(@ForAll Random random) {
+	void doublesGreaterOrEqual(@ForAll JqwikRandom random) {
 		double min = 2.0;
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().greaterOrEqual(min).ofScale(0);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(100);
@@ -113,7 +113,7 @@ class DoubleArbitraryTests {
 	}
 
 	@Example
-	void doublesWithSpecials(@ForAll Random random) {
+	void doublesWithSpecials(@ForAll JqwikRandom random) {
 		Arbitrary<Double> arbitrary = Arbitraries.doubles().between(1.0, 10.0)
 												 .withSpecialValue(Double.NaN)
 												 .withSpecialValue(Double.MIN_VALUE);
@@ -134,7 +134,7 @@ class DoubleArbitraryTests {
 	}
 
 	@Example
-	void doublesWithStandardSpecials(@ForAll Random random) {
+	void doublesWithStandardSpecials(@ForAll JqwikRandom random) {
 		Arbitrary<Double> arbitrary = Arbitraries.doubles().between(1.0, 10.0)
 												 .withStandardSpecialValues();
 		RandomGenerator<Double> generator = arbitrary.generator(100);

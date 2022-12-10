@@ -19,7 +19,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class ArrayArbitraryTests {
 
 	@Example
-	void array(@ForAll Random random) {
+	void array(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		ArrayArbitrary<Integer, Integer[]> arrayArbitrary = integerArbitrary.array(Integer[].class).ofMinSize(2).ofMaxSize(5);
 
@@ -32,7 +32,7 @@ class ArrayArbitraryTests {
 	}
 
 	@Example
-	void arrayOfSupertype(@ForAll Random random) {
+	void arrayOfSupertype(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		ArrayArbitrary<Integer, Object[]> arrayArbitrary = integerArbitrary.array(Object[].class).ofMinSize(2).ofMaxSize(5);
 
@@ -51,7 +51,7 @@ class ArrayArbitraryTests {
 	}
 
 	@Example
-	void arrayForComponentClass(@ForAll Random random) {
+	void arrayForComponentClass(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		ArrayArbitrary<Integer, Integer[]> arrayArbitrary =
 			DefaultArrayArbitrary.forComponentType(integerArbitrary, Integer.class).ofMinSize(2).ofMaxSize(5);
@@ -66,7 +66,7 @@ class ArrayArbitraryTests {
 
 	@Example
 	@StatisticsReport(onFailureOnly = true)
-	void withSizeDistribution(@ForAll Random random) {
+	void withSizeDistribution(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		ArrayArbitrary<Integer, Integer[]> arbitrary =
 			integerArbitrary.array(Integer[].class).ofMaxSize(100)
@@ -87,7 +87,7 @@ class ArrayArbitraryTests {
 	}
 
 	@Example
-	void reduceArray(@ForAll Random random) {
+	void reduceArray(@ForAll JqwikRandom random) {
 		ArrayArbitrary<Integer, Integer[]> arrayArbitrary =
 			Arbitraries.integers().between(1, 5).array(Integer[].class).ofMinSize(1).ofMaxSize(10);
 
@@ -104,7 +104,7 @@ class ArrayArbitraryTests {
 	}
 
 	@Example
-	void arrayOfPrimitiveType(@ForAll Random random) {
+	void arrayOfPrimitiveType(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		ArrayArbitrary<Integer, int[]> arrayArbitrary = integerArbitrary.array(int[].class).ofMinSize(0).ofMaxSize(5);
 
@@ -117,7 +117,7 @@ class ArrayArbitraryTests {
 	}
 
 	@Example
-	void uniquenessConstraint(@ForAll Random random) {
+	void uniquenessConstraint(@ForAll JqwikRandom random) {
 		ArrayArbitrary<Integer, Integer[]> listArbitrary =
 			Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
 					   .uniqueElements(i -> i % 100);
@@ -130,7 +130,7 @@ class ArrayArbitraryTests {
 	}
 
 	@Example
-	void uniqueElements(@ForAll Random random) {
+	void uniqueElements(@ForAll JqwikRandom random) {
 		ArrayArbitrary<Integer, Integer[]> listArbitrary =
 			Arbitraries.integers().between(1, 1000).array(Integer[].class).ofMaxSize(20)
 					   .uniqueElements();
@@ -254,14 +254,14 @@ class ArrayArbitraryTests {
 	class Shrinking {
 
 		@Property
-		void shrinksToEmptyArrayByDefault(@ForAll Random random) {
+		void shrinksToEmptyArrayByDefault(@ForAll JqwikRandom random) {
 			ArrayArbitrary<Integer, Integer[]> arrays = Arbitraries.integers().between(1, 10).array(Integer[].class);
 			Integer[] value = falsifyThenShrink(arrays, random);
 			assertThat(value).isEmpty();
 		}
 
 		@Property
-		void shrinkToMinSize(@ForAll Random random, @ForAll @IntRange(min = 1, max = 20) int min) {
+		void shrinkToMinSize(@ForAll JqwikRandom random, @ForAll @IntRange(min = 1, max = 20) int min) {
 			ArrayArbitrary<Integer, Integer[]> arrays = Arbitraries.integers().between(1, 10).array(Integer[].class).ofMinSize(min);
 			Integer[] value = falsifyThenShrink(arrays, random);
 			assertThat(value).hasSize(min);
@@ -269,7 +269,7 @@ class ArrayArbitraryTests {
 		}
 
 		@Property
-		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
+		void shrinkWithUniqueness(@ForAll JqwikRandom random, @ForAll @IntRange(min = 2, max = 10) int min) {
 			ArrayArbitrary<Integer, Integer[]> lists =
 				Arbitraries.integers().between(1, 100).array(Integer[].class).ofMinSize(min).ofMaxSize(10)
 						   .uniqueElements(i -> i);

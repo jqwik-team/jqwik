@@ -16,7 +16,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class LazyArbitraryShrinkingTests {
 
 	@Property(tries = 10)
-	void oneStep(@ForAll Random random) {
+	void oneStep(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazy(Arbitraries::integers);
 		Integer value = falsifyThenShrink(arbitrary, random);
@@ -25,7 +25,7 @@ class LazyArbitraryShrinkingTests {
 
 	// Fixed seed because in rare cases it can take VERY long
 	@Property(tries = 10, seed = "42")
-	void severalStepsToList(@ForAll Random random) {
+	void severalStepsToList(@ForAll JqwikRandom random) {
 		Arbitrary<List<Integer>> arbitrary = listOfInteger();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
 		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, falsifier);
@@ -48,7 +48,7 @@ class LazyArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
-	void severalStepsToListReversedLazy(@ForAll Random random) {
+	void severalStepsToListReversedLazy(@ForAll JqwikRandom random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
 		RandomGenerator<List<Integer>> generator = arbitrary.generator(10, true);

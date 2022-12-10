@@ -183,14 +183,14 @@ public class EmailsTests {
 	class ShrinkingTests {
 
 		@Property
-		void defaultShrinking(@ForAll Random random) {
+		void defaultShrinking(@ForAll JqwikRandom random) {
 			EmailArbitrary emails = Web.emails();
 			String value = falsifyThenShrink(emails.generator(1000), random, TestingFalsifier.alwaysFalsify());
 			assertThat(value).isEqualTo("a@a.aa");
 		}
 
 		@Property
-		void domainShrinking(@ForAll Random random) {
+		void domainShrinking(@ForAll JqwikRandom random) {
 			EmailArbitrary emails = Web.emails();
 			Falsifier<String> falsifier = falsifyDomain();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
@@ -198,7 +198,7 @@ public class EmailsTests {
 		}
 
 		@Property
-		void ipv4Shrinking(@ForAll Random random) {
+		void ipv4Shrinking(@ForAll JqwikRandom random) {
 			EmailArbitrary emails = Web.emails().allowIpv4Host();
 			Falsifier<String> falsifier = falsifyIPv4();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);
@@ -206,7 +206,7 @@ public class EmailsTests {
 		}
 
 		@Property
-		void ipv6Shrinking(@ForAll Random random) {
+		void ipv6Shrinking(@ForAll JqwikRandom random) {
 			Arbitrary<String> emails = Web.emails().allowIpv6Host();
 			Falsifier<String> falsifier = falsifyIPv6();
 			String value = falsifyThenShrink(emails.generator(1000), random, falsifier);

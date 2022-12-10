@@ -31,7 +31,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	StringArbitrary arbitrary = new DefaultStringArbitrary();
 
 	@Example
-	void currentlyNoCodepointsAboveAllowedMaxAreCreated(@ForAll Random random) {
+	void currentlyNoCodepointsAboveAllowedMaxAreCreated(@ForAll JqwikRandom random) {
 		assertAllGenerated(arbitrary.generator(10, true), random, s -> {
 			for (int i = 0; i < s.length(); i++) {
 				Assertions.assertThat(s.codePointAt(i)).isLessThanOrEqualTo(Character.MAX_CODE_POINT);
@@ -40,7 +40,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated(@ForAll Random random, @ForAll int i) {
+	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated(@ForAll JqwikRandom random, @ForAll int i) {
 		checkAllGenerated(arbitrary.generator(10000, true), random, s -> {
 			return s.chars().allMatch(c -> {
 				if (DefaultCharacterArbitrary.isNoncharacter(c))
@@ -51,7 +51,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void allAlsoAllowsNoncharactersAndPrivateUseCharacters(@ForAll Random random) {
+	void allAlsoAllowsNoncharactersAndPrivateUseCharacters(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.all();
 		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);
@@ -67,7 +67,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void withCharRange(@ForAll Random random) {
+	void withCharRange(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333');
 		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c >= '\u0222' && c <= '\u0333');
@@ -83,7 +83,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void withTwoCharRanges(@ForAll Random random) {
+	void withTwoCharRanges(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333').withCharRange('A', 'Z');
 		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> (c >= '\u0222' && c <= '\u0333') || (c >= 'A' && c <= 'Z'));
@@ -107,7 +107,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void withChars(@ForAll Random random) {
+	void withChars(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withChars('a', 'm', 'x');
 		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c == 'a' || c == 'm' || c == 'x');
@@ -127,7 +127,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void withCharsFromCharSequence(@ForAll Random random) {
+	void withCharsFromCharSequence(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withChars("amx");
 		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c == 'a' || c == 'm' || c == 'x');
@@ -147,7 +147,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void withCharsAndCharRange(@ForAll Random random) {
+	void withCharsAndCharRange(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333').withChars('a', 'm', 'x');
 		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> (c == 'a' || c == 'm' || c == 'x') || (c >= '\u0222' && c <= '\u0333'));
@@ -155,7 +155,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void defaultLength(@ForAll Random random) {
+	void defaultLength(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary;
 		checkAllGenerated(
 			stringArbitrary.generator(10, true), random,
@@ -164,7 +164,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void minLengthAboveDefaultMaxLength(@ForAll Random random) {
+	void minLengthAboveDefaultMaxLength(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.ofMinLength(256);
 		checkAllGenerated(
 			stringArbitrary.generator(10, true), random,
@@ -173,7 +173,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void lengthRange(@ForAll Random random) {
+	void lengthRange(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.ofMinLength(3).ofMaxLength(10);
 		checkAllGenerated(
 			stringArbitrary.generator(10, true), random,
@@ -182,7 +182,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void ofLength(@ForAll Random random) {
+	void ofLength(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.ofLength(17);
 		checkAllGenerated(
 			stringArbitrary.generator(10, true), random,
@@ -191,7 +191,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void withLengthDistribution(@ForAll Random random) {
+	void withLengthDistribution(@ForAll JqwikRandom random) {
 		StringArbitrary arbitrary = this.arbitrary.ofMaxLength(100)
 												  .withLengthDistribution(RandomDistribution.uniform());
 
@@ -211,7 +211,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void ascii(@ForAll Random random) {
+	void ascii(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.ascii();
 		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c <= DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT);
@@ -223,7 +223,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void alpha(@ForAll Random random) {
+	void alpha(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.alpha();
 		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
@@ -247,7 +247,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void numeric(@ForAll Random random) {
+	void numeric(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.numeric();
 		checkAllGenerated(stringArbitrary.generator(10, true), random, s -> {
 			return s.chars().allMatch(c -> c >= '0' && c <= '9');
@@ -255,7 +255,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void whitespace(@ForAll Random random) {
+	void whitespace(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.whitespace();
 
 		RandomGenerator<String> generator = stringArbitrary.generator(10, true);
@@ -265,7 +265,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Example
-	void excludeChars(@ForAll Random random) {
+	void excludeChars(@ForAll JqwikRandom random) {
 		StringArbitrary stringArbitrary = this.arbitrary.numeric()
 														.excludeChars('0', '9');
 

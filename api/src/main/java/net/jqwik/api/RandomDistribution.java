@@ -1,7 +1,6 @@
 package net.jqwik.api;
 
 import java.math.*;
-import java.util.*;
 
 import org.apiguardian.api.*;
 
@@ -61,7 +60,7 @@ public interface RandomDistribution {
 		 *
 		 * @return an instance of BigInteger. Never {@code null}.
 		 */
-		BigInteger next(Random random);
+		BigInteger next(JqwikRandom random);
 	}
 
 	/**

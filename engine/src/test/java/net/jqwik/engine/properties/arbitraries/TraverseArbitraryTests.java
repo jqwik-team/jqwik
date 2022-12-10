@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.*;
 class TraverseArbitraryTests {
 
 	@Example
-	void traverseWithoutRecursion(@ForAll Random random) {
+	void traverseWithoutRecursion(@ForAll JqwikRandom random) {
 		TraverseArbitrary<MyClass> arbitrary = Arbitraries.traverse(MyClass.class, new NameTraverser());
 
 		TestingSupport.assertAllGenerated(
@@ -30,7 +30,7 @@ class TraverseArbitraryTests {
 	}
 
 	@Example
-	void traverseWithRecursion(@ForAll Random random) {
+	void traverseWithRecursion(@ForAll JqwikRandom random) {
 		TraverseArbitrary<MyNestingClass> arbitrary =
 			Arbitraries.traverse(MyNestingClass.class, new NameTraverser()).enableRecursion();
 
