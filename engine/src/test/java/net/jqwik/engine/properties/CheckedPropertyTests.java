@@ -3,6 +3,7 @@ package net.jqwik.engine.properties;
 import java.util.*;
 import java.util.function.*;
 
+import org.assertj.core.api.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
@@ -16,6 +17,7 @@ import net.jqwik.engine.support.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.SoftAssertions.*;
 
 import static net.jqwik.api.GenerationMode.*;
 import static net.jqwik.engine.TestHelper.*;
@@ -263,9 +265,16 @@ class CheckedPropertyTests {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 99);
 			GenerationInfo previousGenerationInfo = new GenerationInfo("41", 13);
 			// This is what's being generated from integers in the 13th attempt
-			List<Integer> previousSample = Arrays.asList(99, 97);
+			List<Integer> expectedParameterValues = Arrays.asList(65, 77);
 
-			CheckedFunction checkSample = params -> params.equals(previousSample);
+			CheckedFunction checkSample = params -> {
+				Assertions.assertThat(params)
+					.describedAs("sampleProperty initial params should reuse GenerationInfo supplied in the config. " +
+									"If you see failure here, then it looks like the random generation strategy has changed. " +
+									"You might need to adjust expectedParameterValues = ... in usePreviouslyFailedGeneration() property test.")
+					.isEqualTo(expectedParameterValues);
+				return true;
+			};
 
 			CheckedProperty checkedProperty = createCheckedProperty(
 				"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
@@ -273,15 +282,37 @@ class CheckedPropertyTests {
 				Optional.empty(),
 				aConfig()
 					.withPreviousFailureGeneration(previousGenerationInfo)
+					// Disable shrinking, so checkSample fails on the first attempt, and we can see the first failure,
+					// and not the result of the shrinking which will be always [1, 1]
+					.withShrinking(ShrinkingMode.OFF)
 					.withAfterFailure(AfterFailureMode.SAMPLE_ONLY).build(),
 				lifecycleContextForMethod("sampleProperty", int.class, int.class)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
-			assertThat(check.countTries()).isEqualTo(1);
-			assertThat(check.seed()).isEqualTo(Optional.of("41"));
-			assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
-			assertThat(check.falsifiedParameters()).isEmpty();
+			assertSoftly(
+				softly -> {
+					// Rethrow the error, so the stacktrace is meaningful, and the assert message in checkSample is printed
+					check.throwable().ifPresent(
+						e -> softly.assertThat(e)
+								   // softly.fail("...", e) would not print stacktrace for some reason
+								   .describedAs("checkSample property failed")
+								   .doesNotThrowAnyException()
+					);
+					softly.assertThat(check.countTries())
+						.describedAs("check.countTries()")
+						.isEqualTo(1);
+					softly.assertThat(check.seed())
+						.describedAs("check.seed()")
+						.contains("41");
+					softly.assertThat(check.checkStatus())
+						.describedAs("check.checkStatus()")
+						.isEqualTo(SUCCESSFUL);
+					softly.assertThat(check.falsifiedParameters())
+						.describedAs("check.falsifiedParameters()")
+						.isEmpty();
+				}
+			);
 		}
 
 		@SuppressWarnings("unchecked")

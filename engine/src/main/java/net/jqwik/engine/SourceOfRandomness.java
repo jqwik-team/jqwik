@@ -62,10 +62,20 @@ public class SourceOfRandomness {
 		}
 
 		private XORShiftRandom(long seed) {
-			if (seed == 0l) {
-				throw new IllegalArgumentException("0L is not an allowed seed value");
+			this.seed = mix64(seed);
+			if (this.seed == 0) {
+				// 0 is invalid for XorShift seed, so we set it to a non-zero value
+				this.seed = 0xbf58476d1ce4e5b9L;
 			}
-			this.seed = seed;
+		}
+
+		/**
+		* See <a href="http://zimbry.blogspot.com/2011/09/better-bit-mixing-improving-on.html">Better Bit Mixing - Improving on MurmurHash3's 64-bit Finalizer</a>
+		*/
+		private static long mix64(long z) {
+			z = (z ^ (z >>> 30)) * 0xbf58476d1ce4e5b9L;
+			z = (z ^ (z >>> 27)) * 0x94d049bb133111ebL;
+			return z ^ (z >>> 31);
 		}
 
 		@Override
