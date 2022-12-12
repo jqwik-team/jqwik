@@ -121,6 +121,7 @@ class ActionChainArbitraryTests {
 
 	static class SetMutatingChainState {
 		final List<String> actualOps = new ArrayList<>();
+		boolean hasPrints;
 		final Set<Integer> set = new HashSet<>();
 
 		@Override
@@ -131,6 +132,14 @@ class ActionChainArbitraryTests {
 
 	@Property
 	void chainActionsAreProperlyDescribedEvenAfterChainExecution(@ForAll("setMutatingChain") ActionChain<SetMutatingChainState> chain) {
+		chain = chain.withInvariant(
+			state -> {
+				if (state.hasPrints) {
+					assertThat(state.actualOps).hasSizeLessThan(5);
+				}
+			}
+		);
+
 		SetMutatingChainState finalState = chain.run();
 
 		assertThat(chain.transformations())
@@ -168,7 +177,7 @@ class ActionChainArbitraryTests {
 								)
 				)
 				.addAction(
-					2,
+					4,
 					(Action.Dependent<SetMutatingChainState>)
 						state ->
 							Arbitraries
@@ -177,16 +186,33 @@ class ActionChainArbitraryTests {
 								.map(i -> {
 										 if (state.set.contains(i)) {
 											 return Transformer.noop();
-										 } else {
-											 return Transformer.mutate("add " + i + " to " + state.set, newState -> {
-												 newState.actualOps.add("add " + i + " to " + newState.set);
-												 newState.set.add(i);
-											 });
 										 }
+										 return Transformer.mutate("add " + i + " to " + state.set, newState -> {
+											 newState.actualOps.add("add " + i + " to " + newState.set);
+											 newState.set.add(i);
+										 });
 									 }
 								)
 				)
-				.withMaxTransformations(5);
+				.addAction(
+					2,
+					(Action.Dependent<SetMutatingChainState>)
+						state ->
+							state.set.isEmpty() ? Arbitraries.just(Transformer.noop()) :
+							Arbitraries
+								.of(state.set)
+								.map(i -> {
+										 if (!state.set.contains(i)) {
+											 throw new IllegalStateException("The set does not contain " + i + ", current state is " + state);
+										 }
+										 return Transformer.mutate("print " + i + " from " + state.set, newState -> {
+											 newState.actualOps.add("print " + i + " from " + newState.set);
+											 newState.hasPrints = true;
+										 });
+									 }
+								)
+				)
+				.withMaxTransformations(7);
 	}
 
 	@Property
