@@ -119,6 +119,76 @@ class ActionChainArbitraryTests {
 						  .withMaxTransformations(30);
 	}
 
+	static class SetMutatingChainState {
+		final List<String> actualOps = new ArrayList<>();
+		final Set<Integer> set = new HashSet<>();
+
+		@Override
+		public String toString() {
+			return "set=" + set + ", actualOps=" + actualOps;
+		}
+	}
+
+	@Property
+	void chainActionsAreProperlyDescribedEvenAfterChainExecution(@ForAll("setMutatingChain") ActionChain<SetMutatingChainState> chain) {
+		SetMutatingChainState finalState = chain.run();
+
+		assertThat(chain.transformations())
+			.describedAs("chain.transformations() should be the same as the list of operations in finalState.actualOps, final state is %s", finalState.set)
+			.isEqualTo(finalState.actualOps);
+	}
+
+	@Provide
+	public ActionChainArbitrary<SetMutatingChainState> setMutatingChain() {
+		return
+			ActionChain
+				.startWith(SetMutatingChainState::new)
+				// This is an action that does not depend on the state to produce the transformation
+				.addAction(
+					1,
+					Action.just("clear anyway", state -> {
+						state.actualOps.add("clear anyway");
+						state.set.clear();
+						return state;
+					})
+				)
+				// Below actions depend on the state to derive the transformations
+				.addAction(
+					1,
+					(Action.Dependent<SetMutatingChainState>)
+						state ->
+							Arbitraries
+								.just(
+									state.set.isEmpty()
+										? Transformer.noop()
+										: Transformer.<SetMutatingChainState>mutate("clear " + state.set, set -> {
+										state.actualOps.add("clear " + set.set);
+										state.set.clear();
+									})
+								)
+				)
+				.addAction(
+					2,
+					(Action.Dependent<SetMutatingChainState>)
+						state ->
+							Arbitraries
+								.integers()
+								.between(1, 10)
+								.map(i -> {
+										 if (state.set.contains(i)) {
+											 return Transformer.noop();
+										 } else {
+											 return Transformer.mutate("add " + i + " to " + state.set, newState -> {
+												 newState.actualOps.add("add " + i + " to " + newState.set);
+												 newState.set.add(i);
+											 });
+										 }
+									 }
+								)
+				)
+				.withMaxTransformations(5);
+	}
+
 	@Property
 	void chainChoosesBetweenTwoActions(@ForAll("xOrY") ActionChain<String> chain) {
 		String result = chain.run();

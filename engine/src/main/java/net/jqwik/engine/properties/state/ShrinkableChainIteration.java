@@ -6,9 +6,12 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 
+import org.jetbrains.annotations.*;
+
 class ShrinkableChainIteration<T> {
 	final Shrinkable<Transformer<T>> shrinkable;
 	private final Predicate<T> precondition;
+	private final @Nullable Transformer<T> transformer;
 	final boolean accessState;
 	final boolean changeState;
 
@@ -31,18 +34,21 @@ class ShrinkableChainIteration<T> {
 		this.accessState = accessState;
 		this.changeState = changeState;
 		this.shrinkable = shrinkable;
+		// Transformer method might access state, so we need to cache the value here
+		// otherwise it might be evaluated with wrong state (e.g. after chain executes)
+		this.transformer = accessState ? shrinkable.value() : null;
 	}
 
 	@Override
 	public String toString() {
 		return String.format(
 			"Iteration[accessState=%s, changeState=%s, transformation=%s]",
-			accessState, changeState, shrinkable.value().transformation()
+			accessState, changeState, transformer().transformation()
 		);
 	}
 
 	boolean isEndOfChain() {
-		return shrinkable.value().equals(Transformer.END_OF_CHAIN);
+		return transformer().equals(Transformer.END_OF_CHAIN);
 	}
 
 	Optional<Predicate<T>> precondition() {
@@ -65,6 +71,6 @@ class ShrinkableChainIteration<T> {
 	}
 
 	Transformer<T> transformer() {
-		return shrinkable.value();
+		return transformer == null ? shrinkable.value() : transformer;
 	}
 }
