@@ -1,5 +1,12 @@
 # 1.7.2
 
+    - Add @ChecReturnValue to all jqwik Arbitrary API methods that return a new value
+      See https://github.com/jlink/jqwik/issues/422
+      - Also rename `.addAction(..)` to `.withAction(..)`
+
+    - Scramble input seed of XORShiftRandom
+      See https://github.com/jlink/jqwik/pull/425
+
 # 1.7.x
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
