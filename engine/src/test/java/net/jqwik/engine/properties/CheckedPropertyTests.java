@@ -37,8 +37,8 @@ class CheckedPropertyTests {
 		void createCheckedPropertyWithoutParameters() {
 			PropertyMethodDescriptor descriptor =
 				(PropertyMethodDescriptor) TestDescriptorBuilder
-					.forMethod(CheckingExamples.class, "propertyWithoutParameters", int.class)
-					.build();
+											   .forMethod(CheckingExamples.class, "propertyWithoutParameters", int.class)
+											   .build();
 			CheckedProperty checkedProperty = createCheckedProperty(descriptor);
 
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(PropertyAttributesDefaults.DEFAULT_STEREOTYPE);
@@ -52,8 +52,8 @@ class CheckedPropertyTests {
 		void createCheckedPropertyWithTriesParameter() {
 			PropertyMethodDescriptor descriptor =
 				(PropertyMethodDescriptor) TestDescriptorBuilder
-					.forMethod(CheckingExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class)
-					.build();
+											   .forMethod(CheckingExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class)
+											   .build();
 			CheckedProperty checkedProperty = createCheckedProperty(descriptor);
 
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo("OtherStereotype");
@@ -261,7 +261,7 @@ class CheckedPropertyTests {
 
 		@Example
 		@Label("use previously failed generation info")
-		void usePreviouslyFailedGeneration() {
+		void usePreviouslyFailedGenerationInfo() {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 99);
 			GenerationInfo previousGenerationInfo = new GenerationInfo("41", 13);
 			// This is what's being generated from integers in the 13th attempt
@@ -269,10 +269,10 @@ class CheckedPropertyTests {
 
 			CheckedFunction checkSample = params -> {
 				Assertions.assertThat(params)
-					.describedAs("sampleProperty initial params should reuse GenerationInfo supplied in the config. " +
-									"If you see failure here, then it looks like the random generation strategy has changed. " +
-									"You might need to adjust expectedParameterValues = ... in usePreviouslyFailedGeneration() property test.")
-					.isEqualTo(expectedParameterValues);
+						  .describedAs("sampleProperty initial params should reuse GenerationInfo supplied in the config. " +
+										   "If you see failure here, then it looks like the random generation strategy has changed. " +
+										   "You might need to adjust expectedParameterValues = ... in usePreviouslyFailedGeneration() property test.")
+						  .isEqualTo(expectedParameterValues);
 				return true;
 			};
 
@@ -282,9 +282,6 @@ class CheckedPropertyTests {
 				Optional.empty(),
 				aConfig()
 					.withPreviousFailureGeneration(previousGenerationInfo)
-					// Disable shrinking, so checkSample fails on the first attempt, and we can see the first failure,
-					// and not the result of the shrinking which will be always [1, 1]
-					.withShrinking(ShrinkingMode.OFF)
 					.withAfterFailure(AfterFailureMode.SAMPLE_ONLY).build(),
 				lifecycleContextForMethod("sampleProperty", int.class, int.class)
 			);
@@ -292,25 +289,18 @@ class CheckedPropertyTests {
 			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 			assertSoftly(
 				softly -> {
-					// Rethrow the error, so the stacktrace is meaningful, and the assert message in checkSample is printed
-					check.throwable().ifPresent(
-						e -> softly.assertThat(e)
-								   // softly.fail("...", e) would not print stacktrace for some reason
-								   .describedAs("checkSample property failed")
-								   .doesNotThrowAnyException()
-					);
 					softly.assertThat(check.countTries())
-						.describedAs("check.countTries()")
-						.isEqualTo(1);
+						  .describedAs("check.countTries()")
+						  .isEqualTo(1);
 					softly.assertThat(check.seed())
-						.describedAs("check.seed()")
-						.contains("41");
+						  .describedAs("check.seed()")
+						  .contains("41");
 					softly.assertThat(check.checkStatus())
-						.describedAs("check.checkStatus()")
-						.isEqualTo(SUCCESSFUL);
-					softly.assertThat(check.falsifiedParameters())
-						.describedAs("check.falsifiedParameters()")
-						.isEmpty();
+						  .describedAs("check.checkStatus()")
+						  .isEqualTo(SUCCESSFUL);
+					softly.assertThat(check.throwable())
+						  .describedAs("check.throwable()")
+						  .isEmpty();
 				}
 			);
 		}
@@ -344,7 +334,7 @@ class CheckedPropertyTests {
 			void runWithGenerationModeDataDriven() {
 				List<Tuple.Tuple2<Integer, String>> allGeneratedParameters = new ArrayList<>();
 				CheckedFunction rememberParameters = params -> allGeneratedParameters
-					.add(Tuple.of((int) params.get(0), (String) params.get(1)));
+																   .add(Tuple.of((int) params.get(0), (String) params.get(1)));
 				CheckedProperty checkedProperty = createCheckedProperty(
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),

@@ -4,9 +4,6 @@
       See https://github.com/jlink/jqwik/issues/422
       - Also rename `.addAction(..)` to `.withAction(..)`
 
-    - Scramble input seed of XORShiftRandom
-      See https://github.com/jlink/jqwik/pull/425
-
 # 1.7.x
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
