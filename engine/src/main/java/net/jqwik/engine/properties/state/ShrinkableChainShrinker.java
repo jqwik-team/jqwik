@@ -147,10 +147,10 @@ class ShrinkableChainShrinker<T> {
 			int index = i;
 			ShrinkableChainIteration<T> iteration = iterationsRange.get(i);
 			Shrinkable<Transformer<T>> element = iteration.shrinkable;
-			Stream<List<ShrinkableChainIteration<T>>> shrinkElement = element.shrink().flatMap(shrunkElement -> {
+			Stream<List<ShrinkableChainIteration<T>>> shrinkElement = element.shrink().map(shrunkElement -> {
 				List<ShrinkableChainIteration<T>> iterationsCopy = new ArrayList<>(iterationsRange);
 				iterationsCopy.set(index, iteration.withShrinkable(shrunkElement));
-				return Stream.of(iterationsCopy);
+				return iterationsCopy;
 			});
 			shrinkPerElementStreams.add(shrinkElement);
 		}
