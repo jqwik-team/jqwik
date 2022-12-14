@@ -19,28 +19,70 @@ class LifecycleMethods {
 
 	private LifecycleMethods() { }
 
+	private static final ClassValue<List<Method>> findBeforeContainerMethods = new ClassValue<List<Method>>() {
+		@Override
+		protected List<Method> computeValue(Class<?> testClass) {
+			return findMethods(testClass, true, true, BeforeContainer.class, HierarchyTraversalMode.TOP_DOWN);
+		}
+	};
+
 	static List<Method> findBeforeContainerMethods(Class<?> testClass) {
-		return findMethods(testClass, true, true, BeforeContainer.class, HierarchyTraversalMode.TOP_DOWN);
+		return findBeforeContainerMethods.get(testClass);
 	}
+
+	private static final ClassValue<List<Method>> findAfterContainerMethods = new ClassValue<List<Method>>() {
+		@Override
+		protected List<Method> computeValue(Class<?> testClass) {
+			return findMethods(testClass, true, true, AfterContainer.class, HierarchyTraversalMode.BOTTOM_UP);
+		}
+	};
 
 	static List<Method> findAfterContainerMethods(Class<?> testClass) {
-		return findMethods(testClass, true, true, AfterContainer.class, HierarchyTraversalMode.BOTTOM_UP);
+		return findAfterContainerMethods.get(testClass);
 	}
+
+	private static final ClassValue<List<Method>> findBeforePropertyMethods = new ClassValue<List<Method>>() {
+		@Override
+		protected List<Method> computeValue(Class<?> testClass) {
+			return findMethods(testClass, false, true, BeforeProperty.class, HierarchyTraversalMode.TOP_DOWN);
+		}
+	};
 
 	static List<Method> findBeforePropertyMethods(Class<?> testClass) {
-		return findMethods(testClass, false, true, BeforeProperty.class, HierarchyTraversalMode.TOP_DOWN);
+		return findBeforePropertyMethods.get(testClass);
 	}
+
+	private static final ClassValue<List<Method>> findAfterPropertyMethods = new ClassValue<List<Method>>() {
+		@Override
+		protected List<Method> computeValue(Class<?> testClass) {
+			return findMethods(testClass, false, true, AfterProperty.class, HierarchyTraversalMode.BOTTOM_UP);
+		}
+	};
 
 	static List<Method> findAfterPropertyMethods(Class<?> testClass) {
-		return findMethods(testClass, false, true, AfterProperty.class, HierarchyTraversalMode.BOTTOM_UP);
+		return findAfterPropertyMethods.get(testClass);
 	}
+
+	private static final ClassValue<List<Method>> findBeforeTryMethods = new ClassValue<List<Method>>() {
+		@Override
+		protected List<Method> computeValue(Class<?> testClass) {
+			return findMethods(testClass, false, true, BeforeTry.class, HierarchyTraversalMode.TOP_DOWN);
+		}
+	};
 
 	static List<Method> findBeforeTryMethods(Class<?> testClass) {
-		return findMethods(testClass, false, true, BeforeTry.class, HierarchyTraversalMode.TOP_DOWN);
+		return findBeforeTryMethods.get(testClass);
 	}
 
+	private static final ClassValue<List<Method>> findAfterTryMethods = new ClassValue<List<Method>>() {
+		@Override
+		protected List<Method> computeValue(Class<?> testClass) {
+			return findMethods(testClass, false, true, AfterTry.class, HierarchyTraversalMode.BOTTOM_UP);
+		}
+	};
+
 	static List<Method> findAfterTryMethods(Class<?> testClass) {
-		return findMethods(testClass, false, true, AfterTry.class, HierarchyTraversalMode.BOTTOM_UP);
+		return findAfterTryMethods.get(testClass);
 	}
 
 	private static void assertStatic(Class<? extends Annotation> annotationType, Method method) {
