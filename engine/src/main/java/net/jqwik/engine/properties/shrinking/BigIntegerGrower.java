@@ -50,23 +50,19 @@ class BigIntegerGrower {
 	}
 
 	private long toLong(Object value) {
-		return tryNumberTypeCasts(value, Integer.class, Long.class, Short.class, Byte.class);
-	}
-
-	private long tryNumberTypeCasts(Object value, Class<?>... targetClasses) {
-		return tryNumberTypeCasts(value, new ArrayList<>(Arrays.asList(targetClasses)));
-	}
-
-	private long tryNumberTypeCasts(Object value, List<Class<?>> targetClasses) {
-		if (targetClasses.isEmpty()) {
-			return 0L;
+		if (value instanceof Long) {
+			return (Long) value;
 		}
-		try {
-			Class<?> targetClass = targetClasses.remove(0);
-			return ((Number) targetClass.cast(value)).longValue();
-		} catch (Throwable cannotCastToTargetClass) {
-			return tryNumberTypeCasts(value, targetClasses);
+		if (value instanceof Integer) {
+			return ((Integer) value).longValue();
 		}
+		if (value instanceof Short) {
+			return ((Short) value).longValue();
+		}
+		if (value instanceof Byte) {
+			return ((Byte) value).longValue();
+		}
+		return 0L;
 	}
 
 	public Stream<Shrinkable<BigInteger>> grow(BigInteger value, Range<BigInteger> range, BigInteger shrinkingTarget) {
