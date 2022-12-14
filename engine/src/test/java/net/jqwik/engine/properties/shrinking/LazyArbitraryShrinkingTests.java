@@ -59,7 +59,11 @@ class LazyArbitraryShrinkingTests {
 			});
 		List<Integer> shrunkValue = shrink(falsifiedShrinkable, falsifier, null);
 
-		Assertions.assertThat(shrunkValue.size()).isLessThanOrEqualTo(falsifiedShrinkable.value().size());
+		Assertions.assertThat(shrunkValue.size())
+			.describedAs(
+				"shrunk.value().size() should improve when compared with original falsifiedShrinkable.value().size()." +
+					" falsifiedShrinkable.value(): %s, shrunk.value(): %s", falsifiedShrinkable.value(), shrunkValue)
+				  .isLessThanOrEqualTo(falsifiedShrinkable.value().size());
 		// TODO: Shrinking should be improved so that:
 		// Assertions.assertThat(shrunkValue).isEqualTo(Arrays.asList(1, 1));
 	}
