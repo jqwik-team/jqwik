@@ -82,8 +82,8 @@ class LazyOfArbitraryShrinkingTests {
 		);
 	}
 
-	@Property(tries = 10)
-		// Fewer tries to prevent occasional heap overflow in Travis build
+	// Fixing seed and tries to prevent occasional heap overflow in CI build
+	@Property(seed = "42", tries = 10)
 	void severalStepsToList_withReversedOrderOfSuppliers(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
@@ -108,7 +108,6 @@ class LazyOfArbitraryShrinkingTests {
 	void withDuplicateSuppliers(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerWithDuplicateSuppliers();
 		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, alwaysFalsify());
-		;
 		assertThat(shrunkValue).isEqualTo(Collections.emptyList());
 	}
 
@@ -171,7 +170,6 @@ class LazyOfArbitraryShrinkingTests {
 			if (expression instanceof Integer) {
 				return 1;
 			}
-			;
 			@SuppressWarnings("rawtypes")
 			Tuple3 tupleExpression = (Tuple3) expression;
 			return 1 + countNodes(tupleExpression.get2()) + countNodes(tupleExpression.get3());
