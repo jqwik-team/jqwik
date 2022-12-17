@@ -83,6 +83,7 @@ class LazyOfArbitraryShrinkingTests {
 	}
 
 	// Fixing seed and tries to prevent occasional heap overflow in CI build
+	// See https://github.com/jlink/jqwik/issues/431 for the underlying problem
 	@Property(seed = "42", tries = 10)
 	void severalStepsToList_withReversedOrderOfSuppliers(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
