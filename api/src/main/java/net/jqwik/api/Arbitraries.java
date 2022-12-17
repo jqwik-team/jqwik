@@ -129,9 +129,11 @@ public class Arbitraries {
 	 * A generated value will be shrunk towards the start of the array.
 	 *
 	 * <p>
-	 * Use this method only for immutable values, because changing the value will change
-	 * subsequent generated values as well.
+	 * Use this method only for immutable arrays of immutable values.
+	 * Changing a value will change subsequently generated values as well.
 	 * For mutable values use {@linkplain #ofSuppliers(Supplier[])} instead.
+	 * Modifying the array may cause erratic behavior, things may halt and
+	 * catch fire.
 	 *
 	 * @param values The array of values to choose from
 	 * @param <T>    The type of values to generate
@@ -729,8 +731,6 @@ public class Arbitraries {
 
 	/**
 	 * Create a new arbitrary of element type {@code Set<T>} using the handed in values as elements of the set.
-	 * The array of values is considered to be immutable. Modifications of the array or its content will cause
-	 * erratic behavior, things may halt and catch fire.
 	 *
 	 * @return a new arbitrary instance
 	 */
