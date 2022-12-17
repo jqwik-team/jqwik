@@ -7,6 +7,7 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 public class ChooseValueArbitrary<T> extends FromGeneratorsArbitrary<T> {
 
+	private final int hashCode;
 	private final List<T> values;
 
 	public ChooseValueArbitrary(List<T> values) {
@@ -15,6 +16,7 @@ public class ChooseValueArbitrary<T> extends FromGeneratorsArbitrary<T> {
 			max -> ExhaustiveGenerators.choose(values, max),
 			maxEdgeCases -> EdgeCasesSupport.choose(values, maxEdgeCases)
 		);
+		hashCode = values.hashCode();
 		this.values = values;
 	}
 
@@ -29,6 +31,6 @@ public class ChooseValueArbitrary<T> extends FromGeneratorsArbitrary<T> {
 
 	@Override
 	public int hashCode() {
-		return values.hashCode();
+		return hashCode;
 	}
 }
