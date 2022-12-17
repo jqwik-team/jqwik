@@ -147,7 +147,7 @@ public class Arbitraries {
 	 * A generated value will be shrunk towards the start of the collection.
 	 *
 	 * <p>
-	 * Use this method only for and immutable collections of immutable values.
+	 * Use this method only for immutable collections of immutable values.
 	 * Changing a value will change subsequently generated values as well.
 	 * For mutable values use {@linkplain #ofSuppliers(Collection)} instead.
 	 * Modifying the collection may cause erratic behavior, kittens may die.
