@@ -156,16 +156,14 @@ class ActionChainArbitraryTests {
 				.addAction(
 					1,
 					(Action.Dependent<SetMutatingChainState>)
-						state ->
-							Arbitraries
-								.just(
-									state.set.isEmpty()
-										? Transformer.noop()
-										: Transformer.<SetMutatingChainState>mutate("clear " + state.set, set -> {
-										state.actualOps.add("clear " + set.set);
-										state.set.clear();
-									})
-								)
+						state -> Arbitraries.just(
+							state.set.isEmpty()
+								? Transformer.noop()
+								: Transformer.<SetMutatingChainState>mutate("clear " + state.set, set -> {
+								state.actualOps.add("clear " + set.set);
+								state.set.clear();
+							})
+						)
 				)
 				.addAction(
 					2,
