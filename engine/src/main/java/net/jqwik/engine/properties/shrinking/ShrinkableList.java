@@ -23,7 +23,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	@Override
 	List<E> createValue(List<Shrinkable<E>> shrinkables) {
 		// Using loop instead of stream to make stack traces more readable
-		List<E> values = new ArrayList<>();
+		List<E> values = new ArrayList<>(shrinkables.size());
 		for (Shrinkable<E> shrinkable : shrinkables) {
 			values.add(shrinkable.value());
 		}

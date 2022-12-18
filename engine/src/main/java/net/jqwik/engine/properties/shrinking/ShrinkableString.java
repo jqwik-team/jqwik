@@ -16,7 +16,7 @@ public class ShrinkableString extends ShrinkableContainer<String, Character> {
 	@Override
 	String createValue(List<Shrinkable<Character>> shrinkables) {
 		// Using loop instead of stream to make stack traces more readable
-		StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder(shrinkables.size());
 		for (Shrinkable<Character> shrinkable : shrinkables) {
 			builder.appendCodePoint(shrinkable.value());
 		}
