@@ -23,12 +23,8 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		this.uniquenessExtractors = uniquenessExtractors;
 	}
 
-	private C createValue(List<Shrinkable<E>> shrinkables) {
-		return shrinkables
-				   .stream()
-				   .map(Shrinkable::value)
-				   .collect(containerCollector());
-	}
+
+	abstract C createValue(List<Shrinkable<E>> shrinkables);
 
 	@Override
 	public C value() {
@@ -179,7 +175,5 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	}
 
 	abstract Shrinkable<C> createShrinkable(List<Shrinkable<E>> shrunkElements);
-
-	abstract Collector<E, ?, C> containerCollector();
 
 }

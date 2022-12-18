@@ -21,8 +21,13 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	}
 
 	@Override
-	Collector<E, ?, List<E>> containerCollector() {
-		return Collectors.toList();
+	List<E> createValue(List<Shrinkable<E>> shrinkables) {
+		// Using loop instead of stream to make stack traces more readable
+		List<E> values = new ArrayList<>();
+		for (Shrinkable<E> shrinkable : shrinkables) {
+			values.add(shrinkable.value());
+		}
+		return values;
 	}
 
 	@Override

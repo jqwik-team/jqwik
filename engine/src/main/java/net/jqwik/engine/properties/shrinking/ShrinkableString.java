@@ -14,8 +14,13 @@ public class ShrinkableString extends ShrinkableContainer<String, Character> {
 	}
 
 	@Override
-	Collector<Character, ?, String> containerCollector() {
-		return new CharacterCollector();
+	String createValue(List<Shrinkable<Character>> shrinkables) {
+		// Using loop instead of stream to make stack traces more readable
+		StringBuilder builder = new StringBuilder();
+		for (Shrinkable<Character> shrinkable : shrinkables) {
+			builder.appendCodePoint(shrinkable.value());
+		}
+		return builder.toString();
 	}
 
 	@Override

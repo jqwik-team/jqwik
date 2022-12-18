@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 
 public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
@@ -28,8 +27,13 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 	}
 
 	@Override
-	Collector<E, ?, Set<E>> containerCollector() {
-		return CollectorsSupport.toLinkedHashSet();
+	Set<E> createValue(List<Shrinkable<E>> shrinkables) {
+		// Using loop instead of stream to make stack traces more readable
+		Set<E> values = new LinkedHashSet<>();
+		for (Shrinkable<E> shrinkable : shrinkables) {
+			values.add(shrinkable.value());
+		}
+		return values;
 	}
 
 	@Override

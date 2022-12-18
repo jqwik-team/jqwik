@@ -26,7 +26,12 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 	}
 
 	private List<Object> createValues(List<Shrinkable<Object>> shrinkables) {
-		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+		// Using loop instead of stream to make stack traces more readable
+		List<Object> values = new ArrayList<>();
+		for (Shrinkable<Object> shrinkable : shrinkables) {
+			values.add(shrinkable.value());
+		}
+		return values;
 	}
 
 	@Override
