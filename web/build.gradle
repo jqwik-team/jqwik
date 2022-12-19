@@ -85,7 +85,7 @@ dependencies {
 	testImplementation(project(":testing"))
 
 	// To verify generated email addresses
-	testImplementation('com.github.seancfoley:ipaddress:5.3.4')
+	testImplementation('com.github.seancfoley:ipaddress:5.4.0')
 
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 	testRuntimeOnly(project(":engine"))
