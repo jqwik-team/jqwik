@@ -28,8 +28,12 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
 	@Override
 	Set<E> createValue(List<Shrinkable<E>> shrinkables) {
+		// See https://richardstartin.github.io/posts/5-java-mundane-performance-tricks#size-hashmaps-whenever-possible
+		//     for how to compute initial capacity of hash maps
+		int capacityWithLoadFactor = shrinkables.size() * 4 / 3;
+
 		// Using loop instead of stream to make stack traces more readable
-		Set<E> values = new LinkedHashSet<>(shrinkables.size());
+		Set<E> values = new LinkedHashSet<>(capacityWithLoadFactor);
 		for (Shrinkable<E> shrinkable : shrinkables) {
 			values.add(shrinkable.value());
 		}
