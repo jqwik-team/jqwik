@@ -1,8 +1,8 @@
 # 1.7.2
 
-    - Add @ChecReturnValue to all jqwik Arbitrary API methods that return a new value
-      See https://github.com/jlink/jqwik/issues/422
-      - Also rename `.addAction(..)` to `.withAction(..)`
+    - https://github.com/jlink/jqwik/issues/422
+        - Rename `ActionChainArbitraty.addAction(..)` to `.withAction(..)`
+        - Add @ChecReturnValue to all jqwik Arbitrary API methods that return a new value
 
 # 1.7.x
 

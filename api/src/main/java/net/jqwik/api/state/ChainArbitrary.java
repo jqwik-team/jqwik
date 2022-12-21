@@ -1,5 +1,6 @@
 package net.jqwik.api.state;
 
+import javax.annotation.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
@@ -12,22 +13,26 @@ import static org.apiguardian.api.API.Status.*;
 public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 
 	/**
-	 * Add an additional {@linkplain Transformation}.
+	 * Allow an additional {@linkplain Transformation} on the generated chain.
 	 *
 	 * @param weight Determines the relative probability of a transformer to be chosen.
-	 * @param provider The {@linkplain Transformation provider} to add.
-	 * @return instance of arbitrary
+	 * @param transformation The {@linkplain Transformation provider} to add.
+	 * @return new instance of arbitrary
 	 */
-	ChainArbitrary<T> addTransformation(int weight, Transformation<T> provider);
+	@API(status = EXPERIMENTAL, since = "1.7.2")
+	@CheckReturnValue
+	ChainArbitrary<T> withTransformation(int weight, Transformation<T> transformation);
 
 	/**
-	 * Add an additional {@linkplain Transformation} with a default weight of 1.
+	 * Allow an additional {@linkplain Transformation} with a default weight of 1.
 	 *
-	 * @param provider The {@linkplain Transformation provider} to add.
-	 * @return instance of arbitrary
+	 * @param transformation The {@linkplain Transformation provider} to add.
+	 * @return new instance of arbitrary
 	 */
-	default ChainArbitrary<T> addTransformation(Transformation<T> provider) {
-		return addTransformation(1, provider);
+	@API(status = EXPERIMENTAL, since = "1.7.0")
+	@CheckReturnValue
+	default ChainArbitrary<T> withTransformation(Transformation<T> transformation) {
+		return withTransformation(1, transformation);
 	}
 
 	/**
@@ -37,13 +42,19 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 * Setting {@code maxTransformations} to {@code -1} creates a potentially infinite chain.
 	 * Such a chain will only end when a {@linkplain Transformer#endOfChain()} is applied.
 	 * </p>
+	 *
+	 * @return new instance of arbitrary
 	 */
+	@CheckReturnValue
 	ChainArbitrary<T> withMaxTransformations(int maxTransformations);
 
 	/**
 	 * Create a potentially infinite chain.
 	 * Such a chain will only end when a {@linkplain Transformer#endOfChain()} is applied.
+	 *
+	 * @return new instance of arbitrary
 	 */
+	@CheckReturnValue
 	default ChainArbitrary<T> infinite() {
 		return withMaxTransformations(-1);
 	}
@@ -52,7 +63,10 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 * Set supplier for the type specific {@linkplain ChangeDetector} which can make shrinking of chains more effective.
 	 *
 	 * @param detectorSupplier A function to create a new {@linkplain ChangeDetector} instance.
+	 *
+	 * @return new instance of arbitrary
 	 */
+	@CheckReturnValue
 	ChainArbitrary<T> improveShrinkingWith(Supplier<ChangeDetector<T>> detectorSupplier);
 
 }

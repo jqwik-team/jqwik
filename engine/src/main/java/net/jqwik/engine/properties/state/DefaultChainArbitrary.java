@@ -35,7 +35,7 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	}
 
 	@Override
-	public ChainArbitrary<T> addTransformation(int weight, Transformation<T> transformation) {
+	public ChainArbitrary<T> withTransformation(int weight, Transformation<T> transformation) {
 		if (weight <= 0) {
 			throw new IllegalArgumentException("Weight must be at least 1");
 		}

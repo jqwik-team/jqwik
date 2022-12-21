@@ -22,15 +22,15 @@ class RegexChainExample {
 	@Provide
 	Arbitrary<Chain<String>> abplusc() {
 		return Chain.startWith(() -> "")
-					.addTransformation(Transformation.when(String::isEmpty).provide(just(s -> s + "a")))
-					.addTransformation(Transformation.<String>when(s -> s.endsWith("a")).provide(just(s -> s + "b")))
-					.addTransformation(Transformation.<String>when(s -> s.endsWith("b")).provide(
+					.withTransformation(Transformation.when(String::isEmpty).provide(just(s -> s + "a")))
+					.withTransformation(Transformation.<String>when(s -> s.endsWith("a")).provide(just(s -> s + "b")))
+					.withTransformation(Transformation.<String>when(s -> s.endsWith("b")).provide(
 						 frequency(
 							 Tuple.of(5, s -> s + "b"),
 							 Tuple.of(1, s -> s + "c")
 						 )
 					 ))
-					.addTransformation(Transformation.<String>when(s -> s.endsWith("c")).provide(just(Transformer.endOfChain())))
+					.withTransformation(Transformation.<String>when(s -> s.endsWith("c")).provide(just(Transformer.endOfChain())))
 					.infinite().dontShrink();
 	}
 
