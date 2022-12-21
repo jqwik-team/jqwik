@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -17,6 +18,7 @@ import static org.apiguardian.api.API.Status.*;
  *            type (e.g. Integer, Boolean).
  */
 @API(status = STABLE, since = "1.0")
+@CheckReturnValue
 public interface Arbitrary<T> {
 
 	@API(status = INTERNAL)

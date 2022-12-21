@@ -20,7 +20,6 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 * @return new instance of arbitrary
 	 */
 	@API(status = EXPERIMENTAL, since = "1.7.2")
-	@CheckReturnValue
 	ChainArbitrary<T> withTransformation(int weight, Transformation<T> transformation);
 
 	/**
@@ -30,7 +29,6 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 * @return new instance of arbitrary
 	 */
 	@API(status = EXPERIMENTAL, since = "1.7.0")
-	@CheckReturnValue
 	default ChainArbitrary<T> withTransformation(Transformation<T> transformation) {
 		return withTransformation(1, transformation);
 	}
@@ -45,7 +43,6 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 *
 	 * @return new instance of arbitrary
 	 */
-	@CheckReturnValue
 	ChainArbitrary<T> withMaxTransformations(int maxTransformations);
 
 	/**
@@ -54,7 +51,6 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 *
 	 * @return new instance of arbitrary
 	 */
-	@CheckReturnValue
 	default ChainArbitrary<T> infinite() {
 		return withMaxTransformations(-1);
 	}
@@ -66,7 +62,6 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 *
 	 * @return new instance of arbitrary
 	 */
-	@CheckReturnValue
 	ChainArbitrary<T> improveShrinkingWith(Supplier<ChangeDetector<T>> detectorSupplier);
 
 }
