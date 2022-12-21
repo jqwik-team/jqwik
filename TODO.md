@@ -4,6 +4,12 @@
         - Rename `ActionChainArbitraty.addAction(..)` to `.withAction(..)`
         - Add @ChecReturnValue to all jqwik Arbitrary API methods that return a new value
 
+    - Recommend jetbrains annotations dependency in user guide
+        - And may jqwik-samples
+
+    - Update jqwik-samples to use latest jqwik version
+
+
 # 1.7.x
 
     - Fix shrink and grow bug: https://github.com/jlink/jqwik/issues/439
