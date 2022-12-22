@@ -173,9 +173,9 @@ void checkMyStack(@ForAll("myStackActions") ActionChain<MyStringStack> chain) {
 @Provide
 Arbitrary<ActionChain<MyStringStack>> myStackActions() {
   return ActionChain.startWith(MyStringStack::new)
-                    .addAction(new PushAction())
-                    .addAction(pop())
-                    .addAction(new ClearAction());
+                    .withAction(new PushAction())
+                    .withAction(pop())
+                    .withAction(new ClearAction());
 }
 ```
 
@@ -236,9 +236,9 @@ explicitly using `withMaxTransformations(int)`:
 @Provide
 Arbitrary<ActionChain<MyStringStack>> myStackActions() {
     return ActionChain.startWith(MyStringStack::new)
-                      .addAction(new PushAction())
-                      .addAction(pop())
-                      .addAction(new ClearAction())
+                      .withAction(new PushAction())
+                      .withAction(pop())
+                      .withAction(new ClearAction())
                       .withMaxTransformations(10);
 }
 ```
@@ -253,10 +253,10 @@ which then requires to explicitly add an action with an `endOfChain()` transform
 @Provide
 Arbitrary<ActionChain<MyStringStack>> myStackActions() {
     return ActionChain.startWith(MyStringStack::new)
-                      .addAction(new PushAction())
-                      .addAction(pop())
-                      .addAction(new ClearAction())
-                      .addAction(Action.just(Transformer.endOfChain()))
+                      .withAction(new PushAction())
+                      .withAction(pop())
+                      .withAction(new ClearAction())
+                      .withAction(Action.just(Transformer.endOfChain()))
                       .infinite();
 }
 

@@ -1,10 +1,7 @@
 # 1.7.2
 
-    - https://github.com/jlink/jqwik/issues/422
-        - Rename `ActionChainArbitraty.addAction(..)` to `.withAction(..)`
-
     - Recommend jetbrains annotations dependency in user guide
-        - And may jqwik-samples
+        - And maybe in jqwik-samples
 
     - Update jqwik-samples to use latest jqwik version
 
