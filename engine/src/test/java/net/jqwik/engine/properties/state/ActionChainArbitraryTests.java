@@ -21,7 +21,7 @@ class ActionChainArbitraryTests {
 	void deterministicChainCanBeRun(@ForAll Random random) {
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
-					   .addAction(addX())
+					   .withAction(addX())
 					   .withMaxTransformations(10);
 
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
@@ -43,7 +43,7 @@ class ActionChainArbitraryTests {
 		Action.Independent<String> action = Action.just(transformer);
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
-					   .addAction(action)
+					   .withAction(action)
 					   .withMaxTransformations(10);
 
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
@@ -59,8 +59,8 @@ class ActionChainArbitraryTests {
 		Action.Independent<String> addEOC = Action.just(Transformer.endOfChain());
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
-					   .addAction(addX())
-					   .addAction(addEOC)
+					   .withAction(addX())
+					   .withAction(addEOC)
 					   .infinite();
 
 		TestingSupport.assertAllGenerated(
@@ -82,7 +82,7 @@ class ActionChainArbitraryTests {
 	void peekingIntoChain(@ForAll Random random) {
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
-					   .addAction(addX())
+					   .withAction(addX())
 					   .withMaxTransformations(5);
 
 		AtomicInteger countPeeks = new AtomicInteger(0);
@@ -114,8 +114,8 @@ class ActionChainArbitraryTests {
 	@Provide
 	ActionChainArbitrary<String> xOrFailing() {
 		return ActionChain.startWith(() -> "")
-						  .addAction(addX())
-						  .addAction(failing())
+						  .withAction(addX())
+						  .withAction(failing())
 						  .withMaxTransformations(30);
 	}
 
@@ -144,7 +144,7 @@ class ActionChainArbitraryTests {
 			ActionChain
 				.startWith(SetMutatingChainState::new)
 				// This is an action that does not depend on the state to produce the transformation
-				.addAction(
+				.withAction(
 					1,
 					Action.just("clear anyway", state -> {
 						state.actualOps.add("clear anyway");
@@ -153,7 +153,7 @@ class ActionChainArbitraryTests {
 					})
 				)
 				// Below actions depend on the state to derive the transformations
-				.addAction(
+				.withAction(
 					1,
 					(Action.Dependent<SetMutatingChainState>)
 						state -> Arbitraries.just(
@@ -165,7 +165,7 @@ class ActionChainArbitraryTests {
 							})
 						)
 				)
-				.addAction(
+				.withAction(
 					2,
 					(Action.Dependent<SetMutatingChainState>)
 						state ->
@@ -203,8 +203,8 @@ class ActionChainArbitraryTests {
 	@Provide
 	ActionChainArbitrary<String> xOrY() {
 		return ActionChain.startWith(() -> "")
-						  .addAction(addX())
-						  .addAction(addY())
+						  .withAction(addX())
+						  .withAction(addY())
 						  .withMaxTransformations(30);
 	}
 
@@ -223,7 +223,7 @@ class ActionChainArbitraryTests {
 	ActionChainArbitrary<String> anyAtoZ() {
 		Action.Independent<String> anyAZ = () -> Arbitraries.chars().range('a', 'z').map(c -> s -> s + c);
 		return ActionChain.startWith(() -> "")
-						  .addAction(anyAZ)
+						  .withAction(anyAZ)
 						  .withMaxTransformations(30);
 	}
 
@@ -236,8 +236,8 @@ class ActionChainArbitraryTests {
 
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
-					   .addAction(x0to4)
-					   .addAction(y5to9)
+					   .withAction(x0to4)
+					   .withAction(y5to9)
 					   .withMaxTransformations(10);
 
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
@@ -256,8 +256,8 @@ class ActionChainArbitraryTests {
 
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
-					   .addAction(x0to4)
-					   .addAction(end)
+					   .withAction(x0to4)
+					   .withAction(end)
 					   .withMaxTransformations(10);
 		ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
 
@@ -304,8 +304,8 @@ class ActionChainArbitraryTests {
 			};
 			ActionChainArbitrary<String> chains =
 				ActionChain.startWith(() -> "")
-						   .addAction(x0to4)
-						   .addAction(y5to9)
+						   .withAction(x0to4)
+						   .withAction(y5to9)
 						   .withMaxTransformations(10);
 
 			ActionChain<String> chain = TestingSupport.generateFirst(chains, random);
@@ -342,8 +342,8 @@ class ActionChainArbitraryTests {
 			};
 			ActionChainArbitrary<List<String>> chains =
 				ActionChain.<List<String>>startWith(ArrayList::new)
-						   .addAction(x0to4)
-						   .addAction(y5to9)
+						   .withAction(x0to4)
+						   .withAction(y5to9)
 						   .withMaxTransformations(10);
 
 			ActionChain<List<String>> chain = TestingSupport.generateFirst(chains, random);
@@ -378,8 +378,8 @@ class ActionChainArbitraryTests {
 
 			ActionChainArbitrary<List<Integer>> chains =
 				ActionChain.<List<Integer>>startWith(ArrayList::new)
-						   .addAction(clear)
-						   .addAction(add)
+						   .withAction(clear)
+						   .withAction(add)
 						   .withMaxTransformations(10);
 
 			TestingFalsifier<ActionChain<List<Integer>>> falsifier = c -> {
@@ -424,8 +424,8 @@ class ActionChainArbitraryTests {
 
 			ActionChainArbitrary<List<Integer>> chains =
 				ActionChain.<List<Integer>>startWith(ArrayList::new)
-						   .addAction(nothing)
-						   .addAction(add)
+						   .withAction(nothing)
+						   .withAction(add)
 						   .withMaxTransformations(10)
 						   .improveShrinkingWith(changeOfListDetector);
 
@@ -478,12 +478,12 @@ class ActionChainArbitraryTests {
 				}
 			};
 			return ActionChain.<Set<Integer>>startWith(LinkedHashSet::new)
-							  .addAction(
+							  .withAction(
 								  Action.just("clear", set -> {
 									  set.clear();
 									  return set;
 								  }))
-							  .addAction(addNumber)
+							  .withAction(addNumber)
 							  .withMaxTransformations(10);
 		}
 
@@ -530,8 +530,8 @@ class ActionChainArbitraryTests {
 				}
 			};
 			return ActionChain.<List<Integer>>startWith(ArrayList::new)
-							  .addAction(addInitialNumber)
-							  .addAction(addSmallerNumber)
+							  .withAction(addInitialNumber)
+							  .withAction(addSmallerNumber)
 							  .withMaxTransformations(30);
 		}
 
@@ -569,8 +569,8 @@ class ActionChainArbitraryTests {
 			@Override
 			public Arbitrary<ActionChain<MyModel>> get() {
 				return ActionChain.startWith(MyModel::new)
-								  .addAction(changeValue())
-								  .addAction(nullify())
+								  .withAction(changeValue())
+								  .withAction(nullify())
 								  .withMaxTransformations(20);
 			}
 		}
@@ -595,7 +595,7 @@ class ActionChainArbitraryTests {
 
 		ActionChainArbitrary<String> actionChainArbitrary = ActionChain.startWith(() -> "");
 		Assertions.assertThatThrownBy(
-			() -> actionChainArbitrary.addAction(neitherDependentNotIndependent)
+			() -> actionChainArbitrary.withAction(neitherDependentNotIndependent)
 		).isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -605,7 +605,7 @@ class ActionChainArbitraryTests {
 
 		ActionChainArbitrary<String> actionChainArbitrary = ActionChain.startWith(() -> "");
 		Assertions.assertThatThrownBy(
-			() -> actionChainArbitrary.addAction(neitherDependentNotIndependent)
+			() -> actionChainArbitrary.withAction(neitherDependentNotIndependent)
 		).isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -615,7 +615,7 @@ class ActionChainArbitraryTests {
 
 		ActionChainArbitrary<String> actionChainArbitrary = ActionChain.startWith(() -> "");
 		Assertions.assertThatThrownBy(
-			() -> actionChainArbitrary.addAction(0, addA)
+			() -> actionChainArbitrary.withAction(0, addA)
 		).isInstanceOf(IllegalArgumentException.class);
 	}
 

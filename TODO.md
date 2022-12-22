@@ -2,7 +2,6 @@
 
     - https://github.com/jlink/jqwik/issues/422
         - Rename `ActionChainArbitraty.addAction(..)` to `.withAction(..)`
-        - Add @ChecReturnValue to all jqwik Arbitrary API methods that return a new value
 
     - Recommend jetbrains annotations dependency in user guide
         - And may jqwik-samples

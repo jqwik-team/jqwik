@@ -1,7 +1,6 @@
 package net.jqwik.docs.state.mystack;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
 import net.jqwik.api.state.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -16,9 +15,9 @@ class MyStringStackExamples {
 	@Provide
 	Arbitrary<ActionChain<MyStringStack>> myStackActions() {
 		return ActionChain.startWith(MyStringStack::new)
-						  .addAction(new PushAction())
-						  .addAction(pop())
-						  .addAction(new ClearAction());
+						  .withAction(new PushAction())
+						  .withAction(pop())
+						  .withAction(new ClearAction());
 	}
 
 	@Provide
@@ -30,10 +29,10 @@ class MyStringStackExamples {
 	@Provide
 	Arbitrary<ActionChain<MyStringStack>> infiniteStackActions() {
 		return ActionChain.startWith(MyStringStack::new)
-						  .addAction(new PushAction())
-						  .addAction(pop())
-						  .addAction(new ClearAction())
-						  .addAction(Action.just(Transformer.endOfChain()))
+						  .withAction(new PushAction())
+						  .withAction(pop())
+						  .withAction(new ClearAction())
+						  .withAction(Action.just(Transformer.endOfChain()))
 						  .infinite();
 	}
 

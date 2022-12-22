@@ -81,7 +81,7 @@ public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionCha
 	}
 
 	@Override
-	public ActionChainArbitrary<T> addAction(int weight, Action<T> action) {
+	public ActionChainArbitrary<T> withAction(int weight, Action<T> action) {
 		DefaultActionChainArbitrary<T> clone = typedClone();
 		clone.chainArbitrary = clone.chainArbitrary.withTransformation(weight, createTransformation(action));
 		return clone;

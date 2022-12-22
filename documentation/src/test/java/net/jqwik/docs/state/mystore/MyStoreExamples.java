@@ -22,9 +22,9 @@ public class MyStoreExamples {
 	@Provide
 	ActionChainArbitrary<MyStore<Integer, String>> storeActions() {
 		return ActionChain.<MyStore<Integer, String>>startWith(MyStore::new)
-						  .addAction(3, new StoreAnyValue())
-						  .addAction(1, new UpdateValue())
-						  .addAction(1, new RemoveValue())
+						  .withAction(3, new StoreAnyValue())
+						  .withAction(1, new UpdateValue())
+						  .withAction(1, new RemoveValue())
 						  .improveShrinkingWith(StoreChangesDetector::new);
 	}
 
