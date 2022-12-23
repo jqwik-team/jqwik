@@ -7,6 +7,8 @@ import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
+import static net.jqwik.api.support.LongArraysSupport.*;
+
 @API(status = STABLE, since = "1.0")
 public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
@@ -26,9 +28,9 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 	@API(status = MAINTAINED, since = "1.0")
 	public static <T> ShrinkingDistance forCollection(Collection<Shrinkable<T>> elements) {
 		ShrinkingDistance sumDistanceOfElements = elements
-			.stream()
-			.map(Shrinkable::distance)
-			.reduce(ShrinkingDistance.of(0), ShrinkingDistance::plus);
+													  .stream()
+													  .map(Shrinkable::distance)
+													  .reduce(ShrinkingDistance.of(0), ShrinkingDistance::plus);
 
 		return ShrinkingDistance.of(elements.size()).append(sumDistanceOfElements);
 	}
@@ -36,9 +38,9 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 	@API(status = MAINTAINED, since = "1.0")
 	public static <T> ShrinkingDistance combine(List<Shrinkable<T>> shrinkables) {
 		return shrinkables
-			.stream()
-			.map(Shrinkable::distance)
-			.reduce(new ShrinkingDistance(new long[0]), ShrinkingDistance::append);
+				   .stream()
+				   .map(Shrinkable::distance)
+				   .reduce(new ShrinkingDistance(new long[0]), ShrinkingDistance::append);
 	}
 
 	private ShrinkingDistance(long[] distances) {
@@ -101,38 +103,16 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return Long.compare(left, right);
 	}
 
-	private long at(long[] array, int i) {
-		return array.length > i ? array[i] : 0;
-	}
-
 	@API(status = INTERNAL)
 	public ShrinkingDistance plus(ShrinkingDistance other) {
 		long[] summedUpDistances = sumUpArrays(distances, other.distances);
 		return new ShrinkingDistance(summedUpDistances);
 	}
 
-	private long[] sumUpArrays(long[] left, long[] right) {
-		long[] sum = new long[Math.max(left.length, right.length)];
-		for (int i = 0; i < sum.length; i++) {
-			long summedValue = at(left, i) + at(right, i);
-			if (summedValue < 0) {
-				summedValue = Long.MAX_VALUE;
-			}
-			sum[i] = summedValue;
-		}
-		return sum;
-	}
-
 	@API(status = INTERNAL)
 	public ShrinkingDistance append(ShrinkingDistance other) {
 		long[] appendedDistances = concatArrays(distances, other.distances);
 		return new ShrinkingDistance(appendedDistances);
-	}
-
-	private long[] concatArrays(long[] left, long[] right) {
-		long[] concatenated = Arrays.copyOf(left, left.length + right.length);
-		System.arraycopy(right, 0, concatenated, left.length, right.length);
-		return concatenated;
 	}
 
 }
