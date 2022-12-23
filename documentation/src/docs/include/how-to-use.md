@@ -65,7 +65,10 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:\${junitJupiterVersion}"
 
     // Add any other test library you need...
-    testImplementation "org.assertj:assertj-core:3.12.2"
+    testImplementation "org.assertj:assertj-core:3.23.1"
+
+    // Optional but recommended to get annotation related API warnings
+	compileOnly("org.jetbrains:annotations:23.0.0")
 
 }
 ```

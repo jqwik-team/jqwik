@@ -1,9 +1,7 @@
 # 1.7.2
 
-    - Recommend jetbrains annotations dependency in user guide
-        - And maybe in jqwik-samples
-
     - Update jqwik-samples to use latest jqwik version
+        - And add compileOnly dependency to "org.jetbrains:annotations:23.0.0"
 
 
 # 1.7.x
