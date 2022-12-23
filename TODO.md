@@ -1,9 +1,5 @@
 # 1.7.2
 
-    - Update jqwik-samples to use latest jqwik version
-        - And add compileOnly dependency to "org.jetbrains:annotations:23.0.0"
-
-
 # 1.7.x
 
     - Fix shrink and grow bug: https://github.com/jlink/jqwik/issues/439
@@ -43,3 +39,7 @@
 
         - Allow @ForAll on member variables of test container class
 
+
+# 1.8.0
+
+    - Include compileOnly("org.jetbrains:annotations:23.0.0") into API?
