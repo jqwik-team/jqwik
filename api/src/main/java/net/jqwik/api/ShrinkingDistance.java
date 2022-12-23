@@ -13,6 +13,9 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 	@API(status = MAINTAINED, since = "1.2.0")
 	public static final ShrinkingDistance MAX = ShrinkingDistance.of(Long.MAX_VALUE);
 
+	@API(status = MAINTAINED, since = "1.7.2")
+	public static final ShrinkingDistance MIN = ShrinkingDistance.of(0);
+
 	private final long[] distances;
 
 	@API(status = MAINTAINED, since = "1.0")

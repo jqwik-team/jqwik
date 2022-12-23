@@ -39,13 +39,22 @@ class ShrinkingDistanceTests {
 		assertThat(ShrinkingDistance.of(Long.MAX_VALUE, 1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
 	}
 
-
 	@Group
 	class Comparing {
 		@Example
 		void compareSingleDimension() {
 			assertThat(ShrinkingDistance.of(1).compareTo(ShrinkingDistance.of(1))).isEqualTo(0);
 			assertThat(ShrinkingDistance.of(1).compareTo(ShrinkingDistance.of(2))).isLessThan(0);
+		}
+
+		@Example
+		void comparingToMINandMAX() {
+			assertThat(ShrinkingDistance.of(1).compareTo(ShrinkingDistance.MIN)).isEqualTo(1);
+			assertThat(ShrinkingDistance.of(0, 0).compareTo(ShrinkingDistance.MIN)).isEqualTo(0);
+
+			assertThat(ShrinkingDistance.of(1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
+
+			assertThat(ShrinkingDistance.MIN.compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
 		}
 
 		@Example
@@ -78,7 +87,7 @@ class ShrinkingDistanceTests {
 		@Example
 		void emptyCollection() {
 			ShrinkingDistance distance = ShrinkingDistance.forCollection(Collections.emptyList());
-			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(0, 0));
+			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.MIN);
 		}
 
 		@Example
@@ -99,12 +108,44 @@ class ShrinkingDistanceTests {
 		@Example
 		void nonUniformCollection() {
 			Collection<Shrinkable<String>> elements = asList(
-				Shrinkable.unshrinkable("hello"), // [0]
+				Shrinkable.unshrinkable("a"), // [0]
+				Shrinkable.unshrinkable("b", ShrinkingDistance.of(1)), // [1]
 				ShrinkableStringTests.createShrinkableString("bcd", 0) // [3, 6]
 			);
 			ShrinkingDistance distance = ShrinkingDistance.forCollection(elements);
-			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(2, 3, 6));
+			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(3, 4, 6));
 		}
+	}
+
+	@Group
+	@Label("combine()")
+	class Combine {
+		@Example
+		void zeroDistance() {
+			ShrinkingDistance distance = ShrinkingDistance.combine(
+				Arrays.asList(Shrinkable.unshrinkable("hello"))
+			);
+			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(0));
+		}
+
+		@Example
+		void simpleDistance() {
+			ShrinkingDistance distance = ShrinkingDistance.combine(
+				Arrays.asList(Shrinkable.unshrinkable(42, ShrinkingDistance.of(42)))
+			);
+			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(42));
+		}
+
+		@Example
+		void several() {
+			ShrinkingDistance distance = ShrinkingDistance.combine(Arrays.asList(
+				Shrinkable.unshrinkable(42, ShrinkingDistance.of(42)),
+				Shrinkable.unshrinkable("ab", ShrinkingDistance.of(2, 3)),
+				Shrinkable.unshrinkable(asList(1, 2, 3), ShrinkingDistance.of(4, 5, 6))
+			));
+			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(42, 2, 3, 4, 5, 6));
+		}
+
 	}
 
 	@Group
