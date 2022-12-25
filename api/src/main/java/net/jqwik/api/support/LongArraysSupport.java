@@ -13,7 +13,7 @@ public class LongArraysSupport {
 		return array.length > i ? array[i] : 0;
 	}
 
-	public static long[] sumUpArrays(long[] left, long[] right) {
+	public static long[] sumUp(long[] left, long[] right) {
 		long[] sum = new long[Math.max(left.length, right.length)];
 		for (int i = 0; i < sum.length; i++) {
 			long summedValue = at(left, i) + at(right, i);
@@ -25,9 +25,14 @@ public class LongArraysSupport {
 		return sum;
 	}
 
-	public static long[] concatArrays(long[] left, long[] right) {
-		long[] concatenated = Arrays.copyOf(left, left.length + right.length);
-		System.arraycopy(right, 0, concatenated, left.length, right.length);
-		return concatenated;
+	public static long[] concatenate(List<long[]> listOfArrays) {
+		int size = listOfArrays.stream().mapToInt(s -> s.length).sum();
+		long[] concatenatedArrays = new long[size];
+		int i = 0;
+		for (long[] array : listOfArrays) {
+			System.arraycopy(array, 0, concatenatedArrays, i, array.length);
+			i += array.length;
+		}
+		return concatenatedArrays;
 	}
 }

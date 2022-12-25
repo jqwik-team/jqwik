@@ -40,12 +40,12 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		if (shrinkables.isEmpty()) {
 			throw new IllegalArgumentException("At least one shrinkable is required");
 		}
-		ShrinkingDistance acc = new ShrinkingDistance(new long[0]);
-		for (Shrinkable<T> shrinkable : shrinkables) {
-			ShrinkingDistance distance = shrinkable.distance();
-			acc = acc.append(distance);
-		}
-		return acc;
+		// This is an optimization to avoid creating many temporary arrays, which the old streams-based implementation did.
+		List<long[]> shrinkableDistances = shrinkables.stream()
+													  .map(tShrinkable -> tShrinkable.distance().distances)
+													  .collect(Collectors.toList());
+		long[] combinedDistances = concatenate(shrinkableDistances);
+		return new ShrinkingDistance(combinedDistances);
 	}
 
 	private ShrinkingDistance(long[] distances) {
@@ -110,13 +110,13 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	@API(status = INTERNAL)
 	public ShrinkingDistance plus(ShrinkingDistance other) {
-		long[] summedUpDistances = sumUpArrays(distances, other.distances);
+		long[] summedUpDistances = sumUp(distances, other.distances);
 		return new ShrinkingDistance(summedUpDistances);
 	}
 
 	@API(status = INTERNAL)
 	public ShrinkingDistance append(ShrinkingDistance other) {
-		long[] appendedDistances = concatArrays(distances, other.distances);
+		long[] appendedDistances = concatenate(Arrays.asList(distances, other.distances));
 		return new ShrinkingDistance(appendedDistances);
 	}
 
