@@ -53,7 +53,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		if (o == null || getClass() != o.getClass()) return false;
 
 		ShrinkingDistance that = (ShrinkingDistance) o;
-		return this.compareTo(that) == 0;
+		return Arrays.equals(this.distances, that.distances);
 	}
 
 	@Override

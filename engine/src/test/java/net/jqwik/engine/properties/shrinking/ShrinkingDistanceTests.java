@@ -15,7 +15,7 @@ class ShrinkingDistanceTests {
 	@Example
 	void append() {
 		assertThat(ShrinkingDistance.of(1, 2).append(ShrinkingDistance.of(3, 4)))
-			.isEqualByComparingTo(ShrinkingDistance.of(1, 2, 3, 4));
+			.isEqualTo(ShrinkingDistance.of(1, 2, 3, 4));
 	}
 
 	@Example
@@ -87,6 +87,7 @@ class ShrinkingDistanceTests {
 		@Example
 		void emptyCollection() {
 			ShrinkingDistance distance = ShrinkingDistance.forCollection(Collections.emptyList());
+			assertThat(distance).isEqualTo(ShrinkingDistance.of(0, 0));
 			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.MIN);
 		}
 
@@ -102,7 +103,7 @@ class ShrinkingDistanceTests {
 
 			int sizeOfCollection = 4;
 			int sumOfElementDistances = 6;
-			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(sizeOfCollection, sumOfElementDistances));
+			assertThat(distance).isEqualTo(ShrinkingDistance.of(sizeOfCollection, sumOfElementDistances));
 		}
 
 		@Example
@@ -113,7 +114,7 @@ class ShrinkingDistanceTests {
 				ShrinkableStringTests.createShrinkableString("bcd", 0) // [3, 6]
 			);
 			ShrinkingDistance distance = ShrinkingDistance.forCollection(elements);
-			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(3, 4, 6));
+			assertThat(distance).isEqualTo(ShrinkingDistance.of(3, 4, 6));
 		}
 	}
 
@@ -125,7 +126,7 @@ class ShrinkingDistanceTests {
 			ShrinkingDistance distance = ShrinkingDistance.combine(
 				Arrays.asList(Shrinkable.unshrinkable("hello"))
 			);
-			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(0));
+			assertThat(distance).isEqualTo(ShrinkingDistance.of(0));
 		}
 
 		@Example
@@ -133,7 +134,7 @@ class ShrinkingDistanceTests {
 			ShrinkingDistance distance = ShrinkingDistance.combine(
 				Arrays.asList(Shrinkable.unshrinkable(42, ShrinkingDistance.of(42)))
 			);
-			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(42));
+			assertThat(distance).isEqualTo(ShrinkingDistance.of(42));
 		}
 
 		@Example
@@ -155,17 +156,17 @@ class ShrinkingDistanceTests {
 		@Example
 		void noOverflow() {
 			assertThat(ShrinkingDistance.of(2).plus(ShrinkingDistance.of(3)))
-				.isEqualByComparingTo(ShrinkingDistance.of(5));
+				.isEqualTo(ShrinkingDistance.of(5));
 			assertThat(ShrinkingDistance.of(2, 3, 4).plus(ShrinkingDistance.of(3, 4, 5)))
-				.isEqualByComparingTo(ShrinkingDistance.of(5, 7, 9));
+				.isEqualTo(ShrinkingDistance.of(5, 7, 9));
 			assertThat(ShrinkingDistance.of(2).plus(ShrinkingDistance.of(3, 4, 5)))
-				.isEqualByComparingTo(ShrinkingDistance.of(5, 4, 5));
+				.isEqualTo(ShrinkingDistance.of(5, 4, 5));
 		}
 
 		@Example
 		void overflow() {
 			assertThat(ShrinkingDistance.of(Long.MAX_VALUE).plus(ShrinkingDistance.of(1)))
-				.isEqualByComparingTo(ShrinkingDistance.of(Long.MAX_VALUE));
+				.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE));
 		}
 	}
 
