@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.jetbrains.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -41,9 +42,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 			throw new IllegalArgumentException("At least one shrinkable is required");
 		}
 		// This is an optimization to avoid creating many temporary arrays, which the old streams-based implementation did.
-		List<long[]> shrinkableDistances = shrinkables.stream()
-													  .map(tShrinkable -> tShrinkable.distance().distances)
-													  .collect(Collectors.toList());
+		List<long[]> shrinkableDistances = toDistances(shrinkables);
 		long[] combinedDistances = concatenate(shrinkableDistances);
 		return new ShrinkingDistance(combinedDistances);
 	}
@@ -118,6 +117,16 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 	public ShrinkingDistance append(ShrinkingDistance other) {
 		long[] appendedDistances = concatenate(Arrays.asList(distances, other.distances));
 		return new ShrinkingDistance(appendedDistances);
+	}
+
+	@NotNull
+	private static <T> List<long[]> toDistances(List<Shrinkable<T>> shrinkables) {
+		List<long[]> listOfDistances = new ArrayList<>(shrinkables.size());
+		for (Shrinkable<?> tShrinkable : shrinkables) {
+			long[] longs = tShrinkable.distance().distances;
+			listOfDistances.add(longs);
+		}
+		return listOfDistances;
 	}
 
 }
