@@ -37,10 +37,15 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	@API(status = MAINTAINED, since = "1.0")
 	public static <T> ShrinkingDistance combine(List<Shrinkable<T>> shrinkables) {
-		return shrinkables
-				   .stream()
-				   .map(Shrinkable::distance)
-				   .reduce(new ShrinkingDistance(new long[0]), ShrinkingDistance::append);
+		if (shrinkables.isEmpty()) {
+			throw new IllegalArgumentException("At least one shrinkable is required");
+		}
+		ShrinkingDistance acc = new ShrinkingDistance(new long[0]);
+		for (Shrinkable<T> shrinkable : shrinkables) {
+			ShrinkingDistance distance = shrinkable.distance();
+			acc = acc.append(distance);
+		}
+		return acc;
 	}
 
 	private ShrinkingDistance(long[] distances) {

@@ -8,6 +8,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressWarnings("EqualsWithItself")
 @Group
 @Label("ShrinkingDistance")
 class ShrinkingDistanceTests {
@@ -118,13 +119,20 @@ class ShrinkingDistanceTests {
 		}
 	}
 
+	@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 	@Group
 	@Label("combine()")
 	class Combine {
 		@Example
+		void combiningNoShrinkablesIsNotAllowed() {
+			assertThatThrownBy(() -> ShrinkingDistance.combine(Collections.emptyList()))
+				.isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
 		void zeroDistance() {
 			ShrinkingDistance distance = ShrinkingDistance.combine(
-				Arrays.asList(Shrinkable.unshrinkable("hello"))
+				asList(Shrinkable.unshrinkable("hello"))
 			);
 			assertThat(distance).isEqualTo(ShrinkingDistance.of(0));
 		}
@@ -132,14 +140,14 @@ class ShrinkingDistanceTests {
 		@Example
 		void simpleDistance() {
 			ShrinkingDistance distance = ShrinkingDistance.combine(
-				Arrays.asList(Shrinkable.unshrinkable(42, ShrinkingDistance.of(42)))
+				asList(Shrinkable.unshrinkable(42, ShrinkingDistance.of(42)))
 			);
 			assertThat(distance).isEqualTo(ShrinkingDistance.of(42));
 		}
 
 		@Example
 		void several() {
-			ShrinkingDistance distance = ShrinkingDistance.combine(Arrays.asList(
+			ShrinkingDistance distance = ShrinkingDistance.combine(asList(
 				Shrinkable.unshrinkable(42, ShrinkingDistance.of(42)),
 				Shrinkable.unshrinkable("ab", ShrinkingDistance.of(2, 3)),
 				Shrinkable.unshrinkable(asList(1, 2, 3), ShrinkingDistance.of(4, 5, 6))
