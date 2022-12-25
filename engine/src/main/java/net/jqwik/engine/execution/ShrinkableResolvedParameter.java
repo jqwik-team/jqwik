@@ -43,7 +43,7 @@ public class ShrinkableResolvedParameter implements Shrinkable<Object> {
 
 	@Override
 	public ShrinkingDistance distance() {
-		return ShrinkingDistance.of(0);
+		return ShrinkingDistance.MIN;
 	}
 
 	@Override

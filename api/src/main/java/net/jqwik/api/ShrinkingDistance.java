@@ -30,7 +30,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		ShrinkingDistance sumDistanceOfElements = elements
 													  .stream()
 													  .map(Shrinkable::distance)
-													  .reduce(ShrinkingDistance.of(0), ShrinkingDistance::plus);
+													  .reduce(ShrinkingDistance.MIN, ShrinkingDistance::plus);
 
 		return ShrinkingDistance.of(elements.size()).append(sumDistanceOfElements);
 	}

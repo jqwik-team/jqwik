@@ -30,7 +30,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	}
 
 	static <T> Shrinkable<T> unshrinkable(@Nullable T value) {
-		return unshrinkable(value, ShrinkingDistance.of(0));
+		return unshrinkable(value, ShrinkingDistance.MIN);
 	}
 
 	static <T> Shrinkable<T> unshrinkable(@Nullable T value, ShrinkingDistance distance) {
@@ -39,7 +39,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 
 	@API(status = INTERNAL)
 	static <T> Shrinkable<T> supplyUnshrinkable(Supplier<T> supplier) {
-		return ShrinkableFacade.implementation.unshrinkable(supplier, ShrinkingDistance.of(0));
+		return ShrinkableFacade.implementation.unshrinkable(supplier, ShrinkingDistance.MIN);
 	}
 
 	/**
