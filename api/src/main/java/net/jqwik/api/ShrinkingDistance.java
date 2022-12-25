@@ -28,11 +28,9 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	@API(status = MAINTAINED, since = "1.0")
 	public static <T> ShrinkingDistance forCollection(Collection<Shrinkable<T>> elements) {
-		ShrinkingDistance sumDistanceOfElements = elements
-													  .stream()
-													  .map(Shrinkable::distance)
-													  .reduce(ShrinkingDistance.MIN, ShrinkingDistance::plus);
-
+		// This is an optimization to avoid creating temporary arrays, which the old streams-based implementation did.
+		long[] collectedDistances = sumUp(toDistances(elements));
+		ShrinkingDistance sumDistanceOfElements = new ShrinkingDistance(collectedDistances);
 		return ShrinkingDistance.of(elements.size()).append(sumDistanceOfElements);
 	}
 
@@ -41,9 +39,9 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		if (shrinkables.isEmpty()) {
 			throw new IllegalArgumentException("At least one shrinkable is required");
 		}
-		// This is an optimization to avoid creating many temporary arrays, which the old streams-based implementation did.
-		List<long[]> shrinkableDistances = toDistances(shrinkables);
-		long[] combinedDistances = concatenate(shrinkableDistances);
+
+		// This is an optimization to avoid creating temporary arrays, which the old streams-based implementation did.
+		long[] combinedDistances = concatenate(toDistances(shrinkables));
 		return new ShrinkingDistance(combinedDistances);
 	}
 
@@ -52,7 +50,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(@Nullable Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
@@ -109,7 +107,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	@API(status = INTERNAL)
 	public ShrinkingDistance plus(ShrinkingDistance other) {
-		long[] summedUpDistances = sumUp(distances, other.distances);
+		long[] summedUpDistances = sumUp(Arrays.asList(distances, other.distances));
 		return new ShrinkingDistance(summedUpDistances);
 	}
 
@@ -120,7 +118,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 	}
 
 	@NotNull
-	private static <T> List<long[]> toDistances(List<Shrinkable<T>> shrinkables) {
+	private static <T> List<long[]> toDistances(Collection<Shrinkable<T>> shrinkables) {
 		List<long[]> listOfDistances = new ArrayList<>(shrinkables.size());
 		for (Shrinkable<?> tShrinkable : shrinkables) {
 			long[] longs = tShrinkable.distance().distances;

@@ -88,8 +88,7 @@ class ShrinkingDistanceTests {
 		@Example
 		void emptyCollection() {
 			ShrinkingDistance distance = ShrinkingDistance.forCollection(Collections.emptyList());
-			assertThat(distance).isEqualTo(ShrinkingDistance.of(0, 0));
-			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.MIN);
+			assertThat(distance).isEqualTo(ShrinkingDistance.MIN);
 		}
 
 		@Example

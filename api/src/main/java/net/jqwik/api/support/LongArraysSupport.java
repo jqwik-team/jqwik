@@ -13,16 +13,24 @@ public class LongArraysSupport {
 		return array.length > i ? array[i] : 0;
 	}
 
-	public static long[] sumUp(long[] left, long[] right) {
-		long[] sum = new long[Math.max(left.length, right.length)];
-		for (int i = 0; i < sum.length; i++) {
-			long summedValue = at(left, i) + at(right, i);
-			if (summedValue < 0) {
-				summedValue = Long.MAX_VALUE;
+	public static long[] sumUp(List<long[]> listOfArrays) {
+		int maxDistanceSize = listOfArrays.stream().mapToInt(s -> s.length).max().orElse(0);
+		long[] summedUpArray = new long[maxDistanceSize];
+		Arrays.fill(summedUpArray, 0);
+		for (long[] array : listOfArrays) {
+			for (int i = 0; i < summedUpArray.length; i++) {
+				summedUpArray[i] = plusWithoutOverflowAt(summedUpArray, array, i);
 			}
-			sum[i] = summedValue;
 		}
-		return sum;
+		return summedUpArray;
+	}
+
+	private static long plusWithoutOverflowAt(long[] left, long[] right, int index) {
+		long summedValue = at(right, index) + at(left, index);
+		if (summedValue < 0) {
+			return Long.MAX_VALUE;
+		}
+		return summedValue;
 	}
 
 	public static long[] concatenate(List<long[]> listOfArrays) {
