@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.jetbrains.annotations.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
@@ -17,6 +18,39 @@ import static org.apiguardian.api.API.Status.*;
 public class LambdaSupport {
 
 	private LambdaSupport() {}
+
+	private static class FieldAccessor {
+		final boolean isFunctionalType;
+		final MethodHandle handle;
+
+		FieldAccessor(boolean isFunctionalType, MethodHandle handle) {
+			this.isFunctionalType = isFunctionalType;
+			this.handle = handle;
+		}
+	}
+
+	/**
+	 * Returns field accessor for the given class, or {@code null} if accessors are not available (e.g. no reflective access to the class)
+	 */
+	private static final ClassValue<List<FieldAccessor>> HANDLES = new ClassValue<List<FieldAccessor>>() {
+		@Override
+		protected @Nullable List<FieldAccessor> computeValue(Class<?> type) {
+			Field[] fields = type.getDeclaredFields();
+			List<FieldAccessor> res = new ArrayList<>(fields.length);
+			try {
+				for (Field field : fields) {
+					// Javadoc of LOOKUP.unreflectGetter(..) suggests that this may be necessary in some cases:
+					field.setAccessible(true);
+					res.add(new FieldAccessor(isFunctionalType(field.getType()), LOOKUP.unreflectGetter(field)));
+				}
+			} catch (Throwable e) {
+				// As of Java 17, field.setAccessible(..) throws IllegalAccessException
+				// if the field is private and not opened to jqwik, Predicate.not() will create lambda instances with private fields.
+				return null;
+			}
+			return res;
+		}
+	};
 
 	/**
 	 * This method is used in {@linkplain Object#equals(Object)} implementations of {@linkplain Arbitrary} types
@@ -41,8 +75,12 @@ public class LambdaSupport {
 		}
 
 		// Check enclosed state the hard way
-		for (Field field : l1Class.getDeclaredFields()) {
-			if (!fieldIsEqualIn(field, l1, l2)) {
+		List<FieldAccessor> handles = HANDLES.get(l1Class);
+		if (handles == null) {
+			return false;
+		}
+		for (FieldAccessor handle : handles) {
+			if (!fieldIsEqualIn(handle, l1, l2)) {
 				return false;
 			}
 		}
@@ -58,15 +96,12 @@ public class LambdaSupport {
 
 	private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
-	private static boolean fieldIsEqualIn(Field field, Object left, Object right) {
+	private static boolean fieldIsEqualIn(FieldAccessor field, Object left, Object right) {
 		try {
-			// Javadoc of LOOKUP.unreflectGetter(..) suggests that this may be necessary in some cases:
-			field.setAccessible(true);
-
-			MethodHandle handle = LOOKUP.unreflectGetter(field);
 			// If field is a functional type use LambdaSupport.areEqual().
 			// TODO: Could there be circular references among functional types?
-			if (isFunctionalType(field.getType())) {
+			MethodHandle handle = field.handle;
+			if (field.isFunctionalType) {
 				return areEqual(handle.invoke(left), handle.invoke(right));
 			}
 			return handle.invoke(left).equals(handle.invoke(right));
