@@ -16,7 +16,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class ArbitrariesRecursiveTests {
 
 	@Example
-	void minMaxDepthRecursion(@ForAll Random random) {
+	void minMaxDepthRecursion(@ForAll JqwikRandom random) {
 		Arbitrary<List<Integer>> lists = Arbitraries.recursive(
 			() -> Arbitraries.create(ArrayList::new),
 			list -> {
@@ -35,7 +35,7 @@ class ArbitrariesRecursiveTests {
 	}
 
 	@Example
-	void fixedDepthRecursion(@ForAll Random random) {
+	void fixedDepthRecursion(@ForAll JqwikRandom random) {
 		Arbitrary<List<Integer>> lists = Arbitraries.recursive(
 			() -> Arbitraries.create(ArrayList::new),
 			list -> {
@@ -54,7 +54,7 @@ class ArbitrariesRecursiveTests {
 	}
 
 	@Example
-	void zeroDepthRecursion(@ForAll Random random) {
+	void zeroDepthRecursion(@ForAll JqwikRandom random) {
 		Arbitrary<List<Integer>> lists = Arbitraries.recursive(
 			() -> Arbitraries.create(ArrayList::new),
 			list -> {
@@ -185,7 +185,7 @@ class ArbitrariesRecursiveTests {
 	class ShrinkingTests {
 
 		@Property
-		void fixedDepthRecursion(@ForAll Random random) {
+		void fixedDepthRecursion(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> base = Arbitraries.integers().between(0, 10);
 			Arbitrary<Integer> integer = Arbitraries.recursive(
 				() -> base,
@@ -200,7 +200,7 @@ class ArbitrariesRecursiveTests {
 		}
 
 		@Property
-		void minMaxDepthRecursion(@ForAll Random random) {
+		void minMaxDepthRecursion(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> base = Arbitraries.integers().between(1, 10);
 			Arbitrary<Integer> integer = Arbitraries.recursive(
 				() -> Arbitraries.just(0),
@@ -215,7 +215,7 @@ class ArbitrariesRecursiveTests {
 		}
 
 		@Property
-		void complexShrinking(@ForAll Random random) {
+		void complexShrinking(@ForAll JqwikRandom random) {
 			Arbitrary<String> sentences = sentences(20);
 
 			TestingFalsifier<String> max10words = sentence -> sentence.split(" ").length <= 10;

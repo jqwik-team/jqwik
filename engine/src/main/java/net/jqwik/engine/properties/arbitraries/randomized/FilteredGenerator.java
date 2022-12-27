@@ -1,9 +1,9 @@
 package net.jqwik.engine.properties.arbitraries.randomized;
 
-import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.JqwikRandom;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class FilteredGenerator<T> implements RandomGenerator<T> {
@@ -18,7 +18,7 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
-	public Shrinkable<T> next(Random random) {
+	public Shrinkable<T> next(JqwikRandom random) {
 		return nextUntilAccepted(random, toFilter::next);
 	}
 
@@ -27,7 +27,7 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 		return String.format("Filtering [%s]", toFilter);
 	}
 
-	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
+	private Shrinkable<T> nextUntilAccepted(JqwikRandom random, Function<JqwikRandom, Shrinkable<T>> fetchShrinkable) {
 		for (int i = 0; i < maxMisses; i++) {
 			Shrinkable<T> value = fetchShrinkable.apply(random);
 			if (filterPredicate.test(value.value())) {

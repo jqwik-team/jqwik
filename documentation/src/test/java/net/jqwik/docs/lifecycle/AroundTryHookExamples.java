@@ -11,7 +11,7 @@ class AroundTryHookExamples {
 
 	@Property(tries = 10)
 	@AddLifecycleHook(FailIfTooSlow.class)
-	void sleepingProperty(@ForAll Random random) throws InterruptedException {
+	void sleepingProperty(@ForAll JqwikRandom random) throws InterruptedException {
 		Thread.sleep(random.nextInt(101));
 	}
 

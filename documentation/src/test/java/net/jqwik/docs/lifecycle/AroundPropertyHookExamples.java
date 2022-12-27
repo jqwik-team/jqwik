@@ -38,7 +38,7 @@ class AroundPropertyHookExamples implements AutoCloseable {
 
 	@Property(tries = 100)
 	@AddLifecycleHook(MeasureTime.class)
-	void measureTimeSpent(@ForAll Random random) throws InterruptedException {
+	void measureTimeSpent(@ForAll JqwikRandom random) throws InterruptedException {
 		Thread.sleep(random.nextInt(50));
 	}
 

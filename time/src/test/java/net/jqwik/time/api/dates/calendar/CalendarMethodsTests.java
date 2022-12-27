@@ -25,7 +25,7 @@ public class CalendarMethodsTests {
 	class CalendarMethods {
 
 		@Property
-		void atTheEarliest(@ForAll("dates") Calendar startDate, @ForAll Random random) {
+		void atTheEarliest(@ForAll("dates") Calendar startDate, @ForAll JqwikRandom random) {
 
 			Arbitrary<Calendar> dates = Dates.datesAsCalendar().atTheEarliest(startDate);
 
@@ -40,7 +40,7 @@ public class CalendarMethodsTests {
 		void atTheEarliestAtTheLatestMinAfterMax(
 			@ForAll("dates") Calendar startDate,
 			@ForAll("dates") Calendar endDate,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDate.after(endDate));
@@ -56,7 +56,7 @@ public class CalendarMethodsTests {
 		}
 
 		@Property
-		void atTheLatest(@ForAll("dates") Calendar endDate, @ForAll Random random) {
+		void atTheLatest(@ForAll("dates") Calendar endDate, @ForAll JqwikRandom random) {
 
 			Arbitrary<Calendar> dates = Dates.datesAsCalendar().atTheLatest(endDate);
 
@@ -71,7 +71,7 @@ public class CalendarMethodsTests {
 		void atTheLatestAtTheEarliestMinAfterMax(
 			@ForAll("dates") Calendar startDate,
 			@ForAll("dates") Calendar endDate,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDate.after(endDate));
@@ -87,7 +87,7 @@ public class CalendarMethodsTests {
 		}
 
 		@Property
-		void between(@ForAll("dates") Calendar startDate, @ForAll("dates") Calendar endDate, @ForAll Random random) {
+		void between(@ForAll("dates") Calendar startDate, @ForAll("dates") Calendar endDate, @ForAll JqwikRandom random) {
 
 			Assume.that(!startDate.after(endDate));
 
@@ -104,7 +104,7 @@ public class CalendarMethodsTests {
 		void betweenEndDateAfterStartDate(
 			@ForAll("dates") Calendar startDate,
 			@ForAll("dates") Calendar endDate,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDate.after(endDate));
@@ -119,7 +119,7 @@ public class CalendarMethodsTests {
 		}
 
 		@Property
-		void betweenSame(@ForAll("dates") Calendar sameDate, @ForAll Random random) {
+		void betweenSame(@ForAll("dates") Calendar sameDate, @ForAll JqwikRandom random) {
 
 			Arbitrary<Calendar> dates = Dates.datesAsCalendar().between(sameDate, sameDate);
 
@@ -136,7 +136,7 @@ public class CalendarMethodsTests {
 	class YearMethods {
 
 		@Property
-		void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll Random random) {
+		void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll JqwikRandom random) {
 
 			Assume.that(startYear <= endYear);
 
@@ -151,7 +151,7 @@ public class CalendarMethodsTests {
 		}
 
 		@Property
-		void yearBetweenSame(@ForAll("years") int year, @ForAll Random random) {
+		void yearBetweenSame(@ForAll("years") int year, @ForAll JqwikRandom random) {
 
 			Arbitrary<Calendar> dates = Dates.datesAsCalendar().yearBetween(year, year);
 
@@ -173,7 +173,7 @@ public class CalendarMethodsTests {
 	class MonthMethods {
 
 		@Property
-		void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+		void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll JqwikRandom random) {
 
 			Assume.that(startMonth <= endMonth);
 
@@ -188,7 +188,7 @@ public class CalendarMethodsTests {
 		}
 
 		@Property
-		void monthBetweenMinAfterMax(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+		void monthBetweenMinAfterMax(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll JqwikRandom random) {
 
 			Assume.that(startMonth > endMonth);
 
@@ -203,7 +203,7 @@ public class CalendarMethodsTests {
 		}
 
 		@Property
-		void monthBetweenSame(@ForAll("months") int month, @ForAll Random random) {
+		void monthBetweenSame(@ForAll("months") int month, @ForAll JqwikRandom random) {
 
 			Arbitrary<Calendar> dates = Dates.datesAsCalendar().monthBetween(month, month);
 
@@ -215,7 +215,7 @@ public class CalendarMethodsTests {
 		}
 
 		@Property
-		void monthOnlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
+		void monthOnlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll JqwikRandom random) {
 
 			Arbitrary<Calendar> dates = Dates.datesAsCalendar().onlyMonths(months.toArray(new Month[]{}));
 
@@ -241,7 +241,7 @@ public class CalendarMethodsTests {
 		void dayOfMonthBetween(
 			@ForAll("dayOfMonths") int startDayOfMonth,
 			@ForAll("dayOfMonths") int endDayOfMonth,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(startDayOfMonth <= endDayOfMonth);
@@ -257,7 +257,7 @@ public class CalendarMethodsTests {
 		}
 
 		@Property
-		void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth, @ForAll Random random) {
+		void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth, @ForAll JqwikRandom random) {
 
 			Arbitrary<Calendar> dates = Dates.datesAsCalendar().dayOfMonthBetween(dayOfMonth, dayOfMonth);
 
@@ -279,7 +279,7 @@ public class CalendarMethodsTests {
 	class OnlyDaysOfWeekMethods {
 
 		@Property
-		void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll Random random) {
+		void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll JqwikRandom random) {
 
 			Arbitrary<Calendar> dates = Dates.datesAsCalendar().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 

@@ -10,7 +10,7 @@ import net.jqwik.api.stateful.*;
 class ActionSequenceInvariantTests {
 
 	@Example
-	boolean succeedingInvariant(@ForAll Random random) {
+	boolean succeedingInvariant(@ForAll JqwikRandom random) {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(changeValue());
 		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10, true).next(random);
 
@@ -24,7 +24,7 @@ class ActionSequenceInvariantTests {
 	}
 
 	@Example
-	void failingInvariantFailSequenceRun(@ForAll Random random) {
+	void failingInvariantFailSequenceRun(@ForAll JqwikRandom random) {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(Arbitraries.oneOf(changeValue(), nullify())).ofSize(20);
 		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(1000, true).next(random);
 

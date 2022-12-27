@@ -31,7 +31,7 @@ public class SimpleArbitrariesTests {
 		@ForAll LocalDate date,
 		@ForAll @IntRange(min = 50, max = 59) int secondEnd,
 		@ForAll @IntRange(max = 10) int secondStart,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(!date.isEqual(LocalDate.MAX));
@@ -52,7 +52,7 @@ public class SimpleArbitrariesTests {
 		@ForAll LocalDate date,
 		@ForAll @IntRange(min = 999_999_800, max = 999_999_999) int nanoEnd,
 		@ForAll @IntRange(max = 200) int nanoStart,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(!date.isEqual(LocalDate.MAX));

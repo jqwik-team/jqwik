@@ -25,7 +25,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	CharacterArbitrary arbitrary = new DefaultCharacterArbitrary();
 
 	@Example
-	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated(@ForAll Random random) {
+	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated(@ForAll JqwikRandom random) {
 		checkAllGenerated(
 			this.arbitrary.generator(1000, true),
 			random,
@@ -49,7 +49,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void edgeCasesAreGenerated(@ForAll Random random) {
+	void edgeCasesAreGenerated(@ForAll JqwikRandom random) {
 		TestingSupport.checkAtLeastOneGenerated(
 			this.arbitrary.generator(1000, true),
 			random,
@@ -58,7 +58,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void allOverridesAnythingBefore(@ForAll Random random) {
+	void allOverridesAnythingBefore(@ForAll JqwikRandom random) {
 		CharacterArbitrary all = this.arbitrary.ascii().all();
 		checkAllGenerated(
 			all.generator(1000, true),
@@ -78,7 +78,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void chars(@ForAll Random random) {
+	void chars(@ForAll JqwikRandom random) {
 		final List<Character> chars = Arrays.asList('a', 'b', 'c', '1', '2', '.');
 		CharacterArbitrary all = this.arbitrary.with('a', 'b', 'c', '1', '2', '.');
 		checkAllGenerated(
@@ -94,7 +94,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void charsFromCharSequence(@ForAll Random random) {
+	void charsFromCharSequence(@ForAll JqwikRandom random) {
 		final List<Character> chars = Arrays.asList('a', 'b', 'c', '1', '2', '.');
 		CharacterArbitrary all = this.arbitrary.with("abc12.");
 		checkAllGenerated(
@@ -110,7 +110,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void range(@ForAll Random random) {
+	void range(@ForAll JqwikRandom random) {
 		char min = '\u0010';
 		char max = '\u0030';
 		CharacterArbitrary all = this.arbitrary.range(min, max);
@@ -127,7 +127,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void digit(@ForAll Random random) {
+	void digit(@ForAll JqwikRandom random) {
 		CharacterArbitrary all = this.arbitrary.numeric();
 		checkAllGenerated(
 			all.generator(1000, true),
@@ -142,7 +142,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void ascii(@ForAll Random random) {
+	void ascii(@ForAll JqwikRandom random) {
 		CharacterArbitrary all = this.arbitrary.ascii();
 		checkAllGenerated(
 			all.generator(1000, true),
@@ -157,7 +157,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void alpha(@ForAll Random random) {
+	void alpha(@ForAll JqwikRandom random) {
 		CharacterArbitrary all = this.arbitrary.alpha();
 		checkAllGenerated(
 			all.generator(1000, true),
@@ -172,7 +172,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void addUpRangesAndChars(@ForAll Random random) {
+	void addUpRangesAndChars(@ForAll JqwikRandom random) {
 		char min1 = '\u0010';
 		char max1 = '\u0030';
 		char min2 = '\u0110';
@@ -206,7 +206,7 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 	}
 
 	@Example
-	void whitespace(@ForAll Random random) {
+	void whitespace(@ForAll JqwikRandom random) {
 		CharacterArbitrary all = this.arbitrary.whitespace();
 		checkAllGenerated(
 			all.generator(1000, true),

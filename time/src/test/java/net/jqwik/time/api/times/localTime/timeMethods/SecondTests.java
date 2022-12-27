@@ -19,7 +19,7 @@ public class SecondTests {
 	}
 
 	@Property
-	void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll Random random) {
+	void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll JqwikRandom random) {
 
 		Assume.that(startSecond <= endSecond);
 
@@ -34,7 +34,7 @@ public class SecondTests {
 	}
 
 	@Property
-	void secondBetweenSame(@ForAll("seconds") int second, @ForAll Random random) {
+	void secondBetweenSame(@ForAll("seconds") int second, @ForAll JqwikRandom random) {
 
 		Arbitrary<LocalTime> times = Times.times().secondBetween(second, second);
 

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.random.JqwikRandomState;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
@@ -12,17 +13,17 @@ import net.jqwik.engine.properties.shrinking.*;
  */
 public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFacade {
 	@Override
-	public <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, long nextLong) {
+	public <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, JqwikRandomState nextLong) {
 		return new FlatMappedShrinkable<>(self, mapper, nextLong);
 	}
 
 	@Override
 	public <T, U> Shrinkable<U> flatMap(
-			Shrinkable<T> self,
-			Function<T, Arbitrary<U>> mapper,
-			int genSize,
-			long nextLong,
-			boolean withEmbeddedEdgeCases
+		Shrinkable<T> self,
+		Function<T, Arbitrary<U>> mapper,
+		int genSize,
+		JqwikRandomState nextLong,
+		boolean withEmbeddedEdgeCases
 	) {
 		return new FlatMappedShrinkable<>(self, mapper, genSize, nextLong, withEmbeddedEdgeCases);
 	}

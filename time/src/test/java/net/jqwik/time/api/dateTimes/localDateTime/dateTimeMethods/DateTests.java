@@ -24,7 +24,7 @@ public class DateTests {
 	class DateBetweenMethod {
 
 		@Property
-		void between(@ForAll LocalDate min, @ForAll LocalDate max, @ForAll Random random) {
+		void between(@ForAll LocalDate min, @ForAll LocalDate max, @ForAll JqwikRandom random) {
 
 			Assume.that(!min.isAfter(max));
 
@@ -39,7 +39,7 @@ public class DateTests {
 		}
 
 		@Property
-		void betweenSame(@ForAll LocalDate same, @ForAll Random random) {
+		void betweenSame(@ForAll LocalDate same, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dateBetween(same, same);
 
@@ -56,7 +56,7 @@ public class DateTests {
 			@ForAll LocalDate maxDate,
 			@ForAll("dateTimes") LocalDateTime min,
 			@ForAll("dateTimes") LocalDateTime max,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(!minDate.isAfter(maxDate));
@@ -80,7 +80,7 @@ public class DateTests {
 	class YearMethods {
 
 		@Property
-		void yearBetween(@ForAll("years") int min, @ForAll("years") int max, @ForAll Random random) {
+		void yearBetween(@ForAll("years") int min, @ForAll("years") int max, @ForAll JqwikRandom random) {
 
 			Assume.that(min <= max);
 
@@ -95,7 +95,7 @@ public class DateTests {
 		}
 
 		@Property
-		void yearBetweenSame(@ForAll("years") int year, @ForAll Random random) {
+		void yearBetweenSame(@ForAll("years") int year, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().yearBetween(year, year);
 
@@ -107,7 +107,7 @@ public class DateTests {
 		}
 
 		@Property
-		void yearBetweenMinAfterMax(@ForAll("years") int min, @ForAll("years") int max, @ForAll Random random) {
+		void yearBetweenMinAfterMax(@ForAll("years") int min, @ForAll("years") int max, @ForAll JqwikRandom random) {
 
 			Assume.that(min > max);
 
@@ -132,7 +132,7 @@ public class DateTests {
 	class MonthMethods {
 
 		@Property
-		void monthBetween(@ForAll("months") int min, @ForAll("months") int max, @ForAll Random random) {
+		void monthBetween(@ForAll("months") int min, @ForAll("months") int max, @ForAll JqwikRandom random) {
 
 			Assume.that(min <= max);
 
@@ -147,7 +147,7 @@ public class DateTests {
 		}
 
 		@Property
-		void monthBetweenSame(@ForAll("months") int month, @ForAll Random random) {
+		void monthBetweenSame(@ForAll("months") int month, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().monthBetween(month, month);
 
@@ -159,7 +159,7 @@ public class DateTests {
 		}
 
 		@Property
-		void monthBetweenMinAfterMax(@ForAll("months") int min, @ForAll("months") int max, @ForAll Random random) {
+		void monthBetweenMinAfterMax(@ForAll("months") int min, @ForAll("months") int max, @ForAll JqwikRandom random) {
 
 			Assume.that(min > max);
 
@@ -174,7 +174,7 @@ public class DateTests {
 		}
 
 		@Property
-		void onlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
+		void onlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().onlyMonths(months.toArray(new Month[]{}));
 
@@ -199,7 +199,7 @@ public class DateTests {
 		void dayOfMonthBetween(
 			@ForAll("dayOfMonths") int min,
 			@ForAll("dayOfMonths") int max,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(min <= max);
@@ -218,7 +218,7 @@ public class DateTests {
 		void dayOfMonthBetweenStartAfterEnd(
 			@ForAll("dayOfMonths") int min,
 			@ForAll("dayOfMonths") int max,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(min > max);
@@ -234,7 +234,7 @@ public class DateTests {
 		}
 
 		@Property
-		void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth, @ForAll Random random) {
+		void dayOfMonthBetweenSame(@ForAll("dayOfMonths") int dayOfMonth, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().dayOfMonthBetween(dayOfMonth, dayOfMonth);
 
@@ -256,7 +256,7 @@ public class DateTests {
 	class OnlyDaysOfWeekMethods {
 
 		@Property
-		void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll Random random) {
+		void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 

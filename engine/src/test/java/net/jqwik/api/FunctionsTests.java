@@ -35,7 +35,7 @@ class FunctionsTests {
 	}
 
 	@Example
-	void function_creates_same_result_for_same_input(@ForAll Random random) {
+	void function_creates_same_result_for_same_input(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returning(integers);
@@ -48,7 +48,7 @@ class FunctionsTests {
 	}
 
 	@Example
-	void some_functions_create_different_result_for_different_input(@ForAll Random random) {
+	void some_functions_create_different_result_for_different_input(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returning(integers);
@@ -61,7 +61,7 @@ class FunctionsTests {
 	}
 
 	@Example
-	void toString_of_functions_can_be_called(@ForAll Random random) {
+	void toString_of_functions_can_be_called(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.just(42);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returning(integers);
@@ -72,7 +72,7 @@ class FunctionsTests {
 
 	@Example
 	@StatisticsReport(onFailureOnly = true)
-	void hashCode_of_functions_can_be_called(@ForAll Random random) {
+	void hashCode_of_functions_can_be_called(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10000);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returning(integers);
@@ -94,7 +94,7 @@ class FunctionsTests {
 	}
 
 	@Example
-	void equals_of_functions_can_be_called(@ForAll Random random) {
+	void equals_of_functions_can_be_called(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10000);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returning(integers);
@@ -107,7 +107,7 @@ class FunctionsTests {
 	}
 
 	@Example
-	void default_methods_of_functions_can_be_called(@ForAll Random random) {
+	void default_methods_of_functions_can_be_called(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.just(42);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returning(integers);
@@ -120,7 +120,7 @@ class FunctionsTests {
 	}
 
 	@Example
-	void default_methods_of_self_made_functional_interface_can_be_called(@ForAll Random random) {
+	void default_methods_of_self_made_functional_interface_can_be_called(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.just(42);
 		Arbitrary<MyFunctionalInterface<String, String, Integer>> functions =
 			Functions.function(MyFunctionalInterface.class).returning(integers);
@@ -130,7 +130,7 @@ class FunctionsTests {
 	}
 
 	@Example
-	void null_value_is_accepted_as_input(@ForAll Random random) {
+	void null_value_is_accepted_as_input(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returning(integers);
@@ -143,7 +143,7 @@ class FunctionsTests {
 	}
 
 	@Example
-	void supplier_always_returns_same_element(@ForAll Random random) {
+	void supplier_always_returns_same_element(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Supplier<Integer>> functions =
 			Functions.function(Supplier.class).returning(integers);
@@ -156,7 +156,7 @@ class FunctionsTests {
 	}
 
 	@Example
-	void consumer_accepts_anything(@ForAll Random random) {
+	void consumer_accepts_anything(@ForAll JqwikRandom random) {
 		Arbitrary<Consumer<Integer>> functions =
 			Functions.function(Consumer.class).returning(Arbitraries.nothing());
 
@@ -193,7 +193,7 @@ class FunctionsTests {
 	}
 
 	@Property(tries = 100, afterFailure = AfterFailureMode.RANDOM_SEED)
-	void functions_are_shrunk_to_constant_functions(@ForAll Random random) {
+	void functions_are_shrunk_to_constant_functions(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 20);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returning(integers);
@@ -282,7 +282,7 @@ class FunctionsTests {
 	@Group
 	class Conditional_results {
 		@Example
-		void function_with_conditional_answer(@ForAll Random random) {
+		void function_with_conditional_answer(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 			Arbitrary<Function<String, Integer>> functions =
 				Functions
@@ -298,7 +298,7 @@ class FunctionsTests {
 		}
 
 		@Example
-		void first_matching_conditional_answer_is_used(@ForAll Random random) {
+		void first_matching_conditional_answer_is_used(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 			Arbitrary<Function<String, Integer>> functions =
 				Functions
@@ -314,7 +314,7 @@ class FunctionsTests {
 		}
 
 		@Example
-		void function_with_conditional_null_answer(@ForAll Random random) {
+		void function_with_conditional_null_answer(@ForAll JqwikRandom random) {
 			Arbitrary<String> integers = Arbitraries.of("1", "2", "3");
 			Arbitrary<Function<String, String>> functions =
 				Functions
@@ -349,7 +349,7 @@ class FunctionsTests {
 		}
 
 		@Example
-		void conditional_answer_works_when_shrunk(@ForAll Random random) {
+		void conditional_answer_works_when_shrunk(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 			Arbitrary<Function<String, Integer>> functions =
 				Functions

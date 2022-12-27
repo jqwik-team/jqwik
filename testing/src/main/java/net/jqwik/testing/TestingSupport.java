@@ -19,11 +19,11 @@ public class TestingSupport {
 	private TestingSupport() {
 	}
 
-	public static <T> void checkAllGenerated(Arbitrary<? extends T> arbitrary, Random random, Predicate<T> checker) {
+	public static <T> void checkAllGenerated(Arbitrary<? extends T> arbitrary, JqwikRandom random, Predicate<T> checker) {
 		checkAllGenerated(arbitrary.generator(1000), random, checker);
 	}
 
-	public static <T> void checkAllGenerated(RandomGenerator<? extends T> generator, Random random, Predicate<T> checker) {
+	public static <T> void checkAllGenerated(RandomGenerator<? extends T> generator, JqwikRandom random, Predicate<T> checker) {
 		Optional<? extends Shrinkable<? extends T>> failure =
 			generator
 				.stream(random)
@@ -36,11 +36,11 @@ public class TestingSupport {
 		});
 	}
 
-	public static <T> void assertAllGenerated(Arbitrary<? extends T> arbitrary, Random random, Consumer<T> assertions) {
+	public static <T> void assertAllGenerated(Arbitrary<? extends T> arbitrary, JqwikRandom random, Consumer<T> assertions) {
 		assertAllGenerated(arbitrary.generator(1000), random, assertions);
 	}
 
-	public static <T> void assertAllGenerated(RandomGenerator<? extends T> generator, Random random, Consumer<T> assertions) {
+	public static <T> void assertAllGenerated(RandomGenerator<? extends T> generator, JqwikRandom random, Consumer<T> assertions) {
 		Predicate<T> checker = value -> {
 			assertions.accept(value);
 			return true;
@@ -48,7 +48,7 @@ public class TestingSupport {
 		checkAllGenerated(generator, random, checker);
 	}
 
-	public static <T> void assertAllGeneratedEqualTo(RandomGenerator<? extends T> generator, Random random, T expected) {
+	public static <T> void assertAllGeneratedEqualTo(RandomGenerator<? extends T> generator, JqwikRandom random, T expected) {
 		assertAllGenerated(
 			generator,
 			random,
@@ -56,7 +56,7 @@ public class TestingSupport {
 		);
 	}
 
-	public static <T> void assertAllGeneratedEqualTo(Arbitrary<? extends T> arbitrary, Random random, T expected) {
+	public static <T> void assertAllGeneratedEqualTo(Arbitrary<? extends T> arbitrary, JqwikRandom random, T expected) {
 		assertAllGeneratedEqualTo(
 			arbitrary.generator(1000),
 			random,
@@ -66,7 +66,7 @@ public class TestingSupport {
 
 	public static <T> void checkAtLeastOneGenerated(
 		RandomGenerator<? extends T> generator,
-		Random random,
+		JqwikRandom random,
 		Predicate<T> checker,
 		String failureMessage
 	) {
@@ -83,7 +83,7 @@ public class TestingSupport {
 
 	public static <T> void checkAtLeastOneGenerated(
 		RandomGenerator<? extends T> generator,
-		Random random,
+		JqwikRandom random,
 		Predicate<T> checker
 	) {
 		checkAtLeastOneGenerated(generator, random, checker, "Failed to generate at least one");
@@ -91,7 +91,7 @@ public class TestingSupport {
 
 	public static <T> void checkAtLeastOneGenerated(
 		Arbitrary<? extends T> arbitrary,
-		Random random,
+		JqwikRandom random,
 		Predicate<T> checker
 	) {
 		checkAtLeastOneGenerated(arbitrary.generator(1000), random, checker);
@@ -100,7 +100,7 @@ public class TestingSupport {
 	@SafeVarargs
 	public static <T> void assertAtLeastOneGeneratedOf(
 		RandomGenerator<? extends T> generator,
-		Random random,
+		JqwikRandom random,
 		T... values
 	) {
 		for (T value : values) {
@@ -109,7 +109,7 @@ public class TestingSupport {
 	}
 
 	@SafeVarargs
-	public static <T> void assertGeneratedExactly(RandomGenerator<? extends T> generator, Random random, T... expectedValues) {
+	public static <T> void assertGeneratedExactly(RandomGenerator<? extends T> generator, JqwikRandom random, T... expectedValues) {
 		List<T> generated = generator
 			.stream(random)
 			.limit(expectedValues.length)
@@ -135,12 +135,12 @@ public class TestingSupport {
 		return values;
 	}
 
-	public static <T> T generateFirst(Arbitrary<T> arbitrary, Random random) {
+	public static <T> T generateFirst(Arbitrary<T> arbitrary, JqwikRandom random) {
 		RandomGenerator<T> generator = arbitrary.generator(1, true);
 		return generator.next(random).value();
 	}
 
-	public static <T> Map<T, Long> count(RandomGenerator<T> generator, int tries, Random random) {
+	public static <T> Map<T, Long> count(RandomGenerator<T> generator, int tries, JqwikRandom random) {
 		return generator
 			.stream(random)
 			.limit(tries)
@@ -149,7 +149,7 @@ public class TestingSupport {
 	}
 
 	// TODO: Call from TestingSupportFacade
-	public static <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
+	public static <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, JqwikRandom random, Function<T, Boolean> condition) {
 		long maxTries = 1000;
 		return generator
 			.stream(random)

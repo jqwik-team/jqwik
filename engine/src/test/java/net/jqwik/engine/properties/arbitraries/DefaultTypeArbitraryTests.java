@@ -19,7 +19,7 @@ class DefaultTypeArbitraryTests {
 	class DirectUses {
 
 		@Example
-		void useConstructorWithoutParameter(@ForAll Random random) throws NoSuchMethodException {
+		void useConstructorWithoutParameter(@ForAll JqwikRandom random) throws NoSuchMethodException {
 
 			TypeArbitrary<String> typeArbitrary =
 				new DefaultTypeArbitrary<>(String.class)
@@ -33,7 +33,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void useSingleFactoryWithoutParameter(@ForAll Random random) throws NoSuchMethodException {
+		void useSingleFactoryWithoutParameter(@ForAll JqwikRandom random) throws NoSuchMethodException {
 
 			TypeArbitrary<String> typeArbitrary =
 				new DefaultTypeArbitrary<>(String.class)
@@ -47,7 +47,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void twoCreatorsAreUsedRandomly(@ForAll Random random) throws NoSuchMethodException {
+		void twoCreatorsAreUsedRandomly(@ForAll JqwikRandom random) throws NoSuchMethodException {
 
 			TypeArbitrary<String> typeArbitrary =
 				new DefaultTypeArbitrary<>(String.class)
@@ -66,7 +66,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void exceptionsDuringCreationAreIgnored(@ForAll Random random) throws NoSuchMethodException {
+		void exceptionsDuringCreationAreIgnored(@ForAll JqwikRandom random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Samples.class.getDeclaredMethod("personFromAge", int.class));
@@ -79,7 +79,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void useConstructorWithOneParameter(@ForAll Random random) throws NoSuchMethodException {
+		void useConstructorWithOneParameter(@ForAll JqwikRandom random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Person.class.getConstructor(String.class));
@@ -92,7 +92,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void useConstructorWithTwoParameters(@ForAll Random random) throws NoSuchMethodException {
+		void useConstructorWithTwoParameters(@ForAll JqwikRandom random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Person.class.getConstructor(String.class, int.class));
@@ -105,7 +105,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void useFactoryMethodWithTwoParameters(@ForAll Random random) throws NoSuchMethodException {
+		void useFactoryMethodWithTwoParameters(@ForAll JqwikRandom random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Person.class.getDeclaredMethod("create", int.class, String.class));
@@ -124,7 +124,7 @@ class DefaultTypeArbitraryTests {
 	class UseDefaults {
 
 		@Example
-		void willUseAllPublicConstructorsAndFactoryMethods(@ForAll Random random) {
+		void willUseAllPublicConstructorsAndFactoryMethods(@ForAll JqwikRandom random) {
 			TypeArbitrary<Person> typeArbitrary = new DefaultTypeArbitrary<>(Person.class);
 
 			checkAllGenerated(
@@ -135,7 +135,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void isOverwrittenByDirectUse(@ForAll Random random) throws NoSuchMethodException {
+		void isOverwrittenByDirectUse(@ForAll JqwikRandom random) throws NoSuchMethodException {
 			TypeArbitrary<Person> typeArbitrary =
 				new DefaultTypeArbitrary<>(Person.class)
 					.use(Samples.class.getDeclaredMethod("personFromNoParams"));
@@ -148,7 +148,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void onAbstractClassUsesOnlyFactoryMethods(@ForAll Random random) {
+		void onAbstractClassUsesOnlyFactoryMethods(@ForAll JqwikRandom random) {
 			TypeArbitrary<Animal> typeArbitrary = new DefaultTypeArbitrary<>(Animal.class);
 
 			checkAllGenerated(
@@ -159,7 +159,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void onInterfaceUsesOnlyFactoryMethods(@ForAll Random random) {
+		void onInterfaceUsesOnlyFactoryMethods(@ForAll JqwikRandom random) {
 			TypeArbitrary<Thing> typeArbitrary = new DefaultTypeArbitrary<>(Thing.class);
 
 			checkAllGenerated(
@@ -175,7 +175,7 @@ class DefaultTypeArbitraryTests {
 	class UseConstructors {
 
 		@Example
-		void publicConstructorsOnly(@ForAll Random random) {
+		void publicConstructorsOnly(@ForAll JqwikRandom random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).usePublicConstructors();
 
@@ -190,7 +190,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void allConstructors(@ForAll Random random) {
+		void allConstructors(@ForAll JqwikRandom random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useAllConstructors();
 
@@ -220,7 +220,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void filterConstructors(@ForAll Random random) {
+		void filterConstructors(@ForAll JqwikRandom random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useConstructors(ctor -> ctor.getParameterCount() == 1);
 
@@ -237,7 +237,7 @@ class DefaultTypeArbitraryTests {
 
 		@SuppressWarnings("unchecked")
 		@Example
-		void recursiveConstructorsAreIgnored(@ForAll Random random) {
+		void recursiveConstructorsAreIgnored(@ForAll JqwikRandom random) {
 
 			DefaultTypeArbitrary<Person> typeArbitrary =
 				(DefaultTypeArbitrary<Person>) new DefaultTypeArbitrary<>(Person.class).useAllConstructors();
@@ -254,7 +254,7 @@ class DefaultTypeArbitraryTests {
 	class UseFactories {
 
 		@Example
-		void publicConstructorsOnly(@ForAll Random random) {
+		void publicConstructorsOnly(@ForAll JqwikRandom random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).usePublicFactoryMethods();
 
@@ -269,7 +269,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void allConstructors(@ForAll Random random) {
+		void allConstructors(@ForAll JqwikRandom random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useAllFactoryMethods();
 
@@ -299,7 +299,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void filterFactoryMethods(@ForAll Random random) {
+		void filterFactoryMethods(@ForAll JqwikRandom random) {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).useFactoryMethods(method -> method.getParameterCount() == 1);
 
@@ -316,7 +316,7 @@ class DefaultTypeArbitraryTests {
 
 		@SuppressWarnings("unchecked")
 		@Example
-		void recursiveFactoryMethodsAreIgnored(@ForAll Random random) {
+		void recursiveFactoryMethodsAreIgnored(@ForAll JqwikRandom random) {
 
 			DefaultTypeArbitrary<Person> typeArbitrary =
 				(DefaultTypeArbitrary<Person>) new DefaultTypeArbitrary<>(Person.class).useAllFactoryMethods();
@@ -333,7 +333,7 @@ class DefaultTypeArbitraryTests {
 	class RecursiveUse {
 
 		@Example
-		void unresolvableSimpleTypeIsResolvedThroughTypeArbitrary(@ForAll Random random) {
+		void unresolvableSimpleTypeIsResolvedThroughTypeArbitrary(@ForAll JqwikRandom random) {
 			Arbitrary<Customer> typeArbitrary = new DefaultTypeArbitrary<>(Customer.class)
 				.enableRecursion();
 
@@ -354,7 +354,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void resolveDeeperTypeRecursively(@ForAll Random random) {
+		void resolveDeeperTypeRecursively(@ForAll JqwikRandom random) {
 			Arbitrary<Contract> typeArbitrary = new DefaultTypeArbitrary<>(Contract.class)
 				.usePublicConstructors()
 				.enableRecursion();
@@ -400,7 +400,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void creatorWithParameterThatHasNoDefaultArbitrary_willThrowException_whenGeneratorIsCreated(@ForAll Random random) {
+		void creatorWithParameterThatHasNoDefaultArbitrary_willThrowException_whenGeneratorIsCreated(@ForAll JqwikRandom random) {
 			TypeArbitrary<Customer> typeArbitrary =
 				new DefaultTypeArbitrary<>(Customer.class).usePublicConstructors();
 
@@ -416,7 +416,7 @@ class DefaultTypeArbitraryTests {
 	class Shrinking {
 
 		@Property
-		void simpleType(@ForAll Random random) {
+		void simpleType(@ForAll JqwikRandom random) {
 			Arbitrary<Person> arbitrary = new DefaultTypeArbitrary<>(Person.class).usePublicConstructors();
 			Person shrunkValue = falsifyThenShrink(arbitrary, random);
 
@@ -427,7 +427,7 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Property
-		void recursiveType(@ForAll Random random) {
+		void recursiveType(@ForAll JqwikRandom random) {
 			Arbitrary<Customer> arbitrary = new DefaultTypeArbitrary<>(Customer.class).usePublicConstructors().enableRecursion();
 			Customer shrunkValue = falsifyThenShrink(arbitrary, random);
 

@@ -1,8 +1,7 @@
 package net.jqwik.engine.properties.stateful;
 
-import java.util.*;
-
 import net.jqwik.api.*;
+import net.jqwik.api.JqwikRandom;
 import net.jqwik.api.stateful.*;
 
 class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
@@ -17,7 +16,7 @@ class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
 	}
 
 	@Override
-	public Shrinkable<ActionSequence<M>> next(Random random) {
+	public Shrinkable<ActionSequence<M>> next(JqwikRandom random) {
 		ActionGenerator<M> actionGenerator = new RandomActionGenerator<>(actionArbitrary, genSize, random);
 		return new ShrinkableActionSequence<>(actionGenerator, maxSize, ShrinkingDistance.of(maxSize));
 	}

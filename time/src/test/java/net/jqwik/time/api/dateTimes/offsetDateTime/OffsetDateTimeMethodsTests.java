@@ -51,7 +51,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void atTheEarliest(@ForAll LocalDateTime min, @ForAll Random random) {
+	void atTheEarliest(@ForAll LocalDateTime min, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().atTheEarliest(min);
 
@@ -63,7 +63,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void atTheLatest(@ForAll LocalDateTime max, @ForAll Random random) {
+	void atTheLatest(@ForAll LocalDateTime max, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().atTheLatest(max);
 
@@ -75,7 +75,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void between(@ForAll LocalDateTime min, @ForAll LocalDateTime max, @ForAll Random random) {
+	void between(@ForAll LocalDateTime min, @ForAll LocalDateTime max, @ForAll JqwikRandom random) {
 
 		Assume.that(!min.isAfter(max));
 
@@ -90,7 +90,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void betweenMinAfterMax(@ForAll LocalDateTime min, @ForAll LocalDateTime max, @ForAll Random random) {
+	void betweenMinAfterMax(@ForAll LocalDateTime min, @ForAll LocalDateTime max, @ForAll JqwikRandom random) {
 
 		Assume.that(min.isAfter(max));
 
@@ -105,7 +105,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void dateBetween(@ForAll LocalDate min, @ForAll LocalDate max, @ForAll Random random) {
+	void dateBetween(@ForAll LocalDate min, @ForAll LocalDate max, @ForAll JqwikRandom random) {
 
 		Assume.that(!min.isAfter(max));
 
@@ -120,7 +120,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void yearBetween(@ForAll("years") int min, @ForAll("years") int max, @ForAll Random random) {
+	void yearBetween(@ForAll("years") int min, @ForAll("years") int max, @ForAll JqwikRandom random) {
 
 		Assume.that(min <= max);
 
@@ -135,7 +135,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void monthBetween(@ForAll("months") int min, @ForAll("months") int max, @ForAll Random random) {
+	void monthBetween(@ForAll("months") int min, @ForAll("months") int max, @ForAll JqwikRandom random) {
 
 		Assume.that(min <= max);
 
@@ -150,7 +150,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void onlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
+	void onlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().onlyMonths(months.toArray(new Month[]{}));
 
@@ -165,7 +165,7 @@ public class OffsetDateTimeMethodsTests {
 	void dayOfMonthBetween(
 		@ForAll("dayOfMonths") int min,
 		@ForAll("dayOfMonths") int max,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(min <= max);
@@ -181,7 +181,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll Random random) {
+	void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetDateTime> dateTimes = DateTimes.offsetDateTimes().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 
@@ -192,7 +192,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void timeBetween(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll Random random) {
+	void timeBetween(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll JqwikRandom random) {
 
 		Assume.that(!min.isAfter(max));
 
@@ -206,7 +206,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll Random random) {
+	void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll JqwikRandom random) {
 
 		Assume.that(startHour <= endHour);
 
@@ -221,7 +221,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll Random random) {
+	void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll JqwikRandom random) {
 
 		Assume.that(startMinute <= endMinute);
 
@@ -236,7 +236,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll Random random) {
+	void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll JqwikRandom random) {
 
 		Assume.that(startSecond <= endSecond);
 
@@ -258,7 +258,7 @@ public class OffsetDateTimeMethodsTests {
 	}
 
 	@Property
-	void offsetBetween(@ForAll ZoneOffset startOffset, @ForAll ZoneOffset endOffset, @ForAll Random random) {
+	void offsetBetween(@ForAll ZoneOffset startOffset, @ForAll ZoneOffset endOffset, @ForAll JqwikRandom random) {
 
 		Assume.that(startOffset.getTotalSeconds() <= endOffset.getTotalSeconds());
 

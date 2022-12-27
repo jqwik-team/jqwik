@@ -16,7 +16,7 @@ import static net.jqwik.testing.TestingSupport.*;
 
 class CombinatorsTests {
 
-	private final Random random = SourceOfRandomness.current();
+	private final JqwikRandom random = SourceOfRandomness.current();
 
 	@Example
 	void twoArbitrariesCanBeCombined() {
@@ -89,7 +89,7 @@ class CombinatorsTests {
 		}
 
 		@Example
-		void twoArbitraries(@ForAll Random random) {
+		void twoArbitraries(@ForAll JqwikRandom random) {
 			Arbitrary<Tuple2<Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree())
 						   .filter((a, b) -> !a.equals(b))
@@ -103,7 +103,7 @@ class CombinatorsTests {
 		}
 
 		@Example
-		void doubleFilters(@ForAll Random random) {
+		void doubleFilters(@ForAll JqwikRandom random) {
 			Arbitrary<Tuple2<Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree())
 						   .filter((a, b) -> a + b != 2)
@@ -119,7 +119,7 @@ class CombinatorsTests {
 		}
 
 		@Example
-		void threeArbitraries(@ForAll Random random) {
+		void threeArbitraries(@ForAll JqwikRandom random) {
 			Arbitrary<Tuple3<Integer, Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree(), oneToThree())
 						   .filter((a, b, c) -> !a.equals(b))
@@ -133,7 +133,7 @@ class CombinatorsTests {
 		}
 
 		@Example
-		void fourArbitraries(@ForAll Random random) {
+		void fourArbitraries(@ForAll JqwikRandom random) {
 			Arbitrary<Tuple4<Integer, Integer, Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree(), oneToThree(), oneToThree())
 						   .filter((a, b, c, d) -> !a.equals(b))
@@ -147,7 +147,7 @@ class CombinatorsTests {
 		}
 
 		@Example
-		void fiveArbitraries(@ForAll Random random) {
+		void fiveArbitraries(@ForAll JqwikRandom random) {
 			Arbitrary<Tuple5<Integer, Integer, Integer, Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree())
 						   .filter((a, b, c, d, e) -> !a.equals(b))
@@ -161,7 +161,7 @@ class CombinatorsTests {
 		}
 
 		@Example
-		void sixArbitraries(@ForAll Random random) {
+		void sixArbitraries(@ForAll JqwikRandom random) {
 			Arbitrary<Tuple6<Integer, Integer, Integer, Integer, Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree())
 						   .filter((a, b, c, d, e, f) -> !a.equals(b))
@@ -175,7 +175,7 @@ class CombinatorsTests {
 		}
 
 		@Example
-		void sevenArbitraries(@ForAll Random random) {
+		void sevenArbitraries(@ForAll JqwikRandom random) {
 			Arbitrary<Tuple7<Integer, Integer, Integer, Integer, Integer, Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree())
 						   .filter((a, b, c, d, e, f, g) -> !a.equals(b))
@@ -189,7 +189,7 @@ class CombinatorsTests {
 		}
 
 		@Example
-		void eightArbitraries(@ForAll Random random) {
+		void eightArbitraries(@ForAll JqwikRandom random) {
 			Arbitrary<Tuple8<Integer, Integer, Integer, Integer, Integer, Integer, Integer, Integer>> combine =
 				Combinators.combine(oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree(), oneToThree())
 						   .filter((a, b, c, d, e, f, g, h) -> !a.equals(b))

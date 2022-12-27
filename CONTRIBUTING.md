@@ -37,4 +37,4 @@ Use _jqwik_ itself for all tests and properties.
 
 Use _AssertJ_ for non trivial assertions.
 
-Use `@ForAll Random random` parameter if you need a random value. 
+Use `@ForAll JqwikRandom random` parameter if you need a random value. 

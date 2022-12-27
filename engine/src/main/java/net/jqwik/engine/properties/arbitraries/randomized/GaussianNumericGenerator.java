@@ -3,6 +3,7 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 import java.math.*;
 import java.util.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.RandomDistribution.*;
 
 public class GaussianNumericGenerator implements RandomNumericGenerator {
@@ -23,9 +24,10 @@ public class GaussianNumericGenerator implements RandomNumericGenerator {
 	}
 
 	@Override
-	public BigInteger next(Random random) {
+	public BigInteger next(JqwikRandom random) {
+		Random rnd = random.asJdkRandom();
 		while (true) {
-			double gaussianFactor = random.nextGaussian() / borderSigma;
+			double gaussianFactor = rnd.nextGaussian() / borderSigma;
 			BigInteger value = center;
 			if (gaussianFactor < 0.0 && leftRange.compareTo(BigInteger.ZERO) > 0) {
 				BigDecimal bigDecimalLeft = new BigDecimal(leftRange).multiply(BigDecimal.valueOf(gaussianFactor).abs());

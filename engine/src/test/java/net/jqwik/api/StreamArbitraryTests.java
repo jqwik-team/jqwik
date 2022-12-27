@@ -21,7 +21,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class StreamArbitraryTests {
 
 	@Example
-	void stream(@ForAll Random random) {
+	void stream(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		StreamArbitrary<Integer> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5);
 
@@ -34,7 +34,7 @@ class StreamArbitraryTests {
 	}
 
 	@Property(tries = 100)
-	void filterStream(@ForAll Random random) {
+	void filterStream(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 11);
 		Arbitrary<Stream<Integer>> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5)
 				.filter(stream -> !stream.collect(Collectors.toList()).contains(11));
@@ -48,7 +48,7 @@ class StreamArbitraryTests {
 	}
 
 	@Example
-	void uniquenessConstraint(@ForAll Random random) {
+	void uniquenessConstraint(@ForAll JqwikRandom random) {
 		StreamArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).stream().ofMaxSize(20)
 						   .uniqueElements(i -> i % 100);
@@ -61,7 +61,7 @@ class StreamArbitraryTests {
 	}
 
 	@Example
-	void uniquenessElements(@ForAll Random random) {
+	void uniquenessElements(@ForAll JqwikRandom random) {
 		StreamArbitrary<Integer> listArbitrary =
 				Arbitraries.integers().between(1, 1000).stream().ofMaxSize(20).uniqueElements();
 
@@ -74,7 +74,7 @@ class StreamArbitraryTests {
 
 	@Example
 	@StatisticsReport(onFailureOnly = true)
-	void withSizeDistribution(@ForAll Random random) {
+	void withSizeDistribution(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		StreamArbitrary<Integer> arbitrary =
 			integerArbitrary.stream().ofMaxSize(100)
@@ -225,14 +225,14 @@ class StreamArbitraryTests {
 	class Shrinking {
 
 		@Property
-		void shrinksToEmptyStreamByDefault(@ForAll Random random) {
+		void shrinksToEmptyStreamByDefault(@ForAll JqwikRandom random) {
 			StreamArbitrary<Integer> streams = Arbitraries.integers().between(1, 10).stream();
 			Stream<Integer> value = falsifyThenShrink(streams, random);
 			assertThat(value).isEmpty();
 		}
 
 		@Property
-		void shrinkToMinSize(@ForAll Random random, @ForAll @IntRange(min = 1, max = 20) int min) {
+		void shrinkToMinSize(@ForAll JqwikRandom random, @ForAll @IntRange(min = 1, max = 20) int min) {
 			StreamArbitrary<Integer> streams = Arbitraries.integers().between(1, 10).stream().ofMinSize(min);
 			Stream<Integer> value = falsifyThenShrink(streams, random);
 			List<Integer> list = toList(value);
@@ -241,7 +241,7 @@ class StreamArbitraryTests {
 		}
 
 		@Property
-		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
+		void shrinkWithUniqueness(@ForAll JqwikRandom random, @ForAll @IntRange(min = 2, max = 10) int min) {
 			StreamArbitrary<Integer> lists =
 					Arbitraries.integers().between(1, 100).stream().ofMinSize(min).ofMaxSize(10)
 							   .uniqueElements(i -> i);

@@ -12,13 +12,13 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 class TestingSupportTests {
 
 	@Example
-	void assertAllGenerated(@ForAll Random random) {
+	void assertAllGenerated(@ForAll JqwikRandom random) {
 		Arbitrary<String> strings = Arbitraries.just("hello");
 		TestingSupport.checkAllGenerated(strings.generator(1000, true), random, (Predicate<String>) s -> s.equals("hello"));
 	}
 
 	@Example
-	void shrinkToMinimal(@ForAll Random random) {
+	void shrinkToMinimal(@ForAll JqwikRandom random) {
 		Arbitrary<String> strings = Arbitraries.strings().alpha().ofMaxLength(10);
 
 		String shrunkValue = falsifyThenShrink(strings, random);

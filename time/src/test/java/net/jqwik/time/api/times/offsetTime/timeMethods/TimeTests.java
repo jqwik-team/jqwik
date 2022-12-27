@@ -14,7 +14,7 @@ import static net.jqwik.testing.TestingSupport.*;
 public class TimeTests {
 
 	@Property
-	void atTheEarliest(@ForAll LocalTime startTime, @ForAll Random random) {
+	void atTheEarliest(@ForAll LocalTime startTime, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().atTheEarliest(startTime);
 
@@ -26,7 +26,7 @@ public class TimeTests {
 	}
 
 	@Property
-	void atTheLatest(@ForAll LocalTime endTime, @ForAll Random random) {
+	void atTheLatest(@ForAll LocalTime endTime, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().atTheLatest(endTime);
 
@@ -38,7 +38,7 @@ public class TimeTests {
 	}
 
 	@Property
-	void between(@ForAll LocalTime startTime, @ForAll LocalTime endTime, @ForAll Random random) {
+	void between(@ForAll LocalTime startTime, @ForAll LocalTime endTime, @ForAll JqwikRandom random) {
 
 		Assume.that(!startTime.isAfter(endTime));
 
@@ -55,7 +55,7 @@ public class TimeTests {
 	void betweenEndTimeBeforeStartTime(
 		@ForAll LocalTime startTime,
 		@ForAll LocalTime endTime,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(startTime.isAfter(endTime));
@@ -70,7 +70,7 @@ public class TimeTests {
 	}
 
 	@Property
-	void betweenSame(@ForAll LocalTime sameTime, @ForAll Random random) {
+	void betweenSame(@ForAll LocalTime sameTime, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().between(sameTime, sameTime);
 

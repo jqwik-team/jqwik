@@ -33,7 +33,7 @@ class ShrinkingQualityProperties {
 	}
 
 	@Property(tries = 100)
-	void reversingAList(@ForAll Random random) {
+	void reversingAList(@ForAll JqwikRandom random) {
 		Arbitrary<List<Integer>> integerLists = Arbitraries.integers().list();
 
 		TestingFalsifier<List<Integer>> reverseEqualsOriginal = (List<Integer> list) -> list.equals(reversed(list));
@@ -49,7 +49,7 @@ class ShrinkingQualityProperties {
 	}
 
 	@Property(tries = 100)
-	void largeUnionList(@ForAll Random random) {
+	void largeUnionList(@ForAll JqwikRandom random) {
 		ListArbitrary<List<Integer>> listOfLists =
 			Arbitraries.integers()
 					   .list().ofMaxSize(50)
@@ -85,7 +85,7 @@ class ShrinkingQualityProperties {
 	}
 
 	@Property(tries = 100)
-	void flatMapRectangles(@ForAll Random random) {
+	void flatMapRectangles(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> lengths = Arbitraries.integers().between(0, 10);
 		List<String> shrunkResult = falsifyThenShrink(
 			lengths.flatMap(this::listsOfLength),
@@ -101,7 +101,7 @@ class ShrinkingQualityProperties {
 	}
 
 	@Property(seed = "535353", tries = 10)
-	void bound5(@ForAll Random random) {
+	void bound5(@ForAll JqwikRandom random) {
 		ListArbitrary<List<Short>> listOfLists = boundedListTuples();
 
 		TestingFalsifier<List<List<Short>>> falsifier = p -> {

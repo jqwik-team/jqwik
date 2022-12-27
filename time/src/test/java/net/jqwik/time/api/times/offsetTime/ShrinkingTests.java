@@ -15,7 +15,7 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 public class ShrinkingTests {
 
 	@Property
-	void defaultShrinking(@ForAll Random random) {
+	void defaultShrinking(@ForAll JqwikRandom random) {
 		OffsetTimeArbitrary times = Times.offsetTimes();
 		OffsetTime value = falsifyThenShrink(times, random);
 		assertThat(value).isEqualTo(OffsetTime.of(LocalTime.of(0, 0, 0), ZoneOffset.of("Z")));

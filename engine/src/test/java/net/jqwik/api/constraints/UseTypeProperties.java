@@ -61,7 +61,7 @@ class UseTypeProperties {
 	@Domain(SmallNumbers.class)
 	void useTypeShouldWorkRegardlessOfDomainContext(
 		@ForAll int smallNumber,
-		@ForAll @UseType Random random
+		@ForAll JqwikRandom random
 	) {
 		assertThat(smallNumber).isBetween(1, 99);
 		assertThat(random).isNotNull();

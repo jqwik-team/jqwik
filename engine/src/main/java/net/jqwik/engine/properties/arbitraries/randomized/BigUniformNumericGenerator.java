@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.math.*;
-import java.util.*;
 
 import net.jqwik.api.*;
 
@@ -20,9 +19,9 @@ class BigUniformNumericGenerator implements RandomDistribution.RandomNumericGene
 	}
 
 	@Override
-	public BigInteger next(Random random) {
+	public BigInteger next(JqwikRandom random) {
 		while (true) {
-			BigInteger rawValue = new BigInteger(bits, random);
+			BigInteger rawValue = new BigInteger(bits, random.asJdkRandom());
 			BigInteger value = rawValue.add(min);
 			if (value.compareTo(min) >= 0 && value.compareTo(max) <= 0) {
 				return value;

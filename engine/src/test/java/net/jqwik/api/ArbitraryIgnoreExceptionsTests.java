@@ -22,7 +22,7 @@ class ArbitraryIgnoreExceptionsTests {
 
 
 	@Example
-	void ignoreIllegalArgumentException(@ForAll Random random) {
+	void ignoreIllegalArgumentException(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
 				.map(anInt -> {
@@ -41,7 +41,7 @@ class ArbitraryIgnoreExceptionsTests {
 	}
 
 	@Example
-	void ignoreMultipleExceptions(@ForAll Random random) {
+	void ignoreMultipleExceptions(@ForAll JqwikRandom random) {
 
 		Arbitrary<Integer> arbitrary =
 			new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5, 6, 7, 8, 9)
@@ -68,7 +68,7 @@ class ArbitraryIgnoreExceptionsTests {
 	}
 
 	@Example
-	void ignoreSubtypeOfException(@ForAll Random random) {
+	void ignoreSubtypeOfException(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
 				.map(anInt -> {
@@ -87,7 +87,7 @@ class ArbitraryIgnoreExceptionsTests {
 	}
 
 	@Example
-	void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
+	void failIfFilterWillDiscard10000ValuesInARow(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> arbitrary =
 			new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
 				.map(anInt -> {
@@ -123,7 +123,7 @@ class ArbitraryIgnoreExceptionsTests {
 	class Shrinking {
 
 		@Property(tries = 10)
-		void singleException(@ForAll Random random) {
+		void singleException(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary =
 				Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 						   .map(i -> {
@@ -140,7 +140,7 @@ class ArbitraryIgnoreExceptionsTests {
 
 		@SuppressWarnings("unchecked")
 		@Property(tries = 10)
-		void severalExceptions(@ForAll Random random) {
+		void severalExceptions(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> arbitrary =
 				Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 						   .map(i -> {

@@ -24,7 +24,7 @@ public class YearMonthMethodsTests {
 	class YearMonthMethods {
 
 		@Property
-		void atTheEarliest(@ForAll("yearMonths") YearMonth yearMonth, @ForAll Random random) {
+		void atTheEarliest(@ForAll("yearMonths") YearMonth yearMonth, @ForAll JqwikRandom random) {
 
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().atTheEarliest(yearMonth);
 
@@ -39,7 +39,7 @@ public class YearMonthMethodsTests {
 		void atTheEarliestAtTheLatestMinAfterMax(
 			@ForAll("yearMonths") YearMonth min,
 			@ForAll("yearMonths") YearMonth max,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(min.isAfter(max));
@@ -55,7 +55,7 @@ public class YearMonthMethodsTests {
 		}
 
 		@Property
-		void atTheLatest(@ForAll("yearMonths") YearMonth yearMonth, @ForAll Random random) {
+		void atTheLatest(@ForAll("yearMonths") YearMonth yearMonth, @ForAll JqwikRandom random) {
 
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().atTheLatest(yearMonth);
 
@@ -70,7 +70,7 @@ public class YearMonthMethodsTests {
 		void atTheLatestAtTheEarliestMinAfterMax(
 			@ForAll("yearMonths") YearMonth min,
 			@ForAll("yearMonths") YearMonth max,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(min.isAfter(max));
@@ -89,7 +89,7 @@ public class YearMonthMethodsTests {
 		void between(
 			@ForAll("yearMonths") YearMonth startYearMonth,
 			@ForAll("yearMonths") YearMonth endYearMonth,
-			@ForAll Random random
+			@ForAll JqwikRandom random
 		) {
 
 			Assume.that(!startYearMonth.isAfter(endYearMonth));
@@ -104,7 +104,7 @@ public class YearMonthMethodsTests {
 		}
 
 		@Property
-		void betweenSame(@ForAll("yearMonths") YearMonth yearMonth, @ForAll Random random) {
+		void betweenSame(@ForAll("yearMonths") YearMonth yearMonth, @ForAll JqwikRandom random) {
 
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().between(yearMonth, yearMonth);
 
@@ -121,7 +121,7 @@ public class YearMonthMethodsTests {
 	class YearMethods {
 
 		@Property
-		void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll Random random) {
+		void yearBetween(@ForAll("years") int startYear, @ForAll("years") int endYear, @ForAll JqwikRandom random) {
 
 			Assume.that(startYear <= endYear);
 
@@ -136,7 +136,7 @@ public class YearMonthMethodsTests {
 		}
 
 		@Property
-		void yearBetweenSame(@ForAll("years") int year, @ForAll Random random) {
+		void yearBetweenSame(@ForAll("years") int year, @ForAll JqwikRandom random) {
 
 			Assume.that(year != 0);
 
@@ -160,7 +160,7 @@ public class YearMonthMethodsTests {
 	class MonthMethods {
 
 		@Property
-		void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+		void monthBetween(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll JqwikRandom random) {
 
 			Assume.that(startMonth <= endMonth);
 
@@ -175,7 +175,7 @@ public class YearMonthMethodsTests {
 		}
 
 		@Property
-		void monthBetweenMinAfterMax(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll Random random) {
+		void monthBetweenMinAfterMax(@ForAll("months") int startMonth, @ForAll("months") int endMonth, @ForAll JqwikRandom random) {
 
 			Assume.that(startMonth > endMonth);
 
@@ -190,7 +190,7 @@ public class YearMonthMethodsTests {
 		}
 
 		@Property
-		void monthBetweenSame(@ForAll("months") int month, @ForAll Random random) {
+		void monthBetweenSame(@ForAll("months") int month, @ForAll JqwikRandom random) {
 
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().monthBetween(month, month);
 
@@ -202,7 +202,7 @@ public class YearMonthMethodsTests {
 		}
 
 		@Property
-		void monthOnlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
+		void monthOnlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll JqwikRandom random) {
 
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().onlyMonths(months.toArray(new Month[]{}));
 

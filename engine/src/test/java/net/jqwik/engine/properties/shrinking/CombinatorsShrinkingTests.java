@@ -13,7 +13,7 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 class CombinatorsShrinkingTests {
 
 	@Property
-	void shrinkCombineWithoutCondition(@ForAll Random random) {
+	void shrinkCombineWithoutCondition(@ForAll JqwikRandom random) {
 		Arbitrary<String> as =
 			Combinators
 				.combine(Arbitraries.integers(), Arbitraries.strings().alpha().ofMinLength(1))
@@ -25,7 +25,7 @@ class CombinatorsShrinkingTests {
 	}
 
 	@Property
-	void shrinkCombineWithCondition(@ForAll Random random) {
+	void shrinkCombineWithCondition(@ForAll JqwikRandom random) {
 		Arbitrary<String> as =
 			Combinators
 				.combine(Arbitraries.integers(), Arbitraries.strings().alpha().ofMinLength(1))

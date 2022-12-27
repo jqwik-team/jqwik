@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.random.*;
+
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -19,13 +21,13 @@ public interface RandomGenerator<T> {
 			implementation = FacadeLoader.load(RandomGeneratorFacade.class);
 		}
 
-		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, long nextLong);
+		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, JqwikRandomState nextLong);
 
 		public abstract <T, U> Shrinkable<U> flatMap(
 				Shrinkable<T> wrappedShrinkable,
 				Function<T, Arbitrary<U>> mapper,
 				int genSize,
-				long nextLong,
+				JqwikRandomState nextLong,
 				boolean withEmbeddedEdgeCases
 		);
 
@@ -44,7 +46,7 @@ public interface RandomGenerator<T> {
 	 * @param random the source of randomness. Injected by jqwik itself.
 	 * @return the next generated value wrapped within the Shrinkable interface. The method must ALWAYS return a next value.
 	 */
-	Shrinkable<T> next(Random random);
+	Shrinkable<T> next(JqwikRandom random);
 
 	@API(status = INTERNAL)
 	default <U> RandomGenerator<U> map(Function<T, U> mapper) {
@@ -63,7 +65,7 @@ public interface RandomGenerator<T> {
 	default <U> RandomGenerator<U> flatMap(Function<T, RandomGenerator<U>> mapper) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
-			return RandomGeneratorFacade.implementation.flatMap(wrappedShrinkable, mapper, random.nextLong());
+			return RandomGeneratorFacade.implementation.flatMap(wrappedShrinkable, mapper, random.split().saveState());
 		};
 	}
 
@@ -72,7 +74,7 @@ public interface RandomGenerator<T> {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
 			return RandomGeneratorFacade.implementation
-						   .flatMap(wrappedShrinkable, mapper, genSize, random.nextLong(), withEmbeddedEdgeCases);
+						   .flatMap(wrappedShrinkable, mapper, genSize, random.split().saveState(), withEmbeddedEdgeCases);
 		};
 	}
 
@@ -87,7 +89,7 @@ public interface RandomGenerator<T> {
 	}
 
 	@API(status = INTERNAL)
-	default Stream<Shrinkable<T>> stream(Random random) {
+	default Stream<Shrinkable<T>> stream(JqwikRandom random) {
 		return Stream.generate(() -> this.next(random));
 	}
 

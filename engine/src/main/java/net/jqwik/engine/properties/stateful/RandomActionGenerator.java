@@ -10,10 +10,10 @@ class RandomActionGenerator<T> implements ActionGenerator<T> {
 	private static final int MAX_TRIES = 1000;
 
 	private final RandomGenerator<Action<T>> randomGenerator;
-	private final Random random;
+	private final JqwikRandom random;
 	private List<Shrinkable<Action<T>>> shrinkableActions = new ArrayList<>();
 
-	RandomActionGenerator(Arbitrary<Action<T>> actionArbitrary, int genSize, Random random) {
+	RandomActionGenerator(Arbitrary<Action<T>> actionArbitrary, int genSize, JqwikRandom random) {
 		this.random = random;
 		this.randomGenerator = actionArbitrary.generator(genSize);
 	}

@@ -20,12 +20,12 @@ class RandomizedParameterGenerator {
 		this.withEdgeCases = withEdgeCases;
 	}
 
-	Shrinkable<Object> next(Random random, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
+	Shrinkable<Object> next(JqwikRandom random, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
 		RandomGenerator<Object> selectedGenerator = selectGenerator(random, arbitrariesCache);
 		return selectedGenerator.next(random);
 	}
 
-	private RandomGenerator<Object> selectGenerator(Random random, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
+	private RandomGenerator<Object> selectGenerator(JqwikRandom random, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
 		if (arbitrariesCache.containsKey(typeUsage)) {
 			Arbitrary<Object> arbitrary = arbitrariesCache.get(typeUsage);
 			return getGenerator(arbitrary);

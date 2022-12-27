@@ -14,7 +14,7 @@ import static net.jqwik.testing.TestingSupport.*;
 public class OffsetTests {
 
 	@Property
-	void between(@ForAll ZoneOffset startOffset, @ForAll ZoneOffset endOffset, @ForAll Random random) {
+	void between(@ForAll ZoneOffset startOffset, @ForAll ZoneOffset endOffset, @ForAll JqwikRandom random) {
 
 		Assume.that(startOffset.getTotalSeconds() <= endOffset.getTotalSeconds());
 
@@ -29,7 +29,7 @@ public class OffsetTests {
 	}
 
 	@Property
-	void betweenSame(@ForAll ZoneOffset offset, @ForAll Random random) {
+	void betweenSame(@ForAll ZoneOffset offset, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().offsetBetween(offset, offset);
 

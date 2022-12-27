@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.JqwikRandom;
 import net.jqwik.engine.properties.*;
 
 import static net.jqwik.engine.properties.UniquenessChecker.*;
@@ -14,10 +15,10 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	private final int minSize;
 	private final long maxUniqueElements;
 	private final Collection<FeatureExtractor<T>> uniquenessExtractors;
-	private final Function<Random, Integer> sizeGenerator;
+	private final Function<JqwikRandom, Integer> sizeGenerator;
 	private final long maxAttempts;
 
-	private static Function<Random, Integer> sizeGenerator(
+	private static Function<JqwikRandom, Integer> sizeGenerator(
 		int minSize,
 		int maxSize,
 		int genSize,
@@ -51,7 +52,7 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	}
 
 	@Override
-	public Shrinkable<C> next(Random random) {
+	public Shrinkable<C> next(JqwikRandom random) {
 		int listSize = sizeGenerator.apply(random);
 		List<Shrinkable<T>> listOfShrinkables = new ArrayList<>();
 
@@ -93,15 +94,15 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 			// If we started generating with no duplicates, and then realized we can't generate enough unique elements,
 			// then the list becomes skewed: unique elements go first
 			// We shuffle the list to allow other constellations (e.g. list unique-most elements starting with non-unique ones)
-			Collections.shuffle(listOfShrinkables, random);
+			Collections.shuffle(listOfShrinkables, random.asJdkRandom());
 		}
 		return createShrinkable.apply(listOfShrinkables);
 	}
 
 	private Shrinkable<T> nextUntilAccepted(
-		Random random,
+		JqwikRandom random,
 		Collection<T> existingValues,
-		Function<Random, Shrinkable<T>> fetchShrinkable,
+		Function<JqwikRandom, Shrinkable<T>> fetchShrinkable,
 		boolean noDuplicates
 	) {
 		for (int i = 0; i < maxAttempts; i++) {

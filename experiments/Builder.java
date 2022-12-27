@@ -15,7 +15,7 @@ public class Builder<T> {
 
 	public Builder(Arbitrary<T> arbitrary) {this.arbitrary = arbitrary;}
 
-	public T build(Random random) {
+	public T build(JqwikRandom random) {
 		RandomGenerator<T> generator = arbitrary.generator(1);
 		T value = generator.next(random).value();
 		return transform(value, transformers);

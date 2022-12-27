@@ -48,7 +48,7 @@ class ActionSequenceShrinkingTests {
 	}
 
 	@Example
-	void sequencesAreShrunkToSingleAction(@ForAll Random random) {
+	void sequencesAreShrunkToSingleAction(@ForAll JqwikRandom random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX());
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000, true).next(random);
 		shrinkable.value().run(""); // to setup sequence
@@ -65,7 +65,7 @@ class ActionSequenceShrinkingTests {
 	}
 
 	@Example
-	void dontShrinkBelow1Action(@ForAll Random random) {
+	void dontShrinkBelow1Action(@ForAll JqwikRandom random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX());
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000, true).next(random);
 		shrinkable.value().run(""); // to setup sequence
@@ -81,7 +81,7 @@ class ActionSequenceShrinkingTests {
 	}
 
 	@Example
-	void remainingActionsAreShrunkThemselves(@ForAll Random random) {
+	void remainingActionsAreShrunkThemselves(@ForAll JqwikRandom random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addStringOfLength2());
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000, true).next(random);
 		shrinkable.value().run(""); // to setup sequence

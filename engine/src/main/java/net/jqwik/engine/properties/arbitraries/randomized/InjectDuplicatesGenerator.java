@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.JqwikRandom;
 import net.jqwik.engine.*;
 
 public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
@@ -23,12 +24,12 @@ public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
-	public Shrinkable<T> next(Random random) {
+	public Shrinkable<T> next(JqwikRandom random) {
 		long seed = chooseSeed(random);
 		return base.next(SourceOfRandomness.newRandom(seed));
 	}
 
-	long chooseSeed(Random random) {
+	long chooseSeed(JqwikRandom random) {
 		List<Long> previousSeeds = previousSeedsStore.get();
 		if (!previousSeeds.isEmpty()) {
 			if (random.nextDouble() <= duplicateProbability) {
@@ -40,7 +41,7 @@ public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
 		return seed;
 	}
 
-	private long randomPreviousSeed(Store<List<Long>> previousSeeds, Random random) {
+	private long randomPreviousSeed(Store<List<Long>> previousSeeds, JqwikRandom random) {
 		int index = random.nextInt(previousSeeds.get().size());
 		return previousSeeds.get().get(index);
 	}

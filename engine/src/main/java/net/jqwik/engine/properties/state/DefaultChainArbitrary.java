@@ -23,9 +23,9 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	public RandomGenerator<Chain<T>> generator(int genSize) {
 		final int effectiveMaxTransformations =
 			this.maxTransformations != Integer.MIN_VALUE ? this.maxTransformations : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-		Function<Random, Transformation<T>> transformationGenerator = new ChooseRandomlyByFrequency<>(weightedTransformations);
+		Function<JqwikRandom, Transformation<T>> transformationGenerator = new ChooseRandomlyByFrequency<>(weightedTransformations);
 		return random -> new ShrinkableChain<>(
-			random.nextLong(),
+			random.split().saveState(),
 			initialSupplier,
 			transformationGenerator,
 			changeDetectorSupplier,

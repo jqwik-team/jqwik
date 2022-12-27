@@ -13,6 +13,6 @@ public class RandomArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		return Collections.singleton(Arbitraries.randoms());
+		return Collections.singleton(Arbitraries.randoms().map(JqwikRandom::asJdkRandom));
 	}
 }

@@ -14,7 +14,7 @@ import static net.jqwik.testing.TestingSupport.*;
 public class MinuteTests {
 
 	@Property
-	void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll Random random) {
+	void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll JqwikRandom random) {
 
 		Assume.that(startMinute <= endMinute);
 
@@ -29,7 +29,7 @@ public class MinuteTests {
 	}
 
 	@Property
-	void minuteBetweenSame(@ForAll("minutes") int minute, @ForAll Random random) {
+	void minuteBetweenSame(@ForAll("minutes") int minute, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().minuteBetween(minute, minute);
 

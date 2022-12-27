@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.JqwikRandom;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class CollectGenerator<T> implements RandomGenerator<List<T>> {
@@ -16,7 +17,7 @@ public class CollectGenerator<T> implements RandomGenerator<List<T>> {
 	}
 
 	@Override
-	public Shrinkable<List<T>> next(Random random) {
+	public Shrinkable<List<T>> next(JqwikRandom random) {
 		List<T> base = new ArrayList<>();
 		List<Shrinkable<T>> shrinkables = new ArrayList<>();
 		for (int i = 0; i < 10000; i++) {

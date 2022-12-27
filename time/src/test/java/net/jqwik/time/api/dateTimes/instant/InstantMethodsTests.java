@@ -57,7 +57,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void atTheEarliest(@ForAll("instants") Instant min, @ForAll Random random) {
+	void atTheEarliest(@ForAll("instants") Instant min, @ForAll JqwikRandom random) {
 
 		Arbitrary<Instant> instants = DateTimes.instants().atTheEarliest(min);
 
@@ -69,7 +69,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void atTheLatest(@ForAll("instants") Instant max, @ForAll Random random) {
+	void atTheLatest(@ForAll("instants") Instant max, @ForAll JqwikRandom random) {
 
 		Arbitrary<Instant> instants = DateTimes.instants().atTheLatest(max);
 
@@ -81,7 +81,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void between(@ForAll("instants") Instant min, @ForAll("instants") Instant max, @ForAll Random random) {
+	void between(@ForAll("instants") Instant min, @ForAll("instants") Instant max, @ForAll JqwikRandom random) {
 
 		Assume.that(!min.isAfter(max));
 
@@ -96,7 +96,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void betweenMinAfterMax(@ForAll("instants") Instant min, @ForAll("instants") Instant max, @ForAll Random random) {
+	void betweenMinAfterMax(@ForAll("instants") Instant min, @ForAll("instants") Instant max, @ForAll JqwikRandom random) {
 
 		Assume.that(min.isAfter(max));
 
@@ -111,7 +111,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void dateBetween(@ForAll LocalDate min, @ForAll LocalDate max, @ForAll Random random) {
+	void dateBetween(@ForAll LocalDate min, @ForAll LocalDate max, @ForAll JqwikRandom random) {
 
 		Assume.that(!min.isAfter(max));
 
@@ -126,7 +126,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void yearBetween(@ForAll("years") int min, @ForAll("years") int max, @ForAll Random random) {
+	void yearBetween(@ForAll("years") int min, @ForAll("years") int max, @ForAll JqwikRandom random) {
 
 		Assume.that(min <= max);
 
@@ -141,7 +141,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void monthBetween(@ForAll("months") int min, @ForAll("months") int max, @ForAll Random random) {
+	void monthBetween(@ForAll("months") int min, @ForAll("months") int max, @ForAll JqwikRandom random) {
 
 		Assume.that(min <= max);
 
@@ -156,7 +156,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void onlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll Random random) {
+	void onlyMonths(@ForAll @Size(min = 1) Set<Month> months, @ForAll JqwikRandom random) {
 
 		Arbitrary<Instant> instants = DateTimes.instants().onlyMonths(months.toArray(new Month[]{}));
 
@@ -171,7 +171,7 @@ public class InstantMethodsTests {
 	void dayOfMonthBetween(
 		@ForAll("dayOfMonths") int min,
 		@ForAll("dayOfMonths") int max,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(min <= max);
@@ -187,7 +187,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll Random random) {
+	void onlyDaysOfWeek(@ForAll @Size(min = 1) Set<DayOfWeek> dayOfWeeks, @ForAll JqwikRandom random) {
 
 		Arbitrary<Instant> instants = DateTimes.instants().onlyDaysOfWeek(dayOfWeeks.toArray(new DayOfWeek[]{}));
 
@@ -198,7 +198,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void timeBetween(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll Random random) {
+	void timeBetween(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll JqwikRandom random) {
 
 		Assume.that(!min.isAfter(max));
 
@@ -212,7 +212,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll Random random) {
+	void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll JqwikRandom random) {
 
 		Assume.that(startHour <= endHour);
 
@@ -227,7 +227,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll Random random) {
+	void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll JqwikRandom random) {
 
 		Assume.that(startMinute <= endMinute);
 
@@ -242,7 +242,7 @@ public class InstantMethodsTests {
 	}
 
 	@Property
-	void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll Random random) {
+	void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll JqwikRandom random) {
 
 		Assume.that(startSecond <= endSecond);
 

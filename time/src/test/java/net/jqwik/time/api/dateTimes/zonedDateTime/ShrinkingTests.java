@@ -17,14 +17,14 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 public class ShrinkingTests {
 
 	@Property
-	void defaultShrinking(@ForAll Random random) {
+	void defaultShrinking(@ForAll JqwikRandom random) {
 		ZonedDateTimeArbitrary dateTimes = DateTimes.zonedDateTimes();
 		ZonedDateTime value = falsifyThenShrink(dateTimes, random);
 		assertThat(value).isEqualTo(ZonedDateTime.of(1900, 1, 1, 0, 0, 0, 0, ZoneId.of("Etc/GMT-14")));
 	}
 
 	@Property
-	void shrinksToSmallestFailingValue(@ForAll Random random) {
+	void shrinksToSmallestFailingValue(@ForAll JqwikRandom random) {
 		ZonedDateTimeArbitrary dateTimes = DateTimes.zonedDateTimes();
 		TestingFalsifier<ZonedDateTime> falsifier =
 			dateTime -> dateTime.isBefore(ZonedDateTime.of(LocalDateTime.of(2013, MAY, 25, 13, 12, 55), ZoneId.of("Indian/Reunion")));

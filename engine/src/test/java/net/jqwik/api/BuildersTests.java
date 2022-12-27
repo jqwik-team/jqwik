@@ -17,7 +17,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class BuildersTests {
 
 	@Property
-	void plainBuilder(@ForAll Random random) {
+	void plainBuilder(@ForAll JqwikRandom random) {
 		Arbitrary<Person> personArbitrary =
 				Builders
 						.withBuilder(PersonBuilder::new)
@@ -29,7 +29,7 @@ class BuildersTests {
 	}
 
 	@Property
-	void appendingBuilder(@ForAll Random random) {
+	void appendingBuilder(@ForAll JqwikRandom random) {
 		Arbitrary<String> digits = Arbitraries.of("0", "1", "2");
 
 		Arbitrary<String> arbitrary =
@@ -45,7 +45,7 @@ class BuildersTests {
 	}
 
 	@Property
-	void useBuilderMethods(@ForAll Random random) {
+	void useBuilderMethods(@ForAll JqwikRandom random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
@@ -62,7 +62,7 @@ class BuildersTests {
 	}
 
 	@Property
-	void useNullableArbitraryInBuilderMethods(@ForAll Random random) {
+	void useNullableArbitraryInBuilderMethods(@ForAll JqwikRandom random) {
 		Arbitrary<String> name = Arbitraries.strings().injectNull(1.0);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
@@ -79,7 +79,7 @@ class BuildersTests {
 	}
 
 	@Property
-	void useBuilderMethodsWithProbability0and1(@ForAll Random random) {
+	void useBuilderMethodsWithProbability0and1(@ForAll JqwikRandom random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
@@ -96,7 +96,7 @@ class BuildersTests {
 	}
 
 	@Example
-	void useBuilderMethodsWithProbabilities(@ForAll Random random) {
+	void useBuilderMethodsWithProbabilities(@ForAll JqwikRandom random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
@@ -130,7 +130,7 @@ class BuildersTests {
 	}
 
 	@Property
-	void buildWithoutFunctionUsesIdentityAsDefault(@ForAll Random random) {
+	void buildWithoutFunctionUsesIdentityAsDefault(@ForAll JqwikRandom random) {
 		Arbitrary<Person> personArbitrary =
 			Builders
 				.withBuilder(() -> new Person("john", 42))
@@ -144,7 +144,7 @@ class BuildersTests {
 	}
 
 	@Property
-	void builderIsFreshlyCreatedForEachTry(@ForAll Random random) {
+	void builderIsFreshlyCreatedForEachTry(@ForAll JqwikRandom random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 
 		Arbitrary<Person> personArbitrary =
@@ -161,7 +161,7 @@ class BuildersTests {
 	}
 
 	@Property
-	void useInSetter(@ForAll Random random) {
+	void useInSetter(@ForAll JqwikRandom random) {
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
@@ -182,7 +182,7 @@ class BuildersTests {
 	class Shrinking {
 
 		@Property
-		void shrinkToSmallestValues(@ForAll Random random) {
+		void shrinkToSmallestValues(@ForAll JqwikRandom random) {
 			Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 			Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
@@ -198,7 +198,7 @@ class BuildersTests {
 		}
 
 		@Property
-		void shrinkMaybeUsesToNotUsed(@ForAll Random random) {
+		void shrinkMaybeUsesToNotUsed(@ForAll JqwikRandom random) {
 			Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 			Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
@@ -214,7 +214,7 @@ class BuildersTests {
 		}
 
 		@Property
-		void shrinkAllUses(@ForAll Random random) {
+		void shrinkAllUses(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> digits = Arbitraries.integers().between(0, 9);
 
 			Arbitrary<String> arbitrary =
@@ -236,7 +236,7 @@ class BuildersTests {
 		}
 
 		@Property(tries = 5)
-		void shrinkingBigBuilder(@ForAll Random random) {
+		void shrinkingBigBuilder(@ForAll JqwikRandom random) {
 			Builders.BuilderCombinator<Integer[]> combinator = bigBuilder(200);
 			Arbitrary<Integer[]> arbitrary = combinator.build();
 

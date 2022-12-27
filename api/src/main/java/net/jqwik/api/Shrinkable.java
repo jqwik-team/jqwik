@@ -5,6 +5,8 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.random.*;
+
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -26,7 +28,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 
 		public abstract <T> Shrinkable<T> filter(Shrinkable<T> self, Predicate<T> filter);
 
-		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed);
+		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, JqwikRandomState randomSeed);
 	}
 
 	static <T> Shrinkable<T> unshrinkable(@Nullable T value) {
@@ -106,7 +108,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return ShrinkableFacade.implementation.filter(this, filter);
 	}
 
-	default <U> Shrinkable<U> flatMap(Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed) {
+	default <U> Shrinkable<U> flatMap(Function<T, Arbitrary<U>> flatMapper, int tries, JqwikRandomState randomSeed) {
 		return ShrinkableFacade.implementation.flatMap(this, flatMapper, tries, randomSeed);
 	}
 

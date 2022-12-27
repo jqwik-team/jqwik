@@ -15,14 +15,14 @@ import static net.jqwik.testing.ShrinkingSupport.*;
 public class ShrinkingTests {
 
 	@Property
-	void defaultShrinking(@ForAll Random random) {
+	void defaultShrinking(@ForAll JqwikRandom random) {
 		PeriodArbitrary periods = Dates.periods();
 		Period value = falsifyThenShrink(periods, random);
 		assertThat(value).isEqualTo(Period.of(0, 0, 0));
 	}
 
 	@Property
-	void shrinksToSmallestFailingValue(@ForAll Random random) {
+	void shrinksToSmallestFailingValue(@ForAll JqwikRandom random) {
 		PeriodArbitrary periods = Dates.periods();
 		TestingFalsifier<Period> falsifier = period -> comparePeriodsWithMax30DaysAnd11Months(period, Period.of(200, 3, 5)) < 0;
 		Period value = falsifyThenShrink(periods, random, falsifier);

@@ -14,7 +14,7 @@ import static net.jqwik.testing.TestingSupport.*;
 public class HourTests {
 
 	@Property
-	void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll Random random) {
+	void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll JqwikRandom random) {
 
 		Assume.that(startHour <= endHour);
 
@@ -29,7 +29,7 @@ public class HourTests {
 	}
 
 	@Property
-	void hourBetweenSame(@ForAll("hours") int hour, @ForAll Random random) {
+	void hourBetweenSame(@ForAll("hours") int hour, @ForAll JqwikRandom random) {
 
 		Arbitrary<OffsetTime> times = Times.offsetTimes().hourBetween(hour, hour);
 

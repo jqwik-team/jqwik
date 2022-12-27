@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.*;
 class RandomizedShrinkablesGeneratorTests {
 
 	@Example
-	void useSimpleRegisteredArbitraryProviders(@ForAll Random random) {
+	void useSimpleRegisteredArbitraryProviders(@ForAll JqwikRandom random) {
 		RandomizedShrinkablesGenerator shrinkablesGenerator = createGenerator(random, "simpleParameters");
 		List<Shrinkable<Object>> shrinkables = shrinkablesGenerator.next();
 
@@ -25,7 +25,7 @@ class RandomizedShrinkablesGeneratorTests {
 	}
 
 	@Example
-	void resetting(@ForAll Random random) {
+	void resetting(@ForAll JqwikRandom random) {
 		RandomizedShrinkablesGenerator shrinkablesGenerator = createGenerator(random, "simpleParameters");
 
 		List<Object> values1 = values(shrinkablesGenerator.next());
@@ -39,7 +39,7 @@ class RandomizedShrinkablesGeneratorTests {
 	}
 
 	@Example
-	void severalFittingArbitraries(@ForAll Random random) {
+	void severalFittingArbitraries(@ForAll JqwikRandom random) {
 
 		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
 			@Override
@@ -69,7 +69,7 @@ class RandomizedShrinkablesGeneratorTests {
 	}
 
 	@Example
-	void sameTypeVariableGetsSameArbitrary(@ForAll Random random) {
+	void sameTypeVariableGetsSameArbitrary(@ForAll JqwikRandom random) {
 
 		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
 			@Override
@@ -90,7 +90,7 @@ class RandomizedShrinkablesGeneratorTests {
 	}
 
 	@Example
-	void sameTypeVariableInParameterOfType(@ForAll Random random) {
+	void sameTypeVariableInParameterOfType(@ForAll JqwikRandom random) {
 
 		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
 			@Override
@@ -140,7 +140,7 @@ class RandomizedShrinkablesGeneratorTests {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
-	private RandomizedShrinkablesGenerator createGenerator(Random random, String methodName) {
+	private RandomizedShrinkablesGenerator createGenerator(JqwikRandom random, String methodName) {
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
 			new MyProperties(),
 			DomainContext.global()
@@ -148,7 +148,7 @@ class RandomizedShrinkablesGeneratorTests {
 		return createGenerator(random, methodName, arbitraryResolver);
 	}
 
-	private RandomizedShrinkablesGenerator createGenerator(Random random, String methodName, ArbitraryResolver arbitraryResolver) {
+	private RandomizedShrinkablesGenerator createGenerator(JqwikRandom random, String methodName, ArbitraryResolver arbitraryResolver) {
 		PropertyMethodDescriptor methodDescriptor = createDescriptor(methodName);
 		List<MethodParameter> parameters = TestHelper.getParameters(methodDescriptor);
 

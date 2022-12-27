@@ -3,6 +3,7 @@ package net.jqwik.engine.facades;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.random.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 /**
@@ -25,7 +26,7 @@ public class ShrinkableFacadeImpl extends Shrinkable.ShrinkableFacade {
 	}
 
 	@Override
-	public <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed) {
+	public <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, JqwikRandomState randomSeed) {
 		return new FlatMappedShrinkable<>(self, flatMapper, tries, randomSeed, false);
 	}
 }

@@ -53,4 +53,6 @@ signing {
 dependencies {
 	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
+	api(platform("org.apache.commons:commons-rng-bom:1.5"))
+	api("org.apache.commons:commons-rng-client-api")
 }

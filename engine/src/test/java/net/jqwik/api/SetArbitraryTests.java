@@ -18,7 +18,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class SetArbitraryTests {
 
 	@Example
-	void set(@ForAll Random random) {
+	void set(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		SetArbitrary<Integer> setArbitrary = integerArbitrary.set().ofMinSize(2).ofMaxSize(7);
 
@@ -28,7 +28,7 @@ class SetArbitraryTests {
 	}
 
 	@Example
-	void largeSetOfFixedSize(@ForAll Random random) {
+	void largeSetOfFixedSize(@ForAll JqwikRandom random) {
 		int size = 1000;
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		SetArbitrary<Integer> setArbitrary = integerArbitrary.set().ofSize(size);
@@ -42,7 +42,7 @@ class SetArbitraryTests {
 	}
 
 	@Example
-	void setWithLessElementsThanMaxSize(@ForAll Random random) {
+	void setWithLessElementsThanMaxSize(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 		SetArbitrary<Integer> setArbitrary = integerArbitrary.set().ofMinSize(2);
 
@@ -52,7 +52,7 @@ class SetArbitraryTests {
 	}
 
 	@Example
-	void mapEach(@ForAll Random random) {
+	void mapEach(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		Arbitrary<Set<Tuple.Tuple2<Integer, Set<Integer>>>> setArbitrary =
 			integerArbitrary
@@ -72,7 +72,7 @@ class SetArbitraryTests {
 	}
 
 	@Example
-	void flatMapEach(@ForAll Random random) {
+	void flatMapEach(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		Arbitrary<Set<Tuple.Tuple2<Integer, Integer>>> setArbitrary =
 			integerArbitrary
@@ -94,7 +94,7 @@ class SetArbitraryTests {
 	}
 
 	@Example
-	void multipleUniquenessConstraints(@ForAll Random random) {
+	void multipleUniquenessConstraints(@ForAll JqwikRandom random) {
 		SetArbitrary<Integer> setArbitrary =
 			Arbitraries.integers().between(1, 1000).set().ofMaxSize(20)
 					   .uniqueElements(i -> i % 99)
@@ -110,7 +110,7 @@ class SetArbitraryTests {
 
 	@Example
 	@StatisticsReport(onFailureOnly = true)
-	void withSizeDistribution(@ForAll Random random) {
+	void withSizeDistribution(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 		SetArbitrary<Integer> arbitrary =
 			integerArbitrary.set().ofMaxSize(100)
@@ -290,14 +290,14 @@ class SetArbitraryTests {
 	class Shrinking {
 
 		@Property
-		void shrinksToEmptySetByDefault(@ForAll Random random) {
+		void shrinksToEmptySetByDefault(@ForAll JqwikRandom random) {
 			SetArbitrary<Integer> sets = Arbitraries.integers().between(1, 10).set();
 			Set<Integer> value = falsifyThenShrink(sets, random);
 			assertThat(value).isEmpty();
 		}
 
 		@Property
-		void shrinkToMinSize(@ForAll Random random, @ForAll @IntRange(min = 1, max = 20) int min) {
+		void shrinkToMinSize(@ForAll JqwikRandom random, @ForAll @IntRange(min = 1, max = 20) int min) {
 			SetArbitrary<Integer> sets = Arbitraries.integers().between(1, 100).set().ofMinSize(min);
 			Set<Integer> value = falsifyThenShrink(sets, random);
 			assertThat(value).hasSize(min);
@@ -306,7 +306,7 @@ class SetArbitraryTests {
 		}
 
 		@Property
-		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 9) int min) {
+		void shrinkWithUniqueness(@ForAll JqwikRandom random, @ForAll @IntRange(min = 2, max = 9) int min) {
 			SetArbitrary<Integer> lists =
 				Arbitraries.integers().between(1, 1000).set().ofMinSize(min).ofMaxSize(9)
 						   .uniqueElements(i -> i % 10);
@@ -320,7 +320,7 @@ class SetArbitraryTests {
 
 	}
 
-	private void assertGeneratedSet(RandomGenerator<Set<Integer>> generator, Random random, int minSize, int maxSize) {
+	private void assertGeneratedSet(RandomGenerator<Set<Integer>> generator, JqwikRandom random, int minSize, int maxSize) {
 		assertAllGenerated(generator, random, set -> {
 			assertThat(set.size()).isBetween(minSize, maxSize);
 			assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);

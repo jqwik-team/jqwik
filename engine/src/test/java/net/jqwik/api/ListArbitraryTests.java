@@ -63,7 +63,7 @@ class ListArbitraryTests {
 
 	// Lists of that size often lead to OutOfMemoryError
 	// @Property(tries = 10)
-	void ofMinSize_closeToIntegerMax(@ForAll @IntRange(min = Integer.MAX_VALUE / 2) int minSize, @ForAll Random random) {
+	void ofMinSize_closeToIntegerMax(@ForAll @IntRange(min = Integer.MAX_VALUE / 2) int minSize, @ForAll JqwikRandom random) {
 		ListArbitrary<Integer> listArbitrary = Arbitraries.of(1,2,3).list().ofMinSize(minSize);
 		RandomGenerator<List<Integer>> generator = listArbitrary.generator(1, true);
 
@@ -72,7 +72,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void reduceList(@ForAll Random random) {
+	void reduceList(@ForAll JqwikRandom random) {
 		ListArbitrary<Integer> listArbitrary =
 			Arbitraries.integers().between(1, 5).list().ofMinSize(1).ofMaxSize(10);
 
@@ -89,7 +89,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void uniqueElements(@ForAll Random random) {
+	void uniqueElements(@ForAll JqwikRandom random) {
 		ListArbitrary<Integer> listArbitrary =
 			Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
 					   .uniqueElements(i -> i % 100);
@@ -102,7 +102,7 @@ class ListArbitraryTests {
 	}
 
 	@Property(tries = 10)
-	void uniqueElementsWithoutMaxSize(@ForAll Random random, @ForAll @IntRange(max = 10) int minSize) {
+	void uniqueElementsWithoutMaxSize(@ForAll JqwikRandom random, @ForAll @IntRange(max = 10) int minSize) {
 		ListArbitrary<Integer> listArbitrary =
 			Arbitraries.integers().between(1, 1000).list().ofMinSize(minSize)
 					   .uniqueElements(i -> i % 10);
@@ -115,7 +115,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void uniqueElementsWithNull(@ForAll Random random) {
+	void uniqueElementsWithNull(@ForAll JqwikRandom random) {
 		ListArbitrary<Integer> listArbitrary =
 			Arbitraries.integers().between(1, 1000).injectNull(0.5)
 					   .list().ofMaxSize(20)
@@ -129,7 +129,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void multipleUniquenessConstraints(@ForAll Random random) {
+	void multipleUniquenessConstraints(@ForAll JqwikRandom random) {
 		ListArbitrary<Integer> listArbitrary =
 			Arbitraries.integers().between(1, 1000).list().ofMaxSize(20)
 					   .uniqueElements(i -> i % 99)
@@ -144,7 +144,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void uniquenessConstraintCannotBeFulfilled(@ForAll Random random) {
+	void uniquenessConstraintCannotBeFulfilled(@ForAll JqwikRandom random) {
 		ListArbitrary<Integer> listArbitrary =
 			Arbitraries.integers().between(1, 1000).list().ofSize(10)
 					   .uniqueElements(i -> i % 5);
@@ -155,7 +155,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void uniquenessElements(@ForAll Random random) {
+	void uniquenessElements(@ForAll JqwikRandom random) {
 		ListArbitrary<Integer> listArbitrary =
 			Arbitraries.integers().between(1, 1000).list().ofMaxSize(20).uniqueElements();
 
@@ -167,7 +167,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void uniqueListsAreSometimesGeneratedByDefault(@ForAll Random random) {
+	void uniqueListsAreSometimesGeneratedByDefault(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(0, 1_000);
 		ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofSize(50);
 
@@ -184,7 +184,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void uniqueListsAreSometimesGeneratedByDefaultEvenIfMaxSizeDoesNotAllowThat(@ForAll Random random) {
+	void uniqueListsAreSometimesGeneratedByDefaultEvenIfMaxSizeDoesNotAllowThat(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(0, 10);
 		ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(50);
 
@@ -204,7 +204,7 @@ class ListArbitraryTests {
 	class SizeDistribution {
 
 		@Example
-		void use_explicit_size_distribution(@ForAll Random random) {
+		void use_explicit_size_distribution(@ForAll JqwikRandom random) {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 			ListArbitrary<Integer> arbitrary =
 				integerArbitrary.list().ofMaxSize(100)
@@ -225,7 +225,7 @@ class ListArbitraryTests {
 		}
 
 		@Example
-		void without_explicit_size_distribution_each_possible_size_should_be_generated(@ForAll Random random) {
+		void without_explicit_size_distribution_each_possible_size_should_be_generated(@ForAll JqwikRandom random) {
 			int maxSize = 50;
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 			ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(maxSize);
@@ -245,7 +245,7 @@ class ListArbitraryTests {
 		}
 
 		@Example
-		void without_explicit_size_distribution_max_size_should_be_generated_regularly(@ForAll Random random) {
+		void without_explicit_size_distribution_max_size_should_be_generated_regularly(@ForAll JqwikRandom random) {
 			int maxSize = 1000;
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers();
 			ListArbitrary<Integer> listArbitrary = integerArbitrary.list().ofMaxSize(maxSize);
@@ -277,7 +277,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void mapEach(@ForAll Random random) {
+	void mapEach(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		Arbitrary<List<Tuple.Tuple2<Integer, List<Integer>>>> setArbitrary =
 			integerArbitrary
@@ -315,13 +315,13 @@ class ListArbitraryTests {
 		}
 
 		@Example
-		void plain(@ForAll Random random) {
+		void plain(@ForAll JqwikRandom random) {
 			Arbitrary<List<Integer>> listOfBytes = Arbitraries.integers().list().ofSize(largeSize);
 			checkAllGenerated(listOfBytes.generator(1000), random, bytes -> bytes.size() == largeSize);
 		}
 
 		@Example
-		void unique(@ForAll Random random) {
+		void unique(@ForAll JqwikRandom random) {
 			Arbitrary<List<Integer>> uniqueIntegers = Arbitraries.integers().list().ofSize(largeSize).uniqueElements();
 			RandomGenerator<List<Integer>> generator = uniqueIntegers.generator(1000);
 			List<Integer> list = generator.next(random).value();
@@ -330,7 +330,7 @@ class ListArbitraryTests {
 		}
 
 		@Example
-		void uniqueBy(@ForAll Random random) {
+		void uniqueBy(@ForAll JqwikRandom random) {
 			Function<IntegerAbs,Object> keyExtractor = x -> x.value;
 			Arbitrary<List<IntegerAbs>> uniqueBytes = Arbitraries.integers().map(IntegerAbs::new).list().ofSize(largeSize).uniqueElements(keyExtractor);
 			RandomGenerator<List<IntegerAbs>> generator = uniqueBytes.generator(1000);
@@ -348,7 +348,7 @@ class ListArbitraryTests {
 	}
 
 	@Example
-	void flatMapEach(@ForAll Random random) {
+	void flatMapEach(@ForAll JqwikRandom random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 		Arbitrary<List<Tuple.Tuple2<Integer, Integer>>> setArbitrary =
 			integerArbitrary
@@ -532,14 +532,14 @@ class ListArbitraryTests {
 	class Shrinking {
 
 		@Property
-		void shrinksToEmptyListByDefault(@ForAll Random random) {
+		void shrinksToEmptyListByDefault(@ForAll JqwikRandom random) {
 			ListArbitrary<Integer> lists = Arbitraries.integers().between(1, 10).list();
 			List<Integer> value = falsifyThenShrink(lists, random);
 			assertThat(value).isEmpty();
 		}
 
 		@Property
-		void shrinkToMinSize(@ForAll Random random, @ForAll @IntRange(min = 1, max = 20) int min) {
+		void shrinkToMinSize(@ForAll JqwikRandom random, @ForAll @IntRange(min = 1, max = 20) int min) {
 			ListArbitrary<Integer> lists = Arbitraries.integers().between(1, 10).list().ofMinSize(min);
 			List<Integer> value = falsifyThenShrink(lists, random);
 			assertThat(value).hasSize(min);
@@ -547,7 +547,7 @@ class ListArbitraryTests {
 		}
 
 		@Property
-		void shrinkWithUniqueness(@ForAll Random random, @ForAll @IntRange(min = 2, max = 10) int min) {
+		void shrinkWithUniqueness(@ForAll JqwikRandom random, @ForAll @IntRange(min = 2, max = 10) int min) {
 			ListArbitrary<Integer> lists =
 				Arbitraries.integers().between(1, 100).list().ofMinSize(min).ofMaxSize(10)
 						   .uniqueElements(i -> i);
@@ -560,7 +560,7 @@ class ListArbitraryTests {
 		}
 
 		@Property
-		void shrinkWithUniquenessAndNulls(@ForAll Random random) {
+		void shrinkWithUniquenessAndNulls(@ForAll JqwikRandom random) {
 			ListArbitrary<Integer> lists =
 				Arbitraries.integers().between(1, 100).injectNull(0.5)
 						   .list().ofMinSize(3).ofMaxSize(10)
@@ -599,7 +599,7 @@ class ListArbitraryTests {
 	}
 
 	private void assertGeneratedLists(RandomGenerator<List<String>> generator, int minSize, int maxSize) {
-		Random random = SourceOfRandomness.current();
+		JqwikRandom random = SourceOfRandomness.current();
 		assertAllGenerated(generator, random, list -> {
 			assertThat(list.size()).isBetween(minSize, maxSize);
 			assertThat(list).isSubsetOf("1", "hallo", "test");

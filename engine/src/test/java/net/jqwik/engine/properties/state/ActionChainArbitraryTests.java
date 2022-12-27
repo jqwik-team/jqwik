@@ -1,9 +1,19 @@
 package net.jqwik.engine.properties.state;
 
+import java.math.*;
+import java.security.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.statistics.*;
+
+import net.jqwik.engine.*;
+
+import org.apache.commons.rng.*;
+import org.apache.commons.rng.core.*;
+import org.apache.commons.rng.core.source64.*;
 import org.assertj.core.api.*;
 import org.opentest4j.*;
 
@@ -18,7 +28,7 @@ import static org.assertj.core.api.Assertions.*;
 class ActionChainArbitraryTests {
 
 	@Example
-	void deterministicChainCanBeRun(@ForAll Random random) {
+	void deterministicChainCanBeRun(@ForAll JqwikRandom random) {
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
 					   .withAction(addX())
@@ -37,7 +47,7 @@ class ActionChainArbitraryTests {
 	}
 
 	@Example
-	void transformersAreCorrectlyReported(@ForAll Random random) {
+	void transformersAreCorrectlyReported(@ForAll JqwikRandom random) {
 		Transformer<String> transformer = s -> s + "x";
 
 		Action.Independent<String> action = Action.just(transformer);
@@ -55,7 +65,7 @@ class ActionChainArbitraryTests {
 	}
 
 	@Example
-	void infiniteChain(@ForAll Random random) {
+	void infiniteChain(@ForAll JqwikRandom random) {
 		Action.Independent<String> addEOC = Action.just(Transformer.endOfChain());
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
@@ -79,7 +89,7 @@ class ActionChainArbitraryTests {
 	}
 
 	@Example
-	void peekingIntoChain(@ForAll Random random) {
+	void peekingIntoChain(@ForAll JqwikRandom random) {
 		ActionChainArbitrary<String> chains =
 			ActionChain.startWith(() -> "")
 					   .withAction(addX())
@@ -228,7 +238,7 @@ class ActionChainArbitraryTests {
 	}
 
 	@Example
-	void preconditionsInSeparateActionsAreConsidered(@ForAll Random random) {
+	void preconditionsInSeparateActionsAreConsidered(@ForAll JqwikRandom random) {
 		Action<String> x0to4 = Action.<String>when(s1 -> s1.length() < 5)
 									 .just(s2 -> s2 + "x");
 		Action<String> y5to9 = Action.<String>when(s -> s.length() >= 5)
@@ -247,7 +257,7 @@ class ActionChainArbitraryTests {
 	}
 
 	@Example
-	void usingEndOfChain(@ForAll Random random) {
+	void usingEndOfChain(@ForAll JqwikRandom random) {
 		Action.Independent<String> x0to4 = Action.<String>when(s -> s.length() < 5)
 												 .describeAs("addX")
 												 .just(s -> s + "x");
@@ -273,12 +283,63 @@ class ActionChainArbitraryTests {
 		);
 	}
 
+	@Property(tries = 10000)
+	void duplicatesInPlainArbitrary(@ForAll JqwikRandom random) {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.integers()
+					   .between(1, Integer.MAX_VALUE)
+					   .withDistribution(RandomDistribution.uniform())
+					   .withoutEdgeCases();
+		Map<Integer, Long> count = TestingSupport.count(arbitrary.generator(30, false), 30, random);
+		for (Map.Entry<Integer, Long> entry : count.entrySet()) {
+			if (entry.getValue() == 1) {
+				Statistics.label("value").collect("unique");
+			} else {
+				Statistics.label("value").collect("duplicate");
+			}
+		}
+	}
+	
+	@Property(tries = 10000, edgeCases = EdgeCasesMode.NONE)
+	void duplicatesInChain(@ForAll JqwikRandom random) {
+		ActionChainArbitrary<Set<Integer>> chains =
+			ActionChain.<Set<Integer>>startWith(HashSet::new)
+			   .addAction(
+				   1, 
+				   Action.<Set<Integer>>when(set -> !set.isEmpty())
+					   .just(Transformer.mutate("clear", Set::clear))
+			   )		
+			   .addAction(
+				   5, 
+				   (Action.Dependent<Set<Integer>>) state ->
+						Arbitraries.integers()
+						   .between(1, Integer.MAX_VALUE)
+						   .withDistribution(RandomDistribution.uniform())
+						   .withoutEdgeCases()
+						   .map(i -> {
+									if (state.contains(i)) {
+										// System.out.println("got duplicate value " + i);
+										Statistics.label("value").collect("duplicate");
+										return Transformer.noop();
+									} else {
+										Statistics.label("value").collect("unique");
+										return Transformer.mutate("add " + i, set -> set.add(i));
+									}
+								}
+						   )
+			   )
+			   .withMaxTransformations(30);
+
+		ActionChain<Set<Integer>> chain = TestingSupport.generateFirst(chains, random);
+		chain.run();
+	}
+
 	@Group
 	class ConvenienceSubtypes {
 
 		@Example
 		@Label("Action.JustTransform")
-		void justTransform(@ForAll Random random) {
+		void justTransform(@ForAll JqwikRandom random) {
 			Action.Independent<String> x0to4 = new Action.JustTransform<String>() {
 				@Override
 				public boolean precondition(String state) {
@@ -316,7 +377,7 @@ class ActionChainArbitraryTests {
 
 		@Example
 		@Label("Action.JustMutate")
-		void justMutate(@ForAll Random random) {
+		void justMutate(@ForAll JqwikRandom random) {
 			Action.Independent<List<String>> x0to4 = new Action.JustMutate<List<String>>() {
 				@Override
 				public boolean precondition(List<String> state) {
@@ -358,7 +419,7 @@ class ActionChainArbitraryTests {
 	class Shrinking {
 
 		@Property
-		void shrinkActionChain(@ForAll Random random) {
+		void shrinkActionChain(@ForAll JqwikRandom random) {
 			Action.Independent<List<Integer>> clear = Action.just(
 				"clear",
 				(List<Integer> l) -> {
@@ -396,7 +457,7 @@ class ActionChainArbitraryTests {
 		}
 
 		@Property
-		void shrinkWithChangeDetector(@ForAll Random random) {
+		void shrinkWithChangeDetector(@ForAll JqwikRandom random) {
 			Action.Independent<List<Integer>> nothing = Action.just(
 				"nothing", l -> l
 			);

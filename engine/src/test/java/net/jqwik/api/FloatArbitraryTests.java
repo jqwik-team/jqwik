@@ -14,7 +14,7 @@ import static net.jqwik.testing.TestingSupport.*;
 class FloatArbitraryTests {
 
 	@Example
-	void floatMinsAndMaxesWithEdgeCases(@ForAll Random random) {
+	void floatMinsAndMaxesWithEdgeCases(@ForAll JqwikRandom random) {
 		RandomGenerator<Float> generator = Arbitraries.floats().generator(1, true);
 		assertAtLeastOneGeneratedOf(
 			generator, random,
@@ -23,7 +23,7 @@ class FloatArbitraryTests {
 	}
 
 	@Example
-	void floats(@ForAll Random random) {
+	void floats(@ForAll JqwikRandom random) {
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().between(-10.0f, 10.0f).ofScale(2);
 		RandomGenerator<Float> generator = floatArbitrary.generator(1, true);
 
@@ -37,7 +37,7 @@ class FloatArbitraryTests {
 	}
 
 	@Example
-	void floatsWithBordersExcluded(@ForAll Random random) {
+	void floatsWithBordersExcluded(@ForAll JqwikRandom random) {
 		float min = 1.0f;
 		float max = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().between(min, false, max, false).ofScale(1);
@@ -46,7 +46,7 @@ class FloatArbitraryTests {
 	}
 
 	@Example
-	void floatsLessThan(@ForAll Random random) {
+	void floatsLessThan(@ForAll JqwikRandom random) {
 		float max = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().lessThan(max).ofScale(0);
 		RandomGenerator<Float> generator = floatArbitrary.generator(100);
@@ -54,7 +54,7 @@ class FloatArbitraryTests {
 	}
 
 	@Example
-	void floatsLessOrEqual(@ForAll Random random) {
+	void floatsLessOrEqual(@ForAll JqwikRandom random) {
 		float max = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().lessOrEqual(max).ofScale(0);
 		RandomGenerator<Float> generator = floatArbitrary.generator(100);
@@ -62,7 +62,7 @@ class FloatArbitraryTests {
 	}
 
 	@Example
-	void floatsGreaterThan(@ForAll Random random) {
+	void floatsGreaterThan(@ForAll JqwikRandom random) {
 		float min = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().greaterThan(min).ofScale(0);
 		RandomGenerator<Float> generator = floatArbitrary.generator(100);
@@ -70,7 +70,7 @@ class FloatArbitraryTests {
 	}
 
 	@Example
-	void floatsGreaterOrEqual(@ForAll Random random) {
+	void floatsGreaterOrEqual(@ForAll JqwikRandom random) {
 		float min = 2.0f;
 		Arbitrary<Float> floatArbitrary = Arbitraries.floats().greaterOrEqual(min).ofScale(0);
 		RandomGenerator<Float> generator = floatArbitrary.generator(100);
@@ -86,7 +86,7 @@ class FloatArbitraryTests {
 	}
 
 	@Example
-	void floatsWithSpecials(@ForAll Random random) {
+	void floatsWithSpecials(@ForAll JqwikRandom random) {
 		Arbitrary<Float> arbitrary = Arbitraries.floats().between(1.0f, 10.0f)
 												.withSpecialValue(Float.NaN)
 												.withSpecialValue(Float.MIN_VALUE);
@@ -107,7 +107,7 @@ class FloatArbitraryTests {
 	}
 
 	@Example
-	void floatsWithStandardSpecials(@ForAll Random random) {
+	void floatsWithStandardSpecials(@ForAll JqwikRandom random) {
 		Arbitrary<Float> arbitrary = Arbitraries.floats().between(1.0f, 10.0f)
 												.withStandardSpecialValues();
 		RandomGenerator<Float> generator = arbitrary.generator(100);

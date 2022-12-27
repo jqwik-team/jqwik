@@ -18,7 +18,7 @@ public class DateTimeTests {
 	}
 
 	@Property
-	void atTheEarliest(@ForAll("dateTimes") LocalDateTime min, @ForAll Random random) {
+	void atTheEarliest(@ForAll("dateTimes") LocalDateTime min, @ForAll JqwikRandom random) {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().atTheEarliest(min);
 
@@ -33,7 +33,7 @@ public class DateTimeTests {
 	void atTheEarliestAtTheLatestMinAfterMax(
 		@ForAll("dateTimes") LocalDateTime min,
 		@ForAll("dateTimes") LocalDateTime max,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(min.isAfter(max));
@@ -49,7 +49,7 @@ public class DateTimeTests {
 	}
 
 	@Property
-	void atTheLatest(@ForAll("dateTimes") LocalDateTime max, @ForAll Random random) {
+	void atTheLatest(@ForAll("dateTimes") LocalDateTime max, @ForAll JqwikRandom random) {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().atTheLatest(max);
 
@@ -64,7 +64,7 @@ public class DateTimeTests {
 	void atTheLatestAtTheEarliestMinAfterMax(
 		@ForAll("dateTimes") LocalDateTime min,
 		@ForAll("dateTimes") LocalDateTime max,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(min.isAfter(max));
@@ -80,7 +80,7 @@ public class DateTimeTests {
 	}
 
 	@Property
-	void between(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max, @ForAll Random random) {
+	void between(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max, @ForAll JqwikRandom random) {
 
 		Assume.that(!min.isAfter(max));
 
@@ -95,7 +95,7 @@ public class DateTimeTests {
 	}
 
 	@Property
-	void betweenMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max, @ForAll Random random) {
+	void betweenMinAfterMax(@ForAll("dateTimes") LocalDateTime min, @ForAll("dateTimes") LocalDateTime max, @ForAll JqwikRandom random) {
 
 		Assume.that(min.isAfter(max));
 
@@ -110,7 +110,7 @@ public class DateTimeTests {
 	}
 
 	@Property
-	void betweenSame(@ForAll("dateTimes") LocalDateTime same, @ForAll Random random) {
+	void betweenSame(@ForAll("dateTimes") LocalDateTime same, @ForAll JqwikRandom random) {
 
 		Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().between(same, same);
 

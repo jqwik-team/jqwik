@@ -195,7 +195,7 @@ The starting point for generation usually is a static method call on class
       return Arbitraries.randomValue(random -> generatePrime(random));
   }
 
-  private Integer generatePrime(Random random) {
+  private Integer generatePrime(JqwikRandom random) {
       int candidate;
       do {
           candidate = random.nextInt(10000) + 2;
@@ -309,7 +309,7 @@ Arbitraries.strings().ofMinLength(5).ofMaxLength(25)
 
 #### java.util.Random
 
-- [`Arbitrary<Random> randoms()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#randoms()):
+- [`Arbitrary<JqwikRandom> randoms()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#randoms()):
   Random instances will never be shrunk
 
 #### Shuffling Permutations

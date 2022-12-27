@@ -68,7 +68,7 @@ public class TimeTests {
 	class TimeBetweenMethods {
 
 		@Property
-		void timeBetween(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll Random random) {
+		void timeBetween(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll JqwikRandom random) {
 
 			Assume.that(!min.isAfter(max));
 
@@ -82,7 +82,7 @@ public class TimeTests {
 		}
 
 		@Property
-		void timeBetweenMaxBeforeMin(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll Random random) {
+		void timeBetweenMaxBeforeMin(@ForAll LocalTime min, @ForAll LocalTime max, @ForAll JqwikRandom random) {
 
 			Assume.that(min.isAfter(max));
 
@@ -96,7 +96,7 @@ public class TimeTests {
 		}
 
 		@Property
-		void betweenSame(@ForAll LocalTime same, @ForAll Random random) {
+		void betweenSame(@ForAll LocalTime same, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().timeBetween(same, same);
 
@@ -113,7 +113,7 @@ public class TimeTests {
 	class HourMethods {
 
 		@Property
-		void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll Random random) {
+		void hourBetween(@ForAll("hours") int startHour, @ForAll("hours") int endHour, @ForAll JqwikRandom random) {
 
 			Assume.that(startHour <= endHour);
 
@@ -128,7 +128,7 @@ public class TimeTests {
 		}
 
 		@Property
-		void hourBetweenSame(@ForAll("hours") int hour, @ForAll Random random) {
+		void hourBetweenSame(@ForAll("hours") int hour, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().hourBetween(hour, hour);
 
@@ -145,7 +145,7 @@ public class TimeTests {
 	class MinuteMethods {
 
 		@Property
-		void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll Random random) {
+		void minuteBetween(@ForAll("minutes") int startMinute, @ForAll("minutes") int endMinute, @ForAll JqwikRandom random) {
 
 			Assume.that(startMinute <= endMinute);
 
@@ -160,7 +160,7 @@ public class TimeTests {
 		}
 
 		@Property
-		void minuteBetweenSame(@ForAll("minutes") int minute, @ForAll Random random) {
+		void minuteBetweenSame(@ForAll("minutes") int minute, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().minuteBetween(minute, minute);
 
@@ -177,7 +177,7 @@ public class TimeTests {
 	class SecondMethods {
 
 		@Property
-		void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll Random random) {
+		void secondBetween(@ForAll("seconds") int startSecond, @ForAll("seconds") int endSecond, @ForAll JqwikRandom random) {
 
 			Assume.that(startSecond <= endSecond);
 
@@ -192,7 +192,7 @@ public class TimeTests {
 		}
 
 		@Property
-		void secondBetweenSame(@ForAll("seconds") int second, @ForAll Random random) {
+		void secondBetweenSame(@ForAll("seconds") int second, @ForAll JqwikRandom random) {
 
 			Arbitrary<LocalDateTime> dateTimes = DateTimes.dateTimes().secondBetween(second, second);
 

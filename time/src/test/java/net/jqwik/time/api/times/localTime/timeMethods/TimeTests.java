@@ -19,7 +19,7 @@ public class TimeTests {
 	}
 
 	@Property
-	void atTheEarliest(@ForAll("times") LocalTime startTime, @ForAll Random random) {
+	void atTheEarliest(@ForAll("times") LocalTime startTime, @ForAll JqwikRandom random) {
 
 		Arbitrary<LocalTime> times = Times.times().atTheEarliest(startTime);
 
@@ -34,7 +34,7 @@ public class TimeTests {
 	void atTheEarliestAtTheLatestMinAfterMax(
 		@ForAll("times") LocalTime startTime,
 		@ForAll("times") LocalTime endTime,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(startTime.isAfter(endTime));
@@ -50,7 +50,7 @@ public class TimeTests {
 	}
 
 	@Property
-	void atTheLatest(@ForAll("times") LocalTime endTime, @ForAll Random random) {
+	void atTheLatest(@ForAll("times") LocalTime endTime, @ForAll JqwikRandom random) {
 
 		Arbitrary<LocalTime> times = Times.times().atTheLatest(endTime);
 
@@ -65,7 +65,7 @@ public class TimeTests {
 	void atTheLatestAtTheEarliestMinAfterMax(
 		@ForAll("times") LocalTime startTime,
 		@ForAll("times") LocalTime endTime,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(startTime.isAfter(endTime));
@@ -81,7 +81,7 @@ public class TimeTests {
 	}
 
 	@Property
-	void between(@ForAll("times") LocalTime startTime, @ForAll("times") LocalTime endTime, @ForAll Random random) {
+	void between(@ForAll("times") LocalTime startTime, @ForAll("times") LocalTime endTime, @ForAll JqwikRandom random) {
 
 		Assume.that(!startTime.isAfter(endTime));
 
@@ -98,7 +98,7 @@ public class TimeTests {
 	void betweenEndTimeBeforeStartTime(
 		@ForAll("times") LocalTime startTime,
 		@ForAll("times") LocalTime endTime,
-		@ForAll Random random
+		@ForAll JqwikRandom random
 	) {
 
 		Assume.that(startTime.isAfter(endTime));
@@ -113,7 +113,7 @@ public class TimeTests {
 	}
 
 	@Property
-	void betweenSame(@ForAll("times") LocalTime sameTime, @ForAll Random random) {
+	void betweenSame(@ForAll("times") LocalTime sameTime, @ForAll JqwikRandom random) {
 
 		Arbitrary<LocalTime> times = Times.times().between(sameTime, sameTime);
 

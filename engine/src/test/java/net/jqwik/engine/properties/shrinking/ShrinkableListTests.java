@@ -324,7 +324,7 @@ class ShrinkableListTests {
 		}
 
 		@Property(tries = 100)
-		void sumOfIntegers(@ForAll Random random) {
+		void sumOfIntegers(@ForAll JqwikRandom random) {
 			ListArbitrary<Integer> integerLists = Arbitraries.integers().between(0, 10).list().ofSize(4);
 
 			TestingFalsifier<List<Integer>> falsifier =
@@ -338,7 +338,7 @@ class ShrinkableListTests {
 		}
 
 		@Property(tries = 100)
-		void sumOfIntegersWithShrinkingTarget(@ForAll Random random) {
+		void sumOfIntegersWithShrinkingTarget(@ForAll JqwikRandom random) {
 			ListArbitrary<Integer> integerLists = Arbitraries.integers().between(0, 20).shrinkTowards(10).list().ofSize(4);
 
 			TestingFalsifier<List<Integer>> falsifier =
@@ -352,7 +352,7 @@ class ShrinkableListTests {
 		}
 
 		@Property(tries = 100)
-		void sumOfShorts(@ForAll Random random) {
+		void sumOfShorts(@ForAll JqwikRandom random) {
 			ListArbitrary<Short> integerLists = Arbitraries.shorts().between((short) 0, (short) 10).list().ofSize(4);
 
 			TestingFalsifier<List<Short>> falsifier =
@@ -366,7 +366,7 @@ class ShrinkableListTests {
 		}
 
 		@Property(tries = 100)
-		void sumOfBytes(@ForAll Random random) {
+		void sumOfBytes(@ForAll JqwikRandom random) {
 			ListArbitrary<Byte> integerLists = Arbitraries.bytes().between((byte) 0, (byte) 10).list().ofSize(4);
 
 			TestingFalsifier<List<Byte>> falsifier =
@@ -380,7 +380,7 @@ class ShrinkableListTests {
 		}
 
 		@Property(tries = 100)
-		void sumOfLongs(@ForAll Random random) {
+		void sumOfLongs(@ForAll JqwikRandom random) {
 			ListArbitrary<Long> integerLists = Arbitraries.longs().between(0, 10).list().ofSize(4);
 
 			TestingFalsifier<List<Long>> falsifier =
@@ -394,7 +394,7 @@ class ShrinkableListTests {
 		}
 
 		@Property(tries = 100)
-		void sumOfIntegersAcrossLists(@ForAll Random random) {
+		void sumOfIntegersAcrossLists(@ForAll JqwikRandom random) {
 			ListArbitrary<List<Integer>> listOfLists =
 					Arbitraries.integers().between(0, 10)
 							   .list().ofMaxSize(5)
@@ -413,7 +413,7 @@ class ShrinkableListTests {
 		}
 
 		@Property(tries = 100)
-		void sumOfIntegersAcrossSets(@ForAll Random random) {
+		void sumOfIntegersAcrossSets(@ForAll JqwikRandom random) {
 			Arbitrary<List<Set<Integer>>> listOfSets =
 					Arbitraries.integers().between(0, 10)
 							   .set().ofMaxSize(10)
