@@ -10,6 +10,15 @@ import static org.apiguardian.api.API.Status.*;
 
 import static net.jqwik.api.ShrinkingDistanceArraysSupport.*;
 
+/**
+ * A {@code ShrinkingDistance} is a measure of how close a value is to the minimum value,
+ * aka target value.
+ *
+ * <p>
+ *     The distance is used during shrinking to determine if a shrunk value is really closer to the target value.
+ *     If it is not, the value is being discarded.
+ * </p>
+ */
 @API(status = STABLE, since = "1.0")
 public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
@@ -21,8 +30,21 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	private final long[] distances;
 
+	/**
+	 * Create a {@code ShrinkingDistance} with one or more dimensions.
+	 *
+	 * @param distances a non-empty array of non-negative values.
+	 *
+	 * @return an immutable instance of {@code ShrinkingDistance}
+	 */
 	@API(status = MAINTAINED, since = "1.0")
 	public static ShrinkingDistance of(long... distances) {
+		if (distances.length == 0) {
+			throw new IllegalArgumentException("ShrinkingDistance requires at least one value");
+		}
+		if (Arrays.stream(distances).anyMatch(d -> d < 0)) {
+			throw new IllegalArgumentException("ShrinkingDistance does not allow negative values");
+		}
 		return new ShrinkingDistance(distances);
 	}
 
@@ -68,6 +90,11 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return String.format("ShrinkingDistance:%s", Arrays.toString(distances));
 	}
 
+	/**
+	 * Compare to distances with each other.
+	 * No distance can be greater than {@link #MAX}.
+	 * No distance can be smaller than {@link #MIN}.
+	 */
 	@Override
 	public int compareTo(ShrinkingDistance other) {
 		if (this == MAX) {

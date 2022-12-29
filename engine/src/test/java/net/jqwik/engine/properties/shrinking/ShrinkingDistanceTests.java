@@ -25,6 +25,13 @@ class ShrinkingDistanceTests {
 		assertThat(ShrinkingDistance.of(1, 2, 3, 4).size()).isEqualTo(4);
 	}
 
+	@SuppressWarnings("ResultOfMethodCallIgnored")
+	@Example
+	void doNotAllowNegativeDistanceValues() {
+		assertThatThrownBy(() -> ShrinkingDistance.of(-1)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> ShrinkingDistance.of(1, 1, -1)).isInstanceOf(IllegalArgumentException.class);
+	}
+
 	@Example
 	@Label("ShrinkingDistance.MAX")
 	void maximumDistance() {
