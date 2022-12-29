@@ -29,10 +29,12 @@ public class LambdaSupport {
 		}
 	}
 
+	private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+
 	/**
 	 * Returns field accessor for the given class, or {@code null} if accessors are not available (e.g. no reflective access to the class)
 	 */
-	private static final ClassValue<List<FieldAccessor>> HANDLES = new ClassValue<List<FieldAccessor>>() {
+	private static final ClassValue<List<FieldAccessor>> FIELD_ACCESSORS = new ClassValue<List<FieldAccessor>>() {
 		@Override
 		protected @Nullable List<FieldAccessor> computeValue(Class<?> type) {
 			Field[] fields = type.getDeclaredFields();
@@ -51,6 +53,7 @@ public class LambdaSupport {
 			return res;
 		}
 	};
+
 
 	/**
 	 * This method is used in {@linkplain Object#equals(Object)} implementations of {@linkplain Arbitrary} types
@@ -75,12 +78,12 @@ public class LambdaSupport {
 		}
 
 		// Check enclosed state the hard way
-		List<FieldAccessor> handles = HANDLES.get(l1Class);
-		if (handles == null) {
+		List<FieldAccessor> accessors = FIELD_ACCESSORS.get(l1Class);
+		if (accessors == null) {
 			return false;
 		}
-		for (FieldAccessor handle : handles) {
-			if (!fieldIsEqualIn(handle, l1, l2)) {
+		for (FieldAccessor accessor : accessors) {
+			if (!fieldIsEqualIn(accessor, l1, l2)) {
 				return false;
 			}
 		}
@@ -93,8 +96,6 @@ public class LambdaSupport {
 		outputStream.writeObject(l1);
 		return byteArrayOutputStream.toByteArray();
 	}
-
-	private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
 	private static boolean fieldIsEqualIn(FieldAccessor field, Object left, Object right) {
 		try {
