@@ -8,7 +8,7 @@ import org.jetbrains.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-import static net.jqwik.api.support.LongArraysSupport.*;
+import static net.jqwik.api.ShrinkingDistanceArraysSupport.*;
 
 @API(status = STABLE, since = "1.0")
 public class ShrinkingDistance implements Comparable<ShrinkingDistance> {

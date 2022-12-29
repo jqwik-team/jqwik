@@ -1,19 +1,14 @@
-package net.jqwik.api.support;
+package net.jqwik.api;
 
 import java.util.*;
 
-import org.apiguardian.api.*;
+class ShrinkingDistanceArraysSupport {
 
-import static org.apiguardian.api.API.Status.*;
-
-@API(status = INTERNAL)
-public class LongArraysSupport {
-
-	public static long at(long[] array, int i) {
+	static long at(long[] array, int i) {
 		return array.length > i ? array[i] : 0;
 	}
 
-	public static long[] sumUp(List<long[]> listOfArrays) {
+	static long[] sumUp(List<long[]> listOfArrays) {
 		int maxDistanceSize = listOfArrays.stream().mapToInt(s -> s.length).max().orElse(0);
 		long[] summedUpArray = new long[maxDistanceSize];
 		Arrays.fill(summedUpArray, 0);
@@ -33,7 +28,7 @@ public class LongArraysSupport {
 		return summedValue;
 	}
 
-	public static long[] concatenate(List<long[]> listOfArrays) {
+	static long[] concatenate(List<long[]> listOfArrays) {
 		int size = listOfArrays.stream().mapToInt(s -> s.length).sum();
 		long[] concatenatedArrays = new long[size];
 		int i = 0;
