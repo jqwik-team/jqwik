@@ -155,15 +155,27 @@ class FunctionsTests {
 		assertThat(supplier.get()).isEqualTo(value);
 	}
 
-	@Example
+	@Property(tries = 10)
 	void consumer_accepts_anything(@ForAll Random random) {
 		Arbitrary<Consumer<Integer>> functions =
 			Functions.function(Consumer.class).returning(Arbitraries.nothing());
 
-		Consumer<Integer> supplier = functions.generator(10, true).next(random).value();
+		Consumer<Integer> consumer = functions.generator(10, true).next(random).value();
 
-		supplier.accept(0);
-		supplier.accept(Integer.MAX_VALUE);
+		consumer.accept(0);
+		consumer.accept(Integer.MAX_VALUE);
+	}
+
+	@Property(tries = 10)
+	void list_of_consumers_accept_anything(@ForAll Random random) {
+		Arbitrary<Consumer<Integer>> returning = Functions.function(Consumer.class).returning(Arbitraries.nothing());
+		ListArbitrary<Consumer<Integer>> consumersArbitrary = returning.list().ofMinSize(1);
+
+		List<Consumer<Integer>> consumers = consumersArbitrary.generator(10, true).next(random).value();
+		consumers.forEach(consumer -> {
+			consumer.accept(0);
+			consumer.accept(Integer.MAX_VALUE);
+		});
 	}
 
 	@Example

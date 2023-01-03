@@ -7,6 +7,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
+import net.jqwik.api.support.*;
 import net.jqwik.engine.support.*;
 
 abstract class AbstractFunctionGenerator<F, R> implements RandomGenerator<F> {
@@ -43,7 +44,7 @@ abstract class AbstractFunctionGenerator<F, R> implements RandomGenerator<F> {
 				return handleToStringOfConstantMethod(constant);
 			}
 			if (JqwikReflectionSupport.isHashCodeMethod(method)) {
-				return constant.hashCode() + constant.hashCode();
+				return HashCodeSupport.hash(constant);
 			}
 			if (method.isDefault()) {
 				return handleDefaultMethod(proxy, method, args);
