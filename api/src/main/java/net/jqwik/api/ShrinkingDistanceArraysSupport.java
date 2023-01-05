@@ -9,8 +9,7 @@ class ShrinkingDistanceArraysSupport {
 	}
 
 	static long[] sumUp(List<long[]> listOfArrays) {
-		int maxDistanceSize = maxValue(listOfArrays);
-		long[] summedUpArray = new long[maxDistanceSize];
+		long[] summedUpArray = new long[maxLength(listOfArrays)];
 		for (long[] array : listOfArrays) {
 			for (int i = 0; i < summedUpArray.length; i++) {
 				summedUpArray[i] = plusWithoutOverflowAt(summedUpArray, array, i);
@@ -19,7 +18,7 @@ class ShrinkingDistanceArraysSupport {
 		return summedUpArray;
 	}
 
-	private static int maxValue(List<long[]> listOfArrays) {
+	private static int maxLength(List<long[]> listOfArrays) {
 		int maxDistanceSize = 0;
 		for (long[] array : listOfArrays) {
 			maxDistanceSize = Math.max(maxDistanceSize, array.length);
