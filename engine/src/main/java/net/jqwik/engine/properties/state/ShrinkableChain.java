@@ -171,13 +171,11 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			// Fix random seed for same random sequence in re-runs
 			long nextSeed = random.nextLong();
 
-			Shrinkable<Transformer<T>> next = null;
 			if (steps < iterations.size()) {
-				next = rerunStep();
+				return rerunStep();
 			} else {
-				next = runNewStep(nextSeed);
+				return runNewStep(nextSeed);
 			}
-			return next.value();
 		}
 
 		private T transformState(Transformer<T> transformer, T before) {
@@ -194,17 +192,18 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 			}
 		}
 
-		private Shrinkable<Transformer<T>> rerunStep() {
+		private Transformer<T> rerunStep() {
 			ShrinkableChainIteration<T> iteration = iterations.get(steps);
 			iteration.precondition().ifPresent(predicate -> {
 				if (!predicate.test(current)) {
 					throw new TestAbortedException("Precondition no longer valid");
 				}
 			});
-			return iteration.shrinkable;
+			// TODO: Could that be optimized to iteration.transformer()?
+			return iteration.shrinkable.value();
 		}
 
-		private Shrinkable<Transformer<T>> runNewStep(long nextSeed) {
+		private Transformer<T> runNewStep(long nextSeed) {
 			Random random = SourceOfRandomness.newRandom(nextSeed);
 
 			AtomicInteger attemptsCounter = new AtomicInteger(0);
@@ -215,17 +214,21 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 				boolean accessState = arbitraryAccessTuple.get3();
 
 				RandomGenerator<Transformer<T>> generator = arbitrary.generator(genSize);
-				Shrinkable<Transformer<T>> next = generator.next(random);
-				if (next.value() == Transformer.noop()) {
+				Shrinkable<Transformer<T>> nextShrinkable = generator.next(random);
+				Transformer<T> next = nextShrinkable.value();
+				if (next == Transformer.noop()) {
 					continue;
 				}
-				iterations.add(new ShrinkableChainIteration<>(precondition, accessState, next));
+				iterations.add(new ShrinkableChainIteration<>(precondition, accessState, nextShrinkable));
 				return next;
 			}
 			return failWithTooManyAttempts(attemptsCounter);
 		}
 
-		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(Random random, AtomicInteger attemptsCounter) {
+		private Tuple3<Arbitrary<Transformer<T>>, Predicate<T>, Boolean> nextTransformerArbitrary(
+			Random random,
+			AtomicInteger attemptsCounter
+		) {
 			AtomicBoolean accessState = new AtomicBoolean(false);
 			Supplier<T> supplier = () -> {
 				accessState.set(true);
