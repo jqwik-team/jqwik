@@ -27,7 +27,7 @@ ext {
 	assertJVersion = '3.24.1'
 	mockitoVersion = '4.11.0'
 	systemLambdaVersion = '1.2.1'
-	kotlinVersion = '1.7.20'
+	kotlinVersion = '1.8.0'
 	kotlinxVersion = '1.6.4'
 	kotestVersion = '5.5.4'
 	findbugsVersion = '3.0.2'
