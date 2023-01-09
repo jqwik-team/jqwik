@@ -52,9 +52,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - Across single property with annotation @Parallel
   - Across Properties: Does it make sense with non working IntelliJ support?
   
-- Concurrent execution of ActionSequences. 
-  See https://www.youtube.com/watch?v=r5i_OiZw6Sw for inspiration
-
 ### Lifecycle Hooks
 
 - Make ProvidePropertyInstanceHook a useful hook for other purposes.
@@ -111,13 +108,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   https://github.com/Zac-HD/hypothesis-jsonschema
   - https://github.com/schemathesis/schemathesis 
 
-- Arbitraries.random(): Generate an  instrumentalized Random subclass which uses
-  jqwik generators for methods like Random.nextDouble() etc. 
-  This will allow shrinking of provided pseudo-random values.
-  See PR for this feature in Hypothesis: https://github.com/HypothesisWorks/hypothesis/pull/2472
-
 - Generator / value sharing:
-
     - Arbitrary.shareValue(Arbitrary, String key)
       [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
 
@@ -127,15 +118,9 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
     https://github.com/jeffhain/jafaran/blob/master/src/main/java/net/jafaran/Ziggurat.java
 
 - Stateful Properties:
-  - see https://github.com/jlink/jqwik/issues/80
-  - Let action generation access the model state?
-    E.g. to use a name that’s already been added to a store.
-    - Will require involved version of ActionGenerator, e.g. to take
-      Arbitrary<Function<T, Arbitrary<Action<T>>>>
-    - Will shrinking work on that?
-    - Are there other ways to reach the same goal?
-  - Parallel execution of action sequences (see Proper book)
   - Special support for FSMs (finite state machines)
+  - Concurrent execution of Chains and ActionChains.
+    See https://www.youtube.com/watch?v=r5i_OiZw6Sw for inspiration
 
 - @Property(timeout=500) msecs to timeout a property run
 

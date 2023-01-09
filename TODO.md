@@ -1,12 +1,16 @@
-# 1.7.2
-
-# 1.7.x
+# 1.7.3
 
     - State-based Properties (https://github.com/jlink/jqwik/issues/428) : 
       - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
       - ChainArbitrary.startWith(.., ChainConfig.of(isImmutable, hasSideEffects, comparator))
 
     - Fix shrink and grow bug: https://github.com/jlink/jqwik/issues/439
+
+    - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
+      - Alternative: New annotation @InitBeforeTry
+
+
+# 1.7.x
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
       See Jupiter's TestInfo as an example.
@@ -15,9 +19,6 @@
       - Should cover https://github.com/jlink/jqwik/issues/80.
       - Maybe ModelChain can be fully generated before it's provided as parameter? This could enable repeatability of shrinked samples.
       - See example in https://github.com/jlink/model-based-testing/tree/jqwik170/src/test/java/mbt/tecoc/withModelChain
-
-    - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
-      - Alternative: New annotation @InitBeforeTry
 
     - JqwikSession:
       - setRandomSessionSeed(), getRandomSessionSeed()
