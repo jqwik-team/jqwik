@@ -2,6 +2,10 @@
 
 # 1.7.x
 
+    - State-based Properties (https://github.com/jlink/jqwik/issues/428) : 
+      - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
+      - ChainArbitrary.startWith(.., ChainConfig.of(isImmutable, hasSideEffects, comparator))
+
     - Fix shrink and grow bug: https://github.com/jlink/jqwik/issues/439
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
