@@ -1,10 +1,7 @@
 /**
  * This package contains interfaces that are implemented by engine-module
- * and also used in other modules, e.g. testing
- *
- * <p>
- *     This package may also be moved to a module of its own.
- * </p>
+ * and also used in other modules, e.g. testing.
+ * They are not supposed to be used from outside jqwik
  */
 
 //@API(status = API.Status.INTERNAL) // Currently not allowed by api-guardian
