@@ -1,6 +1,4 @@
-| Branch   | CI Build Status |
-| ---------| --------------- |
-| main     | [![CI Status](https://github.com/jlink/jqwik/workflows/CI/badge.svg?branch=main)](https://github.com/jlink/jqwik/actions) |
+[![CI Status](https://github.com/jlink/jqwik/workflows/CI/badge.svg?branch=main)](https://github.com/jlink/jqwik/actions)
 
 # jqwik
 
