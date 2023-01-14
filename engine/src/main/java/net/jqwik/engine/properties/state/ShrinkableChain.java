@@ -5,6 +5,8 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.engine.support.*;
+
 import org.jetbrains.annotations.*;
 import org.opentest4j.*;
 
@@ -118,6 +120,12 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		@NotNull
 		public List<Transformer<T>> transformers() {
 			return iterations.stream().map(i -> i.transformer()).collect(Collectors.toList());
+		}
+
+		@Override
+		public String toString() {
+			String actionsString = JqwikStringSupport.displayString(transformations());
+			return String.format("Chain: %s", actionsString);
 		}
 	}
 
