@@ -17,41 +17,60 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-
+  matrix_prep:
+    name: Matrix Preparation
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    env:
+      MATRIX_JOBS: 4
+    steps:
+    - uses: actions/checkout@v3
+    - id: set-matrix
+      run: |
+        node .github/workflows/matrix.js
 
+  build:
+    name: '${{ matrix.name }}'
+    runs-on: ${{ matrix.os }}
+    needs: matrix_prep
     strategy:
-      matrix:
-        java: [ '8.0.322+6', '11.0.14+101', '17.0.2+8', '18.0.0+36' ]
-
-    name: Test on Java ${{ matrix.Java }}
-
+      matrix: ${{fromJson(needs.matrix_prep.outputs.matrix)}}
+      # fail-fast: false
+    env:
+      TZ: ${{ matrix.tz }}
     steps:
       - uses: actions/checkout@v3
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
 
-      - name: Set up JDK
+      - name: Set up Java ${{ matrix.java_version }}, ${{ matrix.java_distribution }}
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.Java }}
+          java-version: ${{ matrix.java_version }}
+          distribution: ${{ matrix.java_distribution }}
           check-latest: true
+
+      - name: Steps to reproduce
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log('The following command might help reproducing CI results, use Java ${{ matrix.java_version }}')
+            console.log('TZ="${{ matrix.tz }}" _JAVA_OPTIONS="${{ matrix.testExtraJvmArgs }}" ./gradlew check ${{ matrix.extraGradleArgs }}')
 
       - uses: burrunan/gradle-cache-action@v1
         # See https://github.com/burrunan/gradle-cache-action
         name: Build and Test
+        env:
+          _JAVA_OPTIONS: ${{ matrix.testExtraJvmArgs }}
         with:
           # It allows different cache contents for different JDKs
-          job-id: java${{ matrix.java }}
-          arguments: check
+          job-id: java${{ matrix.java_version }}
+          arguments: check ${{ matrix.extraGradleArgs }}
 
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
         if: always() && (github.ref == 'refs/heads/main')
         with:
-          check_name: Test Report for Java ${{ matrix.Java }}
+          check_name: Test Report for ${{ matrix.name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
