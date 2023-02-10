@@ -26,7 +26,6 @@ public class DefaultCalendarArbitrary extends ArbitraryDecorator<Calendar> imple
 	@SuppressWarnings("MagicConstant")
 	public static Calendar localDateToCalendar(LocalDate date) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
 		calendar.set(date.getYear(), monthToCalendarMonth(date.getMonth()), date.getDayOfMonth(), 0, 0, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar;
