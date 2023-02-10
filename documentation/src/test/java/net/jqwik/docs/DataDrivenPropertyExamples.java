@@ -9,7 +9,6 @@ class DataDrivenPropertyExamples {
 
 	@Data
 	Iterable<Tuple2<Integer, String>> fizzBuzzExamples() {
-		//noinspection unchecked
 		return Table.of(
 			Tuple.of(1, "1"),
 			Tuple.of(3, "Fizz"),
