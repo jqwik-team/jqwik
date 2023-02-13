@@ -72,15 +72,13 @@ signing {
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-	kotlinOptions {
-		freeCompilerArgs = [
-			"-Xjsr305=strict", // For strict type warnings
-			"-Xjsr305=under-migration:strict",
-			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
-		]
-		jvmTarget = "1.8"
-		javaParameters = true // Required to get correct parameter names in reporting
-	}
+	kotlinOptions.freeCompilerArgs = [
+		"-Xjsr305=strict", // For strict type warnings
+		"-Xjsr305=under-migration:strict",
+		"-Xemit-jvm-type-annotations" // Required for annotations on type variables
+	]
+	kotlinOptions.jvmTarget = "1.8"
+	kotlinOptions.javaParameters = true // Required to get correct parameter names in reporting
 }
 
 compileTestKotlin {
@@ -119,6 +117,6 @@ dependencies {
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${kotlinxVersion}")
 
-	// Necessary in order to run all tests of a package in IntelliJ IDEA 2022.2.1
+	// Necessary in order to run all tests of a package in IntelliJ IDEA 2022.3.2
 	testImplementation("io.kotest:kotest-runner-junit5:${kotestVersion}")
 }

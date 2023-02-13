@@ -125,19 +125,17 @@ test {
 
 	exclude 'net/jqwik/docs/**' // some tests are supposed to fail
 
-	// testLogging.showStandardStreams = true
+	testLogging.showStandardStreams = true
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-	kotlinOptions {
-		freeCompilerArgs = [
-			"-Xjsr305=strict", // For strict type warnings
-			"-Xjsr305=under-migration:strict",
-			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
-		]
-		jvmTarget = "1.8"
-		javaParameters = true // Required to get correct parameter names in reporting
-	}
+	kotlinOptions.freeCompilerArgs = [
+		"-Xjsr305=strict", // For strict type warnings
+		"-Xjsr305=under-migration:strict",
+		"-Xemit-jvm-type-annotations" // Required for annotations on type variables
+	]
+	kotlinOptions.jvmTarget = "1.8"
+	kotlinOptions.javaParameters = true
 }
 
 compileTestKotlin {
