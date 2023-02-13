@@ -233,6 +233,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@SuppressWarnings("unchecked")
+	@SafeVarargs
 	public static <T> Arbitrary<T> oneOf(Arbitrary<? extends T> first, Arbitrary<? extends T>... rest) {
 		List<Arbitrary<? extends T>> all = new ArrayList<>();
 		all.add(first);
@@ -734,6 +735,7 @@ public class Arbitraries {
 	 *
 	 * @return a new arbitrary instance
 	 */
+	@SafeVarargs
 	@API(status = MAINTAINED, since = "1.6.4")
 	public static <T> SetArbitrary<T> subsetOf(T... values) {
 		return subsetOf(Arrays.asList(values));
