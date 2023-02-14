@@ -1,13 +1,15 @@
 # 1.7.3
 
-    - State-based Properties (https://github.com/jlink/jqwik/issues/428) : 
-      - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
-      - ChainArbitrary.startWith(.., ChainConfig.of(isImmutable, hasSideEffects, comparator))
+    - Add section with external modules to website / user guide
 
     - Fix shrink and grow bug: https://github.com/jlink/jqwik/issues/439
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
       - Alternative: New annotation @InitBeforeTry
+
+    - State-based Properties (https://github.com/jlink/jqwik/issues/428) : 
+      - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
+      - ChainArbitrary.startWith(.., ChainConfig.of(isImmutable, hasSideEffects, comparator))
 
 
 # 1.7.x
