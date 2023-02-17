@@ -120,7 +120,7 @@ class UseArbitrariesOutsideJqwikTests {
 	}
 
 	/**
-	 * Has been brought up in https://github.com/jlink/jqwik/issues/205
+	 * Has been brought up in https://github.com/jqwik-team/jqwik/issues/205
 	 */
 	@Test
 	void useSampleInArbitraryDefinition() {

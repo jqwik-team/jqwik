@@ -42,9 +42,9 @@ publishing {
 					}
 				}
 				scm {
-					connection = 'scm:git:git://github.com/jlink/jqwik.git'
-					developerConnection = 'scm:git:git://github.com/jlink/jqwik.git'
-					url = 'https://github.com/jlink/jqwik'
+					connection = 'scm:git:git://github.com/jqwik-team/jqwik.git'
+					developerConnection = 'scm:git:git://github.com/jqwik-team/jqwik.git'
+					url = 'https://github.com/jqwik-team/jqwik'
 				}
 			}
 		}

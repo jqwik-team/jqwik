@@ -2,8 +2,8 @@ package examples.bugs;
 
 import net.jqwik.api.*;
 
-// see problem in https://github.com/jlink/jqwik/issues/113
-// feature issue: https://github.com/jlink/jqwik/issues/114
+// see problem in https://github.com/jqwik-team/jqwik/issues/113
+// feature issue: https://github.com/jqwik-team/jqwik/issues/114
 class JqwikHeapBust {
 
 	@Property//(edgeCases = EdgeCasesMode.NONE)

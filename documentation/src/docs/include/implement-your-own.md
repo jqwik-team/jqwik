@@ -63,4 +63,4 @@ Overriding `ArbitraryDecorator.arbitrary()` is where you can apply the knowledge
 of the previous chapters.
 If you get stuck figuring out how to create an arbitrary with the desired behaviour
 either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
-or [open a Github issue](https://github.com/jlink/jqwik/issues).
+or [open a Github issue](https://github.com/jqwik-team/jqwik/issues).

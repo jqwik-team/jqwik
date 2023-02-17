@@ -21,7 +21,7 @@ public class MutatingChainExperiments {
 	}
 
 	// This fails (in 1.7.2) although it shouldn't.
-	// See https://github.com/jlink/jqwik/issues/428 for discussion on the topic
+	// See https://github.com/jqwik-team/jqwik/issues/428 for discussion on the topic
 	@Property(shrinking = ShrinkingMode.FULL, seed = "7077187739734332001")
 	void chainActionsAreProperlyDescribedEvenAfterChainExecution(@ForAll("setMutatingChain") ActionChain<SetMutatingChainState> chain) {
 		chain = chain.withInvariant(

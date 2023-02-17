@@ -20,7 +20,7 @@ Also, state machines can have invariants that should never be violated regardles
 of the sequence of performed actions.
 
 To make this abstract concept concrete, let's look at a
-[simple stack implementation](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/state/mystack/MyStringStack.java):
+[simple stack implementation](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/state/mystack/MyStringStack.java):
 
 ```java
 public class MyStringStack {

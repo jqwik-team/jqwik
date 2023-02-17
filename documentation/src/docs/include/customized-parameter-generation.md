@@ -5,7 +5,7 @@ of values programmatically. The means to do that are _provider methods_.
 ### Arbitrary Provider Methods
 
 Look at the
-[following example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ProvideMethodExamples.java):
+[following example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ProvideMethodExamples.java):
 
 ```java
 @Property
@@ -252,7 +252,7 @@ Arbitrary<String> abcdWeighted() {
 
 The first value of the tuple specifies the frequency of a particular value in relation to the
 sum of all frequencies. In
-[the given example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ChoosingExamples.java#L17)
+[the given example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ChoosingExamples.java#L17)
 the sum is 36, thus `"a"` will be generated with a probability of `1/36`
 whereas `"d"` has a generation probability of `20/36` (= `5/9`).
 
@@ -663,7 +663,7 @@ which are organized in a flat hierarchy:
 
 
 Here are a
-[two examples](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/FluentConfigurationExamples.java)
+[two examples](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/FluentConfigurationExamples.java)
 to give you a hint of what you can do:
 
 ```java
@@ -840,7 +840,7 @@ Arbitrary<List<Tuple2<Integer, Long>>> elementsWithOccurrence() {
 Similar as in the case of `Arbitrary.map(..)` there are situations in which you want to use
 a generated value in order to create another Arbitrary from it. Sounds complicated?
 Have a look at the
-[following example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/FlatMappingExamples.java#L26):
+[following example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/FlatMappingExamples.java#L26):
 
 ```java
 @Property
@@ -875,7 +875,7 @@ However, both have dependencies:
   You can make _jqwik_ create all three values by using
   [`flatMap`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#flatMap(java.util.function.Function))
   combined with a tuple type
-  [like this](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/FlatMappingExamples.java#L32):
+  [like this](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/FlatMappingExamples.java#L32):
 
 
 ```java
@@ -982,7 +982,7 @@ Arbitrary<Integer> oneOfThree() {
 }
 ```
 
-[In this example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/OneOfExamples.java)
+[In this example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/OneOfExamples.java)
 the statistics should also give you an equal distribution between
 the three types of integers.
 

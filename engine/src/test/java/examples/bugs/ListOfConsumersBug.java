@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 
-// See https://github.com/jlink/jqwik/issues/446
+// See https://github.com/jqwik-team/jqwik/issues/446
 class ListOfConsumersBug {
 	@Property
 	void listOfConsumers(@ForAll @Size(min = 1) List<Consumer<Integer>> integerConsumers){

@@ -12,7 +12,7 @@ _Jqwik_ offers provides two main mechanism to do that:
 [`Combinators.combine()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#combine(net.jqwik.api.Arbitrary,net.jqwik.api.Arbitrary))
 allows you to set up a composite arbitrary from up to eight parts.
 
-[The following example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/MappingAndCombinatorExamples.java#L25)
+[The following example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/MappingAndCombinatorExamples.java#L25)
 generates `Person` instances from three arbitraries as inputs.
 
 ```java

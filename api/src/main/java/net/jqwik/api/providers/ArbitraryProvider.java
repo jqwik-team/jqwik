@@ -22,11 +22,11 @@ import static org.apiguardian.api.API.Status.*;
  * Some examples that come with jqwik:
  * </p>
  * <ul>
- * <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/providers/EnumArbitraryProvider.java"
+ * <li><a href="https://github.com/jqwik-team/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/providers/EnumArbitraryProvider.java"
  * >net.jqwik.engine.providers.EnumArbitraryProvider</a></li>
- * <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/providers/BigDecimalArbitraryProvider.java"
+ * <li><a href="https://github.com/jqwik-team/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/providers/BigDecimalArbitraryProvider.java"
  * >net.jqwik.engine.providers.BigDecimalArbitraryProvider</a></li>
- * <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/providers/ListArbitraryProvider.java"
+ * <li><a href="https://github.com/jqwik-team/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/providers/ListArbitraryProvider.java"
  * >net.jqwik.engine.providers.ListArbitraryProvider</a></li>
  * </ul>
  */

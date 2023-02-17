@@ -12,7 +12,7 @@ when they can be invoked and some objects have invariants that should never be v
 of the sequence of performed actions.
 
 To make this abstract concept concrete, let's look at a
-[simple stack implementation](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/MyStringStack.java):
+[simple stack implementation](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/MyStringStack.java):
 
 ```java
 public class MyStringStack {
@@ -29,7 +29,7 @@ public class MyStringStack {
 
 We can see at least three _actions_ with their preconditions and expected state changes:
 
-- [`Push`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PushAction.java):
+- [`Push`](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PushAction.java):
   Push a string onto the stack. The string should be on top afterwards and the size
   should have increased by 1.
 
@@ -59,7 +59,7 @@ We can see at least three _actions_ with their preconditions and expected state 
   }
   ``` 
 
-- [`Pop`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PopAction.java):
+- [`Pop`](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PopAction.java):
   If (and only if) the stack is not empty, pop the element on top off the stack.
   The size of the stack should have decreased by 1.
 
@@ -87,7 +87,7 @@ We can see at least three _actions_ with their preconditions and expected state 
   }
   ``` 
 
-- [`Clear`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/ClearAction.java):
+- [`Clear`](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/ClearAction.java):
   Remove all elements from the stack which should be empty afterwards.
 
   ```java
@@ -113,7 +113,7 @@ The fundamental property that _jqwik_ should try to falsify is:
     (aka postconditions) should be fulfilled.
 
 We can formulate that quite easily as a
-[_jqwik_ property](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/MyStringStackProperties.java):
+[_jqwik_ property](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/stateful/mystack/MyStringStackProperties.java):
 
 ```java
 class MyStringStackProperties {

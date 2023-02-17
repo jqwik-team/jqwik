@@ -9,7 +9,7 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
 
 /**
- * For feature https://github.com/jlink/jqwik/issues/75
+ * For feature https://github.com/jqwik-team/jqwik/issues/75
  */
 class StatisticsCoverageExamples {
 

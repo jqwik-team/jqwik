@@ -2,7 +2,7 @@ If you want to constrain the set of generated values in a way that embraces
 more than one parameter, [filtering](#filtering) does not work. What you
 can do instead is putting one or more assumptions at the beginning of your property.
 
-[The following property](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/AssumptionExamples.java)
+[The following property](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/AssumptionExamples.java)
 works only on strings that are not equal:
 
 ```java

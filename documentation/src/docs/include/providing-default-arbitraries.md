@@ -20,7 +20,7 @@ packaged into _jqwik_.
 ### Simple Arbitrary Providers
 
 A simple provider is one that delivers arbitraries for types without type variables.
-Consider the class [`Money`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/defaultprovider/Money.java):
+Consider the class [`Money`](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/defaultprovider/Money.java):
 
 ```java
 public class Money {
@@ -44,7 +44,7 @@ public class Money {
 ``` 
 
 If you register the following class
-[`MoneyArbitraryProvider`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/defaultprovider/MoneyArbitraryProvider.java):
+[`MoneyArbitraryProvider`](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/defaultprovider/MoneyArbitraryProvider.java):
 
 ```java
 package my.own.provider;
@@ -67,7 +67,7 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 ```
 
 in file
-[`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider)
+[`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider)
 with such an entry:
 
 ```
@@ -75,7 +75,7 @@ my.own.provider.MoneyArbitraryProvider
 ```
 
 The
-[following property](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/defaultprovider/MoneyProperties.java)
+[following property](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/defaultprovider/MoneyProperties.java)
 will run without further ado - regardless the class you put it in:
 
 ```java
@@ -162,9 +162,9 @@ The mechanism you can plug into is similar to what you do when
 
 To demonstrate the idea let's create an annotation `@Odd` which will constrain any integer
 generation to only generate odd numbers. First things first, so here's
-the [`@Odd` annotation](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/Odd.java)
+the [`@Odd` annotation](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/Odd.java)
 together with the
-[configurator implementation](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddConfigurator.java):
+[configurator implementation](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddConfigurator.java):
 
 ```java
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
@@ -183,8 +183,8 @@ Mind that the implementation uses an abstract base class - instead of the interf
 which simplifies implementation if you're only interested in a single annotation.
 
 If you now
-[register the implementation](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator),
-the [following example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddProperties.java)
+[register the implementation](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator),
+the [following example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddProperties.java)
 will work:
 
 ```java

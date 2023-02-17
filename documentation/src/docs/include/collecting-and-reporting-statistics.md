@@ -89,7 +89,7 @@ void twoParameterStats(
 
 As you can see, collected `null` values are not being reported.
 
-[Here](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/statistics/StatisticsExamples.java)
+[Here](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/statistics/StatisticsExamples.java)
 are a couple of examples to try out.
 
 ### Labeled Statistics

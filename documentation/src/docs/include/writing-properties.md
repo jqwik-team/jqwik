@@ -25,7 +25,7 @@ The first failed execution will stop value generation
 and be reported as failure - usually followed by an attempt to
 [shrink](#result-shrinking) the falsified parameter set.
 
-[Here](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/PropertyBasedTests.java)
+[Here](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/PropertyBasedTests.java)
 are two properties whose failures might surprise you:
 
 ```java
@@ -344,7 +344,7 @@ A test case method must
 - or return nothing (`void`) in which case you will probably
   use [assertions](#assertions) in order to verify the test condition.
 
-[Here](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ExampleBasedTests.java)
+[Here](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ExampleBasedTests.java)
 is a test class with two example-based tests:
 
 ```java
@@ -594,7 +594,7 @@ maintainability of your tests.
 
 Groups can be nested and there lifecycle is also nested, that means that
 the lifecycle of a test class is also applied to inner groups of that container.
-Have a look at [this example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/TestsWithGroups.java):
+Have a look at [this example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/TestsWithGroups.java):
 
 ```java
 import net.jqwik.api.*;
@@ -642,7 +642,7 @@ If you want to tweak display names even more,
 test container classes, groups, example methods and property methods can be labeled
 using the annotation `@Label("a label")`. This label will be used to display the element
 in test reports or within the IDE.
-[In the following example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/NamingExamples.java),
+[In the following example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/NamingExamples.java),
 every test relevant element has been labeled:
 
 ```java
@@ -684,7 +684,7 @@ Those tag can be used to filter the set of tests
 Tags are handed down from container (class or group) to its children (test methods or groups).
 
 Have a look at
-[the following example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/TaggingExamples.java).
+[the following example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/TaggingExamples.java).
 Including the tag `integration-test` will include
 all tests of the class.
 

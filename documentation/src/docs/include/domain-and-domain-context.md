@@ -60,7 +60,7 @@ Let's say that US postal addresses play a crucial role in the software that we'r
 That's why there are a couple of classes that represent important domain concepts:
 `Street`, `State`, `City` and `Address`. Since we have to generate instances of those classes
 for our properties, we collect all arbitrary provision code 
-[in one place](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/domains/AmericanAddresses.java):
+[in one place](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/domains/AmericanAddresses.java):
 
 ```java
 public class AmericanAddresses extends DomainContextBase {

@@ -130,7 +130,7 @@ public class StoreRepository {
 			.flatMap(identifiedStores -> new ArrayList<>(identifiedStores.values()).stream());
 
 		// TODO: Above implementation tries to get rid of ConcurrentModificationException
-		//       reported in https://github.com/jlink/jqwik/issues/210.
+		//       reported in https://github.com/jqwik-team/jqwik/issues/210.
 		//       Evaluate if it really does.
 		// return storesByIdentifier
 		// 		   .values()

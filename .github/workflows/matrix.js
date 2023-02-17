@@ -99,7 +99,7 @@ matrix.exclude({java_distribution: 'microsoft', java_version: '18'});
 matrix.exclude({java_distribution: 'oracle', java_version: ['8', '11']});
 // TODO: remove when compileJava with "same hashcode" issues are resolved
 // See https://bugs.openjdk.org/browse/JDK-8288590 is resolved
-// See https://github.com/jlink/jqwik/pull/460#issuecomment-1428261036
+// See https://github.com/jqwik-team/jqwik/pull/460#issuecomment-1428261036
 matrix.exclude({hash: {value: 'same'}});
 
 // The most rare features should be generated the first

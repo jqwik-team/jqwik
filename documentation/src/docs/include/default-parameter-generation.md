@@ -212,7 +212,7 @@ _jqwik_ can also handle type variables and wildcard types. The handling of upper
 bounds works mostly as you would expect it.
 
 Consider
-[the following examples](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/VariableTypedPropertyExamples.java):
+[the following examples](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/VariableTypedPropertyExamples.java):
 
 ```java
 class VariableTypedPropertyExamples {

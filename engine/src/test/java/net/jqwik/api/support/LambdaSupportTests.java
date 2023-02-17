@@ -128,7 +128,7 @@ class LambdaSupportTests {
 	}
 
 	/**
-	 * See https://github.com/jlink/jqwik/issues/393 for details and motivation.
+	 * See https://github.com/jqwik-team/jqwik/issues/393 for details and motivation.
 	 * The failure occurred in jqwik 1.7.0 with Java >= 17.
 	 * The critical code is in LambdaSupport.fieldIsEqualIn(..).
 	 */

@@ -5,7 +5,7 @@ is one application field but you can also use it for other stuff.
 ### Probabilistic Recursion
 
 Look at the
-[following example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/RecursiveExamples.java)
+[following example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/RecursiveExamples.java)
 which generates sentences by recursively adding words to a sentence:
 
 ```java

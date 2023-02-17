@@ -37,7 +37,7 @@ class ErrorEquivalenceChecker {
 		StackTraceElement[] stackTrace = error.getStackTrace();
 		if (stackTrace == null) {
 			// Although you might think this cannot happen, it can.
-			// See https://github.com/jlink/jqwik/issues/283 for the discussion
+			// See https://github.com/jqwik-team/jqwik/issues/283 for the discussion
 			return Optional.empty();
 		}
 		return Arrays.stream(stackTrace)

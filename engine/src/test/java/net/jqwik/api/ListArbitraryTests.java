@@ -294,7 +294,7 @@ class ListArbitraryTests {
 
 	/**
 	 * Motivated by performance issues when generating large lists.
-	 * See https://github.com/jlink/jqwik/pull/227
+	 * See https://github.com/jqwik-team/jqwik/pull/227
 	 */
 	@Group
 	class LargeLists {

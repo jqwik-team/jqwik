@@ -463,7 +463,7 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
   `Byte` instead of `UByte` and so on.
   One day _jqwik_ may be able to handle the intricacies of hidden Kotlin types
   better. 
-  [Create an issue](https://github.com/jlink/jqwik/issues/new) if that's important for you.
+  [Create an issue](https://github.com/jqwik-team/jqwik/issues/new) if that's important for you.
 
 - Inline classes are handled like the class they inline.
   Default generation works and you can also use constraint annotations for the inlined class:
@@ -483,4 +483,4 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
   However, if you build your own arbitraries for inline classes 
   you have to generate values of the _inlined class_ instead, 
   which would be `String` in the example above.
-  [Create an issue](https://github.com/jlink/jqwik/issues/new) if that bothers you too much.
+  [Create an issue](https://github.com/jqwik-team/jqwik/issues/new) if that bothers you too much.

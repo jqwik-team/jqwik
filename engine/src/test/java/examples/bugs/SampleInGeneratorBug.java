@@ -6,7 +6,7 @@ import org.junit.platform.commons.util.*;
 import net.jqwik.api.*;
 
 /**
- * see https://github.com/jlink/jqwik/issues/205
+ * see https://github.com/jqwik-team/jqwik/issues/205
  */
 class SampleInGeneratorBug {
 

@@ -4,7 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 
-// see https://github.com/jlink/jqwik/issues/119
+// see https://github.com/jqwik-team/jqwik/issues/119
 class JqwikLogExplosion {
 
 	@Property(edgeCases = EdgeCasesMode.MIXIN)

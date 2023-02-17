@@ -591,7 +591,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 					&& Objects.equals(embeddedTypeToFind, typeToFind)) {
 				// To prevent stack overflow on recursive parameterized types
 				// This is looser than it should be
-				// In response to https://github.com/jlink/jqwik/issues/327
+				// In response to https://github.com/jqwik-team/jqwik/issues/327
 				// Not covered by unit test, b/c I wasn't able to create one :-(
 				return true;
 			}

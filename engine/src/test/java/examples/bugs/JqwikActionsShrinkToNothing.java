@@ -11,7 +11,7 @@ import net.jqwik.testing.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * https://github.com/jlink/jqwik/issues/104
+ * https://github.com/jqwik-team/jqwik/issues/104
  */
 public class JqwikActionsShrinkToNothing {
 

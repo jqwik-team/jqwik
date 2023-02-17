@@ -10,4 +10,4 @@ _List open issues and remaining problems with your solution._
 
 ---
 
-I hereby agree to the terms of the [jqwik Contributor Agreement](https://github.com/jlink/jqwik/blob/master/CONTRIBUTING.md#jqwik-contributor-agreement).
+I hereby agree to the terms of the [jqwik Contributor Agreement](https://github.com/jqwik-team/jqwik/blob/master/CONTRIBUTING.md#jqwik-contributor-agreement).

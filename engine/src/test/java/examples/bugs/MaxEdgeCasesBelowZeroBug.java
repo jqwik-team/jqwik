@@ -5,7 +5,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 
 /**
- * https://github.com/jlink/jqwik/issues/180
+ * https://github.com/jqwik-team/jqwik/issues/180
  */
 public class MaxEdgeCasesBelowZeroBug {
 

@@ -16,11 +16,11 @@ import static org.apiguardian.api.API.Status.*;
  * There are a few implementors within jqwik's own codebase:
  * </p>
  * <ul>
- *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/OneOfArbitrary.java"
+ *     <li><a href="https://github.com/jqwik-team/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/OneOfArbitrary.java"
  *     >net.jqwik.engine.properties.arbitraries.OneOfArbitrary</a></li>
- *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/FrequencyOfArbitrary.java"
+ *     <li><a href="https://github.com/jqwik-team/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/FrequencyOfArbitrary.java"
  *     >net.jqwik.engine.properties.arbitraries.FrequencyOfArbitrary</a></li>
- *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/ArrayArbitrary.java"
+ *     <li><a href="https://github.com/jqwik-team/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/ArrayArbitrary.java"
  *     >net.jqwik.engine.properties.arbitraries.ArrayArbitrary</a></li>
  * </ul>
  */

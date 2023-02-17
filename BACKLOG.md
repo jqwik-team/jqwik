@@ -12,7 +12,7 @@
   Additional module, e.g. jqwik-jupiter-extensions-adapter
 
 - Guided Generation
-  https://github.com/jlink/jqwik/issues/84
+  https://github.com/jqwik-team/jqwik/issues/84
     - Maybe change AroundTryHook to allow replacement of `Random` source
     - Or: Introduce ProvideGenerationSourceHook
     
@@ -75,7 +75,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Reporting.ARBITRARIES|GENERATORS: report for each property which arbitraries are used.
     - Requires Arbitrary.describe() or something similar
 
-- Property runtime statistics (https://github.com/jlink/jqwik/issues/100)
+- Property runtime statistics (https://github.com/jqwik-team/jqwik/issues/100)
     - Additional reporting data, e.g.
       - Typical runtimes: ~ 1m
       - Fraction of time spent in data generation: ~ 12%
@@ -125,7 +125,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - @Property(timeout=500) msecs to timeout a property run
 
 - Guided data generation
-  see https://github.com/jlink/jqwik/issues/84
+  see https://github.com/jqwik-team/jqwik/issues/84
   - also see: Targeted generation, Simulated annealing with an additional target
     function in property (see Proper book)
 
@@ -156,7 +156,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - Add Arbitrary.describe() to optionally describe elements in sample output
   - functions/methods (whose output parameter can be generated)
   - @Regex(RegularExpression value) or composable RegexStringArbitrary
-    see https://github.com/jlink/jqwik/issues/68
+    see https://github.com/jqwik-team/jqwik/issues/68
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
 
 - Implement grow() for more shrinkables

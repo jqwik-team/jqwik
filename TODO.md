@@ -2,12 +2,12 @@
 
     - Add section with external modules to website / user guide
 
-    - Fix shrink and grow bug: https://github.com/jlink/jqwik/issues/439
+    - Fix shrink and grow bug: https://github.com/jqwik-team/jqwik/issues/439
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
       - Alternative: New annotation @InitBeforeTry
 
-    - State-based Properties (https://github.com/jlink/jqwik/issues/428) : 
+    - State-based Properties (https://github.com/jqwik-team/jqwik/issues/428) : 
       - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
       - ChainArbitrary.startWith(.., ChainConfig.of(isImmutable, hasSideEffects, comparator))
 
@@ -18,7 +18,7 @@
       See Jupiter's TestInfo as an example.
 
     - Introduce ModelChain or other mechanism to simplify model-based comparison properties. 
-      - Should cover https://github.com/jlink/jqwik/issues/80.
+      - Should cover https://github.com/jqwik-team/jqwik/issues/80.
       - Maybe ModelChain can be fully generated before it's provided as parameter? This could enable repeatability of shrinked samples.
       - See example in https://github.com/jlink/model-based-testing/tree/jqwik170/src/test/java/mbt/tecoc/withModelChain
 
@@ -41,7 +41,7 @@
       - For all collection arbitraries
 
     - SharedArbitrary
-      See https://github.com/jlink/jqwik/issues/294 & SharedArbitraryExperiments
+      See https://github.com/jqwik-team/jqwik/issues/294 & SharedArbitraryExperiments
       This probably requires major refactoring and change of structure.
 
         - Allow @ForAll on member variables of test container class
