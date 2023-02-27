@@ -131,7 +131,7 @@ class ArbitraryTests {
 	}
 
 	@Group
-	@PropertyDefaults(edgeCases = EdgeCasesMode.MIXIN, tries = 5000)
+	@PropertyDefaults(edgeCases = EdgeCasesMode.MIXIN, tries = 10000)
 	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
 	class GeneratorWithEmbeddedEdgeCases {
 
