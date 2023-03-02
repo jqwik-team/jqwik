@@ -1,7 +1,5 @@
 # 1.7.3
 
-    - Add section with external modules to website / user guide
-
     - Fix shrink and grow bug: https://github.com/jqwik-team/jqwik/issues/439
 
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
