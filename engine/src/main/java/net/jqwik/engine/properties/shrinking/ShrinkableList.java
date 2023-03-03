@@ -13,11 +13,17 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 
 	// Only used in tests
 	ShrinkableList(List<Shrinkable<E>> elements, int minSize, int maxSize) {
-		this(elements, minSize, maxSize, Collections.emptySet());
+		this(elements, minSize, maxSize, Collections.emptySet(), null);
 	}
 
-	public ShrinkableList(List<Shrinkable<E>> elements, int minSize, int maxSize, Collection<FeatureExtractor<E>> uniquenessExtractors) {
-		super(elements, minSize, maxSize, uniquenessExtractors);
+	// TODO: Check all callers if they can provide elementArbitrary
+	public ShrinkableList(
+		List<Shrinkable<E>> elements,
+		int minSize, int maxSize,
+		Collection<FeatureExtractor<E>> uniquenessExtractors,
+		Arbitrary<E> elementArbitrary
+	) {
+		super(elements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
 	}
 
 	@Override
@@ -32,7 +38,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 
 	@Override
 	Shrinkable<List<E>> createShrinkable(List<Shrinkable<E>> shrunkElements) {
-		return new ShrinkableList<>(shrunkElements, minSize, maxSize, uniquenessExtractors);
+		return new ShrinkableList<>(shrunkElements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
 	}
 
 	@Override

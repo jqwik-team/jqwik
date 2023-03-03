@@ -128,10 +128,11 @@ public class RandomGenerators {
 		RandomGenerator<T> elementGenerator,
 		int minSize, int maxSize, long maxUniqueElements,
 		int genSize, RandomDistribution sizeDistribution,
-		Set<FeatureExtractor<T>> uniquenessExtractors
+		Set<FeatureExtractor<T>> uniquenessExtractors,
+		Arbitrary<T> elementArbitrary
 	) {
 		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable =
-			elements -> new ShrinkableList<>(elements, minSize, maxSize, uniquenessExtractors);
+			elements -> new ShrinkableList<>(elements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
 		return container(elementGenerator, createShrinkable, minSize, maxSize, maxUniqueElements, genSize, sizeDistribution, uniquenessExtractors);
 	}
 

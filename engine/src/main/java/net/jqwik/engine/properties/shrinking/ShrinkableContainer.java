@@ -3,6 +3,8 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 import java.util.stream.*;
 
+import org.jetbrains.annotations.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
@@ -16,13 +18,21 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	protected final int maxSize;
 	protected final Collection<FeatureExtractor<E>> uniquenessExtractors;
 
-	ShrinkableContainer(List<Shrinkable<E>> elements, int minSize, int maxSize, Collection<FeatureExtractor<E>> uniquenessExtractors) {
+	@Nullable
+	protected final Arbitrary<E> elementArbitrary;
+
+	ShrinkableContainer(
+		List<Shrinkable<E>> elements,
+		int minSize, int maxSize,
+		Collection<FeatureExtractor<E>> uniquenessExtractors,
+		@Nullable Arbitrary<E> elementArbitrary
+	) {
 		this.elements = elements;
 		this.minSize = minSize;
 		this.maxSize = maxSize;
 		this.uniquenessExtractors = uniquenessExtractors;
+		this.elementArbitrary = elementArbitrary;
 	}
-
 
 	abstract C createValue(List<Shrinkable<E>> shrinkables);
 
@@ -43,9 +53,15 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	@Override
 	public Optional<Shrinkable<C>> grow(Shrinkable<?> before, Shrinkable<?> after) {
 		if (before instanceof ShrinkableContainer && after instanceof ShrinkableContainer) {
-			List<Shrinkable<?>> removedShrinkables = new ArrayList<>(((ShrinkableContainer<?, ?>) before).elements);
-			removedShrinkables.removeAll(((ShrinkableContainer<?, ?>) after).elements);
-			return growBy(removedShrinkables);
+			ShrinkableContainer<?, ?> beforeContainer = (ShrinkableContainer<?, ?>) before;
+			ShrinkableContainer<?, ?> afterContainer = (ShrinkableContainer<?, ?>) after;
+			// Moving shrinkable from one container to another is only allowed if both contain elements
+			// created by the same arbitrary
+			if (Objects.equals(beforeContainer.elementArbitrary, afterContainer.elementArbitrary)) {
+				List<Shrinkable<?>> removedShrinkables = new ArrayList<>((beforeContainer).elements);
+				removedShrinkables.removeAll((afterContainer).elements);
+				return growBy(removedShrinkables);
+			}
 		}
 		return Optional.empty();
 	}
@@ -96,16 +112,16 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 
 	protected Stream<Shrinkable<C>> shrinkSizeAggressively() {
 		return new AggressiveSizeOfListShrinker<Shrinkable<E>>(minSize)
-					   .shrink(elements)
-					   .map(this::createShrinkable)
-					   .sorted(Comparator.comparing(Shrinkable::distance));
+				   .shrink(elements)
+				   .map(this::createShrinkable)
+				   .sorted(Comparator.comparing(Shrinkable::distance));
 	}
 
 	protected Stream<Shrinkable<C>> shrinkSizeOfList() {
 		return new SizeOfListShrinker<Shrinkable<E>>(minSize)
-					   .shrink(elements)
-					   .map(this::createShrinkable)
-					   .sorted(Comparator.comparing(Shrinkable::distance));
+				   .shrink(elements)
+				   .map(this::createShrinkable)
+				   .sorted(Comparator.comparing(Shrinkable::distance));
 	}
 
 	protected Stream<Shrinkable<C>> shrinkElementsOneAfterTheOther(int maxToShrink) {
