@@ -459,7 +459,7 @@ class ShrinkableListTests {
 								  BigInteger.valueOf(0)
 						  ).map(BigInteger::intValueExact))
 						  .collect(Collectors.toList());
-		return new ShrinkableList<>(elementShrinkables, min, max, Arrays.asList(extractors));
+		return new ShrinkableList<>(elementShrinkables, min, max, Arrays.asList(extractors), null);
 	}
 
 	private AssertionError failAndCatch(String message) {

@@ -93,7 +93,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	protected RandomGenerator<List<T>> createListGenerator(int genSize, boolean withEmbeddedEdgeCases) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize, withEmbeddedEdgeCases);
 		long maxUniqueElements = elementArbitrary.exhaustive(maxSize()).map(ExhaustiveGenerator::maxCount).orElse((long) maxSize());
-		return RandomGenerators.list(elementGenerator, minSize, maxSize(), maxUniqueElements, genSize, sizeDistribution, uniquenessExtractors);
+		return RandomGenerators.list(elementGenerator, minSize, maxSize(), maxUniqueElements, genSize, sizeDistribution, uniquenessExtractors, elementArbitrary);
 	}
 
 	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int genSize, boolean withEdgeCases) {

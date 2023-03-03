@@ -67,7 +67,7 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 	public EdgeCases<A> edgeCases(int maxEdgeCases) {
 		return EdgeCasesSupport.map(
 			edgeCases(
-				(elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize(), uniquenessExtractors),
+				(elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize(), uniquenessExtractors, elementArbitrary),
 				maxEdgeCases
 			),
 			this::toArray

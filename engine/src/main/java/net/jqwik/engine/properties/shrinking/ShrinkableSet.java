@@ -13,7 +13,8 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 	}
 
 	private ShrinkableSet(List<Shrinkable<E>> elements, int minSize, int maxSize, Collection<FeatureExtractor<E>> uniquenessExtractors) {
-		super(elements, minSize, maxSize, uniquenessExtractors);
+		// TODO: Inject elementArbitrary
+		super(elements, minSize, maxSize, uniquenessExtractors, null);
 	}
 
 	@Override
