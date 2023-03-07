@@ -16,7 +16,6 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 		this(elements, minSize, maxSize, Collections.emptySet(), null);
 	}
 
-	// TODO: Check all callers if they can provide elementArbitrary
 	public ShrinkableList(
 		List<Shrinkable<E>> elements,
 		int minSize, int maxSize,
