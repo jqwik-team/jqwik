@@ -3,18 +3,29 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 import java.util.stream.*;
 
+import org.jetbrains.annotations.*;
+
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
 
 public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
-	public ShrinkableSet(Collection<Shrinkable<E>> elements, int minSize, int maxSize, Collection<FeatureExtractor<E>> uniquenessExtractors) {
-		this(new ArrayList<>(elements), minSize, maxSize, uniquenessExtractors);
+	public ShrinkableSet(
+		Collection<Shrinkable<E>> elements,
+		int minSize, int maxSize,
+		Collection<FeatureExtractor<E>> uniquenessExtractors,
+		@Nullable Arbitrary<E> elementArbitrary
+	) {
+		this(new ArrayList<>(elements), minSize, maxSize, uniquenessExtractors, elementArbitrary);
 	}
 
-	private ShrinkableSet(List<Shrinkable<E>> elements, int minSize, int maxSize, Collection<FeatureExtractor<E>> uniquenessExtractors) {
-		// TODO: Inject elementArbitrary
-		super(elements, minSize, maxSize, uniquenessExtractors, null);
+	private ShrinkableSet(
+		List<Shrinkable<E>> elements,
+		int minSize, int maxSize,
+		Collection<FeatureExtractor<E>> uniquenessExtractors,
+		@Nullable Arbitrary<E> elementArbitrary
+	) {
+		super(elements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
 	}
 
 	@Override
@@ -43,6 +54,6 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
 	@Override
 	Shrinkable<Set<E>> createShrinkable(List<Shrinkable<E>> shrunkElements) {
-		return new ShrinkableSet<>(shrunkElements, minSize, maxSize, uniquenessExtractors);
+		return new ShrinkableSet<>(shrunkElements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
 	}
 }

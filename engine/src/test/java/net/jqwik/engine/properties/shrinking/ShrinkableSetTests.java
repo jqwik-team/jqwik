@@ -10,7 +10,6 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
-import net.jqwik.engine.support.*;
 import net.jqwik.testing.*;
 
 import static java.util.Arrays.*;
@@ -141,7 +140,7 @@ class ShrinkableSetTests {
 		void bigSet() {
 			Set<Shrinkable<Integer>> elementShrinkables = IntStream.range(0, 1000).mapToObj(OneStepShrinkable::new)
 																   .collect(CollectorsSupport.toLinkedHashSet());
-			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5, 1000, Collections.emptySet());
+			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5, 1000, Collections.emptySet(), null);
 
 			Set<Integer> shrunkValue = shrink(shrinkable, falsifier(Set::isEmpty), null);
 			assertThat(shrunkValue).containsExactly(0, 1, 2, 3, 4);
@@ -179,19 +178,19 @@ class ShrinkableSetTests {
 
 	@SafeVarargs
 	private final Shrinkable<Set<Integer>> createShrinkableSet(
-			List<Integer> listValues,
-			int min,
-			FeatureExtractor<Integer>... extractors
+		List<Integer> listValues,
+		int min,
+		FeatureExtractor<Integer>... extractors
 	) {
 		List<Shrinkable<Integer>> elementShrinkables =
-				listValues.stream()
-						  .map(i -> new ShrinkableBigInteger(
-								  BigInteger.valueOf(i),
-								  Range.of(BigInteger.ZERO, BigInteger.valueOf(100)),
-								  BigInteger.valueOf(0)
-						  ).map(BigInteger::intValueExact))
-						  .collect(Collectors.toList());
-		return new ShrinkableSet<>(elementShrinkables, min, listValues.size(), Arrays.asList(extractors));
+			listValues.stream()
+					  .map(i -> new ShrinkableBigInteger(
+						  BigInteger.valueOf(i),
+						  Range.of(BigInteger.ZERO, BigInteger.valueOf(100)),
+						  BigInteger.valueOf(0)
+					  ).map(BigInteger::intValueExact))
+					  .collect(Collectors.toList());
+		return new ShrinkableSet<>(elementShrinkables, min, listValues.size(), Arrays.asList(extractors), null);
 	}
 
 	private AssertionError failAndCatch(String message) {

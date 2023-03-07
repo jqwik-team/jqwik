@@ -136,19 +136,24 @@ public class RandomGenerators {
 		return container(elementGenerator, createShrinkable, minSize, maxSize, maxUniqueElements, genSize, sizeDistribution, uniquenessExtractors);
 	}
 
-	public static <T> RandomGenerator<Set<T>> set(RandomGenerator<T> elementGenerator, int minSize, int maxSize, int genSize) {
-		return set(elementGenerator, minSize, maxSize, genSize, null, Collections.emptySet());
+	public static <T> RandomGenerator<Set<T>> set(
+		RandomGenerator<T> elementGenerator,
+		int minSize, int maxSize, int genSize,
+		Arbitrary<T> elementArbitrary
+	) {
+		return set(elementGenerator, minSize, maxSize, genSize, null, Collections.emptySet(), elementArbitrary);
 	}
 
 	public static <T> RandomGenerator<Set<T>> set(
 			RandomGenerator<T> elementGenerator,
 			int minSize, int maxSize, int genSize, RandomDistribution sizeDistribution,
-			Set<FeatureExtractor<T>> uniquenessExtractors
+			Set<FeatureExtractor<T>> uniquenessExtractors,
+			Arbitrary<T> elementArbitrary
 	) {
 		Set<FeatureExtractor<T>> extractors = new LinkedHashSet<>(uniquenessExtractors);
 		extractors.add(FeatureExtractor.identity());
 		Function<List<Shrinkable<T>>, Shrinkable<Set<T>>> createShrinkable =
-			elements -> new ShrinkableSet<T>(elements, minSize, maxSize, uniquenessExtractors);
+			elements -> new ShrinkableSet<T>(elements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
 		return container(elementGenerator, createShrinkable, minSize, maxSize, maxSize, genSize, sizeDistribution, extractors);
 	}
 

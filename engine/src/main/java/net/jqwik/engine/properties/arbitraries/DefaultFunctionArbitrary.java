@@ -39,6 +39,7 @@ public class DefaultFunctionArbitrary<F, R> extends TypedCloneable implements Fu
 		);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
