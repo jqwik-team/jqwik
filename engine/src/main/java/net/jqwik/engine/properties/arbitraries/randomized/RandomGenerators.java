@@ -99,9 +99,10 @@ public class RandomGenerators {
 	public static RandomGenerator<String> strings(
 		RandomGenerator<Character> elementGenerator,
 		int minLength, int maxLength, long maxUniqueChars,
-		int genSize, RandomDistribution lengthDistribution
+		int genSize, RandomDistribution lengthDistribution,
+		Arbitrary<Character> characterArbitrary
 	) {
-		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength, maxLength);
+		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength, maxLength, characterArbitrary);
 		return container(elementGenerator, createShrinkable, minLength, maxLength, maxUniqueChars, genSize, lengthDistribution, Collections.emptySet());
 	}
 

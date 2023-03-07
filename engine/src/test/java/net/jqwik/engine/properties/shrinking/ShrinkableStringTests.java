@@ -7,7 +7,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
-import net.jqwik.engine.support.*;
 import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -82,7 +81,7 @@ public class ShrinkableStringTests {
 
 			TestingFalsifier<String> falsifier = ignore -> false;
 			Falsifier<String> filteredFalsifier =
-					falsifier.withFilter(aString -> aString.startsWith("d") || aString.startsWith("b"));
+				falsifier.withFilter(aString -> aString.startsWith("d") || aString.startsWith("b"));
 
 			String shrunkValue = shrink(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).isEqualTo("b");
@@ -93,10 +92,10 @@ public class ShrinkableStringTests {
 			Shrinkable<String> shrinkable = createShrinkableString("xxxx", 2);
 
 			TestingFalsifier<String> falsifier =
-					string -> {
-						Set<Integer> usedLetters = string.chars().boxed().collect(CollectorsSupport.toLinkedHashSet());
-						return usedLetters.size() != 1;
-					};
+				string -> {
+					Set<Integer> usedLetters = string.chars().boxed().collect(CollectorsSupport.toLinkedHashSet());
+					return usedLetters.size() != 1;
+				};
 
 			String shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("aa");
@@ -107,10 +106,10 @@ public class ShrinkableStringTests {
 			Shrinkable<String> shrinkable = createShrinkableString("cdab", 4);
 
 			TestingFalsifier<String> falsifier =
-					string -> {
-						int sum = string.chars().map(c -> c - 'a').sum();
-						return sum < 6;
-					};
+				string -> {
+					int sum = string.chars().map(c -> c - 'a').sum();
+					return sum < 6;
+				};
 
 			String shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("abcd");
@@ -119,12 +118,12 @@ public class ShrinkableStringTests {
 		@Example
 		void longString() {
 			List<Shrinkable<Character>> elementShrinkables =
-					IntStream.range(0, 1000)
-							 .mapToObj(aChar -> new OneStepShrinkable(aChar, 0, 100))
-							 .map(shrinkableInt -> shrinkableInt.map(anInt -> (char) (int) anInt))
-							 .collect(Collectors.toList());
+				IntStream.range(0, 1000)
+						 .mapToObj(aChar -> new OneStepShrinkable(aChar, 0, 100))
+						 .map(shrinkableInt -> shrinkableInt.map(anInt -> (char) (int) anInt))
+						 .collect(Collectors.toList());
 
-			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5, 1000);
+			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5, 1000, null);
 			String shrunkValue = shrink(shrinkable, (TestingFalsifier<String>) String::isEmpty, null);
 			assertThat(shrunkValue).hasSize(5);
 		}
@@ -133,13 +132,13 @@ public class ShrinkableStringTests {
 
 	public static Shrinkable<String> createShrinkableString(String aString, int minSize) {
 		List<Shrinkable<Character>> elementShrinkables =
-				aString
-						.chars()
-						.mapToObj(aChar -> new OneStepShrinkable(aChar, 'a', 'z'))
-						.map(shrinkable -> shrinkable.map(anInt -> (char) (int) anInt))
-						.collect(Collectors.toList());
+			aString
+				.chars()
+				.mapToObj(aChar -> new OneStepShrinkable(aChar, 'a', 'z'))
+				.map(shrinkable -> shrinkable.map(anInt -> (char) (int) anInt))
+				.collect(Collectors.toList());
 
-		return new ShrinkableString(elementShrinkables, minSize, aString.length());
+		return new ShrinkableString(elementShrinkables, minSize, aString.length(), null);
 	}
 
 }
