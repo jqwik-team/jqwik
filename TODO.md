@@ -1,6 +1,6 @@
 # 1.7.3
 
-    - Fix shrink and grow bug: https://github.com/jqwik-team/jqwik/issues/439
+    - Tackle Kotlin compiler warnings
 
     - Add Arbitrary.ignoreException(maxMisses, ...)
       See https://github.com/jqwik-team/jqwik/issues/462.
