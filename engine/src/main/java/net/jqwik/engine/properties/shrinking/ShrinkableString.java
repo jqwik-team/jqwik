@@ -9,9 +9,8 @@ import net.jqwik.engine.support.*;
 
 public class ShrinkableString extends ShrinkableContainer<String, Character> {
 
-	public ShrinkableString(List<Shrinkable<Character>> elements, int minSize, int maxSize) {
-		// TODO: Inject elementArbitrary
-		super(elements, minSize, maxSize, Collections.emptySet(), null);
+	public ShrinkableString(List<Shrinkable<Character>> elements, int minSize, int maxSize, Arbitrary<Character> characterArbitrary) {
+		super(elements, minSize, maxSize, Collections.emptySet(), characterArbitrary);
 	}
 
 	@Override
@@ -26,7 +25,7 @@ public class ShrinkableString extends ShrinkableContainer<String, Character> {
 
 	@Override
 	Shrinkable<String> createShrinkable(List<Shrinkable<Character>> shrunkElements) {
-		return new ShrinkableString(shrunkElements, minSize, maxSize);
+		return new ShrinkableString(shrunkElements, minSize, maxSize, elementArbitrary);
 	}
 
 	@Override
