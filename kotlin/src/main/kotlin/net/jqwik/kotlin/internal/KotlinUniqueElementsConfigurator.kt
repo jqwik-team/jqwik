@@ -12,7 +12,7 @@ import java.util.function.Function
 
 class KotlinUniqueElementsConfigurator : ArbitraryConfigurator {
     @Suppress("UNCHECKED_CAST")
-    override fun <T> configure(arbitrary: Arbitrary<T>, targetType: TypeUsage): Arbitrary<T> {
+    override fun <T:Any> configure(arbitrary: Arbitrary<T>, targetType: TypeUsage): Arbitrary<T> {
         return targetType.findAnnotation(UniqueElements::class.java).map { uniqueness ->
             return@map when {
                 arbitrary is SequenceArbitrary<*> -> configureSequenceArbitrary(arbitrary, uniqueness)

@@ -5,6 +5,7 @@ import net.jqwik.api.constraints.Size
 import net.jqwik.api.constraints.UniqueElements
 import net.jqwik.kotlin.api.JqwikIntRange
 import net.jqwik.kotlin.api.any
+import net.jqwik.kotlin.api.orNull
 import net.jqwik.kotlin.api.sequence
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions.assertThat
@@ -21,6 +22,18 @@ class KotlinSequenceTests {
             random
         ) { sequence ->
             sequence is Sequence<Int> && sequence.all { i -> i in 1..10 }
+        }
+    }
+
+    @Example
+    fun sequenceFromNullableArbitrary(@ForAll random: Random) {
+        val sequences = Int.any(1..10).orNull(0.1).sequence()
+
+        checkAllGenerated(
+            sequences,
+            random
+        ) { sequence ->
+            sequence is Sequence<Int?> && sequence.all { i -> i == null || i in 1..10  }
         }
     }
 
