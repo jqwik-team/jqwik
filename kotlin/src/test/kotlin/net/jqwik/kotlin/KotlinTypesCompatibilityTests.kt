@@ -5,6 +5,7 @@ import net.jqwik.api.constraints.Size
 import net.jqwik.api.constraints.StringLength
 import net.jqwik.api.constraints.UseType
 import net.jqwik.kotlin.api.any
+import net.jqwik.testing.SuppressLogging
 import org.assertj.core.api.Assertions.assertThat
 
 @PropertyDefaults(tries = 100)
@@ -44,6 +45,7 @@ class KotlinTypesCompatibilityTests {
     data class MyUser(val name: String, val age: Int = -1)
 
     @Property
+    @SuppressLogging("edge case generation exceeded warning")
     fun defaultParameterInConstructorIsIgnored(@ForAll @UseType user: MyUser) {
         assertThat(user.name is String).isTrue
         assertThat(user.age is Int).isTrue

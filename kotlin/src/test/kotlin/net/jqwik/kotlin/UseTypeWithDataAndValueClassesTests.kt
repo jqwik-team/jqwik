@@ -2,12 +2,12 @@ package net.jqwik.kotlin
 
 import net.jqwik.api.ForAll
 import net.jqwik.api.Property
-import net.jqwik.api.Report
-import net.jqwik.api.Reporting
 import net.jqwik.api.constraints.AlphaChars
 import net.jqwik.api.constraints.StringLength
 import net.jqwik.api.constraints.UseType
+import net.jqwik.testing.SuppressLogging
 
+@SuppressLogging
 class UseTypeWithDataAndValueClassesTests {
 
     @Property(tries = 100)

@@ -4,6 +4,7 @@ import net.jqwik.api.*
 import net.jqwik.kotlin.api.anyForType
 import net.jqwik.kotlin.api.frequency
 import net.jqwik.kotlin.api.frequencyOf
+import net.jqwik.testing.SuppressLogging
 import org.assertj.core.api.Assertions.assertThat
 
 @PropertyDefaults(tries = 100)
@@ -11,6 +12,7 @@ class ConvenienceFunctionsTests {
 
     data class MyUser(val name: String, val age: Int = -1)
 
+    @SuppressLogging("edge case generation exceeded warning")
     @Property
     fun anyForType(@ForAll("users") user: MyUser) {
         assertThat(user.name is String).isTrue

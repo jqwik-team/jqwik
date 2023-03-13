@@ -5,7 +5,6 @@ import net.jqwik.api.Property
 import net.jqwik.api.Reporter
 import net.jqwik.api.footnotes.EnableFootnotes
 import net.jqwik.api.footnotes.Footnotes
-import net.jqwik.api.lifecycle.AddLifecycleHook
 import net.jqwik.testing.CheckReporting
 import org.mockito.Mockito
 
