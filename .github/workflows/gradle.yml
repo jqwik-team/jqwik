@@ -66,11 +66,11 @@ jobs:
           job-id: java${{ matrix.java_version }}
           arguments: check ${{ matrix.extraGradleArgs }}
 
-      - name: Publish Test Report
-        uses: scacap/action-surefire-report@v1
-        if: always() && (github.ref == 'refs/heads/main')
-        with:
-          check_name: Test Report for ${{ matrix.name }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+#      - name: Publish Test Report
+#        uses: scacap/action-surefire-report@v1
+#        if: always() && (github.ref == 'refs/heads/main')
+#        with:
+#          check_name: Test Report for ${{ matrix.name }}
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          report_paths: '**/build/test-results/test/TEST-*.xml'
 
