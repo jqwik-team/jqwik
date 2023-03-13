@@ -75,7 +75,7 @@ test {
 		junitXml.required = true
 	}
 
-	// testLogging.showStandardStreams = true
+	testLogging.showStandardStreams = showStandardStreams
 }
 
 dependencies {

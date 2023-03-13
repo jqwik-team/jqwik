@@ -22,6 +22,8 @@ java {
 
 test {
 	useJUnitPlatform()
+
+	testLogging.showStandardStreams = showStandardStreams
 }
 
 dependencies {
