@@ -1,6 +1,7 @@
 # 1.7.3
 
-    - Tackle Kotlin compiler warnings
+    - Support UniqueElements annotation for extensions.
+      See: https://github.com/jqwik-team/jqwik/issues/466
 
     - Add Arbitrary.ignoreException(maxMisses, ...)
       See https://github.com/jqwik-team/jqwik/issues/462.
@@ -8,12 +9,12 @@
     - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
       - Alternative: New annotation @InitBeforeTry
 
+
+# 1.7.x
+
     - State-based Properties (https://github.com/jqwik-team/jqwik/issues/428) : 
       - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
       - ChainArbitrary.startWith(.., ChainConfig.of(isImmutable, hasSideEffects, comparator))
-
-
-# 1.7.x
 
     - PropertyInfo: Provide PropertyInfo hook with info about the porperty's display name, class, method, tags etc.
       See Jupiter's TestInfo as an example.
