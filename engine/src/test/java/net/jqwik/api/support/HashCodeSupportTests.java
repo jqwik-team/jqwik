@@ -4,10 +4,12 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 @PropertyDefaults(tries = 100)
+@SuppressLogging
 class HashCodeSupportTests {
 
 	@Property

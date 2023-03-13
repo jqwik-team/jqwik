@@ -18,6 +18,11 @@ static def isSnapshotRelease(versionString) {
 	versionString.endsWith('SNAPSHOT')
 }
 
+static def showStandardStreams() {
+	def propSSS = System.getProperty("showStandardStreams")
+	propSSS == null ? false : propSSS == "true"
+}
+
 ext {
 	junitPlatformVersion = '1.9.2'
 	junitJupiterVersion = '5.9.2'
@@ -35,4 +40,6 @@ ext {
 	moduleName = 'net.jqwik'
 	jqwikVersion = '1.7.3-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
+	showStandardStreams = showStandardStreams()
+
 }

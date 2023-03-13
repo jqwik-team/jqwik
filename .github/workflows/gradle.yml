@@ -64,7 +64,7 @@ jobs:
         with:
           # It allows different cache contents for different JDKs
           job-id: java${{ matrix.java_version }}
-          arguments: check ${{ matrix.extraGradleArgs }}
+          arguments: check -DshowStandardStreams=true ${{ matrix.extraGradleArgs }}
 
 #      - name: Publish Test Report
 #        uses: scacap/action-surefire-report@v1
