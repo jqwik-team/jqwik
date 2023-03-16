@@ -84,6 +84,6 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 
 	@Override
 	public ListArbitrary<T> uniqueElements() {
-		return (ListArbitrary<T>) uniqueElements(FeatureExtractor.identity());
+		return (ListArbitrary<T>) super.uniqueElements();
 	}
 }

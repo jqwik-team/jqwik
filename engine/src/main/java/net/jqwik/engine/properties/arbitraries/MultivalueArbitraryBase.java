@@ -81,6 +81,11 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 		});
 	}
 
+	@Override
+	public StreamableArbitrary<T, U> uniqueElements() {
+		return uniqueElements(FeatureExtractor.identity());
+	}
+
 	protected abstract Iterable<T> toIterable(U streamable);
 
 	protected StreamableArbitrary<T, U> uniqueElements(FeatureExtractor<T> by) {

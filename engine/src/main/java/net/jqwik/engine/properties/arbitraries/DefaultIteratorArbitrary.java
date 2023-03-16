@@ -67,7 +67,7 @@ public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iter
 
 	@Override
 	public IteratorArbitrary<T> uniqueElements() {
-		return (IteratorArbitrary<T>) uniqueElements(FeatureExtractor.identity());
+		return (IteratorArbitrary<T>) super.uniqueElements();
 	}
 
 }

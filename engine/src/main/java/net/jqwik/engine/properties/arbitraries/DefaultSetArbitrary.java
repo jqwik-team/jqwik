@@ -88,6 +88,11 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 	}
 
 	@Override
+	public SetArbitrary<T> uniqueElements() {
+		return this;
+	}
+
+	@Override
 	public SetArbitrary<T> uniqueElements(Function<T, Object> by) {
 		FeatureExtractor<T> featureExtractor = by::apply;
 		return (SetArbitrary<T>) super.uniqueElements(featureExtractor);

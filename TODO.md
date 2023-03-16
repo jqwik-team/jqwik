@@ -1,8 +1,5 @@
 # 1.7.3
 
-    - Support UniqueElements annotation for extensions.
-      See: https://github.com/jqwik-team/jqwik/issues/466
-
     - Add Arbitrary.ignoreException(maxMisses, ...)
       See https://github.com/jqwik-team/jqwik/issues/462.
 

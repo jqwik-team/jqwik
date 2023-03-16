@@ -69,7 +69,7 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 
 	@Override
 	public StreamArbitrary<T> uniqueElements() {
-		return (StreamArbitrary<T>) uniqueElements(FeatureExtractor.identity());
+		return (StreamArbitrary<T>) super.uniqueElements();
 	}
 
 }

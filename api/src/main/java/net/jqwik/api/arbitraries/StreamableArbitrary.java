@@ -50,4 +50,33 @@ public interface StreamableArbitrary<T, U> extends SizableArbitrary<U> {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.3")
 	StreamableArbitrary<T, U> withSizeDistribution(RandomDistribution distribution);
+
+	/**
+	 * Add the constraint that elements of the generated streamable must be unique,
+	 * i.e. no two elements must return true when being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.7.3")
+	StreamableArbitrary<T, U> uniqueElements();
+
+	/**
+	 * Add the constraint that elements of the generated streamable must be unique
+	 * relating to an element's "feature" being extracted using the
+	 * {@code by} function.
+	 * The extracted features are being compared using {@linkplain Object#equals(Object)}.
+	 *
+	 * <p>
+	 *     The constraint can be combined with other {@linkplain #uniqueElements(Function)} constraints.
+	 * </p>
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.7.3")
+	StreamableArbitrary<T, U> uniqueElements(Function<T, Object> by);
+
 }

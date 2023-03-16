@@ -73,6 +73,15 @@ public interface SetArbitrary<T> extends Arbitrary<Set<T>>, StreamableArbitrary<
 	<U> Arbitrary<Set<U>> flatMapEach(BiFunction<Set<T>, T, Arbitrary<U>> flatMapper);
 
 	/**
+	 * Do not use. Sets have unique elements anyway.
+	 * It only exists for purposes of symmetry.
+	 *
+	 * @return same instance of arbitrary
+	 */
+	@API(status = MAINTAINED, since = "1.7.3")
+	SetArbitrary<T> uniqueElements();
+
+	/**
 	 * Add the constraint that elements of the generated set must be unique
 	 * relating to an element's "feature" being extracted using the
 	 * {@code by} function.

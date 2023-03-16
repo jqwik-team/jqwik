@@ -19,20 +19,12 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 	@Override
 	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
 		return targetType.findAnnotation(UniqueElements.class).map(uniqueness -> {
-			if (arbitrary instanceof ListArbitrary) {
-				return (Arbitrary<T>) configureListArbitrary((ListArbitrary<?>) arbitrary, uniqueness);
-			}
 			if (arbitrary instanceof SetArbitrary) {
+				// Handle SetArbitrary explicitly for optimization
 				return (Arbitrary<T>) configureSetArbitrary((SetArbitrary<?>) arbitrary, uniqueness);
 			}
-			if (arbitrary instanceof ArrayArbitrary) {
-				return (Arbitrary<T>) configureArrayArbitrary((ArrayArbitrary<?, ?>) arbitrary, uniqueness);
-			}
-			if (arbitrary instanceof StreamArbitrary) {
-				return (Arbitrary<T>) configureStreamArbitrary((StreamArbitrary<?>) arbitrary, uniqueness);
-			}
-			if (arbitrary instanceof IteratorArbitrary) {
-				return (Arbitrary<T>) configureIteratorArbitrary((IteratorArbitrary<?>) arbitrary, uniqueness);
+			if (arbitrary instanceof StreamableArbitrary) {
+				return (Arbitrary<T>) configureStreamableArbitrary((StreamableArbitrary<?, ?>) arbitrary, uniqueness);
 			}
 			if (targetType.isAssignableFrom(List.class)) {
 				Arbitrary<List<?>> listArbitrary = (Arbitrary<List<?>>) arbitrary;
@@ -76,27 +68,16 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 		return set.size() == list.size();
 	}
 
-	private <T> Arbitrary<?> configureListArbitrary(ListArbitrary<T> arbitrary, UniqueElements uniqueness) {
+	private <T> Arbitrary<?> configureStreamableArbitrary(StreamableArbitrary<T, ?> arbitrary, UniqueElements uniqueness) {
 		Function<T, Object> extractor = (Function<T, Object>) extractor(uniqueness);
 		return arbitrary.uniqueElements(extractor);
 	}
 
 	private <T> Arbitrary<?> configureSetArbitrary(SetArbitrary<T> arbitrary, UniqueElements uniqueness) {
-		Function<T, Object> extractor = (Function<T, Object>) extractor(uniqueness);
-		return arbitrary.uniqueElements(extractor);
-	}
-
-	private <T> Arbitrary<?> configureArrayArbitrary(ArrayArbitrary<T, ?> arbitrary, UniqueElements uniqueness) {
-		Function<T, Object> extractor = (Function<T, Object>) extractor(uniqueness);
-		return arbitrary.uniqueElements(extractor);
-	}
-
-	private <T> Arbitrary<?> configureStreamArbitrary(StreamArbitrary<T> arbitrary, UniqueElements uniqueness) {
-		Function<T, Object> extractor = (Function<T, Object>) extractor(uniqueness);
-		return arbitrary.uniqueElements(extractor);
-	}
-
-	private <T> Arbitrary<?> configureIteratorArbitrary(IteratorArbitrary<T> arbitrary, UniqueElements uniqueness) {
+		Class<? extends Function<?, Object>> extractorClass = uniqueness.by();
+		if (extractorClass.equals(UniqueElements.NOT_SET.class)) {
+			return arbitrary;
+		}
 		Function<T, Object> extractor = (Function<T, Object>) extractor(uniqueness);
 		return arbitrary.uniqueElements(extractor);
 	}
