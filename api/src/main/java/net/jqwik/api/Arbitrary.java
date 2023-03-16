@@ -49,7 +49,7 @@ public interface Arbitrary<T> {
 
 		public abstract <T, U> Arbitrary<U> flatMap(Arbitrary<T> self, Function<T, Arbitrary<U>> mapper);
 
-		public abstract <T> Arbitrary<T> ignoreExceptions(Arbitrary<T> self, Class<? extends Throwable>[] exceptionTypes);
+		public abstract <T> Arbitrary<T> ignoreExceptions(Arbitrary<T> self, int maxThrows, Class<? extends Throwable>[] exceptionTypes);
 
 		public abstract <T> Arbitrary<T> dontShrink(Arbitrary<T> self);
 
@@ -534,11 +534,29 @@ public interface Arbitrary<T> {
 	 *
 	 * @param exceptionType The exception type to ignore
 	 * @return a new arbitrary instance
+	 * @throws TooManyFilterMissesException if more than 10000 exceptions are thrown in a row
 	 */
 	@SuppressWarnings("unchecked")
 	@API(status = MAINTAINED, since = "1.3.1")
 	default Arbitrary<T> ignoreException(Class<? extends Throwable> exceptionType) {
 		return ignoreExceptions(exceptionType);
+	}
+
+	/**
+	 * Create a new arbitrary of type {@code T} that will use the underlying
+	 * arbitrary to create the tuple values but will ignore any raised exception of
+	 * type {@code exceptionType} during generation.
+	 *
+	 * @param maxThrows The maximum number of subsequent exception throws before generation
+	 *                  is stopped.
+	 * @param exceptionType The exception type to ignore
+	 * @return a new arbitrary instance
+	 * @throws TooManyFilterMissesException if more than {@code maxThrows} exceptions are thrown in a row
+	 */
+	@SuppressWarnings("unchecked")
+	@API(status = EXPERIMENTAL, since = "1.7.3")
+	default Arbitrary<T> ignoreException(int maxThrows, Class<? extends Throwable> exceptionType) {
+		return ignoreExceptions(maxThrows, exceptionType);
 	}
 
 	/**
@@ -552,11 +570,33 @@ public interface Arbitrary<T> {
 	 *
 	 * @param exceptionTypes The exception types to ignore
 	 * @return a new arbitrary instance
+	 * @throws TooManyFilterMissesException if more than 10000 exceptions are thrown in a row
 	 */
 	@SuppressWarnings("unchecked")
 	@API(status = MAINTAINED, since = "1.7.2")
 	default Arbitrary<T> ignoreExceptions(Class<? extends Throwable>... exceptionTypes) {
-		return ArbitraryFacade.implementation.ignoreExceptions(Arbitrary.this, exceptionTypes);
+		return this.ignoreExceptions(10000, exceptionTypes);
+	}
+
+	/**
+	 * Create a new arbitrary of type {@code T} that will use the underlying
+	 * arbitrary to create the tuple values but will ignore any raised exception in
+	 * {@code exceptionTypes} during generation.
+	 *
+	 * <p>
+	 *     If {@code exceptionTypes} is empty, the original arbitrary is returned.
+	 * </p>
+	 *
+	 * @param maxThrows The maximum number of subsequent exception throws before generation
+	 *                  is stopped.
+	 * @param exceptionTypes The exception types to ignore
+	 * @return a new arbitrary instance
+	 * @throws TooManyFilterMissesException if more than {@code maxThrows} exceptions are thrown in a row
+	 */
+	@SuppressWarnings("unchecked")
+	@API(status = EXPERIMENTAL, since = "1.7.3")
+	default Arbitrary<T> ignoreExceptions(int maxThrows, Class<? extends Throwable>... exceptionTypes) {
+		return ArbitraryFacade.implementation.ignoreExceptions(Arbitrary.this, maxThrows, exceptionTypes);
 	}
 
 	/**

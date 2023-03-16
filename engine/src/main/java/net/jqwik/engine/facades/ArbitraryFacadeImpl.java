@@ -81,25 +81,25 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> ignoreExceptions(Arbitrary<T> self, Class<? extends Throwable>[] exceptionTypes) {
+	public <T> Arbitrary<T> ignoreExceptions(Arbitrary<T> self, int maxThrows, Class<? extends Throwable>[] exceptionTypes) {
 		if (exceptionTypes.length == 0) {
 			return self;
 		}
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
-				return super.generator(genSize).ignoreExceptions(exceptionTypes);
+				return super.generator(genSize).ignoreExceptions(maxThrows, exceptionTypes);
 			}
 
 			@Override
 			public RandomGenerator<T> generatorWithEmbeddedEdgeCases(int genSize) {
-				return super.generatorWithEmbeddedEdgeCases(genSize).ignoreExceptions(exceptionTypes);
+				return super.generatorWithEmbeddedEdgeCases(genSize).ignoreExceptions(maxThrows, exceptionTypes);
 			}
 
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return super.exhaustive(maxNumberOfSamples)
-							.map(generator -> generator.ignoreExceptions(exceptionTypes));
+							.map(generator -> generator.ignoreExceptions(maxThrows, exceptionTypes));
 			}
 
 			@Override

@@ -1,6 +1,7 @@
 package net.jqwik.api;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 import org.assertj.core.api.*;
 
@@ -19,7 +20,6 @@ class ArbitraryIgnoreExceptionsTests {
 			super(message);
 		}
 	}
-
 
 	@Example
 	void ignoreIllegalArgumentException(@ForAll Random random) {
@@ -97,6 +97,26 @@ class ArbitraryIgnoreExceptionsTests {
 		RandomGenerator<Integer> generator = filtered.generator(10, true);
 
 		assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
+	}
+
+	@Example
+	void maxThrowsIsConsideredForFailing(@ForAll Random random) {
+		AtomicInteger countMisses = new AtomicInteger();
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.integers()
+					   .map(anInt -> {
+						   countMisses.incrementAndGet();
+						   throw new IllegalArgumentException("Always fail");
+					   });
+		Arbitrary<Integer> filtered = arbitrary.ignoreException(
+			100,
+			IllegalArgumentException.class
+		);
+		// Allowing edge cases will raise the number since edge case filtering cannot be cancelled
+		RandomGenerator<Integer> generator = filtered.generator(10, false);
+
+		assertThatThrownBy(() -> generator.next(random)).isInstanceOf(TooManyFilterMissesException.class);
+		assertThat(countMisses).hasValue(100);
 	}
 
 	@Example

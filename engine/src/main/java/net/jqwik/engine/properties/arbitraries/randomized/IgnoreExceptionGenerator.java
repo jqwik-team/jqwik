@@ -12,10 +12,12 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 
 	private final RandomGenerator<T> base;
 	private final Class<? extends Throwable>[] exceptionTypes;
+	private final int maxThrows;
 
-	public IgnoreExceptionGenerator(RandomGenerator<T> base, Class<? extends Throwable>[] exceptionTypes) {
+	public IgnoreExceptionGenerator(RandomGenerator<T> base, Class<? extends Throwable>[] exceptionTypes, int maxThrows) {
 		this.base = base;
 		this.exceptionTypes = exceptionTypes;
+		this.maxThrows = maxThrows;
 	}
 
 	@Override
@@ -24,7 +26,7 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 	}
 
 	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < maxThrows; i++) {
 			try {
 				Shrinkable<T> next = fetchShrinkable.apply(random);
 				// Enforce value generation for possible exception raising
@@ -37,7 +39,7 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 				throw throwable;
 			}
 		}
-		String message = String.format("%s missed more than %s times.", this, 10000);
+		String message = String.format("%s missed more than %s times.", this, maxThrows);
 		throw new TooManyFilterMissesException(message);
 	}
 

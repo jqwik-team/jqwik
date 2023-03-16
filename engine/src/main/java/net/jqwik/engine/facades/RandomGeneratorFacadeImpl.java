@@ -18,11 +18,11 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 
 	@Override
 	public <T, U> Shrinkable<U> flatMap(
-			Shrinkable<T> self,
-			Function<T, Arbitrary<U>> mapper,
-			int genSize,
-			long nextLong,
-			boolean withEmbeddedEdgeCases
+		Shrinkable<T> self,
+		Function<T, Arbitrary<U>> mapper,
+		int genSize,
+		long nextLong,
+		boolean withEmbeddedEdgeCases
 	) {
 		return new FlatMappedShrinkable<>(self, mapper, genSize, nextLong, withEmbeddedEdgeCases);
 	}
@@ -48,7 +48,7 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 	}
 
 	@Override
-	public <T> RandomGenerator<T> ignoreExceptions(RandomGenerator<T> self, Class<? extends Throwable>[] exceptionTypes) {
-		return new IgnoreExceptionGenerator<>(self, exceptionTypes);
+	public <T> RandomGenerator<T> ignoreExceptions(RandomGenerator<T> self, Class<? extends Throwable>[] exceptionTypes, int maxThrows) {
+		return new IgnoreExceptionGenerator<>(self, exceptionTypes, maxThrows);
 	}
 }

@@ -22,11 +22,11 @@ public interface RandomGenerator<T> {
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, long nextLong);
 
 		public abstract <T, U> Shrinkable<U> flatMap(
-				Shrinkable<T> wrappedShrinkable,
-				Function<T, Arbitrary<U>> mapper,
-				int genSize,
-				long nextLong,
-				boolean withEmbeddedEdgeCases
+			Shrinkable<T> wrappedShrinkable,
+			Function<T, Arbitrary<U>> mapper,
+			int genSize,
+			long nextLong,
+			boolean withEmbeddedEdgeCases
 		);
 
 		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate, int maxMisses);
@@ -37,7 +37,11 @@ public interface RandomGenerator<T> {
 
 		public abstract <T> RandomGenerator<T> injectDuplicates(RandomGenerator<T> self, double duplicateProbability);
 
-		public abstract <T> RandomGenerator<T> ignoreExceptions(RandomGenerator<T> self, Class<? extends Throwable>[] exceptionTypes);
+		public abstract <T> RandomGenerator<T> ignoreExceptions(
+			RandomGenerator<T> self,
+			Class<? extends Throwable>[] exceptionTypes,
+			int maxThrows
+		);
 	}
 
 	/**
@@ -72,7 +76,7 @@ public interface RandomGenerator<T> {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
 			return RandomGeneratorFacade.implementation
-						   .flatMap(wrappedShrinkable, mapper, genSize, random.nextLong(), withEmbeddedEdgeCases);
+					   .flatMap(wrappedShrinkable, mapper, genSize, random.nextLong(), withEmbeddedEdgeCases);
 		};
 	}
 
@@ -102,8 +106,8 @@ public interface RandomGenerator<T> {
 	}
 
 	@API(status = INTERNAL)
-	default RandomGenerator<T> ignoreExceptions(Class<? extends Throwable>[] exceptionTypes) {
-		return RandomGeneratorFacade.implementation.ignoreExceptions(this, exceptionTypes);
+	default RandomGenerator<T> ignoreExceptions(int maxThrows, Class<? extends Throwable>[] exceptionTypes) {
+		return RandomGeneratorFacade.implementation.ignoreExceptions(this, exceptionTypes, maxThrows);
 	}
 
 	@API(status = INTERNAL)

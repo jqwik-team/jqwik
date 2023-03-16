@@ -28,7 +28,11 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
 		public abstract <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<T> self);
 
-		public abstract <T> ExhaustiveGenerator<T> ignoreExceptions(ExhaustiveGenerator<T> self, Class<? extends Throwable>[] exceptionTypes);
+		public abstract <T> ExhaustiveGenerator<T> ignoreExceptions(
+			ExhaustiveGenerator<T> self,
+			Class<? extends Throwable>[] exceptionTypes,
+			int maxThrows
+		);
 	}
 
 	/**
@@ -48,9 +52,8 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 		return ExhaustiveGeneratorFacade.implementation.injectNull(this);
 	}
 
-	default ExhaustiveGenerator<T> ignoreExceptions(Class<? extends Throwable>[] exceptionTypes) {
-		return ExhaustiveGeneratorFacade.implementation.ignoreExceptions(this, exceptionTypes);
+	default ExhaustiveGenerator<T> ignoreExceptions(int maxThrows, Class<? extends Throwable>[] exceptionTypes) {
+		return ExhaustiveGeneratorFacade.implementation.ignoreExceptions(this, exceptionTypes, maxThrows);
 	}
-
 
 }
