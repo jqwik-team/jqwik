@@ -8,13 +8,11 @@ import net.jqwik.api.lifecycle.*;
 
 class BeforeTryOnMemberVariableTests {
 
-	@BeforeTry
-	private int member = 41;
+	//@BeforeTry // will lead to exception since static fields must not use @BeforeTry
+	private static final int staticMember = 40;
 
 	@BeforeTry
-	void testBefore() {
-		System.out.println("before try outer");
-	}
+	private int member = 41;
 
 	@Property(tries = 10)
 	void beforeTryOnMember(@ForAll @IntRange(min = 1, max = 100) int addend) {
@@ -27,11 +25,6 @@ class BeforeTryOnMemberVariableTests {
 
 		@BeforeTry
 		private int innerMember = 42;
-
-		@BeforeTry
-		void testBeforeInner() {
-			System.out.println("before try inner");
-		}
 
 		@Property(tries = 10)
 		void beforeTryOnMemberInInnerGroup(@ForAll @IntRange(min = 1, max = 100) int addend) {

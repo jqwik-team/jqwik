@@ -2,38 +2,50 @@ package net.jqwik.engine.hooks.lifecycle;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
+import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.support.hierarchical.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
+import static org.junit.platform.commons.support.AnnotationSupport.*;
+
 public class BeforeTryMembersHook implements AroundTryHook {
 
-	private void beforeTry(TryLifecycleContext context) {
-		System.out.println("initialize before try members");
-		// List<Method> beforeTryMethods = LifecycleMethods.findBeforeTryMethods(context.containerClass());
-		// callTryMethods(beforeTryMethods, context);
+	private static List<Field> findBeforeTryFields(Class<?> testClass) {
+		Predicate<Field> isAnnotated = method -> isAnnotated(method, BeforeTry.class);
+		return JqwikReflectionSupport.findFieldsPotentiallyOuter(testClass, isAnnotated, HierarchyTraversalMode.TOP_DOWN);
 	}
 
-	private void callTryMethods(List<Method> methods, TryLifecycleContext context) {
+	private void beforeTry(TryLifecycleContext context) {
+		List<Field> beforeTryFields = findBeforeTryFields(context.containerClass());
+		initializeFields(beforeTryFields, context);
+	}
+
+	private void initializeFields(List<Field> fields, TryLifecycleContext context) {
 		Object testInstance = context.testInstance();
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
-		for (Method method : methods) {
-			Object[] parameters = MethodParameterResolver.resolveParameters(method, context);
-			throwableCollector.execute(() -> callMethod(method, testInstance, parameters));
+		for (Field field : fields) {
+			if (JqwikReflectionSupport.isStatic(field)) {
+				String message = String.format("Static field <%s> must not be annotated with @BeforeTry.", field);
+				throw new JqwikException(message);
+			}
+			throwableCollector.execute(() -> initializeField(field, testInstance));
 		}
 		throwableCollector.assertEmpty();
 	}
 
-	private void callMethod(Method method, Object target, Object[] parameters) {
-		JqwikReflectionSupport.invokeMethodPotentiallyOuter(method, target, parameters);
-	}
-
-	private void afterTry(TryLifecycleContext context) {
-		List<Method> afterTryMethods = LifecycleMethods.findAfterTryMethods(context.containerClass());
-		callTryMethods(afterTryMethods, context);
+	private void initializeField(Field field, Object target) {
+		Store<Object> initialFieldValue = Store.getOrCreate(
+			Tuple.of(BeforeTryMembersHook.class, field),
+			Lifespan.PROPERTY,
+			() -> JqwikReflectionSupport.readFieldPotentiallyOuter(field, target)
+		);
+		JqwikReflectionSupport.setFieldPotentiallyOuter(field, initialFieldValue.get(), target);
 	}
 
 	@Override
@@ -54,10 +66,6 @@ public class BeforeTryMembersHook implements AroundTryHook {
 	@Override
 	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) {
 		beforeTry(context);
-		try {
-			return aTry.execute(parameters);
-		} finally {
-			afterTry(context);
-		}
+		return aTry.execute(parameters);
 	}
 }
