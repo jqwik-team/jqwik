@@ -8,10 +8,10 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Annotate methods or member variables of a container class with {@code @BeforeTry}.
- * Annotated methods will then be run once before each try - the actual invocation of the property
- * method with generated parameters - including properties of
- * embedded containers.
- * Annotated members will be freshly initialized before each try.
+ * <ul>
+ *     <li>Annotated methods will then be run once before each try</li>
+ *     <li>Annotated members will be reset to their initial value before each try</li>
+ * </ul>
  *
  * <p>{@code @BeforeTry} methods are inherited from superclasses
  * and implemented interfaces as long as they are not <em>hidden</em>
@@ -23,7 +23,7 @@ import static org.apiguardian.api.API.Status.*;
  * <p>The execution order of multiple {@code @BeforeTry} methods
  * within the same container is not guaranteed and might change.
  *
- * <p>Parameters of this method will be resolved using registered instances
+ * <p>Parameters of an annotated method will be resolved using registered instances
  * of {@linkplain ResolveParameterHook}. Parameters with annotation
  * {@linkplain net.jqwik.api.ForAll} are not allowed.
  *

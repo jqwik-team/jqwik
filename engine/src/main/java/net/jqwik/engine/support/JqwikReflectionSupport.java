@@ -10,6 +10,7 @@ import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.support.*;
 
@@ -53,6 +54,7 @@ public class JqwikReflectionSupport {
 				   });
 	}
 
+	@SuppressWarnings("deprecation") // Deprecated as of Java 9
 	private static <T extends AccessibleObject> T makeAccessible(T object) {
 		if (!object.isAccessible()) {
 			object.setAccessible(true);
@@ -128,6 +130,73 @@ public class JqwikReflectionSupport {
 			foundMethods.addAll(ReflectionSupport.findMethods(searchClass, predicate, traversalMode));
 		}
 		return foundMethods;
+	}
+
+	/**
+	 * Find all {@linkplain Field field} but also use outer classes to look for
+	 * methods.
+	 *
+	 * @param clazz         The class in which you start the search
+	 * @param predicate     The condition to check for all candidate methods
+	 * @param traversalMode Traverse hierarchy up or down. Determines the order in resulting list.
+	 * @return List of found fields
+	 */
+	public static List<Field> findFieldsPotentiallyOuter(
+		Class<?> clazz,
+		Predicate<Field> predicate,
+		HierarchyTraversalMode traversalMode
+	) {
+		List<Class<?>> searchClasses = getDeclaringClasses(clazz, traversalMode);
+		List<Field> foundFields = new ArrayList<>();
+		for (Class<?> searchClass : searchClasses) {
+			foundFields.addAll(ReflectionSupport.findFields(searchClass, predicate, traversalMode));
+		}
+		return foundFields;
+	}
+
+	public static Object readFieldPotentiallyOuter(Field field, Object target) {
+		makeAccessible(field);
+		List<Field> declaredFields = Arrays.stream(target.getClass().getDeclaredFields()).collect(toList());
+		if (declaredFields.contains(field)) {
+			try {
+				return field.get(target);
+			} catch (Exception exception) {
+				return JqwikExceptionSupport.throwAsUncheckedException(exception);
+			}
+		} else {
+			Optional<Object> outer = getOuterInstance(target);
+			if (outer.isPresent()) {
+				return readFieldPotentiallyOuter(field, outer.get());
+			} else {
+				String message = String.format("Cannot access value of field %s", field);
+				throw new JqwikException(message);
+			}
+		}
+	}
+
+	public static void setFieldPotentiallyOuter(Field field, Object value, Object target) {
+		makeAccessible(field);
+		List<Field> declaredFields = Arrays.stream(target.getClass().getDeclaredFields()).collect(toList());
+		if (declaredFields.contains(field)) {
+			try {
+				if (isStatic(field)) {
+					field.set(null, value);
+				} else {
+					field.set(target, value);
+				}
+			} catch (Exception exception) {
+				//noinspection ResultOfMethodCallIgnored
+				JqwikExceptionSupport.throwAsUncheckedException(exception);
+			}
+		} else {
+			Optional<Object> outer = getOuterInstance(target);
+			if (outer.isPresent()) {
+				setFieldPotentiallyOuter(field, value, outer.get());
+			} else {
+				String message = String.format("Cannot set value of field %s", field);
+				throw new JqwikException(message);
+			}
+		}
 	}
 
 	private static List<Class<?>> getDeclaringClasses(Class<?> clazz, HierarchyTraversalMode traversalMode) {
@@ -300,7 +369,7 @@ public class JqwikReflectionSupport {
 		return hasConstructor(aClass);
 	}
 
-	public static boolean hasConstructor(Class<?> aClass, Class<?> ... parameterTypes) {
+	public static boolean hasConstructor(Class<?> aClass, Class<?>... parameterTypes) {
 		try {
 			aClass.getDeclaredConstructor(parameterTypes);
 			return true;
@@ -343,7 +412,12 @@ public class JqwikReflectionSupport {
 		return method.getReturnType().equals(Void.TYPE);
 	}
 
-	public static boolean implementsMethod(Class<?> aClass, String methodName, Class<?>[] parameterTypes, Class<?> ignoreImplementationClass) {
+	public static boolean implementsMethod(
+		Class<?> aClass,
+		String methodName,
+		Class<?>[] parameterTypes,
+		Class<?> ignoreImplementationClass
+	) {
 		Optional<Method> optionalMethod = ReflectionSupport.findMethod(aClass, methodName, parameterTypes);
 		return optionalMethod.map(method -> !method.getDeclaringClass().equals(ignoreImplementationClass)).orElse(false);
 	}
