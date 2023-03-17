@@ -7,10 +7,11 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Annotate methods of a container class with {@code @BeforeTry}
- * to have them run once before each try - the actual invocation of the property
+ * Annotate methods or member variables of a container class with {@code @BeforeTry}.
+ * Annotated methods will then be run once before each try - the actual invocation of the property
  * method with generated parameters - including properties of
  * embedded containers.
+ * Annotated members will be freshly initialized before each try.
  *
  * <p>{@code @BeforeTry} methods are inherited from superclasses
  * and implemented interfaces as long as they are not <em>hidden</em>
@@ -28,7 +29,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see AfterTry
  */
-@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @API(status = MAINTAINED, since = "1.4.0")
 public @interface BeforeTry {
