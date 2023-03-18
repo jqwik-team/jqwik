@@ -551,6 +551,28 @@ after container
 All those lifecycle methods are being run through _jqwik_'s mechanism for
 writing [_lifecycle hooks_](#lifecycle-hooks) under the hood.
 
+#### Annotated Lifecycle Variables
+
+One of the lifecycle annotations from above has an additional meaning: 
+[`@BeforeTry`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeTry.html):
+It can also be used on a test container class' member variable 
+to make sure that it will be reset to its initial value - the one it had before the first try -
+for each try:
+
+```java
+class BeforeTryMemberExample {
+
+	@BeforeTry
+	int theAnswer = 42;
+
+	@Property
+	void theAnswerIsAlways42(@ForAll int addend) {
+		Assertions.assertThat(theAnswer).isEqualTo(42);
+		theAnswer += addend;
+	}
+}
+```
+
 
 #### Single Property Lifecycle
 

@@ -1,8 +1,5 @@
 # 1.7.3
 
-    - Allow annotation @BeforeTry on member variables of tests to reinitialize them before each try.
-        - Add section in user guide
-
 
 # 1.7.x
 
