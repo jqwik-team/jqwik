@@ -1,5 +1,7 @@
 # 1.7.3
 
+    - Check exhaustive generation in Chain-based properties.
+      Example: https://github.com/paulk-asert/groovy-combinations-permutations/issues/1
 
 # 1.7.x
 
