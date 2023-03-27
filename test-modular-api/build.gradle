@@ -34,7 +34,7 @@ dependencies {
 	} else {
 		testImplementation("net.jqwik:jqwik-api:1.7.2")
 		testImplementation("net.jqwik:jqwik-web:1.7.2")
-		testRuntimeOnly("net.jqwik:jqwik-engine:1.7.2")
+		testRuntimeOnly("net.jqwik:jqwik-engine:1.7.3")
 	}
 }
 
