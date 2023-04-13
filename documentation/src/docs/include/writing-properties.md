@@ -614,8 +614,8 @@ another non-static and non-private inner class and annotating it with `@Group`.
 Grouping examples and properties is a means to improve the organization and
 maintainability of your tests.
 
-Groups can be nested and there lifecycle is also nested, that means that
-the lifecycle of a test class is also applied to inner groups of that container.
+Groups can be nested, which makes their lifecycles also nested. 
+That means that the lifecycle of a test class is also applied to inner groups of that container.
 Have a look at [this example](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/TestsWithGroups.java):
 
 ```java
