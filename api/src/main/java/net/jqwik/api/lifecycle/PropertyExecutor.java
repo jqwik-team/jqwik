@@ -2,7 +2,7 @@ package net.jqwik.api.lifecycle;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
+import net.jqwik.api.support.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -20,4 +20,29 @@ public interface PropertyExecutor {
 	 * @return The execution result
 	 */
 	PropertyExecutionResult execute();
+
+	/**
+	 * {@linkplain #execute()} the property and then call {@code andFinally},
+	 * even if property execution fails with an exception
+	 *
+	 * @param andFinally the code to call after execution
+	 * @return The execution result
+	 */
+	@API(status = EXPERIMENTAL, since = "1.7.4")
+	default PropertyExecutionResult executeAndFinally(Runnable andFinally) {
+		try {
+			PropertyExecutionResult result = this.execute();
+			try {
+				andFinally.run();
+				return result;
+			} catch (Throwable throwable) {
+				ExceptionSupport.rethrowIfBlacklisted(throwable);
+				return result.mapToFailed(throwable);
+			}
+		} catch (Throwable throwable) {
+			ExceptionSupport.rethrowIfBlacklisted(throwable);
+			andFinally.run();
+			throw throwable;
+		}
+	}
 }

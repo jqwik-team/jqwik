@@ -53,10 +53,8 @@ public class PropertyLifecycleMethodsHook implements AroundPropertyHook {
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
 		beforeProperty(context);
-		try {
-			return property.execute();
-		} finally {
-			afterProperty(context);
-		}
+		return property.executeAndFinally(
+			() -> afterProperty(context)
+		);
 	}
 }
