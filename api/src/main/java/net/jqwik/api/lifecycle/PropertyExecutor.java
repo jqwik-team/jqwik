@@ -13,6 +13,11 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = MAINTAINED, since = "1.4.0")
 public interface PropertyExecutor {
 
+	@FunctionalInterface
+	interface Runnable {
+		void run() throws Throwable;
+	}
+
 	/**
 	 * Call to actually run the property, including all hooks that are "closer"
 	 * (have a higher proximity) than the current hook.
@@ -41,7 +46,11 @@ public interface PropertyExecutor {
 			}
 		} catch (Throwable throwable) {
 			ExceptionSupport.rethrowIfBlacklisted(throwable);
-			andFinally.run();
+			try {
+				andFinally.run();
+			} catch (Throwable cause) {
+				throw new RuntimeException(cause);
+			}
 			throw throwable;
 		}
 	}

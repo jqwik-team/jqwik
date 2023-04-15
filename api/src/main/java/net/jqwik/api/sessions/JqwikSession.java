@@ -17,6 +17,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.6.0")
 public class JqwikSession {
 
+	@FunctionalInterface
 	public interface Runnable {
 		void run() throws Throwable;
 	}
