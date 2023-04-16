@@ -8,6 +8,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
 @AddLifecycleHook(RegisterCountTries.class)
+@AddLifecycleHook(RegisterRegisterSetTo42.class)
 class RegistrarHookTests {
 
 	static int countTries = 0;
@@ -41,6 +42,14 @@ class RegistrarHookTests {
 		}
 	}
 
+	static int setTo42ByNestedRegistrar = 0;
+
+	@Property(tries = 10)
+	void propertyWithNestedRegistrar(@ForAll int i) {
+		Assertions.assertThat(setTo42ByNestedRegistrar).isEqualTo(42);
+		// setTo42ByNestedRegistrar = i;
+	}
+
 	@Group
 	class Nested {
 		@PerProperty(Counted0.class)
@@ -72,5 +81,33 @@ class CountTries implements AroundTryHook {
 	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) {
 		RegistrarHookTests.countTries++;
 		return aTry.execute(parameters);
+	}
+}
+
+class RegisterRegisterSetTo42 implements RegistrarHook {
+
+	@Override
+	public void registerHooks(Registrar registrar) {
+		registrar.register(NestedRegistrar.class);
+	}
+
+	static class NestedRegistrar implements RegistrarHook {
+		@Override
+		public void registerHooks(Registrar registrar) {
+			registrar.register(DoingTheWork.class);
+		}
+	}
+
+	static class DoingTheWork implements BeforeContainerHook {
+		// @Override
+		// public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) {
+		// 	// RegistrarHookTests.setTo42ByNestedRegistrar = 42;
+		// 	return aTry.execute(parameters);
+		// }
+
+		@Override
+		public void beforeContainer(ContainerLifecycleContext context) throws Throwable {
+			RegistrarHookTests.setTo42ByNestedRegistrar = 42;
+		}
 	}
 }
