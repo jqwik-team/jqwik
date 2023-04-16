@@ -72,6 +72,12 @@ class RegisterCountTries implements RegistrarHook {
 	@Override
 	public void registerHooks(Registrar registrar) {
 		registrar.register(CountTries.class, PropagationMode.DIRECT_DESCENDANTS);
+
+		// Ignore double registration:
+		registrar.register(CountTries.class, PropagationMode.DIRECT_DESCENDANTS);
+
+		// Ignore double registration of registrar hook
+		registrar.register(RegisterCountTries.class);
 	}
 }
 
@@ -99,14 +105,8 @@ class RegisterRegisterSetTo42 implements RegistrarHook {
 	}
 
 	static class DoingTheWork implements BeforeContainerHook {
-		// @Override
-		// public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) {
-		// 	// RegistrarHookTests.setTo42ByNestedRegistrar = 42;
-		// 	return aTry.execute(parameters);
-		// }
-
 		@Override
-		public void beforeContainer(ContainerLifecycleContext context) throws Throwable {
+		public void beforeContainer(ContainerLifecycleContext context) {
 			RegistrarHookTests.setTo42ByNestedRegistrar = 42;
 		}
 	}

@@ -25,6 +25,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
 	private final List<HookRegistration> registrations = new ArrayList<>();
 	private final Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new LinkedHashMap<>();
+	private final Set<Class<? extends RegistrarHook>> appliedRegistrars = new HashSet<>();
 
 	@Override
 	public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
@@ -189,7 +190,8 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
 	private void registerRegistrarHooks(TestDescriptor descriptor, LifecycleHook hookInstance) {
 		if (hookInstance instanceof RegistrarHook) {
-			if (hookInstance.propagateTo() != NO_DESCENDANTS) {
+			RegistrarHook registrarHook = (RegistrarHook) hookInstance;
+			if (registrarHook.propagateTo() != NO_DESCENDANTS) {
 				String warnAboutPropagationMode =
 					String.format(
 						"RegistrarHook [%s] is propagated to descendants.%nThis does not work for registerHooks()!",
@@ -197,9 +199,16 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 					);
 				LOG.warning(warnAboutPropagationMode);
 			}
+
+			if (appliedRegistrars.contains(hookInstance.getClass())) {
+				// Prevent recursive registration
+				return;
+			}
+			appliedRegistrars.add(registrarHook.getClass());
+
 			RegistrarHook.Registrar registrar =
 				(hookClass, propagationMode) -> registerLifecycleHook(descriptor, hookClass, propagationMode);
-			((RegistrarHook) hookInstance).registerHooks(registrar);
+			registrarHook.registerHooks(registrar);
 		}
 	}
 
