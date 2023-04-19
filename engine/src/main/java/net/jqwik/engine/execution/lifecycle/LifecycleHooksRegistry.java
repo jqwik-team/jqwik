@@ -5,6 +5,8 @@ import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
+import net.jqwik.api.Tuple.*;
+
 import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 
@@ -25,7 +27,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
 	private final List<HookRegistration> registrations = new ArrayList<>();
 	private final Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new LinkedHashMap<>();
-	private final Set<Class<? extends RegistrarHook>> appliedRegistrars = new HashSet<>();
+	private final Set<Tuple2<TestDescriptor, Class<? extends RegistrarHook>>> appliedRegistrars = new HashSet<>();
 
 	@Override
 	public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
@@ -200,11 +202,12 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 				LOG.warning(warnAboutPropagationMode);
 			}
 
-			if (appliedRegistrars.contains(hookInstance.getClass())) {
+			Tuple2 appliedRegistrar = Tuple.of(descriptor, hookInstance.getClass());
+			if (appliedRegistrars.contains(appliedRegistrar)) {
 				// Prevent recursive registration
 				return;
 			}
-			appliedRegistrars.add(registrarHook.getClass());
+			appliedRegistrars.add(appliedRegistrar);
 
 			RegistrarHook.Registrar registrar =
 				(hookClass, propagationMode) -> registerLifecycleHook(descriptor, hookClass, propagationMode);
