@@ -56,6 +56,11 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 			.orElse(Collections.emptyList());
 	}
 
+	@Override
+	public <T extends Annotation> List<T> findRepeatableAnnotations(Class<T> annotationClass) {
+		return AnnotationSupport.findRepeatableAnnotations(optionalElement(), annotationClass);
+	}
+
 	private Optional<ContainerClassDescriptor> parentContainer() {
 		return parentContainer(descriptor);
 	}

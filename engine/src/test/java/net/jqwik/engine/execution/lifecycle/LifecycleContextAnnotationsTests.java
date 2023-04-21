@@ -1,7 +1,9 @@
 package net.jqwik.engine.execution.lifecycle;
 
 import java.lang.annotation.*;
+import java.util.*;
 
+import org.junit.platform.engine.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
@@ -13,10 +15,26 @@ import net.jqwik.engine.execution.*;
 import static org.assertj.core.api.Assertions.*;
 
 @MyAnnotation
+@MyRepeatableAnnotation("one")
+@MyRepeatableAnnotation("two")
 class LifecycleContextAnnotationsTests {
 
 	private final Reporter reporter = Mockito.mock(Reporter.class);
 	private final ResolveParameterHook resolveParameter = Mockito.mock(ResolveParameterHook.class);
+
+	@Example
+	void engineLifecycleContext() {
+
+		TestDescriptor engineDescriptor = TestDescriptorBuilder.forEngine(new JqwikTestEngine()).build();
+		EngineLifecycleContext lifecycleContext = new EngineLifecycleContext(
+			engineDescriptor,
+			reporter,
+			resolveParameter
+		);
+		assertThat(lifecycleContext.findAnnotation(MyAnnotation.class)).isEmpty();
+		assertThat(lifecycleContext.findAnnotationsInContainer(MyAnnotation.class)).isEmpty();
+		assertThat(lifecycleContext.findRepeatableAnnotations(MyRepeatableAnnotation.class)).isEmpty();
+	}
 
 	@Example
 	void containerLifecycleDescriptor() {
@@ -31,7 +49,11 @@ class LifecycleContextAnnotationsTests {
 
 		assertThat(lifecycleContext.findAnnotation(MyAnnotation.class)).isPresent();
 		assertThat(lifecycleContext.findAnnotationsInContainer(MyAnnotation.class)).isEmpty();
-		assertThat(lifecycleContext.findAnnotation(Property.class)).isNotPresent();
+
+		List<MyRepeatableAnnotation> repeatableAnnotations = lifecycleContext.findRepeatableAnnotations(MyRepeatableAnnotation.class);
+		assertThat(repeatableAnnotations).isNotEmpty();
+		assertThat(repeatableAnnotations.stream().map(MyRepeatableAnnotation::value))
+			.contains("one", "two");
 	}
 
 	@Example
@@ -52,6 +74,8 @@ class LifecycleContextAnnotationsTests {
 			.hasSize(1);
 	}
 
+	@MyRepeatableAnnotation("three")
+	@MyRepeatableAnnotation("four")
 	@Example
 	void propertyLifecycleDescriptor() {
 
@@ -69,6 +93,39 @@ class LifecycleContextAnnotationsTests {
 		assertThat(lifecycleContext.findAnnotationsInContainer(MyAnnotation.class))
 			.hasSize(1);
 
+		List<MyRepeatableAnnotation> repeatableAnnotations = lifecycleContext.findRepeatableAnnotations(MyRepeatableAnnotation.class);
+		assertThat(repeatableAnnotations).isNotEmpty();
+		assertThat(repeatableAnnotations.stream().map(MyRepeatableAnnotation::value))
+			.contains("three", "four");
+
+	}
+
+	@MyRepeatableAnnotation("five")
+	@MyRepeatableAnnotation("six")
+	@Example
+	void tryLifecycleDescriptor() {
+
+		PropertyMethodDescriptor methodDescriptor = (PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(
+			LifecycleContextAnnotationsTests.class, "tryLifecycleDescriptor"
+		).build();
+		DefaultPropertyLifecycleContext propertyLifecycleContext = new DefaultPropertyLifecycleContext(
+			methodDescriptor,
+			new LifecycleContextAnnotationsTests(),
+			reporter,
+			resolveParameter
+		);
+
+		TryLifecycleContext lifecycleContext = new DefaultTryLifecycleContext(propertyLifecycleContext);
+
+		assertThat(lifecycleContext.findAnnotation(Example.class)).isPresent();
+		assertThat(lifecycleContext.findAnnotationsInContainer(MyAnnotation.class))
+			.hasSize(1);
+
+		List<MyRepeatableAnnotation> repeatableAnnotations = lifecycleContext.findRepeatableAnnotations(MyRepeatableAnnotation.class);
+		assertThat(repeatableAnnotations).isNotEmpty();
+		assertThat(repeatableAnnotations.stream().map(MyRepeatableAnnotation::value))
+			.contains("five", "six");
+
 	}
 
 	@Group
@@ -82,4 +139,17 @@ class LifecycleContextAnnotationsTests {
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @interface MyAnnotation {
+}
+
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Repeatable(MyRepeatableAnnotations.class)
+@interface MyRepeatableAnnotation {
+	String value();
+}
+
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@interface MyRepeatableAnnotations {
+	MyRepeatableAnnotation[] value();
 }

@@ -80,6 +80,16 @@ public interface LifecycleContext {
 	<T extends Annotation> List<T> findAnnotationsInContainer(Class<T> annotationClass);
 
 	/**
+	 * Retrieve a list of repeatable annotations if present at the current test element.
+	 *
+	 * @param annotationClass The annotation type
+	 * @param <T>             The annotation type
+	 * @return list of annotation objects
+	 */
+	@API(status = MAINTAINED, since = "1.7.4")
+	<T extends Annotation> List<T> findRepeatableAnnotations(Class<T> annotationClass);
+
+	/**
 	 * Create a new instance of a {@code clazz} in the context of the property in which it
 	 * is running. Use this method, for example, when trying to instantiate a class
 	 * retrieved from an annotation's attribute.

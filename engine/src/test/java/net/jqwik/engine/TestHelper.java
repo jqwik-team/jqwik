@@ -219,6 +219,11 @@ public class TestHelper {
 			}
 
 			@Override
+			public <T extends Annotation> List<T> findRepeatableAnnotations(Class<T> annotationClass) {
+				return Collections.emptyList();
+			}
+
+			@Override
 			public <T> T newInstance(Class<T> clazz) {
 				return null;
 			}

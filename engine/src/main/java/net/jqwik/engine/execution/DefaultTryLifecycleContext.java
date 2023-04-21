@@ -78,6 +78,11 @@ public class DefaultTryLifecycleContext implements TryLifecycleContext {
 	}
 
 	@Override
+	public <T extends Annotation> List<T> findRepeatableAnnotations(Class<T> annotationClass) {
+		return propertyContext.findRepeatableAnnotations(annotationClass);
+	}
+
+	@Override
 	public String toString() {
 		return String.format("TryLifecycleContext:%s", propertyContext);
 	}
