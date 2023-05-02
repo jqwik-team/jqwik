@@ -54,17 +54,19 @@ jobs:
         with:
           script: |
             console.log('The following command might help reproducing CI results, use Java ${{ matrix.java_version }}')
-            console.log('TZ="${{ matrix.tz }}" _JAVA_OPTIONS="${{ matrix.testExtraJvmArgs }}" ./gradlew check ${{ matrix.extraGradleArgs }}')
+            console.log('TZ="${{ matrix.tz }}" _JAVA_OPTIONS="${{ matrix.extraJvmArgs }}" ./gradlew check ${{ matrix.extraGradleArgs }} -PtestExtraJvmArgs="${{ matrix.testExtraJvmArgs }}"')
 
       - uses: burrunan/gradle-cache-action@v1
         # See https://github.com/burrunan/gradle-cache-action
         name: Build and Test
         env:
-          _JAVA_OPTIONS: ${{ matrix.testExtraJvmArgs }}
+          _JAVA_OPTIONS: ${{ matrix.extraJvmArgs }}
         with:
           # It allows different cache contents for different JDKs
           job-id: java${{ matrix.java_version }}
           arguments: check -DshowStandardStreams=true ${{ matrix.extraGradleArgs }}
+          properties: |
+            testExtraJvmArgs=${{ matrix.testExtraJvmArgs }}
 
 #      - name: Publish Test Report
 #        uses: scacap/action-surefire-report@v1

@@ -152,7 +152,13 @@ class MatrixBuilder {
               return title;
             }
             const computeTitle = this.axisByName[axisName].title;
-            return computeTitle ? computeTitle(value) : value;
+            if (computeTitle) {
+                return computeTitle(value);
+            }
+            if (typeof value === 'object' && value.hasOwnProperty('value')) {
+                return value.value;
+            }
+            return value;
           }).filter(Boolean).join(", ");
         this.rows.push(res);
         return res;

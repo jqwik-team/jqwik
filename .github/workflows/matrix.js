@@ -20,17 +20,15 @@ const matrix = new MatrixBuilder();
 matrix.addAxis({
   name: 'java_distribution',
   values: [
-    'corretto',
-    'liberica',
-    'microsoft',
-    'oracle',
-    'temurin',
-    'zulu',
+    {value: 'corretto', weight: 1},
+    {value: 'liberica', weight: 1},
+    {value: 'microsoft', weight: 1},
+    {value: 'oracle', weight: 1},
+    {value: 'semeru', weight: 4},
+    {value: 'temurin', weight: 1},
+    {value: 'zulu', weight: 1},
   ]
 });
-
-// TODO: support different JITs (see https://github.com/actions/setup-java/issues/279)
-matrix.addAxis({name: 'jit', title: '', values: ['hotspot']});
 
 // See the supported versions at https://foojay.io/almanac/java-17/
 matrix.addAxis({
@@ -92,12 +90,16 @@ matrix.setNamePattern([
     'tz', 'locale',
 ]);
 
+// Semeru uses OpenJ9 jit which has no option for making hash codes the same
+// See https://github.com/eclipse-openj9/openj9/issues/17309
+matrix.exclude({java_distribution: {value: 'semeru'}, hash: {value: 'same'}});
+matrix.exclude({java_distribution: {value: 'semeru'}, java_version: '19'});
 // Microsoft Java has no distribution for 8, 18, 19
-matrix.exclude({java_distribution: 'microsoft', java_version: '8'});
-matrix.exclude({java_distribution: 'microsoft', java_version: '18'});
-matrix.exclude({java_distribution: 'microsoft', java_version: '19'});
+matrix.exclude({java_distribution: {value: 'microsoft'}, java_version: '8'});
+matrix.exclude({java_distribution: {value: 'microsoft'}, java_version: '18'});
+matrix.exclude({java_distribution: {value: 'microsoft'}, java_version: '19'});
 // Oracle supports 17+ only
-matrix.exclude({java_distribution: 'oracle', java_version: ['8', '11', '19']});
+matrix.exclude({java_distribution: {value: 'oracle'}, java_version: ['8', '11', '19']});
 // TODO: remove when compileJava with "same hashcode" issues are resolved
 // See https://bugs.openjdk.org/browse/JDK-8288590 is resolved
 // See https://github.com/jqwik-team/jqwik/pull/460#issuecomment-1428261036
@@ -133,14 +135,19 @@ include.forEach(v => {
 });
 include.forEach(v => {
   let jvmArgs = [];
-
+  // Extra JVM arguments passed to test execution
+  let testJvmArgs = [];
   if (v.hash.value === 'same') {
-    jvmArgs.push('-XX:+UnlockExperimentalVMOptions', '-XX:hashCode=2');
+    // javac has issues with "same hashcode" option (see https://bugs.openjdk.org/browse/JDK-8288590)
+    // On the other hand, kotlinc uses "object identity" a lot. It works properly,
+    // but it becomes slow as HashMap degrades. So we pass "same hashcode" to test executions only.
+    testJvmArgs.push('-XX:+UnlockExperimentalVMOptions', '-XX:hashCode=2');
   }
   // Pass locale via _JAVA_OPTIONS so all the forked processes inherit it
   jvmArgs.push(`-Duser.country=${v.locale.country}`);
   jvmArgs.push(`-Duser.language=${v.locale.language}`);
-  if (v.jit === 'hotspot' && Math.random() > 0.5) {
+  v.java_distribution = v.java_distribution.value;
+  if (v.java_distribution !== 'semeru' && Math.random() > 0.5) {
     // The following options randomize instruction selection in JIT compiler
     // so it might reveal missing synchronization in TestNG code
     v.name += ', stress JIT';
@@ -164,7 +171,8 @@ include.forEach(v => {
       jvmArgs.push('-XX:+StressCCP');
     }
   }
-  v.testExtraJvmArgs = jvmArgs.join(' ');
+  v.extraJvmArgs = jvmArgs.join(' ');
+  v.testExtraJvmArgs = testJvmArgs.join(' ::: ');
   delete v.hash;
 });
 
