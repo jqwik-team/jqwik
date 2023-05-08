@@ -33,7 +33,7 @@ ext {
 	mockitoVersion = '4.11.0'
 	systemLambdaVersion = '1.2.1'
 	kotlinVersion = '1.8.0'
-	kotlinxVersion = '1.6.4'
+	kotlinxVersion = '1.7.0'
 	kotestVersion = '5.6.1'
 	findbugsVersion = '3.0.2'
 	jetbrainsAnnotationsVersion = '23.0.0'
