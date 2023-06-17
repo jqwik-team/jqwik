@@ -55,11 +55,29 @@ class UniqueElementsProperties {
 	@Group
 	class Sets {
 		@Property
+		boolean sets(@ForAll @UniqueElements Set<String> aStringSet) {
+			// May seem unnecessary but catches:
+			//   * ClassCastException or NullPointerException
+			//   * Empty Arbitrary
+			return hasNoDuplicates(aStringSet, s -> s);
+		}
+
+		@Property
 		boolean setsWithByClause(
 				@ForAll @UniqueElements(by = GetFirstTwoChars.class)
 						Set<@StringLength(3) @AlphaChars String> aStringSet
 		) {
 			return hasNoDuplicates(aStringSet, new GetFirstTwoChars());
+		}
+
+		@Property
+		boolean setsNotFromSetArbitrary(
+			@ForAll("setsOfStrings") @UniqueElements Set<String> aStringSet
+		) {
+			// May seem unnecessary but catches:
+			//   * ClassCastException or NullPointerException
+			//   * Empty Arbitrary
+			return hasNoDuplicates(aStringSet, s -> s);
 		}
 
 		@Property
