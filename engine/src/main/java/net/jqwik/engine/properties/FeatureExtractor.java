@@ -29,7 +29,12 @@ public interface FeatureExtractor<T> extends Function<T, Object> {
 	}
 
 	default boolean areUnique(Collection<T> elements) {
-		long uniqueCount = elements.stream().map(this::applySafe).distinct().count();
-		return uniqueCount == elements.size();
+		Set<Object> set = new HashSet<>();
+		for (T x : elements) {
+			if (!set.add(applySafe(x))) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
