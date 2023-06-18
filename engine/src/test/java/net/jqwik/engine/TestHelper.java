@@ -185,6 +185,11 @@ public class TestHelper {
 			}
 
 			@Override
+			public List<Object> testInstances() {
+				return null;
+			}
+
+			@Override
 			public String label() {
 				return null;
 			}

@@ -231,6 +231,7 @@ class CheckTryLifecycleContext implements AroundTryHook {
 		assertThat(context.containerClass()).isEqualTo(AroundTryHookTests.class);
 		assertThat(context.targetMethod().getName()).isEqualTo("checkTryLifecycleContextAttributes");
 		assertThat(context.testInstance()).isInstanceOf(AroundTryHookTests.class);
+		assertThat(context.testInstances().get(0)).isInstanceOf(AroundTryHookTests.class);
 		return aTry.execute(parameters);
 	}
 }

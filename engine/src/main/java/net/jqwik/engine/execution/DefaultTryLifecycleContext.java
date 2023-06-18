@@ -33,6 +33,11 @@ public class DefaultTryLifecycleContext implements TryLifecycleContext {
 	}
 
 	@Override
+	public List<Object> testInstances() {
+		return propertyContext.testInstances();
+	}
+
+	@Override
 	public String label() {
 		return propertyContext.label();
 	}
