@@ -62,11 +62,10 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	}
 
 	private List<Annotation> configurationAnnotations(TypeUsage parameter) {
-		return parameter.getAnnotations().stream() //
-						  .filter(annotation -> !annotation.annotationType().equals(ForAll.class)) //
-						  .collect(Collectors.toList());
+		return parameter.getAnnotations().stream()
+						.filter(annotation -> !annotation.annotationType().equals(ForAll.class))
+						.collect(Collectors.toList());
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private <T> Arbitrary<T> configureWithMethod(Arbitrary<T> arbitrary, Annotation annotation, Method configurationMethod) {
@@ -84,7 +83,8 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	private <T> List<Method> findConfigurationMethods(Arbitrary<T> arbitrary, Annotation annotation) {
 		Class<? extends Arbitrary<T>> arbitraryClass = (Class<? extends Arbitrary<T>>) arbitrary.getClass();
 		return findMethods(getClass(),
-				method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation), HierarchyTraversalMode.BOTTOM_UP);
+						   method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation), HierarchyTraversalMode.BOTTOM_UP
+		);
 	}
 
 	private static boolean hasCompatibleConfigurationSignature(
