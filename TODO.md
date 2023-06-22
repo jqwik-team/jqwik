@@ -6,6 +6,9 @@
 
     - Type resolution bug: https://github.com/jqwik-team/jqwik/issues/492
 
+    - Introduce `Arbitraries.fromGenerator(size -> new Generator())`.
+      See https://github.com/jqwik-team/jqwik/issues/494.
+
     - State-based Properties (https://github.com/jqwik-team/jqwik/issues/428) : 
       - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
       - ChainArbitrary.startWith(.., ChainConfig.of(isImmutable, hasSideEffects, comparator))
