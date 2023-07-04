@@ -1,4 +1,4 @@
-# 1.7.x
+# 1.7.5
 
     - Type resolution bug: https://github.com/jqwik-team/jqwik/issues/492
 
@@ -7,6 +7,9 @@
 
     - Allow more than one configure-method in `ArbitraryConfiguratorBase`.
       See https://github.com/jqwik-team/jqwik/issues/493.
+
+
+# 1.7.x
 
     - State-based Properties (https://github.com/jqwik-team/jqwik/issues/428) : 
       - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
