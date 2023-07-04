@@ -1,7 +1,3 @@
-# 1.7.4
-
-    - Release together with Micronaut extension 1.0.0
-
 # 1.7.x
 
     - Type resolution bug: https://github.com/jqwik-team/jqwik/issues/492
