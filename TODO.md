@@ -2,6 +2,11 @@
 
     - Type resolution bug: https://github.com/jqwik-team/jqwik/issues/492
 
+    - Type matching bug: https://github.com/jqwik-team/jqwik/issues/499
+      - Have tried it before. Maybe new insight?
+        e.g. Fail if number of type args differ in TypeUsageImpl.allTypeArgumentsCanBeAssigned
+        and then try type matching for super class and interfaces.
+
     - Introduce `Arbitraries.fromGenerator(size -> new Generator())`.
       See https://github.com/jqwik-team/jqwik/issues/494.
 
