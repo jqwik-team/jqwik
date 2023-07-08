@@ -4,6 +4,7 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -771,7 +772,13 @@ class TypeUsageTests {
 		void parameterizedTypesWithWildcards() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
+				public List rawList() {return null;}
+
+				@SuppressWarnings("WeakerAccess")
 				public List<?> listOfWildcard() {return null;}
+
+				@SuppressWarnings("WeakerAccess")
+				public Collection<?> collectionOfWildcard() {return null;}
 
 				@SuppressWarnings("WeakerAccess")
 				public List<? extends Arbitrary> listOfBoundWildcard() {return null;}
@@ -780,23 +787,34 @@ class TypeUsageTests {
 			Type wildcardType = LocalClass.class.getMethod("listOfWildcard").getAnnotatedReturnType().getType();
 			TypeUsage listOfWildcard = TypeUsage.forType(wildcardType);
 
+			Type collectionWildcardType = LocalClass.class.getMethod("collectionOfWildcard").getAnnotatedReturnType().getType();
+			TypeUsage collectionOfWildcard = TypeUsage.forType(collectionWildcardType);
+
 			Type boundWildcardType = LocalClass.class.getMethod("listOfBoundWildcard").getAnnotatedReturnType().getType();
 			TypeUsage listOfBoundWildcard = TypeUsage.forType(boundWildcardType);
 
+			Type rawListType = LocalClass.class.getMethod("rawList").getAnnotatedReturnType().getType();
+			TypeUsage rawList = TypeUsage.forType(rawListType);
+
 			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
 			TypeUsage listOfNativeInt = TypeUsage.of(List.class, TypeUsage.of(int.class));
-			TypeUsage rawList = TypeUsage.of(List.class);
 
 			assertThat(listOfBoundWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
+			assertThat(listOfBoundWildcard.canBeAssignedTo(collectionOfWildcard)).isTrue();
 
 			assertThat(listOfWildcard.canBeAssignedTo(listOfBoundWildcard)).isFalse();
 			assertThat(listOfWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
+			assertThat(listOfWildcard.canBeAssignedTo(collectionOfWildcard)).isTrue();
+			assertThat(collectionOfWildcard.canBeAssignedTo(listOfWildcard)).isFalse();
 
 			assertThat(listOfString.canBeAssignedTo(listOfWildcard)).isTrue();
+			assertThat(listOfString.canBeAssignedTo(collectionOfWildcard)).isTrue();
 			assertThat(listOfString.canBeAssignedTo(listOfBoundWildcard)).isFalse();
 
 			assertThat(listOfWildcard.canBeAssignedTo(listOfString)).isFalse();
-			assertThat(listOfWildcard.canBeAssignedTo(rawList)).isTrue();
+
+			// Violates variance rules
+			// assertThat(listOfWildcard.canBeAssignedTo(rawList)).isTrue();
 
 			assertThat(listOfNativeInt.canBeAssignedTo(listOfWildcard)).isTrue();
 			assertThat(listOfNativeInt.canBeAssignedTo(listOfBoundWildcard)).isFalse();
@@ -949,8 +967,52 @@ class TypeUsageTests {
 			assertThat(localStringArbitrary.canBeAssignedTo(stringArbitrary)).isTrue();
 
 			TypeUsage integerArbitrary = TypeUsage.of(Arbitrary.class, TypeUsage.of(Integer.class));
-			// TODO: jqwik is too loose here which might result in a class cast exception during property resolution
-			// assertThat(localStringArbitrary.canBeAssignedTo(integerArbitrary)).isFalse();
+			assertThat(localStringArbitrary.canBeAssignedTo(integerArbitrary)).isFalse();
+		}
+
+		// See https://github.com/jqwik-team/jqwik/issues/499#issuecomment-1625949262
+		@Example
+		void canBeAssignedToParameterized() throws NoSuchFieldException, NoSuchMethodException {
+			class LocalClass {
+				public void test(
+					Predicate<Double> predicateDouble,
+					Predicate<Number> predicateNumber,
+					Predicate<? super Number> predicateSuperNumber,
+					Predicate<? extends Number> predicateExtendsNumber
+				) {
+				}
+			}
+			Method method = LocalClass.class.getMethod("test", Predicate.class, Predicate.class, Predicate.class, Predicate.class);
+			List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class);
+			TypeUsage predicateDouble = TypeUsageImpl.forParameter(parameters.get(0));
+			TypeUsage predicateNumber = TypeUsageImpl.forParameter(parameters.get(1));
+			TypeUsage predicateSuperNumber = TypeUsageImpl.forParameter(parameters.get(2));
+			TypeUsage predicateExtendsNumber = TypeUsageImpl.forParameter(parameters.get(3));
+
+			assertThat(predicateSuperNumber.getTypeArgument(0).isSuperWildcard()).isTrue();
+			assertThat(predicateSuperNumber.getTypeArgument(0).isExtendsWildcard()).isFalse();
+			assertThat(predicateExtendsNumber.getTypeArgument(0).isSuperWildcard()).isFalse();
+			assertThat(predicateExtendsNumber.getTypeArgument(0).isExtendsWildcard()).isTrue();
+
+			assertThat(predicateDouble.canBeAssignedTo(predicateDouble)).isTrue();
+			assertThat(predicateDouble.canBeAssignedTo(predicateNumber)).isFalse();
+			assertThat(predicateDouble.canBeAssignedTo(predicateSuperNumber)).isFalse();
+			assertThat(predicateDouble.canBeAssignedTo(predicateExtendsNumber)).isTrue();
+
+			assertThat(predicateNumber.canBeAssignedTo(predicateDouble)).isFalse();
+			assertThat(predicateNumber.canBeAssignedTo(predicateNumber)).isTrue();
+			assertThat(predicateNumber.canBeAssignedTo(predicateSuperNumber)).isTrue();
+			assertThat(predicateNumber.canBeAssignedTo(predicateExtendsNumber)).isTrue();
+
+			assertThat(predicateSuperNumber.canBeAssignedTo(predicateDouble)).isFalse();
+			assertThat(predicateSuperNumber.canBeAssignedTo(predicateNumber)).isFalse();
+			assertThat(predicateSuperNumber.canBeAssignedTo(predicateSuperNumber)).isTrue();
+			assertThat(predicateSuperNumber.canBeAssignedTo(predicateExtendsNumber)).isFalse();
+
+			assertThat(predicateExtendsNumber.canBeAssignedTo(predicateDouble)).isFalse();
+			assertThat(predicateExtendsNumber.canBeAssignedTo(predicateNumber)).isFalse();
+			assertThat(predicateExtendsNumber.canBeAssignedTo(predicateSuperNumber)).isFalse();
+			assertThat(predicateExtendsNumber.canBeAssignedTo(predicateExtendsNumber)).isTrue();
 		}
 
 		@Example
