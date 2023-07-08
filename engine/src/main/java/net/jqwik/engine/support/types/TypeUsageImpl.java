@@ -397,8 +397,12 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public boolean canBeAssignedTo(TypeUsage targetType) {
+		if (targetType.isSuperWildcard() && this.isExtendsWildcard()) {
+			return false;
+		}
 		if (targetType.isTypeVariableOrWildcard()) {
-			return canBeAssignedToUpperBounds(this, targetType) && canBeAssignedToLowerBounds(this, targetType);
+			return canBeAssignedToUpperBounds(this, targetType) &&
+					   canBeAssignedToLowerBounds(this, targetType);
 		}
 		if (primitiveTypeToObject(this.getRawType(), targetType.getRawType()))
 			return true;
@@ -407,12 +411,30 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		if (boxedTypeMatches(this.rawType, targetType.getRawType()))
 			return true;
 		if (targetType.getRawType().isAssignableFrom(rawType)) {
-			// TODO: this is too loose, e.g. DefaultStringArbitrary can be assigned to Arbitrary<Integer>
-			// In order to solve that nested type arguments of this and targetType must be considered
+			if (this.isParameterizedRaw() || targetType.isParameterizedRaw()) {
+				// A raw parameterized type can always be on either side of assignment
+				return true;
+			}
 			if (allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments())) {
+				return true;
+			} else if (anySupertypeCanBeAssignedTo(targetType)) {
 				return true;
 			} else {
 				return findMatchingSuperType(targetType).isPresent();
+			}
+		}
+		return false;
+	}
+
+	private boolean anySupertypeCanBeAssignedTo(TypeUsage targetType) {
+		if (getSuperclass().isPresent()) {
+			if (getSuperclass().get().canBeAssignedTo(targetType)) {
+				return true;
+			}
+		}
+		for (TypeUsage anInterface : getInterfaces()) {
+			if (anInterface.canBeAssignedTo(targetType)) {
+				return true;
 			}
 		}
 		return false;
@@ -439,17 +461,20 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private boolean allTypeArgumentsCanBeAssigned(
 		List<TypeUsage> providedTypeArguments, List<TypeUsage> targetTypeArguments
 	) {
-		if (providedTypeArguments.size() == 0) {
-			return true;
-		}
-		if (targetTypeArguments.size() == 0) {
-			return true;
-		}
 		if (targetTypeArguments.size() != providedTypeArguments.size())
 			return false;
+
 		for (int i = 0; i < targetTypeArguments.size(); i++) {
 			TypeUsage providedTypeArgument = providedTypeArguments.get(i);
 			TypeUsage targetTypeArgument = targetTypeArguments.get(i);
+
+			boolean sameRawType = targetTypeArgument.getRawType().equals(providedTypeArgument.getRawType());
+			if (!(sameRawType || targetTypeArgument.isTypeVariableOrWildcard())) {
+				// Co- or contra-variance is only allowed for type variables and wildcards.
+				// Therefore, stop here if the raw types are not equal and it is not a type variable or wildcard.
+				return false;
+			}
+
 			if (!providedTypeArgument.canBeAssignedTo(targetTypeArgument))
 				return false;
 		}
@@ -674,6 +699,21 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	@Override
 	public boolean isNullable() {
 		return isNullable;
+	}
+
+	@Override
+	public boolean isParameterizedRaw() {
+		return typeArguments.isEmpty() && getRawType().getTypeParameters().length > 0;
+	}
+
+	@Override
+	public boolean isSuperWildcard() {
+		return isWildcard() && !lowerBounds.isEmpty();
+	}
+
+	@Override
+	public boolean isExtendsWildcard() {
+		return isWildcard() && upperBounds.stream().anyMatch(b -> !b.getRawType().equals(Object.class));
 	}
 
 	@Override

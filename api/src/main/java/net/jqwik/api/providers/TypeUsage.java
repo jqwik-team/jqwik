@@ -215,6 +215,24 @@ public interface TypeUsage {
 	boolean isNullable();
 
 	/**
+	 * Return true if it is a parameterized type with no parameters, e.g. {@code List}.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.7.5")
+	boolean isParameterizedRaw();
+
+	/**
+	 * Return true if it is a wildcard with super constraint, e.g. {@code ? super String}.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.7.5")
+	boolean isSuperWildcard();
+
+	/**
+	 * Return true if it is a wildcard with extends constraint, e.g. {@code ? extends String}.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.7.5")
+	boolean isExtendsWildcard();
+
+	/**
 	 * Return type usage object with just nullablity set to true
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.0")
