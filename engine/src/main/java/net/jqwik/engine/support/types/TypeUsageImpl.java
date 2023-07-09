@@ -397,6 +397,10 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public boolean canBeAssignedTo(TypeUsage targetType) {
+		// TODO: Recursive calls to this method will lead to a stack overflow in recursive types
+		// e.g. T extends Comparable<T>
+		// This happens to the new anySupertypeCanBeAssignedTo(targetType) call
+
 		if (targetType.isSuperWildcard() && this.isExtendsWildcard()) {
 			return false;
 		}
@@ -427,6 +431,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	}
 
 	private boolean anySupertypeCanBeAssignedTo(TypeUsage targetType) {
+		// TODO: This can lead to a stack overflow in recursive types
 		if (getSuperclass().isPresent()) {
 			if (getSuperclass().get().canBeAssignedTo(targetType)) {
 				return true;
