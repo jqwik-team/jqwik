@@ -84,6 +84,9 @@ dependencies {
 
 	testImplementation(project(":testing"))
 
+	// Works around an annoying bug in IntelliJ running tests on packages
+	testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
+
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 	testRuntimeOnly(project(":engine"))
 }

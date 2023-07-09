@@ -90,7 +90,8 @@ dependencies {
 	testImplementation("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 	testImplementation("org.junit.platform:junit-platform-testkit:${junitPlatformVersion}")
 
-	// Only needed to check interferences between Jupiter and jqwik
+	// Needed to check interferences between Jupiter and jqwik
+	// And works around an annoying bug in IntelliJ running tests on packages
 	testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
 
 	testImplementation("com.github.stefanbirkner:system-lambda:${systemLambdaVersion}")
