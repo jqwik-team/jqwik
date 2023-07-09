@@ -191,6 +191,12 @@ public interface TypeUsage {
 	Optional<TypeUsage> getSuperclass();
 
 	/**
+	 * List of superclass and interfaces
+	 */
+	@API(status = EXPERIMENTAL, since = "1.7.5")
+	List<TypeUsage> getSuperTypes();
+
+	/**
 	 * Return interfaces of this type.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.0")
@@ -230,7 +236,7 @@ public interface TypeUsage {
 	 * Return true if it is a wildcard with extends constraint, e.g. {@code ? extends String}.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.7.5")
-	boolean isExtendsWildcard();
+	boolean isExtendsConstraint();
 
 	/**
 	 * Return type usage object with just nullablity set to true
