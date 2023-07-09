@@ -84,6 +84,9 @@ dependencies {
 
 	testImplementation(project(":testing"))
 
+	// Works around an annoying bug in IntelliJ running tests on packages
+	testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
+
 	// To verify generated email addresses
 	testImplementation('com.github.seancfoley:ipaddress:5.4.0')
 
