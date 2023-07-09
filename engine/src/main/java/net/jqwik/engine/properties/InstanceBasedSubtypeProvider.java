@@ -8,6 +8,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.support.*;
+import net.jqwik.engine.support.types.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
@@ -98,7 +99,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 		Optional<String> optionalFromValue
 	) {
 		String generatorName = optionalForAllValue.orElseGet(() -> optionalFromValue.orElseThrow(() -> new JqwikException("Should never happen")));
-		return findProviderMethodByName(targetType, generatorName)
+		return findProviderMethodByName(generatorName)
 				   .map(method -> ProviderMethod.forMethod(method, targetType, instance, this).invoke())
 				   .orElse(Collections.emptySet());
 	}
@@ -112,7 +113,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 		throw new JqwikException(message);
 	}
 
-	private Optional<Method> findProviderMethodByName(TypeUsage typeUsage, String generatorToFind) {
+	private Optional<Method> findProviderMethodByName(String generatorToFind) {
 		if (generatorToFind.isEmpty())
 			return Optional.empty();
 
@@ -120,9 +121,8 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 			Optional<Provide> provideAnnotation = findDeclaredOrInheritedAnnotation(method, Provide.class);
 			return provideAnnotation.map(Provide::value).orElse("");
 		};
-		TypeUsage targetArbitraryType = TypeUsage.of(Arbitrary.class, typeUsage);
-
-		return findGeneratorMethod(generatorToFind, this.instance.getClass(), Provide.class, generatorNameSupplier, targetArbitraryType);
+		TypeUsage expectedReturnType = TypeUsage.of(Arbitrary.class);
+		return findGeneratorMethod(generatorToFind, this.instance.getClass(), Provide.class, generatorNameSupplier, expectedReturnType);
 	}
 
 	protected abstract Set<Arbitrary<?>> resolve(TypeUsage parameterType);

@@ -13,6 +13,7 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.support.*;
+import net.jqwik.engine.support.types.*;
 
 import static java.util.stream.Collectors.*;
 
@@ -270,11 +271,11 @@ public class JqwikReflectionSupport {
 		Class<?> containerClass,
 		Class<? extends Annotation> requiredGeneratorAnnotation,
 		Function<Method, String> generatorNameSupplier,
-		TypeUsage targetType
+		TypeUsage expectedReturnType
 	) {
 		List<Method> creators = findMethodsPotentiallyOuter(
 			containerClass,
-			isGeneratorMethod(targetType, requiredGeneratorAnnotation),
+			isGeneratorMethod(expectedReturnType, requiredGeneratorAnnotation),
 			HierarchyTraversalMode.BOTTOM_UP
 		);
 		return creators.stream().filter(generatorMethod -> {
@@ -297,15 +298,13 @@ public class JqwikReflectionSupport {
 		}
 	}
 
-	public static Predicate<Method> isGeneratorMethod(TypeUsage targetType, Class<? extends Annotation> requiredAnnotation) {
+	private static Predicate<Method> isGeneratorMethod(TypeUsage expectedReturnType, Class<? extends Annotation> requiredAnnotation) {
 		return method -> {
 			if (!findDeclaredOrInheritedAnnotation(method, requiredAnnotation).isPresent()) {
 				return false;
 			}
 			TypeUsage generatorReturnType = TypeUsage.forType(method.getAnnotatedReturnType().getType());
-			return generatorReturnType.canBeAssignedTo(targetType)
-					   // for generic types in test hierarchies:
-					   || targetType.canBeAssignedTo(generatorReturnType);
+			return generatorReturnType.canBeAssignedTo(expectedReturnType);
 		};
 	}
 
