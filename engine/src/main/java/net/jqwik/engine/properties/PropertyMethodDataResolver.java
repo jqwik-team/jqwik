@@ -41,7 +41,7 @@ public class PropertyMethodDataResolver implements DataResolver {
 			Data generateAnnotation = method.getDeclaredAnnotation(Data.class);
 			return generateAnnotation.value();
 		};
-		TypeUsage targetType = TypeUsage.of(Iterable.class, TypeUsage.wildcard(TypeUsage.of(Tuple.class)));
-		return findGeneratorMethod(generatorName, this.containerClass, Data.class, generatorNameSupplier, targetType);
+		TypeUsage expectedReturnType = TypeUsage.of(Iterable.class, TypeUsage.wildcard(TypeUsage.of(Tuple.class)));
+		return findGeneratorMethod(generatorName, this.containerClass, Data.class, generatorNameSupplier, expectedReturnType);
 	}
 }
