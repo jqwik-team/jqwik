@@ -990,9 +990,9 @@ class TypeUsageTests {
 			TypeUsage predicateExtendsNumber = TypeUsageImpl.forParameter(parameters.get(3));
 
 			assertThat(predicateSuperNumber.getTypeArgument(0).isSuperWildcard()).isTrue();
-			assertThat(predicateSuperNumber.getTypeArgument(0).isExtendsWildcard()).isFalse();
+			assertThat(predicateSuperNumber.getTypeArgument(0).isExtendsConstraint()).isFalse();
 			assertThat(predicateExtendsNumber.getTypeArgument(0).isSuperWildcard()).isFalse();
-			assertThat(predicateExtendsNumber.getTypeArgument(0).isExtendsWildcard()).isTrue();
+			assertThat(predicateExtendsNumber.getTypeArgument(0).isExtendsConstraint()).isTrue();
 
 			assertThat(predicateDouble.canBeAssignedTo(predicateDouble)).isTrue();
 			assertThat(predicateDouble.canBeAssignedTo(predicateNumber)).isFalse();

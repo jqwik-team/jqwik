@@ -397,11 +397,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public boolean canBeAssignedTo(TypeUsage targetType) {
-		// TODO: Recursive calls to this method will lead to a stack overflow in recursive types
-		// e.g. T extends Comparable<T>
-		// This happens to the new anySupertypeCanBeAssignedTo(targetType) call
-
-		if (targetType.isSuperWildcard() && this.isExtendsWildcard()) {
+		if (targetType.isSuperWildcard() && this.isExtendsConstraint()) {
 			return false;
 		}
 		if (targetType.isTypeVariableOrWildcard()) {
@@ -419,6 +415,16 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 				// A raw parameterized type can always be on either side of assignment
 				return true;
 			}
+			if (targetType.getTypeArgument(0).isExtendsConstraint()) {
+				// Recursive types will break off here.
+				// Sadly this will only work for direct recursion.
+				// Indirect recursion will still lead to a stack overflow.
+				boolean isRecursive = targetType.getTypeArgument(0).getUpperBounds().stream()
+										   .anyMatch(upperBound -> upperBound.isOfType(targetType.getRawType()));
+				if (isRecursive) {
+					return true;
+				}
+			}
 			if (allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments())) {
 				return true;
 			} else if (anySupertypeCanBeAssignedTo(targetType)) {
@@ -431,14 +437,8 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	}
 
 	private boolean anySupertypeCanBeAssignedTo(TypeUsage targetType) {
-		// TODO: This can lead to a stack overflow in recursive types
-		if (getSuperclass().isPresent()) {
-			if (getSuperclass().get().canBeAssignedTo(targetType)) {
-				return true;
-			}
-		}
-		for (TypeUsage anInterface : getInterfaces()) {
-			if (anInterface.canBeAssignedTo(targetType)) {
+		for (TypeUsage supertype : getSuperTypes()) {
+			if (supertype.canBeAssignedTo(targetType)) {
 				return true;
 			}
 		}
@@ -584,9 +584,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	// TODO: This is implementation is certainly wrong but it covers the straightforward cases
 	// e.g. Arbitrary<ActionsSequence<String>> is found in ActionsSequenceArbitrary<String>
 	private Optional<TypeUsage> findMatchingSuperTypeIn(TypeUsage typeToFind, TypeUsage typeToSearch) {
-		List<TypeUsage> supertypes = new ArrayList<>();
-		typeToSearch.getSuperclass().ifPresent(supertypes::add);
-		supertypes.addAll(typeToSearch.getInterfaces());
+		List<TypeUsage> supertypes = typeToSearch.getSuperTypes();
 
 		for (TypeUsage supertype : supertypes) {
 			if (matchesWithTypeArguments(supertype, typeToFind, typeToSearch.getTypeArguments())) {
@@ -692,6 +690,14 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	}
 
 	@Override
+	public List<TypeUsage> getSuperTypes() {
+		List<TypeUsage> supertypes = new ArrayList<>();
+		getSuperclass().ifPresent(supertypes::add);
+		supertypes.addAll(getInterfaces());
+		return supertypes;
+	}
+
+	@Override
 	public Type getType() {
 		return type;
 	}
@@ -717,8 +723,8 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	}
 
 	@Override
-	public boolean isExtendsWildcard() {
-		return isWildcard() && upperBounds.stream().anyMatch(b -> !b.getRawType().equals(Object.class));
+	public boolean isExtendsConstraint() {
+		return isTypeVariableOrWildcard() && upperBounds.stream().anyMatch(b -> !b.getRawType().equals(Object.class));
 	}
 
 	@Override
