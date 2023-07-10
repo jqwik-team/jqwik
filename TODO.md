@@ -1,11 +1,6 @@
-# 1.7.5
+# 1.8.0
 
     - Type resolution bug: https://github.com/jqwik-team/jqwik/issues/492
-
-    - Type matching bug: https://github.com/jqwik-team/jqwik/issues/499
-      - Have tried it before. Maybe new insight?
-        e.g. Fail if number of type args differ in TypeUsageImpl.allTypeArgumentsCanBeAssigned
-        and then try type matching for super class and interfaces.
 
     - Introduce `Arbitraries.fromGenerator(size -> new Generator())`.
       See https://github.com/jqwik-team/jqwik/issues/494.
@@ -14,7 +9,7 @@
       See https://github.com/jqwik-team/jqwik/issues/493.
 
 
-# 1.7.x
+# 1.8.x
 
     - State-based Properties (https://github.com/jqwik-team/jqwik/issues/428) : 
       - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
