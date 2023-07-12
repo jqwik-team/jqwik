@@ -39,7 +39,7 @@ class KotlinUniqueElementsConfigurator : ArbitraryConfigurator {
     private fun <T> configureSequenceArbitrary(
         arbitrary: SequenceArbitrary<T>,
         uniqueness: UniqueElements
-    ): SequenceArbitrary<T> {
+    ): SequenceArbitrary<T> where T: Any {
         val extractor = extractor(uniqueness) as Function<T, Any>
         return arbitrary.uniqueElements(extractor)
     }
