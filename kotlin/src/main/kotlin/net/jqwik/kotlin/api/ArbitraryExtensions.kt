@@ -24,7 +24,7 @@ fun <T> Arbitrary<T>.orNull(nullProbability: Double): Arbitrary<T?> {
  * @return a new arbitrary instance
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun <T> Arbitrary<T>.sequence(): SequenceArbitrary<T> {
+fun <T> Arbitrary<T>.sequence(): SequenceArbitrary<T> where T: Any {
     return SequenceArbitrary(this)
 }
 
