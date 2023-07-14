@@ -57,6 +57,6 @@ fun <T> Arbitrary<T>.triple(): Arbitrary<Triple<T, T, T>> {
  * @return a new arbitrary instance
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-inline fun <T, reified A> Arbitrary<T>.array(): ArrayArbitrary<T, A> {
-    return array(A::class.java)
+inline fun <T, reified A: Any> Arbitrary<T>.array(): ArrayArbitrary<T, A> {
+    return array(A::class.java) as ArrayArbitrary<T, A>
 }

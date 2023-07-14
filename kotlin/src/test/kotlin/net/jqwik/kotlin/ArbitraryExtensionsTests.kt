@@ -5,6 +5,7 @@ import net.jqwik.api.Example
 import net.jqwik.api.ForAll
 import net.jqwik.kotlin.api.any
 import net.jqwik.kotlin.api.array
+import net.jqwik.kotlin.api.orNull
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import java.util.*
 
@@ -29,8 +30,14 @@ class ArbitraryExtensionsTests {
     }
 
     @Example
-    fun arrayParameterCanBeCalledWithReifiedTypeInstead(@ForAll random: Random) {
+    fun arrayFunctionCanBeCalledWithReifiedType(@ForAll random: Random) {
         val stringArray = String.any().array<String, Array<String>>()
         checkAllGenerated(stringArray, random) { array -> array.all { it is String } }
+    }
+
+    @Example
+    fun arrayFunctionCanBeCalledWithNullableType(@ForAll random: Random) {
+        val stringArray = String.any().orNull(0.2).array<String?, Array<String?>>()
+        checkAllGenerated(stringArray, random) { array -> array.all { it is String? } }
     }
 }
