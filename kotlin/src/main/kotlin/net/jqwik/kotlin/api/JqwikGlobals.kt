@@ -96,7 +96,8 @@ fun <T> runBlockingProperty(
  * This is a Kotlin convenience for [Arbitraries.forType] which requires a Java class instead.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-inline fun <reified T> anyForType(): TypeArbitrary<T> {
+inline fun <reified T> anyForType(): TypeArbitrary<T>
+    where T : Any {
     return Arbitraries.forType(T::class.java)
 }
 
