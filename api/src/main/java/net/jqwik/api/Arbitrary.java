@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.Nullable;
 
 import net.jqwik.api.arbitraries.*;
 
@@ -255,7 +256,7 @@ public interface Arbitrary<T> {
 	 * @param nullProbability the probability. &ge; 0 and &le; 1.
 	 * @return a new arbitrary instance
 	 */
-	default Arbitrary<@NullableType T> injectNull(double nullProbability) {
+	default Arbitrary<@Nullable T> injectNull(double nullProbability) {
 		return ArbitraryFacade.implementation.injectNull(Arbitrary.this, nullProbability);
 	}
 
@@ -547,8 +548,8 @@ public interface Arbitrary<T> {
 	 * arbitrary to create the tuple values but will ignore any raised exception of
 	 * type {@code exceptionType} during generation.
 	 *
-	 * @param maxThrows The maximum number of subsequent exception throws before generation
-	 *                  is stopped.
+	 * @param maxThrows     The maximum number of subsequent exception throws before generation
+	 *                      is stopped.
 	 * @param exceptionType The exception type to ignore
 	 * @return a new arbitrary instance
 	 * @throws TooManyFilterMissesException if more than {@code maxThrows} exceptions are thrown in a row

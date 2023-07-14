@@ -56,10 +56,9 @@ compileTestJava {
 dependencies {
 	api("org.apiguardian:apiguardian-api:${apiGuardianVersion}")
 	compileOnly("com.google.code.findbugs:jsr305:${findbugsVersion}")
-	compileOnly("org.jetbrains:annotations:${jetbrainsAnnotationsVersion}")
 	// compileOnly "org.jetbrains.kotlin:kotlin-annotations-jvm:${kotlinVersion}"
-	testCompileOnly("com.google.code.findbugs:jsr305:${findbugsVersion}")
-	testCompileOnly("org.jetbrains:annotations:${jetbrainsAnnotationsVersion}")
+	compileOnly("org.jspecify:jspecify:${jspecifyVersion}")
+	testCompileOnly("org.jspecify:jspecify:${jspecifyVersion}")
 }
 
 tasks.withType(Javadoc) {

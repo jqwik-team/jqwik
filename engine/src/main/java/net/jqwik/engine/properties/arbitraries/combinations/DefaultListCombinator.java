@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.*;
 
@@ -24,7 +24,7 @@ public class DefaultListCombinator<T> implements Combinators.ListCombinator<T> {
 	}
 
 	@Override
-	public <R> Arbitrary<R> as(Function<List<T>, @NotNull R> combinator) {
+	public <R> Arbitrary<R> as(Function<List<T>, @NonNull R> combinator) {
 		return new CombineArbitrary<>(combineFunction(combinator), arbitraries);
 	}
 
@@ -48,7 +48,7 @@ public class DefaultListCombinator<T> implements Combinators.ListCombinator<T> {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <R> Arbitrary<R> as(Function<List<T>, @NotNull R> combinator) {
+		public <R> Arbitrary<R> as(Function<List<T>, @NonNull R> combinator) {
 			Predicate<List<Object>> filterPredicate = params -> filter.test((List<T>) params);
 			return new CombineArbitrary<>(Function.identity(), arbitraries)
 					   .filter(filterPredicate)

@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -25,7 +25,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
-	@NotNull
+	@NonNull
 	public List<String> transformations() {
 		return chain.transformations();
 	}
@@ -36,7 +36,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
-	@NotNull
+	@NonNull
 	public synchronized T run() {
 		currentRunning = RunningState.RUNNING;
 		for (Iterator<T> iterator = chain.iterator(); iterator.hasNext(); ) {
@@ -98,7 +98,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
-	@NotNull
+	@NonNull
 	public ActionChain<T> withInvariant(@Nullable String label, Consumer<T> invariant) {
 		String invariantLabel = label == null ? "Invariant" : String.format("Invariant '%s'", label);
 		invariants.add(Tuple.of(invariantLabel, invariant));
@@ -106,20 +106,20 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
-	@NotNull
+	@NonNull
 	public synchronized Optional<T> finalState() {
 		return Optional.ofNullable(currentValue);
 	}
 
 	@Override
-	@NotNull
+	// @NonNull // TODO: Why does this not work?
 	public ActionChain.RunningState running() {
 		return currentRunning;
 	}
 
 	@Override
-	@NotNull
-	public synchronized ActionChain<T> peek(@NotNull Consumer<T> peeker) {
+	@NonNull
+	public synchronized ActionChain<T> peek(@NonNull Consumer<T> peeker) {
 		peekers.add(peeker);
 		return this;
 	}

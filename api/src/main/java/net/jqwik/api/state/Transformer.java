@@ -3,7 +3,7 @@ package net.jqwik.api.state;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -24,14 +24,14 @@ import static org.apiguardian.api.API.Status.*;
  */
 @FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
+public interface Transformer<T> extends Function<@NonNull T, @NonNull T> {
 
 	/**
 	 * The singleton object used for all calls to {@linkplain #endOfChain()}.
 	 */
 	Transformer<?> END_OF_CHAIN = new Transformer<Object>() {
 		@Override
-		public @NotNull Object apply(@NotNull Object t) {
+		public @NonNull Object apply(@NonNull Object t) {
 			return t;
 		}
 
@@ -56,7 +56,7 @@ public interface Transformer<T> extends Function<@NotNull T, @NotNull T> {
 	 */
 	Transformer<?> NOOP = new Transformer<Object>() {
 		@Override
-		public @NotNull Object apply(@NotNull Object t) {
+		public @NonNull Object apply(@NonNull Object t) {
 			return t;
 		}
 

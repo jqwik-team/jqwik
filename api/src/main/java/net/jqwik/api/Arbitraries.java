@@ -1,10 +1,10 @@
 package net.jqwik.api;
 
-import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
@@ -31,7 +31,7 @@ public class Arbitraries {
 
 		public abstract <T> Arbitrary<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies);
 
-		public abstract <@NullableType T> Arbitrary<T> just(@Nullable T value);
+		public abstract <@Nullable T> Arbitrary<T> just(@Nullable T value);
 
 		public abstract IntegerArbitrary integers();
 
@@ -417,7 +417,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.2")
-	public static <@NullableType T> Arbitrary<T> just(@Nullable T value) {
+	public static <@Nullable T> Arbitrary<T> just(@Nullable T value) {
 		return ArbitrariesFacade.implementation.just(value);
 	}
 

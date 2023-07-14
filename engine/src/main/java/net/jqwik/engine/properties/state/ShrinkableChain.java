@@ -7,7 +7,7 @@ import java.util.stream.*;
 
 import net.jqwik.engine.support.*;
 
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -55,13 +55,13 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	}
 
 	@Override
-	@NotNull
+	@NonNull
 	public Chain<T> value() {
 		return new ChainInstance();
 	}
 
 	@Override
-	@NotNull
+	@NonNull
 	public Stream<Shrinkable<Chain<T>>> shrink() {
 		return new ShrinkableChainShrinker<>(this, iterations, maxTransformations).shrink();
 	}
@@ -79,7 +79,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	}
 
 	@Override
-	@NotNull
+	@NonNull
 	public ShrinkingDistance distance() {
 		List<Shrinkable<Transformer<T>>> shrinkablesForDistance = new ArrayList<>();
 		for (int i = 0; i < maxTransformations; i++) {
@@ -100,7 +100,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	private class ChainInstance implements Chain<T> {
 
 		@Override
-		@NotNull
+		@NonNull
 		public Iterator<T> start() {
 			return new ChainIterator(initialSupplier.get());
 		}
@@ -111,13 +111,13 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		@Override
-		@NotNull
+		@NonNull
 		public List<String> transformations() {
 			return iterations.stream().map(i -> i.transformation()).collect(Collectors.toList());
 		}
 
 		@Override
-		@NotNull
+		@NonNull
 		public List<Transformer<T>> transformers() {
 			return iterations.stream().map(i -> i.transformer()).collect(Collectors.toList());
 		}

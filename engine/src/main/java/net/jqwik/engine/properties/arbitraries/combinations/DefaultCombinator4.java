@@ -3,8 +3,6 @@ package net.jqwik.engine.properties.arbitraries.combinations;
 import java.util.*;
 import java.util.function.*;
 
-import org.jetbrains.annotations.*;
-
 import net.jqwik.api.*;
 
 public class DefaultCombinator4<T1, T2, T3, T4>
@@ -59,7 +57,6 @@ public class DefaultCombinator4<T1, T2, T3, T4>
 			return super.filter(combineFilters(this.filter, filter));
 		}
 
-		@NotNull
 		private Combinators.F4<T1, T2, T3, T4, Boolean> combineFilters(
 			Combinators.F4<T1, T2, T3, T4, Boolean> first,
 			Combinators.F4<T1, T2, T3, T4, Boolean> second

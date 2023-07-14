@@ -2,7 +2,7 @@ package net.jqwik.api;
 
 import java.util.*;
 
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.api.lifecycle.*;
@@ -485,11 +485,10 @@ class BuildersTests {
 
 		@Override
 		public String toString() {
-			final StringBuffer sb = new StringBuffer("Person{");
-			sb.append("name='").append(name).append('\'');
-			sb.append(", age=").append(age);
-			sb.append('}');
-			return sb.toString();
+			String sb = "Person{" + "name='" + name + '\'' +
+							", age=" + age +
+							'}';
+			return sb;
 		}
 	}
 

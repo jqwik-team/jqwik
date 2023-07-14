@@ -5,7 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.support.*;

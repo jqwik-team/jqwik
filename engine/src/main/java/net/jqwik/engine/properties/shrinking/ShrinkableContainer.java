@@ -3,7 +3,7 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 import java.util.stream.*;
 
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.support.*;

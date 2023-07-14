@@ -3,7 +3,7 @@ package net.jqwik.engine.properties.arbitraries.combinations;
 import java.util.*;
 import java.util.function.*;
 
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.*;
 
@@ -17,7 +17,7 @@ public class DefaultCombinator2<T1, T2> implements Combinators.Combinator2<T1, T
 	}
 
 	@Override
-	public <R> Arbitrary<R> as(Combinators.F2<T1, T2, @NotNull R> combinator) {
+	public <R> Arbitrary<R> as(Combinators.F2<T1, T2, @NonNull R> combinator) {
 		return new CombineArbitrary<>(combineFunction(combinator), a1, a2);
 	}
 
@@ -40,7 +40,7 @@ public class DefaultCombinator2<T1, T2> implements Combinators.Combinator2<T1, T
 		}
 
 		@Override
-		public <R> Arbitrary<R> as(Combinators.F2<T1, T2, @NotNull R> combinator) {
+		public <R> Arbitrary<R> as(Combinators.F2<T1, T2, @NonNull R> combinator) {
 			return new CombineArbitrary<>(Function.identity(), a1, a2)
 					   .filter(combineFunction(filter)::apply)
 					   .map(combineFunction(combinator));

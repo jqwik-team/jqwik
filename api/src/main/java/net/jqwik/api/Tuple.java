@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.support.*;
 

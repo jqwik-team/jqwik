@@ -3,7 +3,6 @@ package net.jqwik.kotlin.api
 import net.jqwik.api.Arbitrary
 import net.jqwik.api.arbitraries.ArrayArbitrary
 import org.apiguardian.api.API
-import kotlin.reflect.KClass
 
 /**
  * Create a new arbitrary of the same type but inject null values with a probability of `nullProbability`.

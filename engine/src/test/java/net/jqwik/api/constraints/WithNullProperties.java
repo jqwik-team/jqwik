@@ -1,11 +1,12 @@
 package net.jqwik.api.constraints;
 
-import javax.annotation.*;
 import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.statistics.*;
+
+import org.jspecify.annotations.*;
 
 @StatisticsReport(onFailureOnly = true)
 class WithNullProperties {

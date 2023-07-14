@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -144,7 +144,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return new ShrinkingDistance(appendedDistances);
 	}
 
-	@NotNull
+	@NonNull
 	private static <T> List<long[]> toDistances(Collection<Shrinkable<T>> shrinkables) {
 		List<long[]> listOfDistances = new ArrayList<>(shrinkables.size());
 		for (Shrinkable<?> tShrinkable : shrinkables) {

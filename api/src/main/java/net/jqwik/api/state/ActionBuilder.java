@@ -3,7 +3,7 @@ package net.jqwik.api.state;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.*;
 
@@ -69,7 +69,7 @@ public class ActionBuilder<S> {
 		};
 	}
 
-	@NotNull
+	@NonNull
 	private Arbitrary<Transformer<S>> justTransformer(Transformer<S> transformer) {
 		Transformer<S> withDescription = description == null ? transformer : Transformer.transform(description, transformer);
 		return Arbitraries.just(withDescription);

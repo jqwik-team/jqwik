@@ -1,7 +1,6 @@
 # 1.8.0
 
     - Migrate to Kotlin 1.9.0
-        - Replace jetbrains annotations with jspecify
         - Get rid of the warnings in the Kotlin module one by one. 
           Maybe this requires `interface Arbitrary<@Nullable T>`.
           See discussion in https://github.com/jqwik-team/jqwik/pull/504

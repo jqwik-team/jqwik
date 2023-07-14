@@ -1,6 +1,6 @@
 package net.jqwik.testing;
 
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
@@ -25,5 +25,5 @@ public abstract class CheckReporting implements AroundPropertyHook {
 		return result;
 	}
 
-	public abstract void check(@NotNull Reporter mockReporter);
+	public abstract void check(@NonNull Reporter mockReporter);
 }

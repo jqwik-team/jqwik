@@ -3,7 +3,7 @@ package net.jqwik.api;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.providers.*;
 

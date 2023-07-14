@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
-import org.jetbrains.annotations.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -173,7 +173,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R> Arbitrary<R> as(F2<T1, T2, @NotNull R> combinator);
+		<R> Arbitrary<R> as(F2<T1, T2, @NonNull R> combinator);
 
 		/**
 		 * Filter two values to only let them pass if the predicate is true.
@@ -191,7 +191,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<@NonNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -208,7 +208,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R> Arbitrary<R> as(F3<T1, T2, T3, @NotNull R> combinator);
+		<R> Arbitrary<R> as(F3<T1, T2, T3, @NonNull R> combinator);
 
 		/**
 		 * Filter three values to only let them pass if the predicate is true.
@@ -226,7 +226,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<@NonNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -244,7 +244,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R> Arbitrary<R> as(F4<T1, T2, T3, T4, @NotNull R> combinator);
+		<R> Arbitrary<R> as(F4<T1, T2, T3, T4, @NonNull R> combinator);
 
 		/**
 		 * Filter four values to only let them pass if the predicate is true.
@@ -262,7 +262,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<@NonNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -280,7 +280,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, @NotNull R> combinator);
+		<R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, @NonNull R> combinator);
 
 		/**
 		 * Filter five values to only let them pass if the predicate is true.
@@ -298,7 +298,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<@NonNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -315,7 +315,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, @NotNull R> combinator);
+		<R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, @NonNull R> combinator);
 
 		/**
 		 * Filter six values to only let them pass if the predicate is true.
@@ -333,7 +333,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<@NonNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -351,7 +351,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, @NotNull R> combinator);
+		<R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, @NonNull R> combinator);
 
 		/**
 		 * Filter seven values to only let them pass if the predicate is true.
@@ -369,7 +369,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<@NonNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -387,7 +387,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, @NotNull R> combinator);
+		<R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, @NonNull R> combinator);
 
 		/**
 		 * Filter eight values to only let them pass if the predicate is true.
@@ -405,7 +405,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<@NonNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -422,7 +422,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R> Arbitrary<R> as(Function<List<T>, @NotNull R> combinator);
+		<R> Arbitrary<R> as(Function<List<T>, @NonNull R> combinator);
 
 		/**
 		 * Filter list of values to only let them pass if the predicate is true.
@@ -440,7 +440,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<@NotNull R>> flatCombinator) {
+		default <R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<@NonNull R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}

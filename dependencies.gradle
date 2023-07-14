@@ -36,7 +36,7 @@ ext {
 	kotlinxVersion = '1.7.2'
 	kotestVersion = '5.6.2'
 	findbugsVersion = '3.0.2'
-	jetbrainsAnnotationsVersion = '23.0.0'
+	jspecifyVersion = '0.3.0'
 	moduleName = 'net.jqwik'
 	jqwikVersion = '1.8.0-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
