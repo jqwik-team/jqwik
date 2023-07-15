@@ -42,7 +42,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		return typeUsage;
 	}
 
-	public static TypeUsage forType(Type type) {
+	public static TypeUsageImpl forType(Type type) {
 		if (type instanceof WildcardType) {
 			return TypeUsageImpl.wildcardOf((WildcardType) type);
 		}
@@ -271,7 +271,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private static List<TypeUsage> toTypeUsages(Type[] upperBounds) {
 		return Arrays.stream(upperBounds)
 					 .filter(Objects::nonNull) // for some strange reason there can be null entries
-					 .map(TypeUsage::forType)
+					 .map(TypeUsageImpl::forType)
 					 .collect(Collectors.toList());
 	}
 
@@ -404,10 +404,6 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 			return canBeAssignedToUpperBounds(this, targetType) &&
 					   canBeAssignedToLowerBounds(this, targetType);
 		}
-		if (this.isTypeVariableOrWildcard()) {
-			return canBeAssignedFromUpperBounds(this, targetType) &&
-					   canBeAssignedFromLowerBounds(this, targetType);
-		}
 		if (primitiveTypeToObject(this.getRawType(), targetType.getRawType()))
 			return true;
 		if (boxedTypeMatches(targetType.getRawType(), this.rawType))
@@ -455,30 +451,18 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	private static boolean canBeAssignedToUpperBounds(TypeUsage sourceType, TypeUsage targetType) {
 		if (sourceType.isTypeVariableOrWildcard()) {
-			return sourceType.getUpperBounds().stream().allMatch(upperBoundSource -> canBeAssignedToUpperBounds(upperBoundSource, targetType));
+			return sourceType.getUpperBounds().stream()
+							 .allMatch(upperBoundSource -> canBeAssignedToUpperBounds(upperBoundSource, targetType));
 		}
 		return targetType.getUpperBounds().stream().allMatch(upperBoundTarget -> sourceType.canBeAssignedTo(upperBoundTarget));
 	}
 
 	private static boolean canBeAssignedToLowerBounds(TypeUsage sourceType, TypeUsage targetType) {
 		if (sourceType.isTypeVariableOrWildcard()) {
-			return sourceType.getLowerBounds().stream().allMatch(lowerBoundSource -> canBeAssignedToLowerBounds(lowerBoundSource, targetType));
+			return sourceType.getLowerBounds().stream()
+							 .allMatch(lowerBoundSource -> canBeAssignedToLowerBounds(lowerBoundSource, targetType));
 		}
 		return targetType.getLowerBounds().stream().allMatch(lowerBoundTarget -> lowerBoundTarget.canBeAssignedTo(sourceType));
-	}
-
-	private static boolean canBeAssignedFromUpperBounds(TypeUsage sourceType, TypeUsage targetType) {
-		// if (targetType.isTypeVariableOrWildcard()) {
-		// 	return sourceType.getUpperBounds().stream().allMatch(upperBoundTarget -> canBeAssignedFromUpperBounds(sourceType, upperBoundTarget));
-		// }
-		return sourceType.getUpperBounds().stream().allMatch(upperBoundSource -> upperBoundSource.canBeAssignedTo(targetType));
-	}
-
-	private static boolean canBeAssignedFromLowerBounds(TypeUsage sourceType, TypeUsage targetType) {
-		// if (targetType.isTypeVariableOrWildcard()) {
-		// 	return sourceType.getLowerBounds().stream().allMatch(lowerBoundTarget -> canBeAssignedFromLowerBounds(sourceType, lowerBoundTarget));
-		// }
-		return sourceType.getLowerBounds().stream().allMatch(lowerBoundSource -> targetType.canBeAssignedTo(lowerBoundSource));
 	}
 
 	private boolean allTypeArgumentsCanBeAssigned(
@@ -492,9 +476,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 			TypeUsage targetTypeArgument = targetTypeArguments.get(i);
 
 			boolean sameRawType = targetTypeArgument.getRawType().equals(providedTypeArgument.getRawType());
-			if (!(sameRawType ||
-					  targetTypeArgument.isTypeVariableOrWildcard()
-					  || providedTypeArgument.isTypeVariableOrWildcard())) {
+			if (!(sameRawType || targetTypeArgument.isTypeVariableOrWildcard())) {
 				// Co- or contra-variance is only allowed for type variables and wildcards.
 				// Therefore, stop here if the raw types are not equal and it is not a type variable or wildcard.
 				return false;
@@ -698,21 +680,58 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public Optional<TypeUsage> getSuperclass() {
+		// TODO: Cache lazily
 		if (rawType.getSuperclass() == null) {
 			return Optional.empty();
 		}
-		return Optional.of(TypeUsage.forType(rawType.getGenericSuperclass()));
+		TypeUsageImpl superclass = TypeUsageImpl.forType(rawType.getGenericSuperclass());
+		superclass.replaceTypeVariablesFromSubtype(this);
+		return Optional.of(superclass);
+	}
+
+	private TypeUsageImpl replaceTypeVariablesFromSubtype(TypeUsageImpl subtype) {
+		Map<String, TypeUsage> namedTypeArguments = extractTypeVariables(subtype);
+
+		// TODO: Replace type arguments recursively, i.e. in type arguments of type arguments
+		for (int i = 0; i < this.typeArguments.size(); i++) {
+			TypeUsage typeArgument = this.typeArguments.get(i);
+			if (typeArgument.isTypeVariable() && namedTypeArguments.containsKey(typeArgument.getTypeVariable())) {
+				this.typeArguments.set(i, namedTypeArguments.get(typeArgument.getTypeVariable()));
+			}
+		}
+
+		return this;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static Map<String, TypeUsage> extractTypeVariables(TypeUsage subtype) {
+		List<TypeUsage> typeArgumentsFromSubtype = subtype.getTypeArguments();
+		Map<String, TypeUsage> namedTypeArguments = new HashMap<>();
+		for (int pos = 0; pos < typeArgumentsFromSubtype.size(); pos++) {
+			TypeUsage typeArgumentFromSubtype = typeArgumentsFromSubtype.get(pos);
+			if (!typeArgumentFromSubtype.isTypeVariable()) {
+				// The parameter name is taken from the raw type, e.g. List<String> -> E = String because List<E>
+				TypeVariable[] rawTypeArguments = subtype.getRawType().getTypeParameters();
+				if (rawTypeArguments.length >= pos) {
+					namedTypeArguments.put(rawTypeArguments[pos].getName(), typeArgumentFromSubtype);
+				}
+			}
+		}
+		return namedTypeArguments;
 	}
 
 	@Override
 	public List<TypeUsage> getInterfaces() {
-		return toTypeUsages(getRawType().getGenericInterfaces());
+		return Arrays.stream(getRawType().getGenericInterfaces())
+					 .filter(Objects::nonNull) // for some strange reason there can be null entries
+					 .map(TypeUsageImpl::forType)
+					 .map(superType -> superType.replaceTypeVariablesFromSubtype(this))
+					 .collect(Collectors.toList());
 	}
 
 	@Override
 	public List<TypeUsage> getSuperTypes() {
 		List<TypeUsage> supertypes = new ArrayList<>();
-		// TODO: Replace type variables in supertypes with actual type arguments
 		getSuperclass().ifPresent(e -> supertypes.add(e));
 		supertypes.addAll(getInterfaces());
 		return supertypes;
