@@ -404,6 +404,10 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 			return canBeAssignedToUpperBounds(this, targetType) &&
 					   canBeAssignedToLowerBounds(this, targetType);
 		}
+		if (this.isTypeVariableOrWildcard()) {
+			return canBeAssignedFromUpperBounds(this, targetType) &&
+					   canBeAssignedFromLowerBounds(this, targetType);
+		}
 		if (primitiveTypeToObject(this.getRawType(), targetType.getRawType()))
 			return true;
 		if (boxedTypeMatches(targetType.getRawType(), this.rawType))
@@ -420,7 +424,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 				// Sadly this will only work for direct recursion.
 				// Indirect recursion will still lead to a stack overflow.
 				boolean isRecursive = targetType.getTypeArgument(0).getUpperBounds().stream()
-										   .anyMatch(upperBound -> upperBound.isOfType(targetType.getRawType()));
+												.anyMatch(upperBound -> upperBound.isOfType(targetType.getRawType()));
 				if (isRecursive) {
 					return true;
 				}
@@ -451,16 +455,30 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	private static boolean canBeAssignedToUpperBounds(TypeUsage sourceType, TypeUsage targetType) {
 		if (sourceType.isTypeVariableOrWildcard()) {
-			return sourceType.getUpperBounds().stream().allMatch(upperBound -> canBeAssignedToUpperBounds(upperBound, targetType));
+			return sourceType.getUpperBounds().stream().allMatch(upperBoundSource -> canBeAssignedToUpperBounds(upperBoundSource, targetType));
 		}
-		return targetType.getUpperBounds().stream().allMatch(sourceType::canBeAssignedTo);
+		return targetType.getUpperBounds().stream().allMatch(upperBoundTarget -> sourceType.canBeAssignedTo(upperBoundTarget));
 	}
 
 	private static boolean canBeAssignedToLowerBounds(TypeUsage sourceType, TypeUsage targetType) {
 		if (sourceType.isTypeVariableOrWildcard()) {
-			return sourceType.getLowerBounds().stream().allMatch(lowerBound -> canBeAssignedToLowerBounds(lowerBound, targetType));
+			return sourceType.getLowerBounds().stream().allMatch(lowerBoundSource -> canBeAssignedToLowerBounds(lowerBoundSource, targetType));
 		}
-		return targetType.getLowerBounds().stream().allMatch(lowerBound -> lowerBound.canBeAssignedTo(sourceType));
+		return targetType.getLowerBounds().stream().allMatch(lowerBoundTarget -> lowerBoundTarget.canBeAssignedTo(sourceType));
+	}
+
+	private static boolean canBeAssignedFromUpperBounds(TypeUsage sourceType, TypeUsage targetType) {
+		// if (targetType.isTypeVariableOrWildcard()) {
+		// 	return sourceType.getUpperBounds().stream().allMatch(upperBoundTarget -> canBeAssignedFromUpperBounds(sourceType, upperBoundTarget));
+		// }
+		return sourceType.getUpperBounds().stream().allMatch(upperBoundSource -> upperBoundSource.canBeAssignedTo(targetType));
+	}
+
+	private static boolean canBeAssignedFromLowerBounds(TypeUsage sourceType, TypeUsage targetType) {
+		// if (targetType.isTypeVariableOrWildcard()) {
+		// 	return sourceType.getLowerBounds().stream().allMatch(lowerBoundTarget -> canBeAssignedFromLowerBounds(sourceType, lowerBoundTarget));
+		// }
+		return sourceType.getLowerBounds().stream().allMatch(lowerBoundSource -> targetType.canBeAssignedTo(lowerBoundSource));
 	}
 
 	private boolean allTypeArgumentsCanBeAssigned(
@@ -474,7 +492,9 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 			TypeUsage targetTypeArgument = targetTypeArguments.get(i);
 
 			boolean sameRawType = targetTypeArgument.getRawType().equals(providedTypeArgument.getRawType());
-			if (!(sameRawType || targetTypeArgument.isTypeVariableOrWildcard())) {
+			if (!(sameRawType ||
+					  targetTypeArgument.isTypeVariableOrWildcard()
+					  || providedTypeArgument.isTypeVariableOrWildcard())) {
 				// Co- or contra-variance is only allowed for type variables and wildcards.
 				// Therefore, stop here if the raw types are not equal and it is not a type variable or wildcard.
 				return false;
@@ -519,9 +539,9 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	@Override
 	public <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType) {
 		return getAnnotationsStream()
-			.filter(annotation -> annotation.annotationType().equals(annotationType))
-			.map(annotationType::cast)
-			.findFirst();
+				   .filter(annotation -> annotation.annotationType().equals(annotationType))
+				   .map(annotationType::cast)
+				   .findFirst();
 	}
 
 	@Override
@@ -692,7 +712,8 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	@Override
 	public List<TypeUsage> getSuperTypes() {
 		List<TypeUsage> supertypes = new ArrayList<>();
-		getSuperclass().ifPresent(supertypes::add);
+		// TODO: Replace type variables in supertypes with actual type arguments
+		getSuperclass().ifPresent(e -> supertypes.add(e));
 		supertypes.addAll(getInterfaces());
 		return supertypes;
 	}

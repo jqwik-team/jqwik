@@ -980,6 +980,7 @@ class TypeUsageTests {
 					Predicate<? super Number> predicateSuperNumber,
 					Predicate<? extends Number> predicateExtendsNumber
 				) {
+					// predicateNumber = predicateExtendsNumber;
 				}
 			}
 			Method method = LocalClass.class.getMethod("test", Predicate.class, Predicate.class, Predicate.class, Predicate.class);
@@ -1013,6 +1014,37 @@ class TypeUsageTests {
 			assertThat(predicateExtendsNumber.canBeAssignedTo(predicateNumber)).isFalse();
 			assertThat(predicateExtendsNumber.canBeAssignedTo(predicateSuperNumber)).isFalse();
 			assertThat(predicateExtendsNumber.canBeAssignedTo(predicateExtendsNumber)).isTrue();
+		}
+
+		@Example
+		void canBeAssignedToWithTwoParameters() throws NoSuchMethodException {
+			abstract class StrFunction<T extends Number> implements Function<CharSequence, T> {
+			}
+			class LocalClass {
+				public void test(
+					Function<? extends CharSequence, Integer> functionExtendsCsInteger,
+					Function<? extends CharSequence, Number> functionExtendsCsNumber,
+					StrFunction<Number> customNumber,
+					StrFunction<Integer> customInteger
+				) {
+					// functionExtendsCsInteger = customNumber; // fails to compile
+					functionExtendsCsNumber = customNumber;
+					functionExtendsCsInteger = customInteger;
+					// functionExtendsCsNumber = customInteger; // fails to compile
+				}
+			}
+			Method method = LocalClass.class.getMethod("test", Function.class, Function.class, StrFunction.class, StrFunction.class);
+			List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class);
+			TypeUsage functionExtendsCsInteger = TypeUsageImpl.forParameter(parameters.get(0));
+			TypeUsage functionExtendsCsNumber = TypeUsageImpl.forParameter(parameters.get(1));
+			TypeUsage customNumber = TypeUsageImpl.forParameter(parameters.get(2));
+			TypeUsage customInteger = TypeUsageImpl.forParameter(parameters.get(3));
+
+			assertThat(customNumber.canBeAssignedTo(functionExtendsCsInteger)).isFalse();
+			assertThat(customNumber.canBeAssignedTo(functionExtendsCsNumber)).isTrue();
+
+			assertThat(customInteger.canBeAssignedTo(functionExtendsCsInteger)).isTrue();
+			assertThat(customInteger.canBeAssignedTo(functionExtendsCsNumber)).isFalse();
 		}
 
 		@Example
