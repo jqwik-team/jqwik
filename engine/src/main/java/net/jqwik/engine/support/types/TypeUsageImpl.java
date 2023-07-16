@@ -427,11 +427,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 			}
 			if (allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments())) {
 				return true;
-			} else if (anySupertypeCanBeAssignedTo(targetType)) {
-				return true;
-			} else {
-				return findMatchingSuperType(targetType).isPresent();
-			}
+			} else return anySupertypeCanBeAssignedTo(targetType);
 		}
 		return false;
 	}
@@ -579,57 +575,6 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
 	}
 
-	private Optional<TypeUsage> findMatchingSuperType(TypeUsage typeToFind) {
-		return findMatchingSuperTypeIn(typeToFind, this);
-	}
-
-	// TODO: This is implementation is certainly wrong but it covers the straightforward cases
-	// e.g. Arbitrary<ActionsSequence<String>> is found in ActionsSequenceArbitrary<String>
-	private Optional<TypeUsage> findMatchingSuperTypeIn(TypeUsage typeToFind, TypeUsage typeToSearch) {
-		List<TypeUsage> supertypes = typeToSearch.getSuperTypes();
-
-		for (TypeUsage supertype : supertypes) {
-			if (matchesWithTypeArguments(supertype, typeToFind, typeToSearch.getTypeArguments())) {
-				return Optional.of(supertype);
-			}
-		}
-
-		for (TypeUsage supertype : supertypes) {
-			Optional<TypeUsage> nestedFound = findMatchingSuperTypeIn(typeToFind, supertype);
-			if (nestedFound.isPresent()) return nestedFound;
-		}
-
-		return Optional.empty();
-	}
-
-	private boolean matchesWithTypeArguments(
-		TypeUsage type,
-		TypeUsage typeToFind,
-		List<TypeUsage> boundTypeArguments
-	) {
-		if (!type.getRawType().equals(typeToFind.getRawType())) {
-			return false;
-		}
-		List<TypeUsage> typeArguments = typeToFind.getTypeArguments();
-		if (allTypeArgumentsCanBeAssigned(typeArguments, boundTypeArguments)) {
-			return true;
-		}
-		if (typeArguments.size() == 1 && type.getTypeArguments().size() == 1) {
-			TypeUsage embeddedType = type.getTypeArgument(0);
-			TypeUsage embeddedTypeToFind = typeToFind.getTypeArgument(0);
-			if (Objects.equals(embeddedType, type)
-					&& Objects.equals(embeddedTypeToFind, typeToFind)) {
-				// To prevent stack overflow on recursive parameterized types
-				// This is looser than it should be
-				// In response to https://github.com/jqwik-team/jqwik/issues/327
-				// Not covered by unit test, b/c I wasn't able to create one :-(
-				return true;
-			}
-			return matchesWithTypeArguments(embeddedType, embeddedTypeToFind, boundTypeArguments);
-		}
-		return false;
-	}
-
 	private TypeUsageImpl cloneWith(Consumer<TypeUsageImpl> updater) {
 		try {
 			TypeUsageImpl clone = (TypeUsageImpl) this.clone();
@@ -690,17 +635,20 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	}
 
 	private TypeUsageImpl replaceTypeVariablesFromSubtype(TypeUsageImpl subtype) {
-		Map<String, TypeUsage> namedTypeArguments = extractTypeVariables(subtype);
+		Map<String, TypeUsage> typeVariables = extractTypeVariables(subtype);
+		replaceTypeVariablesIn(typeVariables, this);
+		return this;
+	}
 
-		// TODO: Replace type arguments recursively, i.e. in type arguments of type arguments
-		for (int i = 0; i < this.typeArguments.size(); i++) {
-			TypeUsage typeArgument = this.typeArguments.get(i);
-			if (typeArgument.isTypeVariable() && namedTypeArguments.containsKey(typeArgument.getTypeVariable())) {
-				this.typeArguments.set(i, namedTypeArguments.get(typeArgument.getTypeVariable()));
+	private static void replaceTypeVariablesIn(Map<String, TypeUsage> typeVariables, TypeUsageImpl replacementTarget) {
+		for (int i = 0; i < replacementTarget.typeArguments.size(); i++) {
+			TypeUsage typeArgument = replacementTarget.typeArguments.get(i);
+			if (typeArgument.isTypeVariable() && typeVariables.containsKey(typeArgument.getTypeVariable())) {
+				replacementTarget.typeArguments.set(i, typeVariables.get(typeArgument.getTypeVariable()));
+			} else {
+				replaceTypeVariablesIn(typeVariables, (TypeUsageImpl) typeArgument);
 			}
 		}
-
-		return this;
 	}
 
 	@SuppressWarnings("rawtypes")
