@@ -185,19 +185,19 @@ public interface TypeUsage {
 	boolean isVoid();
 
 	/**
-	 * Return superclass of this type.
+	 * Return superclass of this type. With all type variables resolved.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.0")
 	Optional<TypeUsage> getSuperclass();
 
 	/**
-	 * List of superclass and interfaces
+	 * List of superclass and interfaces. With all type variables resolved.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.7.5")
+	@API(status = EXPERIMENTAL, since = "1.8.0")
 	List<TypeUsage> getSuperTypes();
 
 	/**
-	 * Return interfaces of this type.
+	 * Return interfaces of this type. With all type variables resolved.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.0")
 	List<TypeUsage> getInterfaces();
@@ -223,19 +223,19 @@ public interface TypeUsage {
 	/**
 	 * Return true if it is a parameterized type with no parameters, e.g. {@code List}.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.7.5")
+	@API(status = EXPERIMENTAL, since = "1.8.0")
 	boolean isParameterizedRaw();
 
 	/**
 	 * Return true if it is a wildcard with super constraint, e.g. {@code ? super String}.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.7.5")
+	@API(status = EXPERIMENTAL, since = "1.8.0")
 	boolean isSuperWildcard();
 
 	/**
 	 * Return true if it is a wildcard with extends constraint, e.g. {@code ? extends String}.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.7.5")
+	@API(status = EXPERIMENTAL, since = "1.8.0")
 	boolean isExtendsConstraint();
 
 	/**
