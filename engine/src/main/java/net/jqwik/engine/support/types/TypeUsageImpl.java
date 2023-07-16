@@ -397,6 +397,8 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public boolean canBeAssignedTo(TypeUsage targetType) {
+		if (this.equals(targetType)) return true;
+
 		if (targetType.isSuperWildcard() && this.isExtendsConstraint()) {
 			return false;
 		}
@@ -478,8 +480,12 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 				return false;
 			}
 
-			if (!providedTypeArgument.canBeAssignedTo(targetTypeArgument))
+			// Unbound type variables can only be assigned to themselves.
+			if (targetTypeArgument.isTypeVariable() && !providedTypeArgument.equals(targetTypeArgument)) {
 				return false;
+			}
+
+			if (!providedTypeArgument.canBeAssignedTo(targetTypeArgument)) return false;
 		}
 		return true;
 	}

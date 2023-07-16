@@ -895,61 +895,74 @@ class TypeUsageTests {
 		}
 
 		@Example
-		void boundTypeVariables() throws NoSuchMethodException {
+		void multipleBoundTypeVariables() throws NoSuchMethodException {
 			class LocalClass {
-				@SuppressWarnings("WeakerAccess")
-				public <T extends String> List<T> listOfVariableString() {return null;}
-
 				@SuppressWarnings("WeakerAccess")
 				public <T extends Serializable & CharSequence> List<T> listOfVariableSerializable() {return null;}
 			}
 
-			Type variableStringType = LocalClass.class.getMethod("listOfVariableString").getAnnotatedReturnType().getType();
-			TypeUsage listOfVariableString = TypeUsage.forType(variableStringType);
-
 			Type variableSerializableType = LocalClass.class.getMethod("listOfVariableSerializable").getAnnotatedReturnType().getType();
 			TypeUsage listOfVariableSerializable = TypeUsage.forType(variableSerializableType);
-
 			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
-			TypeUsage listOfArbitrary = TypeUsage.of(List.class, TypeUsage.of(Arbitrary.class));
 
-			assertThat(listOfVariableString.canBeAssignedTo(listOfVariableString)).isTrue();
+			assertThat(listOfVariableSerializable.canBeAssignedTo(listOfVariableSerializable)).isTrue();
 
-			assertThat(listOfString.canBeAssignedTo(listOfVariableString)).isTrue();
-			assertThat(listOfString.canBeAssignedTo(listOfVariableSerializable)).isTrue();
-			assertThat(listOfArbitrary.canBeAssignedTo(listOfVariableString)).isFalse();
-
-			assertThat(listOfVariableString.canBeAssignedTo(listOfString)).isFalse();
+			assertThat(listOfString.canBeAssignedTo(listOfVariableSerializable)).isFalse();
 			assertThat(listOfVariableSerializable.canBeAssignedTo(listOfString)).isFalse();
 		}
 
 		@Example
 		void parameterizedTypesWithTypeVariable() throws NoSuchMethodException {
 			class LocalClass {
-				@SuppressWarnings("WeakerAccess")
-				public <T> List<T> listOfTypeVariable() {return null;}
+				public <T, M extends String> void test(
+					List<T> listOfUnboundTypeVariable,
+					List<M> listOfBoundTypeVariable,
+					List<String> listOfString,
+					List rawList
+				) {
+					// listOfUnboundTypeVariable = listOfBoundTypeVariable;
+					// listOfBoundTypeVariable = listOfUnboundTypeVariable;
+					// listOfUnboundTypeVariable = listOfString;
+					// listOfArbitrary = listOfBoundTypeVariable;
+					// listOfBoundTypeVariable = listOfString;
+					// listOfString = listOfBoundTypeVariable;
+					rawList = listOfUnboundTypeVariable;
+					rawList = listOfBoundTypeVariable;
+					rawList = listOfString;
+					listOfUnboundTypeVariable = rawList;
+					listOfBoundTypeVariable = rawList;
+					listOfString = rawList;
+				}
 
-				@SuppressWarnings("WeakerAccess")
-				public <T extends Arbitrary> List<T> listOfBoundTypeVariable() {return null;}
 			}
 
-			Type variableType = LocalClass.class.getMethod("listOfTypeVariable").getAnnotatedReturnType().getType();
-			TypeUsage listOfVariable = TypeUsage.forType(variableType);
+			Method method = LocalClass.class.getMethod("test", List.class, List.class, List.class, List.class);
+			List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class);
 
-			Type boundVariableType = LocalClass.class.getMethod("listOfBoundTypeVariable").getAnnotatedReturnType().getType();
-			TypeUsage listOfBoundVariable = TypeUsage.forType(boundVariableType);
+			TypeUsage listOfUnboundTypeVariable = TypeUsageImpl.forParameter(parameters.get(0));
+			TypeUsage listOfBoundTypeVariable = TypeUsageImpl.forParameter(parameters.get(1));
+			TypeUsage listOfString = TypeUsageImpl.forParameter(parameters.get(2));
+			TypeUsage rawList = TypeUsageImpl.forParameter(parameters.get(3));
 
-			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
-			TypeUsage rawList = TypeUsage.of(List.class);
+			assertThat(listOfUnboundTypeVariable.canBeAssignedTo(listOfUnboundTypeVariable)).isTrue();
+			assertThat(listOfUnboundTypeVariable.canBeAssignedTo(listOfBoundTypeVariable)).isFalse();
+			assertThat(listOfUnboundTypeVariable.canBeAssignedTo(listOfString)).isFalse();
+			assertThat(listOfUnboundTypeVariable.canBeAssignedTo(rawList)).isTrue();
 
-			assertThat(listOfBoundVariable.canBeAssignedTo(listOfVariable)).isTrue();
-			assertThat(listOfVariable.canBeAssignedTo(listOfBoundVariable)).isFalse();
-			assertThat(listOfVariable.canBeAssignedTo(listOfVariable)).isTrue();
-			assertThat(listOfString.canBeAssignedTo(listOfVariable)).isTrue();
-			assertThat(listOfString.canBeAssignedTo(listOfBoundVariable)).isFalse();
-			assertThat(listOfVariable.canBeAssignedTo(listOfString)).isFalse();
-			assertThat(listOfVariable.canBeAssignedTo(rawList)).isTrue();
-			assertThat(rawList.canBeAssignedTo(listOfVariable)).isTrue();
+			assertThat(listOfBoundTypeVariable.canBeAssignedTo(listOfUnboundTypeVariable)).isFalse();
+			assertThat(listOfBoundTypeVariable.canBeAssignedTo(listOfBoundTypeVariable)).isTrue();
+			assertThat(listOfBoundTypeVariable.canBeAssignedTo(listOfString)).isFalse();
+			assertThat(listOfBoundTypeVariable.canBeAssignedTo(rawList)).isTrue();
+
+			assertThat(listOfString.canBeAssignedTo(listOfUnboundTypeVariable)).isFalse();
+			assertThat(listOfString.canBeAssignedTo(listOfBoundTypeVariable)).isFalse();
+			assertThat(listOfString.canBeAssignedTo(listOfString)).isTrue();
+			assertThat(listOfString.canBeAssignedTo(rawList)).isTrue();
+
+			assertThat(rawList.canBeAssignedTo(listOfUnboundTypeVariable)).isTrue();
+			assertThat(rawList.canBeAssignedTo(listOfBoundTypeVariable)).isTrue();
+			assertThat(rawList.canBeAssignedTo(listOfString)).isTrue();
+			assertThat(rawList.canBeAssignedTo(rawList)).isTrue();
 		}
 
 		@Example
@@ -1048,7 +1061,7 @@ class TypeUsageTests {
 		}
 
 		@Example
-		void typedSuperTypes() throws NoSuchMethodException {
+		void typedSuperTypesCanBeAssigned() throws NoSuchMethodException {
 			class LocalClass {
 				public ActionSequenceArbitrary<String> actionSequenceArbitraryString() {
 					return null;
@@ -1078,6 +1091,43 @@ class TypeUsageTests {
 			assertThat(actionSequenceArbitraryStringType.canBeAssignedTo(arbitraryActionSequenceIntegerType))
 				.describedAs("%s can be assigned to %s but should not", actionSequenceArbitraryStringType, arbitraryActionSequenceIntegerType)
 				.isFalse();
+		}
+
+		@Example
+		void recursiveTypesCanBeAssigned() throws NoSuchMethodException {
+			abstract class MyComparable<T> implements Comparable<MyComparable<T>> {
+			}
+
+			class LocalClass {
+				public <T> void test(
+					MyComparable<T> myComparableT,
+					Comparable<MyComparable<T>> comparableMyComparableT,
+					MyComparable<String> myComparableString,
+					Comparable<MyComparable<String>> comparableMyComparableString
+				) {
+					// myComparableT = comparableMyComparableT;
+					comparableMyComparableT = myComparableT;
+					// myComparableString = comparableMyComparableString;
+					comparableMyComparableString = myComparableString;
+
+					// myComparableT = myComparableString;
+					// myComparableString = myComparableT;
+				}
+			}
+			Method method = LocalClass.class.getMethod("test", MyComparable.class, Comparable.class, MyComparable.class, Comparable.class);
+			List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class);
+			TypeUsage myComparableT = TypeUsageImpl.forParameter(parameters.get(0));
+			TypeUsage comparableMyComparableT = TypeUsageImpl.forParameter(parameters.get(1));
+			TypeUsage myComparableString = TypeUsageImpl.forParameter(parameters.get(2));
+			TypeUsage comparableMyComparableString = TypeUsageImpl.forParameter(parameters.get(3));
+
+			assertThat(myComparableT.canBeAssignedTo(comparableMyComparableT)).isTrue();
+			assertThat(comparableMyComparableT.canBeAssignedTo(myComparableT)).isFalse();
+			assertThat(myComparableString.canBeAssignedTo(comparableMyComparableString)).isTrue();
+			assertThat(comparableMyComparableString.canBeAssignedTo(myComparableString)).isFalse();
+
+			assertThat(myComparableT.canBeAssignedTo(myComparableString)).isFalse();
+			assertThat(myComparableString.canBeAssignedTo(myComparableT)).isFalse();
 		}
 	}
 
