@@ -310,6 +310,13 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private HashMap<String, Object> metaInfo = new LinkedHashMap<>();
 	private boolean isNullable = false;
 
+	// Lazy initialization
+	private TypeUsage superclass = null;
+
+	// Lazy initialization
+	private List<TypeUsage> interfaces = null;
+
+
 	public TypeUsageImpl(
 		Class<?> rawType,
 		Type type,
@@ -631,13 +638,25 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public Optional<TypeUsage> getSuperclass() {
-		// TODO: Cache lazily
 		if (rawType.getSuperclass() == null) {
 			return Optional.empty();
 		}
-		TypeUsageImpl superclass = TypeUsageImpl.forType(rawType.getGenericSuperclass());
-		superclass.replaceTypeVariablesFromSubtype(this);
+		// Double checking for thread safety
+		if (superclass == null) {
+			synchronized (this) {
+				if (superclass == null) {
+					superclass = createSuperclass();
+				}
+			}
+			superclass = createSuperclass();
+		}
 		return Optional.of(superclass);
+	}
+
+	private TypeUsageImpl createSuperclass() {
+		TypeUsageImpl superclass1 = TypeUsageImpl.forType(rawType.getGenericSuperclass());
+		superclass1.replaceTypeVariablesFromSubtype(this);
+		return superclass1;
 	}
 
 	private TypeUsageImpl replaceTypeVariablesFromSubtype(TypeUsageImpl subtype) {
@@ -676,6 +695,18 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public List<TypeUsage> getInterfaces() {
+		// Double checking for thread safety
+		if (interfaces == null) {
+			synchronized(this) {
+				if (interfaces == null) {
+					interfaces = createInterfaces();
+				}
+			}
+		}
+		return interfaces;
+	}
+
+	private List<TypeUsage> createInterfaces() {
 		return Arrays.stream(getRawType().getGenericInterfaces())
 					 .filter(Objects::nonNull) // for some strange reason there can be null entries
 					 .map(TypeUsageImpl::forType)
