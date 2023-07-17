@@ -17,8 +17,9 @@ and [DomainContextBase](/docs/${docsVersion}/javadoc/net/jqwik/api/domains/Domai
 In subclasses of `DomainContextBase` you have several options to specify 
 arbitrary providers, arbitrary configurators and reporting formats:
 
-- Add methods annotated with `Provide` and a return type of `Arbitrary<T>`.
-  The result of an annotated method will then be used as an arbitrary provider for type `T`.
+- Add methods annotated with `Provide` and a return type of `Arbitrary<TParam>`.
+  The result of an annotated method will then be used as an arbitrary provider
+  for `@ForAll` parameters of type `TParam`.
   
   Those methods follow the same rules as 
   [provider methods in container classes](#parameter-provider-methods),
@@ -29,19 +30,19 @@ arbitrary providers, arbitrary configurators and reporting formats:
 - Add inner classes (static or not static, but not private) that implement `ArbitraryProvider`.
   An instance of this class will then be created and used as arbitrary provider.
 
-- Additionally implement `ArbitraryProvider` and the domain context instance
+- Additionally, implement `ArbitraryProvider` and the domain context instance
   itself will be used as arbitrary provider.
 
 - Add inner classes (static or not static, but not private) that implement `ArbitraryConfigurator`.
   An instance of this class will then be created and used as configurator.
 
-- Additionally implement `ArbitraryConfigurator` and the domain context instance
+- Additionally, implement `ArbitraryConfigurator` and the domain context instance
   itself will be used as configurator.
 
 - Add inner classes (static or not static, but not private) that implement `SampleReportingFormat`.
   An instance of this class will then be created and used for reporting values of your domain object.
 
-- Additionally implement `SampleReportingFormat` and the domain context instance
+- Additionally, implement `SampleReportingFormat` and the domain context instance
   itself will be used for reporting values of your domain object.
 
 A `DomainContext` implementation class can itself have `@Domain` annotations,
@@ -51,7 +52,7 @@ You can override method `DomainContext.initialize(PropertyLifecycleContext conte
 which will be called once for each property to which this context is applied.
 Since the lifecycle of `DomainContext` instances is not specified,
 do not rely on storing or caching any information in member variables.
-Instead use jqwik's [Storage Mechanism](#lifecycle-storage) to persist data if needed.
+Instead, use jqwik's [Storage Mechanism](#lifecycle-storage) to persist data if needed.
 
 
 ### Domain example: American Addresses

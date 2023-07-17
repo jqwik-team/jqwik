@@ -35,9 +35,15 @@ method within the same class (or one of its superclasses or owning classes).
 This reference refers to either the method's name or the String value
 of the method's `@Provide` annotation.
 
-The providing method has to return an object of type
-[`@Arbitrary<T>`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html)
-where `T` is the static type of the parameter to be provided.
+The providing method has to return an arbitrary instance that matches type
+[`@Arbitrary<? extends TParam>`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html)
+where `TParam` is the static type of the parameter to be provided.
+If the return type cannot be matched, jqwik will throw a `CannotFindArbitraryException`.
+
+**Caveat:**
+_Since this kind of type matching follows Java's rules for assignability,
+some type mismatches, especially in the presence of wildcards and constrained type variables, 
+can be confusing._
 
 Arbitrary provision usually starts with a
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
