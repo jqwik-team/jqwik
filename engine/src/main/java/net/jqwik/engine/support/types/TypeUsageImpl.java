@@ -311,10 +311,10 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private boolean isNullable = false;
 
 	// Lazy initialization
-	private TypeUsage superclass = null;
+	volatile private TypeUsage superclass = null;
 
 	// Lazy initialization
-	private List<TypeUsage> interfaces = null;
+	volatile private List<TypeUsage> interfaces = null;
 
 
 	public TypeUsageImpl(
