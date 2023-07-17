@@ -641,14 +641,13 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		if (rawType.getSuperclass() == null) {
 			return Optional.empty();
 		}
-		// Double checking for thread safety
+		// Double checked locking for thread safety
 		if (superclass == null) {
 			synchronized (this) {
 				if (superclass == null) {
 					superclass = createSuperclass();
 				}
 			}
-			superclass = createSuperclass();
 		}
 		return Optional.of(superclass);
 	}
@@ -695,7 +694,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public List<TypeUsage> getInterfaces() {
-		// Double checking for thread safety
+		// Double checked locking for thread safety
 		if (interfaces == null) {
 			synchronized(this) {
 				if (interfaces == null) {
