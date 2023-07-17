@@ -1,17 +1,22 @@
 package net.jqwik.engine.properties;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
-
 import net.jqwik.api.*;
-import net.jqwik.api.providers.*;
-import net.jqwik.api.support.*;
-import net.jqwik.engine.support.types.*;
+import net.jqwik.api.providers.ArbitraryProvider;
+import net.jqwik.api.providers.TypeUsage;
+import net.jqwik.api.stateful.ActionSequence;
+import net.jqwik.api.support.CollectorsSupport;
 
-import static net.jqwik.engine.support.JqwikReflectionSupport.*;
-import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static net.jqwik.engine.support.JqwikReflectionSupport.findGeneratorMethod;
+import static net.jqwik.engine.support.JqwikReflectionSupport.newInstanceInTestContext;
+import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.findDeclaredOrInheritedAnnotation;
 
 abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.SubtypeProvider {
 
@@ -99,7 +104,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 		Optional<String> optionalFromValue
 	) {
 		String generatorName = optionalForAllValue.orElseGet(() -> optionalFromValue.orElseThrow(() -> new JqwikException("Should never happen")));
-		return findProviderMethodByName(generatorName)
+		return findProviderMethodByName(generatorName, targetType)
 				   .map(method -> ProviderMethod.forMethod(method, targetType, instance, this).invoke())
 				   .orElse(Collections.emptySet());
 	}
@@ -113,7 +118,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 		throw new JqwikException(message);
 	}
 
-	private Optional<Method> findProviderMethodByName(String generatorToFind) {
+	private Optional<Method> findProviderMethodByName(String generatorToFind, TypeUsage targetType) {
 		if (generatorToFind.isEmpty())
 			return Optional.empty();
 
@@ -121,7 +126,13 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 			Optional<Provide> provideAnnotation = findDeclaredOrInheritedAnnotation(method, Provide.class);
 			return provideAnnotation.map(Provide::value).orElse("");
 		};
-		TypeUsage expectedReturnType = TypeUsage.of(Arbitrary.class);
+		TypeUsage expectedReturnType = TypeUsage.of(
+			Arbitrary.class,
+			TypeUsage.wildcard(
+				targetType
+			)
+		);
+
 		return findGeneratorMethod(generatorToFind, this.instance.getClass(), Provide.class, generatorNameSupplier, expectedReturnType);
 	}
 
