@@ -20,6 +20,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private static final Map<TypeVariable<?>, TypeUsageImpl> resolvedTypeVariables = new ConcurrentHashMap<>();
 
 	public static final String WILDCARD = "?";
+	public static final TypeUsage OBJECT_TYPE = TypeUsage.of(Object.class);
 
 	public static TypeUsage forParameterizedClass(Tuple2<Class<?>, TypeUsage[]> parameterizedClass) {
 		Class<?> type = parameterizedClass.get1();
@@ -242,7 +243,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 			AnnotatedType[] annotatedUpperBounds = ((AnnotatedTypeVariable) annotatedType).getAnnotatedBounds();
 			upperBounds = toTypeUsages(annotatedUpperBounds);
 		}
-		return upperBounds.isEmpty() ? Collections.singletonList(TypeUsage.of(Object.class)) : upperBounds;
+		return upperBounds.isEmpty() ? Collections.singletonList(OBJECT_TYPE) : upperBounds;
 	}
 
 	private static List<TypeUsage> extractUpperBounds(MethodParameter parameter) {
@@ -311,10 +312,10 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private boolean isNullable = false;
 
 	// Lazy initialization
-	volatile private TypeUsage superclass = null;
+	private volatile TypeUsage superclass = null;
 
 	// Lazy initialization
-	volatile private List<TypeUsage> interfaces = null;
+	private volatile List<TypeUsage> interfaces = null;
 
 
 	public TypeUsageImpl(
@@ -390,9 +391,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 	@Override
 	public TypeUsage getTypeArgument(int position) {
-		return getTypeArguments().size() <= position ?
-				   TypeUsage.forType(Object.class)
-				   : getTypeArguments().get(position);
+		return getTypeArguments().size() <= position ? OBJECT_TYPE : getTypeArguments().get(position);
 	}
 
 	@Override
@@ -442,12 +441,20 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	}
 
 	private boolean anySupertypeCanBeAssignedTo(TypeUsage targetType) {
+		// An interface cannot be assigned to a class except to Object
+		if (isInterface(this) && !isInterface(targetType) && !targetType.isOfType(Object.class)) {
+			return false;
+		}
 		for (TypeUsage supertype : getSuperTypes()) {
 			if (supertype.canBeAssignedTo(targetType)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private static boolean isInterface(TypeUsage targetType) {
+		return targetType.getRawType().isInterface();
 	}
 
 	private boolean primitiveTypeToObject(Class<?> primitiveType, Class<?> objectType) {
