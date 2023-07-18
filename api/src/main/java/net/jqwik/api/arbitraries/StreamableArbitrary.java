@@ -8,6 +8,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -77,6 +79,6 @@ public interface StreamableArbitrary<T, U> extends SizableArbitrary<U> {
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.7.3")
-	StreamableArbitrary<T, U> uniqueElements(Function<T, Object> by);
+	StreamableArbitrary<@Nullable T, U> uniqueElements(Function<@Nullable T, Object> by);
 
 }

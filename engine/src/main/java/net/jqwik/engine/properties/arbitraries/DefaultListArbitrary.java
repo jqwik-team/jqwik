@@ -10,6 +10,8 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import org.jspecify.annotations.*;
+
 public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>> implements ListArbitrary<T> {
 
 	public DefaultListArbitrary(Arbitrary<T> elementArbitrary) {
@@ -77,7 +79,7 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 	}
 
 	@Override
-	public ListArbitrary<T> uniqueElements(Function<T, Object> by) {
+	public ListArbitrary<@Nullable T> uniqueElements(Function<@Nullable T, Object> by) {
 		FeatureExtractor<T> featureExtractor = by::apply;
 		return (ListArbitrary<T>) super.uniqueElements(featureExtractor);
 	}

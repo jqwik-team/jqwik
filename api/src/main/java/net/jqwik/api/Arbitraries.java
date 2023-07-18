@@ -159,7 +159,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.1")
-	public static <T> Arbitrary<T> of(Collection<T> values) {
+	public static <@Nullable T> Arbitrary<T> of(Collection<T> values) {
 		return ArbitrariesFacade.implementation.of(values);
 	}
 
@@ -726,7 +726,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.6.4")
-	public static <T> SetArbitrary<T> subsetOf(Collection<T> values) {
+	public static <@Nullable T> SetArbitrary<T> subsetOf(Collection<T> values) {
 		return of(values).set();
 	}
 

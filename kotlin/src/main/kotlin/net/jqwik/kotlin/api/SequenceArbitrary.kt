@@ -7,6 +7,7 @@ import net.jqwik.api.arbitraries.ListArbitrary
 import net.jqwik.api.arbitraries.SizableArbitrary
 import org.apiguardian.api.API
 import org.apiguardian.api.API.Status.EXPERIMENTAL
+import org.jspecify.annotations.Nullable
 import java.util.function.Function
 
 /**

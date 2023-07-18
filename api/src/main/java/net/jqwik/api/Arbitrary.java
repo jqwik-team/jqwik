@@ -20,7 +20,7 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = STABLE, since = "1.0")
 @CheckReturnValue
-public interface Arbitrary<T> {
+public interface Arbitrary<@Nullable T> {
 
 	@API(status = INTERNAL)
 	abstract class ArbitraryFacade {

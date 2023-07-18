@@ -7,6 +7,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -98,5 +100,5 @@ public interface ListArbitrary<T> extends Arbitrary<List<T>>, StreamableArbitrar
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	ListArbitrary<T> uniqueElements(Function<T, Object> by);
+	ListArbitrary<@Nullable T> uniqueElements(Function<@Nullable T, Object> by);
 }
