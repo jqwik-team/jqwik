@@ -7,6 +7,7 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.support.types.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -248,6 +249,33 @@ class GenericsSupportTests {
 			assertThat(annotatedList.getAnnotation(Size.class)).isNotNull();
 		}
 
+		@Example
+		@Label("Bug from issue#492")
+		void bug492() throws NoSuchMethodException {
+
+			abstract class Inner1<PARAMS> {
+				public void methodWithParams(PARAMS params) {}
+			}
+
+			class GenericType<T> {}
+
+			class Inner2<T> extends Inner1<GenericType<T>> {}
+
+			class Inner3 extends Inner2<String> {}
+
+
+			GenericsClassContext context = GenericsSupport.contextFor(Inner3.class);
+			Method method = Inner1.class.getMethod("methodWithParams", Object.class);
+
+			TypeResolution resolution = context.resolveParameter(method.getParameters()[0]);
+			TypeUsage typeUsage = TypeUsageImpl.forResolution(resolution);
+
+			assertThat(typeUsage.isOfType(GenericType.class)).isTrue();
+			// assertThat(typeUsage.getTypeArguments()).hasSize(1);
+			// assertThat(typeUsage.getTypeArgument(0).isOfType(String.class)).isTrue();
+
+		}
+
 	}
 
 	@Group
@@ -363,6 +391,12 @@ class GenericsSupportTests {
 	}
 
 	static class MyInterfaceWithStringAndInteger implements MyInterface<String, Integer> {
+	}
+
+	static class MyInterfaceString<S> implements MyInterface<String, S> {
+	}
+
+	static class MyInterfaceStringInteger extends MyInterfaceString<Integer> {
 	}
 
 	interface Pooper<T> {
