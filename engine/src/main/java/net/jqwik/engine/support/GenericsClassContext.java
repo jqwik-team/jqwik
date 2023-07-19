@@ -11,7 +11,7 @@ public class GenericsClassContext {
 
 	static final GenericsClassContext NULL = new GenericsClassContext(null) {
 		@Override
-		protected TypeResolution resolveInSupertypes(TypeResolution typeResolution) {
+		protected TypeResolution resolveVariableInSupertypes(TypeResolution typeResolution) {
 			return typeResolution.unchanged();
 		}
 
@@ -105,12 +105,12 @@ public class GenericsClassContext {
 	}
 
 	private TypeResolution resolveVariable(TypeResolution typeVariableResolution) {
-		TypeVariable typeVariable = (TypeVariable) typeVariableResolution.type();
-		LookupTypeVariable variable = new LookupTypeVariable(typeVariable);
-		TypeResolution localResolution = resolveLocally(typeVariableResolution, variable);
-		TypeResolution supertypeResolution = resolveInSupertypes(localResolution);
-		if (supertypeResolution.typeHasChanged()) {
-			return resolveType(supertypeResolution);
+		TypeResolution localResolution = resolveVariableLocally(typeVariableResolution);
+		if (localResolution.type() instanceof TypeVariable) {
+			TypeResolution supertypeResolution = resolveVariableInSupertypes(localResolution);
+			if (supertypeResolution.typeHasChanged()) {
+				return resolveType(supertypeResolution);
+			}
 		}
 		if (localResolution.typeHasChanged()) {
 			return resolveType(localResolution);
@@ -118,13 +118,15 @@ public class GenericsClassContext {
 		return typeVariableResolution;
 	}
 
-	private TypeResolution resolveLocally(TypeResolution typeResolution, LookupTypeVariable variable) {
+	private TypeResolution resolveVariableLocally(TypeResolution typeResolution) {
+		TypeVariable typeVariable = (TypeVariable) typeResolution.type();
+		LookupTypeVariable variable = new LookupTypeVariable(typeVariable);
 		return resolutions.getOrDefault(variable, typeResolution.unchanged());
 	}
 
-	protected TypeResolution resolveInSupertypes(TypeResolution typeResolution) {
+	protected TypeResolution resolveVariableInSupertypes(TypeResolution typeResolution) {
 		return supertypeContexts()
-				   .map(context -> context.resolveType(typeResolution))
+				   .map(context -> context.resolveVariableLocally(typeResolution))
 				   .filter(TypeResolution::typeHasChanged)
 				   .findFirst()
 				   .orElse(typeResolution.unchanged());
@@ -158,9 +160,7 @@ public class GenericsClassContext {
 
 		@Override
 		public int hashCode() {
-			int result = name.hashCode();
-			result = 31 * result + declaration.hashCode();
-			return result;
+			return Objects.hash(name, declaration);
 		}
 
 		@Override

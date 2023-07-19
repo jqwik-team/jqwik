@@ -271,8 +271,8 @@ class GenericsSupportTests {
 			TypeUsage typeUsage = TypeUsageImpl.forResolution(resolution);
 
 			assertThat(typeUsage.isOfType(GenericType.class)).isTrue();
-			// assertThat(typeUsage.getTypeArguments()).hasSize(1);
-			// assertThat(typeUsage.getTypeArgument(0).isOfType(String.class)).isTrue();
+			assertThat(typeUsage.getTypeArguments()).hasSize(1);
+			assertThat(typeUsage.getTypeArgument(0).isOfType(String.class)).isTrue();
 
 		}
 
