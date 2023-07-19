@@ -13,6 +13,10 @@ public class TypeResolution {
 		this.typeHasChanged = typeHasChanged;
 	}
 
+	public boolean isVariable() {
+		return type() instanceof TypeVariable;
+	}
+
 	public Type type() {
 		return resolvedType;
 	}

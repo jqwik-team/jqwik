@@ -11,11 +11,6 @@ public class GenericsClassContext {
 
 	static final GenericsClassContext NULL = new GenericsClassContext(null) {
 		@Override
-		protected TypeResolution resolveVariableInSupertypes(TypeResolution typeResolution) {
-			return typeResolution.unchanged();
-		}
-
-		@Override
 		public String toString() {
 			return "GenericsContext(null)";
 		}
@@ -53,7 +48,7 @@ public class GenericsClassContext {
 	}
 
 	private TypeResolution resolveType(TypeResolution typeResolution) {
-		if (typeResolution.type() instanceof TypeVariable) {
+		if (typeResolution.isVariable()) {
 			return resolveVariable(typeResolution);
 		}
 		if (typeResolution.type() instanceof ParameterizedType) {
@@ -106,7 +101,7 @@ public class GenericsClassContext {
 
 	private TypeResolution resolveVariable(TypeResolution typeVariableResolution) {
 		TypeResolution localResolution = resolveVariableLocally(typeVariableResolution);
-		if (localResolution.type() instanceof TypeVariable) {
+		if (localResolution.isVariable()) {
 			TypeResolution supertypeResolution = resolveVariableInSupertypes(localResolution);
 			if (supertypeResolution.typeHasChanged()) {
 				return resolveType(supertypeResolution);
@@ -124,7 +119,7 @@ public class GenericsClassContext {
 		return resolutions.getOrDefault(variable, typeResolution.unchanged());
 	}
 
-	protected TypeResolution resolveVariableInSupertypes(TypeResolution typeResolution) {
+	private TypeResolution resolveVariableInSupertypes(TypeResolution typeResolution) {
 		return supertypeContexts()
 				   .map(context -> context.resolveVariableLocally(typeResolution))
 				   .filter(TypeResolution::typeHasChanged)
