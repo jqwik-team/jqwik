@@ -6,8 +6,6 @@
           See discussion in https://github.com/jqwik-team/jqwik/pull/504
         - Enable strict type checking in kotlin::build.gradle
 
-    - Type resolution bug: https://github.com/jqwik-team/jqwik/issues/492
-
     - Introduce `Arbitraries.fromGenerator(size -> new Generator())`.
       See https://github.com/jqwik-team/jqwik/issues/494.
 
