@@ -277,6 +277,21 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		);
 	}
 
+	@Example
+	void uniqueChars(@ForAll Random random) {
+		StringArbitrary stringArbitrary = this.arbitrary
+											  .withCharRange('a', 'k')
+											  .ofMinLength(2).ofMaxLength(10)
+											  .uniqueChars();
+		checkAllGenerated(
+			stringArbitrary.generator(10, false),
+			//TODO: stringArbitrary.generator(10, true),
+			random,
+			s -> s.length() == s.chars().distinct().count()
+		);
+	}
+
+
 	@Group
 	class Coverage {
 		@Property

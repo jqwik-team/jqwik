@@ -54,9 +54,11 @@ public class ExhaustiveGenerators {
 			Arbitrary<Character> characterArbitrary,
 			int minLength,
 			int maxLength,
-			long maxNumberOfSamples
+			long maxNumberOfSamples,
+			boolean uniqueChars
 	) {
-		return list(characterArbitrary, minLength, maxLength, Collections.emptySet(), maxNumberOfSamples).map(
+		Set<FeatureExtractor<Character>> featureExtractors = uniqueChars ? Collections.singleton(FeatureExtractor.identity()) : Collections.emptySet();
+		return list(characterArbitrary, minLength, maxLength, featureExtractors, maxNumberOfSamples).map(
 				listGenerator -> listGenerator.map(
 						listOfChars -> listOfChars.stream()
 												  .map(String::valueOf)

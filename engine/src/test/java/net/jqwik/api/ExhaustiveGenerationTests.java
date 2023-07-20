@@ -537,6 +537,17 @@ class ExhaustiveGenerationTests {
 		}
 
 		@Example
+		void uniqueChars() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator =
+				Arbitraries.strings().withChars('a', 'b', 'c').ofLength(2).uniqueChars().exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(9L);
+			assertThat(generator).containsExactly("ab", "ac", "ba", "bc", "ca", "cb");
+		}
+
+		@Example
 		void elementArbitraryNotExhaustive() {
 			Optional<ExhaustiveGenerator<String>> optionalGenerator =
 				Arbitraries.strings().alpha().exhaustive();

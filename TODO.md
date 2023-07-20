@@ -1,5 +1,10 @@
 # 1.8.0
 
+    - StringArbitrary.uniqueChars()
+        - edge cases, see DefaultStringArbitraryTests.uniqueChars
+        - repeatChars=0.0 warn on repeatChars(0)
+        - User guide and release notes
+
     - Migrate to Kotlin 1.9.0
         - Get rid of the warnings in the Kotlin module one by one. 
           Maybe this requires `interface Arbitrary<@Nullable T>`.

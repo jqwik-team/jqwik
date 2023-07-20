@@ -110,10 +110,16 @@ public interface StringArbitrary extends Arbitrary<String> {
 	StringArbitrary withLengthDistribution(RandomDistribution lengthDistribution);
 
 	/**
-	 * Set the probability for repeating chars within the string.
+	 * Set the probability for repeating chars within the string to an approximate probability value.
 	 *
 	 * @param repeatProbability Must be between 0 (included) and 1 (excluded)
 	 */
 	@API(status = MAINTAINED, since = "1.5.3")
 	StringArbitrary repeatChars(double repeatProbability);
+
+	/**
+	 * Prevent character from having duplicates within the generated string.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.8.0")
+	StringArbitrary uniqueChars();
 }

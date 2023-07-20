@@ -100,10 +100,12 @@ public class RandomGenerators {
 		RandomGenerator<Character> elementGenerator,
 		int minLength, int maxLength, long maxUniqueChars,
 		int genSize, RandomDistribution lengthDistribution,
-		Arbitrary<Character> characterArbitrary
+		Arbitrary<Character> characterArbitrary,
+		boolean uniqueChars
 	) {
 		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength, maxLength, characterArbitrary);
-		return container(elementGenerator, createShrinkable, minLength, maxLength, maxUniqueChars, genSize, lengthDistribution, Collections.emptySet());
+		Set<FeatureExtractor<Character>> featureExtractors = uniqueChars ? Collections.singleton(FeatureExtractor.identity()) : Collections.emptySet();
+		return container(elementGenerator, createShrinkable, minLength, maxLength, maxUniqueChars, genSize, lengthDistribution, featureExtractors);
 	}
 
 	private static <T, C> RandomGenerator<C> container(

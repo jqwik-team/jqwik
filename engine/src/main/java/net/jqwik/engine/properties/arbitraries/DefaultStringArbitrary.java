@@ -20,6 +20,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	private Set<Character> excludedChars = new LinkedHashSet<>();
 	private RandomDistribution lengthDistribution = null;
 	private double repeatChars = 0.0;
+	private boolean uniqueChars = false;
 
 	@Override
 	public RandomGenerator<String> generator(int genSize) {
@@ -28,7 +29,8 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 			randomCharacterGenerator(),
 			minLength, maxLength(), maxUniqueChars,
 			genSize, lengthDistribution,
-			characterArbitrary
+			characterArbitrary,
+			uniqueChars
 		);
 	}
 
@@ -42,12 +44,15 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 			effectiveCharacterArbitrary(),
 			minLength,
 			maxLength(),
-			maxNumberOfSamples
+			maxNumberOfSamples,
+			uniqueChars
 		);
 	}
 
 	@Override
 	public EdgeCases<String> edgeCases(int maxEdgeCases) {
+		// TODO: Consider uniqueChars
+
 		// Optimization. Already handled by EdgeCases.concat(..)
 		if (maxEdgeCases <= 0) {
 			return EdgeCases.none();
@@ -134,6 +139,13 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 		}
 		DefaultStringArbitrary clone = typedClone();
 		clone.repeatChars = repeatProbability;
+		return clone;
+	}
+
+	@Override
+	public StringArbitrary uniqueChars() {
+		DefaultStringArbitrary clone = typedClone();
+		clone.uniqueChars = true;
 		return clone;
 	}
 
