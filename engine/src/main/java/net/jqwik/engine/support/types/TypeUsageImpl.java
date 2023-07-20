@@ -660,9 +660,16 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	}
 
 	private TypeUsageImpl createSuperclass() {
-		TypeUsageImpl superclass1 = TypeUsageImpl.forType(rawType.getGenericSuperclass());
-		superclass1.replaceTypeVariablesFromSubtype(this);
-		return superclass1;
+		return resolveSupertype(rawType.getGenericSuperclass());
+	}
+
+	private TypeUsageImpl resolveSupertype(Type supertype) {
+		// TODO: The right thing to do would be to resolve the supertype using a GenericsClassContext.
+		//       However, this would require to have the annotated, parameterized type of the supertype
+		//       available. This is not the case for the supertype of a raw type.
+		//       To achieve this, the original resolution of the current type usage would have to be stored.
+		TypeUsageImpl resolvedSupertype = TypeUsageImpl.forType(supertype);
+		return resolvedSupertype.replaceTypeVariablesFromSubtype(this);
 	}
 
 	private TypeUsageImpl replaceTypeVariablesFromSubtype(TypeUsageImpl subtype) {
@@ -715,8 +722,8 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private List<TypeUsage> createInterfaces() {
 		return Arrays.stream(getRawType().getGenericInterfaces())
 					 .filter(Objects::nonNull) // for some strange reason there can be null entries
-					 .map(TypeUsageImpl::forType)
-					 .map(superType -> superType.replaceTypeVariablesFromSubtype(this))
+					 .map(type -> resolveSupertype(type))
+					 // .map(superType -> superType.replaceTypeVariablesFromSubtype(this))
 					 .collect(Collectors.toList());
 	}
 
