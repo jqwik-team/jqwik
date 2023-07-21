@@ -291,6 +291,52 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		);
 	}
 
+	@Group
+	class ExhaustiveGeneration {
+		@Example
+		void generateAllPossibleStrings() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator =
+				arbitrary.withChars('a', 'b').ofMinLength(0).ofMaxLength(2)
+						   .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(7);
+			assertThat(generator).containsOnly("", "a", "b", "aa", "bb", "ab", "ba");
+		}
+
+		@Example
+		void allNumberStringsWith5Digits() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator =
+				arbitrary.numeric().ofLength(5).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(100000);
+			assertThat(generator).contains("00000", "12345", "98765", "99999");
+		}
+
+		@Example
+		void uniqueChars() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator =
+				arbitrary.withChars('a', 'b', 'c').ofLength(2).uniqueChars().exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(9L);
+			assertThat(generator).containsExactly("ab", "ac", "ba", "bc", "ca", "cb");
+		}
+
+		@Example
+		void elementArbitraryNotExhaustive() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator =
+				arbitrary.alpha().exhaustive();
+			assertThat(optionalGenerator).isNotPresent();
+		}
+
+	}
+
+
 
 	@Group
 	class Coverage {
@@ -380,7 +426,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 
 		@Provide
 		Arbitrary<String> withRepeatedChars() {
-			return Arbitraries.strings().repeatChars(0.01);
+			return arbitrary.repeatChars(0.01);
 		}
 
 	}
@@ -393,7 +439,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		void minLengthOutOfRange(@ForAll int minLength) {
 			Assume.that(minLength < 0);
 			assertThatThrownBy(
-				() -> Arbitraries.strings().ofMinLength(minLength)
+				() -> arbitrary.ofMinLength(minLength)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -401,7 +447,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		void maxLengthOutOfRange(@ForAll int maxLength) {
 			Assume.that(maxLength < 0);
 			assertThatThrownBy(
-				() -> Arbitraries.strings().ofMaxLength(maxLength)
+				() -> arbitrary.ofMaxLength(maxLength)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -409,8 +455,9 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		void minLargerThanMax(@ForAll @IntRange(max = 2147483647) int minLength, @IntRange(min = 1) @ForAll int maxLength) {
 			Assume.that(maxLength < minLength);
 			assertThatThrownBy(
-				() -> Arbitraries.strings().ofMinLength(minLength).ofMaxLength(maxLength)
+				() -> arbitrary.ofMinLength(minLength).ofMaxLength(maxLength)
 			).isInstanceOf(IllegalArgumentException.class);
 		}
 	}
+
 }
