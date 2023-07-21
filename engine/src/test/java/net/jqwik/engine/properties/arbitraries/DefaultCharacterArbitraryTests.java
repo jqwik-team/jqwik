@@ -8,6 +8,8 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.edgeCases.*;
 import net.jqwik.testing.*;
 
+import static org.assertj.core.api.Assertions.*;
+
 import static net.jqwik.testing.TestingSupport.*;
 
 class DefaultCharacterArbitraryTests implements GenericGenerationProperties, GenericEdgeCasesProperties {
@@ -227,4 +229,40 @@ class DefaultCharacterArbitraryTests implements GenericGenerationProperties, Gen
 		}
 		return result;
 	}
+
+	@Group
+	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
+
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				Arbitraries.chars(),
+				Arbitraries.chars().with('a', 'b', 'c', '?')
+			);
+		}
+
+		@Example
+		void singleRangeChars() {
+			CharacterArbitrary arbitrary = Arbitraries.chars().range('a', 'z');
+			EdgeCases<Character> edgeCases = arbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
+				'a', 'z'
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
+		}
+
+		@Example
+		void multiRangeChars() {
+			CharacterArbitrary arbitrary = Arbitraries.chars().range('a', 'z').numeric();
+			EdgeCases<Character> edgeCases = arbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
+				'a', 'z', '0', '9'
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(4);
+		}
+
+	}
+
 }

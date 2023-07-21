@@ -321,7 +321,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		void generateAllPossibleStrings() {
 			Optional<ExhaustiveGenerator<String>> optionalGenerator =
 				arbitrary.withChars('a', 'b').ofMinLength(0).ofMaxLength(2)
-						   .exhaustive();
+						 .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<String> generator = optionalGenerator.get();
@@ -360,7 +360,63 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 
 	}
 
+	@Group
+	class EdgeCasesGeneration implements GenericEdgeCasesProperties {
 
+		@Override
+		public Arbitrary<Arbitrary<?>> arbitraries() {
+			return Arbitraries.of(
+				arbitrary,
+				arbitrary.uniqueChars()
+			);
+		}
+
+		@Example
+		void strings() {
+			StringArbitrary stringArbitrary = arbitrary.withCharRange('a', 'z').ofMinLength(0);
+			EdgeCases<String> edgeCases = stringArbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases)).containsExactlyInAnyOrder(
+				"", "a", "z"
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(3);
+		}
+
+		@Property
+		void stringsOfFixedLength(@ForAll @IntRange(min = 0, max = 10) int stringLength) {
+			StringArbitrary stringArbitrary = arbitrary.withCharRange('a', 'z').ofLength(stringLength);
+			EdgeCases<String> edgeCases = stringArbitrary.edgeCases();
+			if (stringLength == 0) {
+				assertThat(collectEdgeCaseValues(edgeCases)).containsExactly("");
+			} else {
+				assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
+				assertThat(collectEdgeCaseValues(edgeCases)).allMatch(aString -> aString.length() == stringLength);
+				assertThat(collectEdgeCaseValues(edgeCases)).allMatch(aString -> aString.chars().allMatch(c -> c == 'a' || c == 'z'));
+			}
+		}
+
+		@Property
+		void stringsWithMinLength(@ForAll @IntRange(min = 2, max = 10) int minLength) {
+			StringArbitrary stringArbitrary = arbitrary.withCharRange('a', 'z')
+												   .ofMinLength(minLength)
+												   .ofMaxLength(20);
+			EdgeCases<String> edgeCases = stringArbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
+			assertThat(collectEdgeCaseValues(edgeCases)).allMatch(aString -> aString.length() == minLength);
+			assertThat(collectEdgeCaseValues(edgeCases)).allMatch(aString -> aString.chars().allMatch(c -> c == 'a' || c == 'z'));
+		}
+
+		@Property
+		void stringsWithUniqueChars(@ForAll @IntRange(min = 1, max = 10) int maxLength) {
+			StringArbitrary stringArbitrary = arbitrary.withCharRange('a', 'z')
+												   .ofMaxLength(maxLength)
+												   .uniqueChars();
+			EdgeCases<String> edgeCases = stringArbitrary.edgeCases();
+			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(3);
+			assertThat(collectEdgeCaseValues(edgeCases)).contains("", "a", "z");
+		}
+
+	}
 
 	@Group
 	class Coverage {
@@ -431,9 +487,9 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		@Provide("a to z, 1 to 3")
 		Arbitrary<String> aToZand1to3() {
 			return new DefaultStringArbitrary()
-				.withCharRange('a', 'z')
-				.withCharRange('1', '3')
-				.ofLength(1);
+					   .withCharRange('a', 'z')
+					   .withCharRange('1', '3')
+					   .ofLength(1);
 		}
 
 		@Property(tries = 2000, edgeCases = EdgeCasesMode.NONE)
