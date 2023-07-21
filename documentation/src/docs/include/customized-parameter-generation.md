@@ -313,6 +313,18 @@ Arbitraries.strings().ofMinLength(5).ofMaxLength(25)
 		   .withLengthDistribution(RandomDistribution.uniform());
 ```
 
+#### String with Unique Characters
+
+In case you need a string with unique characters you can use
+[`StringArbitrary.uniqueChars()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#uniqueChars()).
+Here's an example:
+
+```java
+Arbitraries.strings().alpha().ofMaxLength(25)
+		   .uniqueChars();
+```
+
+
 #### java.util.Random
 
 - [`Arbitrary<Random> randoms()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#randoms()):

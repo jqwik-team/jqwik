@@ -1,6 +1,7 @@
 # 1.8.0
 
     - StringArbitrary.uniqueChars()
+        - `@UniqueChars` annotation
         - User guide and release notes
 
     - Migrate to Kotlin 1.9.0
