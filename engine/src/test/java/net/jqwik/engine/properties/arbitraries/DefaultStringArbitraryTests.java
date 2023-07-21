@@ -290,6 +290,31 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		);
 	}
 
+	@Example
+	void uniqueCharsWithMaxLengthNotReachable(@ForAll Random random) {
+		StringArbitrary stringArbitrary = this.arbitrary
+											  .withCharRange('a', 'e')
+											  .ofMinLength(2).ofMaxLength(10)
+											  .uniqueChars();
+		checkAllGenerated(
+			stringArbitrary.generator(10, true),
+			random,
+			s -> s.length() == s.chars().distinct().count() && s.length() <= 5
+		);
+	}
+
+	@Example
+	void uniqueCharsWithImpossibleLength(@ForAll Random random) {
+		StringArbitrary stringArbitrary = this.arbitrary
+											  .withCharRange('a', 'e')
+											  .ofMinLength(6)
+											  .uniqueChars();
+
+		assertThatThrownBy(
+			() -> stringArbitrary.generator(10, true).next(random)
+		).isInstanceOf(TooManyFilterMissesException.class);
+	}
+
 	@Group
 	class ExhaustiveGeneration {
 		@Example
