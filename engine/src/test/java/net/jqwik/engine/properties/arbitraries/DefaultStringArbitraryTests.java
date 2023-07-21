@@ -284,8 +284,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 											  .ofMinLength(2).ofMaxLength(10)
 											  .uniqueChars();
 		checkAllGenerated(
-			stringArbitrary.generator(10, false),
-			//TODO: stringArbitrary.generator(10, true),
+			stringArbitrary.generator(10, true),
 			random,
 			s -> s.length() == s.chars().distinct().count()
 		);

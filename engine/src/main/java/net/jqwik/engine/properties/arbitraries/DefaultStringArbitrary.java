@@ -51,8 +51,6 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 
 	@Override
 	public EdgeCases<String> edgeCases(int maxEdgeCases) {
-		// TODO: Consider uniqueChars
-
 		// Optimization. Already handled by EdgeCases.concat(..)
 		if (maxEdgeCases <= 0) {
 			return EdgeCases.none();
@@ -77,7 +75,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	}
 
 	private boolean hasMultiCharEdgeCases() {
-		return minLength <= maxLength() && minLength > 1;
+		return minLength <= maxLength() && minLength > 1 && !uniqueChars;
 	}
 
 	private boolean hasSingleCharEdgeCases() {
@@ -134,8 +132,11 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 
 	@Override
 	public StringArbitrary repeatChars(double repeatProbability) {
-		if (repeatProbability < 0 || repeatProbability >= 1) {
+		if (repeatProbability < 0.0 || repeatProbability >= 1.0) {
 			throw new IllegalArgumentException("repeatProbability must be between 0 (included) and 1 (excluded)");
+		}
+		if (Math.abs(repeatProbability) == 0.0) {
+			return uniqueChars();
 		}
 		DefaultStringArbitrary clone = typedClone();
 		clone.repeatChars = repeatProbability;
@@ -145,6 +146,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	@Override
 	public StringArbitrary uniqueChars() {
 		DefaultStringArbitrary clone = typedClone();
+		clone.repeatChars = 0.0;
 		clone.uniqueChars = true;
 		return clone;
 	}

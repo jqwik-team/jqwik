@@ -112,6 +112,11 @@ public interface StringArbitrary extends Arbitrary<String> {
 	/**
 	 * Set the probability for repeating chars within the string to an approximate probability value.
 	 *
+	 * <p>
+	 *     Setting @code{repeatProbability} to 0.0 will generate strings with unique chars, i.e.,
+	 *     it is equivalent to calling {@link #uniqueChars()}.
+	 * </p>
+	 *
 	 * @param repeatProbability Must be between 0 (included) and 1 (excluded)
 	 */
 	@API(status = MAINTAINED, since = "1.5.3")
