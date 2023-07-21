@@ -36,6 +36,7 @@ public class DefaultArbitraries {
 		configurators.add(new SizeConfigurator());
 		configurators.add(new WithNullConfigurator());
 		configurators.add(new UniqueElementsConfigurator());
+		configurators.add(new UniqueCharsConfigurator());
 		return configurators;
 	}
 }

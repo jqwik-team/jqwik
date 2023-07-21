@@ -1,8 +1,11 @@
 # 1.8.0
 
     - StringArbitrary.uniqueChars()
-        - `@UniqueChars` annotation
-        - User guide and release notes
+        - User guide and release notes for @UniqueChars
+
+    - Remove old deprecations.
+
+    - Promote some API.EXPERIMENTAL to API.MAINTAINED
 
     - Migrate to Kotlin 1.9.0
         - Get rid of the warnings in the Kotlin module one by one. 
