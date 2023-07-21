@@ -324,6 +324,15 @@ Arbitraries.strings().alpha().ofMaxLength(25)
 		   .uniqueChars();
 ```
 
+Alternatively you can use the annotation `@UniqueChars` on a `@ForAll String` parameter:
+
+```java
+@Property
+boolean noDuplicateCharsInStrings(@ForAll @UniqueChars String aString) {
+    return aString.distinct().count() == aString.length();
+}
+```
+
 
 #### java.util.Random
 

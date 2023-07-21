@@ -1,8 +1,5 @@
 # 1.8.0
 
-    - StringArbitrary.uniqueChars()
-        - User guide and release notes for @UniqueChars
-
     - Remove old deprecations.
 
     - Promote some API.EXPERIMENTAL to API.MAINTAINED
