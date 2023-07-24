@@ -12,22 +12,6 @@ import static org.apiguardian.api.API.Status.*;
 public interface ActionChainArbitrary<S> extends Arbitrary<ActionChain<S>> {
 
 	/**
-	 * @deprecated Use {@link #withAction(Action)} instead. Will soon be removed.
-	 */
-	@API(status = DEPRECATED)
-	default ActionChainArbitrary<S> addAction(Action<S> action) {
-		return withAction(1, action);
-	}
-
-	/**
-	 * @deprecated Use {@link #withAction(int, Action)} instead. Will soon be removed.
-	 */
-	@API(status = DEPRECATED, since = "1.7.2")
-	default ActionChainArbitrary<S> addAction(int weight, Action<S> action) {
-		return withAction(weight, action);
-	}
-
-	/**
 	 * Allow an additional action with default weight of 1.
 	 *
 	 * @param action Instance of {@linkplain Action.Dependent} or {@linkplain Action.Independent}
