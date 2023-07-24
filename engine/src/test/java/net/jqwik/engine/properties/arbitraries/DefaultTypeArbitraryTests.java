@@ -16,110 +16,6 @@ import static net.jqwik.testing.TestingSupport.*;
 class DefaultTypeArbitraryTests {
 
 	@Group
-	class DirectUses {
-
-		@Example
-		void useConstructorWithoutParameter(@ForAll Random random) throws NoSuchMethodException {
-
-			TypeArbitrary<String> typeArbitrary =
-				new DefaultTypeArbitrary<>(String.class)
-					.use(String.class.getConstructor());
-
-			checkAllGenerated(
-				typeArbitrary,
-				random,
-				aString -> aString.equals("")
-			);
-		}
-
-		@Example
-		void useSingleFactoryWithoutParameter(@ForAll Random random) throws NoSuchMethodException {
-
-			TypeArbitrary<String> typeArbitrary =
-				new DefaultTypeArbitrary<>(String.class)
-					.use(Samples.class.getDeclaredMethod("stringFromNoParams"));
-
-			checkAllGenerated(
-				typeArbitrary,
-				random,
-				aString -> aString.equals("a string")
-			);
-		}
-
-		@Example
-		void twoCreatorsAreUsedRandomly(@ForAll Random random) throws NoSuchMethodException {
-
-			TypeArbitrary<String> typeArbitrary =
-				new DefaultTypeArbitrary<>(String.class)
-					.use(Samples.class.getDeclaredMethod("stringFromNoParams"))
-					.use(String.class.getConstructor());
-
-			RandomGenerator<String> generator = typeArbitrary.generator(1000, true);
-
-			checkAllGenerated(
-				generator,
-				random,
-				aString -> aString.equals("") || aString.equals("a string")
-			);
-
-			assertAtLeastOneGeneratedOf(generator, random, "", "a string");
-		}
-
-		@Example
-		void exceptionsDuringCreationAreIgnored(@ForAll Random random) throws NoSuchMethodException {
-			TypeArbitrary<Person> typeArbitrary =
-				new DefaultTypeArbitrary<>(Person.class)
-					.use(Samples.class.getDeclaredMethod("personFromAge", int.class));
-
-			checkAllGenerated(
-				typeArbitrary,
-				random,
-				aPerson -> aPerson.age > 0
-			);
-		}
-
-		@Example
-		void useConstructorWithOneParameter(@ForAll Random random) throws NoSuchMethodException {
-			TypeArbitrary<Person> typeArbitrary =
-				new DefaultTypeArbitrary<>(Person.class)
-					.use(Person.class.getConstructor(String.class));
-
-			checkAllGenerated(
-				typeArbitrary,
-				random,
-				aPerson -> aPerson.name.length() <= 100
-			);
-		}
-
-		@Example
-		void useConstructorWithTwoParameters(@ForAll Random random) throws NoSuchMethodException {
-			TypeArbitrary<Person> typeArbitrary =
-				new DefaultTypeArbitrary<>(Person.class)
-					.use(Person.class.getConstructor(String.class, int.class));
-
-			checkAllGenerated(
-				typeArbitrary,
-				random,
-				aPerson -> aPerson.name.length() <= 100
-			);
-		}
-
-		@Example
-		void useFactoryMethodWithTwoParameters(@ForAll Random random) throws NoSuchMethodException {
-			TypeArbitrary<Person> typeArbitrary =
-				new DefaultTypeArbitrary<>(Person.class)
-					.use(Person.class.getDeclaredMethod("create", int.class, String.class));
-
-			checkAllGenerated(
-				typeArbitrary,
-				random,
-				aPerson -> aPerson.name.length() <= 100
-			);
-		}
-
-	}
-
-	@Group
 	@Label("useDefaults")
 	class UseDefaults {
 
@@ -131,19 +27,6 @@ class DefaultTypeArbitraryTests {
 				typeArbitrary,
 				random,
 				aPerson -> !aPerson.name.equals("non-public-factory-name")
-			);
-		}
-
-		@Example
-		void isOverwrittenByDirectUse(@ForAll Random random) throws NoSuchMethodException {
-			TypeArbitrary<Person> typeArbitrary =
-				new DefaultTypeArbitrary<>(Person.class)
-					.use(Samples.class.getDeclaredMethod("personFromNoParams"));
-
-			checkAllGenerated(
-				typeArbitrary,
-				random,
-				aPerson -> aPerson.name.equals("a person") && aPerson.age == 42
 			);
 		}
 
@@ -378,24 +261,6 @@ class DefaultTypeArbitraryTests {
 
 			Assertions.assertThatThrownBy(
 				() -> typeArbitrary.generator(1000, true)
-			).isInstanceOf(JqwikException.class);
-		}
-
-		@Example
-		void nonStaticMethodsAreNotSupported() throws NoSuchMethodException {
-			TypeArbitrary<String> typeArbitrary = new DefaultTypeArbitrary<>(String.class)
-				.use(Samples.class.getDeclaredMethod("nonStaticMethod"));
-			Assertions.assertThatThrownBy(
-				() -> typeArbitrary.generator(1000)
-			).isInstanceOf(JqwikException.class);
-		}
-
-		@Example
-		void creatorWithWrongReturnTypeIsNotSupported() throws NoSuchMethodException {
-			TypeArbitrary<Integer> typeArbitrary = new DefaultTypeArbitrary<>(int.class)
-				.use(Samples.class.getDeclaredMethod("stringFromNoParams"));
-			Assertions.assertThatThrownBy(
-				() -> typeArbitrary.generator(1000)
 			).isInstanceOf(JqwikException.class);
 		}
 

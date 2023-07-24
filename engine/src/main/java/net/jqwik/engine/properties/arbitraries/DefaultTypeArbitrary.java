@@ -35,13 +35,6 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 		return traverseArbitrary;
 	}
 
-	@Override
-	public TypeArbitrary<T> use(Executable creator) {
-		DefaultTypeArbitrary<T> clone = cloneWithoutDefaultsSet();
-		clone.explicitCreators.add(creator);
-		return clone;
-	}
-
 	private DefaultTypeArbitrary<T> cloneWithoutDefaultsSet() {
 		DefaultTypeArbitrary<T> clone = typedClone();
 		if (clone.defaultsSet) {

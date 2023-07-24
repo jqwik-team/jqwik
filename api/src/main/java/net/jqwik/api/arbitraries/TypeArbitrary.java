@@ -27,19 +27,6 @@ import static org.apiguardian.api.API.Status.*;
 public interface TypeArbitrary<T> extends Arbitrary<T> {
 
 	/**
-	 * Add another creator (function or constructor) to be used
-	 * for generating values of type {@code T}
-	 *
-	 * @param creator The static function or constructor
-	 * @return new arbitrary instance
-	 *
-	 * @deprecated No longer supported. Will be removed in 1.8.0.
-	 */
-	@Deprecated
-	@API(status = DEPRECATED, since = "1.6.1")
-	TypeArbitrary<T> use(Executable creator);
-
-	/**
 	 * Add public constructors of class {@code T} to be used
 	 * for generating values of type {@code T}
 	 *
