@@ -624,7 +624,7 @@ public interface Arbitrary<@Nullable T> {
 	 * @return a new arbitrary instance
 	 * @see EdgeCases.Config
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.9")
+	@API(status = MAINTAINED, since = "1.8.0")
 	default Arbitrary<T> edgeCases(Consumer<EdgeCases.Config<T>> configurator) {
 		return ArbitraryFacade.implementation.configureEdgeCases(Arbitrary.this, configurator);
 	}
@@ -637,7 +637,7 @@ public interface Arbitrary<@Nullable T> {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.4.0")
+	@API(status = MAINTAINED, since = "1.8.0")
 	default Arbitrary<T> withoutEdgeCases() {
 		return ArbitraryFacade.implementation.withoutEdgeCases(Arbitrary.this);
 	}

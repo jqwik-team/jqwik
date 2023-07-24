@@ -51,6 +51,6 @@ public @interface Provide {
 	 *
 	 * @return an array of exception types
 	 */
-	@API(status = EXPERIMENTAL, since = "1.7.2")
+	@API(status = MAINTAINED, since = "1.8.0")
 	Class<? extends Throwable>[] ignoreExceptions() default {};
 }

@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see Property
  */
-@API(status = EXPERIMENTAL, since = "1.3.0")
+@API(status = MAINTAINED, since = "1.8.0")
 public enum EdgeCasesMode {
 
 	/**

@@ -79,7 +79,7 @@ public @interface Property {
 	@API(status = MAINTAINED, since = "1.0")
 	AfterFailureMode afterFailure() default AfterFailureMode.NOT_SET;
 
-	@API(status = EXPERIMENTAL, since = "1.3.0")
+	@API(status = MAINTAINED, since = "1.8.0")
 	EdgeCasesMode edgeCases() default EdgeCasesMode.NOT_SET;
 
 	/**

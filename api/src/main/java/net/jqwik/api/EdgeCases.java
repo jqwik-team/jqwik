@@ -21,7 +21,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		public abstract <T> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers);
 	}
 
-	@API(status = EXPERIMENTAL, since = "1.3.9")
+	@API(status = MAINTAINED, since = "1.8.0")
 	interface Config<T> {
 
 		static <T> Consumer<Config<T>> noConfig() {

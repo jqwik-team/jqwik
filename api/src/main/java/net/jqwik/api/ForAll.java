@@ -27,6 +27,6 @@ public @interface ForAll {
 
 	String value() default NO_VALUE;
 
-	@API(status = EXPERIMENTAL, since = "1.6.3")
+	@API(status = MAINTAINED, since = "1.8.0")
 	Class<? extends ArbitrarySupplier<?>> supplier() default ArbitrarySupplier.NONE.class;
 }
