@@ -1,7 +1,5 @@
 # 1.8.0
 
-    - Remove old deprecations.
-
     - Promote some API.EXPERIMENTAL to API.MAINTAINED
 
     - Migrate to Kotlin 1.9.0
