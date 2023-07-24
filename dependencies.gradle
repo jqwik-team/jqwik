@@ -25,7 +25,7 @@ static def showStandardStreams() {
 
 ext {
 	junitPlatformVersion = '1.9.3'
-	junitJupiterVersion = '5.9.3'
+	junitJupiterVersion = '5.10.0'
 	apiGuardianVersion = '1.1.2'
 	opentest4jVersion = '1.2.0'
 	archunitVersion = '1.0.1'
