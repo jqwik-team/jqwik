@@ -6,7 +6,7 @@ import net.jqwik.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-@API(status = EXPERIMENTAL, since = "1.3.0")
+@API(status = MAINTAINED, since = "1.8.0")
 public interface NumericalArbitrary<T, A extends NumericalArbitrary<T, A>> extends Arbitrary<T> {
 
 	/**

@@ -84,6 +84,6 @@ public interface TypeArbitrary<T> extends Arbitrary<T> {
 	 *
 	 * @return new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.6.1")
+	@API(status = MAINTAINED, since = "1.8.0")
 	TypeArbitrary<T> enableRecursion();
 }

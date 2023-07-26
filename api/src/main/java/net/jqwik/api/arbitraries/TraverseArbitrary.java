@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to configure arbitraries that try to generate instances
  * of a given type {@code T} from the type's available constructors and factory methods.
  */
-@API(status = EXPERIMENTAL, since = "1.6.1")
+@API(status = MAINTAINED, since = "1.8.0")
 public interface TraverseArbitrary<T> extends Arbitrary<T> {
 
 	/**
