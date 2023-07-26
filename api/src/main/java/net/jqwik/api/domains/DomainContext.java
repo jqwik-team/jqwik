@@ -81,7 +81,7 @@ public interface DomainContext {
 	 *
 	 * @return Collection of {@linkplain SampleReportingFormat} instances
 	 */
-	@API(status = EXPERIMENTAL, since = "1.6.4")
+	@API(status = MAINTAINED, since = "1.6.4")
 	default Collection<SampleReportingFormat> getReportingFormats() {
 		return Collections.emptySet();
 	}
