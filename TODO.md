@@ -1,7 +1,5 @@
 # 1.8.0
 
-    - Promote some API.EXPERIMENTAL to API.MAINTAINED
-
     - Migrate to Kotlin 1.9.0
         - Get rid of the warnings in the Kotlin module one by one. 
           Maybe this requires `interface Arbitrary<@Nullable T>`.
