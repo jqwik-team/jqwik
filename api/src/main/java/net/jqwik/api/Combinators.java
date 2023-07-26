@@ -181,7 +181,7 @@ public class Combinators {
 		 * @param filter function
 		 * @return combinator instance
 		 */
-		@API(status = EXPERIMENTAL, since = "1.7.1")
+		@API(status = MAINTAINED, since = "1.8.0")
 		Combinator2<T1, T2> filter(F2<T1, T2, Boolean> filter);
 
 		/**
@@ -216,7 +216,7 @@ public class Combinators {
 		 * @param filter function
 		 * @return combinator instance
 		 */
-		@API(status = EXPERIMENTAL, since = "1.7.1")
+		@API(status = MAINTAINED, since = "1.8.0")
 		Combinator3<T1, T2, T3> filter(F3<T1, T2, T3, Boolean> filter);
 
 		/**
@@ -252,7 +252,7 @@ public class Combinators {
 		 * @param filter function
 		 * @return combinator instance
 		 */
-		@API(status = EXPERIMENTAL, since = "1.7.1")
+		@API(status = MAINTAINED, since = "1.8.0")
 		Combinator4<T1, T2, T3, T4> filter(F4<T1, T2, T3, T4, Boolean> filter);
 
 		/**
@@ -288,7 +288,7 @@ public class Combinators {
 		 * @param filter function
 		 * @return combinator instance
 		 */
-		@API(status = EXPERIMENTAL, since = "1.7.1")
+		@API(status = MAINTAINED, since = "1.8.0")
 		Combinator5<T1, T2, T3, T4, T5> filter(F5<T1, T2, T3, T4, T5, Boolean> filter);
 
 		/**
@@ -323,7 +323,7 @@ public class Combinators {
 		 * @param filter function
 		 * @return combinator instance
 		 */
-		@API(status = EXPERIMENTAL, since = "1.7.1")
+		@API(status = MAINTAINED, since = "1.8.0")
 		Combinator6<T1, T2, T3, T4, T5, T6> filter(F6<T1, T2, T3, T4, T5, T6, Boolean> filter);
 
 		/**
@@ -359,7 +359,7 @@ public class Combinators {
 		 * @param filter function
 		 * @return combinator instance
 		 */
-		@API(status = EXPERIMENTAL, since = "1.7.1")
+		@API(status = MAINTAINED, since = "1.8.0")
 		Combinator7<T1, T2, T3, T4, T5, T6, T7> filter(F7<T1, T2, T3, T4, T5, T6, T7, Boolean> filter);
 
 		/**
@@ -395,7 +395,7 @@ public class Combinators {
 		 * @param filter function
 		 * @return combinator instance
 		 */
-		@API(status = EXPERIMENTAL, since = "1.7.1")
+		@API(status = MAINTAINED, since = "1.8.0")
 		Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> filter(F8<T1, T2, T3, T4, T5, T6, T7, T8, Boolean> filter);
 
 		/**
@@ -430,7 +430,7 @@ public class Combinators {
 		 * @param filter function
 		 * @return combinator instance
 		 */
-		@API(status = EXPERIMENTAL, since = "1.7.1")
+		@API(status = MAINTAINED, since = "1.8.0")
 		ListCombinator<T> filter(Predicate<List<T>> filter);
 
 		/**
