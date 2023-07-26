@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * This has also influence on memory heap usage since an un-finished session will
  * aggregate state, e.g. through caching and other {@linkplain Store stores}.
  */
-@API(status = EXPERIMENTAL, since = "1.6.0")
+@API(status = MAINTAINED, since = "1.8.0")
 public class JqwikSession {
 
 	@FunctionalInterface
