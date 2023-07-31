@@ -284,7 +284,7 @@ public class Arbitraries {
 	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> frequency(List<Tuple2<Integer, T>> frequencies) {
+	public static <@Nullable T> Arbitrary<@Nullable T> frequency(List<Tuple2<Integer, T>> frequencies) {
 		return ArbitrariesFacade.implementation.frequency(frequencies);
 	}
 
@@ -314,7 +314,7 @@ public class Arbitraries {
 	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies) {
+	public static <@Nullable T> Arbitrary<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies) {
 		// Simple flatMapping is not enough because of configurations
 		return ArbitrariesFacade.implementation.frequencyOf(frequencies);
 	}

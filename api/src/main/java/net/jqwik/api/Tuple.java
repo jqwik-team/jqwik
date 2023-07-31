@@ -37,56 +37,56 @@ public interface Tuple extends Serializable, Cloneable {
 		return Tuple.of();
 	}
 
-	static <T1> Tuple1<T1> of(@Nullable T1 v1) {
+	static <@Nullable T1> Tuple1<T1> of(T1 v1) {
 		return new Tuple1<>(v1);
 	}
 
-	static <T1, T2> Tuple2<T1, T2> of(@Nullable T1 v1, @Nullable T2 v2) {
+	static <@Nullable T1, @Nullable T2> Tuple2<T1, T2> of(T1 v1, T2 v2) {
 		return new Tuple2<>(v1, v2);
 	}
 
-	static <T1, T2, T3> Tuple3<T1, T2, T3> of(@Nullable T1 v1, @Nullable T2 v2, @Nullable T3 v3) {
+	static <@Nullable T1, @Nullable T2, @Nullable T3> Tuple3<T1, T2, T3> of(T1 v1, T2 v2, T3 v3) {
 		return new Tuple3<>(v1, v2, v3);
 	}
 
-	static <T1, T2, T3, T4> Tuple4<T1, T2, T3, T4> of(@Nullable T1 v1, @Nullable T2 v2, @Nullable T3 v3, @Nullable T4 v4) {
+	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4> Tuple4<T1, T2, T3, T4> of(T1 v1, T2 v2, T3 v3, T4 v4) {
 		return new Tuple4<>(v1, v2, v3, v4);
 	}
 
-	static <T1, T2, T3, T4, T5> Tuple5<T1, T2, T3, T4, T5> of(
-		@Nullable T1 v1,
-		@Nullable T2 v2,
-		@Nullable T3 v3,
-		@Nullable T4 v4,
-		@Nullable T5 v5
+	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5> Tuple5<T1, T2, T3, T4, T5> of(
+		T1 v1,
+		T2 v2,
+		T3 v3,
+		T4 v4,
+		T5 v5
 	) {
 		return new Tuple5<>(v1, v2, v3, v4, v5);
 	}
 
-	static <T1, T2, T3, T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6> of(
-		@Nullable T1 v1,
-		@Nullable T2 v2,
-		@Nullable T3 v3,
-		@Nullable T4 v4,
-		@Nullable T5 v5,
-		@Nullable T6 v6
+	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6> Tuple6<T1, T2, T3, T4, T5, T6> of(
+		T1 v1,
+		T2 v2,
+		T3 v3,
+		T4 v4,
+		T5 v5,
+		T6 v6
 	) {
 		return new Tuple6<>(v1, v2, v3, v4, v5, v6);
 	}
 
-	static <T1, T2, T3, T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> of(
-		@Nullable T1 v1,
-		@Nullable T2 v2,
-		@Nullable T3 v3,
-		@Nullable T4 v4,
-		@Nullable T5 v5,
-		@Nullable T6 v6,
-		@Nullable T7 v7
+	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> of(
+		T1 v1,
+		T2 v2,
+		T3 v3,
+		T4 v4,
+		T5 v5,
+		T6 v6,
+		T7 v7
 	) {
 		return new Tuple7<>(v1, v2, v3, v4, v5, v6, v7);
 	}
 
-	static <T1, T2, T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> of(
+	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7, @Nullable T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> of(
 		T1 v1,
 		T2 v2,
 		T3 v3,
@@ -122,7 +122,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple1<T1> extends Tuple0 {
+	class Tuple1<@Nullable T1> extends Tuple0 {
 		final T1 v1;
 
 		private Tuple1(@Nullable T1 v1) {
@@ -163,10 +163,10 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple2<T1, T2> extends Tuple1<T1> {
+	class Tuple2<@Nullable T1, @Nullable T2> extends Tuple1<T1> {
 		final T2 v2;
 
-		private Tuple2(@Nullable T1 v1, @Nullable T2 v2) {
+		private Tuple2(T1 v1, T2 v2) {
 			super(v1);
 			this.v2 = v2;
 		}
@@ -198,17 +198,12 @@ public interface Tuple extends Serializable, Cloneable {
 		public int hashCode() {
 			return HashCodeSupport.hash(v1, v2);
 		}
-
-		@Override
-		public String toString() {
-			return itemsToString();
-		}
 	}
 
-	class Tuple3<T1, T2, T3> extends Tuple2<T1, T2> {
+	class Tuple3<@Nullable T1, @Nullable T2, @Nullable T3> extends Tuple2<T1, T2> {
 		final T3 v3;
 
-		private Tuple3(@Nullable T1 v1, @Nullable T2 v2, @Nullable T3 v3) {
+		private Tuple3(T1 v1, T2 v2, T3 v3) {
 			super(v1, v2);
 			this.v3 = v3;
 		}
@@ -241,17 +236,12 @@ public interface Tuple extends Serializable, Cloneable {
 		public int hashCode() {
 			return HashCodeSupport.hash(v1, v2, v3);
 		}
-
-		@Override
-		public String toString() {
-			return itemsToString();
-		}
 	}
 
-	class Tuple4<T1, T2, T3, T4> extends Tuple3<T1, T2, T3> {
+	class Tuple4<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4> extends Tuple3<T1, T2, T3> {
 		final T4 v4;
 
-		private Tuple4(@Nullable T1 v1, @Nullable T2 v2, @Nullable T3 v3, @Nullable T4 v4) {
+		private Tuple4(T1 v1, T2 v2, T3 v3, T4 v4) {
 			super(v1, v2, v3);
 			this.v4 = v4;
 		}
@@ -285,17 +275,12 @@ public interface Tuple extends Serializable, Cloneable {
 		public int hashCode() {
 			return HashCodeSupport.hash(v1, v2, v3, v4);
 		}
-
-		@Override
-		public String toString() {
-			return itemsToString();
-		}
 	}
 
-	class Tuple5<T1, T2, T3, T4, T5> extends Tuple4<T1, T2, T3, T4> {
+	class Tuple5<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5> extends Tuple4<T1, T2, T3, T4> {
 		final T5 v5;
 
-		private Tuple5(@Nullable T1 v1, @Nullable T2 v2, @Nullable T3 v3, @Nullable T4 v4, @Nullable T5 v5) {
+		private Tuple5(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5) {
 			super(v1, v2, v3, v4);
 			this.v5 = v5;
 		}
@@ -330,17 +315,12 @@ public interface Tuple extends Serializable, Cloneable {
 		public int hashCode() {
 			return HashCodeSupport.hash(v1, v2, v3, v4, v5);
 		}
-
-		@Override
-		public String toString() {
-			return itemsToString();
-		}
 	}
 
-	class Tuple6<T1, T2, T3, T4, T5, T6> extends Tuple5<T1, T2, T3, T4, T5> {
+	class Tuple6<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6> extends Tuple5<T1, T2, T3, T4, T5> {
 		final T6 v6;
 
-		private Tuple6(@Nullable T1 v1, @Nullable T2 v2, @Nullable T3 v3, @Nullable T4 v4, @Nullable T5 v5, @Nullable T6 v6) {
+		private Tuple6(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5, T6 v6) {
 			super(v1, v2, v3, v4, v5);
 			this.v6 = v6;
 		}
@@ -376,24 +356,19 @@ public interface Tuple extends Serializable, Cloneable {
 		public int hashCode() {
 			return HashCodeSupport.hash(v1, v2, v3, v4, v5, v6);
 		}
-
-		@Override
-		public String toString() {
-			return itemsToString();
-		}
 	}
 
-	class Tuple7<T1, T2, T3, T4, T5, T6, T7> extends Tuple6<T1, T2, T3, T4, T5, T6> {
+	class Tuple7<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7> extends Tuple6<T1, T2, T3, T4, T5, T6> {
 		final T7 v7;
 
 		private Tuple7(
-			@Nullable T1 v1,
-			@Nullable T2 v2,
-			@Nullable T3 v3,
-			@Nullable T4 v4,
-			@Nullable T5 v5,
-			@Nullable T6 v6,
-			@Nullable T7 v7
+			T1 v1,
+			T2 v2,
+			T3 v3,
+			T4 v4,
+			T5 v5,
+			T6 v6,
+			T7 v7
 		) {
 			super(v1, v2, v3, v4, v5, v6);
 			this.v7 = v7;
@@ -431,25 +406,20 @@ public interface Tuple extends Serializable, Cloneable {
 		public int hashCode() {
 			return HashCodeSupport.hash(v1, v2, v3, v4, v5, v6, v7);
 		}
-
-		@Override
-		public String toString() {
-			return itemsToString();
-		}
 	}
 
-	class Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> extends Tuple7<T1, T2, T3, T4, T5, T6, T7> {
+	class Tuple8<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7, @Nullable T8> extends Tuple7<T1, T2, T3, T4, T5, T6, T7> {
 		final T8 v8;
 
 		private Tuple8(
-			@Nullable T1 v1,
-			@Nullable T2 v2,
-			@Nullable T3 v3,
-			@Nullable T4 v4,
-			@Nullable T5 v5,
-			@Nullable T6 v6,
-			@Nullable T7 v7,
-			@Nullable T8 v8
+			T1 v1,
+			T2 v2,
+			T3 v3,
+			T4 v4,
+			T5 v5,
+			T6 v6,
+			T7 v7,
+			T8 v8
 		) {
 			super(v1, v2, v3, v4, v5, v6, v7);
 			this.v8 = v8;
@@ -467,11 +437,6 @@ public interface Tuple extends Serializable, Cloneable {
 		@Override
 		public List<Object> items() {
 			return Arrays.asList(get1(), get2(), get3(), get4(), get5(), get6(), get7(), get8());
-		}
-
-		@Override
-		public String toString() {
-			return itemsToString();
 		}
 
 		@Override
