@@ -53,7 +53,7 @@ public class Builders {
 		 * @param <T>
 		 * @return new {@linkplain CombinableBuilder} instance
 		 */
-		public <T> CombinableBuilder<B, T> use(Arbitrary<T> arbitrary) {
+		public <@Nullable T> CombinableBuilder<B, T> use(Arbitrary<T> arbitrary) {
 			return new CombinableBuilder<>(this, 1.0, arbitrary);
 		}
 
@@ -201,7 +201,7 @@ public class Builders {
 		 * @return new {@linkplain BuilderCombinator} instance
 		 */
 		@SuppressWarnings("unchecked")
-		public BuilderCombinator<B> in(BiFunction<B, T, B> toFunction) {
+		public BuilderCombinator<B> in(BiFunction<B, @Nullable T, B> toFunction) {
 			if (probabilityOfUse == 0.0) {
 				return combinator;
 			}
