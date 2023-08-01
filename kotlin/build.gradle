@@ -73,9 +73,8 @@ signing {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 	kotlinOptions.freeCompilerArgs = [
-// Since Kotlin 1.9.0 strict mode results in a lot of errors that are not easy to fix
-//		"-Xjsr305=strict", // For strict type warnings
-//		"-Xjsr305=under-migration:strict",
+		"-Xjsr305=strict", // For strict type warnings
+		// "-Xjsr305=under-migration:strict", // @UnderMigration not used in jqwik
 		"-Xemit-jvm-type-annotations" // Required for annotations on type variables
 	]
 	kotlinOptions.jvmTarget = "1.8"

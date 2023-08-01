@@ -3,6 +3,7 @@ package net.jqwik.api.arbitraries;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.*;
 
@@ -13,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * of Arrays
  */
 @API(status = MAINTAINED, since = "1.4.0")
-public interface ArrayArbitrary<T, A> extends StreamableArbitrary<T, A> {
+public interface ArrayArbitrary<@Nullable T, A> extends StreamableArbitrary<T, A> {
 
 	/**
 	 * Fix the size to {@code size}.
