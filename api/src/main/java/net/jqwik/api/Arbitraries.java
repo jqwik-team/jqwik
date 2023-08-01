@@ -284,7 +284,7 @@ public class Arbitraries {
 	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <@Nullable T> Arbitrary<@Nullable T> frequency(List<Tuple2<Integer, T>> frequencies) {
+	public static <@Nullable T> Arbitrary<T> frequency(List<Tuple2<Integer, T>> frequencies) {
 		return ArbitrariesFacade.implementation.frequency(frequencies);
 	}
 

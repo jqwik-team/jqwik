@@ -41,7 +41,8 @@ fun anyFunction(kClass: KClass<*>): Functions.FunctionWrapper {
  * Create a [FunctionArbitrary] for Kotlin function without parameters.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun <R> anyFunction0(returning: Arbitrary<R>): FunctionArbitrary<Function0<R>, R> {
+fun <R> anyFunction0(returning: Arbitrary<R>): FunctionArbitrary<Function0<R>, R>
+    where R : Any {
     return anyFunction(Function0::class).returning(returning)
 }
 
@@ -49,7 +50,8 @@ fun <R> anyFunction0(returning: Arbitrary<R>): FunctionArbitrary<Function0<R>, R
  * Create a [FunctionArbitrary] for Kotlin function with 1 parameter.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun <A, R> anyFunction1(returning: Arbitrary<R>): FunctionArbitrary<Function1<A, R>, R> {
+fun <A, R> anyFunction1(returning: Arbitrary<R>): FunctionArbitrary<Function1<A, R>, R>
+    where R : Any {
     return anyFunction(Function1::class).returning(returning)
 }
 
@@ -57,7 +59,8 @@ fun <A, R> anyFunction1(returning: Arbitrary<R>): FunctionArbitrary<Function1<A,
  * Create a [FunctionArbitrary] for Kotlin function with 2 parameters.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun <A, B, R> anyFunction2(returning: Arbitrary<R>): FunctionArbitrary<Function2<A, B, R>, R> {
+fun <A, B, R> anyFunction2(returning: Arbitrary<R>): FunctionArbitrary<Function2<A, B, R>, R>
+    where R : Any {
     return anyFunction(Function2::class).returning(returning)
 }
 
@@ -65,7 +68,8 @@ fun <A, B, R> anyFunction2(returning: Arbitrary<R>): FunctionArbitrary<Function2
  * Create a [FunctionArbitrary] for Kotlin function with 3 parameters.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun <A, B, C, R> anyFunction3(returning: Arbitrary<R>): FunctionArbitrary<Function3<A, B, C, R>, R> {
+fun <A, B, C, R> anyFunction3(returning: Arbitrary<R>): FunctionArbitrary<Function3<A, B, C, R>, R>
+    where R : Any {
     return anyFunction(Function3::class).returning(returning)
 }
 
@@ -73,7 +77,8 @@ fun <A, B, C, R> anyFunction3(returning: Arbitrary<R>): FunctionArbitrary<Functi
  * Create a [FunctionArbitrary] for Kotlin function with 4 parameters.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun <A, B, C, D, R> anyFunction4(returning: Arbitrary<R>): FunctionArbitrary<Function4<A, B, C, D, R>, R> {
+fun <A, B, C, D, R> anyFunction4(returning: Arbitrary<R>): FunctionArbitrary<Function4<A, B, C, D, R>, R>
+    where R : Any {
     return anyFunction(Function4::class).returning(returning)
 }
 
@@ -96,7 +101,8 @@ fun <T> runBlockingProperty(
  * This is a Kotlin convenience for [Arbitraries.forType] which requires a Java class instead.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-inline fun <reified T> anyForType(): TypeArbitrary<T> {
+inline fun <reified T> anyForType(): TypeArbitrary<T>
+    where T : Any {
     return Arbitraries.forType(T::class.java)
 }
 

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.*;
 
@@ -16,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
  * @param <R> The return type of the functional interface
  */
 @API(status = MAINTAINED, since = "1.3.0")
-public interface FunctionArbitrary<F, R> extends Arbitrary<F> {
+public interface FunctionArbitrary<F, @Nullable R> extends Arbitrary<F> {
 
 	/**
 	 *
