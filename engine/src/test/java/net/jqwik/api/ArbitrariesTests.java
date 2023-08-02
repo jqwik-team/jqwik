@@ -253,7 +253,7 @@ class ArbitrariesTests {
 					Tuple.of(3, Arbitraries.strings())
 				),
 				() -> Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers()),
-				() -> Arbitraries.randomValue(random -> random.nextInt()),
+				() -> Arbitraries.randomValue(random -> random.nextInt()), // TODO: This fails
 				() -> Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable(random.nextInt())),
 				() -> Arbitraries.supplyGenerator(size -> random -> Shrinkable.unshrinkable(random.nextInt(size))),
 				() -> Arbitraries.defaultFor(String.class)
