@@ -50,9 +50,8 @@ class ArbitrariesTests {
 	}
 
 	@Property(tries = 10)
-	@Disabled("Feature not implemented correctly yet")
 	void supplyGenerator(@ForAll @IntRange(min = 10, max = 1000) int size, @ForAll Random random) {
-		Function<Integer, RandomGenerator<String>> randomGeneratorSupplier = s -> r -> Shrinkable.unshrinkable(Integer.toString(r.nextInt(s)));
+		IntFunction<RandomGenerator<String>> randomGeneratorSupplier = s -> r -> Shrinkable.unshrinkable(Integer.toString(r.nextInt(s)));
 		Arbitrary<String> stringArbitrary = Arbitraries.supplyGenerator(randomGeneratorSupplier);
 		RandomGenerator<String> generator = stringArbitrary.generator(size);
 		checkAllGenerated(generator, random, value -> Integer.parseInt(value) < size);
@@ -256,6 +255,7 @@ class ArbitrariesTests {
 				() -> Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers()),
 				() -> Arbitraries.randomValue(random -> random.nextInt()),
 				() -> Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable(random.nextInt())),
+				() -> Arbitraries.supplyGenerator(size -> random -> Shrinkable.unshrinkable(random.nextInt(size))),
 				() -> Arbitraries.defaultFor(String.class)
 			);
 		}

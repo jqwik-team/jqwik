@@ -142,8 +142,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
-		return new FromGeneratorArbitrary<>(generator);
+	public <T> Arbitrary<T> supplyGenerator(IntFunction<RandomGenerator<T>> generatorSupplier) {
+		return new SupplyGeneratorArbitrary<>(generatorSupplier);
 	}
 
 	@Override
