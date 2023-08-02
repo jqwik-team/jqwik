@@ -49,6 +49,15 @@ class ArbitrariesTests {
 		checkAllGenerated(generator, random, value -> Integer.parseInt(value) < 10);
 	}
 
+	@Property(tries = 10)
+	@Disabled("Feature not implemented correctly yet")
+	void supplyGenerator(@ForAll @IntRange(min = 10, max = 1000) int size, @ForAll Random random) {
+		Function<Integer, RandomGenerator<String>> randomGeneratorSupplier = s -> r -> Shrinkable.unshrinkable(Integer.toString(r.nextInt(s)));
+		Arbitrary<String> stringArbitrary = Arbitraries.supplyGenerator(randomGeneratorSupplier);
+		RandomGenerator<String> generator = stringArbitrary.generator(size);
+		checkAllGenerated(generator, random, value -> Integer.parseInt(value) < size);
+	}
+
 	@Example
 	void ofValues(@ForAll Random random) {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");

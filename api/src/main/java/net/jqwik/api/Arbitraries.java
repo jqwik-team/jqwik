@@ -100,7 +100,20 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
-		return ArbitrariesFacade.implementation.fromGenerator(generator);
+		return supplyGenerator(ignore -> generator);
+	}
+
+	/**
+	 * Create an arbitrary of type T by supplying a corresponding generator of type T.
+	 *
+	 * @param generatorSupplier A function to supply a generator instance given the "size" of a generation attempt
+	 * @param <T>       The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.8.0")
+	public static <T> Arbitrary<T> supplyGenerator(Function<Integer, RandomGenerator<T>> generatorSupplier) {
+		// TODO: Inject the size
+		return ArbitrariesFacade.implementation.fromGenerator(generatorSupplier.apply(1000));
 	}
 
 	/**
