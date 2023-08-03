@@ -432,6 +432,36 @@ There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
 - `Collection<T>.anySubset()` can replace 
   `Arbitraries.subsetOf(collection: Collection<T>)`
 
+##### Combinator DSL
+
+The combinator DSL provides another, potentially more convenient, wrapper for
+`Combinators.combine`.
+
+Instead of a list of arguments, it uses kotlin's property delegates to refer to
+the arbitraries that are being combined:
+
+```kotlin
+combine {
+    val first by Arbitraries.strings()
+    val second by Arbitraries.strings()
+    // ...
+
+    createAs {
+        "first: $first, second: $second"
+    }
+}
+```
+
+Note that accessing the `first` or `second` properties in the example above 
+_outside_ the `createAs` block would result in an error.
+
+In the background, this is equivalent to:
+
+```kt
+combine(listOf(Arbitraries.strings(), Arbitraries.strings())) { values ->
+    "first: ${values[0]}, second: ${values[1]}"
+}
+```
 
 #### Quirks and Bugs
 
