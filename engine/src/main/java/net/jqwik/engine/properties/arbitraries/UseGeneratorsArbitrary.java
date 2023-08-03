@@ -5,14 +5,14 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-// TODO: This class is probably not needed at all its methods be pulled up.
-public class FromGeneratorsArbitrary<T> implements Arbitrary<T> {
+// TODO: This class is probably not needed at all. Its methods could be pushed down to subclasses.
+abstract class UseGeneratorsArbitrary<T> implements Arbitrary<T> {
 
 	private final RandomGenerator<T> randomGenerator;
 	private final Function<Long, Optional<ExhaustiveGenerator<T>>> exhaustiveGeneratorFunction;
 	private final Function<Integer, EdgeCases<T>> edgeCasesSupplier;
 
-	public FromGeneratorsArbitrary(
+	public UseGeneratorsArbitrary(
 		RandomGenerator<T> randomGenerator,
 		Function<Long, Optional<ExhaustiveGenerator<T>>> exhaustiveGeneratorFunction,
 		Function<Integer, EdgeCases<T>> edgeCasesSupplier

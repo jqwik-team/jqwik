@@ -5,7 +5,7 @@ import java.util.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class ChooseCharacterArbitrary extends FromGeneratorsArbitrary<Character> {
+public class ChooseCharacterArbitrary extends UseGeneratorsArbitrary<Character> {
 
 	private final char[] chars;
 

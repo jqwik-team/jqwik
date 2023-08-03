@@ -6,7 +6,7 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class ShuffleArbitrary<T> extends FromGeneratorsArbitrary<List<T>> {
+public class ShuffleArbitrary<T> extends UseGeneratorsArbitrary<List<T>> {
 	private final List<T> values;
 
 	public ShuffleArbitrary(List<T> values) {

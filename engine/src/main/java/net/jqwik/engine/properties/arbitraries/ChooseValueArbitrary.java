@@ -5,7 +5,7 @@ import java.util.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class ChooseValueArbitrary<T> extends FromGeneratorsArbitrary<T> {
+public class ChooseValueArbitrary<T> extends UseGeneratorsArbitrary<T> {
 
 	private final int hashCode;
 	private final List<T> values;

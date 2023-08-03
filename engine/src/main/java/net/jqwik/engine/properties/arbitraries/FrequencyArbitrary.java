@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class FrequencyArbitrary<T> extends FromGeneratorsArbitrary<T> {
+public class FrequencyArbitrary<T> extends UseGeneratorsArbitrary<T> {
 	private final List<Tuple.Tuple2<Integer, T>> frequencies;
 
 	public FrequencyArbitrary(List<Tuple.Tuple2<Integer, T>> frequencies) {
