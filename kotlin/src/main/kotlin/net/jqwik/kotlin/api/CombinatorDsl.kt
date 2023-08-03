@@ -1,11 +1,12 @@
 package net.jqwik.kotlin.api
 
 import net.jqwik.api.Arbitrary
+import net.jqwik.api.Combinators
+import net.jqwik.api.Combinators.ListCombinator
 import org.apiguardian.api.API
-import java.util.Optional
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
-
 
 /**
  * Combine arbitraries using the combinator DSL:
@@ -14,6 +15,9 @@ import kotlin.reflect.KProperty
  * combine {
  *     val first by Arbitraries.strings()
  *     val second by Arbitraries.strings()
+ *
+ *     filter { first.isNotEmpty() }
+ *     filter { first != second }
  *
  *     createAs {
  *         "first: $first, second: $second"
@@ -27,71 +31,125 @@ import kotlin.reflect.KProperty
 fun <R> combine(
     combinator: CombinatorScope.() -> Combined<R>
 ): Arbitrary<R> {
-    val combined = CombinatorScope().combinator()
+    val bindings = ValueBindings()
+    val combined = CombinatorScope(bindings).combinator()
+    val listCombinator = combined.createListCombinator(bindings)
 
-    @Suppress("UNCHECKED_CAST")
-    return combine(combined.arbitraries as List<Arbitrary<Any?>>) { values ->
-        try {
-            for ((property, value) in combined.properties zip values) {
-                property.bind(value)
-            }
-
-            CombinatorCreateScope().(combined.combinator)()
-        } finally {
-            for (it in combined.properties) {
-                it.unbind()
-            }
+    return listCombinator.`as` { values ->
+        bindings.withValues(values) {
+            combined.creator()
         }
-    }
+    } as Arbitrary<R>
+}
+
+/**
+ * Flat-combine arbitraries using the combinator DSL:
+ *
+ * ```kotlin
+ * flatCombine {
+ *     val first by Arbitraries.strings()
+ *     val second by Arbitraries.strings()
+ *
+ *     filter { first.isNotEmpty() }
+ *     filter { first != second }
+ *
+ *     createAs {
+ *         Arbitraries.just("first: $first, second: $second")
+ *     }
+ * }
+ * ```
+ *
+ * @return new Arbitrary instance
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
+fun <R> flatCombine(
+    combinator: CombinatorScope.() -> Combined<Arbitrary<R>>
+): Arbitrary<R> {
+    val bindings = ValueBindings()
+    val combined = CombinatorScope(bindings).combinator()
+    val listCombinator = combined.createListCombinator(bindings)
+
+    return listCombinator.flatAs { values ->
+        bindings.withValues(values) {
+            combined.creator()
+        }
+    } as Arbitrary<R>
 }
 
 @API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
-class ArbitraryProperty<T> internal constructor() : ReadOnlyProperty<Nothing?, T> {
-    private val currentValue = ThreadLocal<Optional<T & Any>>()
-
-    internal fun bind(value: Any?) {
-        @Suppress("UNCHECKED_CAST")
-        currentValue.set(Optional.ofNullable(value as T))
-    }
-
-    internal fun unbind() {
-        currentValue.remove()
-    }
-
+class ArbitraryProperty<T> internal constructor(
+    private val bindings: ValueBindings,
+    private val index: Int,
+) : ReadOnlyProperty<Nothing?, T> {
     override fun getValue(thisRef: Nothing?, property: KProperty<*>): T {
-        val values = currentValue.get() ?: run {
-            error("Arbitrary delegate must only be used inside 'combineAs'")
-        }
-
-        return values.orElse(null)
+        return bindings[index]
     }
 }
 
 @API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
-class CombinatorScope internal constructor() {
+class CombinatorScope internal constructor(private val bindings: ValueBindings) {
+    private var created = AtomicBoolean(false)
     private val arbitraries = mutableListOf<Arbitrary<*>>()
-    private val properties = mutableListOf<ArbitraryProperty<*>>()
+    private val filters = mutableListOf<() -> Boolean>()
 
     operator fun <T> Arbitrary<T>.provideDelegate(thisRef: Nothing?, property: KProperty<*>): ArbitraryProperty<T> {
-        val arbitraryProperty = ArbitraryProperty<T>()
-
         arbitraries += this
-        properties += arbitraryProperty
 
-        return arbitraryProperty
+        return ArbitraryProperty(bindings, arbitraries.lastIndex)
     }
 
-    fun <R> createAs(creator: CombinatorCreateScope.() -> R): Combined<R> {
-        return Combined(arbitraries.toList(), properties.toList(), creator)
+    fun filter(filter: () -> Boolean) {
+        filters += filter
+    }
+
+    fun <R> createAs(creator: () -> R): Combined<R> {
+        check(!created.getAndSet(true)) { "'createAs' must only be called once" }
+
+        return Combined(arbitraries.toList(), filters.toList(), creator)
     }
 }
-
-@API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
-class CombinatorCreateScope internal constructor()
 
 @API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
 class Combined<R> internal constructor(
     val arbitraries: List<Arbitrary<*>>,
-    val properties: List<ArbitraryProperty<*>>,
-    val combinator: CombinatorCreateScope.() -> R
-)
+    val filters: List<() -> Boolean>,
+    val creator: () -> R
+) {
+    internal fun createListCombinator(bindings: ValueBindings): ListCombinator<*> {
+        @Suppress("UNCHECKED_CAST")
+        var combinator: ListCombinator<*> = Combinators.combine(arbitraries as List<Arbitrary<Any?>>)
+
+        if (filters.isNotEmpty()) {
+            combinator = combinator.filter { values ->
+                bindings.withValues(values) {
+                    filters.all { it() }
+                }
+            }
+        }
+
+        return combinator
+    }
+}
+
+internal class ValueBindings {
+    private val current = ThreadLocal<List<*>>()
+
+    operator fun <T> get(index: Int): T {
+        val current = checkNotNull(current.get()) {
+            "Arbitrary delegate property must only be used inside 'combineAs' or 'filter'"
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return current[index] as T
+    }
+
+    fun <R> withValues(values: List<*>, block: () -> R): R {
+        return try {
+            current.set(values)
+
+            block()
+        } finally {
+            current.remove()
+        }
+    }
+}
