@@ -215,6 +215,9 @@ The starting point for generation usually is a static method call on class
   to allow for [shrinking](#result-shrinking) you have to provide
   your own `RandomGenerator` implementation.
 
+- [`Arbitrary<T> fromGeneratorWithSize(RandomGenerator<T> generator)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#fromGeneratorWithSize(java.util.function.IntFunction)):
+  Allows to use the `genSize` parameter at creation time of a `RandomGenerator` instance.
+
 #### Select or generate values randomly
 
 - [`Arbitrary<U> of(U... values)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#of(U...)):
