@@ -84,7 +84,7 @@ public class Arbitraries {
 
 		public abstract <T> Arbitrary<List<T>> shuffle(List<T> values);
 
-		public abstract <T> Arbitrary<T> supplyGenerator(IntFunction<RandomGenerator<T>> generatorSupplier);
+		public abstract <T> Arbitrary<T> fromGenerator(IntFunction<RandomGenerator<T>> generatorSupplier);
 
 		public abstract <T> Arbitrary<T> frequency(List<Tuple2<Integer, T>> frequencies);
 	}
@@ -100,7 +100,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
-		return supplyGenerator(ignore -> generator);
+		return fromGeneratorWithSize(ignore -> generator);
 	}
 
 	/**
@@ -111,8 +111,8 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.8.0")
-	public static <T> Arbitrary<T> supplyGenerator(IntFunction<RandomGenerator<T>> generatorSupplier) {
-		return ArbitrariesFacade.implementation.supplyGenerator(generatorSupplier);
+	public static <T> Arbitrary<T> fromGeneratorWithSize(IntFunction<RandomGenerator<T>> generatorSupplier) {
+		return ArbitrariesFacade.implementation.fromGenerator(generatorSupplier);
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class Arbitraries {
 	 */
 	public static <T> Arbitrary<T> randomValue(Function<Random, T> generator) {
 		IntFunction<RandomGenerator<T>> generatorSupplier = ignore -> random -> Shrinkable.unshrinkable(generator.apply(random));
-		return supplyGenerator(generatorSupplier);
+		return fromGeneratorWithSize(generatorSupplier);
 	}
 
 	/**

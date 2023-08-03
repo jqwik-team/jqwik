@@ -50,9 +50,9 @@ class ArbitrariesTests {
 	}
 
 	@Property(tries = 10)
-	void supplyGenerator(@ForAll @IntRange(min = 10, max = 1000) int size, @ForAll Random random) {
+	void fromGeneratorWithSize(@ForAll @IntRange(min = 10, max = 1000) int size, @ForAll Random random) {
 		IntFunction<RandomGenerator<String>> randomGeneratorSupplier = s -> r -> Shrinkable.unshrinkable(Integer.toString(r.nextInt(s)));
-		Arbitrary<String> stringArbitrary = Arbitraries.supplyGenerator(randomGeneratorSupplier);
+		Arbitrary<String> stringArbitrary = Arbitraries.fromGeneratorWithSize(randomGeneratorSupplier);
 		RandomGenerator<String> generator = stringArbitrary.generator(size);
 		checkAllGenerated(generator, random, value -> Integer.parseInt(value) < size);
 	}
@@ -255,7 +255,7 @@ class ArbitrariesTests {
 				() -> Arbitraries.entries(Arbitraries.integers(), Arbitraries.integers()),
 				() -> Arbitraries.randomValue(random -> random.nextInt()), // TODO: This fails
 				() -> Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable(random.nextInt())),
-				() -> Arbitraries.supplyGenerator(size -> random -> Shrinkable.unshrinkable(random.nextInt(size))),
+				() -> Arbitraries.fromGeneratorWithSize(size -> random -> Shrinkable.unshrinkable(random.nextInt(size))),
 				() -> Arbitraries.defaultFor(String.class)
 			);
 		}

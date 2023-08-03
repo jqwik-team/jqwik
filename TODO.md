@@ -1,8 +1,5 @@
 # 1.8.0
 
-    - Introduce `Arbitraries.fromGenerator(size -> new Generator())`.
-      See https://github.com/jqwik-team/jqwik/issues/494.
-
     - Allow more than one configure-method in `ArbitraryConfiguratorBase`.
       See https://github.com/jqwik-team/jqwik/issues/493.
 

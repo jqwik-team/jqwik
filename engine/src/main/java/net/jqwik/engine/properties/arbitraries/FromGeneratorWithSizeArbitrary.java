@@ -1,18 +1,16 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.util.function.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 
-import java.util.function.*;
+public class FromGeneratorWithSizeArbitrary<T> implements Arbitrary<T> {
 
-public class SupplyGeneratorArbitrary<T> implements Arbitrary<T> {
-
-	private final RandomGenerator<T> generator;
 	private final IntFunction<RandomGenerator<T>> supplier;
 
-	public SupplyGeneratorArbitrary(IntFunction<RandomGenerator<T>> generatorSupplier) {
+	public FromGeneratorWithSizeArbitrary(IntFunction<RandomGenerator<T>> generatorSupplier) {
 		this.supplier = generatorSupplier;
-		this.generator = generatorSupplier.apply(1000); //TODO use real size
 	}
 
 	@Override
@@ -30,7 +28,7 @@ public class SupplyGeneratorArbitrary<T> implements Arbitrary<T> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		SupplyGeneratorArbitrary<?> that = (SupplyGeneratorArbitrary<?>) o;
+		FromGeneratorWithSizeArbitrary<?> that = (FromGeneratorWithSizeArbitrary<?>) o;
 		return LambdaSupport.areEqual(supplier, that.supplier);
 	}
 
