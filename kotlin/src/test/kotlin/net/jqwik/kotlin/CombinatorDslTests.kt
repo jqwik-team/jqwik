@@ -1,18 +1,20 @@
 package net.jqwik.kotlin
 
+import net.jqwik.api.*
 import net.jqwik.api.Arbitraries.just
-import net.jqwik.api.Example
-import net.jqwik.api.ForAll
-import net.jqwik.api.Group
-import net.jqwik.kotlin.api.combine
-import net.jqwik.kotlin.api.orNull
+import net.jqwik.kotlin.api.*
+import net.jqwik.testing.TestingSupport
 import net.jqwik.testing.TestingSupport.assertAtLeastOneGeneratedOf
 import net.jqwik.testing.TestingSupport.checkAllGenerated
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import java.util.*
 
 @Group
 class CombinatorDslTests {
+
+    private val oneToThree: Arbitrary<Int> = Int.any(1..3)
+
     @Example
     fun `combine arbitraries`() {
         val combined = combine {
@@ -20,7 +22,7 @@ class CombinatorDslTests {
             val v2 by just(2)
 
             createAs {
-                v1 + v2
+                v1!! + v2!!
             }
         }
 
@@ -34,7 +36,7 @@ class CombinatorDslTests {
             val v2 by just(2)
 
             createAs {
-                (v1 ?: 0) + v2
+                (v1 ?: 0) + v2!!
             }
         }
 
@@ -46,5 +48,62 @@ class CombinatorDslTests {
 
         assertAtLeastOneGeneratedOf(generator, random, 2)
         assertAtLeastOneGeneratedOf(generator, random, 3)
+    }
+
+    @Example
+    fun `filter arbitraries`(@ForAll random: Random) {
+        val combined = combine {
+            val v1 by oneToThree
+            val v2 by oneToThree
+
+            filter { v1 != v2 }
+
+            createAs {
+                Tuple.of(v1, v2)
+            }
+        }
+
+        TestingSupport.assertAllGenerated(combined.generator(1000), random) { (first, second) ->
+            assertThat(first).isNotEqualTo(second)
+        }
+    }
+
+    @Example
+    fun `throw when calling createAs twice`() {
+        assertThatThrownBy {
+            combine {
+                val value by oneToThree
+
+                createAs { value }
+                createAs { value }
+            }
+        }.isInstanceOf(IllegalStateException::class.java)
+    }
+
+    @Example
+    fun `throw when using value outside createAs`() {
+        assertThatThrownBy {
+            combine {
+                val value by oneToThree
+
+                val usage = value
+
+                createAs { usage }
+            }
+        }.isInstanceOf(IllegalStateException::class.java)
+    }
+
+    @Example
+    fun `flatCombine arbitraries`() {
+        val combined = flatCombine {
+            val v1 by just(1)
+            val v2 by just(2)
+
+            createAs {
+                just(v1!! + v2!!)
+            }
+        }
+
+        assertThat(combined.sample()).isEqualTo(3)
     }
 }

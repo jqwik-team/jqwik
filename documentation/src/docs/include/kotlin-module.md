@@ -463,6 +463,24 @@ combine(listOf(Arbitraries.strings(), Arbitraries.strings())) { values ->
 }
 ```
 
+It is also possible to use filters within the combinator DSL:
+
+```kotlin
+combine {
+    val first by Arbitraries.strings()
+    val second by Arbitraries.strings()
+
+    filter { first.isNotEmpty() }
+    filter { first != second }
+
+    createAs {
+        // 'first' will never be empty or equal to 'second'
+
+        "first: $first, second: $second"
+    }
+}
+```
+
 #### Quirks and Bugs
 
 - Despite our best effort to enrich jqwik's Java API with nullability information,
