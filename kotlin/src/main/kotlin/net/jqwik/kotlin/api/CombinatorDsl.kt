@@ -131,7 +131,14 @@ class Combined<R> internal constructor(
     }
 }
 
+/**
+ * A class that provides the [ArbitraryProperty] instances access to the relevant values when accessed from within the
+ * block passed to [CombinatorScope.createAs].
+ */
 internal class ValueBindings {
+    // Because the ArbitraryProperty instances have to be created once per "combine" call (so once per Arbitrary
+    // instance), they are shared across all invocations of the "createAs" block. To prevent issues with potential
+    // parallel generation of arbitrary values, we use a ThreadLocal here.
     private val current = ThreadLocal<List<*>>()
 
     operator fun <T> get(index: Int): T {
