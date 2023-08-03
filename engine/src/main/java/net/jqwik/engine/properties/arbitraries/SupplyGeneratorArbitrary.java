@@ -36,6 +36,6 @@ public class SupplyGeneratorArbitrary<T> implements Arbitrary<T> {
 
 	@Override
 	public int hashCode() {
-		return supplier.hashCode();
+		return supplier.getClass().hashCode();
 	}
 }
