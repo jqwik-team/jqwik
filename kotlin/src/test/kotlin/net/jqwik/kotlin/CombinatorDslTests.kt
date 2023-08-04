@@ -11,7 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import java.util.*
 
-@Group
+@PropertyDefaults(tries = 100, shrinking = ShrinkingMode.FULL)
 class CombinatorDslTests {
 
     private val oneToThree: Arbitrary<Int> = Int.any(1..3)
