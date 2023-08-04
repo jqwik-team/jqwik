@@ -70,7 +70,7 @@ class CombinatorDslTests {
     }
 
     @Example
-    fun `throw when calling createAs twice`() {
+    fun `throw when calling combineAs twice`() {
         assertThatThrownBy {
             combine {
                 val value by oneToThree
@@ -82,7 +82,7 @@ class CombinatorDslTests {
     }
 
     @Example
-    fun `throw when using value outside createAs`() {
+    fun `throw when using value outside combineAs`() {
         assertThatThrownBy {
             combine {
                 val value by oneToThree
