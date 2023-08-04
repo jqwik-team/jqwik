@@ -19,7 +19,7 @@ import kotlin.reflect.KProperty
  *     filter { first.isNotEmpty() }
  *     filter { first != second }
  *
- *     createAs {
+ *     combineAs {
  *         "first: $first, second: $second"
  *     }
  * }
@@ -78,8 +78,8 @@ class CombinatorScope internal constructor(private val bindings: ValueBindings) 
 
 @API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
 sealed class Combined<R>(
-    val arbitraries: List<Arbitrary<*>>,
-    val filters: List<() -> Boolean>
+    private val arbitraries: List<Arbitrary<*>>,
+    private val filters: List<() -> Boolean>
 ) {
     internal fun createArbitrary(bindings: ValueBindings): Arbitrary<R> {
         @Suppress("UNCHECKED_CAST")

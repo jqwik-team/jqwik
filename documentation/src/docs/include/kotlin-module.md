@@ -446,14 +446,14 @@ combine {
     val second by Arbitraries.strings()
     // ...
 
-    createAs {
+    combineAs {
         "first: $first, second: $second"
     }
 }
 ```
 
 Note that accessing the `first` or `second` properties in the example above 
-_outside_ the `createAs` block would result in an error.
+_outside_ the `combineAs` block would result in an error.
 
 In the background, this is equivalent to:
 
@@ -473,7 +473,7 @@ combine {
     filter { first.isNotEmpty() }
     filter { first != second }
 
-    createAs {
+    combineAs {
         // 'first' will never be empty or equal to 'second'
 
         "first: $first, second: $second"
