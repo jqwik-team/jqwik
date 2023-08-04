@@ -3,6 +3,7 @@ package net.jqwik.kotlin
 import net.jqwik.api.*
 import net.jqwik.api.Arbitraries.just
 import net.jqwik.kotlin.api.*
+import net.jqwik.testing.ShrinkingSupport
 import net.jqwik.testing.TestingSupport
 import net.jqwik.testing.TestingSupport.assertAtLeastOneGeneratedOf
 import net.jqwik.testing.TestingSupport.checkAllGenerated
@@ -105,5 +106,18 @@ class CombinatorDslTests {
         }
 
         assertThat(combined.sample()).isEqualTo(3)
+    }
+
+    @Property
+    fun `shrink combined arbitrary`(@ForAll random: Random) {
+        val combined = combine {
+            val i by Arbitraries.integers()
+            val s by Arbitraries.strings().alpha().ofMinLength(1)
+
+            combineAs { i.toString() + s }
+        }
+
+        val shrunkValue = ShrinkingSupport.falsifyThenShrink(combined, random)
+        assertThat(shrunkValue).isIn("0A", "0a")
     }
 }
