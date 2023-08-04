@@ -49,7 +49,7 @@ class ArbitraryProperty<T> internal constructor(
 
 @API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
 class CombinatorScope internal constructor(private val bindings: ValueBindings) {
-    private var created = AtomicBoolean(false)
+    private val created = AtomicBoolean(false)
     private val arbitraries = mutableListOf<Arbitrary<*>>()
     private val filters = mutableListOf<() -> Boolean>()
 
