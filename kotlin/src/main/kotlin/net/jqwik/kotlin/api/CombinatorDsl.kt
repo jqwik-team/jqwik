@@ -33,47 +33,8 @@ fun <R> combine(
 ): Arbitrary<R> {
     val bindings = ValueBindings()
     val combined = CombinatorScope(bindings).combinator()
-    val listCombinator = combined.createListCombinator(bindings)
 
-    return listCombinator.`as` { values ->
-        bindings.withValues(values) {
-            combined.creator()
-        }
-    } as Arbitrary<R>
-}
-
-/**
- * Flat-combine arbitraries using the combinator DSL:
- *
- * ```kotlin
- * flatCombine {
- *     val first by Arbitraries.strings()
- *     val second by Arbitraries.strings()
- *
- *     filter { first.isNotEmpty() }
- *     filter { first != second }
- *
- *     createAs {
- *         Arbitraries.just("first: $first, second: $second")
- *     }
- * }
- * ```
- *
- * @return new Arbitrary instance
- */
-@API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
-fun <R> flatCombine(
-    combinator: CombinatorScope.() -> Combined<Arbitrary<R>>
-): Arbitrary<R> {
-    val bindings = ValueBindings()
-    val combined = CombinatorScope(bindings).combinator()
-    val listCombinator = combined.createListCombinator(bindings)
-
-    return listCombinator.flatAs { values ->
-        bindings.withValues(values) {
-            combined.creator()
-        }
-    } as Arbitrary<R>
+    return combined.createArbitrary(bindings)
 }
 
 @API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
@@ -102,20 +63,25 @@ class CombinatorScope internal constructor(private val bindings: ValueBindings) 
         filters += filter
     }
 
-    fun <R> createAs(creator: () -> R): Combined<R> {
-        check(!created.getAndSet(true)) { "'createAs' must only be called once" }
+    fun <R> combineAs(creator: () -> R): Combined<R> {
+        check(!created.getAndSet(true)) { "'combineAs' must only be called once" }
 
-        return Combined(arbitraries.toList(), filters.toList(), creator)
+        return Combined.Regular(arbitraries.toList(), filters.toList(), creator)
+    }
+
+    fun <R> flatCombineAs(creator: () -> Arbitrary<R>): Combined<R> {
+        check(!created.getAndSet(true)) { "'flatCombineAs' must only be called once" }
+
+        return Combined.Flat(arbitraries.toList(), filters.toList(), creator)
     }
 }
 
 @API(status = API.Status.EXPERIMENTAL, since = "1.8.0")
-class Combined<R> internal constructor(
+sealed class Combined<R>(
     val arbitraries: List<Arbitrary<*>>,
-    val filters: List<() -> Boolean>,
-    val creator: () -> R
+    val filters: List<() -> Boolean>
 ) {
-    internal fun createListCombinator(bindings: ValueBindings): ListCombinator<*> {
+    internal fun createArbitrary(bindings: ValueBindings): Arbitrary<R> {
         @Suppress("UNCHECKED_CAST")
         var combinator: ListCombinator<*> = Combinators.combine(arbitraries as List<Arbitrary<Any?>>)
 
@@ -127,23 +93,53 @@ class Combined<R> internal constructor(
             }
         }
 
-        return combinator
+        return combinator.asArbitrary(bindings)
+    }
+
+    internal abstract fun ListCombinator<*>.asArbitrary(bindings: ValueBindings): Arbitrary<R>
+
+    internal class Regular<R>(
+        arbitraries: List<Arbitrary<*>>,
+        filters: List<() -> Boolean>,
+        val creator: () -> R
+    ) : Combined<R>(arbitraries, filters) {
+        override fun ListCombinator<*>.asArbitrary(bindings: ValueBindings): Arbitrary<R> {
+            return `as` { values ->
+                bindings.withValues(values) {
+                    creator()
+                }
+            }
+        }
+    }
+
+    internal class Flat<R>(
+        arbitraries: List<Arbitrary<*>>,
+        filters: List<() -> Boolean>,
+        val creator: () -> Arbitrary<R>
+    ) : Combined<R>(arbitraries, filters) {
+        override fun ListCombinator<*>.asArbitrary(bindings: ValueBindings): Arbitrary<R> {
+            return flatAs { values ->
+                bindings.withValues(values) {
+                    creator()
+                }
+            }
+        }
     }
 }
 
 /**
  * A class that provides the [ArbitraryProperty] instances access to the relevant values when accessed from within the
- * block passed to [CombinatorScope.createAs].
+ * block passed to [CombinatorScope.combineAs].
  */
 internal class ValueBindings {
     // Because the ArbitraryProperty instances have to be created once per "combine" call (so once per Arbitrary
-    // instance), they are shared across all invocations of the "createAs" block. To prevent issues with potential
+    // instance), they are shared across all invocations of the "combineAs" block. To prevent issues with potential
     // parallel generation of arbitrary values, we use a ThreadLocal here.
     private val current = ThreadLocal<List<*>>()
 
     operator fun <T> get(index: Int): T {
         val current = checkNotNull(current.get()) {
-            "Arbitrary delegate property must only be used inside 'combineAs' or 'filter'"
+            "Arbitrary delegate property must only be used inside 'combineAs', 'flatCombineAs' or 'filter'"
         }
 
         @Suppress("UNCHECKED_CAST")
