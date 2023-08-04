@@ -21,7 +21,7 @@ class CombinatorDslTests {
             val v1 by just(1)
             val v2 by just(2)
 
-            createAs {
+            combineAs {
                 v1!! + v2!!
             }
         }
@@ -35,7 +35,7 @@ class CombinatorDslTests {
             val v1 by just(1).orNull(0.5)
             val v2 by just(2)
 
-            createAs {
+            combineAs {
                 (v1 ?: 0) + v2!!
             }
         }
@@ -58,7 +58,7 @@ class CombinatorDslTests {
 
             filter { v1 != v2 }
 
-            createAs {
+            combineAs {
                 Tuple.of(v1, v2)
             }
         }
@@ -74,8 +74,8 @@ class CombinatorDslTests {
             combine {
                 val value by oneToThree
 
-                createAs { value }
-                createAs { value }
+                combineAs { value }
+                combineAs { value }
             }
         }.isInstanceOf(IllegalStateException::class.java)
     }
@@ -88,18 +88,18 @@ class CombinatorDslTests {
 
                 val usage = value
 
-                createAs { usage }
+                combineAs { usage }
             }
         }.isInstanceOf(IllegalStateException::class.java)
     }
 
     @Example
     fun `flatCombine arbitraries`() {
-        val combined = flatCombine {
+        val combined = combine {
             val v1 by just(1)
             val v2 by just(2)
 
-            createAs {
+            flatCombineAs {
                 just(v1!! + v2!!)
             }
         }
