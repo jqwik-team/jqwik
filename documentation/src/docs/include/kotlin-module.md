@@ -27,6 +27,7 @@ __Table of contents:__
   - [Jqwik Tuples in Kotlin](#jqwik-tuples-in-kotlin)
   - [Type-based Arbitraries](#type-based-arbitraries)
   - [Diverse Convenience Functions](#diverse-convenience-functions)
+  - [Combinator DSL](#combinator-dsl)
 - [Quirks and Bugs](#quirks-and-bugs)
 
 #### Build Configuration for Kotlin
@@ -477,6 +478,20 @@ combine {
         // 'first' will never be empty or equal to 'second'
 
         "first: $first, second: $second"
+    }
+}
+```
+
+And you can also achieve the `flatCombine` behaviour, by using `flatCombineAs`:
+
+```kotlin
+combine {
+    val first by Arbitraries.strings()
+    val second by Arbitraries.strings()
+    // ...
+
+    flatCombineAs {
+        Arbitraries.just("first: $first, second: $second")
     }
 }
 ```
