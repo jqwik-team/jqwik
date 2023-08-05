@@ -152,7 +152,7 @@ internal class ValueBindings {
 
             block()
         } finally {
-            current.remove()
+            current.set(null)
         }
     }
 }
