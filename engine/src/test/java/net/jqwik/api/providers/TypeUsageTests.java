@@ -769,6 +769,19 @@ class TypeUsageTests {
 		}
 
 		@Example
+		void parameterizedTypesWithPrimitives() {
+			// This is not possible in Java but in jqwik
+			TypeUsage listOfInteger = TypeUsage.of(List.class, TypeUsage.of(Integer.class));
+			TypeUsage listOfInt = TypeUsage.of(List.class, TypeUsage.of(int.class));
+			assertThat(listOfInt.canBeAssignedTo(listOfInteger)).isTrue();
+			assertThat(listOfInteger.canBeAssignedTo(listOfInt)).isTrue();
+
+			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
+			assertThat(listOfInt.canBeAssignedTo(listOfString)).isFalse();
+			assertThat(listOfString.canBeAssignedTo(listOfInt)).isFalse();
+		}
+
+		@Example
 		void parameterizedTypesWithWildcards() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")

@@ -414,10 +414,11 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		}
 		if (primitiveTypeToObject(this.getRawType(), targetType.getRawType()))
 			return true;
-		if (boxedTypeMatches(targetType.getRawType(), this.rawType))
-			return true;
-		if (boxedTypeMatches(this.rawType, targetType.getRawType()))
-			return true;
+		// if (boxedTypeMatches(targetType.getRawType(), this.rawType))
+		// 	return true;
+		// if (boxedTypeMatches(this.rawType, targetType.getRawType()))
+		// 	return true;
+		if (boxedTypeMatchesEitherWay(this, targetType)) return true;
 		if (targetType.getRawType().isAssignableFrom(rawType)) {
 			if (this.isParameterizedRaw() || targetType.isParameterizedRaw()) {
 				// A raw parameterized type can always be on either side of assignment
@@ -437,6 +438,14 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 				return true;
 			} else return anySupertypeCanBeAssignedTo(targetType);
 		}
+		return false;
+	}
+
+	private static boolean boxedTypeMatchesEitherWay(TypeUsage sourceType, TypeUsage targetType) {
+		if (boxedTypeMatches(targetType.getRawType(), sourceType.getRawType()))
+			return true;
+		if (boxedTypeMatches(sourceType.getRawType(), targetType.getRawType()))
+			return true;
 		return false;
 	}
 
@@ -486,6 +495,13 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		for (int i = 0; i < targetTypeArguments.size(); i++) {
 			TypeUsage providedTypeArgument = providedTypeArguments.get(i);
 			TypeUsage targetTypeArgument = targetTypeArguments.get(i);
+
+			if (boxedTypeMatchesEitherWay(providedTypeArgument, targetTypeArgument)) {
+				// Primitive types can be assigned to their boxed type and vice versa
+				// This cannot happen in real Java (since primitive types cannot be used in generics),
+				// but it is possible in some jqwik scenarios
+				return true;
+			}
 
 			boolean sameRawType = targetTypeArgument.getRawType().equals(providedTypeArgument.getRawType());
 			if (!(sameRawType || targetTypeArgument.isTypeVariableOrWildcard())) {
@@ -577,7 +593,7 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		return (TypeUsageImpl) TypeUsage.of(componentRawType);
 	}
 
-	private boolean boxedTypeMatches(Class<?> providedType, Class<?> targetType) {
+	private static boolean boxedTypeMatches(Class<?> providedType, Class<?> targetType) {
 		if (providedType.equals(Long.class) && targetType.equals(long.class))
 			return true;
 		if (providedType.equals(Integer.class) && targetType.equals(int.class))
