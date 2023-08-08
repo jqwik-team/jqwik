@@ -82,8 +82,10 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	@SuppressWarnings("unchecked")
 	private <T> List<Method> findConfigurationMethods(Arbitrary<T> arbitrary, Annotation annotation) {
 		Class<? extends Arbitrary<T>> arbitraryClass = (Class<? extends Arbitrary<T>>) arbitrary.getClass();
-		return findMethods(getClass(),
-						   method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation), HierarchyTraversalMode.BOTTOM_UP
+		return findMethods(
+			getClass(),
+			method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation),
+			HierarchyTraversalMode.BOTTOM_UP
 		);
 	}
 
@@ -92,7 +94,7 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 		Class<? extends Arbitrary<?>> arbitraryClass,
 		Annotation annotation
 	) {
-		if (!CONFIG_METHOD_NAME.equals(candidate.getName())) {
+		if (!candidate.getName().matches(CONFIG_METHOD_NAME)) {
 			return false;
 		}
 		if (!Arbitrary.class.isAssignableFrom(candidate.getReturnType())) {
@@ -104,8 +106,11 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 		if (candidate.getParameterTypes()[1] != annotation.annotationType()) {
 			return false;
 		}
-		Class<?> upperArbitraryType = candidate.getParameterTypes()[0];
-		return upperArbitraryType.isAssignableFrom(arbitraryClass);
+
+		TypeUsage configurationArbitraryType = TypeUsage.forType(candidate.getGenericParameterTypes()[0]);
+		TypeUsage providedArbitraryType = TypeUsage.of(arbitraryClass);
+
+		return providedArbitraryType.canBeAssignedTo(configurationArbitraryType);
 	}
 
 }

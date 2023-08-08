@@ -2,6 +2,7 @@
 
     - Allow more than one configure-method in `ArbitraryConfiguratorBase`.
       See https://github.com/jqwik-team/jqwik/issues/493.
+        - Change user guide accordingly
 
 
 # 1.8.x

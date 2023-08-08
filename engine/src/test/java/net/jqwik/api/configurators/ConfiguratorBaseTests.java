@@ -59,8 +59,7 @@ public class ConfiguratorBaseTests {
 
 	void propertyWithOnlyEvenString(@ForAll @OnlyEven String aString) {}
 
-	// @Example
-	// TODO: The actual arbitrary instance must be matched against the configuration methods first parameter
+	@Example
 	void configuratorWithNonMatchingType() {
 		OnlyEvenConfigurator configurator = new OnlyEvenConfigurator();
 
