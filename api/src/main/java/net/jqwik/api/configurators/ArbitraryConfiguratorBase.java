@@ -35,7 +35,7 @@ import static org.junit.platform.commons.support.ReflectionSupport.*;
 @API(status = MAINTAINED, since = "1.0")
 public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator {
 
-	private final static String CONFIG_METHOD_NAME = "configure";
+	private final static String CONFIG_METHOD_NAME_PATTERN = "configure.*";
 
 	@Override
 	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
@@ -94,7 +94,10 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 		Class<? extends Arbitrary<?>> arbitraryClass,
 		Annotation annotation
 	) {
-		if (!candidate.getName().matches(CONFIG_METHOD_NAME)) {
+		if (!ModifierSupport.isPublic(candidate)) {
+			return false;
+		}
+		if (!candidate.getName().matches(CONFIG_METHOD_NAME_PATTERN)) {
 			return false;
 		}
 		if (!Arbitrary.class.isAssignableFrom(candidate.getReturnType())) {

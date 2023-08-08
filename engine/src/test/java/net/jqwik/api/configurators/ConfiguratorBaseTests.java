@@ -68,4 +68,51 @@ public class ConfiguratorBaseTests {
 		TypeUsage onlyEvenStringType = TypeUsageImpl.forParameter(parameters.get(0));
 		assertThat(configurator.configure(strings, onlyEvenStringType)).isSameAs(strings);
 	}
+
+	@Target({ ElementType.PARAMETER })
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface OnlyOdd {}
+
+
+	static class OnlyConfigurator extends ArbitraryConfiguratorBase {
+		public Arbitrary<Integer> configureOnlyEven(Arbitrary<Integer> arbitrary, OnlyEven odd) {
+			return arbitrary.filter(number  -> Math.abs(number % 2) == 0);
+		}
+		public Arbitrary<Integer> configureOnlyOdd(Arbitrary<Integer> arbitrary, OnlyOdd odd) {
+			return arbitrary.filter(number  -> Math.abs(number % 2) != 0);
+		}
+
+		// Non-public configuration methods are ignored
+		private Arbitrary<Integer> configureToZero(Arbitrary<Integer> arbitrary, OnlyOdd odd) {
+			return Arbitraries.just(0);
+		}
+	}
+
+	void propertyOnlyEven(@ForAll @OnlyEven int anEvenNumber) {}
+	void propertyOnlyOdd(@ForAll @OnlyOdd int anOddNumber) {}
+
+	@Example
+	void configuratorWithExtendedNames(@ForAll Random random) {
+		OnlyConfigurator configurator = new OnlyConfigurator();
+		IntegerArbitrary integers = Arbitraries.integers();
+
+		List<MethodParameter> paramsOnlyEven = getParametersFor(ConfiguratorBaseTests.class, "propertyOnlyEven");
+		TypeUsage anEvenNumberType = TypeUsageImpl.forParameter(paramsOnlyEven.get(0));
+		Arbitrary<Integer> configuredEvenArbitrary = configurator.configure(integers, anEvenNumberType);
+		assertThat(configuredEvenArbitrary).isNotSameAs(integers);
+		TestingSupport.assertAllGenerated(
+			configuredEvenArbitrary, random,
+			number -> assertThat(number).isEven()
+		);
+
+		List<MethodParameter> paramsOnlyOdd = getParametersFor(ConfiguratorBaseTests.class, "propertyOnlyOdd");
+		TypeUsage anOddNumberType = TypeUsageImpl.forParameter(paramsOnlyOdd.get(0));
+		Arbitrary<Integer> configuredOddArbitrary = configurator.configure(integers, anOddNumberType);
+		assertThat(configuredOddArbitrary).isNotSameAs(integers);
+		TestingSupport.assertAllGenerated(
+			configuredOddArbitrary, random,
+			number -> assertThat(number).isOdd()
+		);
+	}
+
 }
