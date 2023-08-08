@@ -4,6 +4,7 @@
       See https://github.com/jqwik-team/jqwik/issues/493.
         - Check if some built-in configurators can now be simplified
         - Change user guide accordingly
+        - Add incompatible change (only public configure methods are supported) to release notes
 
 
 # 1.8.x
