@@ -12,7 +12,7 @@ class OddProperties {
 	}
 
 	@Property @Report(Reporting.GENERATED)
-	boolean oddWillNotBeAppliedToBigIntegers(@ForAll @Odd BigInteger aNumber) {
+	boolean oddBigIntegersOnly(@ForAll @Odd BigInteger aNumber) {
 		return Math.abs(aNumber.longValueExact() % 2) == 1;
 	}
 }
