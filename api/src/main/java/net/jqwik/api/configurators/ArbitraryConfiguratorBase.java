@@ -44,7 +44,7 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 		}
 		List<Annotation> annotations = configurationAnnotations(targetType);
 		for (Annotation annotation : annotations) {
-			List<Method> configurationMethods = findConfigurationMethods(arbitrary, targetType, annotation);
+			List<Method> configurationMethods = findConfigurationMethods(arbitrary, annotation);
 			for (Method configurationMethod : configurationMethods) {
 				arbitrary = configureWithMethod(arbitrary, annotation, configurationMethod);
 			}
@@ -80,11 +80,11 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> List<Method> findConfigurationMethods(Arbitrary<T> arbitrary, TypeUsage targetType, Annotation annotation) {
+	private <T> List<Method> findConfigurationMethods(Arbitrary<T> arbitrary, Annotation annotation) {
 		Class<? extends Arbitrary<T>> arbitraryClass = (Class<? extends Arbitrary<T>>) arbitrary.getClass();
 		return findMethods(
 			getClass(),
-			method -> hasCompatibleConfigurationSignature(method, arbitraryClass, targetType, annotation),
+			method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation),
 			HierarchyTraversalMode.BOTTOM_UP
 		);
 	}
@@ -92,7 +92,6 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	private static boolean hasCompatibleConfigurationSignature(
 		Method candidate,
 		Class<? extends Arbitrary<?>> arbitraryClass,
-		TypeUsage targetType,
 		Annotation annotation
 	) {
 		if (!ModifierSupport.isPublic(candidate)) {
@@ -113,17 +112,8 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 
 		TypeUsage configurationArbitraryType = TypeUsage.forType(candidate.getGenericParameterTypes()[0]);
 		TypeUsage providedArbitraryType = TypeUsage.of(arbitraryClass);
-		if (!providedArbitraryType.canBeAssignedTo(configurationArbitraryType)) {
-			return false;
-		}
 
-		// To prevent application of a configuration method to a target type that is generic, e.g. a filtered arbitrary
-		TypeUsage targetArbitraryType = TypeUsage.of(
-			Arbitrary.class,
-			targetType
-		);
-
-		return targetArbitraryType.canBeAssignedTo(configurationArbitraryType);
+		return providedArbitraryType.canBeAssignedTo(configurationArbitraryType);
 	}
 
 }
