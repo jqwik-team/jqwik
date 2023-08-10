@@ -34,7 +34,10 @@ public class CharsConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public CharacterArbitrary configure(CharacterArbitrary arbitrary, CharRangeList charRangeList) {
-		throw new JqwikException("Characters can only take a single @CharRange annotation");
+		for (CharRange charRange : charRangeList.value()) {
+			arbitrary = configure(arbitrary, charRange);
+		}
+		return arbitrary;
 	}
 
 }
