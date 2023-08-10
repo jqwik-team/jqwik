@@ -84,8 +84,7 @@ class ConfiguratorBaseTests {
 		assertThat(configurator.configure(strings, onlyEvenStringType)).isSameAs(strings);
 	}
 
-	// @Example
-	@Disabled("Hard to implement without breaking lots of configurators supposed to match")
+	@Example
 	void dontConfigureFilteredButNonMatchingType() {
 		OnlyEvenConfigurator configurator = new OnlyEvenConfigurator();
 

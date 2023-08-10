@@ -98,6 +98,10 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	}
 
 	public static TypeUsageImpl forNonWildcardType(Type type) {
+		// This allows optimized handling of type Object
+		if (type.equals(Object.class)) {
+			return (TypeUsageImpl) TypeUsage.OBJECT_TYPE;
+		}
 		return resolveVariableOrCreate(
 			extractRawType(type),
 			type,
