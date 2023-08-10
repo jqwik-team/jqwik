@@ -35,6 +35,9 @@ import static org.apiguardian.api.API.Status.*;
 public interface TypeUsage {
 
 	@API(status = INTERNAL)
+	TypeUsage OBJECT_TYPE = TypeUsage.of(Object.class);
+
+	@API(status = INTERNAL)
 	abstract class TypeUsageFacade {
 		private static final TypeUsageFacade implementation;
 

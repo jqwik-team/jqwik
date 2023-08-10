@@ -20,7 +20,6 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	private static final Map<TypeVariable<?>, TypeUsageImpl> resolvedTypeVariables = new ConcurrentHashMap<>();
 
 	public static final String WILDCARD = "?";
-	public static final TypeUsage OBJECT_TYPE = TypeUsage.of(Object.class);
 
 	public static TypeUsage forParameterizedClass(Tuple2<Class<?>, TypeUsage[]> parameterizedClass) {
 		Class<?> type = parameterizedClass.get1();
@@ -405,6 +404,8 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 	public boolean canBeAssignedTo(TypeUsage targetType) {
 		if (this.equals(targetType)) return true;
 
+		if (targetType == OBJECT_TYPE) return true;
+
 		if (targetType.isSuperWildcard() && this.isExtendsConstraint()) {
 			return false;
 		}
@@ -414,10 +415,6 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		}
 		if (primitiveTypeToObject(this.getRawType(), targetType.getRawType()))
 			return true;
-		// if (boxedTypeMatches(targetType.getRawType(), this.rawType))
-		// 	return true;
-		// if (boxedTypeMatches(this.rawType, targetType.getRawType()))
-		// 	return true;
 		if (boxedTypeMatchesEitherWay(this, targetType)) return true;
 		if (targetType.getRawType().isAssignableFrom(rawType)) {
 			if (this.isParameterizedRaw() || targetType.isParameterizedRaw()) {

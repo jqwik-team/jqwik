@@ -112,7 +112,7 @@ class TypeUsageTests {
 			assertThat(stringType.equals(TypeUsage.of(Number.class))).isFalse();
 
 			assertThat(stringType.getSuperclass()).isPresent();
-			assertThat(stringType.getSuperclass().get()).isEqualTo(TypeUsage.of(Object.class));
+			assertThat(stringType.getSuperclass().get()).isEqualTo(TypeUsage.OBJECT_TYPE);
 			assertThat(stringType.getInterfaces()).contains(
 				TypeUsage.of(Serializable.class),
 				TypeUsage.of(Comparable.class, TypeUsage.of(String.class)),
@@ -360,7 +360,7 @@ class TypeUsageTests {
 			assertThat(second.isTypeVariableOrWildcard()).isTrue();
 			assertThat(second.isTypeVariable()).isFalse();
 			assertThat(second.getLowerBounds()).isNotEmpty();
-			assertThat(second.getUpperBounds()).containsExactly(TypeUsage.of(Object.class));
+			assertThat(second.getUpperBounds()).containsExactly(TypeUsage.OBJECT_TYPE);
 
 			assertThat(wildcardType.toString()).isEqualTo("Tuple2<? extends CharSequence, ? super String>");
 		}
@@ -722,6 +722,8 @@ class TypeUsageTests {
 			assertThat(stringType.canBeAssignedTo(stringType)).isTrue();
 			assertThat(stringType.canBeAssignedTo(TypeUsage.of(CharSequence.class))).isTrue();
 			assertThat(TypeUsage.of(CharSequence.class).canBeAssignedTo(stringType)).isFalse();
+
+			assertThat(stringType.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
 		}
 
 		@Example
@@ -733,7 +735,7 @@ class TypeUsageTests {
 			assertThat(smallInt.canBeAssignedTo(bigInt)).isTrue();
 			assertThat(bigInt.canBeAssignedTo(TypeUsage.of(Number.class))).isTrue();
 
-			assertThat(smallInt.canBeAssignedTo(TypeUsage.of(Object.class))).isTrue();
+			assertThat(smallInt.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
 		}
 
 		@Example
@@ -744,6 +746,9 @@ class TypeUsageTests {
 			assertThat(stringArray.canBeAssignedTo(stringArray)).isTrue();
 			assertThat(stringArray.canBeAssignedTo(csArray)).isTrue();
 			assertThat(csArray.canBeAssignedTo(stringArray)).isFalse();
+
+			assertThat(stringArray.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
+			assertThat(csArray.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
 		}
 
 		@Example
@@ -754,6 +759,9 @@ class TypeUsageTests {
 			assertThat(intArray.canBeAssignedTo(intArray)).isTrue();
 			assertThat(intArray.canBeAssignedTo(integerArray)).isFalse();
 			assertThat(integerArray.canBeAssignedTo(intArray)).isFalse();
+
+			assertThat(intArray.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
+			assertThat(integerArray.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
 		}
 
 		@Example
@@ -766,6 +774,9 @@ class TypeUsageTests {
 			assertThat(listOfString.canBeAssignedTo(rawList)).isTrue();
 			assertThat(rawList.canBeAssignedTo(listOfString)).isTrue();
 			assertThat(listOfString.canBeAssignedTo(listOfInteger)).isFalse();
+
+			assertThat(listOfString.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
+			assertThat(rawList.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
 		}
 
 		@Example
@@ -779,6 +790,8 @@ class TypeUsageTests {
 			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
 			assertThat(listOfInt.canBeAssignedTo(listOfString)).isFalse();
 			assertThat(listOfString.canBeAssignedTo(listOfInt)).isFalse();
+
+			assertThat(listOfInt.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
 		}
 
 		@Example
@@ -985,7 +998,7 @@ class TypeUsageTests {
 
 			TypeUsage localStringArbitrary = TypeUsage.of(LocalStringArbitrary.class);
 
-			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(Object.class))).isTrue();
+			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.OBJECT_TYPE)).isTrue();
 			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(StringArbitrary.class))).isTrue();
 			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(String.class))).isFalse();
 
