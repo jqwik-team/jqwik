@@ -30,7 +30,7 @@ public class ConfiguratorBaseTests {
 	void propertyWithOnlyEven(@ForAll @OnlyEven int anEvenNumber) {}
 
 	@Example
-	void configuratorWithMatchingAnnotation(@ForAll Random random) {
+	void configureMatchingTypeAndAnnotation(@ForAll Random random) {
 		OnlyEvenConfigurator configurator = new OnlyEvenConfigurator();
 
 		List<MethodParameter> parameters = getParametersFor(ConfiguratorBaseTests.class, "propertyWithOnlyEven");
@@ -45,10 +45,26 @@ public class ConfiguratorBaseTests {
 		);
 	}
 
+	@Example
+	void configureWithFilteredArbitrary(@ForAll Random random) {
+		OnlyEvenConfigurator configurator = new OnlyEvenConfigurator();
+
+		List<MethodParameter> parameters = getParametersFor(ConfiguratorBaseTests.class, "propertyWithOnlyEven");
+		TypeUsage anEvenNumberType = TypeUsageImpl.forParameter(parameters.get(0));
+
+		Arbitrary<Integer> numbers = Arbitraries.integers().filter(number -> number % 5 == 0);
+		Arbitrary<Integer> configuredArbitrary = configurator.configure(numbers, anEvenNumberType);
+		assertThat(configuredArbitrary).isNotSameAs(numbers);
+		TestingSupport.assertAllGenerated(
+			configuredArbitrary, random,
+			number -> assertThat(number % 10).isZero()
+		);
+	}
+
 	void propertyWithJustInt(@ForAll int aNumber) {}
 
 	@Example
-	void configuratorWithNonMatchingAnnotation() {
+	void dontConfigureMatchingTypeButNonMatchingAnnotation() {
 		OnlyEvenConfigurator configurator = new OnlyEvenConfigurator();
 
 		IntegerArbitrary numbers = Arbitraries.integers();
@@ -60,13 +76,24 @@ public class ConfiguratorBaseTests {
 	void propertyWithOnlyEvenString(@ForAll @OnlyEven String aString) {}
 
 	@Example
-	void configuratorWithNonMatchingType() {
+	void dontConfigureNonMatchingType() {
 		OnlyEvenConfigurator configurator = new OnlyEvenConfigurator();
 
 		StringArbitrary strings = Arbitraries.strings();
 		List<MethodParameter> parameters = getParametersFor(ConfiguratorBaseTests.class, "propertyWithOnlyEvenString");
 		TypeUsage onlyEvenStringType = TypeUsageImpl.forParameter(parameters.get(0));
 		assertThat(configurator.configure(strings, onlyEvenStringType)).isSameAs(strings);
+	}
+
+	@Example
+	@Disabled("Must be fixed")
+	void dontConfigureFilteredButNonMatchingType() {
+		OnlyEvenConfigurator configurator = new OnlyEvenConfigurator();
+
+		Arbitrary<String> filteredStrings = Arbitraries.strings().filter(s -> s.length() > 5);
+		List<MethodParameter> parameters = getParametersFor(ConfiguratorBaseTests.class, "propertyWithOnlyEvenString");
+		TypeUsage onlyEvenStringType = TypeUsageImpl.forParameter(parameters.get(0));
+		assertThat(configurator.configure(filteredStrings, onlyEvenStringType)).isSameAs(filteredStrings);
 	}
 
 	@Target({ ElementType.PARAMETER })
