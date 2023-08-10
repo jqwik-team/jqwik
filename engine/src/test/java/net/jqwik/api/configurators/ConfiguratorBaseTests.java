@@ -14,8 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.engine.TestHelper.*;
 
-@PropertyDefaults(tries = 10)
-public class ConfiguratorBaseTests {
+class ConfiguratorBaseTests {
 
 	@Target({ ElementType.PARAMETER })
 	@Retention(RetentionPolicy.RUNTIME)
@@ -86,7 +85,6 @@ public class ConfiguratorBaseTests {
 	}
 
 	@Example
-	@Disabled("Must be fixed")
 	void dontConfigureFilteredButNonMatchingType() {
 		OnlyEvenConfigurator configurator = new OnlyEvenConfigurator();
 
@@ -168,6 +166,38 @@ public class ConfiguratorBaseTests {
 			configuredArbitrary, random,
 			string -> assertThat(string).hasSizeLessThan(5)
 		);
+	}
+
+	<T extends CharSequence> void propertyLengthBelow5TypeVariable(@ForAll @LengthBelow5 T aSequence) {}
+
+	@Example
+	void configureTypeVariableIfArbitraryIsCovariant(@ForAll Random random) {
+		LengthBelow5Configurator configurator = new LengthBelow5Configurator();
+
+		List<MethodParameter> parameters = getParametersFor(ConfiguratorBaseTests.class, "propertyLengthBelow5TypeVariable");
+		TypeUsage aSubtypeOfCharSequence = TypeUsageImpl.forParameter(parameters.get(0));
+
+		Arbitrary<String> strings = Arbitraries.strings().alpha();
+		Arbitrary<String> configuredArbitrary = configurator.configure(strings, aSubtypeOfCharSequence);
+		assertThat(configuredArbitrary).isNotSameAs(strings);
+		TestingSupport.assertAllGenerated(
+			configuredArbitrary, random,
+			string -> assertThat(string).hasSizeLessThan(5)
+		);
+	}
+
+	<T extends Number> void propertyLengthBelow5Number(@ForAll @LengthBelow5 T aNumber) {}
+
+	@Example
+	void dontConfigureNonAssignableTypeVariable(@ForAll Random random) {
+		LengthBelow5Configurator configurator = new LengthBelow5Configurator();
+
+		List<MethodParameter> parameters = getParametersFor(ConfiguratorBaseTests.class, "propertyLengthBelow5Number");
+		TypeUsage aSubtypeOfCharSequence = TypeUsageImpl.forParameter(parameters.get(0));
+
+		Arbitrary<Integer> numbers = Arbitraries.integers();
+		Arbitrary<Integer> configuredArbitrary = configurator.configure(numbers, aSubtypeOfCharSequence);
+		assertThat(configuredArbitrary).isSameAs(numbers);
 	}
 
 
