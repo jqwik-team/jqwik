@@ -142,4 +142,33 @@ public class ConfiguratorBaseTests {
 		);
 	}
 
+	@Target({ ElementType.PARAMETER })
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface LengthBelow5 {}
+
+	static class LengthBelow5Configurator extends ArbitraryConfiguratorBase {
+		public Arbitrary<? extends CharSequence> configure(Arbitrary<? extends CharSequence> arbitrary, LengthBelow5 lengthBelow5) {
+			return arbitrary.filter(charSequence  -> charSequence.length() < 5);
+		}
+	}
+
+	void propertyLengthBelow5(@ForAll @LengthBelow5 String aString) {}
+
+	@Example
+	void configureMatchingSubtypeIfArbitraryIsCovariant(@ForAll Random random) {
+		LengthBelow5Configurator configurator = new LengthBelow5Configurator();
+
+		List<MethodParameter> parameters = getParametersFor(ConfiguratorBaseTests.class, "propertyLengthBelow5");
+		TypeUsage aStringType = TypeUsageImpl.forParameter(parameters.get(0));
+
+		Arbitrary<String> strings = Arbitraries.strings().alpha();
+		Arbitrary<String> configuredArbitrary = configurator.configure(strings, aStringType);
+		assertThat(configuredArbitrary).isNotSameAs(strings);
+		TestingSupport.assertAllGenerated(
+			configuredArbitrary, random,
+			string -> assertThat(string).hasSizeLessThan(5)
+		);
+	}
+
+
 }
