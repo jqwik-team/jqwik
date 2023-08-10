@@ -6,25 +6,23 @@ import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
-@SuppressWarnings("unchecked")
-public class UniqueCharsConfigurator implements ArbitraryConfigurator {
+public class UniqueCharsConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
-	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
-		return targetType.findAnnotation(UniqueChars.class).map(uniqueness -> {
-			if (arbitrary instanceof StringArbitrary) {
-				return (Arbitrary<T>) ((StringArbitrary) arbitrary).uniqueChars();
-			}
-			if (targetType.isAssignableFrom(String.class)) {
-				Arbitrary<String> stringArbitrary = (Arbitrary<String>) arbitrary;
-				return (Arbitrary<T>) stringArbitrary.filter(string -> hasUniqueChars(string));
-			}
-			return arbitrary;
-		}).orElse(arbitrary);
+	protected boolean acceptTargetType(TypeUsage targetType) {
+		return targetType.canBeAssignedTo(TypeUsage.of(CharSequence.class));
 	}
 
-	private boolean hasUniqueChars(String string) {
-		return string.chars().distinct().count() == string.length();
+	public Arbitrary<? extends CharSequence> configure(Arbitrary<? extends CharSequence> arbitrary, UniqueChars uniqueChars) {
+		if (arbitrary instanceof StringArbitrary) {
+			return ((StringArbitrary) arbitrary).uniqueChars();
+		} else {
+			return arbitrary.filter(this::hasUniqueChars);
+		}
+	}
+
+	private boolean hasUniqueChars(CharSequence charSequence) {
+		return charSequence.chars().distinct().count() == charSequence.length();
 	}
 
 }

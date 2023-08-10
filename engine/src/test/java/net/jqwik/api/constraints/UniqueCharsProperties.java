@@ -15,6 +15,11 @@ class UniqueCharsProperties {
 		return hasNoDuplicates(aString);
 	}
 
+	@Property
+	boolean charSequenceFromSelection(@ForAll("selectionOfStrings") @UniqueChars CharSequence aSequence) {
+		return hasNoDuplicates(aSequence);
+	}
+
 	@Provide
 	Arbitrary<String> selectionOfStrings() {
 		return Arbitraries.of(
@@ -26,7 +31,7 @@ class UniqueCharsProperties {
 		);
 	}
 
-	private boolean hasNoDuplicates(String aString) {
-		return aString.chars().distinct().count() == aString.length();
+	private boolean hasNoDuplicates(CharSequence charSequence) {
+		return charSequence.chars().distinct().count() == charSequence.length();
 	}
 }
