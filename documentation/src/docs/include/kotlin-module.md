@@ -448,7 +448,7 @@ combine {
     // ...
 
     combineAs {
-        "first: $first, second: $second"
+        "first: ${questionMark}first, second: ${questionMark}second"
     }
 }
 ```
@@ -460,7 +460,7 @@ In the background, this is equivalent to:
 
 ```kt
 combine(listOf(Arbitraries.strings(), Arbitraries.strings())) { values ->
-    "first: ${values[0]}, second: ${values[1]}"
+    "first: ${questionMark}{values[0]}, second: ${questionMark}{values[1]}"
 }
 ```
 
@@ -477,7 +477,7 @@ combine {
     combineAs {
         // 'first' will never be empty or equal to 'second'
 
-        "first: $first, second: $second"
+        "first" + "second"
     }
 }
 ```
@@ -491,7 +491,7 @@ combine {
     // ...
 
     flatCombineAs {
-        Arbitraries.just("first: $first, second: $second")
+        Arbitraries.just("first: ${questionMark}first, second: ${questionMark}second")
     }
 }
 ```

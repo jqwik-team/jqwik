@@ -64,6 +64,7 @@ task expandUserGuide(type: Copy) {
 		junitPlatformVersion: junitPlatformVersion,
 		junitJupiterVersion: junitJupiterVersion,
 		opentest4jVersion: opentest4jVersion,
+		questionMark: '?'
 	)
 	doLast {
 		file("$buildDir/docs/$userGuideTemplate").delete()
