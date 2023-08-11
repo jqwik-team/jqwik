@@ -148,8 +148,9 @@ be resolved to `"A String"`.
 ### Create your own Annotations for Arbitrary Configuration
 
 All you can do [to constrain default parameter generation](#constraining-default-generation)
-is adding another annotation to a parameter or its parameter types. What if the existing parameters
-do not suffice your needs? Is there a way to enhance the set of constraint annotations? Yes, there is!
+is adding another annotation to a parameter or its parameter types. What if the existing annotations
+do not suffice for your needs? 
+Is there a way to enhance the set of constraint annotations? Yes, there is!
 
 The mechanism you can plug into is similar to what you do when
 [providing your own default arbitrary providers](#providing-default-arbitraries). That means:
@@ -158,29 +159,40 @@ The mechanism you can plug into is similar to what you do when
    [`ArbitraryConfigurator`](/docs/${docsVersion}/javadoc/net/jqwik/api/configurators/ArbitraryConfigurator.html).
 2. Register the implementation using using Java’s `java.util.ServiceLoader` mechanism.
 
+jQwik will then call your implementation for every parameter that is annotated with 
+`@ForAll` and any **additional annotation**.
+That also means that parameters without an additional annotation will not 
+and cannot be affected by a configurator.
+
 #### Arbitrary Configuration Example: `@Odd`
 
 To demonstrate the idea let's create an annotation `@Odd` which will constrain any integer
 generation to only generate odd numbers. First things first, so here's
-the [`@Odd` annotation](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/Odd.java)
-together with the
-[configurator implementation](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddConfigurator.java):
+the [`@Odd` annotation](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/Odd.java):
 
 ```java
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Odd {
 }
-
-public class OddConfigurator extends ArbitraryConfiguratorBase {
-	public Arbitrary<Integer> configure(Arbitrary<Integer> arbitrary, Odd odd) {
-		return arbitrary.filter(number -> Math.abs(number % 2) == 1);
-	}
-}
 ```
 
-Mind that the implementation uses an abstract base class - instead of the interface itself -
-which simplifies implementation if you're only interested in a single annotation.
+On its own this annotation will not have any effect. You also need an arbitrary configurator:
+
+```java
+public class OddConfigurator implements ArbitraryConfigurator {
+
+    @Override
+    public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
+        if (!targetType.isOfType(Integer.class) && !targetType.isOfType(int.class)) {
+            return arbitrary;
+        }
+        return targetType.findAnnotation(Odd.class)
+                         .map(odd -> arbitrary.filter(number -> Math.abs(((Integer) number) % 2) == 1))
+                         .orElse(arbitrary);
+    }
+}
+```
 
 If you now
 [register the implementation](https://github.com/jqwik-team/jqwik/blob/${gitVersion}/documentation/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator),
@@ -194,43 +206,52 @@ boolean oddIntegersOnly(@ForAll @Odd int aNumber) {
 }
 ```
 
-There are a few catches, though:
+However, this implementation is rather onerous since it has to check for supported target types 
+and annotation; it also has to cast the arbitrary's value to `Integer`.
+Let's see if we can do better.
 
-- Currently `OddConfigurator` will accept any target type since type erasure
-  will get rid of `<Integer>` in configure-method's signature at runtime.
-  Therefore, using `@Odd` together with e.g. `BigInteger` will lead to a runtime
-  exception. You can prevent that by explicitly accepting only some target types:
+#### Using Arbitrary Configurator Base Class
 
-  ```java
-  public class OddConfigurator extends ArbitraryConfiguratorBase {
+Deriving your implementation from [`ArbitraryConfiguratorBase`](/docs/${docsVersion}/javadoc/net/jqwik/api/configurators/ArbitraryConfiguratorBase.html) will largely simplify things:
 
-  	@Override
-  	protected boolean acceptTargetType(TypeUsage targetType) {
-  		return targetType.isAssignableFrom(Integer.class);
-  	}
 
-  	public Arbitrary<Integer> configure(Arbitrary<Integer> arbitrary, Odd odd) {
-  		return arbitrary.filter(number -> Math.abs(number % 2) == 1);
-  	}
-  }
-  ```
+```java
+public class OddConfigurator extends ArbitraryConfiguratorBase {
 
-  Alternatively, you can check for an object's type directly and use different
-  filter algorithms:
+	public Arbitrary<Integer> configure(Arbitrary<Integer> arbitrary, Odd odd) {
+		return arbitrary.filter(number -> Math.abs(number % 2) == 1);
+	}
+}
+```
 
-  ```java
-  public Arbitrary<Number> configure(Arbitrary<Number> arbitrary, Odd odd) {
-      return arbitrary.filter(number -> {
-          if (number instanceof Integer)
-              return Math.abs((int) number % 2) == 1;
-          if (number instanceof BigInteger)
-              return ((BigInteger) number).remainder(BigInteger.valueOf(2))
-                                          .abs().equals(BigInteger.ONE);
-          return false;
-      });
-  }
-  ```
+The nice thing about `ArbitraryConfiguratorBase` is that it will take care of all the
+boilerplate code for you. It will check for supported target types and annotations and
+will also that the actual arbitrary can be cast to the arbitrary parameter type.
+Your subclass can have any number of `configure` methods under the following constraints:
 
-- You can combine `@Odd` with other annotations like `@Positive` or `@Range` or another
-  self-made configurator. In this case the order of configurator application might play a role,
-  which can be influenced by overriding the `order()` method of a configurator.
+- They must be `public`.
+- Their name starts with `configure`.
+- Their first parameter must be of type `Arbitrary` or a subtype of `Arbitrary`.
+- Their second parameter must have an annotation type.
+- Their return type must be `Arbitrary` or a subtype of `Arbitrary`, 
+  compatible with the original arbitrary's target type.
+
+With this knowledge we can easily enhance our `OddConfigurator` to also support `BigInteger` values:
+
+```java
+public class OddConfigurator extends ArbitraryConfiguratorBase {
+    public Arbitrary<Integer> configureInteger(Arbitrary<Integer> arbitrary, Odd odd) {
+        return arbitrary.filter(number -> Math.abs(number % 2) == 1);
+    }
+
+    public Arbitrary<BigInteger> configureBigInteger(Arbitrary<BigInteger> arbitrary, Odd odd) {
+        return arbitrary.filter(number -> {
+            return number.remainder(BigInteger.valueOf(2)).abs().equals(BigInteger.ONE);
+        });
+    }
+}
+```
+
+You can combine `@Odd` with other annotations like `@Positive` or `@Range` or another
+self-made configurator. In this case the order of configurator application might play a role,
+which can be influenced by overriding the `order()` method of a configurator.
