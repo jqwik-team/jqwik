@@ -5,6 +5,8 @@
 
 # 1.8.x
 
+    - Allow parallel test runs with SBT: https://github.com/jqwik-team/jqwik/issues/514
+
     - Method ordering. See https://github.com/jqwik-team/jqwik/issues/502.
 
     - State-based Properties (https://github.com/jqwik-team/jqwik/issues/428) : 
