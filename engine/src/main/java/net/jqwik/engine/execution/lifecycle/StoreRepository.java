@@ -1,6 +1,7 @@
 package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -27,7 +28,7 @@ public class StoreRepository {
 
 	private static class IdentifiedStores extends LinkedHashMap<TestDescriptor, ScopedStore<?>> {}
 
-	private final Map<Object, IdentifiedStores> storesByIdentifier = new LinkedHashMap<>();
+	private final Map<Object, IdentifiedStores> storesByIdentifier = new ConcurrentHashMap<>();
 
 	public <T> ScopedStore<T> create(
 		TestDescriptor scope,
