@@ -148,15 +148,8 @@ public class TestingSupport {
 			.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
 
-	// TODO: Call from TestingSupportFacade
 	public static <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
-		long maxTries = 1000;
-		return generator
-			.stream(random)
-			.limit(maxTries)
-			.filter(shrinkable -> condition.apply(shrinkable.value()))
-			.findFirst()
-			.orElseThrow(() -> new JqwikException("Failed to generate value that fits condition after " + maxTries + " tries."));
+		return TestingSupportFacade.implementation.generateUntil(generator, random, condition);
 	}
 
 	@API(status = EXPERIMENTAL, since = "1.6.0")

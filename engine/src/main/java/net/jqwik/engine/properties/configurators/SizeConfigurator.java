@@ -38,9 +38,7 @@ public class SizeConfigurator extends ArbitraryConfiguratorBase {
 					"%n    This usage will throw exception starting with version 1.7.0.",
 				size, effectiveSize
 			);
-			LOG.warning(message);
-			// TODO: Throw exception as soon as release 1.7.0
-			// throw new JqwikException(message);
+			throw new JqwikException(message);
 		}
 		return arbitrary.ofSize(effectiveSize);
 	}

@@ -1,7 +1,8 @@
 # 1.8.0
 
-    - Check TODOs in code
-    - Deprecate some APIs?
+    - Include compileOnly("org.jetbrains:annotations:23.0.0") into API?
+      Or rather jspecify annotations? To get rid of build warnings.
+
 
 # 1.8.x
 
@@ -45,7 +46,3 @@
 
         - Allow @ForAll on member variables of test container class
 
-
-# 1.8.0
-
-    - Include compileOnly("org.jetbrains:annotations:23.0.0") into API?

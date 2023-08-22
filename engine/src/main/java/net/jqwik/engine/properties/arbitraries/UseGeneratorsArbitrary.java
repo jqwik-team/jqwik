@@ -5,7 +5,6 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-// TODO: This class is probably not needed at all. Its methods could be pushed down to subclasses.
 abstract class UseGeneratorsArbitrary<T> implements Arbitrary<T> {
 
 	private final RandomGenerator<T> randomGenerator;
