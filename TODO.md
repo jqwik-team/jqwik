@@ -1,8 +1,5 @@
 # 1.8.0
 
-    - Include compileOnly("org.jetbrains:annotations:23.0.0") into API?
-      Or rather jspecify annotations? To get rid of build warnings.
-
 
 # 1.8.x
 
