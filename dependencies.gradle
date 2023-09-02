@@ -38,7 +38,7 @@ ext {
 	findbugsVersion = '3.0.2'
 	jspecifyVersion = '0.3.0'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.8.0'
+	jqwikVersion = '1.8.1-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 	showStandardStreams = showStandardStreams()
 

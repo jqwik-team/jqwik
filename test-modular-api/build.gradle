@@ -32,9 +32,9 @@ dependencies {
 		testImplementation(project(":web"))
 		testRuntimeOnly(project(":engine"))
 	} else {
-		testImplementation("net.jqwik:jqwik-api:1.7.4")
-		testImplementation("net.jqwik:jqwik-web:1.7.4")
-		testRuntimeOnly("net.jqwik:jqwik-engine:1.7.4")
+		testImplementation("net.jqwik:jqwik-api:1.8.0")
+		testImplementation("net.jqwik:jqwik-web:1.8.0")
+		testRuntimeOnly("net.jqwik:jqwik-engine:1.8.0")
 	}
 }
 
