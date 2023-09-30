@@ -130,9 +130,10 @@ class ShrinkingDistanceTests {
 	@Label("combine()")
 	class Combine {
 		@Example
-		void combiningNoShrinkablesIsNotAllowed() {
-			assertThatThrownBy(() -> ShrinkingDistance.combine(Collections.emptyList()))
-				.isInstanceOf(IllegalArgumentException.class);
+		void combiningNoShrinkablesIsPossible() {
+			// This can happen e.g. when using Combinators.combine() with an empty list of arbitraries.
+			ShrinkingDistance distance = ShrinkingDistance.combine(asList());
+			assertThat(distance).isEqualTo(ShrinkingDistance.MIN);
 		}
 
 		@Example

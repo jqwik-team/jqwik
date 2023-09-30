@@ -58,8 +58,9 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	@API(status = MAINTAINED, since = "1.0")
 	public static <T> ShrinkingDistance combine(List<Shrinkable<T>> shrinkables) {
+		// This can happen e.g. when using Combinators.combine() with an empty list of arbitraries.
 		if (shrinkables.isEmpty()) {
-			throw new IllegalArgumentException("At least one shrinkable is required");
+			return ShrinkingDistance.MIN;
 		}
 
 		// This is an optimization to avoid creating temporary arrays, which the old streams-based implementation did.

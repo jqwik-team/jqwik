@@ -35,6 +35,19 @@ class CombinedShrinkableTests {
 		assertThat(shrinkable.value()).isEqualTo("hello3");
 	}
 
+	@Example
+	void creationWithEmptyShrinkablesList() {
+		Function<List<Object>, String> combinator = shrinkables -> {
+			return "constant";
+		};
+
+		List<Shrinkable<Object>> shrinkables = Arrays.asList();
+		Shrinkable<String> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
+
+		assertThat(shrinkable.value()).isEqualTo("constant");
+		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(0));
+	}
+
 	@Group
 	class Shrinking {
 
