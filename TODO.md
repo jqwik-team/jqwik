@@ -5,6 +5,9 @@
 
 # 1.8.x
 
+    - Using @UseType for sealed interfaces and classes: https://github.com/jqwik-team/jqwik/issues/523
+      Will probably require a new module for java 17
+
     - Allow parallel test runs with SBT: https://github.com/jqwik-team/jqwik/issues/514
 
     - Method ordering. See https://github.com/jqwik-team/jqwik/issues/502.
