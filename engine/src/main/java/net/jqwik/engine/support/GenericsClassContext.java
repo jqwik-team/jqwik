@@ -120,17 +120,28 @@ public class GenericsClassContext {
 	}
 
 	private TypeResolution resolveVariableInSupertypes(TypeResolution typeResolution) {
-		return supertypeContexts()
-				   .map(context -> context.resolveVariableLocally(typeResolution))
-				   .filter(TypeResolution::typeHasChanged)
+		// TODO: Optimize so that only get supertypes of supertypes if necessary
+		//       i.e. it cannot be resolved in direct supertypes
+		Set<TypeUsage> superTypes = getAllSupertypes(contextType);
+		List<TypeResolution> typeResolutionList =
+			superTypes.stream()
+					  .map(GenericsSupport::contextFor)
+					  .map(context -> context.resolveVariableLocally(typeResolution))
+					  .filter(TypeResolution::typeHasChanged)
+					  .collect(Collectors.toList());
+
+		return typeResolutionList.stream()
 				   .findFirst()
 				   .orElse(typeResolution.unchanged());
 	}
 
-	private Stream<GenericsClassContext> supertypeContexts() {
-		Stream<TypeUsage> superclassStream = contextType.getSuperclass().map(Stream::of).orElseGet(Stream::empty);
-		Stream<TypeUsage> interfacesStream = contextType.getInterfaces().stream();
-		return Stream.concat(superclassStream, interfacesStream).map(GenericsSupport::contextFor);
+	private Set<TypeUsage> getAllSupertypes(TypeUsage contextType) {
+        List<TypeUsage> directSupertypes = contextType.getSuperTypes();
+        Set<TypeUsage> allSupertypes = new LinkedHashSet<>(directSupertypes);
+		for (TypeUsage directSupertype : directSupertypes) {
+			allSupertypes.addAll(getAllSupertypes(directSupertype));
+		}
+		return allSupertypes;
 	}
 
 	private static class LookupTypeVariable {

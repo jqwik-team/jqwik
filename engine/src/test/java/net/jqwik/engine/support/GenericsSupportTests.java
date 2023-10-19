@@ -273,9 +273,43 @@ class GenericsSupportTests {
 			assertThat(typeUsage.isOfType(GenericType.class)).isTrue();
 			assertThat(typeUsage.getTypeArguments()).hasSize(1);
 			assertThat(typeUsage.getTypeArgument(0).isOfType(String.class)).isTrue();
+		}
+	}
 
+	@Example
+	@Label("Bug from issue#519")
+	void bug519() throws NoSuchMethodException {
+		abstract class A<T> {
+			public boolean myMethod(T t) {
+				return true;
+			}
 		}
 
+		abstract class B<T extends Comparable<? super T>> extends A<T> {
+		}
+
+		abstract class MyType implements Comparable<MyType> { }
+
+		abstract class C<T extends MyType> extends B<T> {
+		}
+
+		class MyRecord extends MyType {
+			@Override
+			public int compareTo(MyType o) {
+				return 0;
+			}
+		}
+
+		class ConcreteC extends C<MyRecord> {
+		}
+
+		GenericsClassContext context = GenericsSupport.contextFor(ConcreteC.class);
+		Method method = A.class.getMethod("myMethod", Object.class);
+
+		TypeResolution resolution = context.resolveParameter(method.getParameters()[0]);
+		TypeUsage typeUsage = TypeUsageImpl.forResolution(resolution);
+
+		assertThat(typeUsage.isOfType(MyRecord.class)).isTrue();
 	}
 
 	@Group
