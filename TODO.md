@@ -1,5 +1,12 @@
 # 1.8.1
 
+    - Update samples repo
+
+    - Update jqwik-spring, jqwik-micronaut, jqwik-testcontainers
+
+# 1.8.2
+
+
 # 1.8.x
 
     - Using @UseType for sealed interfaces and classes: https://github.com/jqwik-team/jqwik/issues/523
