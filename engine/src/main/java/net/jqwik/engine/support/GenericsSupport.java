@@ -29,17 +29,18 @@ public class GenericsSupport {
 	}
 
 	private static GenericsClassContext createContext(TypeUsage typeUsage) {
-		GenericsClassContext context = new GenericsClassContext(typeUsage);
+		Class<?> contextClass = typeUsage.getRawType();
+		GenericsClassContext context = new GenericsClassContext(contextClass);
 		addOwnResolutions(typeUsage, context);
-		addResolutionsForSuperclass(typeUsage, context);
-		addResolutionsForInterfaces(typeUsage, context);
+		addResolutionsForSuperclass(context);
+		addResolutionsForInterfaces(context);
 		return context;
 	}
 
-	private static void addResolutionsForInterfaces(TypeUsage contextType, GenericsClassContext context) {
-		Class<?>[] interfaces = contextType.getRawType().getInterfaces();
-		Type[] genericInterfaces = contextType.getRawType().getGenericInterfaces();
-		AnnotatedType[] annotatedInterfaces = contextType.getRawType().getAnnotatedInterfaces();
+	private static void addResolutionsForInterfaces(GenericsClassContext context) {
+		Class<?>[] interfaces = context.contextClass().getInterfaces();
+		Type[] genericInterfaces = context.contextClass().getGenericInterfaces();
+		AnnotatedType[] annotatedInterfaces = context.contextClass().getAnnotatedInterfaces();
 		for (int i = 0; i < interfaces.length; i++) {
 			Class<?> supertype = interfaces[i];
 			Type genericSupertype = genericInterfaces[i];
@@ -48,11 +49,11 @@ public class GenericsSupport {
 		}
 	}
 
-	private static void addResolutionsForSuperclass(TypeUsage typeUsage, GenericsClassContext context) {
+	private static void addResolutionsForSuperclass(GenericsClassContext context) {
 		addResolutionsForSupertype(
-			typeUsage.getRawType().getSuperclass(),
-			typeUsage.getRawType().getGenericSuperclass(),
-			typeUsage.getRawType().getAnnotatedSuperclass(),
+			context.contextClass().getSuperclass(),
+			context.contextClass().getGenericSuperclass(),
+			context.contextClass().getAnnotatedSuperclass(),
 			context
 		);
 	}

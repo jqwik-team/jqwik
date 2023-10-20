@@ -25,7 +25,7 @@ class GenericsSupportTests {
 		}
 
 		GenericsClassContext context = GenericsSupport.contextFor(JustAClass.class);
-		assertThat(context.contextType().getRawType()).isSameAs(JustAClass.class);
+		assertThat(context.contextClass()).isSameAs(JustAClass.class);
 	}
 
 	private interface PartialFunction<T> extends Function<T, String> {}
@@ -36,7 +36,7 @@ class GenericsSupportTests {
 			TypeUsage.of(PartialFunction.class, TypeUsage.of(Integer.class));
 
 		GenericsClassContext context = GenericsSupport.contextFor(integerToStringFunction);
-		assertThat(context.contextType()).isSameAs(integerToStringFunction);
+		assertThat(context.contextClass()).isSameAs(PartialFunction.class);
 
 		Method functionMethod = Function.class.getMethod("apply", Object.class);
 

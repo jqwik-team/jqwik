@@ -5,8 +5,6 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.api.providers.*;
-
 public class GenericsClassContext {
 
 	static final GenericsClassContext NULL = new GenericsClassContext(null) {
@@ -16,15 +14,15 @@ public class GenericsClassContext {
 		}
 	};
 
-	private final TypeUsage contextType;
+	private final Class<?> contextClass;
 	private final Map<LookupTypeVariable, TypeResolution> resolutions = new LinkedHashMap<>();
 
-	GenericsClassContext(TypeUsage contextType) {
-		this.contextType = contextType;
+	GenericsClassContext(Class<?> contextClass) {
+		this.contextClass = contextClass;
 	}
 
-	public TypeUsage contextType() {
-		return contextType;
+	public Class<?> contextClass() {
+		return contextClass;
 	}
 
 	void addResolution(TypeVariable typeVariable, Type resolvedType, AnnotatedType annotatedType) {
@@ -34,7 +32,7 @@ public class GenericsClassContext {
 
 	@Override
 	public String toString() {
-		return String.format("GenericsContext(%s)", contextType.toString());
+		return String.format("GenericsContext(%s)", contextClass);
 	}
 
 	public TypeResolution resolveParameter(Parameter parameter) {
@@ -102,7 +100,7 @@ public class GenericsClassContext {
 	private TypeResolution resolveVariable(TypeResolution typeVariableResolution) {
 		TypeResolution localResolution = resolveVariableLocally(typeVariableResolution);
 		if (localResolution.isVariable()) {
-			TypeResolution supertypeResolution = resolveVariableInSupertypesOf(localResolution, contextType);
+			TypeResolution supertypeResolution = resolveVariableInSupertypesOf(localResolution, contextClass);
 			if (supertypeResolution.typeHasChanged()) {
 				return resolveType(supertypeResolution);
 			}
@@ -119,19 +117,29 @@ public class GenericsClassContext {
 		return resolutions.getOrDefault(variable, typeResolution.unchanged());
 	}
 
-	private static TypeResolution resolveVariableInSupertypesOf(TypeResolution variableResolution, TypeUsage type) {
-		return resolveVariableInTypes(variableResolution, type.getSuperTypes());
+	private static TypeResolution resolveVariableInSupertypesOf(TypeResolution variableResolution, Class<?> clazz) {
+		return resolveVariableInTypes(variableResolution, supertypesOf(clazz));
 	}
 
-	private static TypeResolution resolveVariableInTypes(TypeResolution variableResolution, Collection<TypeUsage> superTypes) {
-		for (TypeUsage superType : superTypes) {
+	private static Collection<Class<?>> supertypesOf(Class<?> clazz) {
+		if (clazz == null) {
+			return Collections.emptySet();
+		}
+		Set<Class<?>> supertypes = new LinkedHashSet<>();
+		supertypes.add(clazz.getSuperclass());
+		supertypes.addAll(Arrays.asList(clazz.getInterfaces()));
+		return supertypes;
+	}
+
+	private static TypeResolution resolveVariableInTypes(TypeResolution variableResolution, Collection<Class<?>> superTypes) {
+		for (Class<?> superType : superTypes) {
 			GenericsClassContext context = GenericsSupport.contextFor(superType);
 			TypeResolution resolved = context.resolveVariableLocally(variableResolution);
 			if (resolved.typeHasChanged()) {
 				return resolved;
 			}
 		}
-		for (TypeUsage superType : superTypes) {
+		for (Class<?> superType : superTypes) {
 			TypeResolution typeResolution = resolveVariableInSupertypesOf(variableResolution, superType);
 			if (typeResolution.typeHasChanged()) {
 				return typeResolution;
