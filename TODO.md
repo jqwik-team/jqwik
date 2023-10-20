@@ -1,8 +1,5 @@
 # 1.8.1
 
-    - Fix bug https://github.com/jqwik-team/jqwik/issues/519: 
-      Probably some parameterized type resolution problem.
-
 # 1.8.x
 
     - Using @UseType for sealed interfaces and classes: https://github.com/jqwik-team/jqwik/issues/523
