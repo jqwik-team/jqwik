@@ -102,7 +102,7 @@ public class GenericsClassContext {
 	private TypeResolution resolveVariable(TypeResolution typeVariableResolution) {
 		TypeResolution localResolution = resolveVariableLocally(typeVariableResolution);
 		if (localResolution.isVariable()) {
-			TypeResolution supertypeResolution = resolveVariableInSupertypes(localResolution);
+			TypeResolution supertypeResolution = resolveVariableInSupertypesOf(localResolution, contextType);
 			if (supertypeResolution.typeHasChanged()) {
 				return resolveType(supertypeResolution);
 			}
@@ -119,29 +119,25 @@ public class GenericsClassContext {
 		return resolutions.getOrDefault(variable, typeResolution.unchanged());
 	}
 
-	private TypeResolution resolveVariableInSupertypes(TypeResolution typeResolution) {
-		// TODO: Optimize so that only get supertypes of supertypes if necessary
-		//       i.e. it cannot be resolved in direct supertypes
-		Set<TypeUsage> superTypes = getAllSupertypes(contextType);
-		List<TypeResolution> typeResolutionList =
-			superTypes.stream()
-					  .map(GenericsSupport::contextFor)
-					  .map(context -> context.resolveVariableLocally(typeResolution))
-					  .filter(TypeResolution::typeHasChanged)
-					  .collect(Collectors.toList());
-
-		return typeResolutionList.stream()
-				   .findFirst()
-				   .orElse(typeResolution.unchanged());
+	private static TypeResolution resolveVariableInSupertypesOf(TypeResolution variableResolution, TypeUsage type) {
+		return resolveVariableInTypes(variableResolution, type.getSuperTypes());
 	}
 
-	private Set<TypeUsage> getAllSupertypes(TypeUsage contextType) {
-        List<TypeUsage> directSupertypes = contextType.getSuperTypes();
-        Set<TypeUsage> allSupertypes = new LinkedHashSet<>(directSupertypes);
-		for (TypeUsage directSupertype : directSupertypes) {
-			allSupertypes.addAll(getAllSupertypes(directSupertype));
+	private static TypeResolution resolveVariableInTypes(TypeResolution variableResolution, Collection<TypeUsage> superTypes) {
+		for (TypeUsage superType : superTypes) {
+			GenericsClassContext context = GenericsSupport.contextFor(superType);
+			TypeResolution resolved = context.resolveVariableLocally(variableResolution);
+			if (resolved.typeHasChanged()) {
+				return resolved;
+			}
 		}
-		return allSupertypes;
+		for (TypeUsage superType : superTypes) {
+			TypeResolution typeResolution = resolveVariableInSupertypesOf(variableResolution, superType);
+			if (typeResolution.typeHasChanged()) {
+				return typeResolution;
+			}
+		}
+		return variableResolution.unchanged();
 	}
 
 	private static class LookupTypeVariable {
@@ -243,6 +239,7 @@ public class GenericsClassContext {
 
 		// For compatibility with JDK >= 9. A breaking change in the JDK :-(
 		// @Override
+		@SuppressWarnings("Since15")
 		public AnnotatedType getAnnotatedOwnerType() {
 			// TODO: Return annotatedType.getAnnotatedOwnerType() as soon as Java >= 9 is being used
 			return null;
