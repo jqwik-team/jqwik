@@ -1,15 +1,15 @@
-# 1.8.1
-
-    - Update samples repo
-
-    - Update jqwik-spring, jqwik-micronaut, jqwik-testcontainers
-
 # 1.8.2
+
+    - Make run with Java 21 (22?).
+      See https://github.com/jqwik-team/jqwik/issues/528.
 
     - Can large array shrinking be improved?
       See https://github.com/jqwik-team/jqwik/issues/525 
       and https://github.com/jqwik-team/jqwik/issues/526.
 
+    - Update samples repo
+
+    - Update jqwik-spring, jqwik-micronaut, jqwik-testcontainers
 
 # 1.8.x
 
