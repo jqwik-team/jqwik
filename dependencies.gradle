@@ -34,7 +34,7 @@ ext {
 	systemLambdaVersion = '1.2.1'
 	kotlinVersion = '1.8.0'
 	kotlinxVersion = '1.7.3'
-	kotestVersion = '5.7.2'
+	kotestVersion = '5.8.0'
 	findbugsVersion = '3.0.2'
 	jspecifyVersion = '0.3.0'
 	moduleName = 'net.jqwik'
