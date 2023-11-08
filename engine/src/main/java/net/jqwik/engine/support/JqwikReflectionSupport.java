@@ -6,6 +6,7 @@ import java.lang.reflect.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
@@ -13,6 +14,7 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.support.*;
+import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.types.*;
 
 import static java.util.stream.Collectors.*;
@@ -20,6 +22,8 @@ import static java.util.stream.Collectors.*;
 import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 public class JqwikReflectionSupport {
+
+	private static final Logger LOG = Logger.getLogger(JqwikReflectionSupport.class.getName());
 
 	public static Stream<Object> streamInstancesFromInside(Object inner) {
 		return addInstances(inner, new ArrayList<>()).stream();
@@ -50,6 +54,9 @@ public class JqwikReflectionSupport {
 					   try {
 						   return makeAccessible(field).get(inner);
 					   } catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+						   String message = String.format("Could not access outer instance of %s." +
+															  "%nReason: %s", inner, ex);
+						   LOG.warning(message);
 						   return Optional.empty();
 					   }
 				   });
