@@ -11,28 +11,3 @@ plugins {
 wrapper {
 	gradleVersion = '8.4'
 }
-
-allprojects {
-	tasks.withType(ProcessForkOptions).configureEach {
-		// Prevent Gradle build cache reuse for different _JAVA_OPTIONS
-		inputs.property("ENV:_JAVA_OPTIONS", providers.environmentVariable("_JAVA_OPTIONS")).optional(true)
-	}
-
-	tasks.withType(JavaCompile).configureEach {
-		// Prevent Gradle build cache reuse for different _JAVA_OPTIONS
-		inputs.property("ENV:_JAVA_OPTIONS", providers.environmentVariable("_JAVA_OPTIONS")).optional(true)
-	}
-
-	tasks.withType(Test).configureEach {
-		def language = System.getProperty("user.language") ?: "TR"
-		if (language != null) {
-			systemProperty("user.language", language)
-		}
-		def country = System.getProperty("user.country") ?: "tr"
-		if (country != null) {
-			systemProperty("user.country", country)
-		}
-		// Tests might depend on timezone, so treat it as an input
-		inputs.property("ENV:TZ", providers.environmentVariable("TZ")).optional(true)
-	}
-}
