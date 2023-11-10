@@ -47,7 +47,7 @@ public class JqwikReflectionSupport {
 		// but has been stable so far in all JDKs
 
 		return Arrays
-				   .stream(inner.getClass().getDeclaredFields())
+				   .stream(getDeclaredFields(inner))
 				   .filter(field -> field.getName().startsWith("this$"))
 				   .findFirst()
 				   .map(field -> {
@@ -60,6 +60,11 @@ public class JqwikReflectionSupport {
 						   return Optional.empty();
 					   }
 				   });
+	}
+
+	// Public for testing purposes only
+	public static Field[] getDeclaredFields(Object any) {
+		return any.getClass().getDeclaredFields();
 	}
 
 	@SuppressWarnings("deprecation") // Deprecated as of Java 9
@@ -164,7 +169,7 @@ public class JqwikReflectionSupport {
 
 	public static Object readFieldPotentiallyOuter(Field field, Object target) {
 		makeAccessible(field);
-		List<Field> declaredFields = Arrays.stream(target.getClass().getDeclaredFields()).collect(toList());
+		List<Field> declaredFields = Arrays.stream(getDeclaredFields(target)).collect(toList());
 		if (declaredFields.contains(field)) {
 			try {
 				return field.get(target);
@@ -184,7 +189,7 @@ public class JqwikReflectionSupport {
 
 	public static void setFieldPotentiallyOuter(Field field, Object value, Object target) {
 		makeAccessible(field);
-		List<Field> declaredFields = Arrays.stream(target.getClass().getDeclaredFields()).collect(toList());
+		List<Field> declaredFields = Arrays.stream(getDeclaredFields(target)).collect(toList());
 		if (declaredFields.contains(field)) {
 			try {
 				if (isStatic(field)) {
