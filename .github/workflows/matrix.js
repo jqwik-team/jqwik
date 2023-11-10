@@ -97,6 +97,7 @@ matrix.setNamePattern([
 matrix.exclude({java_distribution: 'microsoft', java_version: '8'});
 matrix.exclude({java_distribution: 'microsoft', java_version: '18'});
 matrix.exclude({java_distribution: 'microsoft', java_version: '19'});
+matrix.exclude({java_distribution: 'microsoft', java_version: '20'});
 // Oracle supports 17+ only
 matrix.exclude({java_distribution: 'oracle', java_version: ['8', '11', '19']});
 // TODO: remove when compileJava with "same hashcode" issues are resolved
