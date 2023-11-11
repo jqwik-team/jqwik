@@ -17,18 +17,16 @@ public class TryLifecycleMethodsHook implements AroundTryHook {
 	}
 
 	private void callTryMethods(List<Method> methods, TryLifecycleContext context) {
-		Object testInstance = context.testInstance();
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 		for (Method method : methods) {
 			Object[] parameters = MethodParameterResolver.resolveParameters(method, context);
-			throwableCollector.execute(() -> callMethod(method, testInstance, parameters));
+			throwableCollector.execute(() -> callMethod(method, context.testInstances(), parameters));
 		}
 		throwableCollector.assertEmpty();
 	}
 
-	private void callMethod(Method method, Object target, Object[] parameters) {
-		// TODO: Hand in all test instances instead of just target
-		JqwikReflectionSupport.invokeMethodPotentiallyOuter(method, target, parameters);
+	private void callMethod(Method method, List<Object> containerInstances, Object[] parameters) {
+		JqwikReflectionSupport.invokeMethodOnContainer(method, containerInstances, parameters);
 	}
 
 	private void afterTry(TryLifecycleContext context) {
