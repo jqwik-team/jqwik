@@ -1,7 +1,9 @@
 # 1.8.2
 
-    - Make run with Java 21 (22?).
+    - Make run with Java 18+.
       See https://github.com/jqwik-team/jqwik/issues/528.
+      This may require a change to how methods are invoked via reflection.
+      See JqwikReflectionSupport.invokeMethodPotentiallyOuter() will probably need to accept the current property context as parameter.
 
     - Can large array shrinking be improved?
       See https://github.com/jqwik-team/jqwik/issues/525 
