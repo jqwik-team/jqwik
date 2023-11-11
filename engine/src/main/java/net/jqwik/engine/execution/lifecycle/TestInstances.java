@@ -7,32 +7,32 @@ import java.util.*;
  */
 public class TestInstances {
 
-	private final List<Object> testInstances;
+	private final List<Object> instances;
 
 	public TestInstances(Object testInstance) {
-		this.testInstances = Collections.singletonList(testInstance);
+		this.instances = Collections.singletonList(testInstance);
 	}
 
 	public TestInstances(Object testInstance, TestInstances outerInstances) {
-		this.testInstances = new ArrayList<>(outerInstances.testInstances);
-		this.testInstances.add(0, testInstance);
+		this.instances = new ArrayList<>(outerInstances.instances);
+		this.instances.add(testInstance);
 	}
 
-	private TestInstances(List<Object> testInstances) {
-		this.testInstances = testInstances;
+	private TestInstances(List<Object> instances) {
+		this.instances = instances;
 	}
 
 	public Object target() {
-		if (testInstances.size() > 0) {
-			return testInstances.get(0);
+		if (instances.size() > 0) {
+			return instances.get(instances.size() - 1);
 		} else {
 			throw new IllegalStateException("No target instance available");
 		}
 	}
 
 	public Optional<TestInstances> outer() {
-		if (testInstances.size() > 1) {
-			List<Object> rest = testInstances.subList(1, testInstances.size());
+		if (instances.size() > 1) {
+			List<Object> rest = instances.subList(1, instances.size());
 			return Optional.of(new TestInstances(rest));
 		} else {
 			return Optional.empty();
@@ -40,6 +40,6 @@ public class TestInstances {
 	}
 
 	public List<Object> all() {
-		return testInstances;
+		return instances;
 	}
 }

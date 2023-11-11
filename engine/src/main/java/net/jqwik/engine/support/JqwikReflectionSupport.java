@@ -23,14 +23,9 @@ public class JqwikReflectionSupport {
 
 	private static final Logger LOG = Logger.getLogger(JqwikReflectionSupport.class.getName());
 
+	// TODO: Get rid of that
 	public static Stream<Object> streamInstancesFromInside(Object inner) {
 		return addInstances(inner, new ArrayList<>()).stream();
-	}
-
-	public static List<Object> getInstancesFromInside(Object inner) {
-		List<Object> instances = streamInstancesFromInside(inner).collect(toList());
-		Collections.reverse(instances);
-		return instances;
 	}
 
 	private static List<Object> addInstances(Object inner, List<Object> instances) {
@@ -228,6 +223,7 @@ public class JqwikReflectionSupport {
 	 * @param args   The arguments of the method invocation
 	 * @return Result of method invocation if there is one, otherwise null
 	 */
+	// TODO: Accept target instances instead of just most inner one
 	public static Object invokeMethodPotentiallyOuter(Method method, Object target, Object... args) {
 		if (method.getDeclaringClass().isAssignableFrom(target.getClass())) {
 			return ReflectionSupport.invokeMethod(method, target, args);
