@@ -76,6 +76,7 @@ public class JqwikReflectionSupport {
 	 * @param context The potential context instance
 	 * @return the newly created instance
 	 */
+	// TODO: Require all instances to be passed in instead of just the most inner one
 	public static <T> T newInstanceInTestContext(Class<T> clazz, Object context) {
 		if (!isInnerClass(clazz)) {
 			return ReflectionSupport.newInstance(clazz);
@@ -143,6 +144,7 @@ public class JqwikReflectionSupport {
 		return foundFields;
 	}
 
+	// TODO: Require all instances to be passed in instead of just the most inner one
 	public static Object readFieldPotentiallyOuter(Field field, Object target) {
 		makeAccessible(field);
 		List<Field> declaredFields = Arrays.stream(target.getClass().getDeclaredFields()).collect(toList());
@@ -163,6 +165,7 @@ public class JqwikReflectionSupport {
 		}
 	}
 
+	// TODO: Require all instances to be passed in instead of just the most inner one
 	public static void setFieldPotentiallyOuter(Field field, Object value, Object target) {
 		makeAccessible(field);
 		List<Field> declaredFields = Arrays.stream(target.getClass().getDeclaredFields()).collect(toList());
@@ -211,7 +214,7 @@ public class JqwikReflectionSupport {
 	 * @param args   The arguments of the method invocation
 	 * @return Result of method invocation if there is one, otherwise null
 	 */
-	// TODO: Accept target instances instead of just most inner one
+	// TODO: Require all instances to be passed in instead of just the most inner one
 	public static Object invokeMethodPotentiallyOuter(Method method, Object target, Object... args) {
 		if (method.getDeclaringClass().isAssignableFrom(target.getClass())) {
 			return ReflectionSupport.invokeMethod(method, target, args);

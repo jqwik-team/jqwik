@@ -39,6 +39,9 @@ public class TestInstances {
 		}
 	}
 
+	/**
+	 * Returns all instances, from outermost to innermost.
+	 */
 	public List<Object> all() {
 		return instances;
 	}
