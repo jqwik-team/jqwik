@@ -55,6 +55,7 @@ class ProviderMethod {
 	}
 
 	private Arbitrary<?> invokeProviderMethod(List<Object> argList) {
+		// TODO: Hand in all test instances instead of just target
 		return (Arbitrary<?>) invokeMethodPotentiallyOuter(method, instance, argList.toArray());
 	}
 
