@@ -182,16 +182,6 @@ class JqwikReflectionSupportTests {
 		assertThat(JqwikReflectionSupport.getFunctionMethod(DataOutput.class)).isNotPresent();
 	}
 
-	@Example
-	void streamInstancesFromInside() {
-		Outer outer = new Outer();
-		Outer.Inner inner = outer.createInner();
-
-		Stream<Object> instances = JqwikReflectionSupport.streamInstancesFromInside(inner);
-
-		assertThat(instances).containsExactly(inner, outer);
-	}
-
 	private static class Outer {
 
 		Inner createInner() {

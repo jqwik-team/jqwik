@@ -23,18 +23,6 @@ public class JqwikReflectionSupport {
 
 	private static final Logger LOG = Logger.getLogger(JqwikReflectionSupport.class.getName());
 
-	// TODO: Get rid of that
-	public static Stream<Object> streamInstancesFromInside(Object inner) {
-		return addInstances(inner, new ArrayList<>()).stream();
-	}
-
-	private static List<Object> addInstances(Object inner, List<Object> instances) {
-		instances.add(inner);
-		Optional<Object> outer = getOuterInstance(inner);
-		outer.ifPresent(o -> addInstances(o, instances));
-		return instances;
-	}
-
 	private static Optional<Object> getOuterInstance(Object inner) {
 		// This is risky since it depends on the name of the field which is nowhere guaranteed
 		// but has been stable so far in all JDKs
