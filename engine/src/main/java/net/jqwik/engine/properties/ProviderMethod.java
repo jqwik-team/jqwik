@@ -20,43 +20,47 @@ class ProviderMethod {
 	static ProviderMethod forMethod(
 		Method method,
 		TypeUsage targetType,
-		Object instance,
+		List<Object> instances,
 		ArbitraryProvider.SubtypeProvider subtypeProvider
 	) {
 		Class<? extends Throwable>[] ignoreExceptions = findDeclaredOrInheritedAnnotation(method, Provide.class)
 															.map(Provide::ignoreExceptions)
 															.orElse(new Class[0]);
-		return new ProviderMethod(method, targetType, instance, subtypeProvider, ignoreExceptions);
+		return new ProviderMethod(method, targetType, instances, subtypeProvider, ignoreExceptions);
 	}
 
 	private final Class<? extends Throwable>[] ignoreExceptions;
 
 	private ProviderMethod(
-		Method underlyingMethod, TypeUsage targetType, Object instance, SubtypeProvider subtypeProvider,
+		Method underlyingMethod, TypeUsage targetType, List<Object> instances, SubtypeProvider subtypeProvider,
 		Class<? extends Throwable>[] ignoreExceptions
 	) {
 		this.method = underlyingMethod;
 		this.targetType = targetType;
-		this.instance = instance;
+		this.instances = instances;
 		this.subtypeProvider = subtypeProvider;
 		this.ignoreExceptions = ignoreExceptions;
 	}
 
 	private final Method method;
 	private final TypeUsage targetType;
-	private final Object instance;
+	private final List<Object> instances;
 	private final SubtypeProvider subtypeProvider;
 
 	Set<Arbitrary<?>> invoke() {
-		List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, instance.getClass());
+		Class<?> containerClass = contextInstance().getClass();
+		List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, containerClass);
 		Set<Function<List<Object>, Arbitrary<?>>> baseInvoker = Collections.singleton(this::invokeProviderMethod);
 		Set<Supplier<Arbitrary<?>>> suppliers = arbitrarySuppliers(baseInvoker, parameters, Collections.emptyList());
 		return mapSet(suppliers, arbitrarySupplier -> arbitrarySupplier.get().ignoreExceptions(ignoreExceptions));
 	}
 
+	private Object contextInstance() {
+		return instances.get(instances.size() - 1);
+	}
+
 	private Arbitrary<?> invokeProviderMethod(List<Object> argList) {
-		// TODO: Hand in all test instances instead of just target
-		return (Arbitrary<?>) invokeMethodPotentiallyOuter(method, instance, argList.toArray());
+		return (Arbitrary<?>) invokeMethodOnContainer(method, instances, argList.toArray());
 	}
 
 	private Set<Supplier<Arbitrary<?>>> arbitrarySuppliers(
