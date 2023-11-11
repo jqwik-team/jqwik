@@ -1,6 +1,6 @@
 # 1.8.2
 
-    - Use sourceTarget in GH action matrix
+    - Use sourceTarget in GH action matrix. Make matrix static again.
 
     - Can large array shrinking be improved?
       See https://github.com/jqwik-team/jqwik/issues/525 

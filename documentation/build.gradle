@@ -149,6 +149,7 @@ dependencies {
 	testImplementation(project(":web"))
 	testImplementation(project(":testing"))
 	testImplementation(project(":kotlin"))
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxVersion}")
 	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
