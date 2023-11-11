@@ -87,6 +87,7 @@ class PropertyTaskCreator {
 		ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(methodDescriptor);
 		Reporter reporter = new DefaultReporter(listener::reportingEntryPublished, methodDescriptor);
 		Object testInstance = createTestInstance(methodDescriptor, lifecycleSupplier, reporter);
+		// TODO: Hand in all test instances instead of just target
 		propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter, resolveParameterHook);
 		return propertyLifecycleContext;
 	}
