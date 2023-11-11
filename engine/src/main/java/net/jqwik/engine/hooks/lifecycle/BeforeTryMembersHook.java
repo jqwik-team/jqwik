@@ -27,25 +27,25 @@ public class BeforeTryMembersHook implements AroundTryHook {
 	}
 
 	private void initializeFields(List<Field> fields, TryLifecycleContext context) {
-		Object testInstance = context.testInstance();
+		List<Object> testInstances = context.testInstances();
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 		for (Field field : fields) {
 			if (JqwikReflectionSupport.isStatic(field)) {
 				String message = String.format("Static field <%s> must not be annotated with @BeforeTry.", field);
 				throw new JqwikException(message);
 			}
-			throwableCollector.execute(() -> initializeField(field, testInstance));
+			throwableCollector.execute(() -> initializeField(field, testInstances));
 		}
 		throwableCollector.assertEmpty();
 	}
 
-	private void initializeField(Field field, Object target) {
+	private void initializeField(Field field, List<Object> testInstances) {
 		Store<Object> initialFieldValue = Store.getOrCreate(
 			Tuple.of(BeforeTryMembersHook.class, field),
 			Lifespan.PROPERTY,
-			() -> JqwikReflectionSupport.readFieldPotentiallyOuter(field, target)
+			() -> JqwikReflectionSupport.readFieldOnContainer(field, testInstances)
 		);
-		JqwikReflectionSupport.setFieldPotentiallyOuter(field, initialFieldValue.get(), target);
+		JqwikReflectionSupport.setFieldOnContainer(field, initialFieldValue.get(), testInstances);
 	}
 
 	@Override

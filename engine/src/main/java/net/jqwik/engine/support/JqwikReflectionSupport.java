@@ -23,28 +23,6 @@ public class JqwikReflectionSupport {
 
 	private static final Logger LOG = Logger.getLogger(JqwikReflectionSupport.class.getName());
 
-	private static Optional<Object> getOuterInstance(Object inner) {
-		// This is risky since it depends on the name of the field which is nowhere guaranteed
-		// but has been stable so far in all JDKs.
-		// Moreover, since Java 18 this no longer works for inner classes that do not reference their outer class somewhere,
-		// eg through OuterClass.this, because the field has been optimized away :-(.
-
-		return Arrays
-				   .stream(inner.getClass().getDeclaredFields())
-				   .filter(field -> field.getName().startsWith("this$"))
-				   .findFirst()
-				   .map(field -> {
-					   try {
-						   return makeAccessible(field).get(inner);
-					   } catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-						   String message = String.format("Could not access outer instance of %s." +
-															  "%nReason: %s", inner, ex);
-						   LOG.warning(message);
-						   return Optional.empty();
-					   }
-				   });
-	}
-
 	@SuppressWarnings("deprecation") // Deprecated as of Java 9
 	private static <T extends AccessibleObject> T makeAccessible(T object) {
 		if (!object.isAccessible()) {
@@ -164,9 +142,20 @@ public class JqwikReflectionSupport {
 		return foundFields;
 	}
 
-	// TODO: Require all instances to be passed in instead of just the most inner one
-	public static Object readFieldPotentiallyOuter(Field field, Object target) {
+	/**
+	 * Read a field's value as in ReflectionSupport.getField(..) but potentially use outer instances if the field belongs to an inner class.
+	 *
+	 * @param field The field to read
+	 * @param targetInstances The container instances to read the field from, from outermost to innermost
+	 * @return The value of the field
+	 */
+	public static Object readFieldOnContainer(Field field, List<Object> targetInstances) {
 		makeAccessible(field);
+		return readField(field, new ArrayDeque<>(targetInstances));
+	}
+
+	private static Object readField(Field field, Deque<Object> instances) {
+		Object target = instances.removeLast();
 		List<Field> declaredFields = Arrays.stream(target.getClass().getDeclaredFields()).collect(toList());
 		if (declaredFields.contains(field)) {
 			try {
@@ -175,19 +164,28 @@ public class JqwikReflectionSupport {
 				return JqwikExceptionSupport.throwAsUncheckedException(exception);
 			}
 		} else {
-			Optional<Object> outer = getOuterInstance(target);
-			if (outer.isPresent()) {
-				return readFieldPotentiallyOuter(field, outer.get());
-			} else {
+			if (instances.isEmpty()) {
 				String message = String.format("Cannot access value of field %s", field);
 				throw new JqwikException(message);
 			}
+			return readField(field, instances);
 		}
 	}
 
-	// TODO: Require all instances to be passed in instead of just the most inner one
-	public static void setFieldPotentiallyOuter(Field field, Object value, Object target) {
+	/**
+	 * Set a field's value as in ReflectionSupport.setField(..) but potentially use outer instances if the field belongs to an inner class.
+	 *
+	 * @param field The field to set
+	 * @param value The value to set in the field
+	 * @param targetInstances The container instances to set the field on, from outermost to innermost
+	 */
+	public static void setFieldOnContainer(Field field, Object value, List<Object> targetInstances) {
 		makeAccessible(field);
+		setField(field, value, new ArrayDeque<Object>(targetInstances));
+	}
+
+	private static void setField(Field field, Object value, Deque<Object> instances) {
+		Object target = instances.removeLast();
 		List<Field> declaredFields = Arrays.stream(target.getClass().getDeclaredFields()).collect(toList());
 		if (declaredFields.contains(field)) {
 			try {
@@ -201,13 +199,11 @@ public class JqwikReflectionSupport {
 				JqwikExceptionSupport.throwAsUncheckedException(exception);
 			}
 		} else {
-			Optional<Object> outer = getOuterInstance(target);
-			if (outer.isPresent()) {
-				setFieldPotentiallyOuter(field, value, outer.get());
-			} else {
+			if (instances.isEmpty()) {
 				String message = String.format("Cannot set value of field %s", field);
 				throw new JqwikException(message);
 			}
+			setField(field, value, instances);
 		}
 	}
 
@@ -244,7 +240,8 @@ public class JqwikReflectionSupport {
 			return ReflectionSupport.invokeMethod(method, target, args);
 		} else {
 			if (instances.isEmpty()) {
-				throw new IllegalArgumentException(String.format("Method [%s] cannot be invoked on target [%s].", method, target));
+				String message = String.format("Method [%s] cannot be invoked on target [%s].", method, target);
+				throw new IllegalArgumentException(message);
 			}
 			return invokeMethod(method, instances, args);
 		}
