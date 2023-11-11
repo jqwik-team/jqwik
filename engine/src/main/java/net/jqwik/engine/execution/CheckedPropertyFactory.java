@@ -34,7 +34,7 @@ public class CheckedPropertyFactory {
 		);
 
 		Optional<Iterable<? extends Tuple>> optionalData =
-			new PropertyMethodDataResolver(propertyMethodDescriptor.getContainerClass(), propertyLifecycleContext.testInstance())
+			new PropertyMethodDataResolver(propertyMethodDescriptor.getContainerClass(), propertyLifecycleContext.testInstances())
 				.forMethod(propertyMethodDescriptor.getTargetMethod());
 
 		return new CheckedProperty(

@@ -11,13 +11,13 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
-class TestInstancesCreator {
+class ContainerInstancesCreator {
 	private final ContainerLifecycleContext containerLifecycleContext;
 	private final Class<?> containerClass;
 	private final ContainerClassDescriptor containerDescriptor;
 	private final ProvidePropertyInstanceHook providePropertyInstance;
 
-	TestInstancesCreator(
+	ContainerInstancesCreator(
 		ContainerLifecycleContext containerLifecycleContext,
 		ContainerClassDescriptor containerDescriptor,
 		ProvidePropertyInstanceHook providePropertyInstanceHook

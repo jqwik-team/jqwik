@@ -204,7 +204,10 @@ class PropertyMethodDataResolverTests {
 	}
 
 	private static PropertyMethodDataResolver getResolver(Class<?> container) {
-		return new PropertyMethodDataResolver(container, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
+		return new PropertyMethodDataResolver(
+			container,
+			JqwikReflectionSupport.newInstancesWithDefaultConstructor(container)
+		);
 	}
 
 	private static Method getMethod(Class container, String methodName) {
