@@ -6,6 +6,7 @@ import java.util.*;
 import org.junit.platform.engine.support.hierarchical.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
@@ -17,18 +18,17 @@ public class PropertyLifecycleMethodsHook implements AroundPropertyHook {
 	}
 
 	private void callPropertyMethods(List<Method> methods, PropertyLifecycleContext context) {
-		Object testInstance = context.testInstance();
+		List<Object> testInstances = context.testInstances();
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 		for (Method method : methods) {
 			Object[] parameters = MethodParameterResolver.resolveParameters(method, context);
-			throwableCollector.execute(() -> callMethod(method, testInstance, parameters));
+			throwableCollector.execute(() -> callMethod(method, testInstances, parameters));
 		}
 		throwableCollector.assertEmpty();
 	}
 
-	private void callMethod(Method method, Object target, Object[] parameters) {
-		// TODO: Hand in all test instances instead of just target
-		JqwikReflectionSupport.invokeMethodPotentiallyOuter(method, target, parameters);
+	private void callMethod(Method method, List<Object> containerInstances, Object[] parameters) {
+		JqwikReflectionSupport.invokeMethodOnContainer(method, containerInstances, parameters);
 	}
 
 	private void afterProperty(PropertyLifecycleContext context) {

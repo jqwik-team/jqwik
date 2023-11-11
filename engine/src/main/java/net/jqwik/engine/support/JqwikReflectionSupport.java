@@ -14,6 +14,7 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.support.*;
+import net.jqwik.engine.execution.lifecycle.*;
 
 import static java.util.stream.Collectors.*;
 
@@ -226,6 +227,31 @@ public class JqwikReflectionSupport {
 				}
 			}
 			throw new IllegalArgumentException(String.format("Method [%s] cannot be invoked on target [%s].", method, target));
+		}
+	}
+
+	/**
+	 * Invoke the supplied {@linkplain Method method} as in ReflectionSupport.invokeMethod(..) but potentially use the outer
+	 * instance if the method belongs to the outer instance of an object.
+	 *
+	 * @param method    The method to invoke
+	 * @param instances The container instances to invoke the method on, from outermost to innermost
+	 * @param args      The arguments of the method invocation
+	 * @return Result of method invocation if there is one, otherwise null
+	 */
+	public static Object invokeMethodOnContainer(Method method, List<Object> instances, Object... args) {
+		return invokeMethod(method, new ArrayDeque<>(instances), args);
+	}
+
+	private static Object invokeMethod(Method method, Deque<Object> instances, Object... args) {
+		Object target = instances.removeLast();
+		if (method.getDeclaringClass().isAssignableFrom(target.getClass())) {
+			return ReflectionSupport.invokeMethod(method, target, args);
+		} else {
+			if (instances.isEmpty()) {
+				throw new IllegalArgumentException(String.format("Method [%s] cannot be invoked on target [%s].", method, target));
+			}
+			return invokeMethod(method, instances, args);
 		}
 	}
 
