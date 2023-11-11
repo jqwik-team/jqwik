@@ -35,7 +35,7 @@ class TestInstancesCreator {
 
 	TestInstances create() {
 		if (providePropertyInstance.equals(ProvidePropertyInstanceHook.DEFAULT)) {
-			return new TestInstances(create(containerClass, containerDescriptor));
+			return createInstances(containerClass, containerDescriptor);
 		} else {
 			try {
 				return new TestInstances(providePropertyInstance.provide(containerClass));
@@ -51,7 +51,7 @@ class TestInstancesCreator {
 		}
 	}
 
-	private Object create(
+	private TestInstances createInstances(
 		Class<?> targetClass,
 		TestDescriptor descriptor
 	) {
@@ -65,33 +65,38 @@ class TestInstancesCreator {
 			throw new JqwikException(message);
 		}
 		Constructor<?> constructor = constructors.get(0);
-		return newInstance(targetClass, constructor, descriptor);
+		return newInstances(targetClass, constructor, descriptor);
 	}
 
-	private Object newInstance(
+	private TestInstances newInstances(
 		Class<?> targetClass,
 		Constructor<?> constructor,
 		TestDescriptor descriptor
 	) {
 		if (JqwikReflectionSupport.isInnerClass(targetClass)) {
-			return newInstanceOfInnerContainer(constructor, descriptor);
+			return newInstancesOfInnerContainer(constructor, descriptor);
 		} else {
-			return JqwikReflectionSupport.newInstance(
-				constructor,
-				resolveParameters(constructor, null)
-			);
+			return newInstancesOfBaseContainer(constructor);
 		}
 	}
 
-	private Object newInstanceOfInnerContainer(Constructor<?> constructor, TestDescriptor descriptor) {
+	private TestInstances newInstancesOfBaseContainer(Constructor<?> constructor) {
+		return new TestInstances(createNewInstance(constructor, null));
+	}
+
+	private Object createNewInstance(Constructor<?> constructor, Object outerInstance) {
+		return JqwikReflectionSupport.newInstance(
+			constructor,
+			resolveConstructorParameters(constructor, outerInstance)
+		);
+	}
+
+	private TestInstances newInstancesOfInnerContainer(Constructor<?> constructor, TestDescriptor descriptor) {
 		TestDescriptor parentDescriptor = descriptor.getParent().orElse(descriptor);
 		ContainerClassDescriptor parentClassDescriptor = (ContainerClassDescriptor) parentDescriptor;
 		Class<?> parentClass = parentClassDescriptor.getContainerClass();
-		Object parentInstance = create(parentClass, parentDescriptor);
-		return JqwikReflectionSupport.newInstance(
-			constructor,
-			resolveParameters(constructor, parentInstance)
-		);
+		TestInstances parentInstances = createInstances(parentClass, parentDescriptor);
+		return new TestInstances(createNewInstance(constructor, parentInstances.target()), parentInstances);
 	}
 
 	private List<Constructor<?>> allAccessibleConstructors(Class<?> instanceClass) {
@@ -104,15 +109,15 @@ class TestInstancesCreator {
 		return constructors;
 	}
 
-	private Object[] resolveParameters(
+	private Object[] resolveConstructorParameters(
 		Constructor<?> constructor,
-		Object parent
+		Object outerInstance
 	) {
 		Object[] args = new Object[constructor.getParameterCount()];
 		for (int i = 0; i < args.length; i++) {
 			final int index = i;
-			if (index == 0 && parent != null) {
-				args[index] = parent;
+			if (index == 0 && outerInstance != null) {
+				args[index] = outerInstance;
 			} else {
 				args[index] = containerLifecycleContext
 								  .resolveParameter(constructor, index)
