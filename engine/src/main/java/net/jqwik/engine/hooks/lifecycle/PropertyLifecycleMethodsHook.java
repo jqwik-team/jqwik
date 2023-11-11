@@ -27,6 +27,7 @@ public class PropertyLifecycleMethodsHook implements AroundPropertyHook {
 	}
 
 	private void callMethod(Method method, Object target, Object[] parameters) {
+		// TODO: Hand in all test instances instead of just target
 		JqwikReflectionSupport.invokeMethodPotentiallyOuter(method, target, parameters);
 	}
 
