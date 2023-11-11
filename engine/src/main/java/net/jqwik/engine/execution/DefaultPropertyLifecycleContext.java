@@ -13,7 +13,7 @@ import net.jqwik.engine.support.*;
 public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext implements PropertyLifecycleContext {
 
 	private final PropertyMethodDescriptor methodDescriptor;
-	private final TestInstances testInstances;
+	private final ContainerInstances testInstances;
 	private final ParameterSupplierResolver parameterSupplierResolver;
 
 	public DefaultPropertyLifecycleContext(
@@ -22,12 +22,12 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 		Reporter reporter,
 		ResolveParameterHook resolveParameterHook
 	) {
-		this(methodDescriptor, new TestInstances(testInstance), reporter, resolveParameterHook);
+		this(methodDescriptor, new ContainerInstances(testInstance), reporter, resolveParameterHook);
 	}
 
 	public DefaultPropertyLifecycleContext(
 		PropertyMethodDescriptor methodDescriptor,
-		TestInstances testInstances,
+		ContainerInstances testInstances,
 		Reporter reporter,
 		ResolveParameterHook resolveParameterHook
 	) {

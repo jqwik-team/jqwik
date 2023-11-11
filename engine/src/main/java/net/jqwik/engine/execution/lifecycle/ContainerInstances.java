@@ -5,20 +5,20 @@ import java.util.*;
 /**
  * Wraps the instance of a test container class and potentially its outer classes.
  */
-public class TestInstances {
+public class ContainerInstances {
 
 	private final List<Object> instances;
 
-	public TestInstances(Object testInstance) {
+	public ContainerInstances(Object testInstance) {
 		this.instances = Collections.singletonList(testInstance);
 	}
 
-	public TestInstances(Object testInstance, TestInstances outerInstances) {
+	public ContainerInstances(Object testInstance, ContainerInstances outerInstances) {
 		this.instances = new ArrayList<>(outerInstances.instances);
 		this.instances.add(testInstance);
 	}
 
-	private TestInstances(List<Object> instances) {
+	private ContainerInstances(List<Object> instances) {
 		this.instances = instances;
 	}
 
@@ -30,10 +30,10 @@ public class TestInstances {
 		}
 	}
 
-	public Optional<TestInstances> outer() {
+	public Optional<ContainerInstances> outer() {
 		if (instances.size() > 1) {
 			List<Object> rest = instances.subList(1, instances.size());
-			return Optional.of(new TestInstances(rest));
+			return Optional.of(new ContainerInstances(rest));
 		} else {
 			return Optional.empty();
 		}
