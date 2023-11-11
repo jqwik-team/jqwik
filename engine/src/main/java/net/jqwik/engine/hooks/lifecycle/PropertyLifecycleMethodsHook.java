@@ -18,11 +18,10 @@ public class PropertyLifecycleMethodsHook implements AroundPropertyHook {
 	}
 
 	private void callPropertyMethods(List<Method> methods, PropertyLifecycleContext context) {
-		List<Object> testInstances = context.testInstances();
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 		for (Method method : methods) {
 			Object[] parameters = MethodParameterResolver.resolveParameters(method, context);
-			throwableCollector.execute(() -> callMethod(method, testInstances, parameters));
+			throwableCollector.execute(() -> callMethod(method, context.testInstances(), parameters));
 		}
 		throwableCollector.assertEmpty();
 	}
