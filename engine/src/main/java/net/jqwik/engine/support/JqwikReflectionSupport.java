@@ -14,7 +14,6 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.support.*;
-import net.jqwik.engine.execution.lifecycle.*;
 
 import static java.util.stream.Collectors.*;
 
@@ -26,7 +25,9 @@ public class JqwikReflectionSupport {
 
 	private static Optional<Object> getOuterInstance(Object inner) {
 		// This is risky since it depends on the name of the field which is nowhere guaranteed
-		// but has been stable so far in all JDKs
+		// but has been stable so far in all JDKs.
+		// Moreover, since Java 18 this no longer works for inner classes that do not reference their outer class somewhere,
+		// eg through OuterClass.this, because the field has been optimized away :-(.
 
 		return Arrays
 				   .stream(inner.getClass().getDeclaredFields())
@@ -225,32 +226,8 @@ public class JqwikReflectionSupport {
 	}
 
 	/**
-	 * Invoke the supplied {@linkplain Method method} as in ReflectionSupport.invokeMethod(..) but potentially use the outer
-	 * instance if the method belongs to the outer instance of an object.
-	 *
-	 * @param method The method to invoke
-	 * @param target The object to invoke the method on
-	 * @param args   The arguments of the method invocation
-	 * @return Result of method invocation if there is one, otherwise null
-	 */
-	// TODO: Require all instances to be passed in instead of just the most inner one
-	public static Object invokeMethodPotentiallyOuter(Method method, Object target, Object... args) {
-		if (method.getDeclaringClass().isAssignableFrom(target.getClass())) {
-			return ReflectionSupport.invokeMethod(method, target, args);
-		} else {
-			if (target.getClass().getDeclaringClass() != null) {
-				Optional<Object> newTarget = getOuterInstance(target);
-				if (newTarget.isPresent()) {
-					return invokeMethodPotentiallyOuter(method, newTarget.get(), args);
-				}
-			}
-			throw new IllegalArgumentException(String.format("Method [%s] cannot be invoked on target [%s].", method, target));
-		}
-	}
-
-	/**
-	 * Invoke the supplied {@linkplain Method method} as in ReflectionSupport.invokeMethod(..) but potentially use the outer
-	 * instance if the method belongs to the outer instance of an object.
+	 * Invoke the supplied {@linkplain Method method} as in ReflectionSupport.invokeMethod(..) but potentially use outer
+	 * instances if the method belongs to the outer instances of an object.
 	 *
 	 * @param method    The method to invoke
 	 * @param instances The container instances to invoke the method on, from outermost to innermost
