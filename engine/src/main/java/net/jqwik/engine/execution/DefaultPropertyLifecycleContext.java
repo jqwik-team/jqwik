@@ -7,12 +7,14 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.ResolveParameterHook.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
 public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext implements PropertyLifecycleContext {
 
 	private final PropertyMethodDescriptor methodDescriptor;
 	private final Object testInstance;
+	private final TestInstances testInstances;
 	private final ParameterSupplierResolver parameterSupplierResolver;
 
 	public DefaultPropertyLifecycleContext(
@@ -25,6 +27,7 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook, this);
 		this.methodDescriptor = methodDescriptor;
 		this.testInstance = testInstance;
+		this.testInstances = new TestInstances(testInstance);
 	}
 
 	@Override
@@ -49,7 +52,7 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 
 	@Override
 	public Object testInstance() {
-		return testInstance;
+		return testInstances.target();
 	}
 
 	@Override

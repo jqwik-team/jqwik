@@ -15,7 +15,7 @@ public class TestInstances {
 
 	public TestInstances(Object testInstance, TestInstances outerInstances) {
 		this.testInstances = new ArrayList<>(outerInstances.testInstances);
-		this.testInstances.addFirst(testInstance);
+		this.testInstances.add(0, testInstance);
 	}
 
 	private TestInstances(List<Object> testInstances) {
@@ -23,15 +23,15 @@ public class TestInstances {
 	}
 
 	public Object target() {
-		if (testInstances.size() > 1) {
-			return testInstances.get(1);
+		if (testInstances.size() > 0) {
+			return testInstances.get(0);
 		} else {
 			throw new IllegalStateException("No target instance available");
 		}
 	}
 
 	public Optional<TestInstances> outer() {
-		if (testInstances.size() > 2) {
+		if (testInstances.size() > 1) {
 			List<Object> rest = testInstances.subList(1, testInstances.size());
 			return Optional.of(new TestInstances(rest));
 		} else {
