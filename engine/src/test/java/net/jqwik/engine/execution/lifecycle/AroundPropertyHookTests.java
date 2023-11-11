@@ -168,8 +168,15 @@ class CheckPropertyLifecycleContext implements AroundPropertyHook {
 		assertThat(context.attributes()).isInstanceOf(PropertyAttributes.class);
 		assertThat(context.testInstance()).isInstanceOf(AroundPropertyHookTests.LifecycleContextTests.class);
 
-		List<Object> instances = JqwikReflectionSupport.getInstancesFromInside(context.testInstance());
-		assertThat(context.testInstances()).isEqualTo(instances);
+		assertThat(context.testInstances()).hasSize(2);
+		assertThat(context.testInstances().get(1)).isEqualTo(context.testInstance());
+
+		List<Class<?>> expectedInstanceClasses = Arrays.asList(
+			AroundPropertyHookTests.class,
+			AroundPropertyHookTests.LifecycleContextTests.class
+		);
+		assertThat(context.testInstances()).extracting(Object::getClass).isEqualTo(expectedInstanceClasses);
+
 		return property.execute();
 	}
 }

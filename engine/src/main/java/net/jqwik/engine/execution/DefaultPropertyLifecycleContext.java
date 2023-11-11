@@ -64,7 +64,7 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 
 	@Override
 	public List<Object> testInstances() {
-		return JqwikReflectionSupport.getInstancesFromInside(testInstances.target());
+		return testInstances.all();
 	}
 
 	@Override
