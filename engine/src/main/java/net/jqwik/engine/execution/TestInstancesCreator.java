@@ -34,50 +34,46 @@ class TestInstancesCreator {
 	}
 
 	TestInstances create() {
-		Object instance = create_OLD();
-		return new TestInstances(instance);
-	}
-
-	private Object create_OLD() {
 		if (providePropertyInstance.equals(ProvidePropertyInstanceHook.DEFAULT)) {
-			return create(containerClass, containerDescriptor);
-		}
-		try {
-			return providePropertyInstance.provide(containerClass);
-		} catch (Throwable throwable) {
-			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
-			String message = String.format(
-				"ProvidePropertyInstanceHook [%s] cannot provide instance for class [%s]",
-				providePropertyInstance,
-				containerClass
-			);
-			throw new JqwikException(message, throwable);
+			return new TestInstances(create(containerClass, containerDescriptor));
+		} else {
+			try {
+				return new TestInstances(providePropertyInstance.provide(containerClass));
+			} catch (Throwable throwable) {
+				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+				String message = String.format(
+					"ProvidePropertyInstanceHook [%s] cannot provide instance for class [%s]",
+					providePropertyInstance,
+					containerClass
+				);
+				throw new JqwikException(message, throwable);
+			}
 		}
 	}
 
 	private Object create(
-		Class<?> instanceClass,
+		Class<?> targetClass,
 		TestDescriptor descriptor
 	) {
-		List<Constructor<?>> constructors = allAccessibleConstructors(instanceClass);
+		List<Constructor<?>> constructors = allAccessibleConstructors(targetClass);
 		if (constructors.size() == 0) {
-			String message = String.format("Test container class [%s] has no accessible constructor", instanceClass.getName());
+			String message = String.format("Test container class [%s] has no accessible constructor", targetClass.getName());
 			throw new JqwikException(message);
 		}
 		if (constructors.size() > 1) {
-			String message = String.format("Test container class [%s] has more than one accessible constructor", instanceClass.getName());
+			String message = String.format("Test container class [%s] has more than one accessible constructor", targetClass.getName());
 			throw new JqwikException(message);
 		}
 		Constructor<?> constructor = constructors.get(0);
-		return newInstance(instanceClass, constructor, descriptor);
+		return newInstance(targetClass, constructor, descriptor);
 	}
 
 	private Object newInstance(
-		Class<?> instanceClass,
+		Class<?> targetClass,
 		Constructor<?> constructor,
 		TestDescriptor descriptor
 	) {
-		if (JqwikReflectionSupport.isInnerClass(instanceClass)) {
+		if (JqwikReflectionSupport.isInnerClass(targetClass)) {
 			return newInstanceOfInnerContainer(constructor, descriptor);
 		} else {
 			return JqwikReflectionSupport.newInstance(
