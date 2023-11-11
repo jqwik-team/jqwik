@@ -8,15 +8,16 @@ import org.junit.platform.engine.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
-class TestInstanceCreator {
+class TestInstancesCreator {
 	private final ContainerLifecycleContext containerLifecycleContext;
 	private final Class<?> containerClass;
 	private final ContainerClassDescriptor containerDescriptor;
 	private final ProvidePropertyInstanceHook providePropertyInstance;
 
-	TestInstanceCreator(
+	TestInstancesCreator(
 		ContainerLifecycleContext containerLifecycleContext,
 		ContainerClassDescriptor containerDescriptor,
 		ProvidePropertyInstanceHook providePropertyInstanceHook
@@ -32,7 +33,12 @@ class TestInstanceCreator {
 		this.providePropertyInstance = providePropertyInstanceHook;
 	}
 
-	Object create() {
+	TestInstances create() {
+		Object instance = create_OLD();
+		return new TestInstances(instance);
+	}
+
+	private Object create_OLD() {
 		if (providePropertyInstance.equals(ProvidePropertyInstanceHook.DEFAULT)) {
 			return create(containerClass, containerDescriptor);
 		}

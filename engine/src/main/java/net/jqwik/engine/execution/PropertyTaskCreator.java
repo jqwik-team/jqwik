@@ -86,9 +86,8 @@ class PropertyTaskCreator {
 		PropertyLifecycleContext propertyLifecycleContext;
 		ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(methodDescriptor);
 		Reporter reporter = new DefaultReporter(listener::reportingEntryPublished, methodDescriptor);
-		Object testInstance = createTestInstance(methodDescriptor, lifecycleSupplier, reporter);
-		// TODO: Hand in all test instances instead of just target
-		propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter, resolveParameterHook);
+		TestInstances testInstances = createTestInstances(methodDescriptor, lifecycleSupplier, reporter);
+		propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstances, reporter, resolveParameterHook);
 		return propertyLifecycleContext;
 	}
 
@@ -103,7 +102,7 @@ class PropertyTaskCreator {
 		listener.executionFinished(methodDescriptor, executionResult);
 	}
 
-	private Object createTestInstance(
+	private TestInstances createTestInstances(
 		PropertyMethodDescriptor methodDescriptor,
 		LifecycleHooksSupplier lifecycleSupplier,
 		Reporter reporter
@@ -122,7 +121,7 @@ class PropertyTaskCreator {
 					);
 					return CurrentTestDescriptor.runWithDescriptor(
 						containerDescriptor,
-						() -> createTestInstanceWithResolvedParameters(
+						() -> createTestInstancesWithResolvedParameters(
 							containerLifecycleContext,
 							(ContainerClassDescriptor) containerDescriptor,
 							providePropertyInstanceHook
@@ -144,12 +143,12 @@ class PropertyTaskCreator {
 		}
 	}
 
-	private Object createTestInstanceWithResolvedParameters(
+	private TestInstances createTestInstancesWithResolvedParameters(
 		ContainerLifecycleContext containerLifecycleContext,
 		ContainerClassDescriptor containerDescriptor,
 		ProvidePropertyInstanceHook providePropertyInstanceHook
 	) {
-		TestInstanceCreator testInstanceCreator = new TestInstanceCreator(
+		TestInstancesCreator testInstanceCreator = new TestInstancesCreator(
 			containerLifecycleContext,
 			containerDescriptor,
 			providePropertyInstanceHook
