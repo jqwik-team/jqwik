@@ -28,7 +28,7 @@ public class AutoCloseableHook implements AroundPropertyHook {
 	private void executeCloseMethods(PropertyLifecycleContext context) {
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 
-		JqwikReflectionSupport.streamInstancesFromInside(context.testInstance()).forEach(innerInstance -> {
+		context.testInstances().forEach(innerInstance -> {
 			if (innerInstance instanceof AutoCloseable) {
 				throwableCollector.execute(((AutoCloseable) innerInstance)::close);
 			}
