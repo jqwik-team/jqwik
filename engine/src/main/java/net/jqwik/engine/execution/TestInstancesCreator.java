@@ -33,12 +33,12 @@ class TestInstancesCreator {
 		this.providePropertyInstance = providePropertyInstanceHook;
 	}
 
-	TestInstances create() {
+	ContainerInstances create() {
 		if (providePropertyInstance.equals(ProvidePropertyInstanceHook.DEFAULT)) {
 			return createInstances(containerClass, containerDescriptor);
 		} else {
 			try {
-				return new TestInstances(providePropertyInstance.provide(containerClass));
+				return new ContainerInstances(providePropertyInstance.provide(containerClass));
 			} catch (Throwable throwable) {
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 				String message = String.format(
@@ -51,7 +51,7 @@ class TestInstancesCreator {
 		}
 	}
 
-	private TestInstances createInstances(
+	private ContainerInstances createInstances(
 		Class<?> targetClass,
 		TestDescriptor descriptor
 	) {
@@ -68,7 +68,7 @@ class TestInstancesCreator {
 		return newInstances(targetClass, constructor, descriptor);
 	}
 
-	private TestInstances newInstances(
+	private ContainerInstances newInstances(
 		Class<?> targetClass,
 		Constructor<?> constructor,
 		TestDescriptor descriptor
@@ -80,8 +80,8 @@ class TestInstancesCreator {
 		}
 	}
 
-	private TestInstances newInstancesOfBaseContainer(Constructor<?> constructor) {
-		return new TestInstances(createNewInstance(constructor, null));
+	private ContainerInstances newInstancesOfBaseContainer(Constructor<?> constructor) {
+		return new ContainerInstances(createNewInstance(constructor, null));
 	}
 
 	private Object createNewInstance(Constructor<?> constructor, Object outerInstance) {
@@ -91,12 +91,12 @@ class TestInstancesCreator {
 		);
 	}
 
-	private TestInstances newInstancesOfInnerContainer(Constructor<?> constructor, TestDescriptor descriptor) {
+	private ContainerInstances newInstancesOfInnerContainer(Constructor<?> constructor, TestDescriptor descriptor) {
 		TestDescriptor parentDescriptor = descriptor.getParent().orElse(descriptor);
 		ContainerClassDescriptor parentClassDescriptor = (ContainerClassDescriptor) parentDescriptor;
 		Class<?> parentClass = parentClassDescriptor.getContainerClass();
-		TestInstances parentInstances = createInstances(parentClass, parentDescriptor);
-		return new TestInstances(createNewInstance(constructor, parentInstances.target()), parentInstances);
+		ContainerInstances parentInstances = createInstances(parentClass, parentDescriptor);
+		return new ContainerInstances(createNewInstance(constructor, parentInstances.target()), parentInstances);
 	}
 
 	private List<Constructor<?>> allAccessibleConstructors(Class<?> instanceClass) {

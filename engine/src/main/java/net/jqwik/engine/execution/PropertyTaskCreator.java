@@ -86,7 +86,7 @@ class PropertyTaskCreator {
 		PropertyLifecycleContext propertyLifecycleContext;
 		ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(methodDescriptor);
 		Reporter reporter = new DefaultReporter(listener::reportingEntryPublished, methodDescriptor);
-		TestInstances testInstances = createTestInstances(methodDescriptor, lifecycleSupplier, reporter);
+		ContainerInstances testInstances = createTestInstances(methodDescriptor, lifecycleSupplier, reporter);
 		propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstances, reporter, resolveParameterHook);
 		return propertyLifecycleContext;
 	}
@@ -102,7 +102,7 @@ class PropertyTaskCreator {
 		listener.executionFinished(methodDescriptor, executionResult);
 	}
 
-	private TestInstances createTestInstances(
+	private ContainerInstances createTestInstances(
 		PropertyMethodDescriptor methodDescriptor,
 		LifecycleHooksSupplier lifecycleSupplier,
 		Reporter reporter
@@ -143,7 +143,7 @@ class PropertyTaskCreator {
 		}
 	}
 
-	private TestInstances createTestInstancesWithResolvedParameters(
+	private ContainerInstances createTestInstancesWithResolvedParameters(
 		ContainerLifecycleContext containerLifecycleContext,
 		ContainerClassDescriptor containerDescriptor,
 		ProvidePropertyInstanceHook providePropertyInstanceHook
