@@ -148,12 +148,12 @@ class PropertyTaskCreator {
 		ContainerClassDescriptor containerDescriptor,
 		ProvidePropertyInstanceHook providePropertyInstanceHook
 	) {
-		TestInstancesCreator testInstanceCreator = new TestInstancesCreator(
+		ContainerInstancesCreator testInstancesCreator = new ContainerInstancesCreator(
 			containerLifecycleContext,
 			containerDescriptor,
 			providePropertyInstanceHook
 		);
-		return testInstanceCreator.create();
+		return testInstancesCreator.create();
 	}
 
 	private PropertyExecutionResult executeTestMethod(

@@ -70,6 +70,25 @@ public class JqwikReflectionSupport {
 
 	/**
 	 * Create instance of a class that can potentially be a non static inner class
+	 *
+	 * @param clazz The class to instantiate
+	 * @return all newly created instances with from most outer to most inner
+	 */
+	public static List<Object> newInstancesWithDefaultConstructor(Class<?> clazz) {
+		if (isInnerClass(clazz)) {
+			List<Object> instances = newInstancesWithDefaultConstructor(clazz.getDeclaringClass());
+			Object inner = ReflectionSupport.newInstance(clazz, instances.get(instances.size() - 1));
+			instances.add(inner);
+			return instances;
+		} else {
+			List<Object> instances = new ArrayList<>();
+			instances.add(ReflectionSupport.newInstance(clazz));
+			return instances;
+		}
+	}
+
+	/**
+	 * Create instance of a class that can potentially be a non static inner class
 	 * and its outer instance might be {@code context}
 	 *
 	 * @param <T>     The type of the instance to create
