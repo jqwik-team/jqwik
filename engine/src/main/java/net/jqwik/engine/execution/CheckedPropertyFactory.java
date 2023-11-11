@@ -29,7 +29,7 @@ public class CheckedPropertyFactory {
 		List<MethodParameter> propertyParameters = extractParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
-			propertyLifecycleContext.testInstance(),
+			propertyLifecycleContext.testInstances(),
 			CurrentDomainContext.get()
 		);
 

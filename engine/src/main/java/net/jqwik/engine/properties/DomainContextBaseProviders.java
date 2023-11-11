@@ -14,8 +14,9 @@ import net.jqwik.api.providers.*;
 import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.engine.support.*;
 
+import static java.util.Collections.*;
+
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
-import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 public class DomainContextBaseProviders {
 
@@ -146,7 +147,7 @@ public class DomainContextBaseProviders {
 		private final SubtypeProvider baseProvider;
 
 		protected DomainContextBaseSubtypeProvider(Object base, SubtypeProvider baseProvider) {
-			super(base);
+			super(Collections.singletonList(base));
 			this.baseProvider = baseProvider;
 		}
 
@@ -182,7 +183,7 @@ public class DomainContextBaseProviders {
 		@Override
 		public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 			SubtypeProvider domainSubtypeProvider = new net.jqwik.engine.properties.DomainContextBaseProviders.DomainContextBaseSubtypeProvider(base, subtypeProvider);
-			return ProviderMethod.forMethod(method, targetType, base, domainSubtypeProvider).invoke();
+			return ProviderMethod.forMethod(method, targetType, singletonList(base), domainSubtypeProvider).invoke();
 		}
 
 		@Override

@@ -62,7 +62,7 @@ class PropertyMethodArbitraryResolverTests {
 				createProvider(String.class, secondArbitrary)
 			);
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
-				new DefaultParams(),
+				asList(new DefaultParams()),
 				new RegisteredArbitraryResolver(registeredProviders),
 				new RegisteredArbitraryConfigurer(Collections.emptyList())
 			);
@@ -83,7 +83,7 @@ class PropertyMethodArbitraryResolverTests {
 				createProvider(String.class, thirdFit)
 			);
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
-				new DefaultParams(),
+				asList(new DefaultParams()),
 				new RegisteredArbitraryResolver(registeredProviders),
 				new RegisteredArbitraryConfigurer(Collections.emptyList())
 			);
@@ -109,7 +109,7 @@ class PropertyMethodArbitraryResolverTests {
 				createProvider(String.class, secondFit)
 			);
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
-				new DefaultParams(),
+				asList(new DefaultParams()),
 				new RegisteredArbitraryResolver(registeredProviders),
 				configurer
 			);
@@ -143,7 +143,7 @@ class PropertyMethodArbitraryResolverTests {
 			);
 
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
-				new DefaultParams(),
+				asList(new DefaultParams()),
 				new RegisteredArbitraryResolver(registeredProviders),
 				configurer
 			);
@@ -293,7 +293,7 @@ class PropertyMethodArbitraryResolverTests {
 			};
 
 			PropertyMethodArbitraryResolver provider = new PropertyMethodArbitraryResolver(
-				new WithNamedProviders(),
+				asList(new WithNamedProviders()),
 				new RegisteredArbitraryResolver(Collections.emptyList()),
 				configurer
 			);
@@ -546,7 +546,7 @@ class PropertyMethodArbitraryResolverTests {
 
 	private static PropertyMethodArbitraryResolver getResolver(Class<?> container) {
 		return new PropertyMethodArbitraryResolver(
-			JqwikReflectionSupport.newInstanceWithDefaultConstructor(container),
+			JqwikReflectionSupport.newInstancesWithDefaultConstructor(container),
 			DomainContext.global()
 		);
 	}

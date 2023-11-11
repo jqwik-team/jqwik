@@ -13,20 +13,20 @@ public class PropertyMethodArbitraryResolver extends InstanceBasedSubtypeProvide
 	private final RegisteredArbitraryResolver registeredArbitraryResolver;
 	private final RegisteredArbitraryConfigurer registeredArbitraryConfigurer;
 
-	public PropertyMethodArbitraryResolver(Object testInstance, DomainContext domainContext) {
+	public PropertyMethodArbitraryResolver(List<Object> testInstances, DomainContext domainContext) {
 		this(
-			testInstance,
+			testInstances,
 			new RegisteredArbitraryResolver(domainContext.getArbitraryProviders()),
 			new RegisteredArbitraryConfigurer(domainContext.getArbitraryConfigurators())
 		);
 	}
 
 	PropertyMethodArbitraryResolver(
-		Object testInstance,
+		List<Object> testInstances,
 		RegisteredArbitraryResolver registeredArbitraryResolver,
 		RegisteredArbitraryConfigurer registeredArbitraryConfigurer
 	) {
-		super(testInstance);
+		super(testInstances);
 		this.registeredArbitraryResolver = registeredArbitraryResolver;
 		this.registeredArbitraryConfigurer = registeredArbitraryConfigurer;
 	}

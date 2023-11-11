@@ -1,29 +1,23 @@
 package net.jqwik.engine.properties;
 
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
 import net.jqwik.api.*;
-import net.jqwik.api.providers.ArbitraryProvider;
-import net.jqwik.api.providers.TypeUsage;
-import net.jqwik.api.stateful.ActionSequence;
-import net.jqwik.api.support.CollectorsSupport;
+import net.jqwik.api.providers.*;
+import net.jqwik.api.support.*;
 
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
-import static net.jqwik.engine.support.JqwikReflectionSupport.findGeneratorMethod;
-import static net.jqwik.engine.support.JqwikReflectionSupport.newInstanceInTestContext;
-import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.findDeclaredOrInheritedAnnotation;
+import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.SubtypeProvider {
 
-	private final Object instance;
+	private final List<Object> instances;
 
-	protected InstanceBasedSubtypeProvider(Object instance) {
-		this.instance = instance;
+	protected InstanceBasedSubtypeProvider(List<Object> instances) {
+		this.instances = instances;
 	}
 
 	@Override
@@ -85,7 +79,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 	) {
 		Class<? extends ArbitrarySupplier<?>> supplierClass =
 			optionalForAllSupplier.orElseGet(() -> optionalFromSupplier.orElseThrow(() -> new JqwikException("Should never happen")));
-		ArbitrarySupplier<?> supplier = newInstanceInTestContext(supplierClass, instance);
+		ArbitrarySupplier<?> supplier = newInstanceInTestContext(supplierClass, contextInstance());
 		Arbitrary<?> arbitrary = supplier.supplyFor(targetType);
 		if (arbitrary == null) {
 			String message = String.format(
@@ -98,6 +92,10 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 		return Collections.singleton(arbitrary);
 	}
 
+	private Object contextInstance() {
+		return instances.get(instances.size() - 1);
+	}
+
 	private Set<Arbitrary<?>> resolveFromGeneratorName(
 		TypeUsage targetType,
 		Optional<String> optionalForAllValue,
@@ -105,7 +103,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 	) {
 		String generatorName = optionalForAllValue.orElseGet(() -> optionalFromValue.orElseThrow(() -> new JqwikException("Should never happen")));
 		return findProviderMethodByName(generatorName, targetType)
-				   .map(method -> ProviderMethod.forMethod(method, targetType, instance, this).invoke())
+				   .map(method -> ProviderMethod.forMethod(method, targetType, instances, this).invoke())
 				   .orElse(Collections.emptySet());
 	}
 
@@ -133,7 +131,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 			effectiveTargetType
 		);
 
-		return findGeneratorMethod(generatorToFind, this.instance.getClass(), Provide.class, generatorNameSupplier, expectedReturnType);
+		return findGeneratorMethod(generatorToFind, contextInstance().getClass(), Provide.class, generatorNameSupplier, expectedReturnType);
 	}
 
 	protected abstract Set<Arbitrary<?>> resolve(TypeUsage parameterType);

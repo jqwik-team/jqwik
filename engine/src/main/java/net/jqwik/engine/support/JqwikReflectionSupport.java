@@ -96,7 +96,6 @@ public class JqwikReflectionSupport {
 	 * @param context The potential context instance
 	 * @return the newly created instance
 	 */
-	// TODO: Require all instances to be passed in instead of just the most inner one
 	public static <T> T newInstanceInTestContext(Class<T> clazz, Object context) {
 		if (!isInnerClass(clazz)) {
 			return ReflectionSupport.newInstance(clazz);
