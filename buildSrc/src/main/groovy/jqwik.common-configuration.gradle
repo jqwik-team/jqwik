@@ -41,11 +41,8 @@ publishing {
 java {
 	withJavadocJar()
 	withSourcesJar()
-	toolchain {
-		languageVersion.set(JavaLanguageVersion.of("${javaVersion}"))
-	}
-//	sourceCompatibility = JavaVersion.VERSION_1_8
-//	targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.toVersion("${javaVersion}")
+	targetCompatibility = JavaVersion.toVersion("${javaVersion}")
 }
 
 tasks.withType(JavaCompile) {
