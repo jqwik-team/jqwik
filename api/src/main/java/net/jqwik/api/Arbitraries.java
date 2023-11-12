@@ -563,7 +563,7 @@ public class Arbitraries {
 	 * </p>
 	 * <p>
 	 * One usage of this traversing mechanism is {@linkplain #forType(Class)}
-	 * which uses {@linkplain #traverse(Class, Traverser)} under the hood.
+	 * which uses {@code #traverse(Class, Traverser)} under the hood.
 	 * </p>
 	 *
 	 * @param targetType The class of the type to create an arbitrary for
