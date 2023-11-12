@@ -23,7 +23,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     env:
-      MATRIX_JOBS: 4
+      MATRIX_JOBS: 5
     steps:
     - uses: actions/checkout@v4
     - id: set-matrix

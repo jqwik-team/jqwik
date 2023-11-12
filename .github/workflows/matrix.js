@@ -91,10 +91,12 @@ matrix.exclude({java_distribution: 'microsoft', java_version: '20'});
 matrix.exclude({java_distribution: 'oracle', java_version: ['8', '11', '19']});
 
 // Ensure there will be at least one job with minimal supported Java
-matrix.generateRow({java_version: matrix.axisByName.java_version.values[0]});
-
+// matrix.generateRow({java_version: matrix.axisByName.java_version.values[0]});
 // Ensure there will be at least one job with the latest Java
-matrix.generateRow({java_version: matrix.axisByName.java_version.values.slice(-1)[0]});
+// matrix.generateRow({java_version: matrix.axisByName.java_version.values.slice(-1)[0]});
+
+// Ensure there will be at least one job with all enumerated Java versions
+matrix.axisByName.java_version.values.forEach(v => matrix.generateRow({java_version: v}));
 
 // Ensure at least one Windows and at least one Linux job is present (macOS is almost the same as Linux)
 matrix.generateRow({os: 'windows-latest'});
