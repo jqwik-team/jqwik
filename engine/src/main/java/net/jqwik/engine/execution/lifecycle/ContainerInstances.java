@@ -18,25 +18,11 @@ public class ContainerInstances {
 		this.instances.add(testInstance);
 	}
 
-	private ContainerInstances(List<Object> instances) {
-		this.instances = instances;
-	}
-
 	public Object target() {
-		if (instances.size() > 0) {
-			return instances.get(instances.size() - 1);
-		} else {
+		if (instances.isEmpty()) {
 			throw new IllegalStateException("No target instance available");
 		}
-	}
-
-	public Optional<ContainerInstances> outer() {
-		if (instances.size() > 1) {
-			List<Object> rest = instances.subList(1, instances.size());
-			return Optional.of(new ContainerInstances(rest));
-		} else {
-			return Optional.empty();
-		}
+		return instances.get(instances.size() - 1);
 	}
 
 	/**
