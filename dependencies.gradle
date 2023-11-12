@@ -23,6 +23,11 @@ static def showStandardStreams() {
 	propSSS == null ? false : propSSS == "true"
 }
 
+static def javaVersion() {
+	def propJV = System.getProperty("javaVersion")
+	propJV == null ? '8' : propJV
+}
+
 ext {
 	junitPlatformVersion = '1.10.1'
 	junitJupiterVersion = '5.10.1'
@@ -41,4 +46,5 @@ ext {
 	jqwikVersion = '1.8.2-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 	showStandardStreams = showStandardStreams()
+	javaVersion = javaVersion()
 }
