@@ -41,8 +41,8 @@ publishing {
 java {
 	withJavadocJar()
 	withSourcesJar()
-	sourceCompatibility = JavaVersion.toVersion("${javaVersion}")
-	targetCompatibility = JavaVersion.toVersion("${javaVersion}")
+	sourceCompatibility = JavaVersion.toVersion("${javaTargetVersion}")
+	targetCompatibility = JavaVersion.toVersion("${javaTargetVersion}")
 }
 
 tasks.withType(JavaCompile) {

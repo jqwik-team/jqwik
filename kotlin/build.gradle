@@ -77,7 +77,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 		// "-Xjsr305=under-migration:strict", // @UnderMigration not used in jqwik
 		"-Xemit-jvm-type-annotations" // Required for annotations on type variables
 	]
-	kotlinOptions.jvmTarget = "${javaVersion}"
+	kotlinOptions.jvmTarget = "${javaTargetVersion}"
 	kotlinOptions.javaParameters = true // Required to get correct parameter names in reporting
 }
 

@@ -41,7 +41,7 @@ matrix.addAxis({
     '8',
     '11',
     '17',
-    '21 ',
+    '21',
   ]
 });
 
@@ -112,7 +112,7 @@ include.forEach(v => {
     let gradleArgs = [
         `-Duser.country=${v.locale.country}`,
         `-Duser.language=${v.locale.language}`,
-        `-DjavaVersion=${v.java_version}`,
+        `-DjavaTargetVersion=${v.java_version}`,
     ];
     v.extraGradleArgs = gradleArgs.join(' ');
 });
@@ -122,7 +122,6 @@ include.forEach(v => {
   // Pass locale via _JAVA_OPTIONS so all the forked processes inherit it
   jvmArgs.push(`-Duser.country=${v.locale.country}`);
   jvmArgs.push(`-Duser.language=${v.locale.language}`);
-  //jvmArgs.push(`-DjavaVersion=${v.java_version}`); // Is that necessary?
   if (v.jit === 'hotspot' && Math.random() > 0.5) {
     // The following options randomize instruction selection in JIT compiler
     // so it might reveal missing synchronization in TestNG code

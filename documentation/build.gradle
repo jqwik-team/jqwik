@@ -135,7 +135,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 		"-Xjsr305=under-migration:strict",
 		"-Xemit-jvm-type-annotations" // Required for annotations on type variables
 	]
-	kotlinOptions.jvmTarget = "1.8"
+	kotlinOptions.jvmTarget = "${javaTargetVersion}"
 	kotlinOptions.javaParameters = true
 }
 

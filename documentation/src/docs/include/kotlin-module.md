@@ -57,7 +57,7 @@ tasks.withType<Test>().configureEach {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf(
-            "-Xjsr305=strict", // Required for strict interpretation of
+            "-Xjsr305=strict", // For strict type warnings
             "-Xemit-jvm-type-annotations" // Required for annotations on type variables
         )
         jvmTarget = "11" // 1.8 or above

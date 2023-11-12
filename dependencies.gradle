@@ -23,8 +23,9 @@ static def showStandardStreams() {
 	propSSS == null ? false : propSSS == "true"
 }
 
-static def javaVersion() {
-	def propJV = System.getProperty("javaVersion")
+static def javaTargetVersion() {
+	// 1.8 is default, because that's currently jqwik's minimum supported version
+	def propJV = System.getProperty("javaTargetVersion")
 	propJV = propJV == '8' ? '1.8' : propJV
 	propJV = propJV == null ? '1.8' : propJV
 	propJV
@@ -48,5 +49,5 @@ ext {
 	jqwikVersion = '1.8.2-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 	showStandardStreams = showStandardStreams()
-	javaVersion = javaVersion()
+	javaTargetVersion = javaTargetVersion()
 }

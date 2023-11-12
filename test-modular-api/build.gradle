@@ -13,9 +13,12 @@ repositories {
 	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
+def localJavaTarget = "${javaTargetVersion}" == "1.8" ? JavaVersion.VERSION_1_9
+	: JavaVersion.toVersion("${javaTargetVersion}")
+
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_9
-	targetCompatibility = JavaVersion.VERSION_1_9
+	sourceCompatibility = localJavaTarget
+	targetCompatibility = localJavaTarget
 
 	modularity.inferModulePath = true
 }
