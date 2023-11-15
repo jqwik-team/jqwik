@@ -2,6 +2,7 @@ package net.jqwik.engine.support;
 
 import java.util.ArrayList;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -81,15 +82,48 @@ public class Combinatorics {
 		if (maxExclusive < 2) {
 			return Stream.empty();
 		}
-		List<Tuple2<Integer, Integer>> pairs = new ArrayList<>();
-		for (int i = 0; i < maxExclusive; i++) {
-			for (int j = i + 1; j < maxExclusive; j++) {
-				if (i != j) {
-					pairs.add(Tuple.of(i, j));
-				}
-			}
-		}
-		return pairs.stream();
+		return StreamSupport.stream(new PairSpliterator(maxExclusive), false);
 	}
+
+	private static class PairSpliterator implements Spliterator<Tuple2<Integer, Integer>> {
+		private final int maxExclusive;
+
+		private int i = 0;
+		private int j = 1;
+
+		public PairSpliterator(int maxExclusive) {
+			this.maxExclusive = maxExclusive;
+		}
+
+		@Override
+		public boolean tryAdvance(Consumer<? super Tuple2<Integer, Integer>> action) {
+			if (j >= maxExclusive) {
+				return false;
+			}
+			action.accept(Tuple.of(i, j));
+			j += 1;
+			if (j >= maxExclusive) {
+				i += 1;
+				j = i + 1;
+			}
+			return true;
+		}
+
+		@Override
+		public Spliterator<Tuple2<Integer, Integer>> trySplit() {
+			return null;
+		}
+
+		@Override
+		public long estimateSize() {
+			return (long) maxExclusive * (maxExclusive - 1) / 2;
+		}
+
+		@Override
+		public int characteristics() {
+			return Spliterator.DISTINCT | Spliterator.ORDERED | Spliterator.SIZED | Spliterator.NONNULL | Spliterator.IMMUTABLE;
+		}
+	}
+
 }
 

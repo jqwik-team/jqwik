@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.constraints.*;
 
 import static java.util.Arrays.*;
@@ -25,6 +26,24 @@ class CombinatoricsTests {
 			}
 		}
 		assertThat(iterator.hasNext()).isFalse();
+	}
+
+	@Example
+	void distinctPairs() {
+		assertThat(Combinatorics.distinctPairs(0)).isEmpty();
+		assertThat(Combinatorics.distinctPairs(1)).isEmpty();
+		assertThat(Combinatorics.distinctPairs(2)).containsExactly(
+			Tuple.of(0, 1)
+		);
+		assertThat(Combinatorics.distinctPairs(3)).containsExactly(
+			Tuple.of(0, 1),
+			Tuple.of(0, 2),
+			Tuple.of(1, 2)
+		);
+		// (n * n-1) / 2:
+		assertThat(Combinatorics.distinctPairs(10)).hasSize(45);
+		assertThat(Combinatorics.distinctPairs(100)).hasSize(4950);
+		assertThat(Combinatorics.distinctPairs(1000)).hasSize(499500);
 	}
 
 	@Group
