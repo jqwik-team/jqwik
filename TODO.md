@@ -1,9 +1,5 @@
 # 1.8.2
 
-    - Can large array shrinking be improved?
-      See https://github.com/jqwik-team/jqwik/issues/525 
-      and https://github.com/jqwik-team/jqwik/issues/526.
-
     - Summon preconfigured arbitrary. See https://github.com/jqwik-team/jqwik/issues/527
 
     - Update samples repo
