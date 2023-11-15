@@ -10,12 +10,12 @@ public class JqwikStreamSupport {
 	/**
 	 * From https://stackoverflow.com/a/46230233/32352
 	 *
-	 * @param leftStream left
+	 * @param leftStream  left
 	 * @param rightStream right
-	 * @param combiner combine
-	 * @param <L> left type
-	 * @param <R> right type
-	 * @param <T> result type
+	 * @param combiner    combine
+	 * @param <L>         left type
+	 * @param <R>         right type
+	 * @param <T>         result type
 	 * @return a zipped stream
 	 */
 	public static <L, R, T> Stream<T> zip(Stream<L> leftStream, Stream<R> rightStream, BiFunction<L, R, T> combiner) {
@@ -41,43 +41,24 @@ public class JqwikStreamSupport {
 
 	@SafeVarargs
 	public static <T> Stream<T> concat(Stream<T>... streams) {
-		return concat(Arrays.asList(streams));
+		// See discussion in https://github.com/jqwik-team/jqwik/issues/526 why StreamConcatenation is used
+		return StreamConcatenation.concat(streams);
 	}
 
-	/**
-	 * Use only if normal concatenating will overflow the stack with too many streams
-	 *
-	 * @param suppliers stream supplier
-	 * @param <T> type
-	 * @return a stream
-	 */
-	public static <T> Stream<T> lazyConcat(List<Supplier<Stream<T>>> suppliers) {
-		return suppliers.stream().flatMap(Supplier::get);
-	}
-
+	@SuppressWarnings("unchecked")
 	public static <T> Stream<T> concat(List<Stream<T>> streams) {
-		return concat(Stream.empty(), new ArrayList<>(streams));
-		// The following implementation breaks in recursive scenarios, e.g. ArbitrariesRecursiveTests.ShrinkingTests.complexShrinking
-		// return streams.stream().flatMap(Function.identity());
-	}
-
-	private static <T> Stream<T> concat(Stream<T> head, List<Stream<T>> rest) {
-		if (rest.isEmpty()) {
-			return head;
-		}
-		Stream<T> first = rest.remove(0);
-		return Stream.concat(head, concat(first, rest));
+		return concat(streams.toArray(new Stream[0]));
 	}
 
 	/**
 	 * Simulates Java 9's Stream.takeWhile()
 	 * Taken from https://stackoverflow.com/a/46446546/32352
-	 *
+	 * <p>
 	 * TODO: Remove when moving to Java &gt; 8
 	 *
 	 * @param stream a stream
-	 * @param p a predicate
-	 * @param <T> a type
+	 * @param p      a predicate
+	 * @param <T>    a type
 	 * @return a stream
 	 */
 	public static <T> Stream<T> takeWhile(Stream<T> stream, Predicate<? super T> p) {
