@@ -1,7 +1,5 @@
 # 1.8.2
 
-    - Update samples repo
-
     - Update jqwik-spring, jqwik-micronaut, jqwik-testcontainers
 
 # 1.8.x
