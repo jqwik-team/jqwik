@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Java ${{ matrix.java_version }}, ${{ matrix.java_distribution }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java_version }}
           distribution: ${{ matrix.java_distribution }}
