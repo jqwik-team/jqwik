@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.assertj.core.api.*;
 
@@ -13,6 +14,7 @@ import net.jqwik.testing.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.testing.ShrinkingSupport.*;
 import static net.jqwik.testing.TestingSupport.*;
 
 @StatisticsReport(onFailureOnly = true)
@@ -316,6 +318,53 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Group
+	@PropertyDefaults(tries = 100)
+	class Shrinking {
+
+		@Property
+		void alpha1IsShrunkToSingleA(@ForAll Random random) {
+			StringArbitrary arbitrary =
+				Arbitraries.strings().alpha().ofLength(1);
+			assertAllValuesAreShrunkTo(arbitrary, random, "A");
+
+			assertWhileShrinking(
+				random, arbitrary,
+				s -> s.length() == 1 && s.chars().allMatch(c -> c >= 'A' && c <= 'z')
+			);
+		}
+
+		@Property
+		void alpha3IsShrunkToTripleA(@ForAll Random random) {
+			StringArbitrary arbitrary =
+				Arbitraries.strings().alpha().ofLength(3);
+			assertAllValuesAreShrunkTo(arbitrary, random, "AAA");
+
+			assertWhileShrinking(
+				random, arbitrary,
+				s -> s.length() == 3 && s.chars().allMatch(c -> c >= 'A' && c <= 'z')
+			);
+		}
+
+		// @Property // Currently failing
+		void alpha3UniqueCharsIsShrunkToABC(@ForAll Random random) {
+			StringArbitrary arbitrary =
+				Arbitraries.strings().alpha().uniqueChars().ofLength(3);
+			assertAllValuesAreShrunkTo(arbitrary, random, "ABC");
+
+			assertWhileShrinking(
+				random, arbitrary,
+				s -> s.length() == 3 && s.chars().allMatch(c -> c >= 'A' && c <= 'z')
+			);
+		}
+
+		private void assertWhileShrinking(Random random, Arbitrary<String> arbitrary, Predicate<String> holdsWhileShrinking) {
+			Shrinkable<String> shrinkable = arbitrary.generator(10, true).next(random);
+			ShrinkingSupport.assertWhileShrinking(shrinkable, holdsWhileShrinking);
+		}
+
+	}
+
+	@Group
 	class ExhaustiveGeneration {
 		@Example
 		void generateAllPossibleStrings() {
@@ -398,8 +447,8 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		@Property
 		void stringsWithMinLength(@ForAll @IntRange(min = 2, max = 10) int minLength) {
 			StringArbitrary stringArbitrary = arbitrary.withCharRange('a', 'z')
-												   .ofMinLength(minLength)
-												   .ofMaxLength(20);
+													   .ofMinLength(minLength)
+													   .ofMaxLength(20);
 			EdgeCases<String> edgeCases = stringArbitrary.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(2);
 			assertThat(collectEdgeCaseValues(edgeCases)).allMatch(aString -> aString.length() == minLength);
@@ -409,8 +458,8 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 		@Property
 		void stringsWithUniqueChars(@ForAll @IntRange(min = 1, max = 10) int maxLength) {
 			StringArbitrary stringArbitrary = arbitrary.withCharRange('a', 'z')
-												   .ofMaxLength(maxLength)
-												   .uniqueChars();
+													   .ofMaxLength(maxLength)
+													   .uniqueChars();
 			EdgeCases<String> edgeCases = stringArbitrary.edgeCases();
 			assertThat(collectEdgeCaseValues(edgeCases)).hasSize(3);
 			assertThat(collectEdgeCaseValues(edgeCases)).contains("", "a", "z");

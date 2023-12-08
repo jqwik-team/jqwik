@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.facades.*;
@@ -57,5 +58,11 @@ public class ShrinkingSupport {
 			shrinkable = collect.iterator().next();
 		}
 	}
+
+	public static <T> void assertAllValuesAreShrunkTo(Arbitrary<? extends T> arbitrary, Random random, T expectedShrunkValue) {
+		T value = falsifyThenShrink(arbitrary, random);
+		Assertions.assertThat(value).isEqualTo(expectedShrunkValue);
+	}
+
 
 }

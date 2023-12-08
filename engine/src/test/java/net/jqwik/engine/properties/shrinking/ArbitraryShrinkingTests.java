@@ -3,8 +3,6 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.ArrayList;
 import java.util.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.testing.*;
@@ -20,14 +18,14 @@ class ArbitraryShrinkingTests {
 	@Property(tries = 10)
 	void values(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3);
-		assertAllValuesAreShrunkTo(1, arbitrary, random);
+		assertAllValuesAreShrunkTo(arbitrary, random, 1);
 	}
 
 	@Property(tries = 10)
 	void filtered(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).filter(i -> i % 2 == 0);
-		assertAllValuesAreShrunkTo(2, arbitrary, random);
+		assertAllValuesAreShrunkTo(arbitrary, random, 2);
 	}
 
 	@Property(tries = 10)
@@ -45,7 +43,7 @@ class ArbitraryShrinkingTests {
 	void mapped(@ForAll Random random) {
 		Arbitrary<String> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).map(String::valueOf);
-		assertAllValuesAreShrunkTo("1", arbitrary, random);
+		assertAllValuesAreShrunkTo(arbitrary, random, "1");
 	}
 
 	@Property(tries = 10)
@@ -53,7 +51,7 @@ class ArbitraryShrinkingTests {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 					   .flatMap(i -> Arbitraries.of(i));
-		assertAllValuesAreShrunkTo(1, arbitrary, random);
+		assertAllValuesAreShrunkTo(arbitrary, random, 1);
 	}
 
 	@Property(tries = 10)
@@ -61,14 +59,7 @@ class ArbitraryShrinkingTests {
 		Arbitrary<String> arbitrary =
 			Arbitraries.integers().between(1, 10)
 					   .flatMap(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i));
-		assertAllValuesAreShrunkTo("a", arbitrary, random);
-	}
-
-	@Provide
-	Arbitrary<String> stringsOfLength1to10() {
-		return Arbitraries.integers().between(1, 10)
-						  .flatMap(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i));
-
+		assertAllValuesAreShrunkTo(arbitrary, random, "a");
 	}
 
 	@Property(tries = 10)
@@ -98,7 +89,7 @@ class ArbitraryShrinkingTests {
 				Tuple.of(1, Arbitraries.of(1, 2, 3)),
 				Tuple.of(3, Arbitraries.of(4, 5, 6))
 			);
-		assertAllValuesAreShrunkTo(1, arbitrary, random);
+		assertAllValuesAreShrunkTo(arbitrary, random, 1);
 	}
 
 	@Property(tries = 100)
@@ -108,7 +99,7 @@ class ArbitraryShrinkingTests {
 				Arbitraries.of(1, 2, 3),
 				Arbitraries.of(4, 5, 6)
 			);
-		assertAllValuesAreShrunkTo(1, arbitrary, random);
+		assertAllValuesAreShrunkTo(arbitrary, random, 1);
 	}
 
 	@Property(tries = 100)
@@ -117,14 +108,7 @@ class ArbitraryShrinkingTests {
 			Arbitraries.chars()
 					   .range('A', 'Z')
 					   .range('a', 'z');
-		assertAllValuesAreShrunkTo('A', arbitrary, random);
-	}
-
-	@Property(tries = 100)
-	void stringsAlpha(@ForAll Random random) {
-		Arbitrary<String> arbitrary =
-			Arbitraries.strings().alpha().ofLength(1);
-		assertAllValuesAreShrunkTo("A", arbitrary, random);
+		assertAllValuesAreShrunkTo(arbitrary, random, 'A');
 	}
 
 	@Group
@@ -133,7 +117,7 @@ class ArbitraryShrinkingTests {
 		@Property(tries = 100)
 		void shrinkToNull(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3).injectNull(0.5);
-			assertAllValuesAreShrunkTo(null, arbitrary, random);
+			assertAllValuesAreShrunkTo((Arbitrary<? extends Integer>) arbitrary, random, null);
 		}
 
 		@Property(tries = 100)
@@ -315,11 +299,6 @@ class ArbitraryShrinkingTests {
 		public String toString() {
 			return n1 + ":" + n2;
 		}
-	}
-
-	private  <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
-		T value = falsifyThenShrink(arbitrary, random);
-		Assertions.assertThat(value).isEqualTo(expectedShrunkValue);
 	}
 
 }
