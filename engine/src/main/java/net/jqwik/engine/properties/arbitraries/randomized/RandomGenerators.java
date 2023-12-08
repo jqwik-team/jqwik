@@ -103,8 +103,8 @@ public class RandomGenerators {
 		Arbitrary<Character> characterArbitrary,
 		boolean uniqueChars
 	) {
-		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength, maxLength, characterArbitrary, false);
-		Set<FeatureExtractor<Character>> featureExtractors = uniqueChars ? Collections.singleton(FeatureExtractor.identity()) : Collections.emptySet();
+		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength, maxLength, characterArbitrary, uniqueChars);
+		Set<FeatureExtractor<Character>> featureExtractors = uniqueChars ? ShrinkableString.UNIQUE_CHARS_EXTRACTOR : Collections.emptySet();
 		return container(elementGenerator, createShrinkable, minLength, maxLength, maxUniqueChars, genSize, lengthDistribution, featureExtractors);
 	}
 

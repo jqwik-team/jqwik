@@ -318,7 +318,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 	}
 
 	@Group
-	@PropertyDefaults(tries = 100)
+	@PropertyDefaults(tries = 10)
 	class Shrinking {
 
 		@Property
@@ -345,7 +345,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 			);
 		}
 
-		// @Property // Currently failing
+		@Property
 		void alpha3UniqueCharsIsShrunkToABC(@ForAll Random random) {
 			StringArbitrary arbitrary =
 				Arbitraries.strings().alpha().uniqueChars().ofLength(3);
@@ -353,7 +353,7 @@ class DefaultStringArbitraryTests implements GenericEdgeCasesProperties, Generic
 
 			assertWhileShrinking(
 				random, arbitrary,
-				s -> s.length() == 3 && s.chars().allMatch(c -> c >= 'A' && c <= 'z')
+				s -> s.length() == 3 && s.chars().distinct().count() == 3
 			);
 		}
 

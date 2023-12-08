@@ -83,7 +83,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 	}
 
 	private EdgeCases<String> emptyStringEdgeCase() {
-		return EdgeCases.fromSupplier(() -> new ShrinkableString(Collections.emptyList(), minLength, maxLength(), characterArbitrary));
+		return EdgeCases.fromSupplier(() -> new ShrinkableString(Collections.emptyList(), minLength, maxLength(), characterArbitrary, uniqueChars));
 	}
 
 	private EdgeCases<String> fixedSizedEdgeCases(int fixedSize, int maxEdgeCases) {
@@ -91,7 +91,7 @@ public class DefaultStringArbitrary extends TypedCloneable implements StringArbi
 			effectiveCharacterArbitrary().edgeCases(maxEdgeCases),
 			shrinkableChar -> {
 				List<Shrinkable<Character>> shrinkableChars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
-				return new ShrinkableString(shrinkableChars, minLength, maxLength(), characterArbitrary);
+				return new ShrinkableString(shrinkableChars, minLength, maxLength(), characterArbitrary, uniqueChars);
 			}
 		);
 	}
