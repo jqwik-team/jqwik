@@ -1,10 +1,8 @@
-# 1.8.2
-
-    - Update jqwik-spring, jqwik-micronaut, jqwik-testcontainers
-
-# 1.8.x
+# 1.8.3
 
     - Summon preconfigured arbitrary. See https://github.com/jqwik-team/jqwik/issues/527
+
+# 1.8.x
 
     - Using @UseType for sealed interfaces and classes: https://github.com/jqwik-team/jqwik/issues/523
       Will probably require a new module for java 17
