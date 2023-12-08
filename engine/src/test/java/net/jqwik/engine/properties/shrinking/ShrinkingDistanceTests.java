@@ -118,7 +118,7 @@ class ShrinkingDistanceTests {
 			Collection<Shrinkable<String>> elements = asList(
 				Shrinkable.unshrinkable("a"), // [0]
 				Shrinkable.unshrinkable("b", ShrinkingDistance.of(1)), // [1]
-				ShrinkableStringTests.createShrinkableString("bcd", 0) // [3, 6]
+				ShrinkableStringTests.createShrinkableString("bcd", 0, false) // [3, 6]
 			);
 			ShrinkingDistance distance = ShrinkingDistance.forCollection(elements);
 			assertThat(distance).isEqualTo(ShrinkingDistance.of(3, 4, 6));

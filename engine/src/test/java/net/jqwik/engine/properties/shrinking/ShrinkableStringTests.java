@@ -20,7 +20,7 @@ public class ShrinkableStringTests {
 
 	@Example
 	void creation() {
-		Shrinkable<String> shrinkable = createShrinkableString("abcd", 0);
+		Shrinkable<String> shrinkable = createShrinkableString("abcd", 0, false);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
 		assertThat(shrinkable.value()).isEqualTo("abcd");
 	}
@@ -30,43 +30,51 @@ public class ShrinkableStringTests {
 
 		@Property(tries = 100)
 		void longStrings(@ForAll @CharRange(from = 'a', to = 'z') @StringLength(min = 1000, max = Short.MAX_VALUE) String any) {
-			Shrinkable<String> shrinkable = createShrinkableString(any, 1);
+			Shrinkable<String> shrinkable = createShrinkableString(any, 1, false);
 			String shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
 		@Example
 		void downAllTheWay() {
-			Shrinkable<String> shrinkable = createShrinkableString("abc", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("abc", 0, false);
 			String shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEmpty();
 		}
 
 		@Example
 		void downToMinSize() {
-			Shrinkable<String> shrinkable = createShrinkableString("aaaaa", 2);
+			Shrinkable<String> shrinkable = createShrinkableString("aaaaa", 2, false);
 			String shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo("aa");
 		}
 
 		@Example
 		void downToNonEmpty() {
-			Shrinkable<String> shrinkable = createShrinkableString("abcd", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("abcd", 0, false);
 			String shrunkValue = shrink(shrinkable, falsifier(String::isEmpty), null);
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
 		@Example
 		void alsoShrinkCharacters() {
-			Shrinkable<String> shrinkable = createShrinkableString("bbb", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("bbb", 0, false);
 			TestingFalsifier<String> falsifier = aString -> aString.length() <= 1;
 			String shrunkValue = shrink(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("aa");
 		}
 
 		@Example
+		void withUniqueChars() {
+			Shrinkable<String> shrinkable = createShrinkableString("xyz", 3, true);
+			TestingFalsifier<String> falsifier = aString -> aString.length() >= 4;
+			String shrunkValue = shrink(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo("abc");
+		}
+
+		@Example
 		void withFilterOnStringLength() {
-			Shrinkable<String> shrinkable = createShrinkableString("cccc", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("cccc", 0, false);
 
 			TestingFalsifier<String> falsifier = ignore -> false;
 			Falsifier<String> filteredFalsifier = falsifier.withFilter(aString -> aString.length() % 2 == 0);
@@ -77,7 +85,7 @@ public class ShrinkableStringTests {
 
 		@Example
 		void withFilterOnStringContents() {
-			Shrinkable<String> shrinkable = createShrinkableString("ddd", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("ddd", 0, false);
 
 			TestingFalsifier<String> falsifier = ignore -> false;
 			Falsifier<String> filteredFalsifier =
@@ -89,7 +97,7 @@ public class ShrinkableStringTests {
 
 		@Example
 		void shrinkCharacterPairsTogether() {
-			Shrinkable<String> shrinkable = createShrinkableString("xxxx", 2);
+			Shrinkable<String> shrinkable = createShrinkableString("xxxx", 2, false);
 
 			TestingFalsifier<String> falsifier =
 				string -> {
@@ -103,7 +111,7 @@ public class ShrinkableStringTests {
 
 		@Example
 		void shrinkToSortedString() {
-			Shrinkable<String> shrinkable = createShrinkableString("cdab", 4);
+			Shrinkable<String> shrinkable = createShrinkableString("cdab", 4, false);
 
 			TestingFalsifier<String> falsifier =
 				string -> {
@@ -123,14 +131,14 @@ public class ShrinkableStringTests {
 						 .map(shrinkableInt -> shrinkableInt.map(anInt -> (char) (int) anInt))
 						 .collect(Collectors.toList());
 
-			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5, 1000, null);
+			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5, 1000, null, false);
 			String shrunkValue = shrink(shrinkable, (TestingFalsifier<String>) String::isEmpty, null);
 			assertThat(shrunkValue).hasSize(5);
 		}
 
 	}
 
-	public static Shrinkable<String> createShrinkableString(String aString, int minSize) {
+	public static Shrinkable<String> createShrinkableString(String aString, int minSize, boolean uniqueChars) {
 		List<Shrinkable<Character>> elementShrinkables =
 			aString
 				.chars()
@@ -138,7 +146,7 @@ public class ShrinkableStringTests {
 				.map(shrinkable -> shrinkable.map(anInt -> (char) (int) anInt))
 				.collect(Collectors.toList());
 
-		return new ShrinkableString(elementShrinkables, minSize, aString.length(), null);
+		return new ShrinkableString(elementShrinkables, minSize, aString.length(), null, uniqueChars);
 	}
 
 }
