@@ -52,7 +52,7 @@ class StatisticsCollectionTests {
 		void callingCollectWithNoValueFails() {
 			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
-			assertThatThrownBy(collector::collect).isInstanceOf(IllegalArgumentException.class);
+			assertThatThrownBy(() -> collector.collect()).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
