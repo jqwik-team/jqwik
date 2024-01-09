@@ -1,39 +1,27 @@
 package experiments;
 
-import java.util.concurrent.*;
-import java.util.function.*;
+import java.util.*;
+
+import org.junit.jupiter.api.extension.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
-import net.jqwik.api.providers.*;
+import net.jqwik.api.lifecycle.*;
 
-public class Experiments {
+import static org.assertj.core.api.Assertions.*;
 
-	@Example
-	void integers() {
-		IntegerArbitrary integers = Arbitraries.integers().withDistribution(RandomDistribution.uniform());
+class Experiments {
 
-		integers.sampleStream().limit(50).forEach(System.out::println);
+	@Property(tries= 10)
+	@AddLifecycleHook(ProvideString.class)
+	void test(String constant, @ForAll int i) {
+		if (i > 1000) fail("too big");
 	}
-
-	@Provide
-	Arbitrary<Tuple.Tuple2<String, Supplier<ExecutorService>>> services() {
-		return Arbitraries.of(
-			Tuple.of("newSingleThreadExecutor", () -> Executors.newSingleThreadExecutor()),
-			Tuple.of("newFixedThreadPool", () -> Executors.newFixedThreadPool(2)),
-			Tuple.of("newCachedThreadPool", () -> Executors.newCachedThreadPool()),
-			Tuple.of("newVirtualThreadPerTaskExecutor", () -> Executors.newWorkStealingPool())
-		);
-	}
-
-	@Property
-	void test(@ForAll("services") Tuple.Tuple2<String, Supplier<ExecutorService>> pair) throws Exception {
-		String name = pair.get1();
-		// String service = pair.get2().get().toString();
-		System.out.println("Name: " + name);
-		// System.out.println("Service: " + service);
-	}
-
 }
 
+class ProvideString implements ResolveParameterHook {
+
+	@Override
+	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
+		return Optional.of(ignore -> "constant");
+	}
+}
