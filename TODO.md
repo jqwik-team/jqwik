@@ -1,5 +1,7 @@
 # 1.8.3
 
+    - Fix integer generation bug: https://github.com/jqwik-team/jqwik/issues/544
+
     - Summon preconfigured arbitrary. See https://github.com/jqwik-team/jqwik/issues/527
 
 # 1.8.x
