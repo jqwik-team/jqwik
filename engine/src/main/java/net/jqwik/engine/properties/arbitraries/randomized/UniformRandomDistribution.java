@@ -23,8 +23,10 @@ public class UniformRandomDistribution implements RandomDistribution {
 	}
 
 	private static boolean isWithinIntegerRange(BigInteger min, BigInteger max) {
-		return min.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) >= 0
-			&& max.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0;
+		boolean rangeIsSmallerThanIntegerMax = max.subtract(min).compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0;
+		boolean minAndMaxAreWithinInt = min.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) >= 0
+						&& max.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0;
+		return rangeIsSmallerThanIntegerMax && minAndMaxAreWithinInt;
 	}
 
 	@Override

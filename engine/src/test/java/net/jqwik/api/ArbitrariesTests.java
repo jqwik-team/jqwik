@@ -795,6 +795,24 @@ class ArbitrariesTests {
 			checkAllGenerated(generator, random, value -> value >= -10 && value <= 10);
 		}
 
+		@Property(tries = 10)
+		void integersFullRangeWithUniformDistribution(@ForAll Random random) {
+			Arbitrary<Integer> integerArbitrary =
+				Arbitraries.integers()
+						   .withDistribution(RandomDistribution.uniform());
+			RandomGenerator<Integer> generator = integerArbitrary.generator(1);
+
+			TestingSupport.checkAllGenerated(
+				generator,
+				random,
+				value -> value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE
+			);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value > 0 && value < Integer.MAX_VALUE);
+			TestingSupport.checkAtLeastOneGenerated(generator, random, value -> value < 0 && value > Integer.MIN_VALUE);
+		}
+
+
+
 		@Example
 		void longMinsAndMaxesWithEdgeCases(@ForAll Random random) {
 			RandomGenerator<Long> generator = Arbitraries.longs().generator(1, true);
