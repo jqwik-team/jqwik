@@ -25,4 +25,14 @@ class AnyForSubtypeTests {
         val subtypes = anyForSubtypeOf<Parent>()
         TestingSupport.checkAllGenerated(subtypes, random) { it is Child }
     }
+
+    sealed class ParentWithRecursion
+    class ChildWithCustomType(val customType: CustomType) : ParentWithRecursion()
+    class CustomType(val value: String)
+
+    @Example
+    fun `anyForSubtypeOf() with arbitrary recursion`(@ForAll random: Random) {
+        val subtypes = anyForSubtypeOf<ParentWithRecursion>(enableArbitraryRecursion = true)
+        TestingSupport.checkAllGenerated(subtypes, random) { it is ChildWithCustomType }
+    }
 }
