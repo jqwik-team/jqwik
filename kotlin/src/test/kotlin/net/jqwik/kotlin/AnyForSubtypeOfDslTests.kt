@@ -1,5 +1,6 @@
 package net.jqwik.kotlin
 
+import net.jqwik.api.Arbitraries
 import net.jqwik.api.Example
 import net.jqwik.api.ForAll
 import net.jqwik.api.Property
@@ -9,7 +10,7 @@ import net.jqwik.testing.TestingSupport
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*
 
-class AnyForSubtypeTests {
+class AnyForSubtypeOfDslTests {
 
     sealed interface Interface
     class Implementation(val value: String) : Interface
@@ -55,5 +56,13 @@ class AnyForSubtypeTests {
         ) parent: ParentInterface
     ) {
         assertThat(parent).matches { it is ChildInterfaceImpl || it is ChildClassImpl }
+    }
+
+    @Example
+    fun `anyForSubtypeOf() with type arbitrary customization`(@ForAll random: Random) {
+        val subtypes = anyForSubtypeOf<Interface> {
+            provide<Implementation> { Arbitraries.of(Implementation("custom arbitrary")) }
+        }
+        TestingSupport.checkAllGenerated(subtypes, random) { it is Implementation && it.value == "custom arbitrary" }
     }
 }
