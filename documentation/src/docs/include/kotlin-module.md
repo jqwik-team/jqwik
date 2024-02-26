@@ -386,6 +386,34 @@ Getting a type-based generator using the Java API looks a bit awkward in Kotlin:
 `Arbitraries.forType(MyType::class.java)`.
 There's a more Kotlinish way to do the same: `anyForType<MyType>()`.
 
+`anyForType<MyType>()` is limited to concrete classes. For example, it cannot
+handle sealed class or interface by looking for sealed subtypes.
+`anyForSubtypeOf<MyInterface>()` exists for such situation.
+
+```kotlin
+sealed interface Character
+sealed interface Hero : Character
+class Knight(val name: String) : Hero
+class Wizard(val name: String) : Character
+
+val arbitrary =  anyForSubtypeOf<Character>()
+```
+
+In the previous example, the created arbitrary provides arbitrarily any instances of `Knight` or `Wizard`.
+The arbitrary is recursively based on any sealed subtype.
+Under the hood, it uses `anyForType<Subtype>()` for each subtype.
+However, this can be customized subtype by subtype, by providing a custom arbitrary:
+
+```kotlin
+anyForSubtypeOf<Character> {
+    provide<Wizard> { Arbitraries.of(Wizard("Merlin"),Wizard("Élias de Kelliwic’h")) }
+}
+```
+
+More over, like `anyForType<>()`, `anyForSubtypeOf<>()` can be applied recursively (default is false):
+`anyForSubtypeOf<SealedClass>(enableArbitraryRecursion = true)`.
+
+
 ##### Diverse Convenience Functions
 
 - `combine(a1: Arbitrary<T1>, ..., (v1: T1, ...) -> R)` can replace all
@@ -547,3 +575,19 @@ combine {
   you have to generate values of the _inlined class_ instead, 
   which would be `String` in the example above.
   [Create an issue](https://github.com/jqwik-team/jqwik/issues/new) if that bothers you too much.
+
+- `anyForSubtypeOf<>()` does not work as expected when a sealed subtype requires 
+  a concrete class to be created, which requires a sealed class or interface.
+  The following example demonstrate the issue:
+
+  ```kotlin
+  sealed interface Character
+  class Knight(val kingdom: Kingdom) : Character
+  class Kingdom(val army: Army)
+  sealed interface Army
+
+  val arbitrary =  anyForSubtypeOf<Character>() // this arbitrary will fail during generation
+  ```
+
+  However, the workaround consist on the registration of an arbitrary dedicated
+  to involved sealed class or interface, `Army` in the example above.
