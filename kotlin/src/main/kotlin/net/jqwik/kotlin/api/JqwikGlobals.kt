@@ -106,6 +106,36 @@ inline fun <reified T> anyForType(): TypeArbitrary<T>
     return Arbitraries.forType(T::class.java)
 }
 
+
+/**
+ * Creates [Arbitrary] with subtypes of a sealed class or interface [T].
+ * If a subtype is a sealed class or interface, its subtypes are used to create [Arbitrary]. This is done recursively.
+ * [TypeArbitrary] are created by default under the hood, but this can be customized, for each subtype, with [SubtypeScope.provide] .
+ * ```kotlin
+ * anyForSubtypeOf<MyInterface> {
+ *     provide<MyImplementation1> { customArbitrary1() }
+ *     provide<MyImplementation2> { customArbitrary2() }
+ * }
+ * ```
+ * @param enableArbitraryRecursion is applied to all created [TypeArbitrary].
+ */
+inline fun <reified T> anyForSubtypeOf(
+    enableArbitraryRecursion: Boolean = false,
+    crossinline subtypeScope: SubtypeScope<T>.() -> Unit = {}
+): Arbitrary<T> where T : Any {
+    val scope = SubtypeScope<T>().apply(subtypeScope)
+    return Arbitraries.of(T::class.allSealedSubclasses).flatMap {
+        scope.getProviderFor(it)
+            ?: Arbitraries.forType(it.java as Class<T>).run {
+                if (enableArbitraryRecursion) {
+                    enableRecursion()
+                } else {
+                    this
+                }
+            }
+    }.map { obj -> obj as T }
+}
+
 /**
  * Function to create arbitrary that generates one of the provided values with a given frequency.
  *
