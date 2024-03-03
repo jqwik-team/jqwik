@@ -119,6 +119,7 @@ inline fun <reified T> anyForType(): TypeArbitrary<T>
  * ```
  * @param enableArbitraryRecursion is applied to all created [TypeArbitrary].
  */
+@API(status = API.Status.EXPERIMENTAL, since = "1.8.4")
 inline fun <reified T> anyForSubtypeOf(
     enableArbitraryRecursion: Boolean = false,
     crossinline subtypeScope: SubtypeScope<T>.() -> Unit = {}
