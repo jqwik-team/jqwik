@@ -1,6 +1,7 @@
 package net.jqwik.kotlin.api
 
 import net.jqwik.api.Arbitrary
+import org.apiguardian.api.API
 import kotlin.reflect.KClass
 
 /**
@@ -15,6 +16,7 @@ val <T : Any> KClass<T>.allSealedSubclasses: List<KClass<out T>>
         }
     }
 
+@API(status = API.Status.EXPERIMENTAL, since = "1.8.4")
 class SubtypeScope<T> {
     val customProviders = mutableListOf<CustomProvider<T>>()
 
