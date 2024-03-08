@@ -3,6 +3,7 @@
 Rate as many features as you like. The more the better.
 
 Rating scale:
+
 - 0: I didn't know this feature existed
 - 1: I know about this feature, but I never used it
 - 2: I used this feature once or twice, but I could easily live without it
@@ -11,87 +12,114 @@ Rating scale:
 
 ## Features
 
-- Checking `API.status()` for new API methods that you use or intend to use
+### General Features
 
-- Have a test container class implement `AutoCloseable`
+- Check `API.status()` for new API methods that you use or intend to use
 
-- Tagging properties with `@Tag` annotation
+- Tag properties with `@Tag` annotation
 
-- Using injected reporter `Reporter reporter` parameter
+- Use injected parameter `Reporter reporter` to report values during property execution
 
-- Using footnotes through injected `Footnotes footnotes` parameter
+- Use footnotes through injected `Footnotes footnotes` parameter
 
-- Setting `maxDiscardRatio` for a property
+- Set `maxDiscardRatio` for a property
 
-- Using data-driven properties with `@Data` and `@FromData` annotations
+- Use data-driven properties with `@Data` and `@FromData` annotations
 
-- `@ForAll(supplier=<ArbitrarySupplierClass>.class)`: Alternative to `@ForAll("providerMethod")`
 
-- `@From("providerMethod")`: Alternative to `@ForAll("providerMethod")`
+### Arbitraries and Generators
 
-- Using `Arbitraries.randomValue(Function<Random, T> randomFunction)` to create custom objects
+- `@ForAll(supplier=<ArbitrarySupplierClass>.class)` as alternative
+  to `@ForAll("providerMethod")`
 
-- Using `Arbitraries.fromGenerator(RandomGenerator generator)` to create custom objects
+- Use `Arbitraries.randomValue(Function<Random, T> randomFunction)`
 
-- Using `Arbitraries.traverse(Class<T> targetType, Traverser traverser)` to traverse a type and its dependencies
+- Use `Arbitraries.fromGenerator(RandomGenerator generator)`
 
-- Implementing `Arbitrary` interface
+- Use `Arbitraries.traverse(Class<T> targetType, Traverser traverser)`
 
-- Implementing `RandomGenerator` directly
+- Implement `Arbitrary` interface directly
+
+- Subclass from `ArbitraryDecorator` to create custom arbitrary interfaces
+
+- Implement `RandomGenerator` directly
 
 - Implement and register your own `ArbitraryProvider`
 
 - Implement and register your own `ArbitraryConfigurator`
 
-- Domains 
-  - Define your own domain by implementing `DomainContext` or extending `DomainContextBase`
-  - Using `@Domain` annotation to include a domain for value generation
+- Generate functional types (SAM types), e.g. with `@ForAll Function<String, Integer> myFunction`
 
-- Generating functional types (SAM types), e.g. `@ForAll Function<String, Integer> myFunction`
+- Change edge case generation through `Arbitrary.configureEdgeCases(..)`
 
-- Changing edge case generation through `Arbitrary.configureEdgeCases(..)`
+- Change `genSize` with `Arbitrary.fixGenSize(int)`.
 
-- Changing `genSize` with `Arbitrary.fixGenSize(int)`.
+- Change the shrinking target of numeric types,
+  e.g. `IntegerArbitrary.shrinkTowards(int target)`
 
-- Changing the shrinking target of numeric types, e.g. `IntegerArbitrary.shrinkTowards(int target)`
+- Change the random distribution of numeric types,
+  e.g. `IntegerArbitrary.withDistribution(RandomDistribution distribution)`
 
-- Changing the random distribution of numeric types, e.g. `IntegerArbitrary.withDistribution(RandomDistribution distribution)`
-
-- Changing the length distribution of collections or strings, 
+- Change the length distribution of collections or strings,
   e.g. `ListArbitrary.withSizeDistribution(RandomDistribution distribution)`
 
-- Ignoring exceptions during value generation
-  - with annotation attribute `@ForAll(ignoreExceptions=<ExceptionType>.class)`  
-  - with `Arbitrary.ignoreException(Class<? extends Throwable> exceptionType)`
+- Ignore exceptions during value generation with `@ForAll(ignoreExceptions=<ExceptionType>.class)`
+  or `Arbitrary.ignoreException(Class<? extends Throwable> exceptionType)`
 
-- Combining arbitraries with Builder API
+- Combine arbitraries with Builder API `Builders.withBuilder(..)`
 
 - Deterministic recursive data generation with `Arbitraries.recursive(..)`.
 
-- Using arbitraries outside Jqwik lifecycle, e.g. to generate test data in example based tests
-  - Using `JqwikSession` API 
-  - Accessing all possible values of an arbitrary through `Arbitrary.allValues()` or `Arbitrary.forEachValue(..)`
 
-- Statistics
-  - Collecting statistics with their own label: `Statistics.label(String label).collect(..)`
-  - Report statistics using `Histogram` or `NumberRangeHistogram`
-  - Implementing your own `StatisticsReportFormat`
-  - Check the coverage of generated data with `Statistics.collect(..).coverage(..)`
+### Lifecycle and Lifecycle Hooks
 
-- Stateful properties
-  - Using the old API in package `net.jqwik.api.stateful` 
-  - Using the new API in package `net.jqwik.api.state`
+- Have a test container class implement `AutoCloseable`
+- Implement your own custom lifecycle hooks
+- Use lifecycle storage API on `Store` type 
+- Annotate member variables with `@BeforeTry`
+- Annotate property methods with `@PerProperty` to specify lifecycle adaptations
 
-- Lifecycle Hooks
-  - Writing your own custom lifecycle hooks 
-  - Lifecycle storage using `Store` API
-  - `@BeforeTry` annotation on member variables
-  - `@PerProperty` to specify lifecycle adaptations for individual properties
+
+### Domains
+
+- Define your own domain by implementing `DomainContext` or extending `DomainContextBase`
+- Using `@Domain` annotation to include a domain for value generation
+
+
+### Using arbitraries outside Jqwik lifecycle, e.g. to generate test data in example based tests
+
+- Use `Arbitrary.sample()` or `Arbitrary.sampleStream()`
+- Use `JqwikSession` API
+- Use `Arbitrary.allValues()`
+- Use `Arbitrary.forEachValue(..)`
+
+
+### Statistics
+
+- Collect statistics with label: `Statistics.label(String label).collect(..)`
+- Report statistics using `Histogram` or `NumberRangeHistogram`
+- Implement your own `StatisticsReportFormat`
+- Check the coverage of generated data with `Statistics.collect(..).coverage(..)`
+
+
+### Stateful Testing
+
+- Use the old API in package `net.jqwik.api.stateful`
+- Use the new API in package `net.jqwik.api.state`
+
+
+### Modules and Extensions
 
 - Kotlin module
 
 - Time module
 
 - Web module
-  - Generating email addresses with `Web.emails()` or `@Email` annotation
-  - Generating web domain names with `Web.domains()` or `@WebDomain` annotation
+
+- jqwik Spring Support
+
+- jqwik Micronaut Support
+
+- jqwik Testcontainers Support
+
+- jqwik Vavr Support
