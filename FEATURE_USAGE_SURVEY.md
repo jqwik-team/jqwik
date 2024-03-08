@@ -3,13 +3,15 @@
 Rate as many features as you like. The more the better.
 
 Rating scale:
-- 0: I didn't know about this feature
+- 0: I didn't know this feature existed
 - 1: I know about this feature, but I never used it
 - 2: I used this feature once or twice, but I could easily live without it
 - 3: I use this feature regularly, and I would miss it if it was gone
-- 4: I use this feature all the time, and it's crucial for my work
+- 4: I use this feature regularly, and it's crucial for my work
 
 ## Features
+
+- Checking `API.status()` for new API methods that you use or intend to use
 
 - Have a test container class implement `AutoCloseable`
 
@@ -31,9 +33,19 @@ Rating scale:
 
 - Using `Arbitraries.fromGenerator(RandomGenerator generator)` to create custom objects
 
+- Using `Arbitraries.traverse(Class<T> targetType, Traverser traverser)` to traverse a type and its dependencies
+
 - Implementing `Arbitrary` interface
 
 - Implementing `RandomGenerator` directly
+
+- Implement and register your own `ArbitraryProvider`
+
+- Implement and register your own `ArbitraryConfigurator`
+
+- Domains 
+  - Define your own domain by implementing `DomainContext` or extending `DomainContextBase`
+  - Using `@Domain` annotation to include a domain for value generation
 
 - Generating functional types (SAM types), e.g. `@ForAll Function<String, Integer> myFunction`
 
@@ -58,6 +70,13 @@ Rating scale:
 
 - Using arbitraries outside Jqwik lifecycle, e.g. to generate test data in example based tests
   - Using `JqwikSession` API 
+  - Accessing all possible values of an arbitrary through `Arbitrary.allValues()` or `Arbitrary.forEachValue(..)`
+
+- Statistics
+  - Collecting statistics with their own label: `Statistics.label(String label).collect(..)`
+  - Report statistics using `Histogram` or `NumberRangeHistogram`
+  - Implementing your own `StatisticsReportFormat`
+  - Check the coverage of generated data with `Statistics.collect(..).coverage(..)`
 
 - Stateful properties
   - Using the old API in package `net.jqwik.api.stateful` 
@@ -69,9 +88,10 @@ Rating scale:
   - `@BeforeTry` annotation on member variables
   - `@PerProperty` to specify lifecycle adaptations for individual properties
 
-
 - Kotlin module
 
 - Time module
 
 - Web module
+  - Generating email addresses with `Web.emails()` or `@Email` annotation
+  - Generating web domain names with `Web.domains()` or `@WebDomain` annotation
