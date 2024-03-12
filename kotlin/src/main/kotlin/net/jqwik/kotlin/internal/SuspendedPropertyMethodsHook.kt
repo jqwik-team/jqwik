@@ -38,7 +38,10 @@ class SuspendedPropertyMethodsHook : ResolveParameterHook, InvokePropertyMethodH
     }
 
     private fun AnnotatedElement.isSuspendFunction() =
-        this is Method && this.kotlinFunction?.isSuspend ?: false
+        this is Method
+            // Added because of https://github.com/jqwik-team/jqwik/issues/557
+            && this.declaringClass.isKotlinClass()
+            && this.kotlinFunction?.isSuspend ?: false
 
     override fun resolve(
         parameterContext: ParameterResolutionContext,

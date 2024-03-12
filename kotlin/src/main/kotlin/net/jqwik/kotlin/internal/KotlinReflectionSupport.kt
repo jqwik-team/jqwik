@@ -15,6 +15,9 @@ fun Class<*>.isKotlinClass(): Boolean = declaredAnnotations.any { it.annotationC
 
 val Parameter.kotlinParameter: KParameter?
     get() {
+        if (!this.declaringExecutable.declaringClass.isKotlinClass()) {
+            return null
+        }
         if (isSuspendFunctionContinuationParameter()) {
             return null
         }
