@@ -123,3 +123,14 @@ Rating scale:
 - jqwik Testcontainers Support
 
 - jqwik Vavr Support
+
+
+## Issue Text for GitHub Repos
+
+Jqwik Usage Survey
+
+Hi! I noticed you're using the jqwik library in your code base.
+You might be interested in participating in jqwik's usage survey, which will be the foundation for jqwik version 2:
+[jqwik Usage Survey](https://docs.google.com/forms/d/e/1FAIpQLSeG8-A-QeatayR51p41-PIad8wxPCjlF42TGji4OLqlcUFvHg/viewform?usp=pp_url&entry.444445538=0&entry.1176932837=0&entry.433792307=0&entry.362899335=0&entry.1051484453=0&entry.1308403628=0&entry.1157551046=0&entry.1218216631=0&entry.1884348691=0&entry.1664582984=0&entry.1395243731=0&entry.637599713=0&entry.214390401=0&entry.1023619256=0&entry.2103198793=0&entry.1262440461=0&entry.642227431=0&entry.824407284=0&entry.945992025=0&entry.688647886=0&entry.892125303=0&entry.1318595707=0&entry.1651231167=0&entry.949481904=0&entry.1909153108=0&entry.1310182120=0&entry.1591038055=0&entry.95811223=0&entry.1183762376=0&entry.983463514=0&entry.2030231907=0&entry.1650069733=0&entry.1356824859=0&entry.1217556164=0&entry.1171969955=0&entry.1882369745=0&entry.337847346=0&entry.432565656=0&entry.126087813=0&entry.308155936=0&entry.1308530978=0&entry.1359750459=0&entry.894210534=0&entry.1285593899=0&entry.795916190=0&entry.1039917490=0&entry.1201586198=0&entry.550102822=0&entry.499364845=0&usp=embed_facebook)
+
+Many thanks for considering to participate!
