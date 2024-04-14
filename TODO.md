@@ -1,5 +1,7 @@
 # 1.8.5
 
+  - Fix class inheritance bug: https://github.com/jqwik-team/jqwik/issues/562
+
 
 # 1.8.x
     - Replace jsr305 with jspecify
