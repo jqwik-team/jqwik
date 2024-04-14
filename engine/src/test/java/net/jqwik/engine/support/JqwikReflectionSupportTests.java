@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.junit.platform.commons.support.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
@@ -182,6 +184,30 @@ class JqwikReflectionSupportTests {
 		assertThat(JqwikReflectionSupport.getFunctionMethod(DataOutput.class)).isNotPresent();
 	}
 
+	@Example
+	void findMethodsPotentiallyOuter() {
+		List<Method> methods = JqwikReflectionSupport.findMethodsPotentiallyOuter(
+			AbstractClass.ConcreteSubclass.class,
+			method -> method.getName().startsWith("method"),
+			HierarchyTraversalMode.BOTTOM_UP
+		);
+		assertThat(methods).hasSize(2);
+
+		List<Method> methodsInSub = JqwikReflectionSupport.findMethodsPotentiallyOuter(
+			AbstractClass.ConcreteSubclass.class,
+			method -> method.getName().startsWith("methodInConcreteSubclass"),
+			HierarchyTraversalMode.BOTTOM_UP
+		);
+		assertThat(methodsInSub).hasSize(1);
+
+		List<Method> methodsInBase = JqwikReflectionSupport.findMethodsPotentiallyOuter(
+			AbstractClass.ConcreteSubclass.class,
+			method -> method.getName().startsWith("methodInAbstractClass"),
+			HierarchyTraversalMode.BOTTOM_UP
+		);
+		assertThat(methodsInBase).hasSize(1);
+	}
+
 	private static class Outer {
 
 		Inner createInner() {
@@ -223,5 +249,15 @@ class JqwikReflectionSupportTests {
 
 	private static class OuterWithConstructor {
 
+	}
+}
+
+abstract class AbstractClass {
+
+	void methodInAbstractClass() {}
+
+	static class ConcreteSubclass extends AbstractClass {
+
+		void methodInConcreteSubclass() {}
 	}
 }

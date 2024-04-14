@@ -102,6 +102,10 @@ public class JqwikReflectionSupport {
 	 * Find all {@linkplain Method methods} as in ReflectionSupport.findMethods(..) but also use outer classes to look for
 	 * methods.
 	 *
+	 * <p>
+	 *     Duplicate methods (through) inheritance are de-duplicated. The first occurrence of a method is kept.
+	 * </p>
+	 *
 	 * @param clazz         The class in which you start the search
 	 * @param predicate     The condition to check for all candidate methods
 	 * @param traversalMode Traverse hierarchy up or down. Determines the order in resulting list.
@@ -113,11 +117,11 @@ public class JqwikReflectionSupport {
 		HierarchyTraversalMode traversalMode
 	) {
 		List<Class<?>> searchClasses = getDeclaringClasses(clazz, traversalMode);
-		List<Method> foundMethods = new ArrayList<>();
+		Set<Method> foundMethods = new LinkedHashSet<>();
 		for (Class<?> searchClass : searchClasses) {
 			foundMethods.addAll(ReflectionSupport.findMethods(searchClass, predicate, traversalMode));
 		}
-		return foundMethods;
+		return new ArrayList<>(foundMethods);
 	}
 
 	/**
