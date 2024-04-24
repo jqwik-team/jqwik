@@ -91,7 +91,7 @@ Currently this API consists of a few static methods on class `net.jqwik.api.sess
 - `JqwikSession.isActive()`: Check is a session is currently active.
 - `JqwikSession.finish()`: Finish the currently active session, thereby releasing all the implicitly used memory space.
 - `JqwikSession.finishTry()`: Announce that you're done with the current `trie` of a property.
-  This will, for example, reset the uniqueness collector of a generator for collections.
+  This will, among other things, reset all [stores](#lifecycle-storage) that use `Lifespan.TRY`.
 - `JqwikSession.run(Runnable code)`: Wrap the runnable code segment in implicit `start()` and `finish()` calls.
 
 Mind that there's currently no way to use nested sessions, spread the same session across threads
