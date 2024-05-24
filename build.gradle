@@ -9,7 +9,7 @@ plugins {
 }
 
 wrapper {
-	gradleVersion = '8.4'
+	gradleVersion = '8.7'
 }
 
 allprojects {
