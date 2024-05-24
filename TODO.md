@@ -1,6 +1,9 @@
 
 # 1.9.x
 
+    - Migrate to https://docs.gradle.org/8.7/userguide/jvm_test_suite_plugin.html
+      as preparation for Gradle 9
+
     - Upgrade to Kotlin 2.0
         - Replace jsr305 with jspecify
         - Fix type problems from K2 compiler

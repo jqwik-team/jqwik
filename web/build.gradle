@@ -92,4 +92,5 @@ dependencies {
 
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 	testRuntimeOnly(project(":engine"))
+	testRuntimeOnly ("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 }

@@ -39,6 +39,7 @@ dependencies {
 		testImplementation("net.jqwik:jqwik-web:1.8.4")
 		testRuntimeOnly("net.jqwik:jqwik-engine:1.8.4")
 	}
+	testRuntimeOnly ("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 }
 
 tasks.configureEach {

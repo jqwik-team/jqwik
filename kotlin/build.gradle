@@ -117,6 +117,7 @@ dependencies {
 	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${kotlinxVersion}")
+	testRuntimeOnly ("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
 	// Necessary in order to run all tests of a package in IntelliJ IDEA 2022.3.2
 	testImplementation("io.kotest:kotest-runner-junit5:${kotestVersion}")
