@@ -1,10 +1,10 @@
 package net.jqwik.api.stateful;
 
-import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 

@@ -1,9 +1,9 @@
 package net.jqwik.api.lifecycle;
 
-import javax.annotation.*;
 import java.util.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;

@@ -1,6 +1,5 @@
 package net.jqwik.api.state;
 
-import javax.annotation.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;

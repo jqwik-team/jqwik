@@ -1,11 +1,10 @@
 package net.jqwik.api.lifecycle;
 
-import javax.annotation.*;
 import java.util.*;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 

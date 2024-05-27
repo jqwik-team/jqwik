@@ -37,10 +37,7 @@ there's a few other things you should configure for a seamless jqwik experience 
 
 - As of this writing the current kotlin version (1.5.31) does not generate byte code 
   for Java annotations by default. 
-  It must be switched on through compiler argument `-Xemit-jvm-type-annotations`. 
-
-- In order to have nullability information for jqwik's API available in Kotlin
-  _JSR305_ compatibility should be switched on with compiler argument `-Xjsr305=strict`.
+  It must be switched on through compiler argument `-Xemit-jvm-type-annotations`.
 
 Here's the jqwik-related part of the Gradle build file for a Kotlin project:
 
@@ -57,7 +54,6 @@ tasks.withType<Test>().configureEach {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf(
-            "-Xjsr305=strict", // For strict type warnings
             "-Xemit-jvm-type-annotations" // Required for annotations on type variables
         )
         jvmTarget = "11" // 1.8 or above

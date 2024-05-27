@@ -73,8 +73,6 @@ signing {
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 	kotlinOptions.freeCompilerArgs = [
-		"-Xjsr305=strict", // For strict type warnings
-		// "-Xjsr305=under-migration:strict", // @UnderMigration not used in jqwik
 		"-Xemit-jvm-type-annotations" // Required for annotations on type variables
 	]
 	kotlinOptions.jvmTarget = "${javaTargetVersion}"

@@ -55,10 +55,8 @@ compileTestJava {
 
 dependencies {
 	api("org.apiguardian:apiguardian-api:${apiGuardianVersion}")
-	compileOnly("com.google.code.findbugs:jsr305:${findbugsVersion}")
 	// compileOnly "org.jetbrains.kotlin:kotlin-annotations-jvm:${kotlinVersion}"
 	compileOnly("org.jspecify:jspecify:${jspecifyVersion}")
-	testCompileOnly("com.google.code.findbugs:jsr305:${findbugsVersion}")
 
 	// testCompilation should suffice but Java 8 will mess up reflection then
 	testImplementation("org.jspecify:jspecify:${jspecifyVersion}")

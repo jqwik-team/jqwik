@@ -40,6 +40,7 @@ ext {
 	assertJVersion = '3.26.0'
 	mockitoVersion = '4.11.0'
 	systemLambdaVersion = '1.2.1'
+	errorproneVersion = '2.27.1'
 	kotlinVersion = '1.9.22' // TODO: Support version 2.x
 	kotlinxVersion = '1.8.1'
 	kotestVersion = '5.9.0'
