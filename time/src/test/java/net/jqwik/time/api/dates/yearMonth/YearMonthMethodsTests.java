@@ -29,7 +29,7 @@ public class YearMonthMethodsTests {
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().atTheEarliest(yearMonth);
 
 			checkAllGenerated(yearMonths.generator(1000, true), random, ym -> {
-				assertThat(ym).isGreaterThanOrEqualTo(yearMonth);
+				assertThat(ym).isAfterOrEqualTo(yearMonth);
 				return true;
 			});
 
@@ -47,8 +47,8 @@ public class YearMonthMethodsTests {
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().atTheEarliest(min).atTheLatest(max);
 
 			checkAllGenerated(yearMonths.generator(1000, true), random, ym -> {
-				assertThat(ym).isGreaterThanOrEqualTo(max);
-				assertThat(ym).isLessThanOrEqualTo(min);
+				assertThat(ym).isAfterOrEqualTo(max);
+				assertThat(ym).isBeforeOrEqualTo(min);
 				return true;
 			});
 
@@ -60,7 +60,7 @@ public class YearMonthMethodsTests {
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().atTheLatest(yearMonth);
 
 			checkAllGenerated(yearMonths.generator(1000, true), random, ym -> {
-				assertThat(ym).isLessThanOrEqualTo(yearMonth);
+				assertThat(ym).isBeforeOrEqualTo(yearMonth);
 				return true;
 			});
 
@@ -78,8 +78,8 @@ public class YearMonthMethodsTests {
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().atTheLatest(max).atTheEarliest(min);
 
 			checkAllGenerated(yearMonths.generator(1000, true), random, ym -> {
-				assertThat(ym).isGreaterThanOrEqualTo(max);
-				assertThat(ym).isLessThanOrEqualTo(min);
+				assertThat(ym).isAfterOrEqualTo(max);
+				assertThat(ym).isBeforeOrEqualTo(min);
 				return true;
 			});
 
@@ -97,8 +97,8 @@ public class YearMonthMethodsTests {
 			Arbitrary<YearMonth> yearMonths = Dates.yearMonths().between(startYearMonth, endYearMonth);
 
 			checkAllGenerated(yearMonths.generator(1000, true), random, ym -> {
-				assertThat(ym).isGreaterThanOrEqualTo(startYearMonth);
-				assertThat(ym).isLessThanOrEqualTo(endYearMonth);
+				assertThat(ym).isAfterOrEqualTo(startYearMonth);
+				assertThat(ym).isBeforeOrEqualTo(endYearMonth);
 				return true;
 			});
 		}

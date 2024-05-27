@@ -19,7 +19,7 @@ public class ShrinkingTests {
 	void defaultShrinking(@ForAll Random random) {
 		YearArbitrary years = Dates.years();
 		Year value = falsifyThenShrink(years, random);
-		assertThat(value).isEqualTo(Year.of(1900));
+		assertThat((Object) value).isEqualTo(Year.of(1900));
 	}
 
 	@Property
@@ -27,7 +27,7 @@ public class ShrinkingTests {
 		YearArbitrary years = Dates.years();
 		TestingFalsifier<Year> falsifier = year -> year.getValue() < 1942;
 		Year value = falsifyThenShrink(years, random, falsifier);
-		assertThat(value).isEqualTo(Year.of(1942));
+		assertThat((Object) value).isEqualTo(Year.of(1942));
 	}
 
 }

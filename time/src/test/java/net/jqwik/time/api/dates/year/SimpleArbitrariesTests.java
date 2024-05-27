@@ -21,7 +21,7 @@ public class SimpleArbitrariesTests {
 
 	@Property
 	void yearIsNotNull(@ForAll("years") Year year) {
-		assertThat(year).isNotNull();
+		assertThat((Object) year).isNotNull();
 	}
 
 	@Property
@@ -32,7 +32,7 @@ public class SimpleArbitrariesTests {
 
 	@Property
 	void yearIsNotZero(@ForAll("yearsAround0") Year year) {
-		assertThat(year).isNotEqualTo(Year.of(0));
+		assertThat((Object) year).isNotEqualTo(Year.of(0));
 	}
 
 }

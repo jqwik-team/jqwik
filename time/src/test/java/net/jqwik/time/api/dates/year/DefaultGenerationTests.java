@@ -10,7 +10,7 @@ public class DefaultGenerationTests {
 
 	@Property
 	void yearIsNotNull(@ForAll Year year) {
-		assertThat(year).isNotNull();
+		assertThat((Object) year).isNotNull();
 	}
 
 	@Property
@@ -21,7 +21,7 @@ public class DefaultGenerationTests {
 
 	@Property
 	void yearIsNotZero(@ForAll Year year) {
-		assertThat(year).isNotEqualTo(Year.of(0));
+		assertThat((Object) year).isNotEqualTo(Year.of(0));
 	}
 
 }

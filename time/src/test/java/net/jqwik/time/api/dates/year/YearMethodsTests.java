@@ -25,8 +25,8 @@ public class YearMethodsTests {
 		Arbitrary<Year> years = Dates.years().between(startYear, endYear);
 
 		checkAllGenerated(years.generator(1000, true), random, year -> {
-			assertThat(year).isGreaterThanOrEqualTo(startYear);
-			assertThat(year).isLessThanOrEqualTo(endYear);
+			assertThat(year.getValue()).isGreaterThanOrEqualTo(startYear.getValue());
+			assertThat(year.getValue()).isLessThanOrEqualTo(endYear.getValue());
 			return true;
 		});
 
@@ -38,7 +38,7 @@ public class YearMethodsTests {
 		Arbitrary<Year> years = Dates.years().between(year, year);
 
 		checkAllGenerated(years.generator(1000, true), random, y -> {
-			assertThat(y).isEqualTo(year);
+			assertThat((Object) y).isEqualTo(year);
 			return true;
 		});
 

@@ -19,7 +19,7 @@ public class ConstraintTests {
 		void yearRangeBetweenMinus100And100(@ForAll @YearRange(min = -100, max = 100) Year year) {
 			assertThat(year.getValue()).isGreaterThanOrEqualTo(-100);
 			assertThat(year.getValue()).isLessThanOrEqualTo(100);
-			assertThat(year).isNotEqualTo(Year.of(0));
+			assertThat((Object) year).isNotEqualTo(Year.of(0));
 		}
 
 		@Property

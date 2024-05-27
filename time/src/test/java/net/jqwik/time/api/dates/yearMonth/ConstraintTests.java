@@ -20,8 +20,8 @@ public class ConstraintTests {
 
 		@Property
 		void yearMonthRangeBetween(@ForAll @YearMonthRange(min = "2013-05", max = "2020-08") YearMonth yearMonth) {
-			assertThat(yearMonth).isGreaterThanOrEqualTo(YearMonth.of(2013, MAY));
-			assertThat(yearMonth).isLessThanOrEqualTo(YearMonth.of(2020, AUGUST));
+			assertThat(yearMonth).isAfterOrEqualTo(YearMonth.of(2013, MAY));
+			assertThat(yearMonth).isBeforeOrEqualTo(YearMonth.of(2020, AUGUST));
 		}
 
 		@Property
