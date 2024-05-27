@@ -1,6 +1,5 @@
 package net.jqwik.api.providers;
 
-import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;

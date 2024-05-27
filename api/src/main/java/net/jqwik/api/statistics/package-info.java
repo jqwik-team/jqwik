@@ -1,4 +1,4 @@
-@NonNullApi
+@NullMarked
 package net.jqwik.api.statistics;
 
-import net.jqwik.api.*;
+import org.jspecify.annotations.*;

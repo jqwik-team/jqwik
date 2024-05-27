@@ -6,7 +6,7 @@ import org.mockito.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
-@NonNullApi
+@NullMarked
 public abstract class CheckReporting implements AroundPropertyHook {
 
 	Reporter reporter = Mockito.mock(Reporter.class);

@@ -1,10 +1,10 @@
 package net.jqwik.api;
 
-import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import com.google.errorprone.annotations.*;
 import org.apiguardian.api.*;
 import org.jspecify.annotations.Nullable;
 

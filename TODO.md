@@ -5,7 +5,6 @@
       as preparation for Gradle 9
 
     - Upgrade to Kotlin 2.0
-        - Replace jsr305 with jspecify
         - Fix type problems from K2 compiler
 
     - Summon preconfigured arbitrary. See https://github.com/jqwik-team/jqwik/issues/527

@@ -51,6 +51,7 @@ signing {
 }
 
 dependencies {
+	compileOnly("com.google.errorprone:error_prone_annotations:${errorproneVersion}")
 	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 }
