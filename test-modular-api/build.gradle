@@ -37,7 +37,7 @@ dependencies {
 	} else {
 		testImplementation("net.jqwik:jqwik-api:1.8.4")
 		testImplementation("net.jqwik:jqwik-web:1.8.4")
-		testRuntimeOnly("net.jqwik:jqwik-engine:1.8.4")
+		testRuntimeOnly("net.jqwik:jqwik-engine:1.8.5")
 	}
 	testRuntimeOnly ("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 }
