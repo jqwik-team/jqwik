@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
 	id 'jqwik.common-configuration'
 	id 'jqwik.module-configuration'
@@ -71,17 +74,22 @@ signing {
 	}
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-	kotlinOptions.freeCompilerArgs = [
-		"-Xemit-jvm-type-annotations" // Required for annotations on type variables
-	]
-	kotlinOptions.jvmTarget = "${javaTargetVersion}"
-	kotlinOptions.javaParameters = true // Required to get correct parameter names in reporting
+tasks.withType(KotlinCompile).configureEach {
+	compilerOptions {
+		freeCompilerArgs = [
+			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
+		]
+		javaParameters = true // Required to get correct parameter names in reporting
+		jvmTarget = JvmTarget.fromTarget("${javaTargetVersion}")
+	}
 }
 
 compileTestKotlin {
-	kotlinOptions.suppressWarnings = true
+	compilerOptions {
+		suppressWarnings = true
+	}
 }
+
 
 test {
 	useJUnitPlatform {
