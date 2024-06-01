@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -79,6 +80,8 @@ tasks.withType(KotlinCompile).configureEach {
 		freeCompilerArgs = [
 			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
 		]
+		apiVersion = KotlinVersion.KOTLIN_1_9
+		languageVersion = KotlinVersion.KOTLIN_1_9
 		javaParameters = true // Required to get correct parameter names in reporting
 		jvmTarget = JvmTarget.fromTarget("${javaTargetVersion}")
 	}

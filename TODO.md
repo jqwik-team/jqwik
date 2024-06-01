@@ -6,6 +6,7 @@
 
     - Upgrade to Kotlin 2.0
         - Fix type problems from K2 compiler
+        - Document differences between K1 and K2 in user guide
 
     - Summon preconfigured arbitrary. See https://github.com/jqwik-team/jqwik/issues/527
 
