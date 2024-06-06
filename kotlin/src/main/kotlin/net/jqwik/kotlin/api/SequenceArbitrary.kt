@@ -15,7 +15,7 @@ import java.util.function.Function
  * of type [Sequence]
  */
 @API(status = EXPERIMENTAL, since = "1.6.0")
-class SequenceArbitrary<T>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<Sequence<T>>(),
+class SequenceArbitrary<T: Any?>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<Sequence<T>>(),
     SizableArbitrary<Sequence<T>> {
 
     private var listArbitrary: ListArbitrary<T>
@@ -80,7 +80,7 @@ class SequenceArbitrary<T>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<
      *
      * @return new arbitrary instance
      */
-    fun uniqueElements(by: Function<T, Any>): SequenceArbitrary<T> {
+    fun uniqueElements(by: Function<in T, *>): SequenceArbitrary<T> {
         val clone = typedClone<SequenceArbitrary<T>>()
         clone.listArbitrary = listArbitrary.uniqueElements(by)
         return clone

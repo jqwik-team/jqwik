@@ -10,7 +10,7 @@ import org.jspecify.annotations.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = STABLE, since = "1.0")
-public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
+public interface Shrinkable<T extends @Nullable Object> extends Comparable<Shrinkable<T>> {
 
 	@API(status = INTERNAL)
 	abstract class ShrinkableFacade {

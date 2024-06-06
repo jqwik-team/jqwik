@@ -37,23 +37,23 @@ public interface Tuple extends Serializable, Cloneable {
 		return Tuple.of();
 	}
 
-	static <@Nullable T1> Tuple1<T1> of(T1 v1) {
+	static <T1 extends @Nullable Object> Tuple1<T1> of(T1 v1) {
 		return new Tuple1<>(v1);
 	}
 
-	static <@Nullable T1, @Nullable T2> Tuple2<T1, T2> of(T1 v1, T2 v2) {
+	static <T1 extends @Nullable Object, T2 extends @Nullable Object> Tuple2<T1, T2> of(T1 v1, T2 v2) {
 		return new Tuple2<>(v1, v2);
 	}
 
-	static <@Nullable T1, @Nullable T2, @Nullable T3> Tuple3<T1, T2, T3> of(T1 v1, T2 v2, T3 v3) {
+	static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object> Tuple3<T1, T2, T3> of(T1 v1, T2 v2, T3 v3) {
 		return new Tuple3<>(v1, v2, v3);
 	}
 
-	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4> Tuple4<T1, T2, T3, T4> of(T1 v1, T2 v2, T3 v3, T4 v4) {
+	static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object> Tuple4<T1, T2, T3, T4> of(T1 v1, T2 v2, T3 v3, T4 v4) {
 		return new Tuple4<>(v1, v2, v3, v4);
 	}
 
-	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5> Tuple5<T1, T2, T3, T4, T5> of(
+	static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object> Tuple5<T1, T2, T3, T4, T5> of(
 		T1 v1,
 		T2 v2,
 		T3 v3,
@@ -63,7 +63,7 @@ public interface Tuple extends Serializable, Cloneable {
 		return new Tuple5<>(v1, v2, v3, v4, v5);
 	}
 
-	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6> Tuple6<T1, T2, T3, T4, T5, T6> of(
+	static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object> Tuple6<T1, T2, T3, T4, T5, T6> of(
 		T1 v1,
 		T2 v2,
 		T3 v3,
@@ -74,7 +74,7 @@ public interface Tuple extends Serializable, Cloneable {
 		return new Tuple6<>(v1, v2, v3, v4, v5, v6);
 	}
 
-	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> of(
+	static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object> Tuple7<T1, T2, T3, T4, T5, T6, T7> of(
 		T1 v1,
 		T2 v2,
 		T3 v3,
@@ -86,7 +86,7 @@ public interface Tuple extends Serializable, Cloneable {
 		return new Tuple7<>(v1, v2, v3, v4, v5, v6, v7);
 	}
 
-	static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7, @Nullable T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> of(
+	static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object, T8 extends @Nullable Object> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> of(
 		T1 v1,
 		T2 v2,
 		T3 v3,
@@ -122,10 +122,10 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple1<@Nullable T1> extends Tuple0 {
+	class Tuple1<T1 extends @Nullable Object> extends Tuple0 {
 		final T1 v1;
 
-		private Tuple1(@Nullable T1 v1) {
+		private Tuple1(T1 v1) {
 			super();
 			this.v1 = v1;
 		}
@@ -163,7 +163,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple2<@Nullable T1, @Nullable T2> extends Tuple1<T1> {
+	class Tuple2<T1 extends @Nullable Object, T2 extends @Nullable Object> extends Tuple1<T1> {
 		final T2 v2;
 
 		private Tuple2(T1 v1, T2 v2) {
@@ -200,7 +200,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple3<@Nullable T1, @Nullable T2, @Nullable T3> extends Tuple2<T1, T2> {
+	class Tuple3<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object> extends Tuple2<T1, T2> {
 		final T3 v3;
 
 		private Tuple3(T1 v1, T2 v2, T3 v3) {
@@ -238,7 +238,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple4<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4> extends Tuple3<T1, T2, T3> {
+	class Tuple4<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object> extends Tuple3<T1, T2, T3> {
 		final T4 v4;
 
 		private Tuple4(T1 v1, T2 v2, T3 v3, T4 v4) {
@@ -277,7 +277,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple5<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5> extends Tuple4<T1, T2, T3, T4> {
+	class Tuple5<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object> extends Tuple4<T1, T2, T3, T4> {
 		final T5 v5;
 
 		private Tuple5(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5) {
@@ -317,7 +317,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple6<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6> extends Tuple5<T1, T2, T3, T4, T5> {
+	class Tuple6<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object> extends Tuple5<T1, T2, T3, T4, T5> {
 		final T6 v6;
 
 		private Tuple6(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5, T6 v6) {
@@ -358,7 +358,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple7<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7> extends Tuple6<T1, T2, T3, T4, T5, T6> {
+	class Tuple7<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object> extends Tuple6<T1, T2, T3, T4, T5, T6> {
 		final T7 v7;
 
 		private Tuple7(
@@ -408,7 +408,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple8<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7, @Nullable T8> extends Tuple7<T1, T2, T3, T4, T5, T6, T7> {
+	class Tuple8<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object, T8 extends @Nullable Object> extends Tuple7<T1, T2, T3, T4, T5, T6, T7> {
 		final T8 v8;
 
 		private Tuple8(

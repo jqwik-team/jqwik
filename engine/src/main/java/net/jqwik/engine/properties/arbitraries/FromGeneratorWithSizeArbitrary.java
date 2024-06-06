@@ -7,9 +7,9 @@ import net.jqwik.api.support.*;
 
 public class FromGeneratorWithSizeArbitrary<T> implements Arbitrary<T> {
 
-	private final IntFunction<RandomGenerator<T>> supplier;
+	private final IntFunction<? extends RandomGenerator<T>> supplier;
 
-	public FromGeneratorWithSizeArbitrary(IntFunction<RandomGenerator<T>> generatorSupplier) {
+	public FromGeneratorWithSizeArbitrary(IntFunction<? extends RandomGenerator<T>> generatorSupplier) {
 		this.supplier = generatorSupplier;
 	}
 

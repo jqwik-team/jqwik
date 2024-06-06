@@ -174,12 +174,12 @@ public class RandomGenerators {
 		return samplesFromShrinkables(shrinkables);
 	}
 
-	public static <T> RandomGenerator<T> frequency(List<Tuple2<Integer, T>> frequencies) {
+	public static <T> RandomGenerator<T> frequency(List<? extends Tuple2<Integer, ? extends T>> frequencies) {
 		return new FrequencyGenerator<>(frequencies);
 	}
 
 	public static <T> RandomGenerator<T> frequencyOf(
-			List<Tuple2<Integer, Arbitrary<T>>> frequencies,
+			List<? extends Tuple2<Integer, ? extends Arbitrary<T>>> frequencies,
 			int genSize,
 			boolean withEmbeddedEdgeCases
 	) {

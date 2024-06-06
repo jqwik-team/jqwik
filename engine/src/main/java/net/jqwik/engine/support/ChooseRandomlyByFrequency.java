@@ -11,7 +11,7 @@ public class ChooseRandomlyByFrequency<T> implements Function<Random, T> {
 	private int size = 0;
 	private List<T> valuesToChooseFrom;
 
-	public ChooseRandomlyByFrequency(List<Tuple.Tuple2<Integer, T>> frequencies) {
+	public ChooseRandomlyByFrequency(List<? extends Tuple.Tuple2<Integer, ? extends T>> frequencies) {
 		calculateUpperBorders(frequencies);
 		if (size <= 0) {
 			throw new JqwikException(String.format(
@@ -25,11 +25,11 @@ public class ChooseRandomlyByFrequency<T> implements Function<Random, T> {
 		return valuesToChooseFrom;
 	}
 
-	private void calculateUpperBorders(List<Tuple.Tuple2<Integer, T>> frequencies) {
+	private void calculateUpperBorders(List<? extends Tuple.Tuple2<Integer, ? extends T>> frequencies) {
 		List<T> values = new ArrayList<>(frequencies.size());
 		// Zero-frequency elements are possible, so we start with a list, and transform to array later
 		List<Integer> upperBounds = new ArrayList<>(frequencies.size());
-		for (Tuple.Tuple2<Integer, T> tuple : frequencies) {
+		for (Tuple.Tuple2<Integer, ? extends T> tuple : frequencies) {
 			int frequency = tuple.get1();
 			if (frequency <= 0)
 				continue;

@@ -6,7 +6,7 @@ import java.util.stream.*;
 
 import com.google.errorprone.annotations.*;
 import org.apiguardian.api.*;
-import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.*;
 
 import net.jqwik.api.arbitraries.*;
 
@@ -20,7 +20,7 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = STABLE, since = "1.0")
 @CheckReturnValue
-public interface Arbitrary<@Nullable T> {
+public interface Arbitrary<T extends @Nullable Object> {
 
 	@API(status = INTERNAL)
 	abstract class ArbitraryFacade {

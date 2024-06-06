@@ -16,6 +16,8 @@ import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.stateful.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 
 /**
@@ -24,12 +26,12 @@ import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
-	public <T> Arbitrary<T> just(T value) {
+	public <T extends @Nullable Object> Arbitrary<T> just(T value) {
 		return new JustArbitrary<>(value);
 	}
 
 	@Override
-	public <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> choices) {
+	public <T extends @Nullable Object> Arbitrary<T> oneOf(Collection<? extends Arbitrary<? extends T>> choices) {
 		return new OneOfArbitrary<>(choices);
 	}
 
@@ -39,8 +41,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> frequencyOf(List<Tuple.Tuple2<Integer, Arbitrary<T>>> frequencies) {
-		List<Tuple.Tuple2<Integer, Arbitrary<T>>> aboveZeroFrequencies =
+	public <T> Arbitrary<T> frequencyOf(List<? extends Tuple.Tuple2<Integer, ? extends Arbitrary<T>>> frequencies) {
+		List<Tuple.Tuple2<Integer, ? extends Arbitrary<T>>> aboveZeroFrequencies =
 			frequencies.stream().filter(f -> f.get1() > 0).collect(Collectors.toList());
 
 		if (aboveZeroFrequencies.size() == 1) {
@@ -105,12 +107,12 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier) {
+	public <T> Arbitrary<T> lazy(Supplier<? extends Arbitrary<T>> arbitrarySupplier) {
 		return new LazyArbitrary<>(arbitrarySupplier);
 	}
 
 	@Override
-	public <T> Arbitrary<T> lazyOf(List<Supplier<Arbitrary<T>>> suppliers) {
+	public <T> Arbitrary<T> lazyOf(List<? extends Supplier<? extends Arbitrary<T>>> suppliers) {
 		int hashIdentifier = calculateIdentifier(suppliers.size());
 		return LazyOfArbitrary.of(hashIdentifier, suppliers);
 	}
@@ -142,12 +144,12 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> fromGenerator(IntFunction<RandomGenerator<T>> generatorSupplier) {
+	public <T> Arbitrary<T> fromGenerator(IntFunction<? extends RandomGenerator<T>> generatorSupplier) {
 		return new FromGeneratorWithSizeArbitrary<>(generatorSupplier);
 	}
 
 	@Override
-	public <T> Arbitrary<T> frequency(List<Tuple.Tuple2<Integer, T>> frequencies) {
+	public <T> Arbitrary<T> frequency(List<? extends Tuple.Tuple2<Integer, T>> frequencies) {
 		List<Tuple.Tuple2<Integer, T>> frequenciesAbove0 = frequencies.stream()
 																	  .filter(f -> f.get1() > 0)
 																	  .collect(Collectors.toList());
@@ -259,9 +261,9 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> recursive(
-		Supplier<Arbitrary<T>> base,
-		Function<Arbitrary<T>, Arbitrary<T>> recur,
+	public <T extends @Nullable Object> Arbitrary<T> recursive(
+		Supplier<? extends Arbitrary<T>> base,
+		Function<? super Arbitrary<T>, ? extends Arbitrary<T>> recur,
 		int minDepth,
 		int maxDepth
 	) {
@@ -285,8 +287,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	private <T> Arbitrary<T> recursive(
-		Supplier<Arbitrary<T>> base,
-		Function<Arbitrary<T>, Arbitrary<T>> recur,
+		Supplier<? extends Arbitrary<T>> base,
+		Function<? super Arbitrary<T>, ? extends Arbitrary<T>> recur,
 		int depth
 	) {
 		return new RecursiveArbitrary<>(base, recur, depth);

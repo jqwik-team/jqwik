@@ -24,13 +24,13 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> Arbitrary<T> of(int hashIdentifier, List<Supplier<Arbitrary<T>>> suppliers) {
+	public static <T> Arbitrary<T> of(int hashIdentifier, List<? extends Supplier<? extends Arbitrary<T>>> suppliers) {
 		// It's important for good shrinking to work that the same arbitrary usage is handled by the same arbitrary instance
 		LazyOfArbitrary<?> arbitrary = arbitrariesStore().get().computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
 		return (Arbitrary<T>) arbitrary;
 	}
 
-	private final List<Supplier<Arbitrary<T>>> suppliers;
+	private final List<? extends Supplier<? extends Arbitrary<T>>> suppliers;
 
 	private final Deque<Set<LazyOfShrinkable<T>>> generatedParts = new ArrayDeque<>();
 
@@ -45,7 +45,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		}
 	}
 
-	public LazyOfArbitrary(List<Supplier<Arbitrary<T>>> suppliers) {
+	public LazyOfArbitrary(List<? extends Supplier<? extends Arbitrary<T>>> suppliers) {
 		this.suppliers = suppliers;
 	}
 

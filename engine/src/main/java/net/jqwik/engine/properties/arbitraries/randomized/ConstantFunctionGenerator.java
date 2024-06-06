@@ -11,7 +11,7 @@ public class ConstantFunctionGenerator<F, R> extends AbstractFunctionGenerator<F
 	public ConstantFunctionGenerator(
 		Class<F> functionalType,
 		RandomGenerator<R> resultGenerator,
-		List<Tuple2<Predicate<List<Object>>, Function<List<Object>, R>>> conditions
+		List<Tuple2<Predicate<? super List<?>>, Function<? super List<?>, ? extends R>>> conditions
 	) {
 		super(functionalType, resultGenerator, conditions);
 	}

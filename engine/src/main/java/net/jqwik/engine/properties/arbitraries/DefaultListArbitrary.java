@@ -12,7 +12,7 @@ import net.jqwik.engine.properties.shrinking.*;
 
 import org.jspecify.annotations.*;
 
-public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>> implements ListArbitrary<T> {
+public class DefaultListArbitrary<T extends @Nullable Object> extends MultivalueArbitraryBase<T, List<T>> implements ListArbitrary<T> {
 
 	public DefaultListArbitrary(Arbitrary<T> elementArbitrary) {
 		super(elementArbitrary);
@@ -68,9 +68,9 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 
 	// TODO: Remove duplication with DefaultSetArbitrary.flatMapEach()
 	@Override
-	public <U> Arbitrary<List<U>> flatMapEach(BiFunction<List<T>, T, Arbitrary<U>> flatMapper) {
+	public <U> Arbitrary<List<U>> flatMapEach(BiFunction<? super List<? extends T>, ? super T, ? extends Arbitrary<U>> flatMapper) {
 		return this.flatMap(elements -> {
-			List<Arbitrary<U>> arbitraries =
+			List<? extends Arbitrary<U>> arbitraries =
 				elements.stream()
 						.map(e -> flatMapper.apply(elements, e))
 						.collect(Collectors.toList());
@@ -79,7 +79,7 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 	}
 
 	@Override
-	public ListArbitrary<@Nullable T> uniqueElements(Function<@Nullable T, Object> by) {
+	public ListArbitrary<T> uniqueElements(Function<? super T, ?> by) {
 		FeatureExtractor<T> featureExtractor = by::apply;
 		return (ListArbitrary<T>) super.uniqueElements(featureExtractor);
 	}

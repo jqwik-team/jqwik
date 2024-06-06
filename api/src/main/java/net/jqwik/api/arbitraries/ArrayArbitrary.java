@@ -12,9 +12,11 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Fluent interface to add functionality to arbitraries that generate instances
  * of Arrays
+ *
+ * @param <A> type of the resulting array class
  */
 @API(status = MAINTAINED, since = "1.4.0")
-public interface ArrayArbitrary<@Nullable T, A> extends StreamableArbitrary<T, A> {
+public interface ArrayArbitrary<T extends @Nullable Object, A> extends StreamableArbitrary<T, A> {
 
 	/**
 	 * Fix the size to {@code size}.
@@ -76,6 +78,6 @@ public interface ArrayArbitrary<@Nullable T, A> extends StreamableArbitrary<T, A
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	ArrayArbitrary<T, A> uniqueElements(Function<T, Object> by);
+	ArrayArbitrary<T, A> uniqueElements(Function<? super T, ?> by);
 
 }

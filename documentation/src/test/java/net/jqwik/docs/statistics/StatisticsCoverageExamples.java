@@ -57,7 +57,10 @@ class StatisticsCoverageExamples {
 		Statistics.collect(anInt);
 
 		Statistics.coverage(coverage -> {
-			Predicate<List<Integer>> isZero = params -> params.get(0) == 0;
+			// Note: coverage.checkQuery is untuped as it requires Predicate that must support **any** object
+			// So we can't have Predicate<List<Integer>> here as checkQuery would not be able to call our
+			// predicate with Object values.
+			Predicate<List<?>> isZero = params -> (Integer) params.get(0) == 0;
 			coverage.checkQuery(isZero).percentage(p -> p > 5.0);
 		});
 	}

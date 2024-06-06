@@ -7,6 +7,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -24,7 +26,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see net.jqwik.api.domains.DomainContext
  */
 @API(status = MAINTAINED, since = "1.2")
-public interface TypeArbitrary<T> extends Arbitrary<T> {
+public interface TypeArbitrary<T extends @Nullable Object> extends Arbitrary<T> {
 
 	/**
 	 * Add public constructors of class {@code T} to be used

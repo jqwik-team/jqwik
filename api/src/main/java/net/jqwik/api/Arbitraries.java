@@ -25,13 +25,13 @@ public class Arbitraries {
 			implementation = FacadeLoader.load(ArbitrariesFacade.class);
 		}
 
-		public abstract <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> all);
+		public abstract <T extends @Nullable Object> Arbitrary<T> oneOf(Collection<? extends Arbitrary<? extends T>> all);
 
 		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary);
 
-		public abstract <T> Arbitrary<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies);
+		public abstract <T extends @Nullable Object> Arbitrary<T> frequencyOf(List<? extends Tuple2<Integer, ? extends Arbitrary<T>>> frequencies);
 
-		public abstract <@Nullable T> Arbitrary<T> just(@Nullable T value);
+		public abstract <T extends @Nullable Object> Arbitrary<T> just(T value);
 
 		public abstract IntegerArbitrary integers();
 
@@ -57,36 +57,36 @@ public class Arbitraries {
 
 		public abstract <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver);
 
-		public abstract <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier);
+		public abstract <T extends @Nullable Object> Arbitrary<T> lazy(Supplier<? extends Arbitrary<T>> arbitrarySupplier);
 
 		public abstract <T> TypeArbitrary<T> forType(Class<T> targetType);
 
-		public abstract <K, V> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
+		public abstract <K extends @Nullable Object, V extends @Nullable Object> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 
-		public abstract <K, V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
+		public abstract <K extends @Nullable Object, V extends @Nullable Object> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 
-		public abstract <T> Arbitrary<T> recursive(
-			Supplier<Arbitrary<T>> base,
-			Function<Arbitrary<T>, Arbitrary<T>> recur,
+		public abstract <T extends @Nullable Object> Arbitrary<T> recursive(
+			Supplier<? extends Arbitrary<T>> base,
+			Function<? super Arbitrary<T>, ? extends Arbitrary<T>> recur,
 			int minDepth,
 			int maxDepth
 		);
 
-		public abstract <T> Arbitrary<T> lazyOf(List<Supplier<Arbitrary<T>>> suppliers);
+		public abstract <T extends @Nullable Object> Arbitrary<T> lazyOf(List<? extends Supplier<? extends Arbitrary<T>>> suppliers);
 
 		public abstract <T> TraverseArbitrary<T> traverse(Class<T> targetType, Traverser traverser);
 
 		public abstract Arbitrary<Character> of(char[] chars);
 
-		public abstract <T> Arbitrary<T> of(Collection<T> values);
+		public abstract <T extends @Nullable Object> Arbitrary<T> of(Collection<T> values);
 
-		public abstract <T> Arbitrary<T> create(Supplier<T> supplier);
+		public abstract <T extends @Nullable Object> Arbitrary<T> create(Supplier<T> supplier);
 
-		public abstract <T> Arbitrary<List<T>> shuffle(List<T> values);
+		public abstract <T extends @Nullable Object> Arbitrary<List<T>> shuffle(List<T> values);
 
-		public abstract <T> Arbitrary<T> fromGenerator(IntFunction<RandomGenerator<T>> generatorSupplier);
+		public abstract <T extends @Nullable Object> Arbitrary<T> fromGenerator(IntFunction<? extends RandomGenerator<T>> generatorSupplier);
 
-		public abstract <T> Arbitrary<T> frequency(List<Tuple2<Integer, T>> frequencies);
+		public abstract <T extends @Nullable Object> Arbitrary<T> frequency(List<? extends Tuple2<Integer, T>> frequencies);
 	}
 
 	private Arbitraries() {
@@ -99,7 +99,7 @@ public class Arbitraries {
 	 * @param <T>       The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
+	public static <T extends @Nullable Object> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
 		return fromGeneratorWithSize(ignore -> generator);
 	}
 
@@ -111,7 +111,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.8.0")
-	public static <T> Arbitrary<T> fromGeneratorWithSize(IntFunction<RandomGenerator<T>> generatorSupplier) {
+	public static <T extends @Nullable Object> Arbitrary<T> fromGeneratorWithSize(IntFunction<RandomGenerator<T>> generatorSupplier) {
 		return ArbitrariesFacade.implementation.fromGenerator(generatorSupplier);
 	}
 
@@ -123,7 +123,7 @@ public class Arbitraries {
 	 * @param <T>       The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> randomValue(Function<Random, T> generator) {
+	public static <T extends @Nullable Object> Arbitrary<T> randomValue(Function<Random, T> generator) {
 		IntFunction<RandomGenerator<T>> generatorSupplier = ignore -> random -> Shrinkable.unshrinkable(generator.apply(random));
 		return fromGeneratorWithSize(generatorSupplier);
 	}
@@ -153,7 +153,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@SafeVarargs
-	public static <T> Arbitrary<T> of(T... values) {
+	public static <T extends @Nullable Object> Arbitrary<T> of(T... values) {
 		return of(Arrays.asList(values));
 	}
 
@@ -172,7 +172,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.1")
-	public static <@Nullable T> Arbitrary<T> of(Collection<T> values) {
+	public static <T extends @Nullable Object> Arbitrary<T> of(Collection<T> values) {
 		return ArbitrariesFacade.implementation.of(values);
 	}
 
@@ -192,7 +192,7 @@ public class Arbitraries {
 	 */
 	@API(status = MAINTAINED, since = "1.3.0")
 	@SafeVarargs
-	public static <T> Arbitrary<T> ofSuppliers(Supplier<T>... valueSuppliers) {
+	public static <T extends @Nullable Object> Arbitrary<T> ofSuppliers(Supplier<T>... valueSuppliers) {
 		return of(valueSuppliers).map(Supplier::get);
 	}
 
@@ -211,7 +211,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.1")
-	public static <T> Arbitrary<T> ofSuppliers(Collection<Supplier<T>> valueSuppliers) {
+	public static <T extends @Nullable Object> Arbitrary<T> ofSuppliers(Collection<Supplier<T>> valueSuppliers) {
 		return of(valueSuppliers).map(Supplier::get);
 	}
 
@@ -247,7 +247,7 @@ public class Arbitraries {
 	 */
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
-	public static <T> Arbitrary<T> oneOf(Arbitrary<? extends T> first, Arbitrary<? extends T>... rest) {
+	public static <T extends @Nullable Object> Arbitrary<T> oneOf(Arbitrary<? extends T> first, Arbitrary<? extends T>... rest) {
 		List<Arbitrary<? extends T>> all = new ArrayList<>();
 		all.add(first);
 		for (Arbitrary<?> arbitrary : rest) {
@@ -264,7 +264,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> Arbitrary<T> oneOf(Collection<Arbitrary<? extends T>> choices) {
+	public static <T extends @Nullable Object> Arbitrary<T> oneOf(Collection<? extends Arbitrary<? extends T>> choices) {
 		if (choices.isEmpty()) {
 			String message = "oneOf() must not be called with no choices";
 			throw new JqwikException(message);
@@ -285,7 +285,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@SafeVarargs
-	public static <T> Arbitrary<T> frequency(Tuple2<Integer, T>... frequencies) {
+	public static <T extends @Nullable Object> Arbitrary<T> frequency(Tuple2<Integer, T>... frequencies) {
 		return frequency(Arrays.asList(frequencies));
 	}
 
@@ -297,7 +297,7 @@ public class Arbitraries {
 	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <@Nullable T> Arbitrary<T> frequency(List<Tuple2<Integer, T>> frequencies) {
+	public static <T extends @Nullable Object> Arbitrary<T> frequency(List<? extends Tuple2<Integer, T>> frequencies) {
 		return ArbitrariesFacade.implementation.frequency(frequencies);
 	}
 
@@ -311,7 +311,7 @@ public class Arbitraries {
 	 */
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
-	public static <T> Arbitrary<T> frequencyOf(Tuple2<Integer, Arbitrary<? extends T>>... frequencies) {
+	public static <T extends @Nullable Object> Arbitrary<T> frequencyOf(Tuple2<Integer, Arbitrary<? extends T>>... frequencies) {
 		List<Tuple2<Integer, Arbitrary<T>>> all = new ArrayList<>();
 		for (Tuple2<Integer, Arbitrary<? extends T>> frequency : frequencies) {
 			all.add(Tuple.of(frequency.get1(), (Arbitrary<T>) frequency.get2()));
@@ -327,7 +327,7 @@ public class Arbitraries {
 	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <@Nullable T> Arbitrary<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies) {
+	public static <T extends @Nullable Object> Arbitrary<T> frequencyOf(List<? extends Tuple2<Integer, ? extends Arbitrary<T>>> frequencies) {
 		// Simple flatMapping is not enough because of configurations
 		return ArbitrariesFacade.implementation.frequencyOf(frequencies);
 	}
@@ -454,7 +454,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.1.1")
-	public static <T> Arbitrary<T> create(Supplier<T> supplier) {
+	public static <T extends @Nullable Object> Arbitrary<T> create(Supplier<T> supplier) {
 		return ArbitrariesFacade.implementation.create(supplier);
 	}
 
@@ -468,7 +468,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@SafeVarargs
-	public static <T> Arbitrary<List<T>> shuffle(T... values) {
+	public static <T extends @Nullable Object> Arbitrary<List<T>> shuffle(T... values) {
 		return shuffle(Arrays.asList(values));
 	}
 
@@ -481,7 +481,7 @@ public class Arbitraries {
 	 * @param <T>    The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<List<T>> shuffle(List<T> values) {
+	public static <T extends @Nullable Object> Arbitrary<List<T>> shuffle(List<T> values) {
 		return ArbitrariesFacade.implementation.shuffle(values);
 	}
 
@@ -591,7 +591,7 @@ public class Arbitraries {
 	 * @see #recursive(Supplier, Function, int)
 	 * @see #lazyOf(Supplier, Supplier[])
 	 */
-	public static <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier) {
+	public static <T extends @Nullable Object> Arbitrary<T> lazy(Supplier<? extends Arbitrary<T>> arbitrarySupplier) {
 		return ArbitrariesFacade.implementation.lazy(arbitrarySupplier);
 	}
 
@@ -609,9 +609,9 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 * @see #lazy(Supplier)
 	 */
-	public static <T> Arbitrary<T> recursive(
-		Supplier<Arbitrary<T>> base,
-		Function<Arbitrary<T>, Arbitrary<T>> recur,
+	public static <T extends @Nullable Object> Arbitrary<T> recursive(
+		Supplier<? extends Arbitrary<T>> base,
+		Function<? super Arbitrary<T>, ? extends Arbitrary<T>> recur,
 		int depth
 	) {
 		return ArbitrariesFacade.implementation.recursive(base, recur, depth, depth);
@@ -633,9 +633,9 @@ public class Arbitraries {
 	 * @see #lazy(Supplier)
 	 */
 	@API(status = MAINTAINED, since = "1.6.4")
-	public static <T> Arbitrary<T> recursive(
-		Supplier<Arbitrary<T>> base,
-		Function<Arbitrary<T>, Arbitrary<T>> recur,
+	public static <T extends @Nullable Object> Arbitrary<T> recursive(
+		Supplier<? extends Arbitrary<T>> base,
+		Function<? super Arbitrary<T>, ? extends Arbitrary<T>> recur,
 		int minDepth,
 		int maxDepth
 	) {
@@ -671,7 +671,7 @@ public class Arbitraries {
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	@API(status = MAINTAINED, since = "1.3.4")
-	public static <T> Arbitrary<T> lazyOf(Supplier<Arbitrary<? extends T>> first, Supplier<Arbitrary<? extends T>>... rest) {
+	public static <T extends @Nullable Object> Arbitrary<T> lazyOf(Supplier<Arbitrary<? extends T>> first, Supplier<Arbitrary<? extends T>>... rest) {
 		List<Supplier<Arbitrary<T>>> all = new ArrayList<>();
 		all.add(() -> (Arbitrary<T>) first.get());
 		for (Supplier<Arbitrary<? extends T>> arbitrarySupplier : rest) {

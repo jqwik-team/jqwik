@@ -8,7 +8,7 @@ import net.jqwik.engine.support.*;
 
 class FrequencyGenerator<T> extends ChooseRandomlyByFrequency<T> implements RandomGenerator<T> {
 
-	FrequencyGenerator(List<Tuple.Tuple2<Integer, T>> frequencies) {
+	FrequencyGenerator(List<? extends Tuple.Tuple2<Integer, ? extends T>> frequencies) {
 		super(frequencies);
 	}
 

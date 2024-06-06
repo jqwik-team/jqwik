@@ -7,6 +7,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -14,7 +16,7 @@ import static org.apiguardian.api.API.Status.*;
  * of type {@linkplain Map}
  */
 @API(status = MAINTAINED, since = "1.3.2")
-public interface MapArbitrary<K, V> extends Arbitrary<Map<K, V>>, SizableArbitrary<Map<K, V>> {
+public interface MapArbitrary<K extends @Nullable Object, V extends @Nullable Object> extends Arbitrary<Map<K, V>>, SizableArbitrary<Map<K, V>> {
 
 	/**
 	 * Fix the size to {@code size}.

@@ -1,7 +1,7 @@
 package net.jqwik.kotlin
 
-import net.jqwik.api.Example
-import net.jqwik.api.ForAll
+import net.jqwik.api.*
+import net.jqwik.kotlin.api.any
 import net.jqwik.kotlin.api.anySubset
 import net.jqwik.kotlin.api.anyValue
 import net.jqwik.kotlin.api.ofSize

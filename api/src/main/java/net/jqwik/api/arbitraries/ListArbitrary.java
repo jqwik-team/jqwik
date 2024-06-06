@@ -16,7 +16,7 @@ import static org.apiguardian.api.API.Status.*;
  * of type {@linkplain List}
  */
 @API(status = MAINTAINED, since = "1.3.2")
-public interface ListArbitrary<T> extends Arbitrary<List<T>>, StreamableArbitrary<T, List<T>> {
+public interface ListArbitrary<T extends @Nullable Object> extends Arbitrary<List<T>>, StreamableArbitrary<T, List<T>> {
 
 	/**
 	 * Fix the size to {@code size}.
@@ -72,7 +72,7 @@ public interface ListArbitrary<T> extends Arbitrary<List<T>>, StreamableArbitrar
 	 * @return arbitrary of a list of Us
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	<U> Arbitrary<List<U>> flatMapEach(BiFunction<List<T>, T, Arbitrary<U>> flatMapper);
+	<U> Arbitrary<List<U>> flatMapEach(BiFunction<? super List<? extends T>, ? super T, ? extends Arbitrary<U>> flatMapper);
 
 	/**
 	 * Add the constraint that elements of the generated list must be unique,
@@ -100,5 +100,5 @@ public interface ListArbitrary<T> extends Arbitrary<List<T>>, StreamableArbitrar
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	ListArbitrary<@Nullable T> uniqueElements(Function<@Nullable T, Object> by);
+	ListArbitrary<T> uniqueElements(Function<? super T, ?> by);
 }

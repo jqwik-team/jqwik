@@ -7,6 +7,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -14,7 +16,7 @@ import static org.apiguardian.api.API.Status.*;
  * of type {@linkplain Stream}
  */
 @API(status = MAINTAINED, since = "1.3.2")
-public interface StreamArbitrary<T> extends Arbitrary<Stream<T>>, StreamableArbitrary<T, Stream<T>> {
+public interface StreamArbitrary<T extends @Nullable Object> extends Arbitrary<Stream<T>>, StreamableArbitrary<T, Stream<T>> {
 
 	/**
 	 * Fix the size to {@code size}.
@@ -76,6 +78,6 @@ public interface StreamArbitrary<T> extends Arbitrary<Stream<T>>, StreamableArbi
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	StreamArbitrary<T> uniqueElements(Function<T, Object> by);
+	StreamArbitrary<T> uniqueElements(Function<? super T, ?> by);
 
 }

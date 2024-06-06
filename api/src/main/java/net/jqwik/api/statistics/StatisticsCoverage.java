@@ -80,7 +80,7 @@ public interface StatisticsCoverage {
 	 * @param query A {@link Predicate} that takes the collected values as parameter
 	 *              and returns true if the specific values shall be counted.
 	 */
-	CoverageChecker checkQuery(Predicate<? extends List<?>> query);
+	CoverageChecker checkQuery(Predicate<? super List<?>> query);
 
 	/**
 	 * Match collected values against a regular expression.

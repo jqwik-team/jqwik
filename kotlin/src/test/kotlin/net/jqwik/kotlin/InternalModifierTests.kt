@@ -1,12 +1,10 @@
 package net.jqwik.kotlin
 
-import net.jqwik.api.ForAll
-import net.jqwik.api.Property
-import net.jqwik.api.PropertyDefaults
-import net.jqwik.api.Provide
+import net.jqwik.api.*
 import net.jqwik.api.lifecycle.AfterContainer
 import net.jqwik.api.lifecycle.AfterProperty
 import net.jqwik.kotlin.api.any
+import kotlin.random.Random
 
 @PropertyDefaults(tries = 10)
 internal class InternalModifierTests {

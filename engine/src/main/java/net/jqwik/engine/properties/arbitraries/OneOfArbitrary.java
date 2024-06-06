@@ -16,8 +16,9 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 	private final boolean isGeneratorMemoizable;
 
 	@SuppressWarnings("unchecked")
-	public OneOfArbitrary(Collection<Arbitrary<? extends T>> choices) {
+	public OneOfArbitrary(Collection<? extends Arbitrary<? extends T>> choices) {
 		for (Arbitrary<? extends T> choice : choices) {
+			// TODO: double-check cast
 			all.add((Arbitrary<T>) choice);
 		}
 		isGeneratorMemoizable = all.stream().allMatch(Arbitrary::isGeneratorMemoizable);
@@ -39,7 +40,7 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 	}
 
 	private RandomGenerator<T> rawGeneration(int genSize, boolean withEmbeddedEdgeCases) {
-		List<Tuple2<Integer, Arbitrary<T>>> frequencies =
+		List<Tuple2<Integer, ? extends Arbitrary<T>>> frequencies =
 			all.stream()
 			   .map(a -> Tuple.of(1, a))
 			   .collect(Collectors.toList());

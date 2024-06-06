@@ -68,7 +68,7 @@ public class Combinators {
 			Arbitrary<T8> a8
 		);
 
-		public abstract <T> ListCombinator<T> combineList(List<Arbitrary<T>> listOfArbitraries);
+		public abstract <T> ListCombinator<T> combineList(List<? extends Arbitrary<T>> listOfArbitraries);
 	}
 
 	private Combinators() {
@@ -79,7 +79,7 @@ public class Combinators {
 	 *
 	 * @return Combinator2 instance which can be evaluated using {@linkplain Combinator2#as}
 	 */
-	public static <@Nullable T1, @Nullable T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
+	public static <T1 extends @Nullable Object, T2 extends @Nullable Object> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
 		return CombinatorsFacade.implementation.combine2(a1, a2);
 	}
 
@@ -88,7 +88,7 @@ public class Combinators {
 	 *
 	 * @return Combinator3 instance which can be evaluated using {@linkplain Combinator3#as}
 	 */
-	public static <@Nullable T1, @Nullable T2, @Nullable T3> Combinator3<T1, T2, T3> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3) {
+	public static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object> Combinator3<T1, T2, T3> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3) {
 		return CombinatorsFacade.implementation.combine3(a1, a2, a3);
 	}
 
@@ -97,7 +97,7 @@ public class Combinators {
 	 *
 	 * @return Combinator4 instance which can be evaluated using {@linkplain Combinator4#as}
 	 */
-	public static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4> Combinator4<T1, T2, T3, T4> combine(
+	public static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object> Combinator4<T1, T2, T3, T4> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 		Arbitrary<T4> a4
 	) {
@@ -109,7 +109,7 @@ public class Combinators {
 	 *
 	 * @return Combinator5 instance which can be evaluated using {@linkplain Combinator5#as}
 	 */
-	public static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5> Combinator5<T1, T2, T3, T4, T5> combine(
+	public static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object> Combinator5<T1, T2, T3, T4, T5> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 		Arbitrary<T4> a4, Arbitrary<T5> a5
 	) {
@@ -121,7 +121,7 @@ public class Combinators {
 	 *
 	 * @return Combinator6 instance which can be evaluated using {@linkplain Combinator6#as}
 	 */
-	public static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6> Combinator6<T1, T2, T3, T4, T5, T6> combine(
+	public static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object> Combinator6<T1, T2, T3, T4, T5, T6> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 		Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6
 	) {
@@ -133,7 +133,7 @@ public class Combinators {
 	 *
 	 * @return Combinator7 instance which can be evaluated using {@linkplain Combinator7#as}
 	 */
-	public static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7> Combinator7<T1, T2, T3, T4, T5, T6, T7> combine(
+	public static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object> Combinator7<T1, T2, T3, T4, T5, T6, T7> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2,
 		Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7
 	) {
@@ -145,7 +145,7 @@ public class Combinators {
 	 *
 	 * @return Combinator8 instance which can be evaluated using {@linkplain Combinator8#as}
 	 */
-	public static <@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7, @Nullable T8> Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> combine(
+	public static <T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object, T8 extends @Nullable Object> Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2,
 		Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7, Arbitrary<T8> a8
 	) {
@@ -157,14 +157,14 @@ public class Combinators {
 	 *
 	 * @return ListCombinator instance which can be evaluated using {@linkplain ListCombinator#as}
 	 */
-	public static <@Nullable T> ListCombinator<T> combine(List<Arbitrary<T>> listOfArbitraries) {
+	public static <T extends @Nullable Object> ListCombinator<T> combine(List<? extends Arbitrary<T>> listOfArbitraries) {
 		return CombinatorsFacade.implementation.combineList(listOfArbitraries);
 	}
 
 	/**
 	 * Combinator for two values.
 	 */
-	public interface Combinator2<@Nullable T1, @Nullable T2> {
+	public interface Combinator2<T1 extends @Nullable Object, T2 extends @Nullable Object> {
 
 		/**
 		 * Combine two values.
@@ -173,7 +173,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<@Nullable R> Arbitrary<R> as(F2<T1, T2, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F2<T1, T2, R> combinator);
 
 		/**
 		 * Filter two values to only let them pass if the predicate is true.
@@ -191,7 +191,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <@Nullable R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -199,7 +199,7 @@ public class Combinators {
 	/**
 	 * Combinator for three values.
 	 */
-	public interface Combinator3<@Nullable T1, @Nullable T2, @Nullable T3> {
+	public interface Combinator3<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object> {
 
 		/**
 		 * Combine three values.
@@ -208,7 +208,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<@Nullable R> Arbitrary<R> as(F3<T1, T2, T3, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F3<T1, T2, T3, R> combinator);
 
 		/**
 		 * Filter three values to only let them pass if the predicate is true.
@@ -226,7 +226,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <@Nullable R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -235,7 +235,7 @@ public class Combinators {
 	/**
 	 * Combinator for four values.
 	 */
-	public interface Combinator4<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4> {
+	public interface Combinator4<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object> {
 
 		/**
 		 * Combine four values.
@@ -244,7 +244,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<@Nullable R> Arbitrary<R> as(F4<T1, T2, T3, T4, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F4<T1, T2, T3, T4, R> combinator);
 
 		/**
 		 * Filter four values to only let them pass if the predicate is true.
@@ -262,7 +262,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <@Nullable R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -271,7 +271,7 @@ public class Combinators {
 	/**
 	 * Combinator for five values.
 	 */
-	public interface Combinator5<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5> {
+	public interface Combinator5<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object> {
 
 		/**
 		 * Combine five values.
@@ -280,7 +280,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<@Nullable R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, R> combinator);
 
 		/**
 		 * Filter five values to only let them pass if the predicate is true.
@@ -298,7 +298,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <@Nullable R> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -306,7 +306,7 @@ public class Combinators {
 	/**
 	 * Combinator for six values.
 	 */
-	public interface Combinator6<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6> {
+	public interface Combinator6<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object> {
 
 		/**
 		 * Combine six values.
@@ -315,7 +315,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<@Nullable R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, R> combinator);
 
 		/**
 		 * Filter six values to only let them pass if the predicate is true.
@@ -333,7 +333,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <@Nullable R> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -342,7 +342,7 @@ public class Combinators {
 	/**
 	 * Combinator for seven values.
 	 */
-	public interface Combinator7<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7> {
+	public interface Combinator7<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object> {
 
 		/**
 		 * Combine seven values.
@@ -351,7 +351,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<@Nullable R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator);
 
 		/**
 		 * Filter seven values to only let them pass if the predicate is true.
@@ -369,7 +369,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <@Nullable R> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -378,7 +378,7 @@ public class Combinators {
 	/**
 	 * Combinator for eight values.
 	 */
-	public interface Combinator8<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7, @Nullable T8> {
+	public interface Combinator8<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object, T8 extends @Nullable Object> {
 
 		/**
 		 * Combine eight values.
@@ -387,7 +387,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<@Nullable R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator);
 
 		/**
 		 * Filter eight values to only let them pass if the predicate is true.
@@ -405,7 +405,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <@Nullable R> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -422,7 +422,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<@Nullable R> Arbitrary<R> as(Function<List<T>, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(Function<List<T>, R> combinator);
 
 		/**
 		 * Filter list of values to only let them pass if the predicate is true.
@@ -440,50 +440,50 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <@Nullable R> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F2<@Nullable T1, @Nullable T2, @Nullable R> {
+	public interface F2<T1 extends @Nullable Object, T2 extends @Nullable Object, @Nullable R> {
 		R apply(T1 t1, T2 t2);
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F3<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable R> {
+	public interface F3<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, @Nullable R> {
 		R apply(T1 t1, T2 t2, T3 t3);
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F4<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable R> {
+	public interface F4<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, @Nullable R> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4);
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F5<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable R> {
+	public interface F5<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, R extends @Nullable Object> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5);
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F6<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable R> {
+	public interface F6<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, R extends @Nullable Object> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6);
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F7<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7, @Nullable R> {
+	public interface F7<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object, R extends @Nullable Object> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7);
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F8<@Nullable T1, @Nullable T2, @Nullable T3, @Nullable T4, @Nullable T5, @Nullable T6, @Nullable T7, @Nullable T8, @Nullable R> {
+	public interface F8<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object, T8 extends @Nullable Object, R extends @Nullable Object> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8);
 	}
 

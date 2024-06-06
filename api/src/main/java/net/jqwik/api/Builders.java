@@ -53,7 +53,7 @@ public class Builders {
 		 * @param <T>
 		 * @return new {@linkplain CombinableBuilder} instance
 		 */
-		public <@Nullable T> CombinableBuilder<B, T> use(Arbitrary<T> arbitrary) {
+		public <T extends @Nullable Object> CombinableBuilder<B, T> use(Arbitrary<T> arbitrary) {
 			return new CombinableBuilder<>(this, 1.0, arbitrary);
 		}
 
@@ -167,7 +167,7 @@ public class Builders {
 	 *
 	 * @param <B> The builder's type
 	 */
-	public static class CombinableBuilder<B, T> {
+	public static class CombinableBuilder<B, T extends @Nullable Object> {
 		private final BuilderCombinator<B> combinator;
 		private final double probabilityOfUse;
 		private final Arbitrary<T> arbitrary;
@@ -201,7 +201,7 @@ public class Builders {
 		 * @return new {@linkplain BuilderCombinator} instance
 		 */
 		@SuppressWarnings("unchecked")
-		public BuilderCombinator<B> in(BiFunction<B, @Nullable T, B> toFunction) {
+		public BuilderCombinator<B> in(BiFunction<? super B, ? super T, ? extends B> toFunction) {
 			if (probabilityOfUse == 0.0) {
 				return combinator;
 			}
@@ -217,7 +217,7 @@ public class Builders {
 		 * @param setter Use value provided by arbitrary to change a builder's property.
 		 * @return new {@linkplain BuilderCombinator} instance with same embedded builder
 		 */
-		public BuilderCombinator<B> inSetter(BiConsumer<B, T> setter) {
+		public BuilderCombinator<B> inSetter(BiConsumer<? super B, ? super T> setter) {
 			BiFunction<B, T, B> toFunction = (b, t) -> {
 				setter.accept(b, t);
 				return b;

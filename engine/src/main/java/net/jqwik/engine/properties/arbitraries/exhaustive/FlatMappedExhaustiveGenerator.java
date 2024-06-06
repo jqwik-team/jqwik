@@ -10,11 +10,11 @@ import net.jqwik.engine.support.*;
 public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<U> {
 	private final ExhaustiveGenerator<T> baseGenerator;
 	private final long maxCount;
-	private final Function<T, Arbitrary<U>> mapper;
+	private final Function<? super T, ? extends Arbitrary<U>> mapper;
 
 	public static <T, U> Optional<Long> calculateMaxCounts(
 		ExhaustiveGenerator<T> baseGenerator,
-		Function<T, Arbitrary<U>> mapper,
+		Function<? super T, ? extends Arbitrary<U>> mapper,
 		long maxNumberOfSamples
 	) {
 		long choices = 0;
@@ -31,7 +31,7 @@ public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<
 		return Optional.of(choices);
 	}
 
-	public FlatMappedExhaustiveGenerator(ExhaustiveGenerator<T> baseGenerator, long maxCount, Function<T, Arbitrary<U>> mapper) {
+	public FlatMappedExhaustiveGenerator(ExhaustiveGenerator<T> baseGenerator, long maxCount, Function<? super T, ? extends Arbitrary<U>> mapper) {
 		this.baseGenerator = baseGenerator;
 		this.maxCount = maxCount;
 		this.mapper = mapper;
