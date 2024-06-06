@@ -78,6 +78,7 @@ signing {
 tasks.withType(KotlinCompile).configureEach {
 	compilerOptions {
 		freeCompilerArgs = [
+			"-Xnullability-annotations=@org.jspecify.annotations:strict",
 			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
 		]
 		apiVersion = KotlinVersion.KOTLIN_1_9

@@ -52,7 +52,7 @@ public class EdgeCasesSupport {
 		return EdgeCasesSupport.fromShrinkables(shrinkables);
 	}
 
-	public static <T> EdgeCases<T> concatFrom(final List<Arbitrary<T>> arbitraries, int maxEdgeCases) {
+	public static <T> EdgeCases<T> concatFrom(final List<? extends Arbitrary<T>> arbitraries, int maxEdgeCases) {
 		List<Shrinkable<Arbitrary<T>>> shrinkables = new ArrayList<>();
 		for (Arbitrary<T> arbitrary : arbitraries) {
 			shrinkables.add(new ChooseValueShrinkable<>(arbitrary, arbitraries));

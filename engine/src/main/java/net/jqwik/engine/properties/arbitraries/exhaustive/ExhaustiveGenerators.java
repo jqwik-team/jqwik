@@ -97,7 +97,7 @@ public class ExhaustiveGenerators {
 
 	public static <U, T> Optional<ExhaustiveGenerator<U>> flatMap(
 		ExhaustiveGenerator<T> base,
-		Function<T, Arbitrary<U>> mapper,
+		Function<? super T, ? extends Arbitrary<U>> mapper,
 		long maxNumberOfSamples
 	) {
 		Optional<Long> optionalMaxCount = FlatMappedExhaustiveGenerator.calculateMaxCounts(base, mapper, maxNumberOfSamples);

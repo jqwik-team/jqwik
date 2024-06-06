@@ -7,8 +7,8 @@ import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 
 public class RecursiveArbitrary<T> implements Arbitrary<T> {
-	private final Supplier<Arbitrary<T>> base;
-	private final Function<Arbitrary<T>, Arbitrary<T>> recur;
+	private final Supplier<? extends Arbitrary<T>> base;
+	private final Function<? super Arbitrary<T>, ? extends Arbitrary<T>> recur;
 	private final int depth;
 
 	// Not used for exhaustive generation
@@ -16,7 +16,7 @@ public class RecursiveArbitrary<T> implements Arbitrary<T> {
 
 	private boolean isGeneratorMemoizable = true;
 
-	public RecursiveArbitrary(Supplier<Arbitrary<T>> base, Function<Arbitrary<T>, Arbitrary<T>> recur, int depth) {
+	public RecursiveArbitrary(Supplier<? extends Arbitrary<T>> base, Function<? super Arbitrary<T>, ? extends Arbitrary<T>> recur, int depth) {
 		this.base = base;
 		this.recur = recur;
 		this.depth = depth;

@@ -1070,14 +1070,14 @@ either [annotating parameters with `@UniqueElements`](#unique-elements)
 or by using one of the many `uniqueness(..)` configuration methods for 
 collections and collection-like types:
 
-- `ListArbitrary<T>.uniqueElements(Function<T, Object>)`
+- `ListArbitrary<T>.uniqueElements(Function<? super T, ?>)`
 - `ListArbitrary<T>.uniqueElements()`
-- `SetArbitrary<T>.uniqueElements(Function<T, Object>)`
-- `StreamArbitrary<T>.uniqueElements(Function<T, Object>)`
+- `SetArbitrary<T>.uniqueElements(Function<? super T, ?>)`
+- `StreamArbitrary<T>.uniqueElements(Function<? super T, ?>)`
 - `StreamArbitrary<T>.uniqueElements()`
-- `IteratorArbitrary<T>.uniqueElements(Function<T, Object>)`
+- `IteratorArbitrary<T>.uniqueElements(Function<? super T, ?>)`
 - `IteratorArbitrary<T>.uniqueElements()`
-- `ArrayArbitrary<T, A>.uniqueElements(Function<T, Object>)`
+- `ArrayArbitrary<T, A>.uniqueElements(Function<? super T, ?>)`
 - `ArrayArbitrary<T, A>.uniqueElements()`
 - `MapArbitrary<K, V>.uniqueKeys(Function<K, Object>)`
 - `MapArbitrary<K, V>.uniqueValues(Function<V, Object>)`

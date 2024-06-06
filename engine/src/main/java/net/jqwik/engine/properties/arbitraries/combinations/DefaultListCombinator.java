@@ -15,7 +15,7 @@ public class DefaultListCombinator<T> implements Combinators.ListCombinator<T> {
 	protected final Arbitrary<T>[] arbitraries;
 
 	@SuppressWarnings("unchecked")
-	public DefaultListCombinator(List<Arbitrary<T>> listOfArbitraries) {
+	public DefaultListCombinator(List<? extends Arbitrary<T>> listOfArbitraries) {
 		this(listOfArbitraries.toArray(new Arbitrary[0]));
 	}
 

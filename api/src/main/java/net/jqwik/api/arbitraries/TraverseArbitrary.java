@@ -8,6 +8,8 @@ import org.apiguardian.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -15,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
  * of a given type {@code T} from the type's available constructors and factory methods.
  */
 @API(status = MAINTAINED, since = "1.8.0")
-public interface TraverseArbitrary<T> extends Arbitrary<T> {
+public interface TraverseArbitrary<T extends @Nullable Object> extends Arbitrary<T> {
 
 	/**
 	 * A traverser describes how to travers a given type by providing a hook to

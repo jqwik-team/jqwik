@@ -19,4 +19,4 @@ fun <T> IteratorArbitrary<T>.ofSize(range: IntRange): IteratorArbitrary<T> = ofM
 fun <K, V> MapArbitrary<K, V>.ofSize(range: IntRange): MapArbitrary<K, V> = ofMinSize(range.first).ofMaxSize(range.last)
 
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
-fun <T, A> ArrayArbitrary<T, A>.ofSize(range: IntRange): ArrayArbitrary<T, A> = ofMinSize(range.first).ofMaxSize(range.last)
+fun <T, A: Any> ArrayArbitrary<T, A>.ofSize(range: IntRange): ArrayArbitrary<T, A> = ofMinSize(range.first).ofMaxSize(range.last)

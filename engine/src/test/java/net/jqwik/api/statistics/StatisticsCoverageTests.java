@@ -240,7 +240,7 @@ class StatisticsCoverageTests {
 			Statistics.collect(anInt);
 
 			Statistics.coverage(coverage -> {
-				Predicate<List<Integer>> query = params -> params.get(0) <= 10;
+				Predicate<List<?>> query = params -> (Integer) params.get(0) <= 10;
 				coverage.checkQuery(query).count(c -> c == 10);
 			});
 		}
@@ -250,7 +250,7 @@ class StatisticsCoverageTests {
 			Statistics.collect(anInt);
 
 			Statistics.coverage(coverage -> {
-				Predicate<List<Integer>> query = params -> params.get(0) <= 50;
+				Predicate<List<?>> query = params -> (Integer) params.get(0) <= 50;
 				coverage.checkQuery(query).percentage(p -> {
 					assertThat(p).isCloseTo(50.0, Offset.offset(0.1));
 				});
@@ -263,7 +263,7 @@ class StatisticsCoverageTests {
 			Statistics.label("twice").collect(anInt);
 
 			Statistics.label("twice").coverage(coverage -> {
-				Predicate<List<Integer>> query = params -> params.get(0) <= 10;
+				Predicate<List<?>> query = params -> (Integer) params.get(0) <= 10;
 				coverage.checkQuery(query).count(c -> c == 20);
 			});
 		}
@@ -274,7 +274,7 @@ class StatisticsCoverageTests {
 			Statistics.collect(anInt);
 
 			Statistics.coverage(coverage -> {
-				Predicate<List<String>> query = params -> !params.get(0).isEmpty();
+				Predicate<List<?>> query = params -> !((String)params.get(0)).isEmpty();
 				coverage.checkQuery(query).count(c -> c == 10);
 			});
 		}

@@ -5,11 +5,12 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = STABLE, since = "1.0")
-public interface RandomGenerator<T> {
+public interface RandomGenerator<T extends @Nullable Object> {
 
 	@API(status = INTERNAL)
 	abstract class RandomGeneratorFacade {

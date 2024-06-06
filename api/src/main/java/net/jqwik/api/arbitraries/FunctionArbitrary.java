@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
  * @param <R> The return type of the functional interface
  */
 @API(status = MAINTAINED, since = "1.3.0")
-public interface FunctionArbitrary<F, @Nullable R> extends Arbitrary<F> {
+public interface FunctionArbitrary<F extends @Nullable Object, R extends @Nullable Object> extends Arbitrary<F> {
 
 	/**
 	 *
@@ -28,6 +28,6 @@ public interface FunctionArbitrary<F, @Nullable R> extends Arbitrary<F> {
 	 * @param answer A function that produces a concrete answer or throws an exception
 	 * @return A new instance of function arbitrary
 	 */
-	<F_ extends F> FunctionArbitrary<F_, R> when(Predicate<List<Object>> parameterCondition, Function<List<Object>, R> answer);
+	<F_ extends F> FunctionArbitrary<F_, R> when(Predicate<? super List<?>> parameterCondition, Function<? super List<?>, ? extends R> answer);
 
 }

@@ -8,11 +8,11 @@ import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 
 public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
-	private final Supplier<Arbitrary<T>> arbitrarySupplier;
+	private final Supplier<? extends Arbitrary<T>> arbitrarySupplier;
 	private final List<Tuple.Tuple2<ArbitraryConfigurator, TypeUsage>> configurations = new ArrayList<>();
 	private Arbitrary<T> arbitrary;
 
-	public LazyArbitrary(Supplier<Arbitrary<T>> arbitrarySupplier) {
+	public LazyArbitrary(Supplier<? extends Arbitrary<T>> arbitrarySupplier) {
 		this.arbitrarySupplier = arbitrarySupplier;
 	}
 

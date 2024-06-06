@@ -95,7 +95,7 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 	}
 
 	@Override
-	public ArrayArbitrary<T, A> uniqueElements(Function<T, Object> by) {
+	public ArrayArbitrary<T, A> uniqueElements(Function<? super T, ?> by) {
 		FeatureExtractor<T> featureExtractor = by::apply;
 		return (ArrayArbitrary<T, A>) super.uniqueElements(featureExtractor);
 	}

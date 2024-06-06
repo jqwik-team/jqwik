@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
  * can be streamed, e.g. {@link List}, {@link Set}, {@link Stream} and Arrays
  */
 @API(status = MAINTAINED, since = "1.2.1")
-public interface StreamableArbitrary<T, U> extends SizableArbitrary<U> {
+public interface StreamableArbitrary<T extends @Nullable Object, U> extends SizableArbitrary<U> {
 
 	/**
 	 * Given an {@code initial} argument use {@code accumulator} to produce
@@ -79,6 +79,6 @@ public interface StreamableArbitrary<T, U> extends SizableArbitrary<U> {
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.7.3")
-	StreamableArbitrary<@Nullable T, U> uniqueElements(Function<@Nullable T, Object> by);
+	StreamableArbitrary<T, U> uniqueElements(Function<? super T, ?> by);
 
 }

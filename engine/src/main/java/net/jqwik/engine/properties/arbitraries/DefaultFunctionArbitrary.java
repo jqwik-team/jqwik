@@ -13,7 +13,7 @@ public class DefaultFunctionArbitrary<F, R> extends TypedCloneable implements Fu
 
 	private final Class<F> functionalType;
 	private final Arbitrary<R> resultArbitrary;
-	private final List<Tuple2<Predicate<List<Object>>, Function<List<Object>, R>>> conditions = new ArrayList<>();
+	private final List<Tuple2<Predicate<? super List<?>>, Function<? super List<?>, ? extends R>>> conditions = new ArrayList<>();
 
 	public DefaultFunctionArbitrary(Class<F> functionalType, Arbitrary<R> resultArbitrary) {
 		this.functionalType = functionalType;
@@ -52,15 +52,15 @@ public class DefaultFunctionArbitrary<F, R> extends TypedCloneable implements Fu
 	}
 
 	private boolean conditionsAreEqual(
-		List<Tuple2<Predicate<List<Object>>, Function<List<Object>, R>>> left,
-		List<Tuple2<Predicate<List<Object>>, Function<List<Object>, R>>> right
+		List<Tuple2<Predicate<? super List<?>>, Function<? super List<?>, ? extends R>>> left,
+		List<Tuple2<Predicate<? super List<?>>, Function<? super List<?>, ? extends R>>> right
 	) {
 		if (left.size() != right.size()) {
 			return false;
 		}
 		for (int i = 0; i < left.size(); i++) {
-			Tuple2<Predicate<List<Object>>, Function<List<Object>, R>> leftCondition = left.get(i);
-			Tuple2<Predicate<List<Object>>, Function<List<Object>, R>> rightCondition = right.get(i);
+			Tuple2<Predicate<? super List<?>>, Function<? super List<?>, ? extends R>> leftCondition = left.get(i);
+			Tuple2<Predicate<? super List<?>>, Function<? super List<?>, ? extends R>> rightCondition = right.get(i);
 			if (!LambdaSupport.areEqual(leftCondition.get1(), rightCondition.get1())) {
 				return false;
 			}
@@ -94,14 +94,14 @@ public class DefaultFunctionArbitrary<F, R> extends TypedCloneable implements Fu
 	}
 
 	@Override
-	public <F_ extends F> FunctionArbitrary<F_, R> when(Predicate<List<Object>> parameterCondition, Function<List<Object>, R> answer) {
+	public <F_ extends F> FunctionArbitrary<F_, R> when(Predicate<? super List<?>> parameterCondition, Function<? super List<?>, ? extends R> answer) {
 		DefaultFunctionArbitrary<F_, R> clone = typedClone();
 		clone.conditions.addAll(this.conditions);
 		clone.addCondition(Tuple.of(parameterCondition, answer));
 		return clone;
 	}
 
-	private void addCondition(Tuple2<Predicate<List<Object>>, Function<List<Object>, R>> condition) {
+	private void addCondition(Tuple2<Predicate<? super List<?>>, Function<? super List<?>, ? extends R>> condition) {
 		conditions.add(condition);
 	}
 }

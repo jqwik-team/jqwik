@@ -13,10 +13,10 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 
-	private final List<Tuple2<Integer, Arbitrary<T>>> frequencies;
+	private final List<Tuple2<Integer, ? extends Arbitrary<T>>> frequencies;
 	private final boolean isGeneratorMemoizable;
 
-	public FrequencyOfArbitrary(List<Tuple2<Integer, Arbitrary<T>>> frequencies) {
+	public FrequencyOfArbitrary(List<Tuple2<Integer, ? extends Arbitrary<T>>> frequencies) {
 		this.frequencies = frequencies;
 		this.isGeneratorMemoizable = frequencies.stream().allMatch(t -> t.get2().isGeneratorMemoizable());
 		if (this.frequencies.isEmpty()) {

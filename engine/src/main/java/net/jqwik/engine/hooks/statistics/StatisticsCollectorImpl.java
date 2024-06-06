@@ -80,7 +80,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 				   .orElse(StatisticsEntryImpl.nullFor(key));
 	}
 
-	private StatisticsEntry query(Predicate<List<Object>> query, int countAll) {
+	private StatisticsEntry query(Predicate<? super List<?>> query, int countAll) {
 		return statisticsEntries()
 				   .stream()
 				   .filter(entry -> {
@@ -198,9 +198,9 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public CoverageChecker checkQuery(Predicate<? extends List<?>> query) {
+		public CoverageChecker checkQuery(Predicate<? super List<?>> query) {
 			int countAll = countAllCollects();
-			StatisticsEntry entry = query((Predicate<List<Object>>) query, countAll);
+			StatisticsEntry entry = query(query, countAll);
 			return new CoverageCheckerImpl(label, entry, countAll);
 		}
 

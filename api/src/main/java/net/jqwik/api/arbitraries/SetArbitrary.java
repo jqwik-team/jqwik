@@ -7,6 +7,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -14,7 +16,7 @@ import static org.apiguardian.api.API.Status.*;
  * of type {@linkplain Set}
  */
 @API(status = MAINTAINED, since = "1.3.2")
-public interface SetArbitrary<T> extends Arbitrary<Set<T>>, StreamableArbitrary<T, Set<T>> {
+public interface SetArbitrary<T extends @Nullable Object> extends Arbitrary<Set<T>>, StreamableArbitrary<T, Set<T>> {
 
 	/**
 	 * Fix the size to {@code size}.
@@ -94,6 +96,6 @@ public interface SetArbitrary<T> extends Arbitrary<Set<T>>, StreamableArbitrary<
 	 * @return new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	SetArbitrary<T> uniqueElements(Function<T, Object> by);
+	SetArbitrary<T> uniqueElements(Function<? super T, ?> by);
 
 }

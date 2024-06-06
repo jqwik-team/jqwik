@@ -7,9 +7,9 @@ import net.jqwik.api.*;
 
 public class ChooseValueShrinkable<T> extends AbstractValueShrinkable<T> {
 
-	private final List<T> values;
+	private final List<? extends T> values;
 
-	public ChooseValueShrinkable(T value, List<T> values) {
+	public ChooseValueShrinkable(T value, List<? extends T> values) {
 		super(value);
 		this.values = values;
 	}
