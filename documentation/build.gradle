@@ -148,6 +148,7 @@ dependencies {
 	testImplementation(project(":testing"))
 	testImplementation(project(":kotlin"))
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+	compileOnly("com.google.errorprone:error_prone_annotations:${errorproneVersion}")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxVersion}")
 	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
