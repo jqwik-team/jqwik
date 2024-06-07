@@ -8,7 +8,7 @@ public class PermutationIterator<T> implements Iterator<List<T>> {
 	private List<T> next;
 	private int[] indices;
 
-	public PermutationIterator(List<T> values) {
+	public PermutationIterator(List<? extends T> values) {
 		this.values.addAll(values);
 		initializeIndices(values);
 
@@ -19,7 +19,7 @@ public class PermutationIterator<T> implements Iterator<List<T>> {
 		}
 	}
 
-	private void initializeIndices(List<T> values) {
+	private void initializeIndices(List<? extends T> values) {
 		this.indices = new int[values.size()];
 		for (int i = 0; i < indices.length; ++i) {
 			indices[i] = i;

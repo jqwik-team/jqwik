@@ -20,17 +20,17 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	public static final int MAX_TRANSFORMER_TRIES = 1000;
 	private final long randomSeed;
 	private final Supplier<? extends T> initialSupplier;
-	private final Function<Random, Transformation<T>> transformationGenerator;
+	private final Function<? super Random, ? extends Transformation<T>> transformationGenerator;
 	private final int maxTransformations;
 	private final int genSize;
 	private final List<ShrinkableChainIteration<T>> iterations;
-	private final Supplier<ChangeDetector<T>> changeDetectorSupplier;
+	private final Supplier<? extends ChangeDetector<? super T>> changeDetectorSupplier;
 
 	public ShrinkableChain(
 		long randomSeed,
 		Supplier<? extends T> initialSupplier,
-		Function<Random, Transformation<T>> transformationGenerator,
-		Supplier<ChangeDetector<T>> changeDetectorSupplier,
+		Function<? super Random, ? extends Transformation<T>> transformationGenerator,
+		Supplier<? extends ChangeDetector<? super T>> changeDetectorSupplier,
 		int maxTransformations,
 		int genSize
 	) {
@@ -39,8 +39,8 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 	private ShrinkableChain(
 		long randomSeed, Supplier<? extends T> initialSupplier,
-		Function<Random, Transformation<T>> transformationGenerator,
-		Supplier<ChangeDetector<T>> changeDetectorSupplier,
+		Function<? super Random, ? extends Transformation<T>> transformationGenerator,
+		Supplier<? extends ChangeDetector<? super T>> changeDetectorSupplier,
 		int maxTransformations,
 		int genSize,
 		List<ShrinkableChainIteration<T>> iterations
@@ -55,13 +55,11 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	}
 
 	@Override
-	@NonNull
 	public Chain<T> value() {
 		return new ChainInstance();
 	}
 
 	@Override
-	@NonNull
 	public Stream<Shrinkable<Chain<T>>> shrink() {
 		return new ShrinkableChainShrinker<>(this, iterations, maxTransformations).shrink();
 	}
@@ -79,7 +77,6 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	}
 
 	@Override
-	@NonNull
 	public ShrinkingDistance distance() {
 		List<Shrinkable<Transformer<T>>> shrinkablesForDistance = new ArrayList<>();
 		for (int i = 0; i < maxTransformations; i++) {
@@ -100,7 +97,6 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 	private class ChainInstance implements Chain<T> {
 
 		@Override
-		@NonNull
 		public Iterator<T> start() {
 			return new ChainIterator(initialSupplier.get());
 		}
@@ -111,13 +107,11 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		@Override
-		@NonNull
 		public List<String> transformations() {
 			return iterations.stream().map(i -> i.transformation()).collect(Collectors.toList());
 		}
 
 		@Override
-		@NonNull
 		public List<Transformer<T>> transformers() {
 			return iterations.stream().map(i -> i.transformer()).collect(Collectors.toList());
 		}
@@ -187,7 +181,7 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 		}
 
 		private T transformState(Transformer<T> transformer, T before) {
-			ChangeDetector<T> changeDetector = changeDetectorSupplier.get();
+			ChangeDetector<? super T> changeDetector = changeDetectorSupplier.get();
 			changeDetector.before(before);
 			try {
 				T after = transformer.apply(before);

@@ -140,7 +140,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 
 		@Override
-		public List<Object> items() {
+		public List<@Nullable Object> items() {
 			return Arrays.asList(get1());
 		}
 
@@ -181,7 +181,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 
 		@Override
-		public List<Object> items() {
+		public List<@Nullable Object> items() {
 			return Arrays.asList(get1(), get2());
 		}
 
@@ -218,7 +218,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 
 		@Override
-		public List<Object> items() {
+		public List<@Nullable Object> items() {
 			return Arrays.asList(get1(), get2(), get3());
 		}
 
@@ -256,7 +256,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 
 		@Override
-		public List<Object> items() {
+		public List<@Nullable Object> items() {
 			return Arrays.asList(get1(), get2(), get3(), get4());
 		}
 
@@ -295,7 +295,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 
 		@Override
-		public List<Object> items() {
+		public List<@Nullable Object> items() {
 			return Arrays.asList(get1(), get2(), get3(), get4(), get5());
 		}
 
@@ -335,7 +335,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 
 		@Override
-		public List<Object> items() {
+		public List<@Nullable Object> items() {
 			return Arrays.asList(get1(), get2(), get3(), get4(), get5(), get6());
 		}
 
@@ -384,7 +384,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 
 		@Override
-		public List<Object> items() {
+		public List<@Nullable Object> items() {
 			return Arrays.asList(get1(), get2(), get3(), get4(), get5(), get6(), get7());
 		}
 
@@ -435,7 +435,7 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 
 		@Override
-		public List<Object> items() {
+		public List<@Nullable Object> items() {
 			return Arrays.asList(get1(), get2(), get3(), get4(), get5(), get6(), get7(), get8());
 		}
 

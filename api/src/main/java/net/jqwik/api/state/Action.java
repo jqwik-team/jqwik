@@ -6,6 +6,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -30,33 +32,33 @@ import static org.apiguardian.api.API.Status.*;
  * @see ActionChainArbitrary
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface Action<S> {
+public interface Action<S extends @Nullable Object> {
 
 	/**
 	 * Create an unconditioned {@linkplain ActionBuilder}.
 	 */
-	static <T> ActionBuilder<T> builder() {
+	static <T extends @Nullable Object> ActionBuilder<T> builder() {
 		return new ActionBuilder<T>();
 	}
 
 	/**
 	 * Create an {@linkplain ActionBuilder} with a precondition.
 	 */
-	static <T> ActionBuilder<T> when(Predicate<T> precondition) {
+	static <T extends @Nullable Object> ActionBuilder<T> when(Predicate<? super T> precondition) {
 		return new ActionBuilder<T>().when(precondition);
 	}
 
 	/**
 	 * Convenience method to create an independent {@linkplain Action} with a constant transformer
 	 */
-	static <T> Action.Independent<T> just(Transformer<T> transformer) {
+	static <T extends @Nullable Object> Action.Independent<T> just(Transformer<T> transformer) {
 		return Action.<T>builder().just(transformer);
 	}
 
 	/**
 	 * Convenience method to create an independent {@linkplain Action} with a description and a constant transformer
 	 */
-	static <T> Action.Independent<T> just(String description, Transformer<T> transformer) {
+	static <T extends @Nullable Object> Action.Independent<T> just(String description, Transformer<T> transformer) {
 		return Action.<T>builder().describeAs(description).just(transformer);
 	}
 
@@ -82,7 +84,7 @@ public interface Action<S> {
 	 * </p>
 	 */
 	@FunctionalInterface
-	interface Dependent<S> extends Action<S> {
+	interface Dependent<S extends @Nullable Object> extends Action<S> {
 		/**
 		 * Return an arbitrary for transformers that depends on the previous state.
 		 *
@@ -109,7 +111,7 @@ public interface Action<S> {
 	 * @see JustTransform
 	 */
 	@FunctionalInterface
-	interface Independent<S> extends Action<S> {
+	interface Independent<S extends @Nullable Object> extends Action<S> {
 		/**
 		 * Return an arbitrary for transformers that does not depend on the previous state.
 		 *
@@ -136,7 +138,7 @@ public interface Action<S> {
 	 *     you have to implement either {@linkplain Action.Dependent} or {@linkplain Action.Independent}.
 	 * </p>
 	 */
-	abstract class JustTransform<S> implements Action.Independent<S> {
+	abstract class JustTransform<S extends @Nullable Object> implements Action.Independent<S> {
 
 		@Override
 		public Arbitrary<Transformer<S>> transformer() {
@@ -166,7 +168,7 @@ public interface Action<S> {
 	 *     you have to implement either {@linkplain Action.Dependent} or {@linkplain Action.Independent}.
 	 * </p>
 	 */
-	abstract class JustMutate<S> implements Action.Independent<S> {
+	abstract class JustMutate<S extends @Nullable Object> implements Action.Independent<S> {
 
 		@Override
 		public Arbitrary<Transformer<S>> transformer() {

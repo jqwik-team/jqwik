@@ -5,7 +5,9 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-class SetExhaustiveGenerator<T> implements ExhaustiveGenerator<Set<T>> {
+import org.jspecify.annotations.*;
+
+class SetExhaustiveGenerator<T extends @Nullable Object> implements ExhaustiveGenerator<Set<T>> {
 	private final Arbitrary<T> elementArbitrary;
 	private final long maxCount;
 	private final int minSize;

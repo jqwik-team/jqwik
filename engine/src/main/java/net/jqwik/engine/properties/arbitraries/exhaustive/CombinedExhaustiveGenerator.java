@@ -10,7 +10,7 @@ import net.jqwik.engine.support.*;
 class CombinedExhaustiveGenerator<R> implements ExhaustiveGenerator<R> {
 	private final Long maxCount;
 	private final List<Arbitrary<Object>> arbitraries;
-	private final Function<List<Object>, R> combinator;
+	private final Function<? super List<?>, ? extends R> combinator;
 
 	static Optional<Long> calculateMaxCount(List<Arbitrary<Object>> arbitraries, long maxNumberOfSamples) {
 		long product = 1;
@@ -27,7 +27,7 @@ class CombinedExhaustiveGenerator<R> implements ExhaustiveGenerator<R> {
 		return Optional.of(product);
 	}
 
-	CombinedExhaustiveGenerator(Long maxCount, List<Arbitrary<Object>> arbitraries, Function<List<Object>, R> combinator) {
+	CombinedExhaustiveGenerator(Long maxCount, List<Arbitrary<Object>> arbitraries, Function<? super List<?>, ? extends R> combinator) {
 		this.maxCount = maxCount;
 		this.arbitraries = arbitraries;
 		this.combinator = combinator;

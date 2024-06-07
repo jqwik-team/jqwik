@@ -3,6 +3,7 @@ package net.jqwik.engine.execution;
 import java.lang.reflect.*;
 import java.util.*;
 
+import org.jspecify.annotations.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
@@ -84,7 +85,7 @@ class ContainerInstancesCreator {
 		return new ContainerInstances(createNewInstance(constructor, null));
 	}
 
-	private Object createNewInstance(Constructor<?> constructor, Object outerInstance) {
+	private Object createNewInstance(Constructor<?> constructor, @Nullable Object outerInstance) {
 		return JqwikReflectionSupport.newInstance(
 			constructor,
 			resolveConstructorParameters(constructor, outerInstance)
@@ -111,7 +112,7 @@ class ContainerInstancesCreator {
 
 	private Object[] resolveConstructorParameters(
 		Constructor<?> constructor,
-		Object outerInstance
+		@Nullable Object outerInstance
 	) {
 		Object[] args = new Object[constructor.getParameterCount()];
 		for (int i = 0; i < args.length; i++) {

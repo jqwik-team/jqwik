@@ -30,39 +30,39 @@ public interface Arbitrary<T extends @Nullable Object> {
 			implementation = FacadeLoader.load(ArbitraryFacade.class);
 		}
 
-		public abstract <T> ListArbitrary<T> list(Arbitrary<T> elementArbitrary);
+		public abstract <T extends @Nullable Object> ListArbitrary<T> list(Arbitrary<T> elementArbitrary);
 
-		public abstract <T> SetArbitrary<T> set(Arbitrary<T> elementArbitrary);
+		public abstract <T extends @Nullable Object> SetArbitrary<T> set(Arbitrary<T> elementArbitrary);
 
-		public abstract <T> StreamArbitrary<T> stream(Arbitrary<T> elementArbitrary);
+		public abstract <T extends @Nullable Object> StreamArbitrary<T> stream(Arbitrary<T> elementArbitrary);
 
-		public abstract <T> IteratorArbitrary<T> iterator(Arbitrary<T> elementArbitrary);
+		public abstract <T extends @Nullable Object> IteratorArbitrary<T> iterator(Arbitrary<T> elementArbitrary);
 
-		public abstract <T, A> ArrayArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
+		public abstract <T extends @Nullable Object, A> ArrayArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
 
-		public abstract <T> Stream<T> sampleStream(Arbitrary<T> arbitrary);
+		public abstract <T extends @Nullable Object> Stream<T> sampleStream(Arbitrary<T> arbitrary);
 
-		public abstract <T> Arbitrary<T> injectNull(Arbitrary<T> self, double nullProbability);
+		public abstract <T extends @Nullable Object> Arbitrary<@Nullable T> injectNull(Arbitrary<T> self, double nullProbability);
 
-		public abstract <T> Arbitrary<T> filter(Arbitrary<T> self, Predicate<T> filterPredicate, int maxMisses);
+		public abstract <T extends @Nullable Object> Arbitrary<T> filter(Arbitrary<T> self, Predicate<? super T> filterPredicate, int maxMisses);
 
-		public abstract <T, U> Arbitrary<U> map(Arbitrary<T> self, Function<T, U> mapper);
+		public abstract <T, U extends @Nullable Object> Arbitrary<U> map(Arbitrary<T> self, Function<? super T, ? extends U> mapper);
 
-		public abstract <T, U> Arbitrary<U> flatMap(Arbitrary<T> self, Function<T, Arbitrary<U>> mapper);
+		public abstract <T, U extends @Nullable Object> Arbitrary<U> flatMap(Arbitrary<T> self, Function<? super T, ? extends Arbitrary<U>> mapper);
 
-		public abstract <T> Arbitrary<T> ignoreExceptions(Arbitrary<T> self, int maxThrows, Class<? extends Throwable>[] exceptionTypes);
+		public abstract <T extends @Nullable Object> Arbitrary<T> ignoreExceptions(Arbitrary<T> self, int maxThrows, Class<? extends Throwable>[] exceptionTypes);
 
-		public abstract <T> Arbitrary<T> dontShrink(Arbitrary<T> self);
+		public abstract <T extends @Nullable Object> Arbitrary<T> dontShrink(Arbitrary<T> self);
 
-		public abstract <T> Arbitrary<T> configureEdgeCases(Arbitrary<T> self, Consumer<EdgeCases.Config<T>> configurator);
+		public abstract <T extends @Nullable Object> Arbitrary<T> configureEdgeCases(Arbitrary<T> self, Consumer<? super EdgeCases.Config<T>> configurator);
 
-		public abstract <T> Arbitrary<T> withoutEdgeCases(Arbitrary<T> self);
+		public abstract <T extends @Nullable Object> Arbitrary<T> withoutEdgeCases(Arbitrary<T> self);
 
-		public abstract <T> RandomGenerator<T> memoizedGenerator(Arbitrary<T> self, int genSize, boolean withEdgeCases);
+		public abstract <T extends @Nullable Object> RandomGenerator<T> memoizedGenerator(Arbitrary<T> self, int genSize, boolean withEdgeCases);
 
-		public abstract <T> Arbitrary<T> fixGenSize(Arbitrary<T> self, int genSize);
+		public abstract <T extends @Nullable Object> Arbitrary<T> fixGenSize(Arbitrary<T> self, int genSize);
 
-		public abstract <T> Arbitrary<List<T>> collect(Arbitrary<T> self, Predicate<List<T>> until);
+		public abstract <T extends @Nullable Object> Arbitrary<List<T>> collect(Arbitrary<T> self, Predicate<? super List<? extends T>> until);
 	}
 
 	/**
@@ -208,7 +208,7 @@ public interface Arbitrary<T extends @Nullable Object> {
 	 * @return a new arbitrary instance
 	 * @throws TooManyFilterMissesException if filtering will fail to come up with a value after 10000 tries
 	 */
-	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
+	default Arbitrary<T> filter(Predicate<? super T> filterPredicate) {
 		return filter(10000, filterPredicate);
 	}
 
@@ -222,7 +222,7 @@ public interface Arbitrary<T extends @Nullable Object> {
 	 * @throws TooManyFilterMissesException if filtering will fail to come up with a value after {@code maxMisses} tries
 	 */
 	@API(status = EXPERIMENTAL, since = "1.7.0")
-	default Arbitrary<T> filter(int maxMisses, Predicate<T> filterPredicate) {
+	default Arbitrary<T> filter(int maxMisses, Predicate<? super T> filterPredicate) {
 		return ArbitraryFacade.implementation.filter(this, filterPredicate, maxMisses);
 	}
 
@@ -234,7 +234,7 @@ public interface Arbitrary<T extends @Nullable Object> {
 	 * @param mapper the function used to map
 	 * @return a new arbitrary instance
 	 */
-	default <U> Arbitrary<U> map(Function<T, U> mapper) {
+	default <U extends @Nullable Object> Arbitrary<U> map(Function<? super T, ? extends U> mapper) {
 		return ArbitraryFacade.implementation.map(this, mapper);
 	}
 
@@ -246,7 +246,7 @@ public interface Arbitrary<T extends @Nullable Object> {
 	 * @param mapper the function used to map to arbitrary
 	 * @return a new arbitrary instance
 	 */
-	default <U> Arbitrary<U> flatMap(Function<T, Arbitrary<U>> mapper) {
+	default <U extends @Nullable Object> Arbitrary<U> flatMap(Function<? super T, ? extends Arbitrary<U>> mapper) {
 		return ArbitraryFacade.implementation.flatMap(this, mapper);
 	}
 
@@ -359,7 +359,7 @@ public interface Arbitrary<T extends @Nullable Object> {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.0")
-	default Arbitrary<List<T>> collect(Predicate<List<T>> until) {
+	default Arbitrary<List<T>> collect(Predicate<? super List<? extends T>> until) {
 		return ArbitraryFacade.implementation.collect(this, until);
 	}
 

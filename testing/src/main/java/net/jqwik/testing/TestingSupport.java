@@ -10,6 +10,8 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.facades.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,12 +21,12 @@ public class TestingSupport {
 	private TestingSupport() {
 	}
 
-	public static <T> void checkAllGenerated(Arbitrary<? extends T> arbitrary, Random random, Predicate<T> checker) {
+	public static <T extends @Nullable Object> void checkAllGenerated(Arbitrary<T> arbitrary, Random random, Predicate<? super T> checker) {
 		checkAllGenerated(arbitrary.generator(1000), random, checker);
 	}
 
-	public static <T> void checkAllGenerated(RandomGenerator<? extends T> generator, Random random, Predicate<T> checker) {
-		Optional<? extends Shrinkable<? extends T>> failure =
+	public static <T extends @Nullable Object> void checkAllGenerated(RandomGenerator<T> generator, Random random, Predicate<? super T> checker) {
+		Optional<Shrinkable<T>> failure =
 			generator
 				.stream(random)
 				.limit(100)
@@ -36,11 +38,11 @@ public class TestingSupport {
 		});
 	}
 
-	public static <T> void assertAllGenerated(Arbitrary<? extends T> arbitrary, Random random, Consumer<T> assertions) {
+	public static <T extends @Nullable Object> void assertAllGenerated(Arbitrary<T> arbitrary, Random random, Consumer<? super T> assertions) {
 		assertAllGenerated(arbitrary.generator(1000), random, assertions);
 	}
 
-	public static <T> void assertAllGenerated(RandomGenerator<? extends T> generator, Random random, Consumer<T> assertions) {
+	public static <T extends @Nullable Object> void assertAllGenerated(RandomGenerator<T> generator, Random random, Consumer<? super T> assertions) {
 		Predicate<T> checker = value -> {
 			assertions.accept(value);
 			return true;
@@ -48,7 +50,7 @@ public class TestingSupport {
 		checkAllGenerated(generator, random, checker);
 	}
 
-	public static <T> void assertAllGeneratedEqualTo(RandomGenerator<? extends T> generator, Random random, T expected) {
+	public static <T extends @Nullable Object> void assertAllGeneratedEqualTo(RandomGenerator<T> generator, Random random, T expected) {
 		assertAllGenerated(
 			generator,
 			random,
@@ -56,7 +58,7 @@ public class TestingSupport {
 		);
 	}
 
-	public static <T> void assertAllGeneratedEqualTo(Arbitrary<? extends T> arbitrary, Random random, T expected) {
+	public static <T extends @Nullable Object> void assertAllGeneratedEqualTo(Arbitrary<T> arbitrary, Random random, T expected) {
 		assertAllGeneratedEqualTo(
 			arbitrary.generator(1000),
 			random,
@@ -64,13 +66,13 @@ public class TestingSupport {
 		);
 	}
 
-	public static <T> void checkAtLeastOneGenerated(
-		RandomGenerator<? extends T> generator,
+	public static <T extends @Nullable Object> void checkAtLeastOneGenerated(
+		RandomGenerator<T> generator,
 		Random random,
-		Predicate<T> checker,
+		Predicate<? super T> checker,
 		String failureMessage
 	) {
-		Optional<? extends Shrinkable<? extends T>> success =
+		Optional<Shrinkable<T>> success =
 			generator
 				.stream(random)
 				.limit(5000)
@@ -81,15 +83,15 @@ public class TestingSupport {
 		}
 	}
 
-	public static <T> void checkAtLeastOneGenerated(
-		RandomGenerator<? extends T> generator,
+	public static <T extends @Nullable Object> void checkAtLeastOneGenerated(
+		RandomGenerator<T> generator,
 		Random random,
-		Predicate<T> checker
+		Predicate<? super T> checker
 	) {
 		checkAtLeastOneGenerated(generator, random, checker, "Failed to generate at least one");
 	}
 
-	public static <T> void checkAtLeastOneGenerated(
+	public static <T extends @Nullable Object> void checkAtLeastOneGenerated(
 		Arbitrary<? extends T> arbitrary,
 		Random random,
 		Predicate<T> checker
@@ -98,18 +100,18 @@ public class TestingSupport {
 	}
 
 	@SafeVarargs
-	public static <T> void assertAtLeastOneGeneratedOf(
+	public static <T extends @Nullable Object> void assertAtLeastOneGeneratedOf(
 		RandomGenerator<? extends T> generator,
 		Random random,
 		T... values
 	) {
 		for (T value : values) {
-			checkAtLeastOneGenerated(generator, random, value::equals, "Failed to generate " + value);
+			checkAtLeastOneGenerated(generator, random, x -> Objects.equals(x, value), "Failed to generate " + value);
 		}
 	}
 
 	@SafeVarargs
-	public static <T> void assertGeneratedExactly(RandomGenerator<? extends T> generator, Random random, T... expectedValues) {
+	public static <T extends @Nullable Object> void assertGeneratedExactly(RandomGenerator<? extends T> generator, Random random, T... expectedValues) {
 		List<T> generated = generator
 			.stream(random)
 			.limit(expectedValues.length)
@@ -119,7 +121,7 @@ public class TestingSupport {
 		assertThat(generated).containsExactly(expectedValues);
 	}
 
-	public static <T> Set<Shrinkable<T>> collectEdgeCaseShrinkables(EdgeCases<T> edgeCases) {
+	public static <T extends @Nullable Object> Set<Shrinkable<T>> collectEdgeCaseShrinkables(EdgeCases<T> edgeCases) {
 		Set<Shrinkable<T>> shrinkables = new HashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {
 			shrinkables.add(edgeCase);
@@ -127,7 +129,7 @@ public class TestingSupport {
 		return shrinkables;
 	}
 
-	public static <T> Set<T> collectEdgeCaseValues(EdgeCases<T> edgeCases) {
+	public static <T extends @Nullable Object> Set<T> collectEdgeCaseValues(EdgeCases<T> edgeCases) {
 		Set<T> values = new HashSet<>();
 		for (Shrinkable<T> edgeCase : edgeCases) {
 			values.add(edgeCase.value());
@@ -135,12 +137,12 @@ public class TestingSupport {
 		return values;
 	}
 
-	public static <T> T generateFirst(Arbitrary<T> arbitrary, Random random) {
+	public static <T extends @Nullable Object> T generateFirst(Arbitrary<T> arbitrary, Random random) {
 		RandomGenerator<T> generator = arbitrary.generator(1, true);
 		return generator.next(random).value();
 	}
 
-	public static <T> Map<T, Long> count(RandomGenerator<T> generator, int tries, Random random) {
+	public static <T extends @Nullable Object> Map<T, Long> count(RandomGenerator<T> generator, int tries, Random random) {
 		return generator
 			.stream(random)
 			.limit(tries)
@@ -148,7 +150,7 @@ public class TestingSupport {
 			.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
 
-	public static <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
+	public static <T extends @Nullable Object> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<? super T, Boolean> condition) {
 		return TestingSupportFacade.implementation.generateUntil(generator, random, condition);
 	}
 

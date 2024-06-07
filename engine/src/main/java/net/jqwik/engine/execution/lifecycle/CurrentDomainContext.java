@@ -9,6 +9,8 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.configurators.*;
 import net.jqwik.engine.providers.*;
 
+import org.jspecify.annotations.*;
+
 public class CurrentDomainContext {
 
 	public static final DomainContext GLOBAL_DOMAIN_CONTEXT = new GlobalDomainContext();
@@ -22,7 +24,7 @@ public class CurrentDomainContext {
 		return currentContext.get();
 	}
 
-	public static <T> T runWithContext(DomainContext context, Supplier<T> runnable) {
+	public static <T extends @Nullable Object> T runWithContext(DomainContext context, Supplier<? extends T> runnable) {
 		currentContext.set(context);
 		try {
 			return runnable.get();

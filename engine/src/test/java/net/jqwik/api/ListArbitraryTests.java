@@ -279,10 +279,11 @@ class ListArbitraryTests {
 	@Example
 	void mapEach(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+		@SuppressWarnings("unchecked")
 		Arbitrary<List<Tuple.Tuple2<Integer, List<Integer>>>> setArbitrary =
 			integerArbitrary
 				.list().ofSize(5)
-				.mapEach((all, each) -> Tuple.of(each, all));
+				.mapEach((all, each) -> Tuple.of(each, (List<Integer>) all));
 
 		RandomGenerator<List<Tuple.Tuple2<Integer, List<Integer>>>> generator = setArbitrary.generator(1, true);
 

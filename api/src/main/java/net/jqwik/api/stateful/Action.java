@@ -1,6 +1,7 @@
 package net.jqwik.api.stateful;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -13,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * @param <S> Type of the state object
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface Action<S> {
+public interface Action<S extends @Nullable Object> {
 
 	/**
 	 * If this method returns false, the action will not be performed.

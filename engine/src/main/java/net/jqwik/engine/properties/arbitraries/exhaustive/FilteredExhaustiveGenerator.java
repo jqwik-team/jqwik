@@ -7,10 +7,10 @@ import net.jqwik.api.*;
 
 public class FilteredExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 	private final ExhaustiveGenerator<T> toFilter;
-	private final Predicate<T> filter;
+	private final Predicate<? super T> filter;
 	private int maxMisses;
 
-	public FilteredExhaustiveGenerator(ExhaustiveGenerator<T> toFilter, Predicate<T> filter, int maxMisses) {
+	public FilteredExhaustiveGenerator(ExhaustiveGenerator<T> toFilter, Predicate<? super T> filter, int maxMisses) {
 		this.toFilter = toFilter;
 		this.filter = filter;
 		this.maxMisses = maxMisses;

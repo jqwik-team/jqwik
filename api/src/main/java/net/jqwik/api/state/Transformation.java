@@ -6,6 +6,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -65,7 +67,7 @@ public interface Transformation<T> extends Function<Supplier<T>, Arbitrary<Trans
 	/**
 	 * Create a TransformerProvider with a precondition
 	 */
-	static <T> Builder<T> when(Predicate<T> precondition) {
+	static <T extends @Nullable Object> Builder<T> when(Predicate<T> precondition) {
 		return new Builder<T>(precondition);
 	}
 

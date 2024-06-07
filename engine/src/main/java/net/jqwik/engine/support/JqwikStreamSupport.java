@@ -1,5 +1,7 @@
 package net.jqwik.engine.support;
 
+import org.jspecify.annotations.*;
+
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -40,13 +42,13 @@ public class JqwikStreamSupport {
 	}
 
 	@SafeVarargs
-	public static <T> Stream<T> concat(Stream<T>... streams) {
+	public static <T extends @Nullable Object> Stream<T> concat(Stream<T>... streams) {
 		// See discussion in https://github.com/jqwik-team/jqwik/issues/526 why StreamConcatenation is used
 		return StreamConcatenation.concat(streams);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> Stream<T> concat(List<Stream<T>> streams) {
+	public static <T extends @Nullable Object> Stream<T> concat(List<Stream<T>> streams) {
 		return concat(streams.toArray(new Stream[0]));
 	}
 
@@ -61,7 +63,7 @@ public class JqwikStreamSupport {
 	 * @param <T>    a type
 	 * @return a stream
 	 */
-	public static <T> Stream<T> takeWhile(Stream<T> stream, Predicate<? super T> p) {
+	public static <T extends @Nullable Object> Stream<T> takeWhile(Stream<T> stream, Predicate<? super T> p) {
 		class Taking extends Spliterators.AbstractSpliterator<T> implements Consumer<T> {
 			private static final int CANCEL_CHECK_COUNT = 63;
 			private final Spliterator<T> s;
@@ -114,7 +116,7 @@ public class JqwikStreamSupport {
 		return StreamSupport.stream(new Taking(stream.spliterator()), stream.isParallel()).onClose(stream::close);
 	}
 
-	public static <T> Stream<T> toStream(Optional<T> optional) {
+	public static <T extends @Nullable Object> Stream<T> toStream(Optional<T> optional) {
 		return optional.map(Stream::of).orElse(Stream.empty());
 	}
 }

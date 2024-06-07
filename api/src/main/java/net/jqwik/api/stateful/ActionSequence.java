@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * @param <M> The type of the model
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface ActionSequence<M> {
+public interface ActionSequence<M extends @Nullable Object> {
 
 	enum RunState {
 		NOT_RUN, RUNNING, FAILED, SUCCEEDED

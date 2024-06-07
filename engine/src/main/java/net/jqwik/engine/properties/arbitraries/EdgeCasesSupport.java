@@ -9,11 +9,13 @@ import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.support.JqwikExceptionSupport.*;
 
 public class EdgeCasesSupport {
 
-	public static <T> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {
+	public static <T extends @Nullable Object> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {
 		return new EdgeCases<T>() {
 			@Override
 			public List<Supplier<Shrinkable<T>>> suppliers() {
@@ -34,7 +36,7 @@ public class EdgeCasesSupport {
 		};
 	}
 
-	public static <T> EdgeCases<T> choose(final List<T> values, int maxEdgeCases) {
+	public static <T extends @Nullable Object> EdgeCases<T> choose(final List<T> values, int maxEdgeCases) {
 		List<Shrinkable<T>> shrinkables = new ArrayList<>();
 		if (values.size() > 0) {
 			shrinkables.add(new ChooseValueShrinkable<>(values.get(0), values));
@@ -52,7 +54,7 @@ public class EdgeCasesSupport {
 		return EdgeCasesSupport.fromShrinkables(shrinkables);
 	}
 
-	public static <T> EdgeCases<T> concatFrom(final List<? extends Arbitrary<T>> arbitraries, int maxEdgeCases) {
+	public static <T extends @Nullable Object> EdgeCases<T> concatFrom(final List<? extends Arbitrary<T>> arbitraries, int maxEdgeCases) {
 		List<Shrinkable<Arbitrary<T>>> shrinkables = new ArrayList<>();
 		for (Arbitrary<T> arbitrary : arbitraries) {
 			shrinkables.add(new ChooseValueShrinkable<>(arbitrary, arbitraries));
@@ -60,7 +62,7 @@ public class EdgeCasesSupport {
 		return flatMapArbitrary(fromShrinkables(shrinkables), Function.identity(), maxEdgeCases);
 	}
 
-	public static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases, int maxEdgeCases) {
+	public static <T extends @Nullable Object> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases, int maxEdgeCases) {
 		if (edgeCases.isEmpty() || maxEdgeCases <= 0) {
 			return EdgeCases.none();
 		}
@@ -84,18 +86,18 @@ public class EdgeCasesSupport {
 		return EdgeCasesSupport.fromSuppliers(concatenatedSuppliers);
 	}
 
-	public static <T> EdgeCases<T> fromShrinkables(List<Shrinkable<T>> shrinkables) {
+	public static <T extends @Nullable Object> EdgeCases<T> fromShrinkables(List<Shrinkable<T>> shrinkables) {
 		return () -> shrinkables
 						 .stream()
 						 .map(shrinkable -> (Supplier<Shrinkable<T>>) () -> shrinkable)
 						 .collect(Collectors.toList());
 	}
 
-	public static <T, U> EdgeCases<U> map(EdgeCases<T> self, Function<T, U> mapper) {
+	public static <T extends @Nullable Object, U extends @Nullable Object> EdgeCases<U> map(EdgeCases<T> self, Function<? super T, ? extends U> mapper) {
 		return mapShrinkable(self, tShrinkable -> tShrinkable.map(mapper));
 	}
 
-	public static <T, U> EdgeCases<U> mapShrinkable(EdgeCases<T> self, Function<Shrinkable<T>, Shrinkable<U>> mapper) {
+	public static <T extends @Nullable Object, U extends @Nullable Object> EdgeCases<U> mapShrinkable(EdgeCases<T> self, Function<? super Shrinkable<T>, ? extends Shrinkable<U>> mapper) {
 		List<Supplier<Shrinkable<U>>> mappedSuppliers =
 			self.suppliers().stream()
 				.map(tSupplier -> mapper.apply(tSupplier.get()))
@@ -105,7 +107,7 @@ public class EdgeCasesSupport {
 		return EdgeCases.fromSuppliers(mappedSuppliers);
 	}
 
-	public static <T> EdgeCases<T> filter(EdgeCases<T> self, Predicate<T> filterPredicate) {
+	public static <T extends @Nullable Object> EdgeCases<T> filter(EdgeCases<T> self, Predicate<? super T> filterPredicate) {
 		List<Supplier<Shrinkable<T>>> filteredSuppliers =
 			self.suppliers().stream()
 				.filter(supplier -> filterPredicate.test(supplier.get().value()))
@@ -114,7 +116,7 @@ public class EdgeCasesSupport {
 		return EdgeCases.fromSuppliers(filteredSuppliers);
 	}
 
-	public static <T> EdgeCases<T> ignoreExceptions(final EdgeCases<T> self, final Class<? extends Throwable>[] exceptionTypes) {
+	public static <T extends @Nullable Object> EdgeCases<T> ignoreExceptions(final EdgeCases<T> self, final Class<? extends Throwable>[] exceptionTypes) {
 		List<Supplier<Shrinkable<T>>> filteredSuppliers =
 			self.suppliers().stream()
 				.filter(supplier -> {
@@ -136,16 +138,16 @@ public class EdgeCasesSupport {
 		return EdgeCases.fromSuppliers(filteredSuppliers);
 	}
 
-	public static <T> EdgeCases<T> dontShrink(EdgeCases<T> self) {
+	public static <T extends @Nullable Object> EdgeCases<T> dontShrink(EdgeCases<T> self) {
 		return () -> self.suppliers()
 						 .stream()
 						 .map(supplier -> (Supplier<Shrinkable<T>>) () -> supplier.get().makeUnshrinkable())
 						 .collect(Collectors.toList());
 	}
 
-	public static <T, U> EdgeCases<U> flatMapArbitrary(
+	public static <T extends @Nullable Object, U extends @Nullable Object> EdgeCases<U> flatMapArbitrary(
 		EdgeCases<T> self,
-		Function<T, Arbitrary<U>> mapper,
+		Function<? super T, ? extends Arbitrary<U>> mapper,
 		int maxEdgeCases
 	) {
 		List<Supplier<Shrinkable<U>>> flatMappedSuppliers =
@@ -170,9 +172,9 @@ public class EdgeCasesSupport {
 		return EdgeCases.fromSuppliers(flatMappedSuppliers);
 	}
 
-	public static <T> EdgeCases<T> combine(
+	public static <T extends @Nullable Object> EdgeCases<T> combine(
 		final List<Arbitrary<Object>> arbitraries,
-		final Function<List<Object>, T> combineFunction,
+		final Function<? super List<?>, ? extends T> combineFunction,
 		int maxEdgeCases
 	) {
 		if (arbitraries.isEmpty() || maxEdgeCases <= 0) {

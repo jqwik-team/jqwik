@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
  * @param <R> The return type of the functional interface
  */
 @API(status = MAINTAINED, since = "1.3.0")
-public interface FunctionArbitrary<F extends @Nullable Object, R extends @Nullable Object> extends Arbitrary<F> {
+public interface FunctionArbitrary<F, R extends @Nullable Object> extends Arbitrary<F> {
 
 	/**
 	 *

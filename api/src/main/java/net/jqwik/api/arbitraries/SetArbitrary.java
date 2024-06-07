@@ -61,7 +61,7 @@ public interface SetArbitrary<T extends @Nullable Object> extends Arbitrary<Set<
 	 * @return arbitrary of a set of Us
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	<U> Arbitrary<Set<U>> mapEach(BiFunction<Set<T>, T, U> mapper);
+	<U extends @Nullable Object> Arbitrary<Set<U>> mapEach(BiFunction<? super Set<? extends T>, ? super T, ? extends U> mapper);
 
 	/**
 	 * Flat-map over each element of the generated set giving access to all elements of the set.
@@ -72,7 +72,7 @@ public interface SetArbitrary<T extends @Nullable Object> extends Arbitrary<Set<
 	 * @return arbitrary of a set of Us
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	<U> Arbitrary<Set<U>> flatMapEach(BiFunction<Set<T>, T, Arbitrary<U>> flatMapper);
+	<U extends @Nullable Object> Arbitrary<Set<U>> flatMapEach(BiFunction<? super Set<? extends T>, ? super T, ? extends Arbitrary<U>> flatMapper);
 
 	/**
 	 * Do not use. Sets have unique elements anyway.

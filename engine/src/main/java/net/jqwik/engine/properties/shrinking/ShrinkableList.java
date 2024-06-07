@@ -17,16 +17,16 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	}
 
 	public ShrinkableList(
-		List<Shrinkable<E>> elements,
+		List<? extends Shrinkable<E>> elements,
 		int minSize, int maxSize,
-		Collection<FeatureExtractor<E>> uniquenessExtractors,
+		Collection<? extends FeatureExtractor<E>> uniquenessExtractors,
 		Arbitrary<E> elementArbitrary
 	) {
 		super(elements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
 	}
 
 	@Override
-	List<E> createValue(List<Shrinkable<E>> shrinkables) {
+	List<E> createValue(List<? extends Shrinkable<E>> shrinkables) {
 		// Using loop instead of stream to make stack traces more readable
 		List<E> values = new ArrayList<>(shrinkables.size());
 		for (Shrinkable<E> shrinkable : shrinkables) {
@@ -36,7 +36,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	}
 
 	@Override
-	Shrinkable<List<E>> createShrinkable(List<Shrinkable<E>> shrunkElements) {
+	Shrinkable<List<E>> createShrinkable(List<? extends Shrinkable<E>> shrunkElements) {
 		return new ShrinkableList<>(shrunkElements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
 	}
 

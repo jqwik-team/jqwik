@@ -6,7 +6,9 @@ import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 
-public class CreateArbitrary<T> extends UseGeneratorsArbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class CreateArbitrary<T extends @Nullable Object> extends UseGeneratorsArbitrary<T> {
 
 	private final Supplier<T> supplier;
 

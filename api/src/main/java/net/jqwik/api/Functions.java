@@ -4,6 +4,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.arbitraries.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 
@@ -20,7 +22,7 @@ public class Functions {
 
 		public abstract void ensureFunctionalType(Class<?> functionalType);
 
-		public abstract <F, R> FunctionArbitrary<F, R> function(Class<?> functionalType, Arbitrary<R> resultArbitrary);
+		public abstract <F, R extends @Nullable Object> FunctionArbitrary<F, R> function(Class<?> functionalType, Arbitrary<R> resultArbitrary);
 
 	}
 
@@ -65,7 +67,7 @@ public class Functions {
 		 * @return a new arbitrary instance
 		 */
 		@API(status = MAINTAINED, since = "1.6.0")
-		public <F, R> FunctionArbitrary<F, R> returning(Arbitrary<R> resultArbitrary) {
+		public <F, R extends @Nullable Object> FunctionArbitrary<F, R> returning(Arbitrary<R> resultArbitrary) {
 			return FunctionsFacade.implementation.function(functionalType, resultArbitrary);
 		}
 	}

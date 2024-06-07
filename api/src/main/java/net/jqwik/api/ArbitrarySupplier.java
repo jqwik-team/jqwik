@@ -36,8 +36,7 @@ public interface ArbitrarySupplier<T> extends Supplier<Arbitrary<T>> {
 	 *
 	 * @return A new arbitrary instance
 	 */
-	@Nullable
-	default Arbitrary<T> supplyFor(TypeUsage targetType) {
+	default @Nullable Arbitrary<T> supplyFor(TypeUsage targetType) {
 		return get();
 	}
 
@@ -50,8 +49,7 @@ public interface ArbitrarySupplier<T> extends Supplier<Arbitrary<T>> {
 	 *
 	 * @return A new arbitrary instance
 	 */
-	@Nullable
-	default Arbitrary<T> get() {
+	default @Nullable Arbitrary<T> get() {
 		throw new JqwikException("You have to override either ArbitrarySupplier.get() or ArbitrarySupplier.supplyFor()");
 	}
 

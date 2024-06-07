@@ -5,13 +5,15 @@ import java.util.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 class ParameterChangesDetector {
 
-	static boolean haveParametersChanged(List<Object> before, List<Object> after) {
+	static boolean haveParametersChanged(List<? extends @Nullable Object> before, List<? extends @Nullable Object> after) {
 		return atLeastOneParameterHasChanged(before, after);
 	}
 
-	private static boolean atLeastOneParameterHasChanged(List<Object> before, List<Object> after) {
+	private static boolean atLeastOneParameterHasChanged(List<? extends @Nullable Object> before, List<? extends @Nullable Object> after) {
 		if (before.size() != after.size()) {
 			return true;
 		}
@@ -25,11 +27,11 @@ class ParameterChangesDetector {
 		return false;
 	}
 
-	private static boolean valuesDiffer(Object before, Object after) {
-		if (Objects.isNull(before) != Objects.isNull(after)) {
+	private static boolean valuesDiffer(@Nullable Object before, @Nullable Object after) {
+		if ((before == null) != (after == null)) {
 			return true;
 		}
-		if (Objects.isNull(before)) {
+		if (before == null) {
 			return false;
 		}
 		if (before.getClass() != after.getClass()) {

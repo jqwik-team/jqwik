@@ -2,6 +2,7 @@ package net.jqwik.engine.properties;
 
 import java.util.*;
 
+import org.jspecify.annotations.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -56,9 +57,9 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
 		int edgeCasesTried,
-		FalsifiedSample originalSample,
-		ShrunkFalsifiedSample shrunkSample,
-		Throwable throwable
+		@Nullable FalsifiedSample originalSample,
+		@Nullable ShrunkFalsifiedSample shrunkSample,
+		@Nullable Throwable throwable
 	) {
 		// If no shrinking was possible, report only original sample
 		if (shrunkSample != null && areEquivalent(originalSample, shrunkSample)) {
@@ -151,9 +152,9 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	private final EdgeCasesMode edgeCasesMode;
 	private final int edgeCasesTotal;
 	private final int edgeCasesTried;
-	private final FalsifiedSample originalSample;
-	private final ShrunkFalsifiedSample shrunkSample;
-	private final Throwable throwable;
+	private final @Nullable FalsifiedSample originalSample;
+	private final @Nullable ShrunkFalsifiedSample shrunkSample;
+	private final @Nullable Throwable throwable;
 
 	private PropertyCheckResult(
 		CheckStatus status, String stereotype,
@@ -165,9 +166,9 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
 		int edgeCasesTried,
-		FalsifiedSample originalSample,
-		ShrunkFalsifiedSample shrunkSample,
-		Throwable throwable
+		@Nullable FalsifiedSample originalSample,
+		@Nullable ShrunkFalsifiedSample shrunkSample,
+		@Nullable Throwable throwable
 	) {
 		this.stereotype = stereotype;
 		this.status = status;
@@ -184,7 +185,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		this.throwable = determineThrowable(status, throwable);
 	}
 
-	private Throwable determineThrowable(CheckStatus status, Throwable throwable) {
+	private @Nullable Throwable determineThrowable(CheckStatus status, @Nullable Throwable throwable) {
 		if (status == CheckStatus.SUCCESSFUL) {
 			return null;
 		} else {
@@ -218,7 +219,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public PropertyExecutionResult mapTo(Status newStatus, Throwable throwable) {
+	public PropertyExecutionResult mapTo(Status newStatus, @Nullable Throwable throwable) {
 		switch (newStatus) {
 			case ABORTED:
 				return PlainExecutionResult.aborted(throwable, generationInfo);

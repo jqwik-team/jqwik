@@ -6,13 +6,15 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
+import org.jspecify.annotations.*;
+
 /**
  * Is loaded through reflection in api module
  */
 public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 
 	@Override
-	public <T> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {
+	public <T extends @Nullable Object> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {
 		return EdgeCasesSupport.fromSuppliers(suppliers);
 	}
 

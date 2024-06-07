@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.jspecify.annotations.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
@@ -29,7 +30,7 @@ class SampleStreamFacade {
 	private static final Map<Arbitrary<Object>, RandomGenerator<Object>> generators = new LruCache<>(500);
 
 	@SuppressWarnings("unchecked")
-	private static <T> RandomGenerator<T> getGeneratorForSampling(Arbitrary<T> arbitrary) {
+	private static <T extends @Nullable Object> RandomGenerator<T> getGeneratorForSampling(Arbitrary<T> arbitrary) {
 		return runInDescriptor(() -> getGenerator((Arbitrary<Object>) arbitrary));
 	}
 
@@ -51,11 +52,11 @@ class SampleStreamFacade {
 		// );
 	}
 
-	private static <T> Supplier<T> wrapInDescriptor(Supplier<T> code) {
+	private static <T extends @Nullable Object> Supplier<T> wrapInDescriptor(Supplier<T> code) {
 		return () -> runInDescriptor(code);
 	}
 
-	private static <T> T runInDescriptor(Supplier<T> code) {
+	private static <T extends @Nullable Object> T runInDescriptor(Supplier<T> code) {
 		if (CurrentTestDescriptor.isEmpty()) {
 			return CurrentTestDescriptor.runWithDescriptor(SAMPLE_STREAM_DESCRIPTOR, code);
 		} else {
@@ -63,7 +64,7 @@ class SampleStreamFacade {
 		}
 	}
 
-	<T> Stream<T> sampleStream(Arbitrary<T> arbitrary) {
+	<T extends @Nullable Object> Stream<T> sampleStream(Arbitrary<T> arbitrary) {
 		RandomGenerator<T> generator = getGeneratorForSampling(arbitrary);
 		return Stream.generate(wrapInDescriptor(() -> generator.next(SourceOfRandomness.current())))
 					 .map(shrinkable -> runInDescriptor(shrinkable::value));

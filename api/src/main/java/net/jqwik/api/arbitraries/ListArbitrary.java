@@ -61,7 +61,7 @@ public interface ListArbitrary<T extends @Nullable Object> extends Arbitrary<Lis
 	 * @return arbitrary of a list of Us
 	 */
 	@API(status = MAINTAINED, since = "1.4.0")
-	<U> Arbitrary<List<U>> mapEach(BiFunction<List<T>, T, U> mapper);
+	<U extends @Nullable Object> Arbitrary<List<U>> mapEach(BiFunction<? super List<? extends T>, ? super T, ? extends U> mapper);
 
 	/**
 	 * Flat-map over each element of the generated list giving access to all elements of the list.

@@ -28,7 +28,7 @@ public interface StreamableArbitrary<T extends @Nullable Object, U> extends Siza
 	 * @param <R>         The result type
 	 * @return The result of accumulating all elements in streamable
 	 */
-	<R> Arbitrary<R> reduce(R initial, BiFunction<R, T, R> accumulator);
+	<R extends @Nullable Object> Arbitrary<R> reduce(R initial, BiFunction<R, ? super T, R> accumulator);
 
 	/**
 	 * Fix the size to {@code size}.

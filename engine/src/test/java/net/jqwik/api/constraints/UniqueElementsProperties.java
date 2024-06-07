@@ -6,6 +6,8 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static java.util.Arrays.*;
 
 @PropertyDefaults(tries = 100)
@@ -207,7 +209,7 @@ class UniqueElementsProperties {
 		}
 	}
 
-	private <T> boolean hasNoDuplicates(Collection<T> collection, Function<T, Object> by) {
+	private <T extends @Nullable Object> boolean hasNoDuplicates(Collection<T> collection, Function<? super T, ?> by) {
 		Set<Object> set = collection.stream().map(by).collect(Collectors.toSet());
 		return set.size() == collection.size();
 	}

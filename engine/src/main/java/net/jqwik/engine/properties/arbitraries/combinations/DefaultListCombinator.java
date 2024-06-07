@@ -24,44 +24,44 @@ public class DefaultListCombinator<T> implements Combinators.ListCombinator<T> {
 	}
 
 	@Override
-	public <R> Arbitrary<R> as(Function<List<T>, @NonNull R> combinator) {
+	public <R extends @Nullable Object> Arbitrary<R> as(Function<? super List<T>, ? extends R> combinator) {
 		return new CombineArbitrary<>(combineFunction(combinator), arbitraries);
 	}
 
 	@API(status = EXPERIMENTAL, since = "1.7.1")
-	public Combinators.ListCombinator<T> filter(Predicate<List<T>> filter) {
+	public Combinators.ListCombinator<T> filter(Predicate<? super List<? extends T>> filter) {
 		return new Filtered<>(arbitraries, filter);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <R> Function<List<Object>, R> combineFunction(Function<List<T>, R> combinator) {
+	protected <R extends @Nullable Object> Function<List<?>, R> combineFunction(Function<? super List<T>, ? extends R> combinator) {
 		return params -> combinator.apply((List<T>) params);
 	}
 
 	private static class Filtered<T> extends DefaultListCombinator<T> {
-		private final Predicate<List<T>> filter;
+		private final Predicate<? super List<? extends T>> filter;
 
-		private Filtered(Arbitrary<T>[] arbitraries, Predicate<List<T>> filter) {
+		private Filtered(Arbitrary<T>[] arbitraries, Predicate<? super List<? extends T>> filter) {
 			super(arbitraries);
 			this.filter = filter;
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <R> Arbitrary<R> as(Function<List<T>, @NonNull R> combinator) {
-			Predicate<List<Object>> filterPredicate = params -> filter.test((List<T>) params);
+		public <R extends @Nullable Object> Arbitrary<R> as(Function<? super List<T>, ? extends R> combinator) {
+			Predicate<? super List<?>> filterPredicate = params -> filter.test((List<T>) params);
 			return new CombineArbitrary<>(Function.identity(), arbitraries)
 					   .filter(filterPredicate)
 					   .map(combineFunction(combinator));
 		}
 
 		@Override
-		public Combinators.ListCombinator<T> filter(Predicate<List<T>> filter) {
+		public Combinators.ListCombinator<T> filter(Predicate<? super List<? extends T>> filter) {
 			return super.filter(combineFilters(this.filter, filter));
 		}
 
-		private Predicate<List<T>> combineFilters(Predicate<List<T>> first, Predicate<List<T>> second) {
-			return first.and(second);
+		private Predicate<? super List<? extends T>> combineFilters(Predicate<? super List<? extends T>> first, Predicate<? super List<? extends T>> second) {
+			return it -> first.test(it) && second.test(it);
 		}
 	}
 }

@@ -5,7 +5,9 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-class ShrinkablesActionGenerator<T> implements ActionGenerator<T> {
+import org.jspecify.annotations.*;
+
+class ShrinkablesActionGenerator<T extends @Nullable Object> implements ActionGenerator<T> {
 
 	private Iterator<Shrinkable<Action<T>>> iterator;
 	private List<Shrinkable<Action<T>>> shrinkables = new ArrayList<>();

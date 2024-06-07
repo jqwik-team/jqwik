@@ -6,6 +6,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -21,7 +23,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = MAINTAINED, since = "1.4.0")
 public abstract class ArbitraryDecorator<T>  implements Cloneable, Arbitrary<T> {
 
-	private Arbitrary<T> instance = null;
+	private @Nullable Arbitrary<T> instance = null;
 
 	/**
 	 * Implement by calling jqwik's standard DSL for building arbitraries.

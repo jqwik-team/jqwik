@@ -7,6 +7,8 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
+import org.jspecify.annotations.*;
+
 class OneAfterTheOtherParameterShrinker extends AbstractSampleShrinker {
 
 	public OneAfterTheOtherParameterShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
@@ -49,7 +51,7 @@ class OneAfterTheOtherParameterShrinker extends AbstractSampleShrinker {
 		);
 	}
 
-	private <T> List<T> replaceIn(T object, int index, List<T> old) {
+	private <T extends @Nullable Object> List<T> replaceIn(T object, int index, List<T> old) {
 		List<T> newList = new ArrayList<>(old);
 		newList.set(index, object);
 		return newList;

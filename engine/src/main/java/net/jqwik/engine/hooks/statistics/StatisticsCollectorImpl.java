@@ -226,7 +226,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		}
 
 		@Override
-		public void count(Predicate<Integer> countChecker) {
+		public void count(Predicate<? super Integer> countChecker) {
 			if (!countChecker.test(entry.count())) {
 				String condition = String.format("Count of %s", entry.count());
 				failCondition(condition);
@@ -234,7 +234,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		}
 
 		@Override
-		public void count(BiPredicate<Integer, Integer> countChecker) {
+		public void count(BiPredicate<? super Integer, ? super Integer> countChecker) {
 			if (!countChecker.test(entry.count(), countAll)) {
 				String condition = String.format("Count of (%s, %s)", entry.count(), countAll);
 				failCondition(condition);
@@ -242,7 +242,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		}
 
 		@Override
-		public void count(Consumer<Integer> countChecker) {
+		public void count(Consumer<? super Integer> countChecker) {
 			count(c -> {
 				countChecker.accept(c);
 				return true;
@@ -250,7 +250,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		}
 
 		@Override
-		public void count(BiConsumer<Integer, Integer> countChecker) {
+		public void count(BiConsumer<? super Integer, ? super Integer> countChecker) {
 			count((c, a) -> {
 				countChecker.accept(c, a);
 				return true;
@@ -258,7 +258,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		}
 
 		@Override
-		public void percentage(Predicate<Double> percentageChecker) {
+		public void percentage(Predicate<? super Double> percentageChecker) {
 			if (!percentageChecker.test(entry.percentage())) {
 				String condition = String.format("Percentage of %s", entry.percentage());
 				failCondition(condition);
@@ -266,7 +266,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		}
 
 		@Override
-		public void percentage(Consumer<Double> percentageChecker) {
+		public void percentage(Consumer<? super Double> percentageChecker) {
 			percentage(p -> {
 				percentageChecker.accept(p);
 				return true;

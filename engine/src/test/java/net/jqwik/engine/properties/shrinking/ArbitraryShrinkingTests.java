@@ -78,7 +78,7 @@ class ArbitraryShrinkingTests {
 		assertThat(shrunkValue).containsExactly(3, 3, 3, 3);
 	}
 
-	private int sum(List<Integer> list) {
+	private int sum(List<? extends Integer> list) {
 		return list.stream().mapToInt(i -> i).sum();
 	}
 

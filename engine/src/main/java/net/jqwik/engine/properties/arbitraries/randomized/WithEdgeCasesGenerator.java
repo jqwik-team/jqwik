@@ -6,6 +6,8 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
 
+import org.jspecify.annotations.*;
+
 class WithEdgeCasesGenerator<T> implements RandomGenerator<T> {
 
 	private final RandomGenerator<T> base;
@@ -27,7 +29,7 @@ class WithEdgeCasesGenerator<T> implements RandomGenerator<T> {
 		}
 	}
 
-	private static <T> RandomGenerator<T> chooseEdgeCase(EdgeCases<T> edgeCases) {
+	private static <T extends @Nullable Object> RandomGenerator<T> chooseEdgeCase(EdgeCases<T> edgeCases) {
 		final List<Supplier<Shrinkable<T>>> suppliers = edgeCases.suppliers();
 		return random -> RandomGenerators.chooseValue(suppliers, random).get();
 	}

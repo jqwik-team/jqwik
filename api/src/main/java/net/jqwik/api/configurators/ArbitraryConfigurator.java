@@ -5,6 +5,8 @@ import org.apiguardian.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -26,7 +28,7 @@ public interface ArbitraryConfigurator extends Comparable<ArbitraryConfigurator>
 	 * @return the newly configured arbitrary instance
 	 */
 	// Type variable T does not make any sense here. Removing it would breaks all implementors, though.
-	<T> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType);
+	<T extends @Nullable Object> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType);
 
 	/**
 	 * Determines the order in which a configurator will be applied in regards to other configurators.

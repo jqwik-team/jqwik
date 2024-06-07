@@ -46,7 +46,7 @@ public class PropertyShrinker {
 		this.targetMethod = targetMethod;
 	}
 
-	public ShrunkFalsifiedSample shrink(Falsifier<List<Object>> forAllFalsifier) {
+	public ShrunkFalsifiedSample shrink(Falsifier<? super List<Object>> forAllFalsifier) {
 		if (shrinkingMode == ShrinkingMode.OFF) {
 			return unshrunkOriginalSample();
 		}

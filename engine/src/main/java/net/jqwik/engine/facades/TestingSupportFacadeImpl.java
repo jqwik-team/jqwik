@@ -7,10 +7,12 @@ import net.jqwik.api.*;
 import net.jqwik.api.facades.*;
 import net.jqwik.engine.execution.reporting.*;
 
+import org.jspecify.annotations.*;
+
 public class TestingSupportFacadeImpl extends TestingSupportFacade {
 
 	@Override
-	public  <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
+	public  <T extends @Nullable Object> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<? super T, Boolean> condition) {
 		long maxTries = 1000;
 		return generator
 					   .stream(random)

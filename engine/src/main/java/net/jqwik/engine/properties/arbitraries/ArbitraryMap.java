@@ -6,11 +6,13 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 
-public class ArbitraryMap<T, U> implements Arbitrary<U> {
-	private final Arbitrary<T> self;
-	private final Function<T, U> mapper;
+import org.jspecify.annotations.*;
 
-	public ArbitraryMap(Arbitrary<T> self, Function<T, U> mapper) {
+public class ArbitraryMap<T extends @Nullable Object, U extends @Nullable Object> implements Arbitrary<U> {
+	private final Arbitrary<T> self;
+	private final Function<? super T, ? extends U> mapper;
+
+	public ArbitraryMap(Arbitrary<T> self, Function<? super T, ? extends U> mapper) {
 		this.self = self;
 		this.mapper = mapper;
 	}

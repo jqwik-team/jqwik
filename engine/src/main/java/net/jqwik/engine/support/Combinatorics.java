@@ -9,11 +9,13 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.engine.support.combinatorics.*;
 
+import org.jspecify.annotations.*;
+
 import static java.util.Arrays.*;
 
 public class Combinatorics {
 
-	public static <T> Iterator<List<T>> combine(List<Iterable<T>> listOfIterables) {
+	public static <T extends @Nullable Object> Iterator<List<T>> combine(List<? extends Iterable<? extends T>> listOfIterables) {
 		if (listOfIterables.isEmpty()) {
 			return emptyListSingleton();
 		}
@@ -21,16 +23,16 @@ public class Combinatorics {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> Iterator<List<T>> emptyListSingleton() {
+	private static <T extends @Nullable Object> Iterator<List<T>> emptyListSingleton() {
 		return asList((List<T>) new ArrayList<>()).iterator();
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> Iterator<Set<T>> emptySetSingleton() {
+	private static <T extends @Nullable Object> Iterator<Set<T>> emptySetSingleton() {
 		return asList((Set<T>) new LinkedHashSet<>()).iterator();
 	}
 
-	public static <T> Iterator<List<T>> listCombinations(Iterable<T> elementIterable, int minSize, int maxSize) {
+	public static <T extends @Nullable Object> Iterator<List<T>> listCombinations(Iterable<? extends T> elementIterable, int minSize, int maxSize) {
 		List<Iterator<List<T>>> iterators = new ArrayList<>();
 		for(int listSize = minSize; listSize <= maxSize; listSize++) {
 			iterators.add(listIterator(elementIterable, listSize));
@@ -38,15 +40,15 @@ public class Combinatorics {
 		return concatIterators(iterators);
 	}
 
-	private static <T> Iterator<List<T>> listIterator(Iterable<T> elementIterable, int listSize) {
-		List<Iterable<T>> listOfIterables = new ArrayList<>();
+	private static <T extends @Nullable Object> Iterator<List<T>> listIterator(Iterable<? extends T> elementIterable, int listSize) {
+		List<Iterable<? extends T>> listOfIterables = new ArrayList<>();
 		for (int i = 0; i < listSize; i++) {
 			listOfIterables.add(elementIterable);
 		}
 		return combine(listOfIterables);
 	}
 
-	public static <T> Iterator<Set<T>> setCombinations(Iterable<T> elementIterable, int minSize, int maxSize) {
+	public static <T extends @Nullable Object> Iterator<Set<T>> setCombinations(Iterable<? extends T> elementIterable, int minSize, int maxSize) {
 		List<Iterator<Set<T>>> iterators = new ArrayList<>();
 		for(int setSize = minSize; setSize <= maxSize; setSize++) {
 			Iterator<Set<T>> setIterator = setIterator(elementIterable, setSize);
@@ -55,26 +57,26 @@ public class Combinatorics {
 		return concatIterators(iterators);
 	}
 
-	private static <T> Iterator<Set<T>> setIterator(Iterable<T> elementIterable, int setSize) {
+	private static <T extends @Nullable Object> Iterator<Set<T>> setIterator(Iterable<? extends T> elementIterable, int setSize) {
 		if (setSize == 0) {
 			return emptySetSingleton();
 		}
 		return new SetIterator<>(elementIterable, setSize);
 	}
 
-	public static <T> Iterator<List<T>> listPermutations(List<T> values) {
+	public static <T extends @Nullable Object> Iterator<List<T>> listPermutations(List<? extends T> values) {
 		if (values.isEmpty()) {
 			return emptyListSingleton();
 		}
 		return new PermutationIterator<>(values);
 	}
 
-	public static <T> Iterator<T> concat(List<Iterable<T>> iterables) {
-		List<Iterator<T>> iterators = iterables.stream().map(Iterable::iterator).collect(Collectors.toList());
+	public static <T extends @Nullable Object> Iterator<T> concat(List<? extends Iterable<? extends T>> iterables) {
+		List<? extends Iterator<? extends T>> iterators = iterables.stream().map(Iterable::iterator).collect(Collectors.toList());
 		return new ConcatIterator<>(iterators);
 	}
 
-	private static <T> Iterator<T> concatIterators(List<Iterator<T>> iterators) {
+	private static <T extends @Nullable Object> Iterator<T> concatIterators(List<Iterator<T>> iterators) {
 		return new ConcatIterator<>(iterators);
 	}
 

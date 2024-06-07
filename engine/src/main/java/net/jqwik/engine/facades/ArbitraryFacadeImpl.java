@@ -10,6 +10,8 @@ import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 
 /**
@@ -18,54 +20,54 @@ import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
-	public <T> ListArbitrary<T> list(Arbitrary<T> elementArbitrary) {
+	public <T extends @Nullable Object> ListArbitrary<T> list(Arbitrary<T> elementArbitrary) {
 		return new DefaultListArbitrary<>(elementArbitrary);
 	}
 
 	@Override
-	public <T> SetArbitrary<T> set(Arbitrary<T> elementArbitrary) {
+	public <T extends @Nullable Object> SetArbitrary<T> set(Arbitrary<T> elementArbitrary) {
 		// The set can never be larger than the max number of possible elements
 		return new DefaultSetArbitrary<>(elementArbitrary)
 				   .ofMaxSize(maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
 	@Override
-	public <T> StreamArbitrary<T> stream(Arbitrary<T> elementArbitrary) {
+	public <T extends @Nullable Object> StreamArbitrary<T> stream(Arbitrary<T> elementArbitrary) {
 		return new DefaultStreamArbitrary<>(elementArbitrary);
 	}
 
 	@Override
-	public <T> IteratorArbitrary<T> iterator(Arbitrary<T> elementArbitrary) {
+	public <T extends @Nullable Object> IteratorArbitrary<T> iterator(Arbitrary<T> elementArbitrary) {
 		return new DefaultIteratorArbitrary<>(elementArbitrary);
 	}
 
 	@Override
-	public <T, A> ArrayArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
+	public <T extends @Nullable Object, A> ArrayArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
 		return DefaultArrayArbitrary.forArrayType(elementArbitrary, arrayClass);
 	}
 
 	@Override
-	public <T> Arbitrary<T> filter(Arbitrary<T> self, Predicate<T> filterPredicate, int maxMisses) {
+	public <T extends @Nullable Object> Arbitrary<T> filter(Arbitrary<T> self, Predicate<? super T> filterPredicate, int maxMisses) {
 		return new ArbitraryFilter<>(self, filterPredicate, maxMisses);
 	}
 
 	@Override
-	public <T, U> Arbitrary<U> map(Arbitrary<T> self, Function<T, U> mapper) {
+	public <T extends @Nullable Object, U extends @Nullable Object> Arbitrary<U> map(Arbitrary<T> self, Function<? super T, ? extends U> mapper) {
 		return new ArbitraryMap<>(self, mapper);
 	}
 
 	@Override
-	public <T, U> Arbitrary<U> flatMap(Arbitrary<T> self, Function<T, Arbitrary<U>> mapper) {
+	public <T extends @Nullable Object, U extends @Nullable Object> Arbitrary<U> flatMap(Arbitrary<T> self, Function<? super T, ? extends Arbitrary<U>> mapper) {
 		return new ArbitraryFlatMap<>(self, mapper);
 	}
 
 	@Override
-	public <T> Stream<T> sampleStream(Arbitrary<T> arbitrary) {
+	public <T extends @Nullable Object> Stream<T> sampleStream(Arbitrary<T> arbitrary) {
 		return new SampleStreamFacade().sampleStream(arbitrary);
 	}
 
 	@Override
-	public <T> Arbitrary<T> injectNull(Arbitrary<T> self, double nullProbability) {
+	public <T extends @Nullable Object> Arbitrary<@Nullable T> injectNull(Arbitrary<T> self, double nullProbability) {
 		int frequencyNull = (int) Math.round(nullProbability * 1000);
 		int frequencyNotNull = 1000 - frequencyNull;
 		if (frequencyNull <= 0) {
@@ -81,7 +83,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> ignoreExceptions(Arbitrary<T> self, int maxThrows, Class<? extends Throwable>[] exceptionTypes) {
+	public <T extends @Nullable Object> Arbitrary<T> ignoreExceptions(Arbitrary<T> self, int maxThrows, Class<? extends Throwable>[] exceptionTypes) {
 		if (exceptionTypes.length == 0) {
 			return self;
 		}
@@ -110,7 +112,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> dontShrink(Arbitrary<T> self) {
+	public <T extends @Nullable Object> Arbitrary<T> dontShrink(Arbitrary<T> self) {
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
@@ -130,7 +132,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> configureEdgeCases(Arbitrary<T> self, Consumer<EdgeCases.Config<T>> configurator) {
+	public <T extends @Nullable Object> Arbitrary<T> configureEdgeCases(Arbitrary<T> self, Consumer<? super EdgeCases.Config<T>> configurator) {
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public EdgeCases<T> edgeCases(int maxEdgeCases) {
@@ -141,7 +143,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> withoutEdgeCases(Arbitrary<T> self) {
+	public <T extends @Nullable Object> Arbitrary<T> withoutEdgeCases(Arbitrary<T> self) {
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int genSize, boolean withEdgeCases) {
@@ -161,7 +163,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> fixGenSize(Arbitrary<T> self, int genSize) {
+	public <T extends @Nullable Object> Arbitrary<T> fixGenSize(Arbitrary<T> self, int genSize) {
 		return new ArbitraryDelegator<T>(self) {
 			@Override
 			public RandomGenerator<T> generator(int ignoredGenSize) {
@@ -176,16 +178,16 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<List<T>> collect(Arbitrary<T> self, Predicate<List<T>> until) {
+	public <T extends @Nullable Object> Arbitrary<List<T>> collect(Arbitrary<T> self, Predicate<? super List<? extends T>> until) {
 		return new ArbitraryCollect<>(self, until);
 	}
 
 	@Override
-	public <T> RandomGenerator<T> memoizedGenerator(Arbitrary<T> self, int genSize, boolean withEdgeCases) {
+	public <T extends @Nullable Object> RandomGenerator<T> memoizedGenerator(Arbitrary<T> self, int genSize, boolean withEdgeCases) {
 		return Memoize.memoizedGenerator(self, genSize, withEdgeCases, () -> generator(self, genSize, withEdgeCases));
 	}
 
-	private <U> RandomGenerator<U> generator(Arbitrary<U> arbitrary, int genSize, boolean withEdgeCases) {
+	private <U extends @Nullable Object> RandomGenerator<U> generator(Arbitrary<U> arbitrary, int genSize, boolean withEdgeCases) {
 		if (withEdgeCases) {
 			int maxEdgeCases = Math.max(genSize, 10);
 			return arbitrary.generatorWithEmbeddedEdgeCases(genSize).withEdgeCases(genSize, arbitrary.edgeCases(maxEdgeCases));

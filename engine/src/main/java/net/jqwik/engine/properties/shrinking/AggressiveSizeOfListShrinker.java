@@ -13,7 +13,7 @@ public class AggressiveSizeOfListShrinker<T> {
 		this.minSize = minSize;
 	}
 
-	public Stream<List<T>> shrink(List<T> toShrink) {
+	public Stream<List<T>> shrink(List<? extends T> toShrink) {
 		if (toShrink.size() <= minSize) {
 			return Stream.empty();
 		}
@@ -24,14 +24,14 @@ public class AggressiveSizeOfListShrinker<T> {
 		).filter(l -> l.size() >= minSize);
 	}
 
-	public Stream<List<T>> cutsToMinsize(List<T> toShrink) {
+	public Stream<List<T>> cutsToMinsize(List<? extends T> toShrink) {
 		Set<List<T>> lists = new LinkedHashSet<>();
 		appendLeftCut(toShrink, lists, minSize);
 		appendRightCut(toShrink, lists, minSize);
 		return lists.stream();
 	}
 
-	public Stream<List<T>> cutsToMinsizePlus1(List<T> toShrink) {
+	public Stream<List<T>> cutsToMinsizePlus1(List<? extends T> toShrink) {
 		if (toShrink.size() <= minSize + 1) {
 			return Stream.empty();
 		}
@@ -41,7 +41,7 @@ public class AggressiveSizeOfListShrinker<T> {
 		return lists.stream();
 	}
 
-	public Stream<List<T>> cutInHalves(List<T> toShrink) {
+	public Stream<List<T>> cutInHalves(List<? extends T> toShrink) {
 		int halfSize = toShrink.size() / 2;
 		if (halfSize < minSize) {
 			return Stream.empty();
@@ -52,12 +52,12 @@ public class AggressiveSizeOfListShrinker<T> {
 		return lists.stream();
 	}
 
-	private void appendLeftCut(List<T> toShrink, Set<List<T>> lists, int elementsToKeep) {
+	private void appendLeftCut(List<? extends T> toShrink, Set<List<T>> lists, int elementsToKeep) {
 		List<T> cut = new ArrayList<>(toShrink);
 		lists.add(cut.subList(0, elementsToKeep));
 	}
 
-	private void appendRightCut(List<T> toShrink, Set<List<T>> lists, int elementsToKeep) {
+	private void appendRightCut(List<? extends T> toShrink, Set<List<T>> lists, int elementsToKeep) {
 		List<T> cut = new ArrayList<>(toShrink);
 		int elementsToCut = toShrink.size() - elementsToKeep;
 		lists.add(cut.subList(elementsToCut, toShrink.size()));

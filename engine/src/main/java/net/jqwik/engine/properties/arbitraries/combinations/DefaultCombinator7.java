@@ -5,7 +5,9 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public class DefaultCombinator7<T1, T2, T3, T4, T5, T6, T7>
+import org.jspecify.annotations.*;
+
+public class DefaultCombinator7<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, T5 extends @Nullable Object, T6 extends @Nullable Object, T7 extends @Nullable Object>
 	extends DefaultCombinator6<T1, T2, T3, T4, T5, T6>
 	implements Combinators.Combinator7<T1, T2, T3, T4, T5, T6, T7> {
 
@@ -19,17 +21,17 @@ public class DefaultCombinator7<T1, T2, T3, T4, T5, T6, T7>
 	}
 
 	@Override
-	public <R> Arbitrary<R> as(Combinators.F7<T1, T2, T3, T4, T5, T6, T7, R> combinator) {
+	public <R extends @Nullable Object> Arbitrary<R> as(Combinators.F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? extends R> combinator) {
 		return new CombineArbitrary<>(combineFunction(combinator), a1, a2, a3, a4, a5, a6, a7);
 	}
 
 	@Override
-	public Combinators.Combinator7<T1, T2, T3, T4, T5, T6, T7> filter(Combinators.F7<T1, T2, T3, T4, T5, T6, T7, Boolean> filter) {
+	public Combinators.Combinator7<T1, T2, T3, T4, T5, T6, T7> filter(Combinators.F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, Boolean> filter) {
 		return new Filtered<>(a1, a2, a3, a4, a5, a6, a7, filter);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <R> Function<List<Object>, R> combineFunction(Combinators.F7<T1, T2, T3, T4, T5, T6, T7, R> combinator) {
+	protected <R extends @Nullable Object> Function<List<?>, R> combineFunction(Combinators.F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? extends R> combinator) {
 		return params -> combinator.apply(
 			(T1) params.get(0), (T2) params.get(1),
 			(T3) params.get(2), (T4) params.get(3),
@@ -39,7 +41,7 @@ public class DefaultCombinator7<T1, T2, T3, T4, T5, T6, T7>
 	}
 
 	private static class Filtered<T1, T2, T3, T4, T5, T6, T7> extends DefaultCombinator7<T1, T2, T3, T4, T5, T6, T7> {
-		private final Combinators.F7<T1, T2, T3, T4, T5, T6, T7, Boolean> filter;
+		private final Combinators.F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, Boolean> filter;
 
 		private Filtered(
 			Arbitrary<T1> a1,
@@ -49,27 +51,27 @@ public class DefaultCombinator7<T1, T2, T3, T4, T5, T6, T7>
 			Arbitrary<T5> a5,
 			Arbitrary<T6> a6,
 			Arbitrary<T7> a7,
-			Combinators.F7<T1, T2, T3, T4, T5, T6, T7, Boolean> filter
+			Combinators.F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, Boolean> filter
 		) {
 			super(a1, a2, a3, a4, a5, a6, a7);
 			this.filter = filter;
 		}
 
 		@Override
-		public <R> Arbitrary<R> as(Combinators.F7<T1, T2, T3, T4, T5, T6, T7, R> combinator) {
+		public <R extends @Nullable Object> Arbitrary<R> as(Combinators.F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? extends R> combinator) {
 			return new CombineArbitrary<>(Function.identity(), a1, a2, a3, a4, a5, a6, a7)
 					   .filter(combineFunction(filter)::apply)
 					   .map(combineFunction(combinator));
 		}
 
 		@Override
-		public Combinators.Combinator7<T1, T2, T3, T4, T5, T6, T7> filter(Combinators.F7<T1, T2, T3, T4, T5, T6, T7, Boolean> filter) {
+		public Combinators.Combinator7<T1, T2, T3, T4, T5, T6, T7> filter(Combinators.F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, Boolean> filter) {
 			return super.filter(combineFilters(this.filter, filter));
 		}
 
 		private Combinators.F7<T1, T2, T3, T4, T5, T6, T7, Boolean> combineFilters(
-			Combinators.F7<T1, T2, T3, T4, T5, T6, T7, Boolean> first,
-			Combinators.F7<T1, T2, T3, T4, T5, T6, T7, Boolean> second
+			Combinators.F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, Boolean> first,
+			Combinators.F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, Boolean> second
 		) {
 			return (p1, p2, p3, p4, p5, p6, p7) -> first.apply(p1, p2, p3, p4, p5, p6, p7) && second.apply(p1, p2, p3, p4, p5, p6, p7);
 		}

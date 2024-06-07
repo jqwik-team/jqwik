@@ -8,26 +8,28 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import org.jspecify.annotations.*;
+
 public class GenerationInfo implements Serializable {
 
 	public final static GenerationInfo NULL = new GenerationInfo(null);
 
-	private final String randomSeed;
+	private final @Nullable String randomSeed;
 	private final int generationIndex;
 
 	// Store ordinals instead of enum objects so that serialization
 	// in jqwik.database uses less disk space
 	private final List<List<Byte>> byteSequences;
 
-	public GenerationInfo(String randomSeed) {
+	public GenerationInfo(@Nullable String randomSeed) {
 		this(randomSeed, 0);
 	}
 
-	public GenerationInfo(String randomSeed, int generationIndex) {
+	public GenerationInfo(@Nullable String randomSeed, int generationIndex) {
 		this(randomSeed, generationIndex, Collections.emptyList());
 	}
 
-	private GenerationInfo(String randomSeed, int generationIndex, List<List<Byte>> byteSequences) {
+	private GenerationInfo(@Nullable String randomSeed, int generationIndex, List<List<Byte>> byteSequences) {
 		this.randomSeed = randomSeed != null ? (randomSeed.isEmpty() ? null : randomSeed) : null;
 		this.generationIndex = generationIndex;
 		this.byteSequences = byteSequences;
@@ -59,7 +61,7 @@ public class GenerationInfo implements Serializable {
 		return useShrinkingSequences(sample);
 	}
 
-	private Optional<List<Shrinkable<Object>>> useShrinkingSequences(List<Shrinkable<Object>> sample) {
+	private Optional<List<Shrinkable<Object>>> useShrinkingSequences(@Nullable List<Shrinkable<Object>> sample) {
 		Optional<List<Shrinkable<Object>>> shrunkSample = Optional.ofNullable(sample);
 		for (List<TryExecutionResult.Status> shrinkingSequence : shrinkingSequences()) {
 			if (!shrunkSample.isPresent()) {
@@ -78,7 +80,7 @@ public class GenerationInfo implements Serializable {
 		return recreator.recreateFrom(shrinkingSequence);
 	}
 
-	private List<Shrinkable<Object>> useGenerationIndex(ParametersGenerator generator, TryLifecycleContext context) {
+	private @Nullable List<Shrinkable<Object>> useGenerationIndex(ParametersGenerator generator, TryLifecycleContext context) {
 		List<Shrinkable<Object>> sample = null;
 		for (int i = 0; i < generationIndex; i++) {
 			if (generator.hasNext()) {

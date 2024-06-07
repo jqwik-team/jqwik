@@ -5,6 +5,8 @@ import org.apiguardian.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -32,7 +34,7 @@ public interface SelfConfiguringArbitrary<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	@API(status = INTERNAL)
-	static <T> Arbitrary<T> configure(Arbitrary<T> self, ArbitraryConfigurator configurator, TypeUsage targetType) {
+	static <T extends @Nullable Object> Arbitrary<T> configure(Arbitrary<T> self, ArbitraryConfigurator configurator, TypeUsage targetType) {
 		if (self instanceof SelfConfiguringArbitrary) {
 			return ((SelfConfiguringArbitrary<T>) self).configure(configurator, targetType);
 		} else {

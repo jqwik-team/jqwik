@@ -9,14 +9,16 @@ import net.jqwik.api.support.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.support.*;
 
-public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
+import org.jspecify.annotations.*;
+
+public class FlatMappedShrinkable<T extends @Nullable Object, U extends @Nullable Object> implements Shrinkable<U> {
 
 	private final Shrinkable<T> toMap;
-	private final Function<T, Shrinkable<U>> mapper;
+	private final Function<? super T, ? extends Shrinkable<U>> mapper;
 
 	public FlatMappedShrinkable(
 		Shrinkable<T> toMap,
-		Function<T, Arbitrary<U>> toArbitraryMapper,
+		Function<? super T, ? extends Arbitrary<U>> toArbitraryMapper,
 		int genSize,
 		long randomSeed,
 		boolean withEmbeddedEdgeCases
@@ -27,11 +29,11 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		}, randomSeed);
 	}
 
-	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, RandomGenerator<U>> toGeneratorMapper, long randomSeed) {
+	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<? super T, ? extends RandomGenerator<U>> toGeneratorMapper, long randomSeed) {
 		this(toMap, t -> toGeneratorMapper.apply(t).next(SourceOfRandomness.newRandom(randomSeed)));
 	}
 
-	protected FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Shrinkable<U>> mapper) {
+	protected FlatMappedShrinkable(Shrinkable<T> toMap, Function<? super T, ? extends Shrinkable<U>> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
 	}

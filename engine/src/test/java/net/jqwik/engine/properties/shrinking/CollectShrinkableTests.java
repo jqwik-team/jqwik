@@ -26,7 +26,7 @@ class CollectShrinkableTests {
 
 		List<Shrinkable<Integer>> shrinkables = asList(shrinkable3, shrinkable2, shrinkable1);
 
-		Predicate<List<Integer>> untilIsIgnoredHere = l -> true;
+		Predicate<List<?>> untilIsIgnoredHere = l -> true;
 		CollectShrinkable<Integer> shrinkable = new CollectShrinkable<>(shrinkables, untilIsIgnoredHere);
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 6));
@@ -43,7 +43,7 @@ class CollectShrinkableTests {
 
 			List<Shrinkable<Integer>> shrinkables = asList(shrinkable4, shrinkable1);
 
-			Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
+			Predicate<List<?>> untilSizeAtLeast2 = l -> l.size() >= 2;
 			Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
 			List<Integer> shrunkValue = shrink(shrinkable, alwaysFalsify(), null);
@@ -57,7 +57,7 @@ class CollectShrinkableTests {
 
 			List<Shrinkable<Integer>> shrinkables = asList(shrinkable4, shrinkable1);
 
-			Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
+			Predicate<List<?>> untilSizeAtLeast2 = l -> l.size() >= 2;
 			Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
 			Falsifier<List<Integer>> falsifier = collection -> {
@@ -78,7 +78,7 @@ class CollectShrinkableTests {
 
 			List<Shrinkable<Integer>> shrinkables = asList(shrinkable4, shrinkable1);
 
-			Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
+			Predicate<List<?>> untilSizeAtLeast2 = l -> l.size() >= 2;
 			Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
 			TestingFalsifier<List<Integer>> sumMustNotBeEven = listOfInts -> {
@@ -96,7 +96,7 @@ class CollectShrinkableTests {
 			List<Shrinkable<Integer>> shrinkables =
 				asList(shrinkable1, shrinkable1, shrinkable1, shrinkable1, shrinkable1, shrinkable1);
 
-			Predicate<List<Integer>> sumAtLeast6 = l -> {
+			Predicate<List<? extends Integer>> sumAtLeast6 = l -> {
 				int sum = l.stream().mapToInt(i -> i).sum();
 				return sum >= 6;
 			};
@@ -114,7 +114,7 @@ class CollectShrinkableTests {
 
 			List<Shrinkable<Integer>> shrinkables = asList(shrinkable3, shrinkable4, shrinkable2, shrinkable1);
 
-			Predicate<List<Integer>> sumAtLeast10 = l -> {
+			Predicate<List<? extends Integer>> sumAtLeast10 = l -> {
 				int sum = l.stream().mapToInt(i -> i).sum();
 				return sum >= 10;
 			};
@@ -132,7 +132,7 @@ class CollectShrinkableTests {
 
 			List<Shrinkable<Integer>> shrinkables = asList(shrinkable3, shrinkable4, shrinkable2, shrinkable1);
 
-			Predicate<List<Integer>> sumAtLeast10 = l -> {
+			Predicate<List<? extends Integer>> sumAtLeast10 = l -> {
 				int sum = l.stream().mapToInt(i -> i).sum();
 				return sum >= 10 && l.get(0) != 1;
 			};

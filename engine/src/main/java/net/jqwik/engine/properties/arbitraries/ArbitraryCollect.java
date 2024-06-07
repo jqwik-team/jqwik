@@ -9,9 +9,9 @@ import net.jqwik.api.support.*;
 public class ArbitraryCollect<T> implements Arbitrary<List<T>> {
 
 	private final Arbitrary<T> elementArbitrary;
-	private final Predicate<List<T>> until;
+	private final Predicate<? super List<? extends T>> until;
 
-	public ArbitraryCollect(Arbitrary<T> elementArbitrary, Predicate<List<T>> until) {
+	public ArbitraryCollect(Arbitrary<T> elementArbitrary, Predicate<? super List<? extends T>> until) {
 		this.elementArbitrary = elementArbitrary;
 		this.until = until;
 	}

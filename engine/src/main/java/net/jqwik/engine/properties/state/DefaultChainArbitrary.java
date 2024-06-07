@@ -11,7 +11,7 @@ import net.jqwik.engine.support.*;
 public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArbitrary<T> {
 
 	private int maxTransformations = Integer.MIN_VALUE;
-	private Supplier<ChangeDetector<T>> changeDetectorSupplier = ChangeDetector::alwaysTrue;
+	private Supplier<? extends ChangeDetector<? super T>> changeDetectorSupplier = ChangeDetector::alwaysTrue;
 	private List<Tuple.Tuple2<Integer, Transformation<T>>> weightedTransformations = new ArrayList<>();
 	private final Supplier<? extends T> initialSupplier;
 
@@ -24,7 +24,7 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 		final int effectiveMaxTransformations =
 			this.maxTransformations != Integer.MIN_VALUE ? this.maxTransformations : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
 		Function<Random, Transformation<T>> transformationGenerator = new ChooseRandomlyByFrequency<>(weightedTransformations);
-		return random -> new ShrinkableChain<>(
+		return random -> new ShrinkableChain<T>(
 			random.nextLong(),
 			initialSupplier,
 			transformationGenerator,
@@ -54,7 +54,7 @@ public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArb
 	}
 
 	@Override
-	public ChainArbitrary<T> improveShrinkingWith(Supplier<ChangeDetector<T>> changeDetectorSupplier) {
+	public ChainArbitrary<T> improveShrinkingWith(Supplier<? extends ChangeDetector<? super T>> changeDetectorSupplier) {
 		DefaultChainArbitrary<T> clone = typedClone();
 		clone.changeDetectorSupplier = changeDetectorSupplier;
 		return clone;

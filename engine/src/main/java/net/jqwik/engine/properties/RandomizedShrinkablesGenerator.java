@@ -102,7 +102,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		return listOfEdgeCases;
 	}
 
-	private static <T> int calculateNextParamMaxEdgeCases(int maxEdgeCases, int baseCasesSize) {
+	private static int calculateNextParamMaxEdgeCases(int maxEdgeCases, int baseCasesSize) {
 		int maxDerivedEdgeCases = Math.max(1, maxEdgeCases / baseCasesSize);
 		// When in doubt generate a few more edge cases
 		if (maxEdgeCases % baseCasesSize > 0) {
