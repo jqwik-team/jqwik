@@ -1,9 +1,11 @@
 package net.jqwik.docs;
 
+import java.lang.annotation.*;
 import java.math.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
 class ProvideMethodExamples {
@@ -37,19 +39,35 @@ class ProvideMethodExamples {
 	}
 
 	@Property
-	void favouritePrimesAsInts(@ForAll("favouritePrimes") int aFavourite) {
+	void largePrimes(@ForAll("favouritePrimes") @LargePrimes int aPrime) {
+		System.out.println("prime = " + aPrime);
 	}
 
 	@Property
-	void favouritePrimesAsBigInts(@ForAll("favouritePrimes") BigInteger aFavourite) {
+	void smallPrimes(@ForAll("favouritePrimes") int aPrime) {
+		System.out.println("prime = " + aPrime);
 	}
 
 	@Provide
-	Arbitrary<?> favouritePrimes(TypeUsage targetType) {
-		Arbitrary<Integer> ints = Arbitraries.of(3, 5, 7, 13, 17, 23, 41);
-		if (targetType.getRawType().equals(BigInteger.class)) {
-			return ints.map(BigInteger::valueOf);
+	Arbitrary<Integer> favouritePrimes(TypeUsage targetType) {
+		if (targetType.findAnnotation(LargePrimes.class).isPresent()) {
+			return Arbitraries.integers().greaterOrEqual(2).filter(this::isPrime);
 		}
-		return ints;
+		return Arbitraries.of(3, 5, 7, 13, 17, 23, 41);
 	}
+
+	private boolean isPrime(int i) {
+		if (i < 2) return false;
+		if (i == 2) return true;
+		if (i % 2 == 0) return false;
+		for (int j = 3; j * j <= i; j += 2) {
+			if (i % j == 0) return false;
+		}
+		return true;
+	}
+}
+
+@Target({ ElementType.PARAMETER })
+@Retention(RetentionPolicy.RUNTIME)
+@interface LargePrimes {
 }
