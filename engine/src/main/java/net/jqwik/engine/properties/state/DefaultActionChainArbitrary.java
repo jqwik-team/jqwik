@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
+import org.jspecify.annotations.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
@@ -11,7 +12,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.support.*;
 
-public class DefaultActionChainArbitrary<T> extends ArbitraryDecorator<ActionChain<T>> implements ActionChainArbitrary<T> {
+public class DefaultActionChainArbitrary<T extends @Nullable Object> extends ArbitraryDecorator<ActionChain<T>> implements ActionChainArbitrary<T> {
 
 	private ChainArbitrary<T> chainArbitrary;
 

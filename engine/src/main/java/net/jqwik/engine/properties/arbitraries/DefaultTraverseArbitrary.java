@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.jspecify.annotations.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
@@ -17,7 +18,7 @@ import static org.junit.platform.commons.support.ModifierSupport.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
-public class DefaultTraverseArbitrary<T> extends ArbitraryDecorator<T> implements TraverseArbitrary<T> {
+public class DefaultTraverseArbitrary<T extends @Nullable Object> extends ArbitraryDecorator<T> implements TraverseArbitrary<T> {
 
 	private final Class<T> targetType;
 	private final Traverser traverser;
@@ -189,7 +190,7 @@ public class DefaultTraverseArbitrary<T> extends ArbitraryDecorator<T> implement
 
 	@FunctionalInterface
 	private interface Combinator {
-		Object combine(Object[] params) throws Throwable;
+		@Nullable Object combine(Object[] params) throws Throwable;
 	}
 
 	private static class GenerationError extends RuntimeException {

@@ -8,7 +8,9 @@ import net.jqwik.api.state.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
 
-public class DefaultChainArbitrary<T> extends TypedCloneable implements ChainArbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class DefaultChainArbitrary<T extends @Nullable Object> extends TypedCloneable implements ChainArbitrary<T> {
 
 	private int maxTransformations = Integer.MIN_VALUE;
 	private Supplier<? extends ChangeDetector<? super T>> changeDetectorSupplier = ChangeDetector::alwaysTrue;

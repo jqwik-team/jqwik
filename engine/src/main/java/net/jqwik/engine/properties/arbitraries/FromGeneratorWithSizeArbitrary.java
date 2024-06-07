@@ -5,7 +5,9 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 
-public class FromGeneratorWithSizeArbitrary<T> implements Arbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class FromGeneratorWithSizeArbitrary<T extends @Nullable Object> implements Arbitrary<T> {
 
 	private final IntFunction<? extends RandomGenerator<T>> supplier;
 

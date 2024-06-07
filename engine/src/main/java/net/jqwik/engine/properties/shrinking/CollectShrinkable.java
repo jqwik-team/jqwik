@@ -7,7 +7,9 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-public class CollectShrinkable<T> implements Shrinkable<List<T>> {
+import org.jspecify.annotations.*;
+
+public class CollectShrinkable<T extends @Nullable Object> implements Shrinkable<List<T>> {
 	private final List<? extends Shrinkable<T>> elements;
 	private final Predicate<? super List<? extends T>> until;
 

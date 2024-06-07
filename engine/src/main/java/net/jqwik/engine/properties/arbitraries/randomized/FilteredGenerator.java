@@ -6,7 +6,9 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class FilteredGenerator<T> implements RandomGenerator<T> {
+import org.jspecify.annotations.*;
+
+public class FilteredGenerator<T extends @Nullable Object> implements RandomGenerator<T> {
 	private final RandomGenerator<T> toFilter;
 	private final Predicate<? super T> filterPredicate;
 	private int maxMisses;

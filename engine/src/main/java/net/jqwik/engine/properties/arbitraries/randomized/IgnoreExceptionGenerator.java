@@ -6,9 +6,11 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.support.JqwikExceptionSupport.*;
 
-public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
+public class IgnoreExceptionGenerator<T extends @Nullable Object> implements RandomGenerator<T> {
 
 	private final RandomGenerator<T> base;
 	private final Class<? extends Throwable>[] exceptionTypes;

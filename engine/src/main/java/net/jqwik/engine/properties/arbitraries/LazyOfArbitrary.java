@@ -14,7 +14,7 @@ import net.jqwik.engine.support.*;
 
 import org.jspecify.annotations.*;
 
-public class LazyOfArbitrary<T> implements Arbitrary<T> {
+public class LazyOfArbitrary<T extends @Nullable Object> implements Arbitrary<T> {
 
 	// Cached arbitraries only have to survive one property
 	private static Store<Map<Integer, LazyOfArbitrary<?>>> arbitrariesStore() {

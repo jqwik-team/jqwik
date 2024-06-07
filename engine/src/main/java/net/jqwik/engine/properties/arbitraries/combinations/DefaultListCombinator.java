@@ -10,7 +10,7 @@ import net.jqwik.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-public class DefaultListCombinator<T> implements Combinators.ListCombinator<T> {
+public class DefaultListCombinator<T extends @Nullable Object> implements Combinators.ListCombinator<T> {
 
 	protected final Arbitrary<T>[] arbitraries;
 
@@ -38,7 +38,7 @@ public class DefaultListCombinator<T> implements Combinators.ListCombinator<T> {
 		return params -> combinator.apply((List<T>) params);
 	}
 
-	private static class Filtered<T> extends DefaultListCombinator<T> {
+	private static class Filtered<T extends @Nullable Object> extends DefaultListCombinator<T> {
 		private final Predicate<? super List<? extends T>> filter;
 
 		private Filtered(Arbitrary<T>[] arbitraries, Predicate<? super List<? extends T>> filter) {

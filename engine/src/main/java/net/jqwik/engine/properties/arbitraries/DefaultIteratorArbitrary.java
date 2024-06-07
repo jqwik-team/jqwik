@@ -9,7 +9,9 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iterator<T>> implements IteratorArbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class DefaultIteratorArbitrary<T extends @Nullable Object> extends MultivalueArbitraryBase<T, Iterator<T>> implements IteratorArbitrary<T> {
 
 	public DefaultIteratorArbitrary(Arbitrary<T> elementArbitrary) {
 		super(elementArbitrary);

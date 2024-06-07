@@ -5,7 +5,9 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public class FilteredExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
+import org.jspecify.annotations.*;
+
+public class FilteredExhaustiveGenerator<T extends @Nullable Object> implements ExhaustiveGenerator<T> {
 	private final ExhaustiveGenerator<T> toFilter;
 	private final Predicate<? super T> filter;
 	private int maxMisses;

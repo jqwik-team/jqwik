@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
+import org.jspecify.annotations.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
@@ -12,7 +13,7 @@ import net.jqwik.api.providers.*;
 
 import static org.junit.platform.commons.support.ModifierSupport.*;
 
-public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements TypeArbitrary<T> {
+public class DefaultTypeArbitrary<T extends @Nullable Object> extends ArbitraryDecorator<T> implements TypeArbitrary<T> {
 
 	private final Class<T> targetType;
 	private final Set<Executable> explicitCreators = new LinkedHashSet<>();

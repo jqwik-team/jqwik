@@ -12,7 +12,9 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> implements SetArbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class DefaultSetArbitrary<T extends @Nullable Object> extends MultivalueArbitraryBase<T, Set<T>> implements SetArbitrary<T> {
 
 	public DefaultSetArbitrary(Arbitrary<T> elementArbitrary) {
 		super(elementArbitrary);

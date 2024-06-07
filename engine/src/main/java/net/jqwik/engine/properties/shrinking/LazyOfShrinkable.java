@@ -6,7 +6,9 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
-public class LazyOfShrinkable<T> implements Shrinkable<T> {
+import org.jspecify.annotations.*;
+
+public class LazyOfShrinkable<T extends @Nullable Object> implements Shrinkable<T> {
 	public final Shrinkable<T> current;
 	public final int depth;
 	public final Set<LazyOfShrinkable<T>> parts;

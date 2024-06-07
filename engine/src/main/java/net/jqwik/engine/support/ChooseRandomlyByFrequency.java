@@ -5,7 +5,9 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public class ChooseRandomlyByFrequency<T> implements Function<Random, T> {
+import org.jspecify.annotations.*;
+
+public class ChooseRandomlyByFrequency<T extends @Nullable Object> implements Function<Random, T> {
 
 	private int[] upperBounds;
 	private int size = 0;

@@ -8,7 +8,7 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 
 import org.jspecify.annotations.*;
 
-public class JustArbitrary<T> implements Arbitrary<T> {
+public class JustArbitrary<T extends @Nullable Object> implements Arbitrary<T> {
 
 	private final T value;
 

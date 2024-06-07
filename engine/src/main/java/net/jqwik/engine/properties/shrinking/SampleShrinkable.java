@@ -5,7 +5,9 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
-public class SampleShrinkable<T> extends AbstractValueShrinkable<T> {
+import org.jspecify.annotations.*;
+
+public class SampleShrinkable<T extends @Nullable Object> extends AbstractValueShrinkable<T> {
 
 	private final List<T> samples;
 	private final int index;

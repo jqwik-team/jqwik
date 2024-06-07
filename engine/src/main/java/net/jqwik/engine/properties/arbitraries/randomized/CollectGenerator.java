@@ -6,7 +6,9 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class CollectGenerator<T> implements RandomGenerator<List<T>> {
+import org.jspecify.annotations.*;
+
+public class CollectGenerator<T extends @Nullable Object> implements RandomGenerator<List<T>> {
 	private final RandomGenerator<T> elementGenerator;
 	private final Predicate<? super List<? extends T>> until;
 

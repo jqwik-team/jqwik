@@ -15,7 +15,7 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.*;
 
-public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
+public class ShrinkableChain<T extends @Nullable Object> implements Shrinkable<Chain<T>> {
 
 	public static final int MAX_TRANSFORMER_TRIES = 1000;
 	private final long randomSeed;
@@ -127,9 +127,9 @@ public class ShrinkableChain<T> implements Shrinkable<Chain<T>> {
 
 		private final Random random = SourceOfRandomness.newRandom(randomSeed);
 		private int steps = 0;
-		private T current;
+		private @Nullable T current;
 		private boolean initialSupplied = false;
-		private Transformer<T> nextTransformer = null;
+		private @Nullable Transformer<T> nextTransformer = null;
 
 		private ChainIterator(T initial) {
 			this.current = initial;

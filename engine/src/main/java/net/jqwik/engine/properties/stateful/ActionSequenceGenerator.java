@@ -5,7 +5,9 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
+import org.jspecify.annotations.*;
+
+class ActionSequenceGenerator<M extends @Nullable Object> implements RandomGenerator<ActionSequence<M>> {
 	private final int genSize;
 	private final int maxSize;
 	private final Arbitrary<Action<M>> actionArbitrary;

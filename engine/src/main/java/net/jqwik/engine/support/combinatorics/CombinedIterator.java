@@ -1,9 +1,11 @@
 package net.jqwik.engine.support.combinatorics;
 
+import org.jspecify.annotations.*;
+
 import java.util.*;
 import java.util.stream.*;
 
-public class CombinedIterator<T> implements Iterator<List<T>> {
+public class CombinedIterator<T extends @Nullable Object> implements Iterator<List<T>> {
 	private final List<? extends Iterable<? extends T>> iterables;
 	private final List<Iterator<? extends T>> iterators;
 	private final List<T> elements;

@@ -9,7 +9,7 @@ import org.jspecify.annotations.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = EXPERIMENTAL, since = "1.3.0")
-public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
+public interface EdgeCases<T extends @Nullable Object> extends Iterable<Shrinkable<T>> {
 
 	@API(status = INTERNAL)
 	abstract class EdgeCasesFacade {

@@ -117,7 +117,7 @@ public interface Transformer<T extends @Nullable Object> extends Function<T, T> 
 	 * @param <S>         The type of the state to transform
 	 * @return a new instance of a transformer
 	 */
-	static <S extends @Nullable Object> Transformer<S> transform(String description, Function<? super S, S> transform) {
+	static <S extends @Nullable Object> Transformer<S> transform(String description, Function<? super S, ? extends S> transform) {
 		return new Transformer<S>() {
 			@Override
 			public S apply(S s) {

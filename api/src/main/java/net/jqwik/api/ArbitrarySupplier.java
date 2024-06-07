@@ -24,7 +24,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see From
  */
 @API(status = MAINTAINED, since = "1.7.0")
-public interface ArbitrarySupplier<T> extends Supplier<Arbitrary<T>> {
+public interface ArbitrarySupplier<T extends @Nullable Object> extends Supplier<Arbitrary<T>> {
 
 	/**
 	 * Override this method if you need more information about the target type,

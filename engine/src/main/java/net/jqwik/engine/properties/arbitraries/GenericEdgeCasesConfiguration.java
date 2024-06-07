@@ -6,7 +6,9 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
-public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
+import org.jspecify.annotations.*;
+
+public class GenericEdgeCasesConfiguration<T extends @Nullable Object> implements EdgeCases.Config<T> {
 	private boolean none;
 	private final List<Predicate<? super T>> filters = new ArrayList<>();
 	private final List<T> additionalEdgeCases = new ArrayList<>();

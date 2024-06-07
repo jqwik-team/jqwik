@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.jspecify.annotations.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -11,7 +12,7 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.engine.support.*;
 
-class SequentialActionSequence<M> implements ActionSequence<M> {
+class SequentialActionSequence<M extends @Nullable Object> implements ActionSequence<M> {
 
 	protected ActionGenerator<M> actionGenerator;
 	protected int intendedSize;
@@ -20,7 +21,7 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 	private final List<Consumer<M>> peekers = new ArrayList<>();
 
 	protected RunState runState = RunState.NOT_RUN;
-	private M currentModel = null;
+	private @Nullable M currentModel = null;
 
 	SequentialActionSequence(ActionGenerator<M> actionGenerator, int intendedSize) {
 		if (intendedSize < 1) {

@@ -7,7 +7,9 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-public class Unshrinkable<T> implements Shrinkable<T> {
+import org.jspecify.annotations.*;
+
+public class Unshrinkable<T extends @Nullable Object> implements Shrinkable<T> {
 	private final ShrinkingDistance distance;
 	private final Supplier<? extends T> valueSupplier;
 
