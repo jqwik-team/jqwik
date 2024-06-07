@@ -41,7 +41,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> frequencyOf(List<? extends Tuple.Tuple2<Integer, ? extends Arbitrary<T>>> frequencies) {
+	public <T extends @Nullable Object> Arbitrary<T> frequencyOf(List<? extends Tuple.Tuple2<Integer, ? extends Arbitrary<T>>> frequencies) {
 		List<Tuple.Tuple2<Integer, ? extends Arbitrary<T>>> aboveZeroFrequencies =
 			frequencies.stream().filter(f -> f.get1() > 0).collect(Collectors.toList());
 
@@ -107,12 +107,12 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> lazy(Supplier<? extends Arbitrary<T>> arbitrarySupplier) {
+	public <T extends @Nullable Object> Arbitrary<T> lazy(Supplier<? extends Arbitrary<T>> arbitrarySupplier) {
 		return new LazyArbitrary<>(arbitrarySupplier);
 	}
 
 	@Override
-	public <T> Arbitrary<T> lazyOf(List<? extends Supplier<? extends Arbitrary<T>>> suppliers) {
+	public <T extends @Nullable Object> Arbitrary<T> lazyOf(List<? extends Supplier<? extends Arbitrary<T>>> suppliers) {
 		int hashIdentifier = calculateIdentifier(suppliers.size());
 		return LazyOfArbitrary.of(hashIdentifier, suppliers);
 	}
@@ -128,28 +128,28 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> of(Collection<T> values) {
+	public <T extends @Nullable Object> Arbitrary<T> of(Collection<? extends T> values) {
 		List<T> valueList = values instanceof List ? (List<T>) values : new ArrayList<>(values);
 		return new ChooseValueArbitrary<>(valueList);
 	}
 
 	@Override
-	public <T> Arbitrary<T> create(Supplier<T> supplier) {
+	public <T extends @Nullable Object> Arbitrary<T> create(Supplier<T> supplier) {
 		return new CreateArbitrary<>(supplier);
 	}
 
 	@Override
-	public <T> Arbitrary<List<T>> shuffle(List<T> values) {
+	public <T extends @Nullable Object> Arbitrary<List<T>> shuffle(List<T> values) {
 		return new ShuffleArbitrary<>(values);
 	}
 
 	@Override
-	public <T> Arbitrary<T> fromGenerator(IntFunction<? extends RandomGenerator<T>> generatorSupplier) {
+	public <T extends @Nullable Object> Arbitrary<T> fromGenerator(IntFunction<? extends RandomGenerator<T>> generatorSupplier) {
 		return new FromGeneratorWithSizeArbitrary<>(generatorSupplier);
 	}
 
 	@Override
-	public <T> Arbitrary<T> frequency(List<? extends Tuple.Tuple2<Integer, T>> frequencies) {
+	public <T extends @Nullable Object> Arbitrary<T> frequency(List<? extends Tuple.Tuple2<Integer, T>> frequencies) {
 		List<Tuple.Tuple2<Integer, T>> frequenciesAbove0 = frequencies.stream()
 																	  .filter(f -> f.get1() > 0)
 																	  .collect(Collectors.toList());
@@ -199,10 +199,10 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver) {
+	public <T extends @Nullable Object> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<? super TypeUsage, ? extends Arbitrary<T>> noDefaultResolver) {
 		Set<Arbitrary<?>> arbitraries = allDefaultsFor(typeUsage, noDefaultResolver);
 		if (arbitraries.isEmpty()) {
-			return (Arbitrary<T>) noDefaultResolver.apply(typeUsage);
+			return noDefaultResolver.apply(typeUsage);
 		}
 
 		List<Arbitrary<? extends T>> arbitrariesList = new ArrayList<>();
@@ -216,18 +216,18 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <K, V> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+	public <K extends @Nullable Object, V extends @Nullable Object> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		// The map cannot be larger than the max number of possible keys
 		return new DefaultMapArbitrary<>(keysArbitrary, valuesArbitrary)
 				   .ofMaxSize(maxNumberOfElements(keysArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
 	@Override
-	public <K, V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+	public <K extends @Nullable Object, V extends @Nullable Object> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		return Combinators.combine(keysArbitrary, valuesArbitrary).as(AbstractMap.SimpleEntry::new);
 	}
 
-	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver) {
+	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage, Function<? super TypeUsage, ? extends Arbitrary<?>> noDefaultResolver) {
 		DomainContext domainContext = CurrentDomainContext.get();
 		Set<Arbitrary<?>> unconfiguredArbitraries = createDefaultArbitraries(typeUsage, noDefaultResolver, domainContext);
 		return configureDefaultArbitraries(typeUsage, domainContext, unconfiguredArbitraries);
@@ -246,7 +246,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	private static Set<Arbitrary<?>> createDefaultArbitraries(
 		TypeUsage typeUsage,
-		Function<TypeUsage, Arbitrary<Object>> noDefaultResolver,
+		Function<? super TypeUsage, ? extends Arbitrary<?>> noDefaultResolver,
 		DomainContext domainContext
 	) {
 		RegisteredArbitraryResolver defaultArbitraryResolver = new RegisteredArbitraryResolver(domainContext.getArbitraryProviders());
@@ -286,7 +286,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		}
 	}
 
-	private <T> Arbitrary<T> recursive(
+	private <T extends @Nullable Object> Arbitrary<T> recursive(
 		Supplier<? extends Arbitrary<T>> base,
 		Function<? super Arbitrary<T>, ? extends Arbitrary<T>> recur,
 		int depth

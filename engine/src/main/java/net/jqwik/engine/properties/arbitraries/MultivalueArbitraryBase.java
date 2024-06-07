@@ -10,6 +10,8 @@ import net.jqwik.api.support.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
+import org.jspecify.annotations.*;
+
 import static java.util.Arrays.*;
 
 import static net.jqwik.engine.properties.UniquenessChecker.*;
@@ -68,7 +70,7 @@ abstract class MultivalueArbitraryBase<T, U> extends TypedCloneable implements S
 	}
 
 	@Override
-	public <R> Arbitrary<R> reduce(R initial, BiFunction<R, T, R> accumulator) {
+	public <R extends @Nullable Object> Arbitrary<R> reduce(R initial, BiFunction<R, ? super T, R> accumulator) {
 		return this.map(streamable -> {
 			// Couldn't find a way to use Stream.reduce since it requires a combinator
 			@SuppressWarnings("unchecked")

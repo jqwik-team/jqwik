@@ -49,7 +49,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 	}
 
 	@API(status = MAINTAINED, since = "1.0")
-	public static <T> ShrinkingDistance forCollection(Collection<Shrinkable<T>> elements) {
+	public static <T extends @Nullable Object> ShrinkingDistance forCollection(Collection<? extends Shrinkable<T>> elements) {
 		// This is an optimization to avoid creating temporary arrays, which the old streams-based implementation did.
 		long[] collectedDistances = sumUp(toDistances(elements));
 		ShrinkingDistance sumDistanceOfElements = new ShrinkingDistance(collectedDistances);
@@ -57,7 +57,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 	}
 
 	@API(status = MAINTAINED, since = "1.0")
-	public static <T> ShrinkingDistance combine(List<Shrinkable<T>> shrinkables) {
+	public static <T extends @Nullable Object> ShrinkingDistance combine(List<? extends Shrinkable<T>> shrinkables) {
 		// This can happen e.g. when using Combinators.combine() with an empty list of arbitraries.
 		if (shrinkables.isEmpty()) {
 			return ShrinkingDistance.MIN;
@@ -145,8 +145,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return new ShrinkingDistance(appendedDistances);
 	}
 
-	@NonNull
-	private static <T> List<long[]> toDistances(Collection<Shrinkable<T>> shrinkables) {
+	private static <T extends @Nullable Object> List<long[]> toDistances(Collection<? extends Shrinkable<T>> shrinkables) {
 		List<long[]> listOfDistances = new ArrayList<>(shrinkables.size());
 		for (Shrinkable<?> tShrinkable : shrinkables) {
 			long[] longs = tShrinkable.distance().distances;

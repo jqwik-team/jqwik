@@ -7,6 +7,8 @@ import org.apiguardian.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = INTERNAL)
@@ -17,19 +19,19 @@ public abstract class ShrinkingSupportFacade {
 		implementation = FacadeLoader.load(ShrinkingSupportFacade.class);
 	}
 
-	public abstract <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier);
+	public abstract <T extends @Nullable Object> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<? super T> falsifier);
 
-	public abstract <T> T falsifyThenShrink(RandomGenerator<? extends T> arbitrary, Random random, Falsifier<T> falsifier);
+	public abstract <T extends @Nullable Object> T falsifyThenShrink(RandomGenerator<? extends T> arbitrary, Random random, Falsifier<? super T> falsifier);
 
-	public abstract <T> T shrink(
+	public abstract <T extends @Nullable Object> T shrink(
 			Shrinkable<T> falsifiedShrinkable,
-			Falsifier<T> falsifier,
+			Falsifier<? super T> falsifier,
 			Throwable originalError
 	);
 
-	public abstract <T> ShrunkFalsifiedSample shrinkToSample(
+	public abstract <T extends @Nullable Object> ShrunkFalsifiedSample shrinkToSample(
 			Shrinkable<T> falsifiedShrinkable,
-			Falsifier<T> falsifier,
+			Falsifier<? super T> falsifier,
 			Throwable originalError
 	);
 }

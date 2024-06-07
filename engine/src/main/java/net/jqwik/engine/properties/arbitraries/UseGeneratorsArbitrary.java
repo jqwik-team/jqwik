@@ -5,7 +5,9 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-abstract class UseGeneratorsArbitrary<T> implements Arbitrary<T> {
+import org.jspecify.annotations.*;
+
+abstract class UseGeneratorsArbitrary<T extends @Nullable Object> implements Arbitrary<T> {
 
 	private final RandomGenerator<T> randomGenerator;
 	private final Function<Long, Optional<ExhaustiveGenerator<T>>> exhaustiveGeneratorFunction;

@@ -5,6 +5,8 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.combinations.*;
 
+import org.jspecify.annotations.*;
+
 /**
  * Is loaded through reflection in api module
  */
@@ -81,7 +83,7 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 	}
 
 	@Override
-	public <T> Combinators.ListCombinator<T> combineList(List<? extends Arbitrary<T>> listOfArbitraries) {
+	public <T extends @Nullable Object> Combinators.ListCombinator<T> combineList(List<? extends Arbitrary<T>> listOfArbitraries) {
 		return new DefaultListCombinator<>(listOfArbitraries);
 	}
 

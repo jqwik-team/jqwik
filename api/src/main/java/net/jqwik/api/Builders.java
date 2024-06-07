@@ -64,11 +64,10 @@ public class Builders {
 		 * @param <T>           the target object's type
 		 * @return arbitrary of target object
 		 */
-		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
+		public <T extends @Nullable Object> Arbitrary<T> build(Function<B, T> buildFunction) {
 
 			class Holder {
-				@Nullable
-				final Object value;
+				final @Nullable Object value;
 
 				Holder(@Nullable Object value) {
 					this.value = value;

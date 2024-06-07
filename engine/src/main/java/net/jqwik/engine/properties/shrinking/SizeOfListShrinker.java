@@ -5,7 +5,9 @@ import java.util.stream.*;
 
 import net.jqwik.engine.support.*;
 
-public class SizeOfListShrinker<T> {
+import org.jspecify.annotations.*;
+
+public class SizeOfListShrinker<T extends @Nullable Object> {
 
 	private final int minSize;
 
@@ -13,7 +15,7 @@ public class SizeOfListShrinker<T> {
 		this.minSize = minSize;
 	}
 
-	public Stream<List<T>> shrink(List<T> toShrink) {
+	public Stream<List<T>> shrink(List<? extends T> toShrink) {
 		if (toShrink.size() <= minSize)
 			return Stream.empty();
 		return JqwikStreamSupport.concat(
@@ -30,14 +32,14 @@ public class SizeOfListShrinker<T> {
 		}
 	}
 
-	public Stream<List<T>> cuts(List<T> toShrink) {
+	public Stream<List<T>> cuts(List<? extends T> toShrink) {
 		Set<List<T>> lists = new LinkedHashSet<>();
 		appendRightCuts(toShrink, lists);
 		appendLeftCuts(toShrink, lists);
 		return lists.stream();
 	}
 
-	private void appendLeftCuts(List<T> toShrink, Set<List<T>> lists) {
+	private void appendLeftCuts(List<? extends T> toShrink, Set<List<T>> lists) {
 		int elementsToCut = calculateElementsToCut(toShrink.size());
 		appendLeftCut(toShrink, lists, elementsToCut);
 		if (elementsToCut != 1) {
@@ -45,11 +47,11 @@ public class SizeOfListShrinker<T> {
 		}
 	}
 
-	private void appendLeftCut(List<T> toShrink, Set<List<T>> lists, int elementsToCut) {
+	private void appendLeftCut(List<? extends T> toShrink, Set<List<T>> lists, int elementsToCut) {
 		lists.add(new ArrayList<>(cutFromLeft(toShrink, elementsToCut)));
 	}
 
-	private List<T> cutFromLeft(List<T> toShrink, int elementsToCut) {
+	private List<? extends T> cutFromLeft(List<? extends T> toShrink, int elementsToCut) {
 		return toShrink.subList(elementsToCut, toShrink.size());
 	}
 
@@ -68,7 +70,7 @@ public class SizeOfListShrinker<T> {
 		return listSize / 2;
 	}
 
-	private void appendRightCuts(List<T> toShrink, Set<List<T>> lists) {
+	private void appendRightCuts(List<? extends T> toShrink, Set<List<T>> lists) {
 		int elementsToCut = calculateElementsToCut(toShrink.size());
 		appendRightCut(toShrink, lists, elementsToCut);
 		if (elementsToCut != 1) {
@@ -76,11 +78,11 @@ public class SizeOfListShrinker<T> {
 		}
 	}
 
-	private void appendRightCut(List<T> toShrink, Set<List<T>> lists, int elementsToCut) {
+	private void appendRightCut(List<? extends T> toShrink, Set<List<T>> lists, int elementsToCut) {
 		lists.add(new ArrayList<>(cutFromRight(toShrink, elementsToCut)));
 	}
 
-	private List<T> cutFromRight(List<T> toShrink, int elementsToCut) {
+	private List<? extends T> cutFromRight(List<? extends T> toShrink, int elementsToCut) {
 		return toShrink.subList(0, toShrink.size() - elementsToCut);
 	}
 }

@@ -9,9 +9,9 @@ import net.jqwik.engine.support.*;
 
 public class CombinedShrinkable<T> implements Shrinkable<T> {
 	private final List<Shrinkable<Object>> parts;
-	private final Function<List<Object>, T> combinator;
+	private final Function<? super List<?>, ? extends T> combinator;
 
-	public CombinedShrinkable(List<Shrinkable<Object>> parts, Function<List<Object>, T> combinator) {
+	public CombinedShrinkable(List<Shrinkable<Object>> parts, Function<? super List<?>, ? extends T> combinator) {
 		this.parts = parts;
 		this.combinator = combinator;
 	}

@@ -4,13 +4,13 @@ import java.util.*;
 import java.util.stream.*;
 
 public class CombinedIterator<T> implements Iterator<List<T>> {
-	private final List<Iterable<T>> iterables;
-	private final List<Iterator<T>> iterators;
+	private final List<? extends Iterable<? extends T>> iterables;
+	private final List<Iterator<? extends T>> iterators;
 	private final List<T> elements;
 	private final boolean isEmpty;
 	private int position = -1;
 
-	public CombinedIterator(List<Iterable<T>> iterables) {
+	public CombinedIterator(List<? extends Iterable<? extends T>> iterables) {
 		this.iterables = iterables;
 		elements = new ArrayList<>(Collections.nCopies(iterables.size(), null));
 		iterators = iterables.stream().map(Iterable::iterator).collect(Collectors.toCollection(ArrayList::new));
@@ -34,7 +34,7 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 			// The first initialization of the values
 			resetValuesFrom(0);
 		} else {
-			Iterator<T> it = iterators.get(position);
+			Iterator<? extends T> it = iterators.get(position);
 			if (it.hasNext()) {
 				// Just advance the current iterator
 				elements.set(position, it.next());
@@ -53,14 +53,14 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 	}
 
 	private void resetValuesFrom(int startPosition) {
-		List<Iterator<T>> iterators = this.iterators;
-		List<Iterable<T>> iterables = this.iterables;
+		List<Iterator<? extends T>> iterators = this.iterators;
+		List<? extends Iterable<? extends T>> iterables = this.iterables;
 		List<T> elements = this.elements;
 		// In the initial reset, we can reuse the existing iterators
 		// It might slightly optimize the behavior, and it supports Stream#iterator which can't be executed twice
 		boolean initialReset = position == -1;
 		for (int i = startPosition; i < iterables.size(); i++) {
-			Iterator<T> newIt = initialReset ? iterators.get(i) : iterables.get(i).iterator();
+			Iterator<? extends T> newIt = initialReset ? iterators.get(i) : iterables.get(i).iterator();
 			iterators.set(i, newIt);
 			elements.set(i, newIt.next());
 		}
@@ -68,7 +68,7 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 	}
 
 	private int nextAvailablePosition() {
-		List<Iterator<T>> iterators = this.iterators;
+		List<Iterator<? extends T>> iterators = this.iterators;
 		for (int i = position; i >= 0; i--) {
 			if (iterators.get(i).hasNext()) {
 				return i;

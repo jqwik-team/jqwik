@@ -11,18 +11,18 @@ import net.jqwik.engine.properties.*;
 public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
 	public ShrinkableSet(
-		Collection<Shrinkable<E>> elements,
+		Collection<? extends Shrinkable<E>> elements,
 		int minSize, int maxSize,
-		Collection<FeatureExtractor<E>> uniquenessExtractors,
+		Collection<? extends FeatureExtractor<E>> uniquenessExtractors,
 		@Nullable Arbitrary<E> elementArbitrary
 	) {
 		this(new ArrayList<>(elements), minSize, maxSize, uniquenessExtractors, elementArbitrary);
 	}
 
 	private ShrinkableSet(
-		List<Shrinkable<E>> elements,
+		List<? extends Shrinkable<E>> elements,
 		int minSize, int maxSize,
-		Collection<FeatureExtractor<E>> uniquenessExtractors,
+		Collection<? extends FeatureExtractor<E>> uniquenessExtractors,
 		@Nullable Arbitrary<E> elementArbitrary
 	) {
 		super(elements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
@@ -39,7 +39,7 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 	}
 
 	@Override
-	Set<E> createValue(List<Shrinkable<E>> shrinkables) {
+	Set<E> createValue(List<? extends Shrinkable<E>> shrinkables) {
 		// See https://richardstartin.github.io/posts/5-java-mundane-performance-tricks#size-hashmaps-whenever-possible
 		//     for how to compute initial capacity of hash maps
 		int capacityWithLoadFactor = shrinkables.size() * 4 / 3;
@@ -53,7 +53,7 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 	}
 
 	@Override
-	Shrinkable<Set<E>> createShrinkable(List<Shrinkable<E>> shrunkElements) {
+	Shrinkable<Set<E>> createShrinkable(List<? extends Shrinkable<E>> shrunkElements) {
 		return new ShrinkableSet<>(shrunkElements, minSize, maxSize, uniquenessExtractors, elementArbitrary);
 	}
 }

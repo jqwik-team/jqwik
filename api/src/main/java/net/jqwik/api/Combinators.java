@@ -68,7 +68,7 @@ public class Combinators {
 			Arbitrary<T8> a8
 		);
 
-		public abstract <T> ListCombinator<T> combineList(List<? extends Arbitrary<T>> listOfArbitraries);
+		public abstract <T extends @Nullable Object> ListCombinator<T> combineList(List<? extends Arbitrary<T>> listOfArbitraries);
 	}
 
 	private Combinators() {
@@ -173,7 +173,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R extends @Nullable Object> Arbitrary<R> as(F2<T1, T2, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F2<? super T1, ? super T2, ? extends R> combinator);
 
 		/**
 		 * Filter two values to only let them pass if the predicate is true.
@@ -182,7 +182,7 @@ public class Combinators {
 		 * @return combinator instance
 		 */
 		@API(status = MAINTAINED, since = "1.8.0")
-		Combinator2<T1, T2> filter(F2<T1, T2, Boolean> filter);
+		Combinator2<T1, T2> filter(F2<? super T1, ? super T2, Boolean> filter);
 
 		/**
 		 * Combine two values to create a new arbitrary.
@@ -191,7 +191,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R extends @Nullable Object> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F2<? super T1, ? super T2, ? extends Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -208,7 +208,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R extends @Nullable Object> Arbitrary<R> as(F3<T1, T2, T3, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F3<? super T1, ? super T2, ? super T3, ? extends R> combinator);
 
 		/**
 		 * Filter three values to only let them pass if the predicate is true.
@@ -217,7 +217,7 @@ public class Combinators {
 		 * @return combinator instance
 		 */
 		@API(status = MAINTAINED, since = "1.8.0")
-		Combinator3<T1, T2, T3> filter(F3<T1, T2, T3, Boolean> filter);
+		Combinator3<T1, T2, T3> filter(F3<? super T1, ? super T2, ? super T3, Boolean> filter);
 
 		/**
 		 * Combine three values to create a new arbitrary.
@@ -226,7 +226,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R extends @Nullable Object> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F3<? super T1, ? super T2, ? super T3, ? extends Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -244,7 +244,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R extends @Nullable Object> Arbitrary<R> as(F4<T1, T2, T3, T4, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F4<? super T1, ? super T2, ? super T3, ? super T4, ? extends R> combinator);
 
 		/**
 		 * Filter four values to only let them pass if the predicate is true.
@@ -253,7 +253,7 @@ public class Combinators {
 		 * @return combinator instance
 		 */
 		@API(status = MAINTAINED, since = "1.8.0")
-		Combinator4<T1, T2, T3, T4> filter(F4<T1, T2, T3, T4, Boolean> filter);
+		Combinator4<T1, T2, T3, T4> filter(F4<? super T1, ? super T2, ? super T3, ? super T4, Boolean> filter);
 
 		/**
 		 * Combine four values to create a new arbitrary.
@@ -262,7 +262,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R extends @Nullable Object> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F4<? super T1, ? super T2, ? super T3, ? super T4, ? extends Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -280,7 +280,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R extends @Nullable Object> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F5<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> combinator);
 
 		/**
 		 * Filter five values to only let them pass if the predicate is true.
@@ -289,7 +289,7 @@ public class Combinators {
 		 * @return combinator instance
 		 */
 		@API(status = MAINTAINED, since = "1.8.0")
-		Combinator5<T1, T2, T3, T4, T5> filter(F5<T1, T2, T3, T4, T5, Boolean> filter);
+		Combinator5<T1, T2, T3, T4, T5> filter(F5<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, Boolean> filter);
 
 		/**
 		 * Combine five values to create a new arbitrary.
@@ -298,7 +298,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R extends @Nullable Object> Arbitrary<R> flatAs(F5<T1, T2, T3, T4, T5, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F5<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? extends Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -315,7 +315,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R extends @Nullable Object> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F6<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? extends R> combinator);
 
 		/**
 		 * Filter six values to only let them pass if the predicate is true.
@@ -324,7 +324,7 @@ public class Combinators {
 		 * @return combinator instance
 		 */
 		@API(status = MAINTAINED, since = "1.8.0")
-		Combinator6<T1, T2, T3, T4, T5, T6> filter(F6<T1, T2, T3, T4, T5, T6, Boolean> filter);
+		Combinator6<T1, T2, T3, T4, T5, T6> filter(F6<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, Boolean> filter);
 
 		/**
 		 * Combine six values to create a new arbitrary.
@@ -333,7 +333,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R extends @Nullable Object> Arbitrary<R> flatAs(F6<T1, T2, T3, T4, T5, T6, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F6<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? extends Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -351,7 +351,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R extends @Nullable Object> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? extends R> combinator);
 
 		/**
 		 * Filter seven values to only let them pass if the predicate is true.
@@ -360,7 +360,7 @@ public class Combinators {
 		 * @return combinator instance
 		 */
 		@API(status = MAINTAINED, since = "1.8.0")
-		Combinator7<T1, T2, T3, T4, T5, T6, T7> filter(F7<T1, T2, T3, T4, T5, T6, T7, Boolean> filter);
+		Combinator7<T1, T2, T3, T4, T5, T6, T7> filter(F7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, Boolean> filter);
 
 		/**
 		 * Combine seven values to create a new arbitrary.
@@ -369,7 +369,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R extends @Nullable Object> Arbitrary<R> flatAs(F7<T1, T2, T3, T4, T5, T6, T7, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F7<T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? extends Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 
@@ -387,7 +387,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R extends @Nullable Object> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(F8<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, ? extends R> combinator);
 
 		/**
 		 * Filter eight values to only let them pass if the predicate is true.
@@ -396,7 +396,7 @@ public class Combinators {
 		 * @return combinator instance
 		 */
 		@API(status = MAINTAINED, since = "1.8.0")
-		Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> filter(F8<T1, T2, T3, T4, T5, T6, T7, T8, Boolean> filter);
+		Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> filter(F8<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, Boolean> filter);
 
 		/**
 		 * Combine eight values to create a new arbitrary.
@@ -405,7 +405,7 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R extends @Nullable Object> Arbitrary<R> flatAs(F8<T1, T2, T3, T4, T5, T6, T7, T8, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(F8<T1, T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, ? extends Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
@@ -413,7 +413,7 @@ public class Combinators {
 	/**
 	 * Combinator for any number of values.
 	 */
-	public interface ListCombinator<@Nullable T> {
+	public interface ListCombinator<T extends @Nullable Object> {
 
 		/**
 		 * Combine any number of values.
@@ -422,7 +422,7 @@ public class Combinators {
 		 * @param <R>        return type
 		 * @return arbitrary instance
 		 */
-		<R extends @Nullable Object> Arbitrary<R> as(Function<List<T>, R> combinator);
+		<R extends @Nullable Object> Arbitrary<R> as(Function<? super List<T>, ? extends R> combinator);
 
 		/**
 		 * Filter list of values to only let them pass if the predicate is true.
@@ -431,7 +431,7 @@ public class Combinators {
 		 * @return combinator instance
 		 */
 		@API(status = MAINTAINED, since = "1.8.0")
-		ListCombinator<T> filter(Predicate<List<T>> filter);
+		ListCombinator<T> filter(Predicate<? super List<? extends T>> filter);
 
 		/**
 		 * Combine list of values to create a new arbitrary.
@@ -440,26 +440,26 @@ public class Combinators {
 		 * @param <R>            return type of arbitrary
 		 * @return arbitrary instance
 		 */
-		default <R extends @Nullable Object> Arbitrary<R> flatAs(Function<List<T>, Arbitrary<R>> flatCombinator) {
+		default <R extends @Nullable Object> Arbitrary<R> flatAs(Function<? super List<? extends T>, ? extends Arbitrary<R>> flatCombinator) {
 			return as(flatCombinator).flatMap(Function.identity());
 		}
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F2<T1 extends @Nullable Object, T2 extends @Nullable Object, @Nullable R> {
+	public interface F2<T1 extends @Nullable Object, T2 extends @Nullable Object, R extends @Nullable Object> {
 		R apply(T1 t1, T2 t2);
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F3<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, @Nullable R> {
+	public interface F3<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, R extends @Nullable Object> {
 		R apply(T1 t1, T2 t2, T3 t3);
 	}
 
 	@FunctionalInterface
 	@API(status = INTERNAL)
-	public interface F4<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, @Nullable R> {
+	public interface F4<T1 extends @Nullable Object, T2 extends @Nullable Object, T3 extends @Nullable Object, T4 extends @Nullable Object, R extends @Nullable Object> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4);
 	}
 

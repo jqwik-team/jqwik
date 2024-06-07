@@ -11,7 +11,9 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class FrequencyOfArbitrary<T extends @Nullable Object> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 
 	private final List<Tuple2<Integer, ? extends Arbitrary<T>>> frequencies;
 	private final boolean isGeneratorMemoizable;

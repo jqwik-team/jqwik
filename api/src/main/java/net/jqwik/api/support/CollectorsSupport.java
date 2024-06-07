@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -16,7 +17,7 @@ public class CollectorsSupport {
 
 	private CollectorsSupport() {}
 
-	public static <T> Collector<T, ?, Set<T>> toLinkedHashSet() {
+	public static <T extends @Nullable Object> Collector<T, ?, Set<T>> toLinkedHashSet() {
 		return Collectors.toCollection(LinkedHashSet::new);
 	}
 }

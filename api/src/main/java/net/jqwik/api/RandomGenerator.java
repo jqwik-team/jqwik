@@ -20,25 +20,25 @@ public interface RandomGenerator<T extends @Nullable Object> {
 			implementation = FacadeLoader.load(RandomGeneratorFacade.class);
 		}
 
-		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, long nextLong);
+		public abstract <T extends @Nullable Object, U extends @Nullable Object> Shrinkable<U> flatMap(Shrinkable<T> self, Function<? super T, ? extends RandomGenerator<U>> mapper, long nextLong);
 
-		public abstract <T, U> Shrinkable<U> flatMap(
+		public abstract <T extends @Nullable Object, U extends @Nullable Object> Shrinkable<U> flatMap(
 			Shrinkable<T> wrappedShrinkable,
-			Function<T, Arbitrary<U>> mapper,
+			Function<? super T, ? extends Arbitrary<U>> mapper,
 			int genSize,
 			long nextLong,
 			boolean withEmbeddedEdgeCases
 		);
 
-		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate, int maxMisses);
+		public abstract <T extends @Nullable Object> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<? super T> filterPredicate, int maxMisses);
 
-		public abstract <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases);
+		public abstract <T extends @Nullable Object> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases);
 
-		public abstract <T> RandomGenerator<List<T>> collect(RandomGenerator<T> self, Predicate<List<T>> until);
+		public abstract <T extends @Nullable Object> RandomGenerator<List<T>> collect(RandomGenerator<T> self, Predicate<? super List<? extends T>> until);
 
-		public abstract <T> RandomGenerator<T> injectDuplicates(RandomGenerator<T> self, double duplicateProbability);
+		public abstract <T extends @Nullable Object> RandomGenerator<T> injectDuplicates(RandomGenerator<T> self, double duplicateProbability);
 
-		public abstract <T> RandomGenerator<T> ignoreExceptions(
+		public abstract <T extends @Nullable Object> RandomGenerator<T> ignoreExceptions(
 			RandomGenerator<T> self,
 			Class<? extends Throwable>[] exceptionTypes,
 			int maxThrows
@@ -52,12 +52,12 @@ public interface RandomGenerator<T extends @Nullable Object> {
 	Shrinkable<T> next(Random random);
 
 	@API(status = INTERNAL)
-	default <U> RandomGenerator<U> map(Function<T, U> mapper) {
+	default <U extends @Nullable Object> RandomGenerator<U> map(Function<? super T, ? extends U> mapper) {
 		return this.mapShrinkable(s -> s.map(mapper));
 	}
 
 	@API(status = INTERNAL)
-	default <U> RandomGenerator<U> mapShrinkable(Function<Shrinkable<T>, Shrinkable<U>> mapper) {
+	default <U extends @Nullable Object> RandomGenerator<U> mapShrinkable(Function<? super Shrinkable<T>, ? extends Shrinkable<U>> mapper) {
 		return random -> {
 			Shrinkable<T> tShrinkable = RandomGenerator.this.next(random);
 			return mapper.apply(tShrinkable);
@@ -65,7 +65,7 @@ public interface RandomGenerator<T extends @Nullable Object> {
 	}
 
 	@API(status = INTERNAL)
-	default <U> RandomGenerator<U> flatMap(Function<T, RandomGenerator<U>> mapper) {
+	default <U extends @Nullable Object> RandomGenerator<U> flatMap(Function<? super T, ? extends RandomGenerator<U>> mapper) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
 			return RandomGeneratorFacade.implementation.flatMap(wrappedShrinkable, mapper, random.nextLong());
@@ -73,7 +73,7 @@ public interface RandomGenerator<T extends @Nullable Object> {
 	}
 
 	@API(status = INTERNAL)
-	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int genSize, boolean withEmbeddedEdgeCases) {
+	default <U extends @Nullable Object> RandomGenerator<U> flatMap(Function<? super T, ? extends Arbitrary<U>> mapper, int genSize, boolean withEmbeddedEdgeCases) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
 			return RandomGeneratorFacade.implementation
@@ -82,7 +82,7 @@ public interface RandomGenerator<T extends @Nullable Object> {
 	}
 
 	@API(status = INTERNAL)
-	default RandomGenerator<T> filter(Predicate<T> filterPredicate, int maxMisses) {
+	default RandomGenerator<T> filter(Predicate<? super T> filterPredicate, int maxMisses) {
 		return RandomGeneratorFacade.implementation.filter(this, filterPredicate, maxMisses);
 	}
 
@@ -97,7 +97,7 @@ public interface RandomGenerator<T extends @Nullable Object> {
 	}
 
 	@API(status = INTERNAL)
-	default RandomGenerator<List<T>> collect(Predicate<List<T>> until) {
+	default RandomGenerator<List<T>> collect(Predicate<? super List<? extends T>> until) {
 		return RandomGeneratorFacade.implementation.collect(this, until);
 	}
 

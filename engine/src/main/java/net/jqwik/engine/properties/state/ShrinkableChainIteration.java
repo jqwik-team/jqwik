@@ -6,16 +6,18 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.state.*;
 
+import org.jspecify.annotations.*;
+
 class ShrinkableChainIteration<T> {
 	final Shrinkable<Transformer<T>> shrinkable;
 	final boolean accessState;
 	final boolean changeState;
 
-	private final Predicate<T> precondition;
-	private final Transformer<T> cachedTransformer;
+	private final @Nullable Predicate<T> precondition;
+	private final @Nullable Transformer<T> cachedTransformer;
 
 	ShrinkableChainIteration(
-		Predicate<T> precondition,
+		@Nullable Predicate<T> precondition,
 		boolean accessState,
 		Shrinkable<Transformer<T>> shrinkable
 	) {
@@ -24,7 +26,7 @@ class ShrinkableChainIteration<T> {
 	}
 
 	private ShrinkableChainIteration(
-		Predicate<T> precondition,
+		@Nullable Predicate<T> precondition,
 		boolean accessState,
 		boolean changeState,
 		Shrinkable<Transformer<T>> shrinkable

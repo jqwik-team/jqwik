@@ -1,5 +1,7 @@
 package net.jqwik.engine.support;
 
+import org.jspecify.annotations.*;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -48,7 +50,7 @@ final class StreamConcatenation {
 	 */
 	@SafeVarargs
 	@SuppressWarnings({"unchecked", "varargs"}) // TODO: Explain why this is ok.
-	public static <T> Stream<T> concat(Stream<? extends T>... streams) {
+	public static <T extends @Nullable Object> Stream<T> concat(Stream<? extends T>... streams) {
 		return concatInternal(
 			(Stream<T>[]) streams,
 			size -> (Spliterator<T>[]) new Spliterator<?>[size],

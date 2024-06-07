@@ -8,10 +8,10 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class FilteredGenerator<T> implements RandomGenerator<T> {
 	private final RandomGenerator<T> toFilter;
-	private final Predicate<T> filterPredicate;
+	private final Predicate<? super T> filterPredicate;
 	private int maxMisses;
 
-	public FilteredGenerator(RandomGenerator<T> toFilter, Predicate<T> filterPredicate, int maxMisses) {
+	public FilteredGenerator(RandomGenerator<T> toFilter, Predicate<? super T> filterPredicate, int maxMisses) {
 		this.toFilter = toFilter;
 		this.filterPredicate = filterPredicate;
 		this.maxMisses = maxMisses;

@@ -8,9 +8,9 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class CollectGenerator<T> implements RandomGenerator<List<T>> {
 	private final RandomGenerator<T> elementGenerator;
-	private final Predicate<List<T>> until;
+	private final Predicate<? super List<? extends T>> until;
 
-	public CollectGenerator(RandomGenerator<T> elementGenerator, Predicate<List<T>> until) {
+	public CollectGenerator(RandomGenerator<T> elementGenerator, Predicate<? super List<? extends T>> until) {
 		this.elementGenerator = elementGenerator;
 		this.until = until;
 	}

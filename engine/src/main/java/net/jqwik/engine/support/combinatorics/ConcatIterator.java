@@ -5,11 +5,11 @@ import java.util.concurrent.atomic.*;
 
 public class ConcatIterator<T> implements Iterator<T> {
 
-	private final List<Iterator<T>> iterators;
+	private final List<? extends Iterator<? extends T>> iterators;
 	private final AtomicInteger position;
-	private Iterator<T> next;
+	private Iterator<? extends T> next;
 
-	public ConcatIterator(List<Iterator<T>> iterators) {
+	public ConcatIterator(List<? extends Iterator<? extends T>> iterators) {
 		this.iterators = iterators;
 		position = new AtomicInteger(0);
 		if (!iterators.isEmpty()) {
@@ -17,7 +17,7 @@ public class ConcatIterator<T> implements Iterator<T> {
 		}
 	}
 
-	private Iterator<T> findNext() {
+	private Iterator<? extends T> findNext() {
 		while (!iterators.get(position.get()).hasNext()) {
 			if (position.get() >= iterators.size() -1)
 				return null;

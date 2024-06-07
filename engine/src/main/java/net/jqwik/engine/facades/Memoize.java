@@ -8,6 +8,8 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
+import org.jspecify.annotations.*;
+
 public class Memoize {
 
 	private static Store<Map<Tuple3<Arbitrary<?>, Integer, Boolean>, RandomGenerator<?>>> generatorStore() {
@@ -15,11 +17,11 @@ public class Memoize {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <U> RandomGenerator<U> memoizedGenerator(
+	public static <U extends @Nullable Object> RandomGenerator<U> memoizedGenerator(
 			Arbitrary<? extends U> arbitrary,
 			int genSize,
 			boolean withEdgeCases,
-			Supplier<RandomGenerator<? extends U>> generatorSupplier
+			Supplier<? extends RandomGenerator<? extends U>> generatorSupplier
 	) {
 		if (!arbitrary.isGeneratorMemoizable()){
 			return (RandomGenerator<U>) generatorSupplier.get();
@@ -36,7 +38,7 @@ public class Memoize {
 
 	// Had to roll my on computeIfAbsent because HashMap.computeIfAbsent()
 	// does not allow modifications of the map within the mapping function
-	private static <K, V> V computeIfAbsent(
+	private static <K extends @Nullable Object, V extends @Nullable Object> V computeIfAbsent(
 			Map<K, V> cache,
 			K key,
 			Function<? super K, ? extends V> mappingFunction

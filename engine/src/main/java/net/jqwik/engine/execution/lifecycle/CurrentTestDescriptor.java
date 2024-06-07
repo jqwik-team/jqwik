@@ -3,6 +3,7 @@ package net.jqwik.engine.execution.lifecycle;
 import java.util.*;
 import java.util.function.*;
 
+import org.jspecify.annotations.*;
 import org.junit.platform.engine.*;
 
 public class CurrentTestDescriptor {
@@ -11,7 +12,7 @@ public class CurrentTestDescriptor {
 	// e.g. in JqwikIntegrationTests
 	private static final ThreadLocal<List<TestDescriptor>> descriptors = ThreadLocal.withInitial(ArrayList::new);
 
-	public static <T> T runWithDescriptor(TestDescriptor currentDescriptor, Supplier<T> executable) {
+	public static <T extends @Nullable Object> T runWithDescriptor(TestDescriptor currentDescriptor, Supplier<? extends T> executable) {
 		push(currentDescriptor);
 		try {
 			return executable.get();

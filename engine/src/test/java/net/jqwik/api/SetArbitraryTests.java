@@ -54,10 +54,11 @@ class SetArbitraryTests {
 	@Example
 	void mapEach(@ForAll Random random) {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+		@SuppressWarnings("unchecked")
 		Arbitrary<Set<Tuple.Tuple2<Integer, Set<Integer>>>> setArbitrary =
 			integerArbitrary
 				.set().ofSize(5)
-				.mapEach((all, each) -> Tuple.of(each, all));
+				.mapEach((all, each) -> Tuple.of(each, (Set<Integer>) all));
 
 		RandomGenerator<Set<Tuple.Tuple2<Integer, Set<Integer>>>> generator = setArbitrary.generator(1, true);
 

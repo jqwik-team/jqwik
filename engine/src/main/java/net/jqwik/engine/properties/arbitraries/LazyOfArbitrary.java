@@ -12,6 +12,8 @@ import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
+import org.jspecify.annotations.*;
+
 public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	// Cached arbitraries only have to survive one property
@@ -24,7 +26,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> Arbitrary<T> of(int hashIdentifier, List<? extends Supplier<? extends Arbitrary<T>>> suppliers) {
+	public static <T extends @Nullable Object> Arbitrary<T> of(int hashIdentifier, List<? extends Supplier<? extends Arbitrary<T>>> suppliers) {
 		// It's important for good shrinking to work that the same arbitrary usage is handled by the same arbitrary instance
 		LazyOfArbitrary<?> arbitrary = arbitrariesStore().get().computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
 		return (Arbitrary<T>) arbitrary;

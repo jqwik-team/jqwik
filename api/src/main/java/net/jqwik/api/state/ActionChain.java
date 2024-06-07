@@ -23,7 +23,7 @@ import static org.apiguardian.api.API.Status.*;
  * @param <S> The type of the object going through state transformations
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface ActionChain<S> {
+public interface ActionChain<S extends @Nullable Object> {
 
 	@API(status = INTERNAL)
 	abstract class ActionChainFacade {
@@ -33,7 +33,7 @@ public interface ActionChain<S> {
 			implementation = FacadeLoader.load(ActionChainFacade.class);
 		}
 
-		public abstract <T> ActionChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier);
+		public abstract <T extends @Nullable Object> ActionChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier);
 	}
 
 	/**
@@ -43,7 +43,7 @@ public interface ActionChain<S> {
 	 * @param <T>             The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
 	 */
-	static <T> ActionChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
+	static <T extends @Nullable Object> ActionChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
 		return ActionChainFacade.implementation.startWith(initialSupplier);
 	}
 
@@ -136,6 +136,6 @@ public interface ActionChain<S> {
 	 * @param peeker A consumer of a state object
 	 * @return the same chain instance
 	 */
-	ActionChain<S> peek(Consumer<S> peeker);
+	ActionChain<S> peek(Consumer<? super S> peeker);
 
 }

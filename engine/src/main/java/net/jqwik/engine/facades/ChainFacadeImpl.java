@@ -7,13 +7,15 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.state.*;
 import net.jqwik.engine.properties.state.*;
 
+import org.jspecify.annotations.*;
+
 /**
  * Is loaded through reflection in api module
  */
 public class ChainFacadeImpl extends Chain.ChainFacade {
 
 	@Override
-	public <T> ChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
+	public <T extends @Nullable Object> ChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
 		return new DefaultChainArbitrary<>(initialSupplier);
 	}
 

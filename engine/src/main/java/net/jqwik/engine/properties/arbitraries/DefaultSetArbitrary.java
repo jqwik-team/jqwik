@@ -69,7 +69,7 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 
 	// TODO: Remove duplication with DefaultListArbitrary.mapEach()
 	@Override
-	public <U> Arbitrary<Set<U>> mapEach(BiFunction<Set<T>, T, U> mapper) {
+	public <U> Arbitrary<Set<U>> mapEach(BiFunction<? super Set<? extends T>, ? super T, ? extends U> mapper) {
 		return this.map(elements -> elements.stream()
 											.map(e -> mapper.apply(elements, e))
 											.collect(CollectorsSupport.toLinkedHashSet()));
@@ -77,7 +77,7 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 
 	// TODO: Remove duplication with DefaultListArbitrary.flatMapEach()
 	@Override
-	public <U> Arbitrary<Set<U>> flatMapEach(BiFunction<Set<T>, T, Arbitrary<U>> flatMapper) {
+	public <U> Arbitrary<Set<U>> flatMapEach(BiFunction<? super Set<? extends T>, ? super T, ? extends Arbitrary<U>> flatMapper) {
 		return this.flatMap(elements -> {
 			List<Arbitrary<U>> arbitraries =
 				elements.stream()

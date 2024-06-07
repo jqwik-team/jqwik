@@ -14,9 +14,9 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 	private final AtomicInteger countBaseShrinks = new AtomicInteger(0);
 
 	private final Shrinkable<T> toFilter;
-	private final Predicate<T> filter;
+	private final Predicate<? super T> filter;
 
-	public FilteredShrinkable(Shrinkable<T> toFilter, Predicate<T> filter) {
+	public FilteredShrinkable(Shrinkable<T> toFilter, Predicate<? super T> filter) {
 		this.toFilter = toFilter;
 		this.filter = filter;
 	}

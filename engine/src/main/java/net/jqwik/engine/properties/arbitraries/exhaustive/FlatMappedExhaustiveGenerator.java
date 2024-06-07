@@ -7,7 +7,9 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<U> {
+import org.jspecify.annotations.*;
+
+public class FlatMappedExhaustiveGenerator<U extends @Nullable Object, T extends @Nullable Object> implements ExhaustiveGenerator<U> {
 	private final ExhaustiveGenerator<T> baseGenerator;
 	private final long maxCount;
 	private final Function<? super T, ? extends Arbitrary<U>> mapper;

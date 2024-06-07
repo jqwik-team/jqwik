@@ -5,9 +5,11 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.support.MathSupport.*;
 
-class PermutationExhaustiveGenerator<T> implements ExhaustiveGenerator<List<T>> {
+class PermutationExhaustiveGenerator<T extends @Nullable Object> implements ExhaustiveGenerator<List<T>> {
 	private final List<T> values;
 	private final Long maxCount;
 
@@ -16,7 +18,7 @@ class PermutationExhaustiveGenerator<T> implements ExhaustiveGenerator<List<T>> 
 		this.maxCount = maxCount;
 	}
 
-	static <T> Optional<Long> calculateMaxCount(List<T> values, long maxNumberOfSamples) {
+	static Optional<Long> calculateMaxCount(List<?> values, long maxNumberOfSamples) {
 		try {
 			long choices = factorial(values.size());
 			if (choices > maxNumberOfSamples || choices < 0) {

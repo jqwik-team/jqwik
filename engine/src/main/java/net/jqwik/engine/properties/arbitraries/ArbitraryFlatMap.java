@@ -9,9 +9,9 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 
 public class ArbitraryFlatMap<T, U> implements Arbitrary<U> {
 	private final Arbitrary<T> self;
-	private final Function<T, Arbitrary<U>> mapper;
+	private final Function<? super T, ? extends Arbitrary<U>> mapper;
 
-	public ArbitraryFlatMap(Arbitrary<T> self, Function<T, Arbitrary<U>> mapper) {
+	public ArbitraryFlatMap(Arbitrary<T> self, Function<? super T, ? extends Arbitrary<U>> mapper) {
 		this.self = self;
 		this.mapper = mapper;
 	}

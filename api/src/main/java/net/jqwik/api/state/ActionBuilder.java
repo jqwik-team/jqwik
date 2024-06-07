@@ -27,24 +27,22 @@ import static org.apiguardian.api.API.Status.*;
  * @param <S> Type of the object to transform through an action
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public class ActionBuilder<S> {
+public class ActionBuilder<S extends @Nullable Object> {
 
-	@Nullable
-	final private Predicate<S> precondition;
+	final private @Nullable Predicate<? super S> precondition;
 
-	@Nullable
-	final private String description;
+	final private @Nullable String description;
 
 	ActionBuilder() {
 		this(null, null);
 	}
 
-	private ActionBuilder(@Nullable Predicate<S> precondition, @Nullable String description) {
+	private ActionBuilder(@Nullable Predicate<? super S> precondition, @Nullable String description) {
 		this.precondition = precondition;
 		this.description = description;
 	}
 
-	public ActionBuilder<S> when(Predicate<S> precondition) {
+	public ActionBuilder<S> when(Predicate<? super S> precondition) {
 		return new ActionBuilder<>(precondition, description);
 	}
 
@@ -69,7 +67,6 @@ public class ActionBuilder<S> {
 		};
 	}
 
-	@NonNull
 	private Arbitrary<Transformer<S>> justTransformer(Transformer<S> transformer) {
 		Transformer<S> withDescription = description == null ? transformer : Transformer.transform(description, transformer);
 		return Arbitraries.just(withDescription);

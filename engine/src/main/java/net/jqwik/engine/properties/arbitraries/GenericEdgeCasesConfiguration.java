@@ -8,7 +8,7 @@ import net.jqwik.api.*;
 
 public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 	private boolean none;
-	private final List<Predicate<T>> filters = new ArrayList<>();
+	private final List<Predicate<? super T>> filters = new ArrayList<>();
 	private final List<T> additionalEdgeCases = new ArrayList<>();
 
 	@Override
@@ -18,7 +18,7 @@ public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 	}
 
 	@Override
-	public EdgeCases.Config<T> filter(Predicate<T> filter) {
+	public EdgeCases.Config<T> filter(Predicate<? super T> filter) {
 		filters.add(filter);
 		return this;
 	}
@@ -44,7 +44,7 @@ public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 		return filter(values::contains);
 	}
 
-	public EdgeCases<T> configure(Consumer<EdgeCases.Config<T>> configurator, Function<Integer, EdgeCases<T>> edgeCasesCreator, int maxEdgeCases) {
+	public EdgeCases<T> configure(Consumer<? super EdgeCases.Config<T>> configurator, Function<? super Integer, ? extends EdgeCases<T>> edgeCasesCreator, int maxEdgeCases) {
 		configurator.accept(this);
 
 		EdgeCases<T> configuredEdgeCases;
@@ -57,7 +57,7 @@ public class GenericEdgeCasesConfiguration<T> implements EdgeCases.Config<T> {
 		}
 
 		List<Supplier<Shrinkable<T>>> suppliers = configuredEdgeCases.suppliers();
-		for (Predicate<T> filter : new ArrayList<>(filters)) {
+		for (Predicate<? super T> filter : new ArrayList<>(filters)) {
 			suppliers = suppliers.stream().filter(s -> filter.test(s.get().value())).collect(Collectors.toList());
 		}
 		for (T additionalEdgeCase : additionalEdgeCases) {

@@ -7,6 +7,8 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -28,7 +30,7 @@ import static org.apiguardian.api.API.Status.*;
  * @param <T> The type of state to be transformed in a chain
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface Chain<T> extends Iterable<T> {
+public interface Chain<T extends @Nullable Object> extends Iterable<T> {
 
 	@API(status = INTERNAL)
 	abstract class ChainFacade {
@@ -38,7 +40,7 @@ public interface Chain<T> extends Iterable<T> {
 			implementation = FacadeLoader.load(ChainFacade.class);
 		}
 
-		public abstract <T> ChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier);
+		public abstract <T extends @Nullable Object> ChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier);
 	}
 
 	/**
@@ -48,7 +50,7 @@ public interface Chain<T> extends Iterable<T> {
 	 * @param <T>             The type of state to be transformed through the chain.
 	 * @return new arbitrary instance
 	 */
-	static <T> ChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
+	static <T extends @Nullable Object> ChainArbitrary<T> startWith(Supplier<? extends T> initialSupplier) {
 		return ChainFacade.implementation.startWith(initialSupplier);
 	}
 

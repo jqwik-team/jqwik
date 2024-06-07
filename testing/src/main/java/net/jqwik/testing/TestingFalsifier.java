@@ -3,6 +3,7 @@ package net.jqwik.testing;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -11,13 +12,13 @@ import net.jqwik.api.lifecycle.*;
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = EXPERIMENTAL, since = "1.4.0")
-public interface TestingFalsifier<T> extends Falsifier<T>, Predicate<T> {
+public interface TestingFalsifier<T extends @Nullable Object> extends Falsifier<T>, Predicate<T> {
 
-	static <T> TestingFalsifier<T> alwaysFalsify() {
+	static <T extends @Nullable Object> TestingFalsifier<T> alwaysFalsify() {
 		return ignore -> false;
 	}
 
-	static <T> TestingFalsifier<T> falsifier(Predicate<T> predicate) {
+	static <T extends @Nullable Object> TestingFalsifier<T> falsifier(Predicate<? super T> predicate) {
 		return predicate::test;
 	}
 

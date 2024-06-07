@@ -12,12 +12,12 @@ import net.jqwik.api.state.*;
 import net.jqwik.api.support.*;
 import net.jqwik.engine.support.*;
 
-public class SequentialActionChain<T> implements ActionChain<T> {
+public class SequentialActionChain<T extends @Nullable Object> implements ActionChain<T> {
 	private final Chain<T> chain;
 
 	private volatile T currentValue = null;
 	private volatile RunningState currentRunning = RunningState.NOT_RUN;
-	private final List<Consumer<T>> peekers = new ArrayList<>();
+	private final List<Consumer<? super T>> peekers = new ArrayList<>();
 	private final List<Tuple.Tuple2<String, Consumer<T>>> invariants = new ArrayList<>();
 
 	public SequentialActionChain(Chain<T> chain) {
@@ -25,7 +25,6 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
-	@NonNull
 	public List<String> transformations() {
 		return chain.transformations();
 	}
@@ -36,7 +35,6 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
-	@NonNull
 	public synchronized T run() {
 		currentRunning = RunningState.RUNNING;
 		for (Iterator<T> iterator = chain.iterator(); iterator.hasNext(); ) {
@@ -66,7 +64,7 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	private void callPeekers() {
-		for (Consumer<T> peeker : peekers) {
+		for (Consumer<? super T> peeker : peekers) {
 			peeker.accept(currentValue);
 		}
 	}
@@ -98,7 +96,6 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
-	@NonNull
 	public ActionChain<T> withInvariant(@Nullable String label, Consumer<T> invariant) {
 		String invariantLabel = label == null ? "Invariant" : String.format("Invariant '%s'", label);
 		invariants.add(Tuple.of(invariantLabel, invariant));
@@ -106,20 +103,17 @@ public class SequentialActionChain<T> implements ActionChain<T> {
 	}
 
 	@Override
-	@NonNull
 	public synchronized Optional<T> finalState() {
 		return Optional.ofNullable(currentValue);
 	}
 
 	@Override
-	// @NonNull // TODO: Why does this not work?
 	public ActionChain.RunningState running() {
 		return currentRunning;
 	}
 
 	@Override
-	@NonNull
-	public synchronized ActionChain<T> peek(@NonNull Consumer<T> peeker) {
+	public synchronized ActionChain<T> peek(Consumer<? super T> peeker) {
 		peekers.add(peeker);
 		return this;
 	}

@@ -17,7 +17,7 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	private final Class<T> targetType;
 	private final Set<Executable> explicitCreators = new LinkedHashSet<>();
 	private final Set<Predicate<? super Constructor<?>>> constructorFilters = new LinkedHashSet<>();
-	private final Set<Predicate<Method>> factoryMethodFilters = new LinkedHashSet<>();
+	private final Set<Predicate<? super Method>> factoryMethodFilters = new LinkedHashSet<>();
 	private boolean defaultsSet = true;
 
 	private TraverseArbitrary<T> traverseArbitrary;
@@ -81,13 +81,13 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 	}
 
 	@Override
-	public TypeArbitrary<T> useFactoryMethods(Predicate<Method> filter) {
+	public TypeArbitrary<T> useFactoryMethods(Predicate<? super Method> filter) {
 		DefaultTypeArbitrary<T> clone = cloneWithoutDefaultsSet();
 		clone.addFactoryMethods(filter);
 		return clone;
 	}
 
-	private void addFactoryMethods(Predicate<Method> filter) {
+	private void addFactoryMethods(Predicate<? super Method> filter) {
 		factoryMethodFilters.add(filter);
 	}
 
@@ -134,7 +134,7 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 			if (target.isOfType(targetType)) {
 				creators.addAll(explicitCreators);
 			}
-			for (Predicate<Method> filter : factoryMethodFilters) {
+			for (Predicate<? super Method> filter : factoryMethodFilters) {
 				appendFactoryMethods(creators, target, filter);
 			}
 			for (Predicate<? super Constructor<?>> filter : constructorFilters) {
@@ -153,7 +153,7 @@ public class DefaultTypeArbitrary<T> extends ArbitraryDecorator<T> implements Ty
 
 		}
 
-		private void appendFactoryMethods(Set<Executable> creators, TypeUsage target, Predicate<Method> filter) {
+		private void appendFactoryMethods(Set<Executable> creators, TypeUsage target, Predicate<? super Method> filter) {
 			Arrays.stream(target.getRawType().getDeclaredMethods())
 				  .filter(ModifierSupport::isStatic)
 				  .filter(creator -> hasFittingReturnType(creator, target))

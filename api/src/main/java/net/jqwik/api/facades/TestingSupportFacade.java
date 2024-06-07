@@ -5,6 +5,8 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 public abstract class TestingSupportFacade {
 
 	public static final TestingSupportFacade implementation;
@@ -13,7 +15,7 @@ public abstract class TestingSupportFacade {
 		implementation = FacadeLoader.load(TestingSupportFacade.class);
 	}
 
-	public abstract <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition);
+	public abstract <T extends @Nullable Object> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<? super T, Boolean> condition);
 
 	public abstract String singleLineReport(Object any);
 

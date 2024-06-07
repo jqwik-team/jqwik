@@ -31,7 +31,7 @@ class MappedEdgeCasesConsumer<T, U> implements Consumer<EdgeCases.Config<U>> {
 			}
 
 			@Override
-			public EdgeCases.Config<T> filter(Predicate<T> filter) {
+			public EdgeCases.Config<T> filter(Predicate<? super T> filter) {
 				uConfig.filter(u -> filter.test(utMapper.apply(u)));
 				return this;
 			}

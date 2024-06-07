@@ -6,6 +6,8 @@ import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 
+import org.jspecify.annotations.*;
+
 public class OddConfigurator extends ArbitraryConfiguratorBase {
 
 	public Arbitrary<Integer> configureInteger(Arbitrary<Integer> arbitrary, Odd odd) {
@@ -22,7 +24,7 @@ public class OddConfigurator extends ArbitraryConfiguratorBase {
 class PlainOddConfigurator implements ArbitraryConfigurator {
 
 	@Override
-	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
+	public <T extends @Nullable Object> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
 		if (!targetType.isOfType(Integer.class) && !targetType.isOfType(int.class)) {
 			return arbitrary;
 		}

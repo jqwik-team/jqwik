@@ -8,10 +8,10 @@ import net.jqwik.api.support.*;
 import net.jqwik.engine.*;
 
 public class ArbitraryFilter<T> extends ArbitraryDelegator<T> {
-	private final Predicate<T> filterPredicate;
+	private final Predicate<? super T> filterPredicate;
 	private final int maxMisses;
 
-	public ArbitraryFilter(Arbitrary<T> self, Predicate<T> filterPredicate, int maxMisses) {
+	public ArbitraryFilter(Arbitrary<T> self, Predicate<? super T> filterPredicate, int maxMisses) {
 		super(self);
 		this.filterPredicate = filterPredicate;
 		this.maxMisses = maxMisses;

@@ -4,6 +4,8 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 /**
@@ -20,7 +22,7 @@ public class FunctionsFacadeImpl extends Functions.FunctionsFacade {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <F, R> FunctionArbitrary<F, R> function(Class<?> functionalType, Arbitrary<R> resultArbitrary) {
+	public <F, R extends @Nullable Object> FunctionArbitrary<F, R> function(Class<?> functionalType, Arbitrary<R> resultArbitrary) {
 		return (FunctionArbitrary<F, R>) new DefaultFunctionArbitrary<>(functionalType, resultArbitrary);
 	}
 }

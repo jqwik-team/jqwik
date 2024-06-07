@@ -25,5 +25,5 @@ public abstract class CheckReporting implements AroundPropertyHook {
 		return result;
 	}
 
-	public abstract void check(@NonNull Reporter mockReporter);
+	public abstract void check(Reporter mockReporter);
 }

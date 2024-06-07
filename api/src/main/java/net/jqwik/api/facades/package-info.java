@@ -5,5 +5,7 @@
  */
 
 //@API(status = API.Status.INTERNAL) // Currently not allowed by api-guardian
-
+@NullMarked
 package net.jqwik.api.facades;
+
+import org.jspecify.annotations.*;

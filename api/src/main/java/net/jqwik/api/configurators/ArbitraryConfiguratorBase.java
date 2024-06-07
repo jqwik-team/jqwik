@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
@@ -38,7 +39,7 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	private final static String CONFIG_METHOD_NAME_PATTERN = "configure.*";
 
 	@Override
-	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
+	public <T extends @Nullable Object> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
 		if (!acceptTargetType(targetType)) {
 			return arbitrary;
 		}
@@ -68,7 +69,7 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> Arbitrary<T> configureWithMethod(Arbitrary<T> arbitrary, Annotation annotation, Method configurationMethod) {
+	private <T extends @Nullable Object> Arbitrary<T> configureWithMethod(Arbitrary<T> arbitrary, Annotation annotation, Method configurationMethod) {
 		Object configurationResult = invokeMethod(configurationMethod, this, arbitrary, annotation);
 		if (configurationResult == null) {
 			return arbitrary;
@@ -80,7 +81,7 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> List<Method> findConfigurationMethods(Arbitrary<T> arbitrary, TypeUsage targetType, Annotation annotation) {
+	private <T extends @Nullable Object> List<Method> findConfigurationMethods(Arbitrary<T> arbitrary, TypeUsage targetType, Annotation annotation) {
 		Class<? extends Arbitrary<T>> arbitraryClass = (Class<? extends Arbitrary<T>>) arbitrary.getClass();
 		return findMethods(
 			getClass(),

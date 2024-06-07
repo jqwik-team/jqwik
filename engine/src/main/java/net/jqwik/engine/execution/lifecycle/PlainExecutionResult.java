@@ -6,13 +6,15 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.*;
 
+import org.jspecify.annotations.*;
+
 public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 
 	public static ExtendedPropertyExecutionResult successful() {
 		return new PlainExecutionResult(Status.SUCCESSFUL, new GenerationInfo(null), null);
 	}
 
-	public static ExtendedPropertyExecutionResult failed(Throwable throwable, String seed) {
+	public static ExtendedPropertyExecutionResult failed(Throwable throwable, @Nullable String seed) {
 		if (throwable == null) {
 			throw new IllegalArgumentException("throwable must never be null for failed PropertyExecutionResult");
 		}
@@ -32,9 +34,9 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 
 	private final Status status;
 	private final GenerationInfo generationInfo;
-	private final Throwable throwable;
+	private final @Nullable Throwable throwable;
 
-	private PlainExecutionResult(Status status, GenerationInfo generationInfo, Throwable throwable) {
+	private PlainExecutionResult(Status status, GenerationInfo generationInfo, @Nullable Throwable throwable) {
 		this.status = status;
 		this.generationInfo = generationInfo;
 		this.throwable = throwable;
@@ -56,7 +58,7 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public PropertyExecutionResult mapTo(Status newStatus, Throwable throwable) {
+	public PropertyExecutionResult mapTo(Status newStatus, @Nullable Throwable throwable) {
 		return new PlainExecutionResult(newStatus, generationInfo, throwable);
 	}
 

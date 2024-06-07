@@ -233,7 +233,7 @@ class ArbitraryTests {
 		}
 	}
 
-	private static int sum(List<Integer> list) {
+	private static int sum(List<? extends Integer> list) {
 		return list.stream().mapToInt(i -> i).sum();
 	}
 

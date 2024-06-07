@@ -10,22 +10,24 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import org.jspecify.annotations.*;
+
 public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 
 	private final TestingSupportFacadeImpl testingSupportFacade = new TestingSupportFacadeImpl();
 
 	@Override
-	public <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
+	public <T extends @Nullable Object> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<? super T> falsifier) {
 		RandomGenerator<? extends T> generator = arbitrary.generator(10, true);
 		return falsifyThenShrink(generator, random, falsifier);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T falsifyThenShrink(
+	public <T extends @Nullable Object> T falsifyThenShrink(
 			RandomGenerator<? extends T> generator,
 			Random random,
-			Falsifier<T> falsifier
+			Falsifier<? super T> falsifier
 	) {
 		Throwable[] originalError = new Throwable[1];
 		Shrinkable<T> falsifiedShrinkable =
@@ -42,9 +44,9 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T shrink(
+	public <T extends @Nullable Object> T shrink(
 			Shrinkable<T> falsifiedShrinkable,
-			Falsifier<T> falsifier,
+			Falsifier<? super T> falsifier,
 			Throwable originalError
 	) {
 		ShrunkFalsifiedSample sample = shrinkToSample(falsifiedShrinkable, falsifier, originalError);
@@ -52,10 +54,10 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 	}
 
 	@Override
-	public <T> ShrunkFalsifiedSample shrinkToSample(
-			Shrinkable<T> falsifiedShrinkable,
-			Falsifier<T> falsifier,
-			Throwable originalError
+	public <T extends @Nullable Object> ShrunkFalsifiedSample shrinkToSample(
+		Shrinkable<T> falsifiedShrinkable,
+		Falsifier<? super T> falsifier,
+		Throwable originalError
 	) {
 		FalsifiedSample sample = toFalsifiedSample(falsifiedShrinkable, originalError);
 		Consumer<FalsifiedSample> parametersReporter = ignore -> {};
@@ -65,8 +67,10 @@ public class ShrinkingSupportFacadeImpl extends ShrinkingSupportFacade {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> Falsifier<List<Object>> toParamFalsifier(Falsifier<T> tFalsifier) {
+	private static <T extends @Nullable Object> Falsifier<List<Object>> toParamFalsifier(Falsifier<T> tFalsifier) {
 		return params -> {
+			// At best PropertyShrinker should be parameterized, however, currently it is not
+			// Even though PropertyShrinker passes List<Object>, the elements are of type T
 			T t = (T) params.get(0);
 			return tFalsifier.execute(t);
 		};

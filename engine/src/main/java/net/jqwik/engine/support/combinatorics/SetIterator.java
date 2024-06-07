@@ -9,9 +9,9 @@ public class SetIterator<T> implements Iterator<Set<T>> {
 	private final int setSize;
 	private Set<T> next;
 
-	public SetIterator(Iterable<T> elementIterable, int setSize) {
+	public SetIterator(Iterable<? extends T> elementIterable, int setSize) {
 		this.setSize = setSize;
-		List<Iterable<T>> iterables = new ArrayList<>();
+		List<Iterable<? extends T>> iterables = new ArrayList<>();
 		for (int i = 0; i < setSize; i++) {
 			iterables.add(elementIterable);
 		}

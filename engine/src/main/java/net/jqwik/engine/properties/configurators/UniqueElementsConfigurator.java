@@ -12,12 +12,14 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 
+import org.jspecify.annotations.*;
+
 @SuppressWarnings("unchecked")
 public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 
 	@SuppressWarnings("OverlyComplexMethod")
 	@Override
-	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
+	public <T extends @Nullable Object> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
 		return targetType.findAnnotation(UniqueElements.class).map(uniqueness -> {
 			if (arbitrary instanceof SetArbitrary) {
 				// Handle SetArbitrary explicitly for optimization
@@ -36,7 +38,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 			}
 			if (targetType.isArray()) {
 				Arbitrary<Object[]> arrayArbitrary = (Arbitrary<Object[]>) arbitrary;
-				Predicate<List<? extends Object>> predicate = isUnique(uniqueness);
+				Predicate<List<?>> predicate = isUnique(uniqueness);
 				return (Arbitrary<T>) arrayArbitrary.filter(array -> predicate.test(Arrays.asList(array)));
 			}
 			if (targetType.isAssignableFrom(Stream.class)) {
@@ -56,7 +58,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 		}).orElse(arbitrary);
 	}
 
-	private <T> List<T> toList(Iterator<T> i) {
+	private <T extends @Nullable Object> List<T> toList(Iterator<T> i) {
 		List<T> list = new ArrayList<>();
 		while (i.hasNext()) {
 			list.add(i.next());
@@ -64,7 +66,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 		return list;
 	}
 
-	private static <C extends Collection<? extends Object>> Predicate<C> isUnique(UniqueElements uniqueness) {
+	private static <C extends Collection<?>> Predicate<C> isUnique(UniqueElements uniqueness) {
 		Class<? extends Function<?, Object>> extractorClass = uniqueness.by();
 		if (extractorClass.equals(UniqueElements.NOT_SET.class)) {
 			return items -> {
@@ -98,7 +100,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 		};
 	}
 
-	private <T> Arbitrary<?> configureStreamableArbitrary(StreamableArbitrary<T, ?> arbitrary, UniqueElements uniqueness) {
+	private <T extends @Nullable Object> Arbitrary<?> configureStreamableArbitrary(StreamableArbitrary<T, ?> arbitrary, UniqueElements uniqueness) {
 		Class<? extends Function<?, Object>> extractorClass = uniqueness.by();
 		if (extractorClass.equals(UniqueElements.NOT_SET.class)) {
 			return arbitrary.uniqueElements();
@@ -107,7 +109,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 		return arbitrary.uniqueElements(extractor);
 	}
 
-	private <T> Arbitrary<?> configureSetArbitrary(SetArbitrary<T> arbitrary, UniqueElements uniqueness) {
+	private <T extends @Nullable Object> Arbitrary<?> configureSetArbitrary(SetArbitrary<T> arbitrary, UniqueElements uniqueness) {
 		Class<? extends Function<?, Object>> extractorClass = uniqueness.by();
 		if (extractorClass.equals(UniqueElements.NOT_SET.class)) {
 			return arbitrary;
@@ -116,7 +118,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 		return arbitrary.uniqueElements(extractor);
 	}
 
-	private static <T> Function<T, Object> extractor(Class<? extends Function<?, Object>> extractorClass) {
+	private static <T extends @Nullable Object> Function<T, Object> extractor(Class<? extends Function<?, Object>> extractorClass) {
 		return (Function<T, Object>) (
 			extractorClass.equals(UniqueElements.NOT_SET.class)
 				? Function.identity()

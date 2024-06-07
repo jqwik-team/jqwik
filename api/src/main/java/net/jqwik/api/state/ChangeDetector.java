@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -18,14 +19,14 @@ import static org.apiguardian.api.API.Status.*;
  * @see ActionChainArbitrary#improveShrinkingWith(Supplier)
  */
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface ChangeDetector<T> {
+public interface ChangeDetector<T extends @Nullable Object> {
 
 	/**
 	 * A change detector that can be used for immutable types that implement an equals() method
 	 * @param <T> the type of the stateful object
 	 * @return new instance of change detector
 	 */
-	static <T> ChangeDetector<T> forImmutables() {
+	static <T extends @Nullable Object> ChangeDetector<T> forImmutables() {
 		return new ChangeDetector<T>() {
 			private T before = null;
 
@@ -42,14 +43,14 @@ public interface ChangeDetector<T> {
 	}
 
 	@API(status = INTERNAL)
-	static <T> ChangeDetector<T> alwaysTrue() {
-		return new ChangeDetector<T>() {
+	static ChangeDetector<@Nullable Object> alwaysTrue() {
+		return new ChangeDetector<@Nullable Object>() {
 			@Override
-			public void before(T before) {
+			public void before(@Nullable Object before) {
 			}
 
 			@Override
-			public boolean hasChanged(T after) {
+			public boolean hasChanged(@Nullable Object after) {
 				return true;
 			}
 		};

@@ -12,11 +12,11 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class CombineArbitrary<R> implements Arbitrary<R> {
 
-	private final Function<List<Object>, R> combinator;
+	private final Function<? super List<?>, ? extends R> combinator;
 	private final List<Arbitrary<Object>> arbitraries;
 
 	@SuppressWarnings("unchecked")
-	public CombineArbitrary(Function<List<Object>, R> combinator, Arbitrary<?>... arbitraries) {
+	public CombineArbitrary(Function<? super List<?>, ? extends R> combinator, Arbitrary<?>... arbitraries) {
 		this.combinator = combinator;
 		this.arbitraries = Arrays.asList((Arbitrary<Object>[]) arbitraries);
 	}
@@ -75,7 +75,7 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 
 	private RandomGenerator<R> combineGenerator(
 		int genSize,
-		Function<List<Object>, R> combineFunction,
+		Function<? super List<?>, ? extends R> combineFunction,
 		List<Arbitrary<Object>> arbitraries
 	) {
 		List<RandomGenerator<Object>> generators = arbitraries.stream()
@@ -89,7 +89,7 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 
 	private RandomGenerator<R> combineGeneratorWithEmbeddedEdgeCases(
 		int genSize,
-		Function<List<Object>, R> combineFunction,
+		Function<? super List<?>, ? extends R> combineFunction,
 		List<Arbitrary<Object>> arbitraries
 	) {
 		List<RandomGenerator<Object>> generators =
@@ -111,14 +111,14 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 	}
 
 	private Shrinkable<R> combineShrinkables(
-		List<Shrinkable<Object>> shrinkables, Function<List<Object>, R> combineFunction
+		List<Shrinkable<Object>> shrinkables, Function<? super List<?>, ? extends R> combineFunction
 	) {
 		return new CombinedShrinkable<>(shrinkables, combineFunction);
 	}
 
 	private Optional<ExhaustiveGenerator<R>> combineExhaustive(
 		List<Arbitrary<Object>> arbitraries,
-		Function<List<Object>, R> combineFunction,
+		Function<? super List<?>, ? extends R> combineFunction,
 		long maxNumberOfSamples
 	) {
 		return ExhaustiveGenerators.combine(arbitraries, combineFunction, maxNumberOfSamples);
@@ -126,7 +126,7 @@ public class CombineArbitrary<R> implements Arbitrary<R> {
 
 	private EdgeCases<R> combineEdgeCases(
 		final List<Arbitrary<Object>> arbitraries,
-		final Function<List<Object>, R> combineFunction,
+		final Function<? super List<?>, ? extends R> combineFunction,
 		int maxEdgeCases
 	) {
 		return EdgeCasesSupport.combine(arbitraries, combineFunction, maxEdgeCases);

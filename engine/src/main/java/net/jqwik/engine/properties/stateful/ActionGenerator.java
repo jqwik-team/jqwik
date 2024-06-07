@@ -5,7 +5,9 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-interface ActionGenerator<M> {
+import org.jspecify.annotations.*;
+
+interface ActionGenerator<M extends @Nullable Object> {
 
 	Action<M> next(M model);
 

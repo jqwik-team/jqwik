@@ -60,7 +60,7 @@ public class DefaultListArbitrary<T extends @Nullable Object> extends Multivalue
 
 	// TODO: Remove duplication with DefaultSetArbitrary.mapEach()
 	@Override
-	public <U> Arbitrary<List<U>> mapEach(BiFunction<List<T>, T, U> mapper) {
+	public <U extends @Nullable Object> Arbitrary<List<U>> mapEach(BiFunction<? super List<? extends T>, ? super T, ? extends U> mapper) {
 		return this.map(elements -> elements.stream()
 											.map(e -> mapper.apply(elements, e))
 											.collect(Collectors.toList()));
@@ -68,7 +68,7 @@ public class DefaultListArbitrary<T extends @Nullable Object> extends Multivalue
 
 	// TODO: Remove duplication with DefaultSetArbitrary.flatMapEach()
 	@Override
-	public <U> Arbitrary<List<U>> flatMapEach(BiFunction<? super List<? extends T>, ? super T, ? extends Arbitrary<U>> flatMapper) {
+	public <U extends @Nullable Object> Arbitrary<List<U>> flatMapEach(BiFunction<? super List<? extends T>, ? super T, ? extends Arbitrary<U>> flatMapper) {
 		return this.flatMap(elements -> {
 			List<? extends Arbitrary<U>> arbitraries =
 				elements.stream()

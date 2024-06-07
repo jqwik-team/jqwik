@@ -4,7 +4,9 @@ import java.util.*;
 
 import net.jqwik.api.*;
 
-class IterableBasedExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
+import org.jspecify.annotations.*;
+
+class IterableBasedExhaustiveGenerator<T extends @Nullable Object> implements ExhaustiveGenerator<T> {
 
 	final private Iterable<T> iterable;
 	final private long maxCount;

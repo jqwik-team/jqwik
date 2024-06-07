@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -18,13 +19,13 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 			implementation = FacadeLoader.load(EdgeCases.EdgeCasesFacade.class);
 		}
 
-		public abstract <T> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers);
+		public abstract <T extends @Nullable Object> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers);
 	}
 
 	@API(status = MAINTAINED, since = "1.8.0")
 	interface Config<T> {
 
-		static <T> Consumer<Config<T>> noConfig() {
+		static <T extends @Nullable Object> Consumer<Config<T>> noConfig() {
 			return config -> {};
 		}
 
@@ -41,7 +42,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		 * @param filter A predicate
 		 * @return same configuration instance
 		 */
-		Config<T> filter(Predicate<T> filter);
+		Config<T> filter(Predicate<? super T> filter);
 
 		/**
 		 * Add one or more unshrinkable additional values as edge cases.
@@ -86,17 +87,17 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 	}
 
 	@API(status = INTERNAL)
-	static <T> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers) {
+	static <T extends @Nullable Object> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers) {
 		return EdgeCasesFacade.implementation.fromSuppliers(suppliers);
 	}
 
 	@API(status = INTERNAL)
-	static <T> EdgeCases<T> none() {
+	static <T extends @Nullable Object> EdgeCases<T> none() {
 		return fromSuppliers(Collections.emptyList());
 	}
 
 	@API(status = INTERNAL)
-	static <T> EdgeCases<T> fromSupplier(Supplier<Shrinkable<T>> supplier) {
+	static <T extends @Nullable Object> EdgeCases<T> fromSupplier(Supplier<Shrinkable<T>> supplier) {
 		return fromSuppliers(Collections.singletonList(supplier));
 	}
 

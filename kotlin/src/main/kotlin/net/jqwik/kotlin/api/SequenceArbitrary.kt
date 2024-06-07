@@ -15,7 +15,7 @@ import java.util.function.Function
  * of type [Sequence]
  */
 @API(status = EXPERIMENTAL, since = "1.6.0")
-class SequenceArbitrary<T: Any?>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<Sequence<T>>(),
+class SequenceArbitrary<T>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<Sequence<T>>(),
     SizableArbitrary<Sequence<T>> {
 
     private var listArbitrary: ListArbitrary<T>

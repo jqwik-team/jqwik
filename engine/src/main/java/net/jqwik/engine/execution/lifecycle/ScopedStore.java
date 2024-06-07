@@ -17,7 +17,7 @@ public class ScopedStore<T> implements Store<T> {
 	private final Object identifier;
 	private final Lifespan lifespan;
 	private final TestDescriptor scope;
-	private final Supplier<T> initialValueSupplier;
+	private final Supplier<? extends T> initialValueSupplier;
 
 	private T value;
 	private boolean initialized = false;
@@ -26,7 +26,7 @@ public class ScopedStore<T> implements Store<T> {
 		Object identifier,
 		Lifespan lifespan,
 		TestDescriptor scope,
-		Supplier<T> initialValueSupplier
+		Supplier<? extends T> initialValueSupplier
 	) {
 		this.identifier = identifier;
 		this.lifespan = lifespan;

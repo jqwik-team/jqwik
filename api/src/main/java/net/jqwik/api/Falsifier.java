@@ -6,6 +6,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.lifecycle.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -17,13 +19,13 @@ import static org.apiguardian.api.API.Status.*;
  */
 @FunctionalInterface
 @API(status = STABLE, since = "1.0")
-public interface Falsifier<T> {
+public interface Falsifier<T extends @Nullable Object> {
 
 	@API(status = INTERNAL)
 	TryExecutionResult execute(T t);
 
 	@API(status = INTERNAL)
-	default Falsifier<T> withFilter(Predicate<T> filter) {
+	default Falsifier<T> withFilter(Predicate<? super T> filter) {
 		return value -> {
 			if (!filter.test(value)) {
 				return TryExecutionResult.invalid();

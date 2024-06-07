@@ -21,7 +21,7 @@ class IntegralGeneratingArbitrary extends TypedCloneable implements Arbitrary<Bi
 	BigInteger shrinkingTarget;
 	RandomDistribution distribution = RandomDistribution.biased();
 
-	private Consumer<EdgeCases.Config<BigInteger>> edgeCasesConfigurator = EdgeCases.Config.noConfig();
+	private Consumer<? super EdgeCases.Config<BigInteger>> edgeCasesConfigurator = EdgeCases.Config.noConfig();
 
 	IntegralGeneratingArbitrary(BigInteger defaultMin, BigInteger defaultMax) {
 		this.min = defaultMin;

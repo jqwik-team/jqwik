@@ -5,11 +5,13 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public class MappedExhaustiveGenerator<T, U> implements ExhaustiveGenerator<U> {
-	private final ExhaustiveGenerator<T> toMap;
-	private final Function<T, U> mapper;
+import org.jspecify.annotations.*;
 
-	public MappedExhaustiveGenerator(ExhaustiveGenerator<T> toMap, Function<T, U> mapper) {this.toMap = toMap;
+public class MappedExhaustiveGenerator<T extends @Nullable Object, U extends @Nullable Object> implements ExhaustiveGenerator<U> {
+	private final ExhaustiveGenerator<T> toMap;
+	private final Function<? super T, ? extends U> mapper;
+
+	public MappedExhaustiveGenerator(ExhaustiveGenerator<T> toMap, Function<? super T, ? extends U> mapper) {this.toMap = toMap;
 		this.mapper = mapper;
 	}
 

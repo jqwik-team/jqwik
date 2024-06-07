@@ -19,7 +19,7 @@ public class HashCodeSupport {
 		return baseHash(o) + 31;
 	}
 
-	private static int baseHash(Object o) {
+	private static int baseHash(@Nullable Object o) {
 		if (o == null)
 			return 0;
 		return o.hashCode();

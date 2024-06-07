@@ -5,7 +5,9 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-class RandomActionGenerator<T> implements ActionGenerator<T> {
+import org.jspecify.annotations.*;
+
+class RandomActionGenerator<T extends @Nullable Object> implements ActionGenerator<T> {
 
 	private static final int MAX_TRIES = 1000;
 

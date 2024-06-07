@@ -6,6 +6,8 @@ import java.util.stream.*;
 
 import net.jqwik.engine.support.*;
 
+import org.jspecify.annotations.*;
+
 public class ReportableStream<T> implements Stream<T> {
 
 	private final List<T> values;
@@ -31,7 +33,7 @@ public class ReportableStream<T> implements Stream<T> {
 	}
 
 	@Override
-	public <R> Stream<R> map(final Function<? super T, ? extends R> mapper) {
+	public <R extends @Nullable Object> Stream<R> map(final Function<? super T, ? extends R> mapper) {
 		return stream.map(mapper);
 	}
 
@@ -51,7 +53,7 @@ public class ReportableStream<T> implements Stream<T> {
 	}
 
 	@Override
-	public <R> Stream<R> flatMap(final Function<? super T, ? extends Stream<? extends R>> mapper) {
+	public <R extends @Nullable Object> Stream<R> flatMap(final Function<? super T, ? extends Stream<? extends R>> mapper) {
 		return stream.flatMap(mapper);
 	}
 
@@ -136,7 +138,7 @@ public class ReportableStream<T> implements Stream<T> {
 	}
 
 	@Override
-	public <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
+	public <R extends @Nullable Object> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
 		return stream.collect(supplier, accumulator, combiner);
 	}
 

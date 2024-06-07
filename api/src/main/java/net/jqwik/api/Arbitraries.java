@@ -27,7 +27,7 @@ public class Arbitraries {
 
 		public abstract <T extends @Nullable Object> Arbitrary<T> oneOf(Collection<? extends Arbitrary<? extends T>> all);
 
-		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary);
+		public abstract <M extends @Nullable Object> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary);
 
 		public abstract <T extends @Nullable Object> Arbitrary<T> frequencyOf(List<? extends Tuple2<Integer, ? extends Arbitrary<T>>> frequencies);
 
@@ -55,7 +55,7 @@ public class Arbitraries {
 
 		public abstract <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>[] typeParameters);
 
-		public abstract <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver);
+		public abstract <T extends @Nullable Object> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<? super TypeUsage, ? extends Arbitrary<T>> noDefaultResolver);
 
 		public abstract <T extends @Nullable Object> Arbitrary<T> lazy(Supplier<? extends Arbitrary<T>> arbitrarySupplier);
 
@@ -78,7 +78,7 @@ public class Arbitraries {
 
 		public abstract Arbitrary<Character> of(char[] chars);
 
-		public abstract <T extends @Nullable Object> Arbitrary<T> of(Collection<T> values);
+		public abstract <T extends @Nullable Object> Arbitrary<T> of(Collection<? extends T> values);
 
 		public abstract <T extends @Nullable Object> Arbitrary<T> create(Supplier<T> supplier);
 
@@ -172,7 +172,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.1")
-	public static <T extends @Nullable Object> Arbitrary<T> of(Collection<T> values) {
+	public static <T extends @Nullable Object> Arbitrary<T> of(Collection<? extends T> values) {
 		return ArbitrariesFacade.implementation.of(values);
 	}
 
@@ -430,7 +430,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.2")
-	public static <@Nullable T> Arbitrary<T> just(@Nullable T value) {
+	public static <T extends @Nullable Object> Arbitrary<T> just(T value) {
 		return ArbitrariesFacade.implementation.just(value);
 	}
 
@@ -515,7 +515,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.1")
-	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
+	public static <T extends @Nullable Object> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
 		return defaultFor(typeUsage, ignore -> {throw new CannotFindArbitraryException(typeUsage);});
 	}
 
@@ -534,7 +534,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.6.1")
-	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<TypeUsage, Arbitrary<Object>> noDefaultResolver) {
+	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage, Function<? super TypeUsage, ? extends Arbitrary<T>> noDefaultResolver) {
 		return ArbitrariesFacade.implementation.defaultFor(typeUsage, noDefaultResolver);
 	}
 
@@ -739,8 +739,8 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.6.4")
-	public static <@Nullable T> SetArbitrary<T> subsetOf(Collection<T> values) {
-		return of(values).set();
+	public static <T extends @Nullable Object> SetArbitrary<T> subsetOf(Collection<? extends T> values) {
+		return Arbitraries.<T>of(values).set();
 	}
 
 	/**
@@ -750,7 +750,7 @@ public class Arbitraries {
 	 */
 	@SafeVarargs
 	@API(status = MAINTAINED, since = "1.6.4")
-	public static <T> SetArbitrary<T> subsetOf(T... values) {
+	public static <T extends @Nullable Object> SetArbitrary<T> subsetOf(T... values) {
 		return subsetOf(Arrays.asList(values));
 	}
 

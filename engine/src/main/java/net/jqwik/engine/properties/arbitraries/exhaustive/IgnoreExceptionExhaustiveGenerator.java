@@ -4,9 +4,11 @@ import java.util.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.support.JqwikExceptionSupport.*;
 
-public class IgnoreExceptionExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
+public class IgnoreExceptionExhaustiveGenerator<T extends @Nullable Object> implements ExhaustiveGenerator<T> {
 	private final ExhaustiveGenerator<T> toFilter;
 	private final Class<? extends Throwable>[] exceptionTypes;
 	private final int maxThrows;

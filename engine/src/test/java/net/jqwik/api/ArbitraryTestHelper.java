@@ -5,9 +5,11 @@ import java.util.function.*;
 import net.jqwik.engine.*;
 import net.jqwik.testing.*;
 
+import org.jspecify.annotations.*;
+
 public class ArbitraryTestHelper {
 
-	public static <T> void assertAllGenerated(RandomGenerator<? extends T> generator, Consumer<T> assertions) {
+	public static <T extends @Nullable Object> void assertAllGenerated(RandomGenerator<? extends T> generator, Consumer<? super T> assertions) {
 		Predicate<T> checker = value -> {
 			try {
 				assertions.accept(value);

@@ -6,6 +6,8 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -31,11 +33,11 @@ public interface Store<T> {
 			implementation = FacadeLoader.load(Store.StoreFacade.class);
 		}
 
-		public abstract <T> Store<T> create(Object identifier, Lifespan visibility, Supplier<T> initialValueSupplier);
+		public abstract <T extends @Nullable Object> Store<T> create(Object identifier, Lifespan visibility, Supplier<? extends T> initialValueSupplier);
 
-		public abstract <T> Store<T> get(Object identifier);
+		public abstract <T extends @Nullable Object> Store<T> get(Object identifier);
 
-		public abstract <T> Store<T> free(Supplier<T> initialValueSupplier);
+		public abstract <T extends @Nullable Object> Store<T> free(Supplier<? extends T> initialValueSupplier);
 	}
 
 	/**
@@ -63,7 +65,7 @@ public interface Store<T> {
 	 * @param initialValueSupplier Supplies the value to be used for initializing the store depending on its lifespan
 	 * @return New store instance
 	 */
-	static <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier) {
+	static <T extends @Nullable Object> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier) {
 		return StoreFacade.implementation.create(identifier, lifespan, initialValueSupplier);
 	}
 
@@ -82,7 +84,7 @@ public interface Store<T> {
 	 * @param initialValueSupplier Supplies the value to be used for initializing the store depending on its lifespan
 	 * @return New or existing store instance
 	 */
-	static <T> Store<T> getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier) {
+	static <T extends @Nullable Object> Store<T> getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initialValueSupplier) {
 		try {
 			Store<T> store = Store.get(identifier);
 			if (!store.lifespan().equals(lifespan)) {
@@ -107,7 +109,7 @@ public interface Store<T> {
 	 * @return Existing store instance
 	 * @throws CannotFindStoreException
 	 */
-	static <T> Store<T> get(Object identifier) {
+	static <T extends @Nullable Object> Store<T> get(Object identifier) {
 		return StoreFacade.implementation.get(identifier);
 	}
 
@@ -119,7 +121,7 @@ public interface Store<T> {
 	 * @return New store instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.5.0")
-	static <T> Store<T> free(Supplier<T> initializer) {
+	static <T extends @Nullable Object> Store<T> free(Supplier<T> initializer) {
 		return StoreFacade.implementation.free(initializer);
 	}
 }

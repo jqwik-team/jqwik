@@ -17,14 +17,14 @@ val <T : Any> KClass<T>.allSealedSubclasses: List<KClass<out T>>
     }
 
 @API(status = API.Status.EXPERIMENTAL, since = "1.8.4")
-class SubtypeScope<T> {
+class SubtypeScope<T: Any> {
     val customProviders = mutableListOf<CustomProvider<T>>()
 
     /**
      * Registers a custom provider for subtype [U], instead of default one created by [anyForSubtypeOf].
      */
     inline fun <reified U> provide(noinline customProvider: () -> Arbitrary<U>) where U : T {
-        customProviders.add(CustomProvider(U::class as KClass<Any>, customProvider) as CustomProvider<T>)
+        customProviders.add(CustomProvider(U::class, customProvider))
     }
 
     /**
@@ -33,8 +33,8 @@ class SubtypeScope<T> {
     fun getProviderFor(targetType: KClass<*>) =
         customProviders.firstOrNull { it.targetType == targetType }?.arbitraryFactory?.invoke()
 
-    class CustomProvider<T>(
-        val targetType: KClass<Any>,
-        val arbitraryFactory: () -> Arbitrary<T>
+    class CustomProvider<out T: Any>(
+        val targetType: KClass<out T>,
+        val arbitraryFactory: () -> Arbitrary<out T>
     )
 }

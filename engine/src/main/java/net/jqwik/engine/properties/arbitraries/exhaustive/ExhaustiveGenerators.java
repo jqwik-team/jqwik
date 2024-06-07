@@ -7,15 +7,17 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 public class ExhaustiveGenerators {
 
-	public static <T> Optional<ExhaustiveGenerator<T>> create(Supplier<T> supplier, long maxNumberOfSamples) {
+	public static <T extends @Nullable Object> Optional<ExhaustiveGenerator<T>> create(Supplier<T> supplier, long maxNumberOfSamples) {
 		return fromIterable(() -> new SupplierIterator<>(supplier), 1, maxNumberOfSamples);
 	}
 
-	public static <T> Optional<ExhaustiveGenerator<T>> choose(List<T> values, long maxNumberOfSamples) {
+	public static <T extends @Nullable Object> Optional<ExhaustiveGenerator<T>> choose(List<T> values, long maxNumberOfSamples) {
 		return fromIterable(values, values.size(), maxNumberOfSamples);
 	}
 
@@ -27,17 +29,17 @@ public class ExhaustiveGenerators {
 		return choose(validCharacters, maxNumberOfSamples);
 	}
 
-	public static <T> Optional<ExhaustiveGenerator<T>> fromIterable(Iterable<T> iterator, long maxCount, long maxNumberOfSamples) {
+	public static <T extends @Nullable Object> Optional<ExhaustiveGenerator<T>> fromIterable(Iterable<T> iterator, long maxCount, long maxNumberOfSamples) {
 		if (maxCount > maxNumberOfSamples) {
 			return Optional.empty();
 		}
 		return Optional.of(new IterableBasedExhaustiveGenerator<>(iterator, maxCount));
 	}
 
-	public static <T> Optional<ExhaustiveGenerator<List<T>>> list(
+	public static <T extends @Nullable Object> Optional<ExhaustiveGenerator<List<T>>> list(
 			Arbitrary<T> elementArbitrary,
 			int minSize, int maxSize,
-			Collection<FeatureExtractor<T>> uniquenessExtractors,
+			Collection<? extends FeatureExtractor<T>> uniquenessExtractors,
 			long maxNumberOfSamples
 	) {
 		Optional<Long> optionalMaxCount = ListExhaustiveGenerator.calculateMaxCount(elementArbitrary, minSize, maxSize, maxNumberOfSamples);
@@ -66,7 +68,7 @@ public class ExhaustiveGenerators {
 				));
 	}
 
-	public static <T> Optional<ExhaustiveGenerator<Set<T>>> set(
+	public static <T extends @Nullable Object> Optional<ExhaustiveGenerator<Set<T>>> set(
 			Arbitrary<T> elementArbitrary,
 			int minSize, int maxSize,
 			Collection<FeatureExtractor<T>> featureExtractors,
@@ -79,23 +81,23 @@ public class ExhaustiveGenerators {
 		);
 	}
 
-	public static <R> Optional<ExhaustiveGenerator<R>> combine(
+	public static <R extends @Nullable Object> Optional<ExhaustiveGenerator<R>> combine(
 			List<Arbitrary<Object>> arbitraries,
-			Function<List<Object>, R> combinator,
+			Function<? super List<?>, ? extends R> combinator,
 			long maxNumberOfSamples
 	) {
 		Optional<Long> optionalMaxCount = CombinedExhaustiveGenerator.calculateMaxCount(arbitraries, maxNumberOfSamples);
 		return optionalMaxCount.map(maxCount -> new CombinedExhaustiveGenerator<>(maxCount, arbitraries, combinator));
 	}
 
-	public static <T> Optional<ExhaustiveGenerator<List<T>>> shuffle(List<T> values, long maxNumberOfSamples) {
+	public static <T extends @Nullable Object> Optional<ExhaustiveGenerator<List<T>>> shuffle(List<T> values, long maxNumberOfSamples) {
 		Optional<Long> optionalMaxCount = PermutationExhaustiveGenerator.calculateMaxCount(values, maxNumberOfSamples);
 		return optionalMaxCount.map(
 			maxCount -> new PermutationExhaustiveGenerator<>(values, maxCount)
 		);
 	}
 
-	public static <U, T> Optional<ExhaustiveGenerator<U>> flatMap(
+	public static <U extends @Nullable Object, T extends @Nullable Object> Optional<ExhaustiveGenerator<U>> flatMap(
 		ExhaustiveGenerator<T> base,
 		Function<? super T, ? extends Arbitrary<U>> mapper,
 		long maxNumberOfSamples

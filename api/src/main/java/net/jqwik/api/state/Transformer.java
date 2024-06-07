@@ -24,14 +24,14 @@ import static org.apiguardian.api.API.Status.*;
  */
 @FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface Transformer<T> extends Function<@NonNull T, @NonNull T> {
+public interface Transformer<T extends @Nullable Object> extends Function<T, T> {
 
 	/**
 	 * The singleton object used for all calls to {@linkplain #endOfChain()}.
 	 */
 	Transformer<?> END_OF_CHAIN = new Transformer<Object>() {
 		@Override
-		public @NonNull Object apply(@NonNull Object t) {
+		public Object apply(Object t) {
 			return t;
 		}
 
@@ -56,7 +56,7 @@ public interface Transformer<T> extends Function<@NonNull T, @NonNull T> {
 	 */
 	Transformer<?> NOOP = new Transformer<Object>() {
 		@Override
-		public @NonNull Object apply(@NonNull Object t) {
+		public Object apply(Object t) {
 			return t;
 		}
 
@@ -88,7 +88,7 @@ public interface Transformer<T> extends Function<@NonNull T, @NonNull T> {
 	 * @return a transformer instance
 	 */
 	@SuppressWarnings("unchecked")
-	static <T> Transformer<T> endOfChain() {
+	static <T extends @Nullable Object> Transformer<T> endOfChain() {
 		return (Transformer<T>) END_OF_CHAIN;
 	}
 
@@ -117,7 +117,7 @@ public interface Transformer<T> extends Function<@NonNull T, @NonNull T> {
 	 * @param <S>         The type of the state to transform
 	 * @return a new instance of a transformer
 	 */
-	static <S> Transformer<S> transform(String description, Function<S, S> transform) {
+	static <S extends @Nullable Object> Transformer<S> transform(String description, Function<? super S, S> transform) {
 		return new Transformer<S>() {
 			@Override
 			public S apply(S s) {
@@ -140,7 +140,7 @@ public interface Transformer<T> extends Function<@NonNull T, @NonNull T> {
 	 * @param <S>         The type of the state to mutate
 	 * @return a new instance of a transformer
 	 */
-	static <S> Transformer<S> mutate(String description, Consumer<S> mutate) {
+	static <S extends @Nullable Object> Transformer<S> mutate(String description, Consumer<? super S> mutate) {
 		Function<S, S> transformer = s -> {
 			mutate.accept(s);
 			return s;

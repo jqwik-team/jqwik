@@ -5,27 +5,29 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 
+import org.jspecify.annotations.*;
+
 /**
  * Is loaded through reflection in api module
  */
 public class ExhaustiveGeneratorFacadeImpl extends ExhaustiveGenerator.ExhaustiveGeneratorFacade {
 	@Override
-	public <T, U> ExhaustiveGenerator<U> map(ExhaustiveGenerator<T> self, Function<T, U> mapper) {
+	public <T extends @Nullable Object, U extends @Nullable Object> ExhaustiveGenerator<U> map(ExhaustiveGenerator<T> self, Function<? super T, ? extends U> mapper) {
 		return new MappedExhaustiveGenerator<>(self, mapper);
 	}
 
 	@Override
-	public <T> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<T> self, Predicate<T> filterPredicate, int maxMisses) {
+	public <T extends @Nullable Object> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<T> self, Predicate<? super T> filterPredicate, int maxMisses) {
 		return new FilteredExhaustiveGenerator<>(self, filterPredicate, maxMisses);
 	}
 
 	@Override
-	public <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<T> self) {
+	public <T extends @Nullable Object> ExhaustiveGenerator<@Nullable T> injectNull(ExhaustiveGenerator<T> self) {
 		return new WithNullExhaustiveGenerator<>(self);
 	}
 
 	@Override
-	public <T> ExhaustiveGenerator<T> ignoreExceptions(
+	public <T extends @Nullable Object> ExhaustiveGenerator<T> ignoreExceptions(
 		final ExhaustiveGenerator<T> self,
 		final Class<? extends Throwable>[] exceptionTypes,
 		int maxThrows

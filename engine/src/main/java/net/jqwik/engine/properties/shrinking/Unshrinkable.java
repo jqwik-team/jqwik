@@ -9,9 +9,9 @@ import net.jqwik.engine.support.*;
 
 public class Unshrinkable<T> implements Shrinkable<T> {
 	private final ShrinkingDistance distance;
-	private final Supplier<T> valueSupplier;
+	private final Supplier<? extends T> valueSupplier;
 
-	public Unshrinkable(Supplier<T> valueSupplier, ShrinkingDistance distance) {
+	public Unshrinkable(Supplier<? extends T> valueSupplier, ShrinkingDistance distance) {
 		this.valueSupplier = valueSupplier;
 		this.distance = distance;
 	}

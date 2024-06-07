@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.jspecify.annotations.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
@@ -29,11 +30,11 @@ public class StoreRepository {
 
 	private final Map<Object, IdentifiedStores> storesByIdentifier = new LinkedHashMap<>();
 
-	public <T> ScopedStore<T> create(
+	public <T extends @Nullable Object> ScopedStore<T> create(
 		TestDescriptor scope,
 		Object identifier,
 		Lifespan lifespan,
-		Supplier<T> initialValueSupplier
+		Supplier<? extends T> initialValueSupplier
 	) {
 		if (scope == null) {
 			throw new IllegalArgumentException("scope must not be null");
@@ -52,7 +53,7 @@ public class StoreRepository {
 		return store;
 	}
 
-	private <T> void addStore(Object identifier, ScopedStore<T> newStore) {
+	private <T extends @Nullable Object> void addStore(Object identifier, ScopedStore<T> newStore) {
 		IdentifiedStores identifiedStores = storesByIdentifier.computeIfAbsent(newStore.getIdentifier(), ignore -> new IdentifiedStores());
 
 		Optional<ScopedStore<?>> conflictingStore =
@@ -76,11 +77,11 @@ public class StoreRepository {
 		storesByIdentifier.put(identifier, identifiedStores);
 	}
 
-	private <T> boolean isVisibleInAncestorOrDescendant(ScopedStore<T> newStore, ScopedStore<?> store) {
+	private <T extends @Nullable Object> boolean isVisibleInAncestorOrDescendant(ScopedStore<T> newStore, ScopedStore<?> store) {
 		return store.isVisibleFor(newStore.getScope()) || newStore.isVisibleFor(store.getScope());
 	}
 
-	public <T> Optional<ScopedStore<T>> get(TestDescriptor retriever, Object identifier) {
+	public <T extends @Nullable Object> Optional<ScopedStore<T>> get(TestDescriptor retriever, Object identifier) {
 		if (identifier == null) {
 			throw new IllegalArgumentException("identifier must not be null");
 		}
@@ -94,7 +95,7 @@ public class StoreRepository {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> Optional<ScopedStore<T>> getFirstVisibleStore(TestDescriptor retriever, IdentifiedStores identifiedStores) {
+	private <T extends @Nullable Object> Optional<ScopedStore<T>> getFirstVisibleStore(TestDescriptor retriever, IdentifiedStores identifiedStores) {
 		return identifiedStores.values()
 							   .stream()
 							   .filter(store -> store.isVisibleFor(retriever))

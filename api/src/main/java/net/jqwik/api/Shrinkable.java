@@ -20,25 +20,25 @@ public interface Shrinkable<T extends @Nullable Object> extends Comparable<Shrin
 			implementation = FacadeLoader.load(ShrinkableFacade.class);
 		}
 
-		public abstract <T> Shrinkable<T> unshrinkable(@Nullable Supplier<T> valueSupplier, ShrinkingDistance distance);
+		public abstract <T extends @Nullable Object> Shrinkable<T> unshrinkable(Supplier<? extends T> valueSupplier, ShrinkingDistance distance);
 
-		public abstract <T, U> Shrinkable<U> map(Shrinkable<T> self, Function<T, U> mapper);
+		public abstract <T extends @Nullable Object, U extends @Nullable Object> Shrinkable<U> map(Shrinkable<T> self, Function<? super T, ? extends U> mapper);
 
-		public abstract <T> Shrinkable<T> filter(Shrinkable<T> self, Predicate<T> filter);
+		public abstract <T extends @Nullable Object> Shrinkable<T> filter(Shrinkable<T> self, Predicate<? super T> filter);
 
-		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed);
+		public abstract <T extends @Nullable Object, U extends @Nullable Object> Shrinkable<U> flatMap(Shrinkable<T> self, Function<? super T, ? extends Arbitrary<U>> flatMapper, int tries, long randomSeed);
 	}
 
-	static <T> Shrinkable<T> unshrinkable(@Nullable T value) {
+	static <T extends @Nullable Object> Shrinkable<T> unshrinkable(T value) {
 		return unshrinkable(value, ShrinkingDistance.MIN);
 	}
 
-	static <T> Shrinkable<T> unshrinkable(@Nullable T value, ShrinkingDistance distance) {
+	static <T extends @Nullable Object> Shrinkable<T> unshrinkable(T value, ShrinkingDistance distance) {
 		return ShrinkableFacade.implementation.unshrinkable(() -> value, distance);
 	}
 
 	@API(status = INTERNAL)
-	static <T> Shrinkable<T> supplyUnshrinkable(Supplier<T> supplier) {
+	static <T extends @Nullable Object> Shrinkable<T> supplyUnshrinkable(Supplier<? extends T> supplier) {
 		return ShrinkableFacade.implementation.unshrinkable(supplier, ShrinkingDistance.MIN);
 	}
 
@@ -98,15 +98,15 @@ public interface Shrinkable<T extends @Nullable Object> extends Comparable<Shrin
 		return (Shrinkable<Object>) this;
 	}
 
-	default <U> Shrinkable<U> map(Function<T, U> mapper) {
+	default <U extends @Nullable Object> Shrinkable<U> map(Function<? super T, ? extends U> mapper) {
 		return ShrinkableFacade.implementation.map(this, mapper);
 	}
 
-	default Shrinkable<T> filter(Predicate<T> filter) {
+	default Shrinkable<T> filter(Predicate<? super T> filter) {
 		return ShrinkableFacade.implementation.filter(this, filter);
 	}
 
-	default <U> Shrinkable<U> flatMap(Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed) {
+	default <U extends @Nullable Object> Shrinkable<U> flatMap(Function<? super T, ? extends Arbitrary<U>> flatMapper, int tries, long randomSeed) {
 		return ShrinkableFacade.implementation.flatMap(this, flatMapper, tries, randomSeed);
 	}
 

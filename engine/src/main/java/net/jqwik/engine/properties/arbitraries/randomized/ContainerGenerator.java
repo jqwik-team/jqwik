@@ -10,10 +10,10 @@ import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 class ContainerGenerator<T, C> implements RandomGenerator<C> {
 	private final RandomGenerator<T> elementGenerator;
-	private final Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable;
+	private final Function<? super List<? extends Shrinkable<T>>, ? extends Shrinkable<C>> createShrinkable;
 	private final int minSize;
 	private final long maxUniqueElements;
-	private final Collection<FeatureExtractor<T>> uniquenessExtractors;
+	private final Collection<? extends FeatureExtractor<T>> uniquenessExtractors;
 	private final Function<Random, Integer> sizeGenerator;
 	private final long maxAttempts;
 
@@ -28,13 +28,13 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 
 	ContainerGenerator(
 		RandomGenerator<T> elementGenerator,
-		Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,
+		Function<? super List<? extends Shrinkable<T>>, ? extends Shrinkable<C>> createShrinkable,
 		int minSize,
 		int maxSize,
 		long maxUniqueElements,
 		int genSize,
 		RandomDistribution sizeDistribution,
-		Collection<FeatureExtractor<T>> uniquenessExtractors
+		Collection<? extends FeatureExtractor<T>> uniquenessExtractors
 	) {
 		this.elementGenerator = elementGenerator;
 		this.createShrinkable = createShrinkable;

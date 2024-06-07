@@ -26,7 +26,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see net.jqwik.api.domains.DomainContext
  */
 @API(status = MAINTAINED, since = "1.2")
-public interface TypeArbitrary<T extends @Nullable Object> extends Arbitrary<T> {
+public interface TypeArbitrary<T> extends Arbitrary<T> {
 
 	/**
 	 * Add public constructors of class {@code T} to be used
@@ -76,7 +76,7 @@ public interface TypeArbitrary<T extends @Nullable Object> extends Arbitrary<T> 
 	 * @param filter Predicate to add only those factory methods for which the predicate returns true
 	 * @return new arbitrary instance
 	 */
-	TypeArbitrary<T> useFactoryMethods(Predicate<Method> filter);
+	TypeArbitrary<T> useFactoryMethods(Predicate<? super Method> filter);
 
 	/**
 	 * Enable recursive use of type arbitrary:

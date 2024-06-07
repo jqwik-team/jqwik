@@ -13,18 +13,17 @@ import net.jqwik.engine.support.*;
 import static net.jqwik.engine.properties.UniquenessChecker.*;
 
 abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
-	protected final List<Shrinkable<E>> elements;
+	protected final List<? extends Shrinkable<E>> elements;
 	protected final int minSize;
 	protected final int maxSize;
-	protected final Collection<FeatureExtractor<E>> uniquenessExtractors;
+	protected final Collection<? extends FeatureExtractor<E>> uniquenessExtractors;
 
-	@Nullable
-	protected final Arbitrary<E> elementArbitrary;
+	protected final @Nullable Arbitrary<E> elementArbitrary;
 
 	ShrinkableContainer(
-		List<Shrinkable<E>> elements,
+		List<? extends Shrinkable<E>> elements,
 		int minSize, int maxSize,
-		Collection<FeatureExtractor<E>> uniquenessExtractors,
+		Collection<? extends FeatureExtractor<E>> uniquenessExtractors,
 		@Nullable Arbitrary<E> elementArbitrary
 	) {
 		this.elements = elements;
@@ -34,7 +33,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		this.elementArbitrary = elementArbitrary;
 	}
 
-	abstract C createValue(List<Shrinkable<E>> shrinkables);
+	abstract C createValue(List<? extends Shrinkable<E>> shrinkables);
 
 	@Override
 	public C value() {
@@ -159,7 +158,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	}
 
 	protected Stream<Shrinkable<C>> sortElements() {
-		return ShrinkingCommons.sortElements(elements, this::createShrinkable);
+		return ShrinkingCommons.sortElements(elements, (ShrinkingCommons.ContainerCreator<C, E>) this::createShrinkable);
 	}
 
 	@Override
@@ -190,6 +189,6 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		);
 	}
 
-	abstract Shrinkable<C> createShrinkable(List<Shrinkable<E>> shrunkElements);
+	abstract Shrinkable<C> createShrinkable(List<? extends Shrinkable<E>> shrunkElements);
 
 }

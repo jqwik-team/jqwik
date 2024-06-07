@@ -22,7 +22,7 @@ public interface StatisticsCoverage {
 		 *
 		 * @param countChecker a predicate to accept a selected value set's number of occurrences
 		 */
-		void count(Predicate<Integer> countChecker);
+		void count(Predicate<? super Integer> countChecker);
 
 		/**
 		 * Check the number of occurrences using one or more assertions.
@@ -31,14 +31,14 @@ public interface StatisticsCoverage {
 		 *                     and the count of all submitted value sets to compare with
 		 *                     or make a calculation
 		 */
-		void count(BiPredicate<Integer, Integer> countChecker);
+		void count(BiPredicate<? super Integer, ? super Integer> countChecker);
 
 		/**
 		 * Check the number of occurrences returning true (ok) or false (fail).
 		 *
 		 * @param countChecker a predicate to accept a selected value set's number of occurrences
 		 */
-		void count(Consumer<Integer> countChecker);
+		void count(Consumer<? super Integer> countChecker);
 
 		/**
 		 * Check the number of occurrences using one or more assertions.
@@ -47,7 +47,7 @@ public interface StatisticsCoverage {
 		 *                     and the count of all submitted value sets to compare with
 		 *                     or make a calculation
 		 */
-		void count(BiConsumer<Integer, Integer> countChecker);
+		void count(BiConsumer<? super Integer, ? super Integer> countChecker);
 
 		/**
 		 * Check the percentage of occurrences returning true (ok) or false (fail)
@@ -55,7 +55,7 @@ public interface StatisticsCoverage {
 		 * @param percentageChecker a predicate to accept a selected value set's
 		 *                          percentage (0.0 - 100.0) of occurrences
 		 */
-		void percentage(Predicate<Double> percentageChecker);
+		void percentage(Predicate<? super Double> percentageChecker);
 
 		/**
 		 * Check the number of occurrences returning true (ok) or false (fail).
@@ -63,7 +63,7 @@ public interface StatisticsCoverage {
 		 * @param percentageChecker a predicate to accept a selected value set's
 		 *                          percentage (0.0 - 100.0) of occurrences
 		 */
-		void percentage(Consumer<Double> percentageChecker);
+		void percentage(Consumer<? super Double> percentageChecker);
 
 	}
 

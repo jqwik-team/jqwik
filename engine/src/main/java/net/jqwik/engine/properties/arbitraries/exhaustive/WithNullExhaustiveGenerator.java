@@ -4,7 +4,9 @@ import java.util.*;
 
 import net.jqwik.api.*;
 
-public class WithNullExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
+import org.jspecify.annotations.*;
+
+public class WithNullExhaustiveGenerator<T extends @Nullable Object> implements ExhaustiveGenerator<T> {
 	private final ExhaustiveGenerator<T> base;
 
 	public WithNullExhaustiveGenerator(ExhaustiveGenerator<T> base) {

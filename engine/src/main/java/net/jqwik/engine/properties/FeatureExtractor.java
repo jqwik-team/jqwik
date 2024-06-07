@@ -1,12 +1,14 @@
 package net.jqwik.engine.properties;
 
+import org.jspecify.annotations.*;
+
 import java.util.*;
 import java.util.function.*;
 
 @FunctionalInterface
-public interface FeatureExtractor<T> extends Function<T, Object> {
+public interface FeatureExtractor<T extends @Nullable Object> extends Function<T, Object> {
 
-	static <T> FeatureExtractor<T> identity() {
+	static <T extends @Nullable Object> FeatureExtractor<T> identity() {
 		return t -> t;
 	}
 
@@ -18,7 +20,7 @@ public interface FeatureExtractor<T> extends Function<T, Object> {
 		}
 	}
 
-	default boolean isUniqueIn(T value, Collection<T> elements) {
+	default boolean isUniqueIn(T value, Collection<? extends T> elements) {
 		if (this == identity()) {
 			return !elements.contains(value);
 		}
@@ -28,7 +30,7 @@ public interface FeatureExtractor<T> extends Function<T, Object> {
 					   .noneMatch(x -> Objects.equals(x, feature));
 	}
 
-	default boolean areUnique(Collection<T> elements) {
+	default boolean areUnique(Collection<? extends T> elements) {
 		Set<Object> set = new HashSet<>();
 		for (T x : elements) {
 			if (!set.add(applySafe(x))) {

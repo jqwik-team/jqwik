@@ -7,7 +7,9 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class FrequencyArbitrary<T> extends UseGeneratorsArbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class FrequencyArbitrary<T extends @Nullable Object> extends UseGeneratorsArbitrary<T> {
 	private final List<Tuple.Tuple2<Integer, T>> frequencies;
 
 	public FrequencyArbitrary(List<Tuple.Tuple2<Integer, T>> frequencies) {
@@ -19,7 +21,7 @@ public class FrequencyArbitrary<T> extends UseGeneratorsArbitrary<T> {
 		this.frequencies = frequencies;
 	}
 
-	private static <T> List<T> valuesOf(List<Tuple.Tuple2<Integer, T>> frequencies) {
+	private static <T extends @Nullable Object> List<T> valuesOf(List<? extends Tuple.Tuple2<Integer, T>> frequencies) {
 		return frequencies.stream().map(Tuple.Tuple2::get2).collect(Collectors.toList());
 	}
 

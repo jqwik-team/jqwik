@@ -10,6 +10,8 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import org.jspecify.annotations.*;
+
 public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements ArrayArbitrary<T, A> {
 
 	public static <T, A> ArrayArbitrary<T, A> forArrayType(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
@@ -20,7 +22,7 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 		return new DefaultArrayArbitrary<>(elementArbitrary, arrayClass.getComponentType());
 	}
 
-	public static <T> ArrayArbitrary<T, T[]> forComponentType(Arbitrary<T> elementArbitrary, Class<?> componentType) {
+	public static <T extends @Nullable Object> ArrayArbitrary<T, T[]> forComponentType(Arbitrary<T> elementArbitrary, Class<?> componentType) {
 		return new DefaultArrayArbitrary<>(elementArbitrary, componentType);
 	}
 

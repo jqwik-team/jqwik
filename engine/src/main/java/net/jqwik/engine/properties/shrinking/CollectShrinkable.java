@@ -8,10 +8,10 @@ import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
 public class CollectShrinkable<T> implements Shrinkable<List<T>> {
-	private final List<Shrinkable<T>> elements;
-	private final Predicate<List<T>> until;
+	private final List<? extends Shrinkable<T>> elements;
+	private final Predicate<? super List<? extends T>> until;
 
-	public CollectShrinkable(List<Shrinkable<T>> elements, Predicate<List<T>> until) {
+	public CollectShrinkable(List<? extends Shrinkable<T>> elements, Predicate<? super List<? extends T>> until) {
 		this.elements = elements;
 		this.until = until;
 	}
@@ -21,7 +21,7 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 		return createValue(elements);
 	}
 
-	private List<T> createValue(List<Shrinkable<T>> elements) {
+	private List<T> createValue(List<? extends Shrinkable<T>> elements) {
 		return elements
 				   .stream()
 				   .map(Shrinkable::value)
@@ -53,10 +53,10 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 	}
 
 	private Stream<Shrinkable<List<T>>> sortElements() {
-		return ShrinkingCommons.sortElements(elements, this::createShrinkable);
+		return ShrinkingCommons.sortElements(elements, (ShrinkingCommons.ContainerCreator<List<T>, T>) this::createShrinkable);
 	}
 
-	private CollectShrinkable<T> createShrinkable(List<Shrinkable<T>> pairSwap) {
+	private CollectShrinkable<T> createShrinkable(List<? extends Shrinkable<T>> pairSwap) {
 		return new CollectShrinkable<>(pairSwap, until);
 	}
 

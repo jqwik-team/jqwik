@@ -61,6 +61,6 @@ public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
 	 *
 	 * @return new instance of arbitrary
 	 */
-	ChainArbitrary<T> improveShrinkingWith(Supplier<ChangeDetector<T>> detectorSupplier);
+	ChainArbitrary<T> improveShrinkingWith(Supplier<? extends ChangeDetector<? super T>> detectorSupplier);
 
 }
