@@ -23,7 +23,7 @@ class CombinedShrinkableTests {
 		Shrinkable three = new OneStepShrinkable(3);
 		Shrinkable hello = Shrinkable.unshrinkable("hello");
 		Function<List<?>, String> combinator = shrinkables -> {
-			int anInt = (int) shrinkables.get(0);
+			int anInt = (Integer) shrinkables.get(0);
 			String aString = (String) shrinkables.get(1);
 			return aString + anInt;
 		};
@@ -57,8 +57,8 @@ class CombinedShrinkableTests {
 			Shrinkable three = new OneStepShrinkable(3);
 			Shrinkable five = new OneStepShrinkable(5);
 			Function<List<?>, Tuple2<Integer, Integer>> combinator = shrinkables -> {
-				int first = (int) shrinkables.get(0);
-				int second = (int) shrinkables.get(1);
+				int first = (Integer) shrinkables.get(0);
+				int second = (Integer) shrinkables.get(1);
 				return Tuple.of(first, second);
 			};
 
@@ -75,8 +75,8 @@ class CombinedShrinkableTests {
 			Shrinkable three = new OneStepShrinkable(3);
 			Shrinkable five = new OneStepShrinkable(5);
 			Function<List<?>, Tuple2<Integer, Integer>> combinator = shrinkables -> {
-				int first = (int) shrinkables.get(0);
-				int second = (int) shrinkables.get(1);
+				int first = (Integer) shrinkables.get(0);
+				int second = (Integer) shrinkables.get(1);
 				return Tuple.of(first, second);
 			};
 
@@ -93,8 +93,8 @@ class CombinedShrinkableTests {
 			Shrinkable three = new OneStepShrinkable(3);
 			Shrinkable five = new OneStepShrinkable(5);
 			Function<List<?>, Tuple2<Integer, Integer>> combinator = shrinkables -> {
-				int first = (int) shrinkables.get(0);
-				int second = (int) shrinkables.get(1);
+				int first = (Integer) shrinkables.get(0);
+				int second = (Integer) shrinkables.get(1);
 				return Tuple.of(first, second);
 			};
 
