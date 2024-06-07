@@ -716,6 +716,33 @@ class TypeUsageTests {
 	class CanBeAssigned {
 
 		@Example
+		void anythingCanBeAssignedToWildcard() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public <T> List<T> listOfTypeVariable() {return null;}
+
+				@SuppressWarnings("WeakerAccess")
+				public List<Arbitrary> listOfConcreteType() {return null;}
+			}
+
+
+			Type listConcreteType = LocalClass.class.getMethod("listOfConcreteType").getAnnotatedReturnType().getType();
+			TypeUsage listOfConcrete = TypeUsage.forType(listConcreteType);
+
+			Type listOfTypeVariableType = LocalClass.class.getMethod("listOfTypeVariable").getAnnotatedReturnType().getType();
+			TypeUsage listOfTypeVariable = TypeUsage.forType(listOfTypeVariableType);
+
+			TypeUsage wildcard = TypeUsage.wildcard(TypeUsage.OBJECT_TYPE);
+
+			assertThat(wildcard.canBeAssignedTo(wildcard)).isTrue();
+			assertThat(TypeUsage.of(String.class).canBeAssignedTo(wildcard)).isTrue();
+			assertThat(TypeUsage.of(String[].class).canBeAssignedTo(wildcard)).isTrue();
+			assertThat(TypeUsage.of(List.class, wildcard).canBeAssignedTo(wildcard)).isTrue();
+			assertThat(listOfConcrete.canBeAssignedTo(wildcard)).isTrue();
+			assertThat(listOfTypeVariable.canBeAssignedTo(wildcard)).isTrue();
+		}
+
+		@Example
 		void nonGenericTypes() {
 			TypeUsage stringType = TypeUsage.of(String.class);
 
@@ -804,10 +831,16 @@ class TypeUsageTests {
 				public List<?> listOfWildcard() {return null;}
 
 				@SuppressWarnings("WeakerAccess")
+				public <T> List<T> listOfTypeVariable() {return null;}
+
+				@SuppressWarnings("WeakerAccess")
 				public Collection<?> collectionOfWildcard() {return null;}
 
 				@SuppressWarnings("WeakerAccess")
 				public List<? extends Arbitrary> listOfBoundWildcard() {return null;}
+
+				@SuppressWarnings("WeakerAccess")
+				public List<Arbitrary> listOfConcreteType() {return null;}
 			}
 
 			Type wildcardType = LocalClass.class.getMethod("listOfWildcard").getAnnotatedReturnType().getType();
@@ -822,6 +855,12 @@ class TypeUsageTests {
 			Type rawListType = LocalClass.class.getMethod("rawList").getAnnotatedReturnType().getType();
 			TypeUsage rawList = TypeUsage.forType(rawListType);
 
+			Type listConcreteType = LocalClass.class.getMethod("listOfConcreteType").getAnnotatedReturnType().getType();
+			TypeUsage listOfConcrete = TypeUsage.forType(listConcreteType);
+
+			Type listOfTypeVariableType = LocalClass.class.getMethod("listOfTypeVariable").getAnnotatedReturnType().getType();
+			TypeUsage listOfTypeVariable = TypeUsage.forType(listOfTypeVariableType);
+
 			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
 			TypeUsage listOfNativeInt = TypeUsage.of(List.class, TypeUsage.of(int.class));
 
@@ -831,7 +870,16 @@ class TypeUsageTests {
 			assertThat(listOfWildcard.canBeAssignedTo(listOfBoundWildcard)).isFalse();
 			assertThat(listOfWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
 			assertThat(listOfWildcard.canBeAssignedTo(collectionOfWildcard)).isTrue();
+			assertThat(listOfWildcard.canBeAssignedTo(listOfConcrete)).isFalse();
 			assertThat(collectionOfWildcard.canBeAssignedTo(listOfWildcard)).isFalse();
+
+			assertThat(listOfTypeVariable.canBeAssignedTo(listOfWildcard)).isTrue();
+			assertThat(listOfTypeVariable.canBeAssignedTo(collectionOfWildcard)).isTrue();
+			assertThat(listOfTypeVariable.canBeAssignedTo(listOfBoundWildcard)).isFalse();
+
+			assertThat(listOfConcrete.canBeAssignedTo(listOfWildcard)).isTrue();
+			assertThat(listOfConcrete.canBeAssignedTo(collectionOfWildcard)).isTrue();
+			assertThat(listOfConcrete.canBeAssignedTo(listOfBoundWildcard)).isTrue();
 
 			assertThat(listOfString.canBeAssignedTo(listOfWildcard)).isTrue();
 			assertThat(listOfString.canBeAssignedTo(collectionOfWildcard)).isTrue();
