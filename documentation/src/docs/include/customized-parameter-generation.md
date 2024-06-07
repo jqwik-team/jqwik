@@ -41,14 +41,32 @@ where `TParam` is the static type of the parameter to be provided.
 If the return type cannot be matched, jqwik will throw a `CannotFindArbitraryException`.
 
 **Caveat:**
-_Since this kind of type matching follows Java's rules for assignability,
-some type mismatches, especially in the presence of wildcards and constrained type variables, 
-can be confusing._
 
-Arbitrary provision usually starts with a
+Up to version `1.7.4`, it was possible that the provider method's return type
+was broader than the property method's parameter type.
+Since version `1.8.0` this is no longer the case.
+That's why the following code _will now fail at runtime_ with a `CannotFindArbitraryException`:
+
+```java
+@Property
+void favouritePrimes(@ForAll("favouritePrimes") int aFavourite) {
+}
+
+@Provide
+Arbitrary<?> favouritePrimes() {
+    return Arbitraries.of(3, 5, 7, 13, 17, 23, 41, 101);
+}
+```
+
+#### How to write a provider method
+
+Arbitrary provision often starts with a
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
-by one or more [filtering](#filtering), [mapping](#mapping) or
-[combining](#combining-arbitraries) actions.
+by one or more [filtering](#filtering), [mapping](#mapping), 
+[flat mapping](#flat-mapping) or [combining](#combining-arbitraries) actions.
+
+In general, all methods that return and modify arbitrary instances can be used.
+
 
 #### Provider Methods with Parameters
 
@@ -80,28 +98,29 @@ Arbitrary<Integer> favouritePrimes() {
 }
 ```
 
-From time to time, though, you need it as a `BigInteger` instead of an `int`. 
-You can kill both types with a single method:
+From time to time, though, you may want to use details from the type usage to change
+how the arbitrary is created. 
+In the following example, an annotation is used to decide whether to generate large primes:
 
 ```java
 @Property
-void favouritePrimesAsInts(@ForAll("favouritePrimes") int aFavourite) { ... }
+void largePrimes(@ForAll("favouritePrimes") @LargePrimes int aPrime) {
+	System.out.println("prime = " + aPrime);
+}
 
 @Property
-void favouritePrimesAsBigInts(@ForAll("favouritePrimes") BigInteger aFavourite) { ... }
+void smallPrimes(@ForAll("favouritePrimes") int aPrime) {
+	System.out.println("prime = " + aPrime);
+}
 
 @Provide
-Arbitrary<?> favouritePrimes(TypeUsage targetType) {
-	Arbitrary<Integer> ints = Arbitraries.of(3, 5, 7, 13, 17, 23, 41);
-	if (targetType.getRawType().equals(BigInteger.class)) {
-		return ints.map(BigInteger::valueOf);
+Arbitrary<Integer> favouritePrimes(TypeUsage targetType) {
+	if (targetType.findAnnotation(LargePrimes.class).isPresent()) {
+		return Arbitraries.integers().greaterOrEqual(2).filter(this::isPrime);
 	}
-	return ints;
+	return Arbitraries.of(3, 5, 7, 13, 17, 23, 41);
 }
 ```
-
-Mind that Java's type system now forces you to use a wildcard in the return type.
-
 
 ### Arbitrary Suppliers
 
