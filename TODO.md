@@ -1,7 +1,5 @@
 # 1.9.0
 
-    - Fix bug https://github.com/jqwik-team/jqwik/issues/577
-
     - Fix nullability annotation problem https://github.com/jqwik-team/jqwik/issues/575
       Maybe with PR https://github.com/jqwik-team/jqwik/issues/575
 
