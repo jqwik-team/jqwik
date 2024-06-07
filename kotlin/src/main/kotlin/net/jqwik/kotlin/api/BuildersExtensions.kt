@@ -11,6 +11,5 @@ import java.util.function.BiFunction
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 fun <B, T> BuilderCombinator<B>.use(arbitrary: Arbitrary<T>, combinator: (B, T) -> B): BuilderCombinator<B>
     where B : Any {
-    val toFunction = BiFunction<B, T, B> { b, t -> combinator(b, t) }
-    return this.use(arbitrary).`in`(toFunction)
+    return this.use(arbitrary).`in`(combinator)
 }
