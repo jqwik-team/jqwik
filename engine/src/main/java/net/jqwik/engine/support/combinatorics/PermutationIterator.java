@@ -1,12 +1,14 @@
 package net.jqwik.engine.support.combinatorics;
 
+import org.jspecify.annotations.*;
+
 import java.util.*;
 
 // Taken and adapted from https://codereview.stackexchange.com/questions/119969/
-public class PermutationIterator<T> implements Iterator<List<T>> {
+public class PermutationIterator<T extends @Nullable Object> implements Iterator<List<T>> {
 	private final List<T> values = new ArrayList<>();
-	private List<T> next;
-	private int[] indices;
+	private @Nullable List<T> next;
+	private int @Nullable [] indices;
 
 	public PermutationIterator(List<? extends T> values) {
 		this.values.addAll(values);

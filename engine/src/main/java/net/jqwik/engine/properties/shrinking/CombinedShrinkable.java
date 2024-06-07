@@ -7,7 +7,9 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-public class CombinedShrinkable<T> implements Shrinkable<T> {
+import org.jspecify.annotations.*;
+
+public class CombinedShrinkable<T extends @Nullable Object> implements Shrinkable<T> {
 	private final List<Shrinkable<Object>> parts;
 	private final Function<? super List<?>, ? extends T> combinator;
 

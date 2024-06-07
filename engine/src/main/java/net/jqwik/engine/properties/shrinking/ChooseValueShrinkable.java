@@ -5,7 +5,9 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
-public class ChooseValueShrinkable<T> extends AbstractValueShrinkable<T> {
+import org.jspecify.annotations.*;
+
+public class ChooseValueShrinkable<T extends @Nullable Object> extends AbstractValueShrinkable<T> {
 
 	private final List<? extends T> values;
 

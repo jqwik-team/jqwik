@@ -4,9 +4,11 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.support.JqwikExceptionSupport.*;
 
-public class IgnoreExceptionShrinkable<T> implements Shrinkable<T> {
+public class IgnoreExceptionShrinkable<T extends @Nullable Object> implements Shrinkable<T> {
 
 	private final Shrinkable<T> shrinkable;
 	private final Class<? extends Throwable>[] exceptionTypes;

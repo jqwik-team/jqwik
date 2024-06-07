@@ -7,13 +7,15 @@ import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.engine.support.*;
 
-class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
+import org.jspecify.annotations.*;
+
+class ShrinkableActionSequence<T extends @Nullable Object> implements Shrinkable<ActionSequence<T>> {
 
 	private final ActionGenerator<T> actionGenerator;
 	private final int maxSize;
 	private final ShrinkingDistance distance;
 
-	private SequentialActionSequence<T> generatedSequence = null;
+	private @Nullable SequentialActionSequence<T> generatedSequence = null;
 
 	ShrinkableActionSequence(ActionGenerator<T> actionGenerator, int maxSize, ShrinkingDistance distance) {
 		this.actionGenerator = actionGenerator;

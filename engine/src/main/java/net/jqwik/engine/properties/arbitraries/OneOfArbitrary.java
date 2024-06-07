@@ -11,7 +11,9 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class OneOfArbitrary<T extends @Nullable Object> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 	private final List<Arbitrary<T>> all = new ArrayList<>();
 	private final boolean isGeneratorMemoizable;
 

@@ -8,7 +8,7 @@ import net.jqwik.engine.properties.*;
 
 import org.jspecify.annotations.*;
 
-class WithEdgeCasesGenerator<T> implements RandomGenerator<T> {
+class WithEdgeCasesGenerator<T extends @Nullable Object> implements RandomGenerator<T> {
 
 	private final RandomGenerator<T> base;
 	private final int baseToEdgeCaseRatio;

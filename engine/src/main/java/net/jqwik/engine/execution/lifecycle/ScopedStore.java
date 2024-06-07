@@ -3,6 +3,7 @@ package net.jqwik.engine.execution.lifecycle;
 import java.util.function.*;
 import java.util.logging.*;
 
+import org.jspecify.annotations.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
@@ -10,7 +11,7 @@ import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.support.JqwikStringSupport.*;
 
-public class ScopedStore<T> implements Store<T> {
+public class ScopedStore<T extends @Nullable Object> implements Store<T> {
 
 	private static final Logger LOG = Logger.getLogger(ScopedStore.class.getName());
 

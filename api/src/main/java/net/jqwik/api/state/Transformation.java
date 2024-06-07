@@ -24,7 +24,7 @@ import static org.apiguardian.api.API.Status.*;
  */
 @FunctionalInterface
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface Transformation<T> extends Function<Supplier<T>, Arbitrary<Transformer<T>>> {
+public interface Transformation<T extends @Nullable Object> extends Function<Supplier<T>, Arbitrary<Transformer<T>>> {
 
 	Predicate<?> NO_PRECONDITION = ignore -> false;
 

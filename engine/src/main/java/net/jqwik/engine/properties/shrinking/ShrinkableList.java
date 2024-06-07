@@ -7,9 +7,11 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
+import org.jspecify.annotations.*;
+
 import static net.jqwik.engine.properties.UniquenessChecker.*;
 
-public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
+public class ShrinkableList<E extends @Nullable Object> extends ShrinkableContainer<List<E>, E> {
 
 	// Only used in tests
 	ShrinkableList(List<Shrinkable<E>> elements, int minSize, int maxSize) {

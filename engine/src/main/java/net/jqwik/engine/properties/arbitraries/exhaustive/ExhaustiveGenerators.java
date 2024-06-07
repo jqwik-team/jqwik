@@ -108,7 +108,7 @@ public class ExhaustiveGenerators {
 		);
 	}
 
-	private static class SupplierIterator<T> implements Iterator<T> {
+	private static class SupplierIterator<T extends @Nullable Object> implements Iterator<T> {
 
 		private final Supplier<T> supplier;
 		private volatile boolean generated = false;

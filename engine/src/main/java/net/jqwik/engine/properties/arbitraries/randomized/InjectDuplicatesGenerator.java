@@ -6,7 +6,9 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 
-public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
+import org.jspecify.annotations.*;
+
+public class InjectDuplicatesGenerator<T extends @Nullable Object> implements RandomGenerator<T> {
 
 	private final RandomGenerator<T> base;
 	private final double duplicateProbability;

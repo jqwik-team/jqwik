@@ -8,7 +8,7 @@ import net.jqwik.engine.support.*;
 
 import org.jspecify.annotations.*;
 
-public class ReportableStream<T> implements Stream<T> {
+public class ReportableStream<T extends @Nullable Object> implements Stream<T> {
 
 	private final List<T> values;
 	private final Stream<T> stream;

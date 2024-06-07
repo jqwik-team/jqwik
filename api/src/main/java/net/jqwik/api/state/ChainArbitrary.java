@@ -6,10 +6,12 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
 
+import org.jspecify.annotations.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 @API(status = EXPERIMENTAL, since = "1.7.0")
-public interface ChainArbitrary<T> extends Arbitrary<Chain<T>> {
+public interface ChainArbitrary<T extends @Nullable Object> extends Arbitrary<Chain<T>> {
 
 	/**
 	 * Allow an additional {@linkplain Transformation} on the generated chain.

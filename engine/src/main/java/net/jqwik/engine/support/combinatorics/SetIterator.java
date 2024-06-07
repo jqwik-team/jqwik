@@ -1,8 +1,10 @@
 package net.jqwik.engine.support.combinatorics;
 
+import org.jspecify.annotations.*;
+
 import java.util.*;
 
-public class SetIterator<T> implements Iterator<Set<T>> {
+public class SetIterator<T extends @Nullable Object> implements Iterator<Set<T>> {
 
 	private final Iterator<List<T>> combinedListIterator;
 	private final Set<Set<T>> generatedSets = new LinkedHashSet<>();

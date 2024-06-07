@@ -7,7 +7,9 @@ import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 import net.jqwik.engine.*;
 
-public class ArbitraryFilter<T> extends ArbitraryDelegator<T> {
+import org.jspecify.annotations.*;
+
+public class ArbitraryFilter<T extends @Nullable Object> extends ArbitraryDelegator<T> {
 	private final Predicate<? super T> filterPredicate;
 	private final int maxMisses;
 

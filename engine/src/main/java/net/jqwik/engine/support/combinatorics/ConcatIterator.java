@@ -1,13 +1,15 @@
 package net.jqwik.engine.support.combinatorics;
 
+import org.jspecify.annotations.*;
+
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-public class ConcatIterator<T> implements Iterator<T> {
+public class ConcatIterator<T extends @Nullable Object> implements Iterator<T> {
 
 	private final List<? extends Iterator<? extends T>> iterators;
 	private final AtomicInteger position;
-	private Iterator<? extends T> next;
+	private @Nullable Iterator<? extends T> next;
 
 	public ConcatIterator(List<? extends Iterator<? extends T>> iterators) {
 		this.iterators = iterators;
@@ -17,7 +19,7 @@ public class ConcatIterator<T> implements Iterator<T> {
 		}
 	}
 
-	private Iterator<? extends T> findNext() {
+	private @Nullable Iterator<? extends T> findNext() {
 		while (!iterators.get(position.get()).hasNext()) {
 			if (position.get() >= iterators.size() -1)
 				return null;

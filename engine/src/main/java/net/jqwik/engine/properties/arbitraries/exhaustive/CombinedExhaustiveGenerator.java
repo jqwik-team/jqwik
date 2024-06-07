@@ -7,7 +7,9 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-class CombinedExhaustiveGenerator<R> implements ExhaustiveGenerator<R> {
+import org.jspecify.annotations.*;
+
+class CombinedExhaustiveGenerator<R extends @Nullable Object> implements ExhaustiveGenerator<R> {
 	private final Long maxCount;
 	private final List<Arbitrary<Object>> arbitraries;
 	private final Function<? super List<?>, ? extends R> combinator;

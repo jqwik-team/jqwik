@@ -10,7 +10,9 @@ import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class CombineArbitrary<R> implements Arbitrary<R> {
+import org.jspecify.annotations.*;
+
+public class CombineArbitrary<R extends @Nullable Object> implements Arbitrary<R> {
 
 	private final Function<? super List<?>, ? extends R> combinator;
 	private final List<Arbitrary<Object>> arbitraries;

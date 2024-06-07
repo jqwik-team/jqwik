@@ -3,7 +3,9 @@ package net.jqwik.engine;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class ArbitraryDelegator<T> extends ArbitraryDecorator<T> {
+import org.jspecify.annotations.*;
+
+public class ArbitraryDelegator<T extends @Nullable Object> extends ArbitraryDecorator<T> {
 
 	private final Arbitrary<T> delegate;
 

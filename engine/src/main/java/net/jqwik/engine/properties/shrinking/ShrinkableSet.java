@@ -8,7 +8,7 @@ import org.jspecify.annotations.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
 
-public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
+public class ShrinkableSet<E extends @Nullable Object> extends ShrinkableContainer<Set<E>, E> {
 
 	public ShrinkableSet(
 		Collection<? extends Shrinkable<E>> elements,

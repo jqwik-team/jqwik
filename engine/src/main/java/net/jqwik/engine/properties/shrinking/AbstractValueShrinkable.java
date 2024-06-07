@@ -2,7 +2,11 @@ package net.jqwik.engine.properties.shrinking;
 
 import net.jqwik.api.*;
 
-public abstract class AbstractValueShrinkable<T> implements Shrinkable<T> {
+import org.jspecify.annotations.*;
+
+import java.util.*;
+
+public abstract class AbstractValueShrinkable<T extends @Nullable Object> implements Shrinkable<T> {
 
 	private final T value;
 
@@ -22,12 +26,12 @@ public abstract class AbstractValueShrinkable<T> implements Shrinkable<T> {
 
 		AbstractValueShrinkable<?> that = (AbstractValueShrinkable<?>) o;
 
-		return value.equals(that.value);
+		return Objects.equals(value, that.value);
 	}
 
 	@Override
 	public int hashCode() {
-		return value.hashCode();
+		return Objects.hash(value);
 	}
 
 	@Override

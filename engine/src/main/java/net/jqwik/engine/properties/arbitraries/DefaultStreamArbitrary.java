@@ -10,7 +10,9 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream<T>> implements StreamArbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class DefaultStreamArbitrary<T extends @Nullable Object> extends MultivalueArbitraryBase<T, Stream<T>> implements StreamArbitrary<T> {
 
 	public DefaultStreamArbitrary(Arbitrary<T> elementArbitrary) {
 		super(elementArbitrary);

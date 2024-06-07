@@ -6,7 +6,9 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 
-public class ArbitraryCollect<T> implements Arbitrary<List<T>> {
+import org.jspecify.annotations.*;
+
+public class ArbitraryCollect<T extends @Nullable Object> implements Arbitrary<List<T>> {
 
 	private final Arbitrary<T> elementArbitrary;
 	private final Predicate<? super List<? extends T>> until;

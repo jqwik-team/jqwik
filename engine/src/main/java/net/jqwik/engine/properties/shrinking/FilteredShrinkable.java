@@ -8,7 +8,9 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-public class FilteredShrinkable<T> implements Shrinkable<T> {
+import org.jspecify.annotations.*;
+
+public class FilteredShrinkable<T extends @Nullable Object> implements Shrinkable<T> {
 
 	private static final int MAX_BASE_SHRINKS = 100;
 	private final AtomicInteger countBaseShrinks = new AtomicInteger(0);

@@ -7,10 +7,12 @@ import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 
-public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class LazyArbitrary<T extends @Nullable Object> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 	private final Supplier<? extends Arbitrary<T>> arbitrarySupplier;
 	private final List<Tuple.Tuple2<ArbitraryConfigurator, TypeUsage>> configurations = new ArrayList<>();
-	private Arbitrary<T> arbitrary;
+	private @Nullable Arbitrary<T> arbitrary;
 
 	public LazyArbitrary(Supplier<? extends Arbitrary<T>> arbitrarySupplier) {
 		this.arbitrarySupplier = arbitrarySupplier;

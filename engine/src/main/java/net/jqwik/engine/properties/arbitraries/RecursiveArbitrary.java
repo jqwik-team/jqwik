@@ -6,7 +6,9 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.support.*;
 
-public class RecursiveArbitrary<T> implements Arbitrary<T> {
+import org.jspecify.annotations.*;
+
+public class RecursiveArbitrary<T extends @Nullable Object> implements Arbitrary<T> {
 	private final Supplier<? extends Arbitrary<T>> base;
 	private final Function<? super Arbitrary<T>, ? extends Arbitrary<T>> recur;
 	private final int depth;
