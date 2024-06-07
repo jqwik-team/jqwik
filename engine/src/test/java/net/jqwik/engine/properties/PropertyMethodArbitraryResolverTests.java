@@ -200,9 +200,7 @@ class PropertyMethodArbitraryResolverTests {
 			assertThat(arbitraries.iterator().next()).isInstanceOf(LongArbitrary.class);
 		}
 
-		// Exposes https://github.com/jqwik-team/jqwik/issues/577
 		@Example
-		@Disabled("Issue #577")
 		void providerMethodCanHaveWildcardArbitrary() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFromWildcard");
@@ -404,7 +402,7 @@ class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Property
-			boolean thingFromWildcard(@ForAll("aThingFromWildcard") Thing aThing) {
+			boolean thingFromWildcard(@ForAll("aThingFromWildcard") Object aThing) {
 				return true;
 			}
 
