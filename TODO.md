@@ -5,15 +5,15 @@
     - Fix nullability annotation problem https://github.com/jqwik-team/jqwik/issues/575
       Maybe with PR https://github.com/jqwik-team/jqwik/issues/575
 
+    - Upgrade to Kotlin 2.0
+        - Fix type problems from K2 compiler
+        - Document differences between K1 and K2 in user guide
+
 
 # 1.9.x
 
     - Migrate to https://docs.gradle.org/8.7/userguide/jvm_test_suite_plugin.html
       as preparation for Gradle 9
-
-    - Upgrade to Kotlin 2.0
-        - Fix type problems from K2 compiler
-        - Document differences between K1 and K2 in user guide
 
     - Summon preconfigured arbitrary. See https://github.com/jqwik-team/jqwik/issues/527
 
