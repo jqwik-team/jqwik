@@ -26,7 +26,7 @@ public class DefaultChainArbitrary<T extends @Nullable Object> extends TypedClon
 		final int effectiveMaxTransformations =
 			this.maxTransformations != Integer.MIN_VALUE ? this.maxTransformations : (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
 		Function<Random, Transformation<T>> transformationGenerator = new ChooseRandomlyByFrequency<>(weightedTransformations);
-		return random -> new ShrinkableChain<T>(
+		return random -> new ShrinkableChain<>(
 			random.nextLong(),
 			initialSupplier,
 			transformationGenerator,

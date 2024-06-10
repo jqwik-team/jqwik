@@ -14,7 +14,7 @@ import static net.jqwik.engine.properties.UniquenessChecker.*;
 class ShrinkingCommons {
 
 	@FunctionalInterface
-	interface ContainerCreator<C extends @Nullable Object, E extends @Nullable Object> extends Function<List<? extends Shrinkable<E>>, Shrinkable<C>> {}
+	interface ContainerCreator<C, E extends @Nullable Object> extends Function<List<? extends Shrinkable<E>>, Shrinkable<C>> {}
 
 	/**
 	 * Shrink elements of a container pairwise
@@ -25,7 +25,7 @@ class ShrinkingCommons {
 	 * @param <E>             type of elements
 	 * @return stream of shrunk containers
 	 */
-	static  <C extends @Nullable Object, E extends @Nullable Object> Stream<Shrinkable<C>> shrinkPairsOfElements(List<? extends Shrinkable<E>> elements, ContainerCreator<C, E> createContainer) {
+	static  <C, E extends @Nullable Object> Stream<Shrinkable<C>> shrinkPairsOfElements(List<? extends Shrinkable<E>> elements, ContainerCreator<C, E> createContainer) {
 		return Combinatorics
 			.distinctPairs(elements.size())
 			.flatMap(pair -> JqwikStreamSupport.zip(
@@ -49,7 +49,7 @@ class ShrinkingCommons {
 	 * @param <E>             type of elements
 	 * @return stream of shrunk containers
 	 */
-	static <C extends @Nullable Object, E extends @Nullable Object> Stream<Shrinkable<C>> sortElements(List<? extends Shrinkable<E>> elements, ContainerCreator<C, E> createContainer) {
+	static <C, E extends @Nullable Object> Stream<Shrinkable<C>> sortElements(List<? extends Shrinkable<E>> elements, ContainerCreator<C, E> createContainer) {
 		List<Shrinkable<E>> sortedElements = new ArrayList<>(elements);
 		sortedElements.sort(Comparator.comparing(Shrinkable::distance));
 		if (elements.equals(sortedElements)) {
@@ -61,11 +61,11 @@ class ShrinkingCommons {
 		);
 	}
 
-	private static <C extends @Nullable Object, E extends @Nullable Object> Stream<Shrinkable<C>> fullSort(List<? extends Shrinkable<E>> sortedElements, ContainerCreator<C, E> createContainer) {
+	private static <C, E extends @Nullable Object> Stream<Shrinkable<C>> fullSort(List<? extends Shrinkable<E>> sortedElements, ContainerCreator<C, E> createContainer) {
 		return Stream.of(createContainer.apply(sortedElements));
 	}
 
-	private static <C extends @Nullable Object, E extends @Nullable Object> Stream<Shrinkable<C>> pairwiseSort(List<? extends Shrinkable<E>> elements, ContainerCreator<C, E> createContainer) {
+	private static <C, E extends @Nullable Object> Stream<Shrinkable<C>> pairwiseSort(List<? extends Shrinkable<E>> elements, ContainerCreator<C, E> createContainer) {
 		return Combinatorics.distinctPairs(elements.size())
 							.map(pair -> {
 								int firstIndex = Math.min(pair.get1(), pair.get2());

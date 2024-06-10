@@ -52,6 +52,7 @@ public class ShrinkableList<E extends @Nullable Object> extends ShrinkableContai
 	}
 
 	// TODO: Simplify and clean up
+	@SuppressWarnings("OverlyLongMethod")
 	private Stream<Shrinkable<List<E>>> moveIndividualValuesTowardsEnd() {
 		ShrinkingDistance distance = distance();
 		return Combinatorics
