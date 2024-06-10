@@ -42,6 +42,7 @@ matrix.addAxis({
     '11',
     '17',
     '21',
+    '22'
   ]
 });
 
@@ -89,6 +90,8 @@ matrix.exclude({java_distribution: 'microsoft', java_version: '19'});
 matrix.exclude({java_distribution: 'microsoft', java_version: '20'});
 // Oracle supports 17+ only
 matrix.exclude({java_distribution: 'oracle', java_version: ['8', '11', '19']});
+// Temurin supports 11+ only
+matrix.exclude({java_distribution: 'temurin', java_version: ['8']});
 
 // Ensure there will be at least one job with minimal supported Java
 // matrix.generateRow({java_version: matrix.axisByName.java_version.values[0]});
