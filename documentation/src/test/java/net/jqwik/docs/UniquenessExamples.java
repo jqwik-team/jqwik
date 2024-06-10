@@ -46,9 +46,9 @@ class UniquenessExamples {
 		Assertions.assertThat(firstCharacters).doesNotHaveDuplicates();
 	}
 
-	private class FirstChar implements Function<String, Object> {
+	private class FirstChar implements Function<String, Character> {
 		@Override
-		public Object apply(String aString) {
+		public Character apply(String aString) {
 			return aString.charAt(0);
 		}
 	}

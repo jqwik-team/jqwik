@@ -4,6 +4,7 @@ import java.lang.annotation.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
+import org.jspecify.annotations.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -30,5 +31,5 @@ public @interface UniqueElements {
 			throw new IllegalArgumentException("This class must not be used");
 		}
 	}
-	Class<? extends Function<?, Object>> by() default NOT_SET.class;
+	Class<? extends Function<? extends @Nullable Object, ?>> by() default NOT_SET.class;
 }

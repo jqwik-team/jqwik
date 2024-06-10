@@ -17,11 +17,11 @@ class KotlinUniqueElementsConfigurator : ArbitraryConfigurator {
             return@map when {
                 arbitrary is SequenceArbitrary<*> -> configureSequenceArbitrary(arbitrary, uniqueness)
                 targetType.isAssignableFrom(Sequence::class) -> {
-                    val sequenceArbitrary = arbitrary as Arbitrary<Sequence<*>>
+                    val sequenceArbitrary = arbitrary as Arbitrary<Sequence<T>>
                     sequenceArbitrary.filter {
                         isUnique(
                             it.toList(),
-                            extractor(uniqueness) as Function<Any?, Any>
+                            extractor<T>(uniqueness) as Function<Any?, Any>
                         )
                     }
                 }
@@ -40,13 +40,13 @@ class KotlinUniqueElementsConfigurator : ArbitraryConfigurator {
         arbitrary: SequenceArbitrary<T>,
         uniqueness: UniqueElements
     ): SequenceArbitrary<T> {
-        val extractor = extractor(uniqueness) as Function<T, Any>
+        val extractor = extractor<T>(uniqueness) as Function<T?, *>
         return arbitrary.uniqueElements(extractor)
     }
 
-    private fun extractor(uniqueElements: UniqueElements): Function<*, Any> {
-        val extractorClass: Class<out Function<*, Any>> = uniqueElements.by.java
-        return if (extractorClass == NOT_SET::class.java) Function.identity()
+    private fun <T> extractor(uniqueElements: UniqueElements): Function<*, *> {
+        val extractorClass: Class<out Function<*, *>> = uniqueElements.by.java
+        return if (extractorClass == NOT_SET::class.java) Function.identity<Any>()
         // TODO: Create instance in context of test instance.
         //       This requires an extension of ArbitraryConfiguration interface
         //       to provide access to PropertyLifecycleContext

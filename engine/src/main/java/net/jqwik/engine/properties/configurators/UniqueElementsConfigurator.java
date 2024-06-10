@@ -17,7 +17,7 @@ import org.jspecify.annotations.*;
 @SuppressWarnings("unchecked")
 public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 
-	@SuppressWarnings("OverlyComplexMethod")
+	@SuppressWarnings({"OverlyComplexMethod", "OverlyLongMethod"})
 	@Override
 	public <T extends @Nullable Object> Arbitrary<T> configure(Arbitrary<T> arbitrary, TypeUsage targetType) {
 		return targetType.findAnnotation(UniqueElements.class).map(uniqueness -> {
@@ -66,8 +66,9 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 		return list;
 	}
 
+	@SuppressWarnings("OverlyLongMethod")
 	private static <C extends Collection<?>> Predicate<C> isUnique(UniqueElements uniqueness) {
-		Class<? extends Function<?, Object>> extractorClass = uniqueness.by();
+		Class<? extends Function<?, ?>> extractorClass = uniqueness.by();
 		if (extractorClass.equals(UniqueElements.NOT_SET.class)) {
 			return items -> {
 				// Intentionally uses `items.getClass().equals(HashSet.class)`
@@ -101,7 +102,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 	}
 
 	private <T extends @Nullable Object> Arbitrary<?> configureStreamableArbitrary(StreamableArbitrary<T, ?> arbitrary, UniqueElements uniqueness) {
-		Class<? extends Function<?, Object>> extractorClass = uniqueness.by();
+		Class<? extends Function<?, ?>> extractorClass = uniqueness.by();
 		if (extractorClass.equals(UniqueElements.NOT_SET.class)) {
 			return arbitrary.uniqueElements();
 		}
@@ -110,7 +111,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 	}
 
 	private <T extends @Nullable Object> Arbitrary<?> configureSetArbitrary(SetArbitrary<T> arbitrary, UniqueElements uniqueness) {
-		Class<? extends Function<?, Object>> extractorClass = uniqueness.by();
+		Class<? extends Function<?, ?>> extractorClass = uniqueness.by();
 		if (extractorClass.equals(UniqueElements.NOT_SET.class)) {
 			return arbitrary;
 		}
@@ -118,7 +119,7 @@ public class UniqueElementsConfigurator implements ArbitraryConfigurator {
 		return arbitrary.uniqueElements(extractor);
 	}
 
-	private static <T extends @Nullable Object> Function<T, Object> extractor(Class<? extends Function<?, Object>> extractorClass) {
+	private static <T extends @Nullable Object> Function<T, Object> extractor(Class<? extends Function<?, ?>> extractorClass) {
 		return (Function<T, Object>) (
 			extractorClass.equals(UniqueElements.NOT_SET.class)
 				? Function.identity()

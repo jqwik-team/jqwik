@@ -27,9 +27,9 @@ class UniqueElementsProperties {
 			return hasNoDuplicates(integerList, i -> i % 13);
 		}
 
-		private class Modulo13 implements Function<Integer, Object> {
+		private class Modulo13 implements Function<Integer, Integer> {
 			@Override
-			public Object apply(Integer integer) {
+			public Integer apply(Integer integer) {
 				return integer % 13;
 			}
 		}
@@ -102,9 +102,9 @@ class UniqueElementsProperties {
 			return new LinkedHashSet<>(asList(strings));
 		}
 
-		private class GetFirstTwoChars implements Function<String, Object> {
+		private class GetFirstTwoChars implements Function<String, String> {
 			@Override
-			public Object apply(String string) {
+			public String apply(String string) {
 				return string.substring(0, 2);
 			}
 		}
@@ -202,9 +202,9 @@ class UniqueElementsProperties {
 
 	}
 
-	private class GetStringLength implements Function<String, Object> {
+	private class GetStringLength implements Function<String, Integer> {
 		@Override
-		public Object apply(String string) {
+		public Integer apply(String string) {
 			return string.length();
 		}
 	}
