@@ -83,11 +83,8 @@ matrix.setNamePattern([
     'tz', 'locale',
 ]);
 
-// Microsoft Java has no distribution for 8, 18, 19, 20
-matrix.exclude({java_distribution: 'microsoft', java_version: '8'});
-matrix.exclude({java_distribution: 'microsoft', java_version: '18'});
-matrix.exclude({java_distribution: 'microsoft', java_version: '19'});
-matrix.exclude({java_distribution: 'microsoft', java_version: '20'});
+// Microsoft Java has no distribution for 8, 18, 19, 20, 22
+matrix.exclude({java_distribution: 'microsoft', java_version: ['8', '11', '19', '22']});
 // Oracle supports 17+ only
 matrix.exclude({java_distribution: 'oracle', java_version: ['8', '11', '19']});
 // Temurin supports 11+ only
