@@ -21,7 +21,7 @@ class SequenceArbitrary<T>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<
     private var listArbitrary: ListArbitrary<T>
 
     init {
-        this.listArbitrary = elementArbitrary.list()
+        this.listArbitrary = elementArbitrary.list() as ListArbitrary<T>
     }
 
     override fun arbitrary(): Arbitrary<Sequence<T>> {
