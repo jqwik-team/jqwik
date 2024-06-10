@@ -63,13 +63,13 @@ class CombinatorScope internal constructor(private val bindings: ValueBindings) 
         filters += filter
     }
 
-    fun <R> combineAs(creator: () -> R): Combined<R> {
+    fun <R> combineAs(creator: () -> R): Combined<R> where R : Any {
         check(!created.getAndSet(true)) { "'combineAs' must only be called once" }
 
         return Combined.Regular(arbitraries.toList(), filters.toList(), creator)
     }
 
-    fun <R> flatCombineAs(creator: () -> Arbitrary<R>): Combined<R> {
+    fun <R> flatCombineAs(creator: () -> Arbitrary<R>): Combined<R> where R : Any {
         check(!created.getAndSet(true)) { "'flatCombineAs' must only be called once" }
 
         return Combined.Flat(arbitraries.toList(), filters.toList(), creator)
@@ -102,7 +102,7 @@ sealed class Combined<R>(
         arbitraries: List<Arbitrary<*>>,
         filters: List<() -> Boolean>,
         val creator: () -> R
-    ) : Combined<R>(arbitraries, filters) {
+    ) : Combined<R>(arbitraries, filters) where R : Any {
         override fun ListCombinator<*>.asArbitrary(bindings: ValueBindings): Arbitrary<R> {
             return `as` { values ->
                 bindings.withValues(values) {
@@ -116,7 +116,7 @@ sealed class Combined<R>(
         arbitraries: List<Arbitrary<*>>,
         filters: List<() -> Boolean>,
         val creator: () -> Arbitrary<R>
-    ) : Combined<R>(arbitraries, filters) {
+    ) : Combined<R>(arbitraries, filters) where R: Any {
         override fun ListCombinator<*>.asArbitrary(bindings: ValueBindings): Arbitrary<R> {
             return flatAs { values ->
                 bindings.withValues(values) {
