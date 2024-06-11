@@ -1206,6 +1206,82 @@ class TypeUsageTests {
 	}
 
 	@Group
+	@Label("hasSameType(TypeUsage)")
+	class HasSameType {
+
+		@Example
+		void parameterizedType() throws NoSuchMethodException {
+
+			class LocalClass {
+				public void listWithAnnotation(List<@From String> list) {}
+			}
+
+			Method method = LocalClass.class.getMethod("listWithAnnotation", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage listWithAnnotation = TypeUsageImpl.forParameter(parameter);
+
+			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
+			assertThat(listOfString.hasSameTypeAs(listOfString)).isTrue();
+			assertThat(listOfString.hasSameTypeAs(listWithAnnotation)).isTrue();
+
+			TypeUsage listOfInt = TypeUsage.of(List.class, TypeUsage.of(Integer.class));
+			assertThat(listOfString.hasSameTypeAs(listOfInt)).isFalse();
+
+		}
+
+		@Example
+		void parameterizedTypeWithWildcard() throws NoSuchMethodException {
+
+			class LocalClass {
+				public <T> void listWithVariable(List<T> list) {}
+
+				public <T> void listWithAnnotatedVariable(List<@From T> list) {}
+
+				public <S> void listWithOtherVariable(List<S> list) {}
+			}
+
+			Method method = LocalClass.class.getMethod("listWithVariable", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage listWithVariable = TypeUsageImpl.forParameter(parameter);
+
+			method = LocalClass.class.getMethod("listWithAnnotatedVariable", List.class);
+			parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage listWithAnnotatedVariable = TypeUsageImpl.forParameter(parameter);
+
+			method = LocalClass.class.getMethod("listWithOtherVariable", List.class);
+			parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage listWithOtherVariable = TypeUsageImpl.forParameter(parameter);
+
+			assertThat(listWithVariable.hasSameTypeAs(listWithVariable)).isTrue();
+			assertThat(listWithVariable.hasSameTypeAs(listWithAnnotatedVariable)).isTrue();
+			assertThat(listWithVariable.hasSameTypeAs(listWithOtherVariable)).isFalse();
+		}
+
+		@Example
+		void parameterizedNestedType() throws NoSuchMethodException {
+
+			class LocalClass {
+				public void listWithAnnotation(List<List<@From String>> list) {}
+			}
+
+			Method method = LocalClass.class.getMethod("listWithAnnotation", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage listWithAnnotation = TypeUsageImpl.forParameter(parameter);
+
+			TypeUsage listOfListOfString = TypeUsage.of(
+				List.class,
+				TypeUsage.of(
+					List.class,
+					TypeUsage.of(String.class)
+				)
+			);
+			assertThat(listOfListOfString.hasSameTypeAs(listOfListOfString)).isTrue();
+			assertThat(listOfListOfString.hasSameTypeAs(listWithAnnotation)).isTrue();
+		}
+
+	}
+
+	@Group
 	class TypeUsageEnhancers {
 
 		@Example

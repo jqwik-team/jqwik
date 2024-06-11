@@ -274,4 +274,10 @@ public interface TypeUsage {
 	@API(status = EXPERIMENTAL, since = "1.6.0")
 	TypeUsage withMetaInfo(String key, Object value);
 
+
+	/**
+	 * Check for type equality, ie do not consider annotations.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.9.0")
+	boolean hasSameTypeAs(TypeUsage other);
 }

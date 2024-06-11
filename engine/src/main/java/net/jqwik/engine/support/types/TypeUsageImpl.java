@@ -511,8 +511,8 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 				return false;
 			}
 
-			// Unbound type variables can only be assigned to themselves.
-			if (targetTypeArgument.isTypeVariable() && !providedTypeArgument.equals(targetTypeArgument)) {
+			// Unbound type variables can only be assigned to themselves or type-equal type usages.
+			if (targetTypeArgument.isTypeVariable() && !providedTypeArgument.hasSameTypeAs(targetTypeArgument)) {
 				return false;
 			}
 
@@ -620,6 +620,57 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 		} catch (CloneNotSupportedException shouldNeverHappen) {
 			return JqwikExceptionSupport.throwAsUncheckedException(shouldNeverHappen);
 		}
+	}
+
+	@Override
+	public boolean hasSameTypeAs(TypeUsage otherUsage) {
+		if (this == otherUsage) {
+			return true;
+		}
+
+		if (!(otherUsage instanceof TypeUsageImpl)) {
+			return false;
+		}
+
+		TypeUsageImpl other = (TypeUsageImpl) otherUsage;
+
+		// The rest is mostly a copy of the equals method but without annotation checking
+		// and with comparing component types using hasSameTypeAs
+
+		if (!other.getRawType().equals(getRawType()))
+			return false;
+		if (!(haveSameTypes(other.typeArguments, typeArguments)))
+			return false;
+		if (other.isWildcard() != isWildcard()) {
+			return false;
+		}
+		if (other.isTypeVariable() != isTypeVariable()) {
+			return false;
+		}
+		if (other.isWildcard() && isWildcard()) {
+			if (!(haveSameTypes(other.lowerBounds, lowerBounds)))
+				return false;
+			if (!(haveSameTypes(other.upperBounds, upperBounds)))
+				return false;
+		}
+		if (other.isTypeVariable() && isTypeVariable()) {
+			if (!other.typeVariable.equals(typeVariable))
+				return false;
+			return haveSameTypes(other.upperBounds, upperBounds);
+		}
+		return other.isNullable() == isNullable();
+	}
+
+	private static boolean haveSameTypes(List<TypeUsage> left, List<TypeUsage> right) {
+		if (left.size() != right.size()) {
+			return false;
+		}
+		for (int i = 0; i < left.size(); i++) {
+			if (!left.get(i).hasSameTypeAs(right.get(i))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
