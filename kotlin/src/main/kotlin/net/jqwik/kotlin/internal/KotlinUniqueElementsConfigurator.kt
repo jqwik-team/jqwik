@@ -11,7 +11,7 @@ import net.jqwik.kotlin.api.isAssignableFrom
 import java.util.function.Function
 
 class KotlinUniqueElementsConfigurator : ArbitraryConfigurator {
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "WRONG_NULLABILITY_FOR_JAVA_OVERRIDE")
     override fun <T> configure(arbitrary: Arbitrary<T>, targetType: TypeUsage): Arbitrary<T> {
         return targetType.findAnnotation(UniqueElements::class.java).map { uniqueness ->
             return@map when {
@@ -21,7 +21,7 @@ class KotlinUniqueElementsConfigurator : ArbitraryConfigurator {
                     sequenceArbitrary.filter {
                         isUnique(
                             it.toList(),
-                            extractor<T>(uniqueness) as Function<Any?, Any>
+                            extractor(uniqueness) as Function<Any?, Any>
                         )
                     }
                 }
@@ -40,11 +40,11 @@ class KotlinUniqueElementsConfigurator : ArbitraryConfigurator {
         arbitrary: SequenceArbitrary<T>,
         uniqueness: UniqueElements
     ): SequenceArbitrary<T> {
-        val extractor = extractor<T>(uniqueness) as Function<T?, *>
+        val extractor = extractor(uniqueness) as Function<T?, *>
         return arbitrary.uniqueElements(extractor)
     }
 
-    private fun <T> extractor(uniqueElements: UniqueElements): Function<*, *> {
+    private fun extractor(uniqueElements: UniqueElements): Function<*, *> {
         val extractorClass: Class<out Function<*, *>> = uniqueElements.by.java
         return if (extractorClass == NOT_SET::class.java) Function.identity<Any>()
         // TODO: Create instance in context of test instance.

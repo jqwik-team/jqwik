@@ -9,6 +9,7 @@ class PairReportingFormat : SampleReportingFormat {
         return value is Pair<*, *>
     }
 
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     override fun report(value: Any): Any {
         val pair = value as Pair<*, *>
         return Tuple.of(pair.first, pair.second)

@@ -31,7 +31,7 @@ val Parameter.kotlinParameter: KParameter?
             // A generated parameter e.g. DefaultConstructorMarker
             return null
         }
-        return parameters.get(kotlinIndex)
+        return parameters[kotlinIndex]
     }
 
 private fun Parameter.isSuspendFunctionContinuationParameter() =

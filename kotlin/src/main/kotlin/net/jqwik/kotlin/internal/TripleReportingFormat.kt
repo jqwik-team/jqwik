@@ -9,6 +9,7 @@ class TripleReportingFormat : SampleReportingFormat {
         return value is Triple<*, *, *>
     }
 
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     override fun report(value: Any): Any {
         val triple = value as Triple<*, *, *>
         return Tuple.of(triple.first, triple.second, triple.third)

@@ -20,7 +20,7 @@ class SuspendedPropertyMethodsHook : ResolveParameterHook, InvokePropertyMethodH
 
     override fun propagateTo(): PropagationMode = PropagationMode.ALL_DESCENDANTS
 
-    override fun appliesTo(element: Optional<AnnotatedElement>) =
+    override fun appliesTo(element: Optional<AnnotatedElement>): Boolean =
         element.map { e -> e.isSuspendFunction() }.orElse(false)
 
     @Suppress("UNCHECKED_CAST")

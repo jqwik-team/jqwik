@@ -11,6 +11,7 @@ class KotlinIntRangeConfigurator : ArbitraryConfiguratorBase() {
         return targetType.isAssignableFrom(IntRange::class.java)
     }
 
+    @Suppress("unused") // Used by jqwik
     fun configure(arbitrary: Arbitrary<IntRange>, range: JqwikIntRange): Arbitrary<IntRange> {
         return if (arbitrary is IntRangeArbitrary) {
             arbitrary.between(range.min, range.max)
