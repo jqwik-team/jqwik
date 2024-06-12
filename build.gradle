@@ -9,7 +9,7 @@ plugins {
 }
 
 wrapper {
-	gradleVersion = '8.8'
+	gradleVersion = '8.7' // Gradle 8.8 does not run on jlink's local hardware
 }
 
 allprojects {

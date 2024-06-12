@@ -42,7 +42,7 @@ matrix.addAxis({
     '11',
     '17',
     '21',
-    '22'
+    // '22' // Requires Gradle 8., which sadly does not run on jlink's local hardware
   ]
 });
 
