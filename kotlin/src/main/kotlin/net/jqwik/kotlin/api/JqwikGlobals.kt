@@ -137,12 +137,13 @@ inline fun <reified T> anyForSubtypeOf(
  *
  * This is a Kotlin convenience for [Arbitraries.frequency] which takes [Pair]s instead of jqwik tuples.
  */
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.2")
-fun <T> frequency(vararg frequencies: Pair<Int, T>): Arbitrary<T> {
+fun <T> frequency(vararg frequencies: Pair<Int, T>): Arbitrary<out T> {
     val listOfFrequencies: List<Tuple.Tuple2<Int, T>> = frequencies
         .map { pair -> Tuple.of(pair.first, pair.second) }
         .toList()
-    return Arbitraries.frequency(listOfFrequencies)
+    return Arbitraries.frequency(listOfFrequencies) as Arbitrary<T>
 }
 
 /**
@@ -151,10 +152,9 @@ fun <T> frequency(vararg frequencies: Pair<Int, T>): Arbitrary<T> {
  * This is a Kotlin convenience for [Arbitraries.frequencyOf] which takes [Pair]s instead of jqwik tuples.
  */
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.2")
-fun <T> frequencyOf(vararg frequencies: Pair<Int, Arbitrary<out T>>): Arbitrary<T> {
-    @Suppress("UNCHECKED_CAST")
+fun <T> frequencyOf(vararg frequencies: Pair<Int, Arbitrary<T>>): Arbitrary<out T> {
     val listOfFrequencies: List<Tuple.Tuple2<Int, Arbitrary<T>>> = frequencies
-        .map { pair -> Tuple.of(pair.first, pair.second as Arbitrary<T>) }
+        .map { pair -> Tuple.of(pair.first, pair.second) }
         .toList()
-    return Arbitraries.frequencyOf(listOfFrequencies)
+    return Arbitraries.frequencyOf(listOfFrequencies) as Arbitrary<T>
 }
