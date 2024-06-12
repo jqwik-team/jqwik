@@ -634,7 +634,9 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 
 		TypeUsageImpl other = (TypeUsageImpl) otherUsage;
 
-		// The rest is mostly a copy of the equals method but without annotation checking
+		// The rest is mostly a copy of the equals method but
+		// - without annotation checking
+		// - without comparing name of type variable
 		// and with comparing component types using hasSameTypeAs
 
 		if (!other.getRawType().equals(getRawType()))
@@ -654,8 +656,6 @@ public class TypeUsageImpl implements TypeUsage, Cloneable {
 				return false;
 		}
 		if (other.isTypeVariable() && isTypeVariable()) {
-			if (!other.typeVariable.equals(typeVariable))
-				return false;
 			return haveSameTypes(other.upperBounds, upperBounds);
 		}
 		return other.isNullable() == isNullable();

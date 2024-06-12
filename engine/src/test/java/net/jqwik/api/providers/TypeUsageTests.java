@@ -1254,7 +1254,7 @@ class TypeUsageTests {
 
 			assertThat(listWithVariable.hasSameTypeAs(listWithVariable)).isTrue();
 			assertThat(listWithVariable.hasSameTypeAs(listWithAnnotatedVariable)).isTrue();
-			assertThat(listWithVariable.hasSameTypeAs(listWithOtherVariable)).isFalse();
+			assertThat(listWithVariable.hasSameTypeAs(listWithOtherVariable)).isTrue();
 		}
 
 		@Example
