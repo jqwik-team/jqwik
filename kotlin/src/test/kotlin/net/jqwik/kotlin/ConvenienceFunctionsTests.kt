@@ -1,19 +1,11 @@
 package net.jqwik.kotlin
 
-import net.jqwik.api.Arbitraries
-import net.jqwik.api.Example
-import net.jqwik.api.ForAll
-import net.jqwik.api.Property
-import net.jqwik.api.PropertyDefaults
-import net.jqwik.api.Provide
-import net.jqwik.kotlin.api.anyForSubtypeOf
+import net.jqwik.api.*
 import net.jqwik.kotlin.api.anyForType
 import net.jqwik.kotlin.api.frequency
 import net.jqwik.kotlin.api.frequencyOf
 import net.jqwik.testing.SuppressLogging
-import net.jqwik.testing.TestingSupport
 import org.assertj.core.api.Assertions.assertThat
-import java.util.*
 
 @PropertyDefaults(tries = 100)
 class ConvenienceFunctionsTests {
