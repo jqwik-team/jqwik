@@ -56,6 +56,7 @@ fun <T> Arbitrary<T>.triple(): Arbitrary<Triple<T, T, T>> {
  * @param <A> Type of resulting array class
  * @return a new arbitrary instance
  */
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 @API(status = API.Status.EXPERIMENTAL, since = "1.6.0")
 inline fun <T, reified A: Any> Arbitrary<T>.array(): ArrayArbitrary<T, A> {
     return array(A::class.java)
