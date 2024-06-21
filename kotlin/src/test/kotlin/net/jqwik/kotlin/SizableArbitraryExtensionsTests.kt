@@ -35,7 +35,7 @@ class SizableArbitraryExtensionsTests {
     @Example
     fun `StreamArbitrary ofSize() with range`(@ForAll random: Random) {
         val sizableArbitrary: StreamArbitrary<Int> = Int.any().stream().ofSize(2..12)
-        checkAllGenerated(sizableArbitrary, random) { sizable -> sizable.toList().size in 2..12 }
+        checkAllGenerated(sizableArbitrary, random) { sizable -> sizable.count() in 2..12 }
     }
 
     @Example

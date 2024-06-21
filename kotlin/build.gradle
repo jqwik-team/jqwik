@@ -75,13 +75,23 @@ signing {
 	}
 }
 
+def kotlinCompilerArgs = [
+	"-Xnullability-annotations=@org.jspecify.annotations:strict",
+	"-Xemit-jvm-type-annotations" // Required for annotations on type variables
+]
+
+// See https://github.com/jqwik-team/jqwik/issues/546#issuecomment-2180009926
+// Not supported by Java 8
+def isJava8 = javaTargetVersion  == '8' || javaTargetVersion == '1.8'
+if (!isJava8) {
+	kotlinCompilerArgs += [
+		"-Xjvm-target=${javaTargetVersion}"
+	]
+}
+
 tasks.withType(KotlinCompile).configureEach {
 	compilerOptions {
-		freeCompilerArgs = [
-			"-Xnullability-annotations=@org.jspecify.annotations:strict",
-			"-Xemit-jvm-type-annotations", // Required for annotations on type variables
-			"-Xjdk-release=${javaTargetVersion}" // See https://github.com/jqwik-team/jqwik/issues/546#issuecomment-2180009926
-		]
+		freeCompilerArgs = kotlinCompilerArgs
 		apiVersion = KotlinVersion.KOTLIN_1_9
 		languageVersion = KotlinVersion.KOTLIN_1_9
 		javaParameters = true // Required to get correct parameter names in reporting
