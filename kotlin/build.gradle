@@ -79,7 +79,8 @@ tasks.withType(KotlinCompile).configureEach {
 	compilerOptions {
 		freeCompilerArgs = [
 			"-Xnullability-annotations=@org.jspecify.annotations:strict",
-			"-Xemit-jvm-type-annotations" // Required for annotations on type variables
+			"-Xemit-jvm-type-annotations", // Required for annotations on type variables
+			"-Xjdk-release=${javaTargetVersion}" // See https://github.com/jqwik-team/jqwik/issues/546#issuecomment-2180009926
 		]
 		apiVersion = KotlinVersion.KOTLIN_1_9
 		languageVersion = KotlinVersion.KOTLIN_1_9
