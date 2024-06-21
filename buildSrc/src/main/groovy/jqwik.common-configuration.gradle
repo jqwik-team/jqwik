@@ -20,12 +20,16 @@ publishing {
 	repositories {
 		maven {
 			// hint: credentials are in ~/.gradle/gradle.properties
-			def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
-			def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
+			// Since June 2024 Sonatype seems to require a token for publishing
+			def repoUsername = project.hasProperty('tokenUsername') ? project.tokenUsername : ''
+			def repoPassword = project.hasProperty('tokenPassword') ? project.tokenPassword : ''
+
+			//def repoUsername = project.hasProperty('sonatypeUsername') ? project.sonatypeUsername : ''
+			//def repoPassword = project.hasProperty('sonatypePassword') ? project.sonatype : ''
 
 			credentials {
-				username = ossrhUsername
-				password = ossrhPassword
+				username = repoUsername
+				password = repoPassword
 			}
 
 			// change URLs to point to your repos, e.g. http://my.org/repo
