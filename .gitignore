@@ -26,6 +26,7 @@ out/
 # Misc
 *.log
 *.graphml
+*.salive
 
 # Mac
 .DS_Store

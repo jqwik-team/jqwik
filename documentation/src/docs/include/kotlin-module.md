@@ -52,12 +52,14 @@ tasks.withType<Test>().configureEach {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
+    compilerOptions {
         freeCompilerArgs = listOf(
-            "-Xemit-jvm-type-annotations" // Required for annotations on type variables
+            "-Xnullability-annotations=@org.jspecify.annotations:strict",
+            "-Xemit-jvm-type-annotations" // Enable annotations on type variables
         )
-        jvmTarget = "11" // 1.8 or above
-        javaParameters = true // Required to get correct parameter names in reporting
+        apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+        javaParameters = true // Get correct parameter names in jqwik reporting
     }
 }
 ```
