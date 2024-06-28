@@ -80,7 +80,9 @@ task generateUserGuideToc(type: Exec) {
 
 	workingDir "$buildDir/docs"
 
-	commandLine 'doctoc', '--maxlevel', '4', 'user-guide.md'
+	// For some strange reason just using 'doctoc' does no longer work with Gradle 8.7
+	executable "which doctoc".execute().text.trim()
+	args '--maxlevel', '4', 'user-guide.md'
 }
 
 task generateJavaDoc(type: Javadoc) {
