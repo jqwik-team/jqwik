@@ -1,5 +1,8 @@
 # 1.9.1
 
+    - JqwikSession:
+      - setRandomSessionSeed(), getRandomSessionSeed()
+
 
 # 1.9.x
 
@@ -26,9 +29,6 @@
       - Should cover https://github.com/jqwik-team/jqwik/issues/80.
       - Maybe ModelChain can be fully generated before it's provided as parameter? This could enable repeatability of shrinked samples.
       - See example in https://github.com/jlink/model-based-testing/tree/jqwik170/src/test/java/mbt/tecoc/withModelChain
-
-    - JqwikSession:
-      - setRandomSessionSeed(), getRandomSessionSeed()
 
     - Allow state machine / model specification with temporal logic.
       See https://wickstrom.tech/programming/2021/05/03/specifying-state-machines-with-temporal-logic.html
