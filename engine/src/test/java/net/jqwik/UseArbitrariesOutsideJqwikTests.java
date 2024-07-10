@@ -6,6 +6,7 @@ import java.util.stream.*;
 import org.junit.jupiter.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Disabled;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.providers.*;
@@ -178,6 +179,14 @@ class UseArbitrariesOutsideJqwikTests {
 			});
 			assertThat(JqwikSession.isActive()).isFalse();
 			assertThat(StoreRepository.getCurrent().size()).isEqualTo(initialStoreSize);
+		}
+
+		@Test
+		@Disabled("Not implemented yet")
+		void startWithRandomSeed() {
+			// JqwikSession.start("1234");
+			// or
+			// JqwikSession.run("1234", () -> { ... });
 		}
 
 	}

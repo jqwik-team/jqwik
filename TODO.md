@@ -2,6 +2,7 @@
 
     - JqwikSession:
       - setRandomSessionSeed(), getRandomSessionSeed()
+      - see https://github.com/jqwik-team/jqwik/issues/581
 
 
 # 1.9.x
