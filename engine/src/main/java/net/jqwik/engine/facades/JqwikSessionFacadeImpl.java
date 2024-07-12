@@ -1,12 +1,15 @@
 package net.jqwik.engine.facades;
 
+import java.util.*;
 import java.util.logging.*;
 
+import org.jspecify.annotations.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.sessions.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
@@ -28,18 +31,6 @@ public class JqwikSessionFacadeImpl extends JqwikSession.JqwikSessionFacade {
 			return TEST;
 		}
 	};
-
-	@Override
-	public void startSession() {
-		if (!CurrentTestDescriptor.isEmpty()) {
-			if (CurrentTestDescriptor.get() == SESSION_DESCRIPTOR) {
-				throw new JqwikException("JqwikSession.start() cannot be nested");
-			} else {
-				throw new JqwikException("JqwikSession.start() must only be used outside jqwik's standard lifecycle");
-			}
-		}
-		CurrentTestDescriptor.push(SESSION_DESCRIPTOR);
-	}
 
 	@Override
 	public void finishSession() {
@@ -65,8 +56,11 @@ public class JqwikSessionFacadeImpl extends JqwikSession.JqwikSessionFacade {
 	}
 
 	@Override
-	public void runInSession(JqwikSession.Runnable runnable) {
+	public void runInSession(@Nullable String randomSeed, JqwikSession.Runnable runnable) {
 		try {
+			if (randomSeed != null) {
+				SourceOfRandomness.create(randomSeed);
+			}
 			JqwikSession.start();
 			runnable.run();
 		} catch (Throwable t) {
@@ -81,4 +75,33 @@ public class JqwikSessionFacadeImpl extends JqwikSession.JqwikSessionFacade {
 		StoreRepository.getCurrent().finishProperty(SESSION_DESCRIPTOR);
 		StoreRepository.getCurrent().finishScope(SESSION_DESCRIPTOR);
 	}
+
+	@Override
+	public Optional<Random> getRandom() {
+		if (!isSessionOpen()) {
+			return Optional.empty();
+		}
+		return Optional.of(SourceOfRandomness.current());
+	}
+
+	@Override
+	public void startSession(@Nullable String randomSeed) {
+		if (randomSeed != null) {
+			SourceOfRandomness.create(randomSeed);
+		}
+		startSession();
+	}
+
+	private void startSession() {
+		if (!CurrentTestDescriptor.isEmpty()) {
+			if (CurrentTestDescriptor.get() == SESSION_DESCRIPTOR) {
+				throw new JqwikException("JqwikSession.start() cannot be nested");
+			} else {
+				throw new JqwikException("JqwikSession.start() must only be used outside jqwik's standard lifecycle");
+			}
+		}
+		CurrentTestDescriptor.push(SESSION_DESCRIPTOR);
+	}
+
+
 }

@@ -6,7 +6,6 @@ import java.util.stream.*;
 import org.junit.jupiter.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Disabled;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.providers.*;
@@ -182,12 +181,68 @@ class UseArbitrariesOutsideJqwikTests {
 		}
 
 		@Test
-		@Disabled("Not implemented yet")
-		void startWithRandomSeed() {
-			// JqwikSession.start("1234");
-			// or
-			// JqwikSession.run("1234", () -> { ... });
+		void inactiveSessionHasNoRandom() {
+			assertThat(JqwikSession.getRandom()).isEmpty();
 		}
+
+		@Test
+		void accessRandomInActiveSession() {
+			JqwikSession.start();
+			Optional<Random> optionalRandom = JqwikSession.getRandom();
+			assertThat(optionalRandom).isPresent();
+			Random random = optionalRandom.get();
+			assertThat(random.nextInt()).isNotZero();
+
+			// Trigger some random generation
+			assertThat(
+				Arbitraries.strings().sampleStream().limit(5)
+			).hasSize(5);
+
+			assertThat(JqwikSession.getRandom()).hasValue(random);
+		}
+
+		@Test
+		void startSessionWithGivenRandomSeed() {
+			Arbitrary<String> strings = Arbitraries.strings().alpha().ofMaxLength(5);
+
+			JqwikSession.start("42");
+			List<String> generatedValues = strings.sampleStream().limit(10).collect(Collectors.toList());
+			JqwikSession.finish();
+
+			JqwikSession.start("42");
+			assertThat(strings.sampleStream().limit(10).collect(Collectors.toList()))
+				.isEqualTo(generatedValues);
+			JqwikSession.finish();
+
+			JqwikSession.start("4242");
+			assertThat(strings.sampleStream().limit(10).collect(Collectors.toList()))
+				.isNotEqualTo(generatedValues);
+			JqwikSession.finish();
+		}
+
+		@Test
+		void runInSessionWithGivenRandomSeed() {
+			Arbitrary<String> strings = Arbitraries.strings().alpha().ofMaxLength(5);
+			List<String> generatedValues = new ArrayList<>();
+
+			JqwikSession.run("42", () -> {
+				strings.sampleStream().limit(10).forEach(generatedValues::add);
+			});
+
+			JqwikSession.run("42", () -> {
+				assertThat(
+					strings.sampleStream().limit(10).collect(Collectors.toList())
+				).isEqualTo(generatedValues);
+			});
+
+			JqwikSession.run("4243", () -> {
+				assertThat(
+					strings.sampleStream().limit(10).collect(Collectors.toList())
+				).isNotEqualTo(generatedValues);
+			});
+		}
+
+
 
 	}
 
