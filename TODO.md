@@ -1,9 +1,5 @@
 # 1.9.1
 
-    - JqwikSession:
-      - see https://github.com/jqwik-team/jqwik/issues/581
-      - Document in user guide
-
 
 # 1.9.x
 

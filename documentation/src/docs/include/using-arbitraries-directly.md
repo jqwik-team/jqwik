@@ -88,11 +88,15 @@ to simulate a small part of jqwik's property lifecycle.
 Currently this API consists of a few static methods on class `net.jqwik.api.sessions.JqwikSession`:
 
 - `JqwikSession.start()`: Start explicitly a session for using arbitraries and generators.
+- `JqwikSession.start(String randomSeed)`: Start a session with fixed random seed.
 - `JqwikSession.isActive()`: Check is a session is currently active.
+- `JqwikSession.getRandom()`: Return the optional random object that is used in the current active session,
+  return `Optional.empty()` if no session is active.
 - `JqwikSession.finish()`: Finish the currently active session, thereby releasing all the implicitly used memory space.
 - `JqwikSession.finishTry()`: Announce that you're done with the current `trie` of a property.
   This will, among other things, reset all [stores](#lifecycle-storage) that use `Lifespan.TRY`.
 - `JqwikSession.run(Runnable code)`: Wrap the runnable code segment in implicit `start()` and `finish()` calls.
+- `JqwikSession.run(String randomSeed, Runnable code)`: Run code insides session with fixed random seed.
 
 Mind that there's currently no way to use nested sessions, spread the same session across threads
 or use more than one session concurrently.
