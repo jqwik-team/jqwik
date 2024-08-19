@@ -3,9 +3,6 @@
 
 # 1.9.x
 
-    - Migrate to https://docs.gradle.org/8.7/userguide/jvm_test_suite_plugin.html
-      as preparation for Gradle 9
-
     - Summon preconfigured arbitrary. See https://github.com/jqwik-team/jqwik/issues/527
 
     - Using @UseType for sealed interfaces and classes: https://github.com/jqwik-team/jqwik/issues/523
@@ -14,6 +11,9 @@
     - Allow parallel test runs with SBT: https://github.com/jqwik-team/jqwik/issues/514
 
     - Method ordering. See https://github.com/jqwik-team/jqwik/issues/502.
+
+    - Migrate to https://docs.gradle.org/8.10/userguide/jvm_test_suite_plugin.html
+      as preparation for Gradle 9. It's still incubating, but we should be prepared.
 
     - State-based Properties (https://github.com/jqwik-team/jqwik/issues/428) : 
       - Do not shrink a single transformation if it is accessing state and any following transformation changes state.
