@@ -56,7 +56,7 @@ jobs:
             console.log('The following command might help reproducing CI results, use Java ${{ matrix.java_version }}')
             console.log('TZ="${{ matrix.tz }}" _JAVA_OPTIONS="${{ matrix.testExtraJvmArgs }}" ./gradlew check ${{ matrix.extraGradleArgs }}')
 
-      - uses: burrunan/gradle-cache-action@v1
+      - uses: burrunan/gradle-cache-action@v2
         # See https://github.com/burrunan/gradle-cache-action
         name: Build and Test
         env:
