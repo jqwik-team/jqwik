@@ -88,7 +88,7 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
 
 	// To verify generated email addresses
-	testImplementation('com.github.seancfoley:ipaddress:5.5.0') // 5.4.1 no longer works with Java 8
+	testImplementation('com.github.seancfoley:ipaddress:5.5.1') // 5.4.1 no longer works with Java 8
 
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 	testRuntimeOnly(project(":engine"))
