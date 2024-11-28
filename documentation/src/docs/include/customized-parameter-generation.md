@@ -42,10 +42,8 @@ If the return type cannot be matched, jqwik will throw a `CannotFindArbitraryExc
 
 **Caveat:**
 
-Up to version `1.7.4`, it was possible that the provider method's return type
-was broader than the property method's parameter type.
-Since version `1.8.0` this is no longer the case.
-That's why the following code _will now fail at runtime_ with a `CannotFindArbitraryException`:
+Between versions `1.8.0` and `1.9.1`, matching  the provider method's return type to the parameter type was very strict.
+That's why the following code _would fail at runtime_ with a `CannotFindArbitraryException`:
 
 ```java
 @Property
@@ -57,6 +55,15 @@ Arbitrary<?> favouritePrimes() {
     return Arbitraries.of(3, 5, 7, 13, 17, 23, 41, 101);
 }
 ```
+
+Starting with version `1.9.2` return type matching is very loose again.
+The only enforced constraint is that the return type must be a subtype of `Arbitrary`.
+Therefore the above code will work again.
+
+_The downside:_ If the arbitrary provided by the method will create an object of the wrong type,
+there will be an `IllegalArgumentException` thrown when jqwik tries to execute the property method.
+This is a trade-off between strict type checking and convenience.
+
 
 #### How to write a provider method
 

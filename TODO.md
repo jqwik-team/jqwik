@@ -1,8 +1,5 @@
 # 1.9.2
 
-    - Bug with provider method type matching in interface default methods.
-      See https://github.com/jqwik-team/jqwik/issues/599.
-
 # 1.9.x
 
     - Summon preconfigured arbitrary. See https://github.com/jqwik-team/jqwik/issues/527
