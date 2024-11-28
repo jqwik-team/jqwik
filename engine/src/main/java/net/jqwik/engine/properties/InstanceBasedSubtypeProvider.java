@@ -125,12 +125,7 @@ abstract class InstanceBasedSubtypeProvider implements ArbitraryProvider.Subtype
 			return provideAnnotation.map(Provide::value).orElse("");
 		};
 
-		TypeUsage effectiveTargetType = targetType.isTypeVariableOrWildcard() ? targetType : TypeUsage.wildcard(targetType);
-		TypeUsage expectedReturnType = TypeUsage.of(
-			Arbitrary.class,
-			effectiveTargetType
-		);
-
+		TypeUsage expectedReturnType = TypeUsage.of(Arbitrary.class);
 		return findGeneratorMethod(generatorToFind, contextInstance().getClass(), Provide.class, generatorNameSupplier, expectedReturnType);
 	}
 

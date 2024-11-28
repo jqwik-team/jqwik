@@ -28,6 +28,16 @@ class PropertyMethodArbitraryResolverTests {
 		}
 	}
 
+	private class ThingArbitrary extends ArbitraryDecorator<Thing> {
+
+		@Override
+		protected Arbitrary<Thing> arbitrary() {
+			return  Arbitraries.just(new Thing());
+		}
+	}
+
+
+
 	@Target({ElementType.METHOD})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Provide
@@ -209,6 +219,14 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void providerMethodCanReturnArbitrarySubtype() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFromArbitrarySubtype");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			assertThingArbitrary(arbitraries.iterator().next());
+		}
+
+		@Example
 		void providerMethodCanHaveTypeUsageParameter() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingWithTypeUsage");
@@ -238,6 +256,13 @@ class PropertyMethodArbitraryResolverTests {
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "thing");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
 			assertThingArbitrary(arbitraries.iterator().next());
+		}
+
+		@Example
+		void failWhenProviderMethodDoesNotReturnArbitrary() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "providerDoesNotReturnArbitrary");
+			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
 		@Example
@@ -402,13 +427,23 @@ class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Property
-			boolean thingFromWildcard(@ForAll("aThingFromWildcard") Object aThing) {
+			boolean thingFromWildcard(@ForAll("aThingFromWildcard") Thing aThing) {
 				return true;
 			}
 
 			@Provide
 			Arbitrary<?> aThingFromWildcard() {
 				return Arbitraries.just(new Thing());
+			}
+
+			@Property
+			boolean thingFromArbitrarySubtype(@ForAll("aThingFromArbitrarySubtype") Thing aThing) {
+				return true;
+			}
+
+			@Provide
+			ThingArbitrary aThingFromArbitrarySubtype() {
+				return new ThingArbitrary();
 			}
 
 			@Property
@@ -512,6 +547,16 @@ class PropertyMethodArbitraryResolverTests {
 			@Provide
 			Arbitrary<Thing> aThing() {
 				return Arbitraries.just(new Thing());
+			}
+
+			@Property
+			boolean providerDoesNotReturnArbitrary(@ForAll("notAnArbitrary") Thing aThing) {
+				return true;
+			}
+
+			@Provide
+			Thing notAnArbitrary() {
+				return new Thing();
 			}
 
 			@Group
