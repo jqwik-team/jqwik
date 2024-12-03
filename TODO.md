@@ -1,4 +1,6 @@
-# 1.9.2
+# 1.9.3
+
+    - Support live visualization with Tyche: https://github.com/jqwik-team/jqwik/issues/604
 
 # 1.9.x
 
