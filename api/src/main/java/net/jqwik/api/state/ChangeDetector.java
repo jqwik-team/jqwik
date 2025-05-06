@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * A change detector is used to determine if a stateful object has changed after the application of a transformer.
- * This can become improve shrinking of {@linkplain Chain chins} and {@linkplain ActionChain actionChains}.
+ * This can become improve shrinking of {@linkplain Chain chains} and {@linkplain ActionChain actionChains}.
  *
  * @param <T> the type of the stateful object
  *
