@@ -89,7 +89,7 @@ public interface Action<S extends @Nullable Object> {
 		 * Return an arbitrary for transformers that depends on the previous state.
 		 *
 		 * <p>
-		 * In addition to performing a state transformation the transformin function
+		 * In addition to performing a state transformation the transforming function
 		 * can also check or assert post-conditions and invariants that should hold when doing the transformation.
 		 * </p>
 		 *
