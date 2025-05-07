@@ -150,7 +150,7 @@ public interface Action<S extends @Nullable Object> {
 
 		public abstract S transform(S state);
 
-		String description() {
+		public String description() {
 			return getClass().getSimpleName();
 		}
 	}
