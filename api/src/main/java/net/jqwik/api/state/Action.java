@@ -150,6 +150,7 @@ public interface Action<S extends @Nullable Object> {
 
 		public abstract S transform(S state);
 
+		@API(status = EXPERIMENTAL, since = "1.9.3")
 		public String description() {
 			return getClass().getSimpleName();
 		}
