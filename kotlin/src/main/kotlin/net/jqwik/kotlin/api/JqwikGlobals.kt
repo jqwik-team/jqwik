@@ -117,10 +117,19 @@ inline fun <reified T> anyForType(): TypeArbitrary<T>
 @API(status = API.Status.EXPERIMENTAL, since = "1.8.4")
 inline fun <reified T> anyForSubtypeOf(
     enableArbitraryRecursion: Boolean = false,
-    crossinline subtypeScope: SubtypeScope<T>.() -> Unit = {}
-): Arbitrary<T> where T : Any {
+    noinline subtypeScope: SubtypeScope<T>.() -> Unit = {}
+): Arbitrary<out T> where T : Any {
+    return anyForTypes(T::class.allSealedSubclasses, enableArbitraryRecursion, subtypeScope)
+}
+
+@API(status = API.Status.EXPERIMENTAL, since = "1.9.3")
+fun <T> anyForTypes(
+    types: List<KClass<out T>>,
+    enableArbitraryRecursion: Boolean = false,
+    subtypeScope: SubtypeScope<T>.() -> Unit = {},
+): Arbitrary<out T> where T : Any {
     val scope = SubtypeScope<T>().apply(subtypeScope)
-    return Arbitraries.of(T::class.allSealedSubclasses).flatMap {
+    return Arbitraries.of(types).flatMap {
         scope.getProviderFor(it)
             ?: Arbitraries.forType(it.java).run {
                 if (enableArbitraryRecursion) {
@@ -129,7 +138,7 @@ inline fun <reified T> anyForSubtypeOf(
                     this
                 }
             }
-    }.map { obj -> obj }
+    }
 }
 
 /**

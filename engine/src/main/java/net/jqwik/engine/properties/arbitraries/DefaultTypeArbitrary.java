@@ -4,6 +4,8 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
+import net.jqwik.api.support.*;
+
 import org.jspecify.annotations.*;
 import org.junit.platform.commons.support.*;
 
@@ -34,6 +36,25 @@ public class DefaultTypeArbitrary<T extends @Nullable Object> extends ArbitraryD
 	@Override
 	protected Arbitrary<T> arbitrary() {
 		return traverseArbitrary;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || getClass() != o.getClass()) return false;
+		DefaultTypeArbitrary<?> that = (DefaultTypeArbitrary<?>) o;
+		return defaultsSet == that.defaultsSet &&
+				   Objects.equals(targetType, that.targetType) &&
+				   Objects.equals(explicitCreators, that.explicitCreators) &&
+				   Objects.equals(constructorFilters, that.constructorFilters) &&
+				   Objects.equals(factoryMethodFilters, that.factoryMethodFilters);
+		// TODO: compare traverseArbitrary.enableRecursion as well.
+		//   NOTE: we can't call Objects.equals(traverseArbitrary, ..) since it results in StackOverflowError due to
+		//     traverseArbitrary -> traverser -> DefaultTypeArbitrary cycle since TypeTraverser is an inner class so it brings the loop
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeSupport.hash(targetType, explicitCreators, constructorFilters, factoryMethodFilters, defaultsSet);
 	}
 
 	private DefaultTypeArbitrary<T> cloneWithoutDefaultsSet() {
