@@ -92,8 +92,9 @@ public class LambdaSupport {
 
 	private static <T> byte[] serialize(T l1) throws IOException {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
-		outputStream.writeObject(l1);
+		try (ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);) {
+			outputStream.writeObject(l1);
+		}
 		return byteArrayOutputStream.toByteArray();
 	}
 
