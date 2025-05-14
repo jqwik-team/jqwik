@@ -162,7 +162,9 @@ class GenerationInfoTests {
 		void serializeWithEmptyShrinkingSequence() throws Exception {
 			GenerationInfo generationInfo = new GenerationInfo("4242", 41);
 
-			outputStream().writeObject(generationInfo);
+			try (ObjectOutputStream os = outputStream();) {
+				os.writeObject(generationInfo);
+			}
 
 			// System.out.println("### size: " + byteArrayOutputStream.toByteArray().length);
 
@@ -175,7 +177,9 @@ class GenerationInfoTests {
 			GenerationInfo generationInfo = new GenerationInfo("4242", 41)
 				.appendShrinkingSequence(sequence);
 
-			outputStream().writeObject(generationInfo);
+			try (ObjectOutputStream os = outputStream();) {
+				os.writeObject(generationInfo);
+			}
 
 			// System.out.println("### size: " + byteArrayOutputStream.toByteArray().length);
 
@@ -190,7 +194,9 @@ class GenerationInfoTests {
 				generationInfo = generationInfo.appendShrinkingSequence(sequence);
 			}
 
-			outputStream().writeObject(generationInfo);
+			try (ObjectOutputStream os = outputStream();) {
+				os.writeObject(generationInfo);
+			}
 
 			// System.out.println("### size: " + byteArrayOutputStream.toByteArray().length);
 
@@ -203,7 +209,9 @@ class GenerationInfoTests {
 			GenerationInfo generationInfo = new GenerationInfo("4242", 41)
 				.appendShrinkingSequence(sequence);
 
-			outputStream().writeObject(generationInfo);
+			try (ObjectOutputStream os = outputStream();) {
+				os.writeObject(generationInfo);
+			}
 
 			// System.out.printf("### size: %s (%s)%n", sequence.size(), byteArrayOutputStream.toByteArray().length);
 
