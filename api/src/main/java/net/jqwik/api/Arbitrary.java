@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
