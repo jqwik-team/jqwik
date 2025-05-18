@@ -20,7 +20,8 @@ bin/
 *.iws
 *.uml
 .shelf
-.idea/
+.idea/**
+!.idea/icon.png
 out/
 
 # Misc
