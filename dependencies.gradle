@@ -45,7 +45,7 @@ ext {
 	kotestVersion = '5.9.1'
 	jspecifyVersion = '1.0.0'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.9.3-SNAPSHOT'
+	jqwikVersion = '1.9.3'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 	showStandardStreams = showStandardStreams()
 	javaTargetVersion = javaTargetVersion()
