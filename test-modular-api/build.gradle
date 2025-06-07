@@ -35,9 +35,9 @@ dependencies {
 		testImplementation(project(":web"))
 		testRuntimeOnly(project(":engine"))
 	} else {
-		testImplementation("net.jqwik:jqwik-api:1.9.2")
-		testImplementation("net.jqwik:jqwik-web:1.9.2")
-		testRuntimeOnly("net.jqwik:jqwik-engine:1.9.2")
+		testImplementation("net.jqwik:jqwik-api:1.9.3")
+		testImplementation("net.jqwik:jqwik-web:1.9.3")
+		testRuntimeOnly("net.jqwik:jqwik-engine:1.9.3")
 	}
 	testRuntimeOnly ("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 }
