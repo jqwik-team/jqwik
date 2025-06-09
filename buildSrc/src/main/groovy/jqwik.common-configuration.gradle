@@ -33,10 +33,14 @@ publishing {
 			}
 
 			// change URLs to point to your repos, e.g. http://my.org/repo
-			def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-			def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-			// def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-			// def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+			// def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+			// def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+
+			// Documentation for new publishing mechanism: https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/
+			// Both release and snapshot publishing has not been figured out completely yet
+			def releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
+			def snapshotsRepoUrl = "https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots/"
+
 			url = isSnapshotRelease ? snapshotsRepoUrl : releasesRepoUrl
 		}
 	}
