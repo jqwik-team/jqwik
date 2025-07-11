@@ -12,3 +12,16 @@ that focuses on Property-Based Testing.
 ## See the [jqwik website](http://jqwik.net) for further details and documentation.
 
 
+## Maintenance Mode
+
+> Currently, jqwik is in pure maintenance mode.
+> That means, that as long as no further sponsoring or 
+> other funding shows up, 
+> no further feature development will take place -
+> unless the jqwik team has some personal interest in such a feature.
+> 
+> What will happen, though, is a regular update of upstream
+> dependencies - like the JUnit platform - 
+> and fixing crucial bugs. 
+> The triage of bugs into "crucial" and "non-crucial" is
+> fully up to the jqwik team.
