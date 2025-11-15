@@ -10,7 +10,7 @@ description = "Jqwik modular API integration test"
 
 repositories {
 	mavenCentral()
-	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+	maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
 }
 
 def localJavaTarget = "${javaTargetVersion}" == "1.8" ? JavaVersion.VERSION_1_9
@@ -38,6 +38,9 @@ dependencies {
 		testImplementation("net.jqwik:jqwik-api:1.9.3")
 		testImplementation("net.jqwik:jqwik-web:1.9.3")
 		testRuntimeOnly("net.jqwik:jqwik-engine:1.9.3")
+//		testImplementation("net.jqwik:jqwik-api:1.9.4-SNAPSHOT")
+//		testImplementation("net.jqwik:jqwik-web:1.9.4-SNAPSHOT")
+//		testRuntimeOnly("net.jqwik:jqwik-engine:1.9.4-SNAPSHOT")
 	}
 	testRuntimeOnly ("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 }

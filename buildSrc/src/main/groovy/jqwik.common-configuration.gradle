@@ -32,16 +32,26 @@ publishing {
 				password = repoPassword
 			}
 
-			// change URLs to point to your repos, e.g. http://my.org/repo
-			// def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-			// def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-
 			// Documentation for new publishing mechanism: https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/
-			// Both release and snapshot publishing has not been figured out completely yet
+			// URLs suggested in https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuring-your-plugin
+
+			// Works but deployments don't show up in https://central.sonatype.com
 			def releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
-			def snapshotsRepoUrl = "https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots/"
+
+			// Results in 400 error:
+			// def releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/"
+
+			// Works
+			def snapshotsRepoUrl = "https://central.sonatype.com/repository/maven-snapshots/"
 
 			url = isSnapshotRelease ? snapshotsRepoUrl : releasesRepoUrl
+
+			// Additional requests to execute for manual deployments as suggested in documentation:
+			// One of:
+			// - curl -X POST https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/net.jqwik
+			// - curl -G -d "ip=any" -d "profile_id=net.jqwik" https://ossrh-staging-api.central.sonatype.com/manual/search/repositories
+			// Sadly, both did not lead to deployment showing up on central.sonatype.com
+
 		}
 	}
 }
