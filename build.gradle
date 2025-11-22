@@ -36,3 +36,11 @@ allprojects {
 		inputs.property("ENV:TZ", providers.environmentVariable("TZ")).optional(true)
 	}
 }
+
+tasks.register("publishToMavenCentral", Exec) {
+	// subprojects.each { dependsOn("${it.name}:publish") }
+	group = "Publishing"
+	description = "Publishes all publications in this project " +
+		"and announces publication to central.sonatype.com."
+	commandLine './signalPublishToCentralSonatype.sh', project.portalTokenBase64
+}
