@@ -20,12 +20,9 @@ publishing {
 	repositories {
 		maven {
 			// hint: credentials are in ~/.gradle/gradle.properties
-			// Since June 2024 Sonatype seems to require a token for publishing
-			def repoUsername = project.hasProperty('tokenUsername') ? project.tokenUsername : ''
-			def repoPassword = project.hasProperty('tokenPassword') ? project.tokenPassword : ''
-
-			//def repoUsername = project.hasProperty('sonatypeUsername') ? project.sonatypeUsername : ''
-			//def repoPassword = project.hasProperty('sonatypePassword') ? project.sonatype : ''
+			// Since June 2025 there is a new portal which requires new tokens
+			def repoUsername = project.hasProperty('portalTokenUsername') ? project.portalTokenUsername : ''
+			def repoPassword = project.hasProperty('portalTokenPassword') ? project.portalTokenPassword : ''
 
 			credentials {
 				username = repoUsername
@@ -46,11 +43,13 @@ publishing {
 
 			url = isSnapshotRelease ? snapshotsRepoUrl : releasesRepoUrl
 
-			// Additional requests to execute for manual deployments as suggested in documentation:
-			// One of:
-			// - curl -X POST https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/net.jqwik
-			// - curl -G -d "ip=any" -d "profile_id=net.jqwik" https://ossrh-staging-api.central.sonatype.com/manual/search/repositories
-			// Sadly, both did not lead to deployment showing up on central.sonatype.com
+			// Release versions require an additional request to be executed for manual deployments:
+			/*
+			curl -X 'POST' \
+			  'https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/net.jqwik' \
+			  -H 'accept: application/json' \
+			  -H 'Authorization: Bearer <BASE64 token>'
+			*/
 
 		}
 	}
