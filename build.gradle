@@ -37,8 +37,8 @@ allprojects {
 	}
 }
 
-tasks.register("publishToMavenCentral", Exec) {
-	// subprojects.each { dependsOn("${it.name}:publish") }
+tasks.register("publish", Exec) {
+	subprojects.each { dependsOn("${it.name}:publish") }
 	group = "Publishing"
 	description = "Publishes all publications in this project " +
 		"and announces publication to central.sonatype.com."
