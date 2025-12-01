@@ -40,7 +40,7 @@ ext {
 	assertJVersion = '3.27.6'
 	mockitoVersion = '4.11.0' // Mockito 5+ no longer supports Java 8
 	systemLambdaVersion = '1.2.1'
-	errorproneVersion = '2.44.0'
+	errorproneVersion = '2.45.0'
 	kotlinxVersion = '1.10.2'
 	kotestVersion = '5.9.1'
 	jspecifyVersion = '1.0.0'
