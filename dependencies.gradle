@@ -33,7 +33,7 @@ static def javaTargetVersion() {
 
 ext {
 	junitPlatformVersion = '1.14.2'
-	junitJupiterVersion = '5.14.1'
+	junitJupiterVersion = '5.14.2'
 	apiGuardianVersion = '1.1.2'
 	opentest4jVersion = '1.3.0'
 	archunitVersion = '1.4.1'
