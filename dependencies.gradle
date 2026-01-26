@@ -37,7 +37,7 @@ ext {
 	apiGuardianVersion = '1.1.2'
 	opentest4jVersion = '1.3.0'
 	archunitVersion = '1.4.1'
-	assertJVersion = '3.27.6'
+	assertJVersion = '3.27.7'
 	mockitoVersion = '4.11.0' // Mockito 5+ no longer supports Java 8
 	systemLambdaVersion = '1.2.1'
 	errorproneVersion = '2.46.0'
