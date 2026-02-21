@@ -10,7 +10,8 @@ import java.util.*
 class AnyForSubtypeOfTests {
 
     sealed interface Interface
-    class Implementation(val value: String) : Interface
+    // Make generator Arbitrary<Implementation> cacheable by ensuring Implementation has equals/hashCode
+    data class Implementation(val value: String) : Interface
 
     @Example
     fun `anyForSubtypeOf() returns type arbitrary for any implementations of given sealed interface`(@ForAll random: Random) {
