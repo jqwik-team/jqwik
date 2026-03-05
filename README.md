@@ -1,4 +1,3 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.jqwik/jqwik/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.jqwik/jqwik)
 [![Javadocs](http://javadoc.io/badge/net.jqwik/jqwik-api.svg)](https://jqwik.net/docs/current/javadoc/index.html)
 [![CI Status](https://github.com/jqwik-team/jqwik/workflows/CI/badge.svg?branch=main)](https://github.com/jqwik-team/jqwik/actions)
 
