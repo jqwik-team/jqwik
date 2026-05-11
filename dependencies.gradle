@@ -41,7 +41,7 @@ ext {
 	mockitoVersion = '4.11.0' // Mockito 5+ no longer supports Java 8
 	systemLambdaVersion = '1.2.1'
 	errorproneVersion = '2.49.0'
-	kotlinxVersion = '1.10.2'
+	kotlinxVersion = '1.11.0'
 	kotestVersion = '5.9.1'
 	jspecifyVersion = '1.0.0'
 	moduleName = 'net.jqwik'
