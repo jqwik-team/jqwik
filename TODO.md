@@ -1,8 +1,12 @@
-# 1.9.3
+# 1.10.0
+
+    - Address @NotBlank issue. See https://github.com/jqwik-team/jqwik/issues/663.
+
+# 1.11.x
+
+    - Migrate to JUnit Platform 6
 
     - Support live visualization with Tyche: https://github.com/jqwik-team/jqwik/issues/604
-
-# 1.9.x
 
     - Summon preconfigured arbitrary. See https://github.com/jqwik-team/jqwik/issues/527
 
