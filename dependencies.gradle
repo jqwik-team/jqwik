@@ -46,7 +46,7 @@ ext {
 	jspecifyVersion = '1.0.0'
 	moduleName = 'net.jqwik'
 //	jqwikVersion = '1.9.4'
-	jqwikVersion = '1.9.4-SNAPSHOT'
+	jqwikVersion = '1.10.0-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 	showStandardStreams = showStandardStreams()
 	javaTargetVersion = javaTargetVersion()
