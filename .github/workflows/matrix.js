@@ -38,8 +38,8 @@ matrix.addAxis({
   title: x => 'Java ' + x,
   // Strings allow versions like 18-ea
   values: [
-    '8',
-    '11',
+    // '8',
+    // '11',
     '17',
     '21',
     '22'
