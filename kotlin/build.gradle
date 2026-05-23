@@ -24,15 +24,10 @@ task publishKotlinJavadoc(type: Javadoc) {
 	include '**/api/**'
 }
 
-tasks.named("dokkaHtml") {
-	moduleName.set("jqwik-kotlin")
-	outputDirectory.set(file("${rootDir}/documentation/build/docs/kdoc"))
-	dokkaSourceSets.named("main") {
-		perPackageOption {
-			matchingRegex.set(".*\\.internal.*")
-			suppress.set(true)
-		}
-	}
+task publishDokka(type: Copy) {
+	dependsOn 'dokkaGenerateHtml'
+	from("$buildDir/dokka/html")
+	into "${rootDir}/documentation/build/docs/kdoc"
 }
 
 publishing {

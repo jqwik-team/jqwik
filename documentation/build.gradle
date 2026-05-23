@@ -86,7 +86,7 @@ task generateUserGuideToc(type: Exec) {
 }
 
 task generateJavaDoc(type: Javadoc) {
-	dependsOn ':kotlin:dokkaGenerateHtml'
+	dependsOn ':kotlin:publishDokka'
 	source(
 		file("${rootDir}/api/src/main/java"),
 		file("${rootDir}/web/src/main/java"),
