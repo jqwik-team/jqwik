@@ -50,107 +50,107 @@ title: jqwik User Guide - ${version}
 
 ## How to Use
 
-${new File("src/docs/include/how-to-use.md").text}
+${new File("documentation/src/docs/include/how-to-use.md").text}
 
 
 ## Writing Properties
 
-${new File("src/docs/include/writing-properties.md").text}
+${new File("documentation/src/docs/include/writing-properties.md").text}
 
 
 ## Default Parameter Generation
 
-${new File("src/docs/include/default-parameter-generation.md").text}
+${new File("documentation/src/docs/include/default-parameter-generation.md").text}
 
 
 ## Customized Parameter Generation
 
-${new File("src/docs/include/customized-parameter-generation.md").text}
+${new File("documentation/src/docs/include/customized-parameter-generation.md").text}
 
 
 ## Combining Arbitraries
 
-${new File("src/docs/include/combining-arbitraries.md").text}
+${new File("documentation/src/docs/include/combining-arbitraries.md").text}
 
 
 ## Recursive Arbitraries
 
-${new File("src/docs/include/recursive-arbitraries.md").text}
+${new File("documentation/src/docs/include/recursive-arbitraries.md").text}
 
 
 ## Using Arbitraries Directly
 
-${new File("src/docs/include/using-arbitraries-directly.md").text}
+${new File("documentation/src/docs/include/using-arbitraries-directly.md").text}
 
 
 ## Contract Tests
 
-${new File("src/docs/include/contract-tests.md").text}
+${new File("documentation/src/docs/include/contract-tests.md").text}
 
 
 ## Stateful Testing
 
-${new File("src/docs/include/stateful-testing.md").text}
+${new File("documentation/src/docs/include/stateful-testing.md").text}
 
 
 ## Stateful Testing (Old Approach)
 
-${new File("src/docs/include/stateful-testing-old.md").text}
+${new File("documentation/src/docs/include/stateful-testing-old.md").text}
 
 
 ## Assumptions
 
-${new File("src/docs/include/assumptions.md").text}
+${new File("documentation/src/docs/include/assumptions.md").text}
 
 
 ## Result Shrinking
 
-${new File("src/docs/include/result-shrinking.md").text}
+${new File("documentation/src/docs/include/result-shrinking.md").text}
 
 
 ## Collecting and Reporting Statistics
 
-${new File("src/docs/include/collecting-and-reporting-statistics.md").text}
+${new File("documentation/src/docs/include/collecting-and-reporting-statistics.md").text}
 
 
 ## Providing Default Arbitraries
 
-${new File("src/docs/include/providing-default-arbitraries.md").text}
+${new File("documentation/src/docs/include/providing-default-arbitraries.md").text}
 
  
 ## Domain and Domain Context
 
-${new File("src/docs/include/domain-and-domain-context.md").text}
+${new File("documentation/src/docs/include/domain-and-domain-context.md").text}
 
 
 ## Generation from a Type's Interface
 
-${new File("src/docs/include/generation-from-type.md").text}
+${new File("documentation/src/docs/include/generation-from-type.md").text}
 
 
 ## Generation of Edge Cases
 
-${new File("src/docs/include/generation-of-edge-cases.md").text}
+${new File("documentation/src/docs/include/generation-of-edge-cases.md").text}
 
 
 ## Exhaustive Generation
 
-${new File("src/docs/include/exhaustive-generation.md").text}
+${new File("documentation/src/docs/include/exhaustive-generation.md").text}
 
 
 ## Data-Driven Properties
 
-${new File("src/docs/include/data-driven-properties.md").text}
+${new File("documentation/src/docs/include/data-driven-properties.md").text}
 
 
 ## Rerunning Falsified Properties
 
-${new File("src/docs/include/rerunning-falsified-properties.md").text}
+${new File("documentation/src/docs/include/rerunning-falsified-properties.md").text}
 
 
 ## jqwik Configuration
 
-${new File("src/docs/include/jqwik-configuration.md").text}
+${new File("documentation/src/docs/include/jqwik-configuration.md").text}
 
 
 ## Additional Modules
@@ -164,30 +164,30 @@ _jqwik_ comes with a few additional modules:
 
 ### Web Module
 
-${new File("src/docs/include/web-module.md").text}
+${new File("documentation/src/docs/include/web-module.md").text}
 
 ### Time Module
 
-${new File("src/docs/include/time-module.md").text}
+${new File("documentation/src/docs/include/time-module.md").text}
 
 ### Kotlin Module
 
-${new File("src/docs/include/kotlin-module.md").text}
+${new File("documentation/src/docs/include/kotlin-module.md").text}
 
 ### Testing Module
 
-${new File("src/docs/include/testing-module.md").text}
+${new File("documentation/src/docs/include/testing-module.md").text}
 
 
 ## Advanced Topics
 
-${new File("src/docs/include/implement-your-own.md").text}
+${new File("documentation/src/docs/include/implement-your-own.md").text}
 
-${new File("src/docs/include/lifecycle-hooks.md").text}
+${new File("documentation/src/docs/include/lifecycle-hooks.md").text}
 
 ## API Evolution
 
-${new File("src/docs/include/api-evolution.md").text}
+${new File("documentation/src/docs/include/api-evolution.md").text}
 
 
 ## Release Notes
