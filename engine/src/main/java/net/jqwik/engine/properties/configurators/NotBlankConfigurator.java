@@ -5,6 +5,8 @@ import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
+import static net.jqwik.api.arbitraries.CharacterArbitrary.*;
+
 public class NotBlankConfigurator extends ArbitraryConfiguratorBase {
 
 	@Override
@@ -13,6 +15,6 @@ public class NotBlankConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public Arbitrary<String> configure(Arbitrary<String> arbitrary, NotBlank notBlank) {
-		return arbitrary.filter(s -> s != null && !s.trim().isEmpty());
+		return arbitrary.filter(s -> s != null && !isBlank(s.trim()));
 	}
 }

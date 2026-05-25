@@ -109,4 +109,12 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	 */
 	@API(status = MAINTAINED, since = "1.5.3")
 	CharacterArbitrary alpha();
+
+	// Java 11 compatibility function
+	static boolean isBlank(String aString) {
+		// TODO: As of Java 11 this can be replaced with:
+		// return aString.isBlank();
+
+		return aString.chars().allMatch(Character::isWhitespace);
+	}
 }
