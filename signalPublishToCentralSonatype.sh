@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Not sure if this is really necessary and working
 #set -x
 token=$1
 echo "Posting new deployment to ossrh-staging-api.central"

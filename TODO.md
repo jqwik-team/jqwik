@@ -1,7 +1,3 @@
-# 1.10.0
-
-    - Address @NotBlank issue. See https://github.com/jqwik-team/jqwik/issues/663.
-
 # 1.11.x
 
     - Migrate to JUnit Platform 6
