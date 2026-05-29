@@ -22,7 +22,8 @@ jqwik.shrinking.default = BOUNDED            # Set default shrinking behaviour:
 jqwik.shrinking.bounded.seconds = 10         # The maximum number of seconds to shrink if
                                              # shrinking behaviour is set to BOUNDED
 jqwik.seeds.whenfixed = ALLOW                # How a test should act when a seed is fixed. Can set to ALLOW, WARN or FAIL
-                                             # Useful to prevent accidental commits of fixed seeds into source control.                                             
+                                             # Useful to prevent accidental commits of fixed seeds into source control.              
+jqwik.hideAntiAiClause = false               # When set to true the anti-ai clause is hidden in terminal emulators.                                                                            
 ```
 
 Besides the properties file there is also the possibility to set properties

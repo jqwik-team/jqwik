@@ -66,7 +66,8 @@ public class JqwikTestEngine implements TestEngine {
 				recorder,
 				configuration.testEngineConfiguration().previousFailures(),
 				configuration.useJunitPlatformReporter(),
-				configuration.reportOnlyFailures()
+				configuration.reportOnlyFailures(),
+				configuration.hideAntiAiClause()
 			).execute(root, listener);
 		}
 	}

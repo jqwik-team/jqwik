@@ -23,6 +23,7 @@ public class JqwikProperties {
 	private static final int DEFAULT_MAX_DISCARD_RATIO = 5;
 	private static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.SAMPLE_FIRST;
 	private static final boolean DEFAULT_REPORT_ONLY_FAILURES = false;
+	private static final boolean DEFAULT_HIDE_ANTI_AI_CLAUSE = false;
 	private static final GenerationMode DEFAULT_GENERATION = GenerationMode.AUTO;
 	private static final EdgeCasesMode DEFAULT_EDGE_CASES = EdgeCasesMode.MIXIN;
 	private static final ShrinkingMode DEFAULT_SHRINKING = ShrinkingMode.BOUNDED;
@@ -39,6 +40,7 @@ public class JqwikProperties {
 	private final boolean useJunitPlatformReporter;
 	private final AfterFailureMode defaultAfterFailure;
 	private final boolean reportOnlyFailures;
+	private final boolean hideAntiAiClause;
 	private final GenerationMode defaultGeneration;
 	private final EdgeCasesMode defaultEdgeCases;
 	private final ShrinkingMode defaultShrinking;
@@ -73,6 +75,10 @@ public class JqwikProperties {
 		return reportOnlyFailures;
 	}
 
+	public boolean hideAntiAiClause() {
+		return hideAntiAiClause;
+	}
+
 	public GenerationMode defaultGeneration() {
 		return defaultGeneration;
 	}
@@ -101,6 +107,7 @@ public class JqwikProperties {
 		useJunitPlatformReporter = parameters.getBoolean("reporting.usejunitplatform").orElse(DEFAULT_USE_JUNIT_PLATFORM_REPORTER);
 		defaultAfterFailure = parameters.get("failures.after.default", AfterFailureMode::valueOf).orElse(DEFAULT_AFTER_FAILURE);
 		reportOnlyFailures = parameters.getBoolean("reporting.onlyfailures").orElse(DEFAULT_REPORT_ONLY_FAILURES);
+		hideAntiAiClause = parameters.getBoolean("hideAntiAiClause").orElse(DEFAULT_HIDE_ANTI_AI_CLAUSE);
 		defaultGeneration = parameters.get("generation.default", GenerationMode::valueOf).orElse(DEFAULT_GENERATION);
 		defaultEdgeCases = parameters.get("edgecases.default", EdgeCasesMode::valueOf).orElse(DEFAULT_EDGE_CASES);
 		defaultShrinking = parameters.get("shrinking.default", ShrinkingMode::valueOf).orElse(DEFAULT_SHRINKING);

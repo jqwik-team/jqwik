@@ -68,6 +68,11 @@ class JqwikIntegrationTests {
 			public boolean reportOnlyFailures() {
 				return reportOnlyFailures;
 			}
+
+			@Override
+			public boolean hideAntiAiClause() {
+				return true;
+			}
 		};
 	}
 

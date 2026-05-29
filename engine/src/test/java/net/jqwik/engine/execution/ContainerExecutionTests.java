@@ -124,7 +124,14 @@ class ContainerExecutionTests {
 	}
 
 	private void executeTests(TestDescriptor engineDescriptor) {
-		new JqwikExecutor(new LifecycleHooksRegistry(), TestRunRecorder.NULL, Collections.emptySet(), true, false).execute(engineDescriptor, eventRecorder);
+		new JqwikExecutor(
+			new LifecycleHooksRegistry(),
+			TestRunRecorder.NULL,
+			Collections.emptySet(),
+			true,
+			false,
+			true
+		).execute(engineDescriptor, eventRecorder);
 	}
 
 	private static class ContainerClass {

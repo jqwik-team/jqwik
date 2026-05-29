@@ -8,4 +8,6 @@ public interface JqwikConfiguration {
 	boolean useJunitPlatformReporter();
 
 	boolean reportOnlyFailures();
+
+	boolean hideAntiAiClause();
 }
