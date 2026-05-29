@@ -1,6 +1,9 @@
 ---
 title: jqwik User Guide - ${version}
 ---
+
+_Mind that starting with version 1.10 jqwik comes with an [**Anti-AI Usage Clause**](#anti-ai-usage-clause)!_
+
 <h1>The jqwik User Guide
 <span style="padding-left:1em;font-size:50%;font-weight:lighter">${version}</span>
 </h1>
