@@ -35,9 +35,9 @@ dependencies {
 		testImplementation(project(":web"))
 		testRuntimeOnly(project(":engine"))
 	} else {
-		testImplementation("net.jqwik:jqwik-api:1.10.0")
-		testImplementation("net.jqwik:jqwik-web:1.10.0")
-		testRuntimeOnly("net.jqwik:jqwik-engine:1.10.0")
+		testImplementation("net.jqwik:jqwik-api:1.10.1")
+		testImplementation("net.jqwik:jqwik-web:1.10.1")
+		testRuntimeOnly("net.jqwik:jqwik-engine:1.10.1")
 //		testImplementation("net.jqwik:jqwik-api:1.9.4-SNAPSHOT")
 //		testImplementation("net.jqwik:jqwik-web:1.9.4-SNAPSHOT")
 //		testRuntimeOnly("net.jqwik:jqwik-engine:1.9.4-SNAPSHOT")
