@@ -6,7 +6,7 @@ Github issues have been disabled temporarily.
 
 <div style="font-size: 200%; font-style: italic">
 Mind that starting with version 1.10 jqwik comes with an 
-<a href="#anti-ai-usage-clause">Anti-AI Usage Clause</a>! 
+<a href="https://jqwik.net/docs/current/user-guide.html#anti-ai-usage-clause">Anti-AI Usage Clause</a>! 
 </div>
 
 <hr>
