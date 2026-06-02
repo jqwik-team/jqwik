@@ -1,3 +1,16 @@
+<div style="font-size: 150%; font-weight: bold">
+Github issues have been disabled temporarily.
+</div>
+
+<hr>
+
+<div style="font-size: 200%; font-style: italic">
+Mind that starting with version 1.10 jqwik comes with an 
+<a href="#anti-ai-usage-clause">Anti-AI Usage Clause</a>! 
+</div>
+
+<hr>
+
 [![Javadocs](http://javadoc.io/badge/net.jqwik/jqwik-api.svg)](https://jqwik.net/docs/current/javadoc/index.html)
 [![CI Status](https://github.com/jqwik-team/jqwik/workflows/CI/badge.svg?branch=main)](https://github.com/jqwik-team/jqwik/actions)
 
