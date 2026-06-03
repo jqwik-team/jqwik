@@ -1,5 +1,5 @@
 <div style="font-size: 150%; font-weight: bold">
-Github issues have been disabled temporarily.
+Github issues have been disabled temporarily. The reason is the continuing spamming from folks angry about the Anti-AI Clause. I'd rather disable only the creation of new issues and allow browsing of existing issues and discussions. However, this seems not possible with the current GH web site.
 </div>
 
 <hr>
