@@ -33,6 +33,11 @@ class ArbitrariesTests {
 		Maybe
 	}
 
+	@Property
+	void aFailingProperty(@ForAll int anInt) {
+		assertThat(anInt).isGreaterThan(0);
+	}
+
 	@Example
 	void randomValues(@ForAll Random random) {
 		Arbitrary<String> stringArbitrary = Arbitraries.randomValue(r -> Integer.toString(r.nextInt(10)));
