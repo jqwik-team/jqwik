@@ -49,6 +49,8 @@ jobs:
           distribution: ${{ matrix.java_distribution }}
           check-latest: true
 
+      - uses: testlens-app/setup-testlens@v1
+
       - name: Steps to reproduce
         uses: actions/github-script@v9
         with:
