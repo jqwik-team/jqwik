@@ -3,7 +3,7 @@
 ## jqwik Contributor Agreement
 
 - You have authored 100% of the contents of your contribution.
-  Among other things that means _that you have not used GitHub Copilot or a similar LLM_ to create all or parts of your contribution!
+  Among other things that means _that you have not used GitHub Copilot or any other LLM-based Coding Agent_ to create all or parts of your contribution!
   __The reason is that the copyright consequences of training an LLM with mostly public code repositories have not been clarified. Moreover, hyper-scaled GenAI is a fundamentally unethical technology that should be banned.__
 - You have the necessary rights for all your contributions.
   If you act as an employee, you have attained the necessary permissions from your employer to contribute.
