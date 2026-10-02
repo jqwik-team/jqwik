@@ -1,5 +1,7 @@
 package net.jqwik.api;
 
+import com.google.errorprone.annotations.*;
+
 import java.lang.annotation.*;
 import java.util.function.*;
 
@@ -37,6 +39,7 @@ import static org.apiguardian.api.API.Status.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = STABLE, since = "1.0")
+@Keep
 public @interface Provide {
 
 	/**
