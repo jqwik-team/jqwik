@@ -143,7 +143,7 @@ fun <T> frequency(vararg frequencies: Pair<Int, T>): Arbitrary<out T> {
     val listOfFrequencies: List<Tuple.Tuple2<Int, T>> = frequencies
         .map { pair -> Tuple.of(pair.first, pair.second) }
         .toList()
-    return Arbitraries.frequency(listOfFrequencies) as Arbitrary<T>
+    return Arbitraries.frequency(listOfFrequencies)
 }
 
 /**
@@ -156,5 +156,5 @@ fun <T> frequencyOf(vararg frequencies: Pair<Int, Arbitrary<T>>): Arbitrary<out 
     val listOfFrequencies: List<Tuple.Tuple2<Int, Arbitrary<T>>> = frequencies
         .map { pair -> Tuple.of(pair.first, pair.second) }
         .toList()
-    return Arbitraries.frequencyOf(listOfFrequencies) as Arbitrary<T>
+    return Arbitraries.frequencyOf(listOfFrequencies)
 }

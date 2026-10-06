@@ -7,7 +7,6 @@ import net.jqwik.api.arbitraries.ListArbitrary
 import net.jqwik.api.arbitraries.SizableArbitrary
 import org.apiguardian.api.API
 import org.apiguardian.api.API.Status.EXPERIMENTAL
-import org.jspecify.annotations.Nullable
 import java.util.function.Function
 
 /**
@@ -21,7 +20,7 @@ class SequenceArbitrary<T>(elementArbitrary: Arbitrary<T>) : ArbitraryDecorator<
     private var listArbitrary: ListArbitrary<T>
 
     init {
-        this.listArbitrary = elementArbitrary.list() as ListArbitrary<T>
+        this.listArbitrary = elementArbitrary.list()
     }
 
     override fun arbitrary(): Arbitrary<Sequence<T>> {
