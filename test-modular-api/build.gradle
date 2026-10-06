@@ -10,7 +10,9 @@ description = "Jqwik modular API integration test"
 
 repositories {
 	mavenCentral()
-	maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
+	maven {
+		url='https://central.sonatype.com/repository/maven-snapshots/'
+	}
 }
 
 def localJavaTarget = "${javaTargetVersion}" == "1.8" ? JavaVersion.VERSION_1_9
