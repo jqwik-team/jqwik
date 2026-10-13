@@ -2,6 +2,7 @@ package net.jqwik.time.api.dateTimes.localDateTime;
 
 import java.time.*;
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.time.api.*;
@@ -404,6 +405,27 @@ public class EdgeCasesTests {
 			assertThat(edgeCases).containsExactlyInAnyOrder(
 				LocalDateTime.of(2013, MAY, 25, 11, 23, 21, 301_428_111),
 				LocalDateTime.of(2013, MAY, 25, 21, 15, 19, 199_321_789)
+			);
+		}
+
+		@Example
+		void betweenAndTimeBetweenKeepingInclusiveUpperBoundOfCrossDayRange() {
+			// https://github.com/jqwik-team/jqwik/issues/727
+			LocalDate day = LocalDate.of(2000, JANUARY, 1);
+			LocalTime minTime = LocalTime.of(1, 0);
+
+			LocalDateTimeArbitrary dateTimes =
+				DateTimes.dateTimes()
+						 .between(
+							 LocalDateTime.of(day, minTime),
+							 LocalDateTime.of(day.plusDays(1), minTime).minusSeconds(1)
+						 )
+						 .timeBetween(minTime, minTime.plusSeconds(1));
+
+			Set<LocalDateTime> values = dateTimes.allValues().orElseThrow().collect(Collectors.toSet());
+			assertThat(values).containsExactlyInAnyOrder(
+				LocalDateTime.of(2000, JANUARY, 1, 1, 0),
+				LocalDateTime.of(2000, JANUARY, 1, 1, 0, 1)
 			);
 		}
 

@@ -138,7 +138,10 @@ public class DefaultLocalDateTimeArbitrary extends ArbitraryDecorator<LocalDateT
 		if (effective.toLocalTime().isAfter(maxTime)) {
 			return LocalDateTime.of(effective.toLocalDate(), maxTime);
 		} else if (effective.toLocalTime().isBefore(minTime)) {
-			return LocalDateTime.of(effective.toLocalDate().minusDays(1), minTime);
+			// The requested max's time of day lies before the valid time window, so the last valid value
+			// is on the previous day. It must be the inclusive upper bound of the window (maxTime),
+			// not its lower bound, otherwise valid values (minTime, maxTime] are dropped.
+			return LocalDateTime.of(effective.toLocalDate().minusDays(1), maxTime);
 		}
 		return effective;
 	}
